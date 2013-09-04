@@ -58,6 +58,7 @@ import org.infoglue.cms.entities.workflow.EventVO;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
+import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.DateHelper;
 import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Timer;
@@ -164,11 +165,13 @@ public class SiteNodeStateController extends BaseController
     {
     	Timer t = new Timer();
     	
+    	SiteNodeVersionVO returnSiteNodeVersionVO = null;
 		MediumSiteNodeVersionImpl returnSiteNodeVersionImpl = null;
 		
         try
         { 
 			MediumSiteNodeVersionImpl oldMediumSiteNodeVersionImpl = SiteNodeVersionController.getController().getMediumSiteNodeVersionWithId(oldSiteNodeVersionId, db);
+			returnSiteNodeVersionVO = oldMediumSiteNodeVersionImpl.getValueObject();
 			//t.printElapsedTime("oldMediumSiteNodeVersionImpl:" + oldMediumSiteNodeVersionImpl.getSiteNodeId());
 			
             //Here we create a new version if it was a state-change back to working, it's a copy of the publish-version
@@ -201,6 +204,7 @@ public class SiteNodeStateController extends BaseController
 
 				//returnSiteNodeVersionVO = SiteNodeVersionController.createFull(siteNodeId, infoGluePrincipal, newSiteNodeVersionVO, db).getValueObject();
 				returnSiteNodeVersionImpl = SiteNodeVersionController.createSmall(siteNodeVO.getId(), infoGluePrincipal, newSiteNodeVersionVO, db);
+				returnSiteNodeVersionVO = returnSiteNodeVersionImpl.getValueObject();
 				
 				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("changeState createSmall", t.getElapsedTime());
 				
@@ -225,59 +229,78 @@ public class SiteNodeStateController extends BaseController
 	    		//SiteNodeVersionVO oldSiteNodeVersionVO = oldSiteNodeVersion.getValueObject();
 				oldMediumSiteNodeVersionImpl.setVersionComment(versionComment);
 	
-	    		//Now we create a new version which is basically just a copy of the working-version	    	
-		    	SiteNodeVersionVO newSiteNodeVersionVO = new SiteNodeVersionVO();
-		    	newSiteNodeVersionVO.setSiteNodeId(siteNodeVO.getId());
-		    	newSiteNodeVersionVO.setStateId(stateId);
-		    	newSiteNodeVersionVO.setVersionComment(versionComment);
-				if(overrideVersionModifyer)
-				    newSiteNodeVersionVO.setVersionModifier(infoGluePrincipal.getName());
-				else
-				    newSiteNodeVersionVO.setVersionModifier(oldMediumSiteNodeVersionImpl.getVersionModifier());
-				
-				newSiteNodeVersionVO.setModifiedDateTime(DateHelper.getSecondPreciseDate()); 
-		    	
-				newSiteNodeVersionVO.setContentType(oldMediumSiteNodeVersionImpl.getContentType());
-				newSiteNodeVersionVO.setPageCacheKey(oldMediumSiteNodeVersionImpl.getPageCacheKey());
-				newSiteNodeVersionVO.setPageCacheTimeout(oldMediumSiteNodeVersionImpl.getPageCacheTimeout());
-				newSiteNodeVersionVO.setDisableEditOnSight(oldMediumSiteNodeVersionImpl.getDisableEditOnSight());
-				newSiteNodeVersionVO.setDisableLanguages(oldMediumSiteNodeVersionImpl.getDisableLanguages());
-				newSiteNodeVersionVO.setDisablePageCache(oldMediumSiteNodeVersionImpl.getDisablePageCache());
-				newSiteNodeVersionVO.setIsProtected(oldMediumSiteNodeVersionImpl.getIsProtected());
-				newSiteNodeVersionVO.setDisableForceIdentityCheck(oldMediumSiteNodeVersionImpl.getDisableForceIdentityCheck());
-				newSiteNodeVersionVO.setForceProtocolChange(oldMediumSiteNodeVersionImpl.getForceProtocolChange());
-				newSiteNodeVersionVO.setIsHidden(oldMediumSiteNodeVersionImpl.getIsHidden());
-				newSiteNodeVersionVO.setSortOrder(oldMediumSiteNodeVersionImpl.getSortOrder());
-
-				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("changeState publish1", t.getElapsedTime());
-
-				//returnSiteNodeVersionVO = SiteNodeVersionController.createFull(siteNodeId, infoGluePrincipal, newSiteNodeVersionVO, db).getValueObject();
-				returnSiteNodeVersionImpl = SiteNodeVersionController.createSmall(siteNodeVO.getId(), infoGluePrincipal, newSiteNodeVersionVO, db);
-				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("changeState publish createSmall", t.getElapsedTime());
-
-				//returnSiteNodeVersionVO.setSiteNodeId(oldSiteNodeVersion.getValueObject().getSiteNodeId());
-				//copyServiceBindings(oldSiteNodeVersion, newSiteNodeVersion, db);
-				if(returnSiteNodeVersionImpl.getIsProtected().intValue() == SiteNodeVersionVO.YES || returnSiteNodeVersionImpl.getIsProtected().intValue() == SiteNodeVersionVO.YES_WITH_INHERIT_FALLBACK)
+				if(CmsPropertyHandler.getUseApprovalFlow().equals("true"))
 				{
-					copyAccessRights("SiteNodeVersion", oldMediumSiteNodeVersionImpl.getId(), returnSiteNodeVersionImpl.getId(), db);
-					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("changeState publish copyAccessRights", t.getElapsedTime());
+		    		//Now we create a new version which is basically just a copy of the working-version	    	
+			    	SiteNodeVersionVO newSiteNodeVersionVO = new SiteNodeVersionVO();
+			    	newSiteNodeVersionVO.setSiteNodeId(siteNodeVO.getId());
+			    	newSiteNodeVersionVO.setStateId(stateId);
+			    	newSiteNodeVersionVO.setVersionComment(versionComment);
+					if(overrideVersionModifyer)
+					    newSiteNodeVersionVO.setVersionModifier(infoGluePrincipal.getName());
+					else
+					    newSiteNodeVersionVO.setVersionModifier(oldMediumSiteNodeVersionImpl.getVersionModifier());
+					
+					newSiteNodeVersionVO.setModifiedDateTime(DateHelper.getSecondPreciseDate()); 
+			    	
+					newSiteNodeVersionVO.setContentType(oldMediumSiteNodeVersionImpl.getContentType());
+					newSiteNodeVersionVO.setPageCacheKey(oldMediumSiteNodeVersionImpl.getPageCacheKey());
+					newSiteNodeVersionVO.setPageCacheTimeout(oldMediumSiteNodeVersionImpl.getPageCacheTimeout());
+					newSiteNodeVersionVO.setDisableEditOnSight(oldMediumSiteNodeVersionImpl.getDisableEditOnSight());
+					newSiteNodeVersionVO.setDisableLanguages(oldMediumSiteNodeVersionImpl.getDisableLanguages());
+					newSiteNodeVersionVO.setDisablePageCache(oldMediumSiteNodeVersionImpl.getDisablePageCache());
+					newSiteNodeVersionVO.setIsProtected(oldMediumSiteNodeVersionImpl.getIsProtected());
+					newSiteNodeVersionVO.setDisableForceIdentityCheck(oldMediumSiteNodeVersionImpl.getDisableForceIdentityCheck());
+					newSiteNodeVersionVO.setForceProtocolChange(oldMediumSiteNodeVersionImpl.getForceProtocolChange());
+					newSiteNodeVersionVO.setIsHidden(oldMediumSiteNodeVersionImpl.getIsHidden());
+					newSiteNodeVersionVO.setSortOrder(oldMediumSiteNodeVersionImpl.getSortOrder());
+
+					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("changeState publish1", t.getElapsedTime());
+	
+					//returnSiteNodeVersionVO = SiteNodeVersionController.createFull(siteNodeId, infoGluePrincipal, newSiteNodeVersionVO, db).getValueObject();
+					returnSiteNodeVersionImpl = SiteNodeVersionController.createSmall(siteNodeVO.getId(), infoGluePrincipal, newSiteNodeVersionVO, db);
+					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("changeState publish createSmall", t.getElapsedTime());
+					returnSiteNodeVersionVO = returnSiteNodeVersionImpl.getValueObject();
+					
+					//returnSiteNodeVersionVO.setSiteNodeId(oldSiteNodeVersion.getValueObject().getSiteNodeId());
+					//copyServiceBindings(oldSiteNodeVersion, newSiteNodeVersion, db);
+					if(returnSiteNodeVersionImpl.getIsProtected().intValue() == SiteNodeVersionVO.YES || returnSiteNodeVersionImpl.getIsProtected().intValue() == SiteNodeVersionVO.YES_WITH_INHERIT_FALLBACK)
+					{
+						copyAccessRights("SiteNodeVersion", oldMediumSiteNodeVersionImpl.getId(), returnSiteNodeVersionImpl.getId(), db);
+						RequestAnalyser.getRequestAnalyser().registerComponentStatistics("changeState publish copyAccessRights", t.getElapsedTime());
+					}
+	
+					//Creating the event that will notify the editor...
+					EventVO eventVO = new EventVO();
+					eventVO.setDescription(returnSiteNodeVersionImpl.getVersionComment());
+					eventVO.setEntityClass(SiteNodeVersion.class.getName());
+					eventVO.setEntityId(new Integer(returnSiteNodeVersionImpl.getId().intValue()));
+			        eventVO.setName(siteNodeVO.getName());
+					eventVO.setTypeId(EventVO.PUBLISH);
+			        eventVO = EventController.create(eventVO, siteNodeVO.getRepositoryId(), infoGluePrincipal, db);			
+			        
+			        eventVO.setName(siteNodeVO.getName());
+					
+					resultingEvents.add(eventVO);
 				}
-
-				//Creating the event that will notify the editor...
-				EventVO eventVO = new EventVO();
-				eventVO.setDescription(returnSiteNodeVersionImpl.getVersionComment());
-				eventVO.setEntityClass(SiteNodeVersion.class.getName());
-				eventVO.setEntityId(new Integer(returnSiteNodeVersionImpl.getId().intValue()));
-		        eventVO.setName(siteNodeVO.getName());
-				eventVO.setTypeId(EventVO.PUBLISH);
-		        eventVO = EventController.create(eventVO, siteNodeVO.getRepositoryId(), infoGluePrincipal, db);			
-		        
-		        eventVO.setName(siteNodeVO.getName());
+				else
+				{
+					//Creating the event that will notify the editor...
+					EventVO eventVO = new EventVO();
+					eventVO.setDescription(oldMediumSiteNodeVersionImpl.getVersionComment());
+					eventVO.setEntityClass(SiteNodeVersion.class.getName());
+					eventVO.setEntityId(new Integer(oldMediumSiteNodeVersionImpl.getId().intValue()));
+			        eventVO.setName(siteNodeVO.getName());
+					eventVO.setTypeId(EventVO.PUBLISH);
+			        eventVO = EventController.create(eventVO, siteNodeVO.getRepositoryId(), infoGluePrincipal, db);			
+			        
+			        eventVO.setName(siteNodeVO.getName());
+					
+					resultingEvents.add(eventVO);
+				}
 				
-				resultingEvents.add(eventVO);
-
-				if(recipientFilter != null && !recipientFilter.equals(""))
-					PublicationController.mailPublishNotification(resultingEvents, siteNodeVO.getRepositoryId(), infoGluePrincipal, recipientFilter, db);
+				//if(recipientFilter != null && !recipientFilter.equals(""))
+				//	PublicationController.mailPublishNotification(resultingEvents, siteNodeVO.getRepositoryId(), infoGluePrincipal, recipientFilter, db);
 	
 				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("changeState publish create event", t.getElapsedTime());
 	    	}
@@ -290,16 +313,20 @@ public class SiteNodeStateController extends BaseController
 	    		returnSiteNodeVersionImpl = oldMediumSiteNodeVersionImpl;
 	    	}
 
-	    	changeStateOnMetaInfo(db, siteNodeVO, returnSiteNodeVersionImpl.getValueObject(), stateId, versionComment, overrideVersionModifyer, infoGluePrincipal, resultingEvents);
-			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("changeState changeStateOnMetaInfo", t.getElapsedTime());
+	    	if(stateId.intValue() != SiteNodeVersionVO.PUBLISH_STATE.intValue() || CmsPropertyHandler.getUseApprovalFlow().equals("true"))
+			{
+		    	changeStateOnMetaInfo(db, siteNodeVO, returnSiteNodeVersionImpl.getValueObject(), stateId, versionComment, overrideVersionModifyer, infoGluePrincipal, resultingEvents);
+				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("changeState changeStateOnMetaInfo", t.getElapsedTime());
+			}
         }
         catch(Exception e)
         {
+        	e.printStackTrace();
             logger.error("An error occurred so we should not complete the transaction:" + e, e);
             throw new SystemException(e.getMessage());
         }    	  
           	
-    	return returnSiteNodeVersionImpl.getValueObject();
+    	return returnSiteNodeVersionVO;
     }        
 
     

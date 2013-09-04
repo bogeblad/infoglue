@@ -79,6 +79,7 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 	private String versionComment;
 	private boolean overrideVersionModifyer = false;
 	private String attemptDirectPublishing = "false";
+   	private String recipientFilter = null;
 	
 	private String returnAddress;
    	private String userSessionKey;
@@ -209,12 +210,15 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 			ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getFullContentVersionVOWithId(contentVersionId);
 			
 			ContentVersionVO latestContentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentVersionVO.getContentId(), contentVersionVO.getLanguageId());
-			if(latestContentVersionVO != null && !latestContentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
-			{
-				logger.info("Creating a new working version as there was no active working version left...:" + contentVersionVO.getLanguageName());
-				ContentStateController.changeState(latestContentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "new working version", false, null, this.getInfoGluePrincipal(), contentVersionVO.getContentId(), events);
+				if(attemptDirectPublishing.equalsIgnoreCase("true"))
+				{
+				if(latestContentVersionVO != null && !latestContentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
+				{
+					logger.info("Creating a new working version as there was no active working version left...:" + contentVersionVO.getLanguageName());
+					ContentStateController.changeState(latestContentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "new working version", false, null, this.getInfoGluePrincipal(), contentVersionVO.getContentId(), events);
+				}
 			}
-			
+		
 			EventVO eventVO = new EventVO();
 			eventVO.setDescription(this.versionComment);
 			eventVO.setEntityClass(ContentVersion.class.getName());
@@ -225,6 +229,12 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 			events.add(eventVO);
 		}
 		
+		if(!attemptDirectPublishing.equalsIgnoreCase("true"))
+		{
+			if(recipientFilter != null && !recipientFilter.equals("") && events != null && events.size() > 0)
+				PublicationController.mailPublishNotification(events, repositoryId, getInfoGluePrincipal(), recipientFilter, true);
+		}
+
 		if(attemptDirectPublishing.equalsIgnoreCase("true"))
 		{
 		    PublicationVO publicationVO = new PublicationVO();
@@ -318,10 +328,13 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 				{
 					checkedLanguages.put(contentVersionVO.getLanguageId(), new Boolean(true));
 					ContentVersionVO latestContentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentVersionVO.getContentId(), contentVersionVO.getLanguageId());
-					if(latestContentVersionVO != null && !latestContentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
+					if(attemptDirectPublishing.equalsIgnoreCase("true"))
 					{
-						logger.info("Creating a new working version as there was no active working version left...:" + contentVersionVO.getLanguageName());
-						ContentStateController.changeState(latestContentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "new working version", false, null, this.getInfoGluePrincipal(), contentVersionVO.getContentId(), events);
+						if(latestContentVersionVO != null && !latestContentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
+						{
+							logger.info("Creating a new working version as there was no active working version left...:" + contentVersionVO.getLanguageName());
+							ContentStateController.changeState(latestContentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "new working version", false, null, this.getInfoGluePrincipal(), contentVersionVO.getContentId(), events);
+						}
 					}
 				}
 				//ContentStateController.changeState(contentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "new working version", false, this.getInfoGluePrincipal(), contentVersionVO.getContentId(), db, events);
@@ -330,7 +343,8 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 				eventVO.setDescription(this.versionComment);
 				eventVO.setEntityClass(ContentVersion.class.getName());
 				eventVO.setEntityId(contentVersionVO.getContentVersionId());
-				eventVO.setName(contentVersionVO.getContentId() + "(" + contentVersionVO.getLanguageId() + ")");
+				ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentVersionVO.getContentId());
+				eventVO.setName(contentVO.getName() + "(" + contentVersionVO.getLanguageId() + ")");
 				eventVO.setTypeId(EventVO.UNPUBLISH_LATEST);
 				eventVO = EventController.create(eventVO, this.repositoryId, this.getInfoGluePrincipal(), db);
 				events.add(eventVO);
@@ -340,6 +354,12 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
         	}
 
 			processBean.updateLastDescription("Creating publication");
+
+			if(!attemptDirectPublishing.equalsIgnoreCase("true"))
+			{
+				if(recipientFilter != null && !recipientFilter.equals("") && events != null && events.size() > 0)
+					PublicationController.mailPublishNotification(events, repositoryId, getInfoGluePrincipal(), recipientFilter, true);
+			}
 
 			if(attemptDirectPublishing.equalsIgnoreCase("true"))
 			{
@@ -532,6 +552,16 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 	public void setOriginalAddress(String originalAddress)
 	{
 		this.originalAddress = originalAddress;
+	}
+
+	public String getRecipientFilter() 
+	{
+		return recipientFilter;
+	}
+
+	public void setRecipientFilter(String recipientFilter) 
+	{
+		this.recipientFilter = recipientFilter;
 	}
 
 }

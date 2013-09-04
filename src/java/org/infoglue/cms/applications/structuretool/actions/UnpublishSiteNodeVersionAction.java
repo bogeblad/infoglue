@@ -80,7 +80,7 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
     private String originalAddress;
 	private String returnAddress;
    	private String userSessionKey;
-
+   	private String recipientFilter = null;
 	
 	public String doInput() throws Exception 
 	{
@@ -196,12 +196,15 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 			if(siteNodeVO == null)
 				siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersionVO.getSiteNodeId());
 			
-			if(siteNodeVersionVO.getId().equals(latestSiteNodeVersionVO.getId()))
+			if(attemptDirectPublishing.equals("true"))
 			{
-				logger.info("Creating a new working version as there was no active working version left...");
-				SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), siteNodeVO, SiteNodeVersionVO.WORKING_STATE, "new working version", false, this.getInfoGluePrincipal(), events);
+				if(siteNodeVersionVO.getId().equals(latestSiteNodeVersionVO.getId()))
+				{
+					logger.info("Creating a new working version as there was no active working version left...");
+					SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), siteNodeVO, SiteNodeVersionVO.WORKING_STATE, "new working version", false, this.getInfoGluePrincipal(), events);
+				}
 			}
-
+			
 			EventVO eventVO = new EventVO();
 			eventVO.setDescription(this.versionComment);
 			eventVO.setEntityClass(SiteNodeVersion.class.getName());
@@ -219,12 +222,15 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 			    
 				ContentVersionVO latestContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(currentContentVersionVO.getContentId(), currentContentVersionVO.getLanguageId());
 				ContentVO contentVO = ContentController.getContentController().getContentVOWithId(currentContentVersionVO.getContentId());
-				if(currentContentVersionVO.getId().equals(latestContentVersionVO.getId()))
+				if(attemptDirectPublishing.equals("true"))
 				{
-					logger.info("Creating a new working version as there was no active working version left...:" + currentContentVersionVO.getLanguageName());
-					ContentStateController.changeState(currentContentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "new working version", false, null, this.getInfoGluePrincipal(), currentContentVersionVO.getContentId(), events);
+					if(currentContentVersionVO.getId().equals(latestContentVersionVO.getId()))
+					{
+						logger.info("Creating a new working version as there was no active working version left...:" + currentContentVersionVO.getLanguageName());
+						ContentStateController.changeState(currentContentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "new working version", false, null, this.getInfoGluePrincipal(), currentContentVersionVO.getContentId(), events);
+					}
 				}
-
+				
 				EventVO versionEventVO = new EventVO();
 				versionEventVO.setDescription(this.versionComment);
 				versionEventVO.setEntityClass(ContentVersion.class.getName());
@@ -236,6 +242,12 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 			}
 		}
 		
+		if(!attemptDirectPublishing.equalsIgnoreCase("true"))
+		{
+			if(recipientFilter != null && !recipientFilter.equals("") && events != null && events.size() > 0)
+				PublicationController.mailPublishNotification(events, repositoryId, getInfoGluePrincipal(), recipientFilter, true);
+		}
+
 		if(attemptDirectPublishing.equalsIgnoreCase("true"))
 		{
 		    PublicationVO publicationVO = new PublicationVO();
@@ -305,13 +317,16 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 					//if(siteNodeVO == null)
 					SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersionVO.getSiteNodeId());
 					
-					if(siteNodeVersionVO.getId().equals(latestSiteNodeVersionVO.getId()))
+					if(attemptDirectPublishing.equals("true"))
 					{
-						logger.info("Creating a new working version as there was no active working version left...");
-						SiteNodeVersionVO newSiteNodeVersionVO = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), siteNodeVO, SiteNodeVersionVO.WORKING_STATE, "new working version", false, this.getInfoGluePrincipal(), events);
-						siteNodeMap.put(newSiteNodeVersionVO.getId(), siteNodeVO);
+						if(siteNodeVersionVO.getId().equals(latestSiteNodeVersionVO.getId()))
+						{
+							logger.info("Creating a new working version as there was no active working version left...");
+							SiteNodeVersionVO newSiteNodeVersionVO = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), siteNodeVO, SiteNodeVersionVO.WORKING_STATE, "new working version", false, this.getInfoGluePrincipal(), events);
+							siteNodeMap.put(newSiteNodeVersionVO.getId(), siteNodeVO);
+						}
 					}
-	
+					
 					EventVO eventVO = new EventVO();
 					eventVO.setDescription(this.versionComment);
 					eventVO.setEntityClass(SiteNodeVersion.class.getName());
@@ -330,24 +345,33 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 						ContentVersionVO latestContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(currentContentVersionVO.getContentId(), currentContentVersionVO.getLanguageId());
 						ContentVO contentVO = ContentController.getContentController().getContentVOWithId(currentContentVersionVO.getContentId());
 						contentMap.put(currentContentVersionVO.getId(), contentVO);
-						if(currentContentVersionVO.getId().equals(latestContentVersionVO.getId()))
+						if(attemptDirectPublishing.equals("true"))
 						{
-							logger.info("Creating a new working version as there was no active working version left...:" + currentContentVersionVO.getLanguageName());
-							ContentStateController.changeState(currentContentVersionVO.getId(), contentVO, ContentVersionVO.WORKING_STATE, "new working version", false, null, this.getInfoGluePrincipal(), currentContentVersionVO.getContentId(), events);
+							if(currentContentVersionVO.getId().equals(latestContentVersionVO.getId()))
+							{
+								logger.info("Creating a new working version as there was no active working version left...:" + currentContentVersionVO.getLanguageName());
+								ContentStateController.changeState(currentContentVersionVO.getId(), contentVO, ContentVersionVO.WORKING_STATE, "new working version", false, null, this.getInfoGluePrincipal(), currentContentVersionVO.getContentId(), events);
+							}
+							
+							EventVO versionEventVO = new EventVO();
+							versionEventVO.setDescription(this.versionComment);
+							versionEventVO.setEntityClass(ContentVersion.class.getName());
+							versionEventVO.setEntityId(currentContentVersionVO.getId());
+							versionEventVO.setName(contentVO.getName());
+							versionEventVO.setTypeId(EventVO.UNPUBLISH_LATEST);
+							versionEventVO = EventController.create(versionEventVO, this.repositoryId, this.getInfoGluePrincipal());
+							events.add(versionEventVO);			    
 						}
-	
-						EventVO versionEventVO = new EventVO();
-						versionEventVO.setDescription(this.versionComment);
-						versionEventVO.setEntityClass(ContentVersion.class.getName());
-						versionEventVO.setEntityId(currentContentVersionVO.getId());
-						versionEventVO.setName(contentVO.getName());
-						versionEventVO.setTypeId(EventVO.UNPUBLISH_LATEST);
-						versionEventVO = EventController.create(versionEventVO, this.repositoryId, this.getInfoGluePrincipal());
-						events.add(versionEventVO);			    
 					}
 				}
 			}
 			
+			if(!attemptDirectPublishing.equalsIgnoreCase("true"))
+			{
+				if(recipientFilter != null && !recipientFilter.equals("") && events != null && events.size() > 0)
+					PublicationController.mailPublishNotification(events, repositoryId, getInfoGluePrincipal(), recipientFilter, true);
+			}
+
 			if(attemptDirectPublishing.equalsIgnoreCase("true"))
 			{
 			    PublicationVO publicationVO = new PublicationVO();
@@ -553,6 +577,16 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 	public String doShowProcessesAsJSON() throws Exception
 	{
 		return "successShowProcessesAsJSON";
+	}
+
+	public String getRecipientFilter() 
+	{
+		return recipientFilter;
+	}
+
+	public void setRecipientFilter(String recipientFilter) 
+	{
+		this.recipientFilter = recipientFilter;
 	}
 
 }

@@ -1035,6 +1035,11 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
     	return CmsPropertyHandler.getAllowPublicationEventFilter();
     }
 
+    public String getDefaultPublicationEventFilter()
+    {
+    	return CmsPropertyHandler.getDefaultPublicationEventFilter();
+    }
+
     /**
      * Getter for if the system should allow a user to override the 
      * version modifyer upon publication. 

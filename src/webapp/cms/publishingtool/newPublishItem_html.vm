@@ -1,8 +1,14 @@
-<div><h2>$ui.getString("tool.publishingtool.approveMail.title")</h2></div>
+<div>
+	#if($unpublishRequest)
+	<h2>$ui.getString("tool.publishingtool.approveMail.titleUnpublish")</h2>
+	#else
+	<h2>$ui.getString("tool.publishingtool.approveMail.title")</h2>
+	#end
+</div>
 <div>
 	$principal.firstName $principal.lastName ($principal.name) $ui.getString("tool.publishingtool.approveMail.submittedText", $events.size())<br/>
 	<br/>
-	<h3>Items</h3>  
+	$comment
 	#*
 	#foreach($event in $events)
 		$event.name - $event.description<br/>

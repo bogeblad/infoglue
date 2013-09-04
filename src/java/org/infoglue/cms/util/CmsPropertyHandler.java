@@ -1930,6 +1930,16 @@ public class CmsPropertyHandler
 	    return getServerNodeProperty("allowPublicationEventFilter", true, "false");
 	}
 
+	public static String getUseApprovalFlow()
+	{
+	    return getServerNodeProperty("useApprovalFlow", true, "true");
+	}
+
+	public static String getAutoShowApprovalButtons()
+	{
+	    return getServerNodeProperty("autoShowApprovalButtons", true, "true");
+	}
+
 	public static String getSkipVersionComment()
 	{
 	    return getServerNodeProperty("skipVersionComment", true, "false");

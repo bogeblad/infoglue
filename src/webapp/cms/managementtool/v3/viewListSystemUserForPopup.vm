@@ -36,10 +36,12 @@
 			window.close();
 		}
 	
-		function selectUser(userName)
+		function selectUser(userName, email)
 		{
 			if(window.opener && window.opener.selectUser)
 				window.opener.selectUser(userName);
+			if(window.opener && window.opener.selectEmail)
+				window.opener.selectEmail(email);
 	
 			window.close();
 		}
@@ -99,7 +101,7 @@
 				#foreach($user in $filteredInfogluePrincipals)
 
 					<tr>
-					  	<td><a href="javascript:selectUser('$user.name');">$user.name</a></td>
+					  	<td><a href="javascript:selectUser('$user.name','$user.email');">$user.name</a></td>
 					  	<td>$user.firstName</td>
 					  	<td>$user.lastName</td>
 					</tr>

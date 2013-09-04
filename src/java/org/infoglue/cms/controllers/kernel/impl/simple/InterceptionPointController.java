@@ -142,7 +142,12 @@ public class InterceptionPointController extends BaseController
 				
 	    systemInterceptionPoints.put("ComponentPropertyEditor.EditProperty", new InterceptionPointVO("ComponentPropertyEditor", "ComponentPropertyEditor.EditProperty", "This interception point limits who can edit a specific component property", true));
 	    systemInterceptionPoints.put("ComponentPropertyEditor.EditAdvancedProperties", new InterceptionPointVO("ComponentPropertyEditor", "ComponentPropertyEditor.EditAdvancedProperties", "This interception point limits who can edit advanced properties on a component", false));
-	    
+
+		systemInterceptionPoints.put("ComponentEditor.ShowLanguageMenu", new InterceptionPointVO("ComponentEditor", "ComponentEditor.ShowLanguageMenu", "This interception point limits who are allowed to approve / deny publishing requests", false));
+		systemInterceptionPoints.put("ComponentEditor.ShowHomeButton", new InterceptionPointVO("ComponentEditor", "ComponentEditor.ShowHomeButton", "This interception point limits who can see the home-button in edit on sight", false));
+		systemInterceptionPoints.put("ComponentEditor.ShowMySettingsButton", new InterceptionPointVO("ComponentEditor", "ComponentEditor.ShowMySettingsButton", "This interception point limits who can see the my settings button in edit on sight", false));
+		systemInterceptionPoints.put("ComponentEditor.W3CValidator", new InterceptionPointVO("ComponentEditor", "ComponentEditor.W3CValidator", "This interception point limits who can see the W3C Validator button in edit on sight", false));
+
 	    systemInterceptionPoints.put("Publication.Write", new InterceptionPointVO("Publication", "Publication.Write", "This interception point intercepts publications", true));
 	    systemInterceptionPoints.put("Publication.Written", new InterceptionPointVO("Publication", "Publication.Written", "This interception point intercepts when an publication is completed", true));
 	    systemInterceptionPoints.put("Common.SubmitToPublishButton", new InterceptionPointVO("Common", "Common.SubmitToPublishButton", "Intercepts the submit to publish button", false));
@@ -151,7 +156,7 @@ public class InterceptionPointController extends BaseController
 		systemInterceptionPoints.put("Common.CreatePage", new InterceptionPointVO("Common", "Common.CreatePage", "This interception point limits who can create pages (at all)", false));
 		systemInterceptionPoints.put("Common.DeletePage", new InterceptionPointVO("Common", "Common.DeletePage", "This interception point limits who can delete pages (at all)", false));
 		systemInterceptionPoints.put("Common.ApproveDenyPublications", new InterceptionPointVO("Common", "Common.ApproveDenyPublications", "This interception point limits who are allowed to approve / deny publishing requests", false));
-
+		
 	    systemInterceptionPoints.put("ManagementToolMenu.Repositories", new InterceptionPointVO("ManagementToolMenu", "ManagementToolMenu.Repositories", "Intercepts access to the menu item 'Repositories' in management tool", false));
 	    systemInterceptionPoints.put("ManagementToolMenu.SystemUsers", new InterceptionPointVO("ManagementToolMenu", "ManagementToolMenu.SystemUsers", "Intercepts access to the menu item 'SystemUsers' in management tool", false));
 	    systemInterceptionPoints.put("ManagementToolMenu.Roles", new InterceptionPointVO("ManagementToolMenu", "ManagementToolMenu.Roles", "Intercepts access to the menu item 'Roles' in management tool", false));

@@ -1,4 +1,8 @@
-New items up for publication
+#if($unpublishRequest)
+$ui.getString("tool.publishingtool.approveMail.titleUnpublish")
+#else
+$ui.getString("tool.publishingtool.approveMail.title")
+#end
 ------------------------------
 CMS notification: The user $principal.firstName $principal.lastName submitted $events.size() items for publishing.
 

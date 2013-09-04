@@ -309,21 +309,30 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			    	principal = newPrincipal;
 		    }
 		    
-		    boolean hasAccessToAccessRights = AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ChangeSlotAccess", "");
-			boolean hasAccessToAddComponent = AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.AddComponent", "" + component.getContentId() + "_" + component.getSlotName());
-			boolean hasAccessToDeleteComponent = AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.DeleteComponent", "" + component.getContentId() + "_" + component.getSlotName());
-			boolean hasAccessToChangeComponent = AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ChangeComponent", "" + component.getContentId() + "_" + component.getSlotName());
-			boolean hasSaveTemplateAccess = AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.SavePageTemplate", true, false, true);
+		    boolean hasAccessToAccessRights 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ChangeSlotAccess", "");
+			boolean hasAccessToAddComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.AddComponent", "" + component.getContentId() + "_" + component.getSlotName());
+			boolean hasAccessToDeleteComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.DeleteComponent", "" + component.getContentId() + "_" + component.getSlotName());
+			boolean hasAccessToChangeComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ChangeComponent", "" + component.getContentId() + "_" + component.getSlotName());
+			boolean hasSaveTemplateAccess 		= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.SavePageTemplate", true, false, true);
 
-		    boolean hasSubmitToPublishAccess = AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.SubmitToPublish", true, false, true);
-		    boolean hasPageStructureAccess = AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.PageStructure", true, false, true);
-		    boolean hasOpenInNewWindowAccess = AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.OpenInNewWindow", true, false, true);
-		    boolean hasViewSourceAccess = AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ViewSource", true, false, true);
+		    boolean hasSubmitToPublishAccess 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.SubmitToPublish", true, false, true);
+		    boolean hasPageStructureAccess 		= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.PageStructure", true, false, true);
+		    boolean hasOpenInNewWindowAccess 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.OpenInNewWindow", true, false, true);
+		    boolean hasViewSourceAccess 		= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ViewSource", true, false, true);
 
 		    boolean showNotifyUserOfPage 		= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.NotifyUserOfPage", true, false, true);
 		    boolean showContentNotifications 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ContentNotifications", true, false, true);
 		    boolean showPageNotifications 		= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.PageNotifications", true, false, true);
 
+		    boolean showW3CValidator 			= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.W3CValidator", true, false, true);
+		    boolean showLanguageMenu 			= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ShowLanguageMenu", true, false, true);
+
+		    boolean showHomeButton 				= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ShowHomeButton", true, false, true);
+		    boolean showMySettingsButton 		= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ShowMySettingsButton", true, false, true);
+
+		    String useApprovalFlow 				= CmsPropertyHandler.getUseApprovalFlow();
+		    String autoShowApprovalButtons 		= CmsPropertyHandler.getAutoShowApprovalButtons();
+		    
 		    String extraHeader 	= FileHelper.getFileAsString(new File(CmsPropertyHandler.getContextDiskPath() + "preview/pageComponentEditorHeader.vm"), "iso-8859-1");
 		    String extraBody 	= FileHelper.getFileAsString(new File(CmsPropertyHandler.getContextDiskPath() + "preview/pageComponentEditorBody.vm"), "iso-8859-1");
 		    boolean oldUseFullUrl = this.getTemplateController().getDeliveryContext().getUseFullUrl();
@@ -525,6 +534,14 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		    extraBody = extraBody.replaceAll("\\$contentNotificationsJavascript", "window.hasAccessToContentNotifications = " + showContentNotifications + ";");
 		    extraBody = extraBody.replaceAll("\\$pageNotificationsJavascript", "window.hasAccessToPageNotifications = " + showPageNotifications + ";");
 
+		    extraBody = extraBody.replaceAll("\\$W3CValidatorJavascript", "window.hasAccessToW3CValidator = " + showW3CValidator + ";");
+		    extraBody = extraBody.replaceAll("\\$ShowLanguageMenuJavascript", "window.hasAccessToShowLanguageMenu = " + showLanguageMenu + ";");
+		    extraBody = extraBody.replaceAll("\\$ShowApproveButtonsJavascript", "window.useApprovalFlow = " + useApprovalFlow + ";");
+		    extraBody = extraBody.replaceAll("\\$autoShowApprovalButtonsJavascript", "window.autoShowApprovalButtons = " + autoShowApprovalButtons + ";");
+		    
+		    extraBody = extraBody.replaceAll("\\$showHomeButtonJavascript", "window.showHomeButton = " + showHomeButton + ";");
+		    extraBody = extraBody.replaceAll("\\$showMySettingsButtonJavascript", "window.showMySettingsButton = " + showMySettingsButton + ";");
+		    
 		    extraBody = extraBody.replaceAll("\\$\\{deliver.editOnSight.toolbarHomeButton.title\\}", getLocalizedString(new Locale(CmsPropertyHandler.getPreferredLanguageCode(principal.getName())), "deliver.editOnSight.toolbarHomeButton.title"));
 		    extraBody = extraBody.replaceAll("\\$\\{deliver.editOnSight.toolbarValidateW3CButton.title\\}", getLocalizedString(new Locale(CmsPropertyHandler.getPreferredLanguageCode(principal.getName())), "deliver.editOnSight.toolbarValidateW3CButton.title"));
 		    extraBody = extraBody.replaceAll("\\$\\{deliver.editOnSight.toolbarNewWindowButton.title\\}", getLocalizedString(new Locale(CmsPropertyHandler.getPreferredLanguageCode(principal.getName())), "deliver.editOnSight.toolbarNewWindowButton.title"));

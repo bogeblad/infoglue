@@ -51,16 +51,53 @@
 			{
 				listForm.action = "UnpublishContentVersion!V3.action"
 				listForm.versionComment.value = commentElm.value;
-				if(overrideVersionModifyerElm.checked == true)
-					listForm.overrideVersionModifyer.value = overrideVersionModifyerElm.value;
+				
+				if(overrideVersionModifyerElm)
+				{
+					if(overrideVersionModifyerElm.checked == true)
+						listForm.overrideVersionModifyer.value = overrideVersionModifyerElm.value;
+					else
+						listForm.overrideVersionModifyer.value = "false";
+				}
 				else
-					listForm.overrideVersionModifyer.value = "false";
+					listForm.overrideVersionModifyer.value = "true";
+				
+				#if($allowPublicationEventFilter == "true")
+					var xrecipientFilter = document.getElementById("xrecipientFilter");
+					if(xrecipientFilter)
+					{
+						#if($defaultPublicationEventFilter == "emailBased")
+							listForm.recipientFilter.value = xrecipientFilter.value;
+						#else
+							#if($infoGluePrincipal.groups.size() > 1)
+								listForm.recipientFilter.value = xrecipientFilter.options[xrecipientFilter.selectedIndex].value;
+							#else
+								listForm.recipientFilter.value = xrecipientFilter.value;
+							#end
+						#end
+					}
+				#end
 				
 				listForm.attemptDirectPublishing.value = attemptDirectPublishing;
 				listForm.submit();
 			}
 		}
 
+		function showUsers()
+		{
+			openPopup('ViewListSystemUser!userListForPopupV3.action', 'Users', 'width=400,height=600,resizable=yes,scrollbars=yes');
+		}
+		
+		function selectUser(userName)
+		{
+			//$("#xrecipientFilter").val(userName);
+		}
+
+		function selectEmail(email)
+		{
+			$("#xrecipientFilter").val(email);
+		}
+		
 		$(document).ready(function(){
 			setTimeout("resizeInlineTabDivs()", 100);
 		});
@@ -82,6 +119,39 @@
 	<tr>
 		<td>
 			<table width="90%" border="0" cellpadding="0" cellspacing="0">
+			#if($this.hasAccessTo("Common.SubmitToPublishButton", true, false, false))
+				#if($allowPublicationEventFilter == "true")
+					#if($defaultPublicationEventFilter == "emailBased")
+						<tr>
+							<td colspan="3">
+								$ui.getString("tool.common.recipientEmail.label")<br>
+								<input type="text" name="xrecipientFilter" id="xrecipientFilter" class="longtextfield" style="float: left;"/><a class="showUsers" href="javascript:showUsers();" style="display: block; float:left; height: 20px; width: 20px; background: url(css/images/spyglassIcon.gif) no-repeat 0px 0px; margin-left: 4px;">&nbsp;</a>
+							</td>
+						</tr>		
+					#else
+						#if($infoGluePrincipal.groups.size() > 1)
+							<tr>
+								<td colspan="3">
+									$ui.getString("tool.common.recipientFilter.label")<br>
+									<select name="xrecipientFilter" id="xrecipientFilter">
+										<option value="">$ui.getString("entity.ServerNode.property.nonePublishersFilter.label")</option>
+										<!--<option value="all">$ui.getString("entity.ServerNode.property.allPublishersFilter.label")</option>-->
+										<option value="groupBased" selected="1">$ui.getString("entity.ServerNode.property.groupBasePublishersFilter.label")</option>
+										#if($infoGluePrincipal.groups.size() > 1)
+											#foreach($group in $infoGluePrincipal.groups)
+												<option value="groupNameBased_$group.name">$ui.getString("entity.ServerNode.property.groupNameBasedPublisherFilter.label") $group.name</option>
+											#end
+										#end
+									</select>
+								</td>
+							</tr>		
+						#else
+							<input type="hidden" name="xrecipientFilter" id="xrecipientFilter" value="groupBased"/>		
+						#end	
+					#end
+				#end
+			#end
+			
 			#if($this.skipVersionComment == false)
 				<tr>
 					<td colspan="3" class="biglabel">$ui.getString("tool.contenttool.stateChangeComment")</td>
@@ -122,6 +192,7 @@
 		#hiddenField("contentId" $contentId)
 		#hiddenField("versionComment" $!versionComment)
 		#hiddenField("overrideVersionModifyer" $!overrideVersionModifyer)
+		#hiddenField("recipientFilter" $!recipientFilter)
 		#hiddenField("attemptDirectPublishing" $!attemptDirectPublishing)
 		#hiddenField("repositoryId" $!repositoryId)
 		#hiddenField("returnAddress" $!returnAddress)

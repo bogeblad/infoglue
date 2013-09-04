@@ -146,70 +146,75 @@ public class ChangeMultiSiteNodeVersionStatePublishAction extends InfoGlueAbstra
 			}
 			*/
 
-
-        RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);
-        String liveAddressBaseUrl = repositoryVO.getLiveBaseUrl() + "";
-
-        String liveAddress = null;
-        if(CmsPropertyHandler.getPublicDeliveryUrls().size() > 0)
-        {
-	        String firstPublicDeliveryUrl = (String)CmsPropertyHandler.getPublicDeliveryUrls().get(0);
-	        logger.debug("firstPublicDeliveryUrl:" + firstPublicDeliveryUrl);
-	        String[] firstPublicDeliveryUrlSplit = firstPublicDeliveryUrl.split("/");
-	        
-	        String context = firstPublicDeliveryUrlSplit[firstPublicDeliveryUrlSplit.length - 1];
-	        logger.debug("context:" + context);
-	        liveAddress = liveAddressBaseUrl + "/" + context + "/ViewPage.action" + "?siteNodeId=" + this.getSiteNodeId() + "&languageId=" + this.languageId;
-        }
-        
-		if(attemptDirectPublishing.equalsIgnoreCase("true"))
-		{
-            setActionMessage(userSessionKey, getLocalizedString(getLocale(), "tool.common.publishing.publishingInlineOperationDoneHeader"));
-        	if(liveAddress != null)
-        		addActionLink(userSessionKey, new LinkBean("publishedPageUrl", getLocalizedString(getLocale(), "tool.common.publishing.publishingInlineOperationViewPublishedPageLinkText"), getLocalizedString(getLocale(), "tool.common.publishing.publishingInlineOperationViewPublishedPageTitleText"), getLocalizedString(getLocale(), "tool.common.publishing.publishingInlineOperationViewPublishedPageTitleText"), liveAddress, false, "", "_blank"));
-        	else
-        		addActionLink(userSessionKey, new LinkBean("publishedPageUrl", "No public servers stated in cms", "No public servers stated in cms", "No public servers stated in cms", "#", false, "", "_blank"));
-        		
-			PublicationVO publicationVO = new PublicationVO();
-		    publicationVO.setName("Direct publication by " + this.getInfoGluePrincipal().getName());
-		    publicationVO.setDescription(getVersionComment());
-		    publicationVO.setRepositoryId(repositoryId);
-			publicationVO = PublicationController.getController().createAndPublish(publicationVO, events, newsiteNodeMap, newContentMap, overrideVersionModifyer, this.getInfoGluePrincipal());
+			if(!attemptDirectPublishing.equalsIgnoreCase("true"))
+			{
+				if(recipientFilter != null && !recipientFilter.equals("") && events != null && events.size() > 0)
+					PublicationController.mailPublishNotification(events, repositoryId, getInfoGluePrincipal(), recipientFilter, false);
+			}
+			
+	        RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);
+	        String liveAddressBaseUrl = repositoryVO.getLiveBaseUrl() + "";
 	
-			processBean.updateProcess("Creating publication"/*getLocalizedString(getLocale(), "tool.structuretool.publicationProcess.gettingItems")*/);
-		}
-		else
-		{
-            setActionMessage(userSessionKey, getLocalizedString(getLocale(), "tool.common.publishing.submitToPublishingInlineOperationDoneHeader"));
-		}
-
-		logger.info("this.returnAddress:" + this.returnAddress);
-		if(this.returnAddress != null && !this.returnAddress.equals(""))
-        {
-	        String arguments 	= "userSessionKey=" + userSessionKey + "&attemptDirectPublishing=" + attemptDirectPublishing + "&isAutomaticRedirect=false";
-	        String messageUrl 	= returnAddress + (returnAddress.indexOf("?") > -1 ? "&" : "?") + arguments;
+	        String liveAddress = null;
+	        if(CmsPropertyHandler.getPublicDeliveryUrls().size() > 0)
+	        {
+		        String firstPublicDeliveryUrl = (String)CmsPropertyHandler.getPublicDeliveryUrls().get(0);
+		        logger.debug("firstPublicDeliveryUrl:" + firstPublicDeliveryUrl);
+		        String[] firstPublicDeliveryUrlSplit = firstPublicDeliveryUrl.split("/");
+		        
+		        String context = firstPublicDeliveryUrlSplit[firstPublicDeliveryUrlSplit.length - 1];
+		        logger.debug("context:" + context);
+		        liveAddress = liveAddressBaseUrl + "/" + context + "/ViewPage.action" + "?siteNodeId=" + this.getSiteNodeId() + "&languageId=" + this.languageId;
+	        }
 	        
-	        this.getResponse().sendRedirect(messageUrl);
-	        return NONE;
-        }
-        else
-        {
-        	return SUCCESS;
-        }
-        /*
-		if(this.returnAddress != null && !this.returnAddress.equals(""))
-		{
-			this.returnAddress = this.getResponse().encodeURL(returnAddress);
-			this.getResponse().sendRedirect(returnAddress);
+			if(attemptDirectPublishing.equalsIgnoreCase("true"))
+			{
+	            setActionMessage(userSessionKey, getLocalizedString(getLocale(), "tool.common.publishing.publishingInlineOperationDoneHeader"));
+	        	if(liveAddress != null)
+	        		addActionLink(userSessionKey, new LinkBean("publishedPageUrl", getLocalizedString(getLocale(), "tool.common.publishing.publishingInlineOperationViewPublishedPageLinkText"), getLocalizedString(getLocale(), "tool.common.publishing.publishingInlineOperationViewPublishedPageTitleText"), getLocalizedString(getLocale(), "tool.common.publishing.publishingInlineOperationViewPublishedPageTitleText"), liveAddress, false, "", "_blank"));
+	        	else
+	        		addActionLink(userSessionKey, new LinkBean("publishedPageUrl", "No public servers stated in cms", "No public servers stated in cms", "No public servers stated in cms", "#", false, "", "_blank"));
+	        		
+				PublicationVO publicationVO = new PublicationVO();
+			    publicationVO.setName("Direct publication by " + this.getInfoGluePrincipal().getName());
+			    publicationVO.setDescription(getVersionComment());
+			    publicationVO.setRepositoryId(repositoryId);
+				publicationVO = PublicationController.getController().createAndPublish(publicationVO, events, newsiteNodeMap, newContentMap, overrideVersionModifyer, this.getInfoGluePrincipal());
+		
+				processBean.updateProcess("Creating publication"/*getLocalizedString(getLocale(), "tool.structuretool.publicationProcess.gettingItems")*/);
+			}
+			else
+			{
+	            setActionMessage(userSessionKey, getLocalizedString(getLocale(), "tool.common.publishing.submitToPublishingInlineOperationDoneHeader"));
+			}
 	
-			return NONE;
-		}
-		else
-		{
-	       	return "success";
-		}
-		*/
-    }
+			logger.info("this.returnAddress:" + this.returnAddress);
+			if(this.returnAddress != null && !this.returnAddress.equals(""))
+	        {
+		        String arguments 	= "userSessionKey=" + userSessionKey + "&attemptDirectPublishing=" + attemptDirectPublishing + "&isAutomaticRedirect=false";
+		        String messageUrl 	= returnAddress + (returnAddress.indexOf("?") > -1 ? "&" : "?") + arguments;
+		        
+		        this.getResponse().sendRedirect(messageUrl);
+		        return NONE;
+	        }
+	        else
+	        {
+	        	return SUCCESS;
+	        }
+	        /*
+			if(this.returnAddress != null && !this.returnAddress.equals(""))
+			{
+				this.returnAddress = this.getResponse().encodeURL(returnAddress);
+				this.getResponse().sendRedirect(returnAddress);
+		
+				return NONE;
+			}
+			else
+			{
+		       	return "success";
+			}
+			*/
+	    }
 		finally
 		{
 			processBean.setStatus(ProcessBean.FINISHED);

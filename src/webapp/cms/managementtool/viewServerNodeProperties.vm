@@ -367,6 +367,18 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.skipVersionComment" "skipVersionComment" "$this.getPropertyValue('skipVersionComment')" "$!cmsPH.skipVersionComment")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.allowOverrideModifyer" "allowOverrideModifyer" "$this.getPropertyValue('allowOverrideModifyer')" "$!cmsPH.allowOverrideModifyer")
 
+				#set($option1 = ["inherit", "$ui.getString('tool.common.inherit')"])
+				#set($option2 = ["$ui.getString('entity.ServerNode.property.allPublicationEventFilter.value')", "$ui.getString('entity.ServerNode.property.allPublicationEventFilter.label')"])
+				#set($option3 = ["$ui.getString('entity.ServerNode.property.groupBasedPublicationEventFilter.value')", "$ui.getString('entity.ServerNode.property.groupBasedPublicationEventFilter.label')"])
+				#set($option4 = ["$ui.getString('entity.ServerNode.property.emailBasedPublicationEventFilter.value')", "$ui.getString('entity.ServerNode.property.emailBasedPublicationEventFilter.label')"])
+				#set($publicationEventFilterOptions = [$option1, $option2, $option3, $option4]) 
+				
+				#selectFieldCSS("ServerNode.property.defaultPublicationEventFilter" "defaultPublicationEventFilter" $this.getPropertyValue('defaultPublicationEventFilter') $publicationEventFilterOptions "$!cmsPH.defaultPublicationEventFilter")
+
+				#yesNoDropDownWithInheritCSS("ServerNode.property.useApprovalFlow" "useApprovalFlow" "$this.getPropertyValue('useApprovalFlow')" "$!cmsPH.useApprovalFlow")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.autoShowApprovalButtons" "autoShowApprovalButtons" "$this.getPropertyValue('autoShowApprovalButtons')" "$!cmsPH.autoShowApprovalButtons")
+
+
 				#set($option1 = ["fckeditor2", "FCKEditor 2.x"])
 				#set($option2 = ["ckeditor4", "CKEditor 4.x"])
 	
@@ -422,12 +434,6 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.allowPublicationEventFilter" "allowPublicationEventFilter" "$this.getPropertyValue('allowPublicationEventFilter')" "$!cmsPH.allowPublicationEventFilter")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.hideProtectedProperties" "hideProtectedProperties" "$this.getPropertyValue('hideProtectedProperties')" "$!cmsPH.hideProtectedProperties")
 					
-				#set($option1 = ["inherit", "$ui.getString('tool.common.inherit')"])
-				#set($option2 = ["$ui.getString('entity.ServerNode.property.allPublicationEventFilter.value')", "$ui.getString('entity.ServerNode.property.allPublicationEventFilter.label')"])
-				#set($option3 = ["$ui.getString('entity.ServerNode.property.groupBasedPublicationEventFilter.value')", "$ui.getString('entity.ServerNode.property.groupBasedPublicationEventFilter.label')"])
-				#set($publicationEventFilterOptions = [$option1, $option2, $option3]) 
-				
-				#selectFieldCSS("ServerNode.property.defaultPublicationEventFilter" "defaultPublicationEventFilter" $this.getPropertyValue('defaultPublicationEventFilter') $publicationEventFilterOptions "$!cmsPH.defaultPublicationEventFilter")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.protectDeliverWorking" "protectDeliverWorking" "$this.getPropertyValue('protectDeliverWorking')" "$!cmsPH.protectDeliverWorking")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.protectDeliverPreview" "protectDeliverPreview" "$this.getPropertyValue('protectDeliverPreview')" "$!cmsPH.protectDeliverPreview")
 				

@@ -178,6 +178,7 @@ public class ContentStateController extends BaseController
 		try
 		{
 			MediumContentVersionImpl oldContentVersion = ContentVersionController.getContentVersionController().getReadOnlyMediumContentVersionWithId(oldContentVersionId, db);
+			newContentVersion = oldContentVersion;
 			logger.info("oldContentVersion:" + oldContentVersion.getId());
 			//t.printElapsedTime("oldContentVersion");
 			
@@ -227,34 +228,50 @@ public class ContentStateController extends BaseController
 				//First we update the old working-version so it gets a comment
 				logger.info("Setting comment " + versionComment + " on " + oldContentVersion.getId());
 				//oldContentVersion.setVersionComment(versionComment);
-
-				//Now we create a new version which is basically just a copy of the working-version
-				ContentVersionVO newContentVersionVO = new ContentVersionVO();
-				newContentVersionVO.setStateId(stateId);
-				newContentVersionVO.setVersionComment(versionComment);
-				newContentVersionVO.setModifiedDateTime(DateHelper.getSecondPreciseDate());
-				if(overrideVersionModifyer)
-				    newContentVersionVO.setVersionModifier(infoGluePrincipal.getName());
-			    else
-			        newContentVersionVO.setVersionModifier(oldContentVersion.getVersionModifier());
-				newContentVersionVO.setVersionValue(oldContentVersion.getVersionValue());
-				newContentVersion = ContentVersionController.getContentVersionController().createMedium(oldContentVersion, contentId, oldContentVersion.getValueObject().getLanguageId(), newContentVersionVO, oldContentVersion.getContentVersionId(), (oldContentVersion.getDigitalAssets().size() > 0), false, duplicateAssets, excludedAssetId, db);
-				logger.info("Creating " + newContentVersion.getId());
 				
-				//ContentVersionController.getContentVersionController().copyDigitalAssets(oldContentVersion, newContentVersion, db);
-				if(contentVO.getIsProtected().equals(ContentVO.YES))
-					copyAccessRights(oldContentVersion.getId(), newContentVersion.getId(), db);
-				copyContentCategories(oldContentVersion.getId(), newContentVersion.getId(), db);
-
-				//Creating the event that will notify the editor...
-
-				RegistryController.getController().updateContentVersionThreaded(newContentVersion.getValueObject(), null);
-
-				ContentTypeDefinitionVO metaInfoCTDVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Meta info");
-				if(contentVO.getContentTypeDefinitionId() != null && !contentVO.getContentTypeDefinitionId().equals(metaInfoCTDVO.getId()))
+				if(CmsPropertyHandler.getUseApprovalFlow().equals("true"))
+				{
+					//Now we create a new version which is basically just a copy of the working-version
+					ContentVersionVO newContentVersionVO = new ContentVersionVO();
+					newContentVersionVO.setStateId(stateId);
+					newContentVersionVO.setVersionComment(versionComment);
+					newContentVersionVO.setModifiedDateTime(DateHelper.getSecondPreciseDate());
+					if(overrideVersionModifyer)
+					    newContentVersionVO.setVersionModifier(infoGluePrincipal.getName());
+				    else
+				        newContentVersionVO.setVersionModifier(oldContentVersion.getVersionModifier());
+					newContentVersionVO.setVersionValue(oldContentVersion.getVersionValue());
+					newContentVersion = ContentVersionController.getContentVersionController().createMedium(oldContentVersion, contentId, oldContentVersion.getValueObject().getLanguageId(), newContentVersionVO, oldContentVersion.getContentVersionId(), (oldContentVersion.getDigitalAssets().size() > 0), false, duplicateAssets, excludedAssetId, db);
+					logger.info("Creating " + newContentVersion.getId());
+					
+					//ContentVersionController.getContentVersionController().copyDigitalAssets(oldContentVersion, newContentVersion, db);
+					if(contentVO.getIsProtected().equals(ContentVO.YES))
+						copyAccessRights(oldContentVersion.getId(), newContentVersion.getId(), db);
+					copyContentCategories(oldContentVersion.getId(), newContentVersion.getId(), db);
+	
+					//Creating the event that will notify the editor...
+	
+					RegistryController.getController().updateContentVersionThreaded(newContentVersion.getValueObject(), null);
+	
+					ContentTypeDefinitionVO metaInfoCTDVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Meta info");
+					if(contentVO.getContentTypeDefinitionId() != null && !contentVO.getContentTypeDefinitionId().equals(metaInfoCTDVO.getId()))
+					{
+						EventVO eventVO = new EventVO();
+						eventVO.setDescription(newContentVersion.getVersionComment());
+						eventVO.setEntityClass(ContentVersion.class.getName());
+						eventVO.setEntityId(new Integer(newContentVersion.getId().intValue()));
+						eventVO.setName(contentVO.getName());
+						eventVO.setTypeId(EventVO.PUBLISH);
+						eventVO = EventController.create(eventVO, contentVO.getRepositoryId(), infoGluePrincipal, db);
+	
+						resultingEvents.add(eventVO);
+					}
+					
+				}
+				else
 				{
 					EventVO eventVO = new EventVO();
-					eventVO.setDescription(newContentVersion.getVersionComment());
+					eventVO.setDescription(versionComment);
 					eventVO.setEntityClass(ContentVersion.class.getName());
 					eventVO.setEntityId(new Integer(newContentVersion.getId().intValue()));
 					eventVO.setName(contentVO.getName());
@@ -264,8 +281,8 @@ public class ContentStateController extends BaseController
 					resultingEvents.add(eventVO);
 				}
 
-				if(recipientFilter != null && !recipientFilter.equals(""))
-					PublicationController.mailPublishNotification(resultingEvents, contentVO.getRepositoryId(), infoGluePrincipal, recipientFilter, db);
+				//if(recipientFilter != null && !recipientFilter.equals(""))
+				//	PublicationController.mailPublishNotification(resultingEvents, contentVO.getRepositoryId(), infoGluePrincipal, recipientFilter, db);
 			}
 
 			//If the user in the publish-app publishes a publish-version we change state to published.

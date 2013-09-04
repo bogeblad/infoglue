@@ -5,7 +5,7 @@
 	"iTotalDisplayRecords": $totalDisplayRecords, 
 	"aaData": [ 
 		#foreach($principal in $infogluePrincipals)
-		#if($velocityCount > 1),#end["<a href='javascript:selectUser(&#34;$principal.name&#34;);'>$principal.name</a>","$principal.firstName","$principal.lastName"]
+		#if($velocityCount > 1),#end["<a href='javascript:selectUser(&#34;$principal.name&#34;,&#34;$principal.email&#34;);'>$principal.name</a>","$principal.firstName","$principal.lastName"]
 		#end
 	] 
 }

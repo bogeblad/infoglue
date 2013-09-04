@@ -216,37 +216,43 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 		SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
 		SiteNodeVersionVO latestVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(siteNodeId);
 
-		boolean isApprover = false;
-		boolean hasAccessToPublishingTool = hasAccessTo("Common.ApproveDenyPublications", false);
-		if(!hasAccessToPublishingTool)
-			hasAccessToPublishingTool = hasAccessTo("PublishingTool.Read", false);
-		if(hasAccessToPublishingTool)
-		{
-			boolean hasAccessToRepository = hasAccessTo("Repository.Read", "" + siteNodeVO.getRepositoryId());
-			if(!hasAccessToRepository)
-				hasAccessToRepository = hasAccessTo("Repository.Write", "" + siteNodeVO.getRepositoryId());
-			
-			if(hasAccessToRepository)
-				isApprover = true;
-		}
-		
-		List<EventVO> eventVOList = null;
+		String autoShowApprovalButtons = CmsPropertyHandler.getAutoShowApprovalButtons();
+		String useApprovalFlow = CmsPropertyHandler.getUseApprovalFlow();
 		boolean showEvent = false;
-		if(siteNodeId != null && isApprover)
+		
+		if(autoShowApprovalButtons.equals("true"))
 		{
-			if(latestVersion.getStateId().intValue() == SiteNodeVersionVO.PUBLISH_STATE)
+			boolean isApprover = false;
+			boolean hasAccessToPublishingTool = hasAccessTo("Common.ApproveDenyPublications", false);
+			if(!hasAccessToPublishingTool)
+				hasAccessToPublishingTool = hasAccessTo("PublishingTool.Read", false);
+			if(hasAccessToPublishingTool)
 			{
-				eventVOList = EventController.getEventVOListForEntity(SiteNodeVersion.class.getName(), latestVersion.getId());
-				showEvent = true;
+				boolean hasAccessToRepository = hasAccessTo("Repository.Read", "" + siteNodeVO.getRepositoryId());
+				if(!hasAccessToRepository)
+					hasAccessToRepository = hasAccessTo("Repository.Write", "" + siteNodeVO.getRepositoryId());
+				
+				if(hasAccessToRepository)
+					isApprover = true;
+			}
+			
+			List<EventVO> eventVOList = null;
+			if(siteNodeId != null && isApprover)
+			{
+				if(latestVersion.getStateId().intValue() == SiteNodeVersionVO.PUBLISH_STATE)
+				{
+					eventVOList = EventController.getEventVOListForEntity(SiteNodeVersion.class.getName(), latestVersion.getId());
+					showEvent = true;
+				}
+			}
+			
+			if(eventVOList != null && eventVOList.size() > 0)
+			{
+				eventId = eventVOList.get(0).getId().toString();
 			}
 		}
-		
-		if(eventVOList != null && eventVOList.size() > 0)
-		{
-			eventId = eventVOList.get(0).getId().toString();
-		}
-		
-		if(eventId != null && !eventId.equals(""))
+				
+		if(eventId != null && !eventId.equals("") && useApprovalFlow.equals("true"))
 		{
 			try
 			{

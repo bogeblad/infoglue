@@ -1481,17 +1481,41 @@ public class PublicationController extends BaseController
     	return siteNodeVersion.getOwningSiteNode().getValueObject();
     }
 
-    
+
 	/**
 	 * This method mails a notification about items available for publish to the recipient of choice.
 	 */
 	
-	public static void mailPublishNotification(List<EventVO> resultingEvents, Integer repositoryId, InfoGluePrincipal principal, String recipientFilter, Database db)
+	public static void mailPublishNotification(List<EventVO> resultingEvents, Integer repositoryId, InfoGluePrincipal principal, String recipientFilter, boolean unpublishRequest) throws Exception
+	{
+		Database db = CastorDatabaseService.getDatabase();
+		beginTransaction(db);
+        try
+        {
+        	mailPublishNotification(resultingEvents, repositoryId, principal, recipientFilter, unpublishRequest, db);
+	    	commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+        	logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+	}
+	
+	/**
+	 * This method mails a notification about items available for publish to the recipient of choice.
+	 */
+	
+	public static void mailPublishNotification(List<EventVO> resultingEvents, Integer repositoryId, InfoGluePrincipal principal, String recipientFilter, boolean unpublishRequest, Database db)
 	{
 	    try
 	    {
 	    	logger.info("recipientFilter:" + recipientFilter);
-		    String recipients = getRecipients(principal, repositoryId, recipientFilter, db);
+	    	String recipients = recipientFilter;
+	    	if(recipients == null || recipients.equals("") || !recipients.contains("@"))
+	    		recipients = getRecipients(principal, repositoryId, recipientFilter, db);
+	    	
 		    logger.info("recipients:" + recipients);
 		    if(recipients == null || recipients.length() == 0)
 		    	return;
@@ -1507,6 +1531,7 @@ public class PublicationController extends BaseController
 	            template = FileHelper.getFileAsString(new File(CmsPropertyHandler.getContextRootPath() + "cms/publishingtool/newPublishItem_html.vm"));
 		    
 	        List<String> eventHref = new ArrayList<String>();
+	        String comment = "";
 	        for(EventVO event : resultingEvents)
 	        {
 	        	if(CmsPropertyHandler.getInternalDeliveryUrls().size() > 0)
@@ -1569,15 +1594,29 @@ public class PublicationController extends BaseController
 	        		}
 	        		
 	        		String editOnSightUrl = cmsBaseUrl.replaceFirst("infoglueCMS", "infoglueDeliverWorking") + "/ViewPage!renderDecoratedPage.action?siteNodeId=" + siteNodeId + "&approveEntityName=" + approveEntityName + "&approveEntityId=" + approveEntityId + "&publishingEventId=" + event.getEventId();
-		        	if(siteNodeId == null)
+	        		if(unpublishRequest && approveEntityName.equals("SiteNode"))
+	        			editOnSightUrl = cmsBaseUrl + "/Admin.action?siteNodeId=" + approveEntityId;
+	        		else if(unpublishRequest && approveEntityName.equals("Content"))
+	        			editOnSightUrl = cmsBaseUrl + "/Admin.action?contentId=" + approveEntityId;
+	        		
+	        		if(siteNodeId == null)
 		        		editOnSightUrl = cmsBaseUrl + "/Admin.action?contentId=" + approveEntityId;
 		        	
-		        	eventHref.add("<a href=\"" + editOnSightUrl + "\">" + event.getName() + " (" + event.getDescription() + ")</a>");
+		        	if(resultingEvents.size() > 1)
+		        		comment = event.getDescription();
+		        						
+		        	if(resultingEvents.size() > 1)
+		        		eventHref.add("<a href=\"" + editOnSightUrl + "\">" + event.getName() + "</a>");
+		        	else
+		        		eventHref.add("<a href=\"" + editOnSightUrl + "\">" + event.getName() + " (" + event.getDescription() + ")</a>");
 	        	}
 	        }
+
 	        
 	        Map parameters = new HashMap();
 	        parameters.put("ui", LabelController.getController(new Locale(CmsPropertyHandler.getPreferredLanguageCode(principal.getName()))));
+	        parameters.put("unpublishRequest", unpublishRequest);
+	        parameters.put("comment", comment);
 	        parameters.put("events", resultingEvents);
 		    parameters.put("principal", principal);
 		    parameters.put("eventHrefs", eventHref);
@@ -1592,17 +1631,19 @@ public class PublicationController extends BaseController
 			if(systemEmailSender == null || systemEmailSender.equalsIgnoreCase(""))
 				systemEmailSender = "InfoGlueCMS@" + CmsPropertyHandler.getMailSmtpHost();
 
-			logger.info("email:" + email);
-			logger.info("recipients:" + recipients);
+			System.out.println("email:" + email);
+			System.out.println("recipients:" + recipients);
 
-			MailServiceFactory.getService().sendEmail(contentType, systemEmailSender, systemEmailSender, recipients, null, null, null, "CMS - " + principal.getFirstName() + " " + principal.getLastName() + " submitted " + resultingEvents.size() + " items for publishing", email, "utf-8");
+			MailServiceFactory.getService().sendEmail(contentType, systemEmailSender, systemEmailSender, recipients, null, null, null, "CMS - " + principal.getFirstName() + " " + principal.getLastName() + " submitted " + resultingEvents.size() + " items for action", email, "utf-8");
 	    }
 		catch(Exception e)
 		{
+			e.printStackTrace();
 			logger.error("The notification was not sent. Reason:" + e.getMessage(), e);
 		}
 		catch(Throwable t)
 		{
+			t.printStackTrace();
 			logger.error("The notification was not sent. Reason:" + t.getMessage(), t);
 		}
 	}
@@ -1613,7 +1654,7 @@ public class PublicationController extends BaseController
 			return null;
 		
 		String recipients = "";
-	    
+
     	if(recipientFilter.indexOf("testUsers") > -1)
     	{
     		return "mattias.bogeblad@knowit.se;tomas.edquist@uadm.uu.se";

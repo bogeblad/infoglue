@@ -380,6 +380,9 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 
 	    populate(ps, "onlyShowReferenceIfLatestVersion");
 	    populate(ps, "registryContactMailLanguage");
+	    
+	    populate(ps, "useApprovalFlow");
+	    populate(ps, "autoShowApprovalButtons");
 
 	    try
 	    {

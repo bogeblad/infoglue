@@ -2236,7 +2236,7 @@ public class ToolbarController implements ToolbarProvider
 					  true));
 		}
 		
-		if(siteNodeVO != null && hasAccessTo(principal, "Common.SubmitToPublishButton", true))
+		if(siteNodeVO != null && hasAccessTo(principal, "Common.SubmitToPublishButton", true, false, false))
 		{
 			buttons.add(new ToolbarButton("",
 					  getLocalizedString(locale, "tool.common.publishing.submitToPublishButtonLabel"), 
@@ -2290,7 +2290,7 @@ public class ToolbarController implements ToolbarProvider
 					  true));
 		}
 		
-		if(siteNodeVO != null && hasAccessTo(principal, "Common.SubmitToPublishButton", true))
+		if(siteNodeVO != null && hasAccessTo(principal, "Common.SubmitToPublishButton", true, false, false))
 		{
 			buttons.add(new ToolbarButton("",
 					  getLocalizedString(locale, "tool.common.unpublishing.submitToUnpublishButtonLabel"), 
@@ -2344,7 +2344,7 @@ public class ToolbarController implements ToolbarProvider
 					  true));
 		}
 		
-		if(contentVO != null && hasAccessTo(principal, "Common.SubmitToPublishButton", true))
+		if(contentVO != null && hasAccessTo(principal, "Common.SubmitToPublishButton", true, false, false))
 		{
 			buttons.add(new ToolbarButton("",
 					  getLocalizedString(locale, "tool.common.publishing.submitToPublishButtonLabel"), 
@@ -2398,7 +2398,7 @@ public class ToolbarController implements ToolbarProvider
 					  true));
 		}
 		
-		if(contentVO != null && hasAccessTo(principal, "Common.SubmitToPublishButton", true))
+		if(contentVO != null && hasAccessTo(principal, "Common.SubmitToPublishButton", true, false, false))
 		{
 			buttons.add(new ToolbarButton("",
 					  getLocalizedString(locale, "tool.common.unpublishing.submitToUnpublishButtonLabel"), 

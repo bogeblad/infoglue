@@ -119,16 +119,38 @@
 					
 				#if($allowPublicationEventFilter == "true")
 					var xrecipientFilter = document.getElementById("xrecipientFilter");
-					#if($infoGluePrincipal.groups.size() > 1)
-						listForm.recipientFilter.value = xrecipientFilter.options[xrecipientFilter.selectedIndex].value;
-					#else
-						listForm.recipientFilter.value = xrecipientFilter.value;
-					#end
+					if(xrecipientFilter)
+					{
+						#if($defaultPublicationEventFilter == "emailBased")
+							listForm.recipientFilter.value = xrecipientFilter.value;
+						#else
+							#if($infoGluePrincipal.groups.size() > 1)
+								listForm.recipientFilter.value = xrecipientFilter.options[xrecipientFilter.selectedIndex].value;
+							#else
+								listForm.recipientFilter.value = xrecipientFilter.value;
+							#end
+						#end
+					}
 				#end
-					
+							
 				listForm.attemptDirectPublishing.value = attemptDirectPublishing;
 				listForm.submit();
 			}
+		}
+		
+		function showUsers()
+		{
+			openPopup('ViewListSystemUser!userListForPopupV3.action', 'Users', 'width=400,height=600,resizable=yes,scrollbars=yes');
+		}
+		
+		function selectUser(userName)
+		{
+			//$("#xrecipientFilter").val(userName);
+		}
+
+		function selectEmail(email)
+		{
+			$("#xrecipientFilter").val(email);
 		}
 
 		$(document).ready(function(){
@@ -151,7 +173,47 @@
 	<table width="95%" border="0">
 	<tr>
 		<td>
-			<table width="70%" border="0" cellpadding="0" cellspacing="0">
+			<table width="90%" border="0" cellpadding="0" cellspacing="0">
+			
+				#if($!this.allowOverrideModifyer != "false")
+				<tr>
+					<td colspan="3">#yesNoCheckBox("SiteNodeVersion.overrideVersionModifyer" "xoverrideVersionModifyer" "true" $ui.getString('tool.common.yes'))<br/><br/></td>
+				</tr>	
+				#end
+				
+				#if($this.hasAccessTo("Common.SubmitToPublishButton", true, false, false))
+					#if($allowPublicationEventFilter == "true")
+						#if($defaultPublicationEventFilter == "emailBased")
+							<tr>
+								<td colspan="3">
+									$ui.getString("tool.common.recipientEmail.label")<br>
+									<input type="text" name="xrecipientFilter" id="xrecipientFilter" class="longtextfield" style="float: left;"/><a class="showUsers" href="javascript:showUsers();" style="display: block; float:left; height: 20px; width: 20px; background: url(css/images/spyglassIcon.gif) no-repeat 0px 0px; margin-left: 4px;">&nbsp;</a>
+								</td>
+							</tr>		
+						#else
+							#if($infoGluePrincipal.groups.size() > 1)
+								<tr>
+									<td colspan="3">
+										$ui.getString("tool.common.recipientFilter.label")<br>
+										<select name="xrecipientFilter" id="xrecipientFilter">
+											<option value="">$ui.getString("entity.ServerNode.property.nonePublishersFilter.label")</option>
+											<!--<option value="all">$ui.getString("entity.ServerNode.property.allPublishersFilter.label")</option>-->
+											<option value="groupBased" selected="1">$ui.getString("entity.ServerNode.property.groupBasePublishersFilter.label")</option>
+											#if($infoGluePrincipal.groups.size() > 1)
+												#foreach($group in $infoGluePrincipal.groups)
+													<option value="groupNameBased_$group.name">$ui.getString("entity.ServerNode.property.groupNameBasedPublisherFilter.label") $group.name</option>
+												#end
+											#end
+										</select>
+									</td>
+								</tr>		
+							#else
+								<input type="hidden" name="xrecipientFilter" id="xrecipientFilter" value="groupBased"/>		
+							#end	
+						#end
+					#end
+				#end
+				
 				#if($this.skipVersionComment == false)
 					<tr>
 						<td colspan="3">#editTextArea("SiteNodeVersion.versionComment" "xversionComment" $!versionComment "10" "5" "tinytextarea")</td>
@@ -159,39 +221,8 @@
 				#else
 					<input type="hidden" name="xversionComment" id="xversionComment" value=""/>		
 				#end		
-				#if($!this.allowOverrideModifyer != "false")
-				<tr>
-					<td colspan="3">#yesNoCheckBox("SiteNodeVersion.overrideVersionModifyer" "xoverrideVersionModifyer" "true" $ui.getString('tool.common.yes'))<br/><br/></td>
-				</tr>	
-				#end
-				
-				#if($allowPublicationEventFilter == "true")
-					#if($infoGluePrincipal.groups.size() > 1)
-						<tr>
-							<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
-						</tr>
-						<tr>
-							<td colspan="3">
-								$ui.getString("tool.common.recipientFilter.label")<br>
-								<select name="xrecipientFilter" id="xrecipientFilter">
-									<option value="">$ui.getString("entity.ServerNode.property.nonePublishersFilter.label")</option>
-									<!--<option value="all">$ui.getString("entity.ServerNode.property.allPublishersFilter.label")</option>-->
-									<option value="groupBased" selected="1">$ui.getString("entity.ServerNode.property.groupBasePublishersFilter.label")</option>
-									#if($infoGluePrincipal.groups.size() > 1)
-										#foreach($group in $infoGluePrincipal.groups)
-											<option value="groupNameBased_$group.name">$ui.getString("entity.ServerNode.property.groupNameBasedPublisherFilter.label") $group.name</option>
-										#end
-									#end
-									<option value="testUsers">Mattias/Tomas</option>
-								</select>
-							</td>
-						</tr>		
-					#else
-						<input type="hidden" name="xrecipientFilter" id="xrecipientFilter" value="groupBased"/>		
-					#end	
-				#end
-				
 			</table>
+			<br/>
 		</td>
 		<td align="right" valign="top">
 			<br>

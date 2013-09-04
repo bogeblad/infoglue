@@ -124,6 +124,13 @@ public class ChangeMultiContentStatePublishAction extends InfoGlueAbstractAction
 			ContentVersionVO contentVersion = ContentStateController.changeState(contentVersionId, ContentVersionVO.PUBLISH_STATE, getVersionComment(), this.overrideVersionModifyer, this.recipientFilter, this.getInfoGluePrincipal(), null, events);
 		}
 		*/
+		
+		if(!attemptDirectPublishing.equalsIgnoreCase("true"))
+		{
+			if(recipientFilter != null && !recipientFilter.equals("") && events != null && events.size() > 0)
+				PublicationController.mailPublishNotification(events, repositoryId, getInfoGluePrincipal(), recipientFilter, false);
+		}
+
 
 		if(attemptDirectPublishing.equalsIgnoreCase("true"))
 		{

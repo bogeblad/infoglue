@@ -1631,9 +1631,6 @@ public class PublicationController extends BaseController
 			if(systemEmailSender == null || systemEmailSender.equalsIgnoreCase(""))
 				systemEmailSender = "InfoGlueCMS@" + CmsPropertyHandler.getMailSmtpHost();
 
-			System.out.println("email:" + email);
-			System.out.println("recipients:" + recipients);
-
 			MailServiceFactory.getService().sendEmail(contentType, systemEmailSender, systemEmailSender, recipients, null, null, null, "CMS - " + principal.getFirstName() + " " + principal.getLastName() + " submitted " + resultingEvents.size() + " items for action", email, "utf-8");
 	    }
 		catch(Exception e)

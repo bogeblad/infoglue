@@ -2881,4 +2881,11 @@ public class CmsPropertyHandler
 
 		return Boolean.parseBoolean(onlyShowReferenceIfLatestVersion);
 	}
+
+	public static boolean getRedirectUsingSystemRedirect()
+	{
+		String redirectUsingSystemRedirect = getServerNodeProperty("redirectUsingSystemRedirect", true, "false");
+
+		return Boolean.parseBoolean(redirectUsingSystemRedirect);
+	}
 }

@@ -361,10 +361,19 @@ public class BasicURLComposer extends URLComposer
 		return composePageUrl(db, infoGluePrincipal, siteNodeId, languageId, contentId, CmsPropertyHandler.getServletContext(), deliveryContext);
 	}
 
+	/**
+	 * If the <em>infoGluePrincipal</em> argument is null the anonymous principal will be used.
+	 */
     public String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, String applicationContext, DeliveryContext deliveryContext) throws SystemException, Exception
     {
     	String url = null;
-    	
+
+		if (infoGluePrincipal == null)
+		{
+			logger.info("No principal was provided for composePageUrl. Will use the anonymous user.");
+			infoGluePrincipal = (InfoGluePrincipal)getAnonymousPrincipal();
+		}
+
     	if(siteNodeId == null || siteNodeId.intValue() == -1)
     	{
     		logger.warn("composePageUrl was called with siteNodeId:" + siteNodeId + " from the page with key: " + deliveryContext.getPageKey() + " (siteNodeId=" + deliveryContext.getSiteNodeId() + ")");

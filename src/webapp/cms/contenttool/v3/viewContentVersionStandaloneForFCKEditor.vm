@@ -177,7 +177,7 @@
 				   	dataType: "html", 
 				   	cache: false,
 				   	success: function(msg, textStatus){
-						alert("msg:" + msg);
+						//alert("msg:" + msg);
 						//alert("textStatus:" + textStatus);
 						//alert("OK");
 						document.location.reload(true);

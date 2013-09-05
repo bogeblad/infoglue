@@ -1732,6 +1732,8 @@ var Url = {
 
 function submitToPublish(siteNodeId, contentId, languageId, repositoryId, returnAddress)
 {
+	if(!contentId || contentId == "null")
+		contentId = "-1";
 	var url = componentEditorUrl + "ViewListSiteNodeVersion!v3.action?siteNodeId=" + siteNodeId + "&contentId=" + contentId + "&languageId=" + languageId + "&repositoryId=" + repositoryId + "&recurseSiteNodes=false&returnAddress=" + returnAddress + "&originalAddress=" + currentUrl;
 	openInlineDiv(url, 700, 750, true);
 }

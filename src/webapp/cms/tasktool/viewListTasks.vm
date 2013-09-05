@@ -43,7 +43,6 @@
 						<td>
 							<a href="ViewExecuteTask!userInput.action?taskContentId=$task.id#if($contentId)&contentId=$contentId#else&siteNodeId=$siteNodeId#end">$task.getName()</a>
 						</td>
-						<td>$repositoryVO.description</td>
 					</tr>
 				#end
 				

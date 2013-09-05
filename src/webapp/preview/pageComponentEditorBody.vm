@@ -135,16 +135,17 @@ function hideFooterButtons()
 		$(".myHome, .mySettings, .preview, .publish").hide();
 		if(window.hasOpenInNewWindowAccess)
 			$(".openInNewWindow").show();
-		if(window.hasAccessToW3CValidator)
-			$(".validateW3C").show();
-		if(window.hasAccessToShowLanguageMenu)
-			$(".languageContext").show();
 	}
 	else
 	{
 		$(".myHome, .mySettings, .preview").show();
-		$(".openInNewWindow").hide();
+		$(".openInNewWindow").hide();		
 	}
+	
+	if(window.hasAccessToW3CValidator)
+		$(".validateW3C").show();
+	if(window.hasAccessToShowLanguageMenu)
+		$(".languageContext").show();
 }
 
 function registerOnChange()

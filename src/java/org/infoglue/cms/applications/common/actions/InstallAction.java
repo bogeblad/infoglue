@@ -244,7 +244,7 @@ public class InstallAction extends InfoGlueAbstractAction
 		logger.error("serverConfigOK:" + serverConfigOK);
 
 		
-		if(dbConfigExists)
+		if(dbConfigExists && !dbConfigOK)
 			return doInputDatabaseExisting();
 		if(!dbConfigOK)
 			return doInputDatabase();

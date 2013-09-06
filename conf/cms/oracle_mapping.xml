@@ -1416,10 +1416,10 @@
       <sql name="detailPageResolverData" type="varchar" dirty="check" />
     </field>
     <field name="parent" type="org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl">
-      <sql name="parentContentTypeDefinitionId"/>
+      <sql name="parentContTypeDefId"/>
     </field>
     <field name="children" type="org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl" lazy="true" collection="collection">
-      <sql many-key="parentContentTypeDefinitionId"/>
+      <sql many-key="parentContTypeDefId"/>
     </field>
     <!--
     <field name="contents" type="org.infoglue.cms.entities.content.impl.simple.ContentImpl" lazy="true" collection="collection">

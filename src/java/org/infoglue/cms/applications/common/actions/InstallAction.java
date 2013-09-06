@@ -238,10 +238,10 @@ public class InstallAction extends InfoGlueAbstractAction
 			e.printStackTrace();
 		}
 
-		logger.debug("dbConfigExisting:" + dbConfigExists);
-		logger.debug("dbConfigOK:" + dbConfigOK);
-		logger.debug("dbUpgradeOK:" + dbUpgradeOK);
-		logger.debug("serverConfigOK:" + serverConfigOK);
+		logger.error("dbConfigExisting:" + dbConfigExists);
+		logger.error("dbConfigOK:" + dbConfigOK);
+		logger.error("dbUpgradeOK:" + dbUpgradeOK);
+		logger.error("serverConfigOK:" + serverConfigOK);
 
 		
 		if(dbConfigExists)

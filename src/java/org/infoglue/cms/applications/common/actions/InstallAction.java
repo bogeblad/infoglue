@@ -183,7 +183,7 @@ public class InstallAction extends InfoGlueAbstractAction
 		try
 		{
 			int reason = InstallationController.getController().getBrokenDatabaseReason();
-			logger.info("reason:" + reason);
+			logger.error("reason:" + reason);
 			if(reason == InstallationController.DATABASE_SERVER_MISSING_DATABASE || reason == InstallationController.DATABASE_SERVER_MISSING_DATABASE_TABLES)
 				dbConfigExists = true;
 		}
@@ -197,6 +197,7 @@ public class InstallAction extends InfoGlueAbstractAction
 		{
 			InstallationController.getController().validateDatabaseConnection();
 			dbConfigOK = true;
+			logger.error("dbConfigOK:" + dbConfigOK);
 		}
 		catch (Exception e) 
 		{
@@ -207,16 +208,18 @@ public class InstallAction extends InfoGlueAbstractAction
 		try
 		{
 			this.dbVersion = InstallationController.getController().getCurrentDatabaseVersion(getHttpSession());
+			logger.error("DBVersion:" + this.dbVersion);
 			if(this.dbVersion.equalsIgnoreCase(CmsPropertyHandler.getInfoGlueDBVersion()))
 				dbUpgradeOK = true;	
 			else
 			{
-				logger.debug("Reported old database schema: " + dbVersion);
+				logger.error("Reported old database schema: " + dbVersion);
 				this.sqlScript = InstallationController.getController().getUpgradeScripts(this.dbVersion, getHttpSession());
 			}
 		}
 		catch (ClassNotFoundException e) 
 		{
+			logger.error("No class found:" + e.getMessage());
 			dbConfigOK = false;
 		}
 		catch (Exception e) 
@@ -228,6 +231,7 @@ public class InstallAction extends InfoGlueAbstractAction
 		try
 		{
 			serverConfigOK = InstallationController.getController().validateApplicationFile();
+			logger.error("serverConfigOK:" + serverConfigOK);
 		}
 		catch (Exception e) 
 		{

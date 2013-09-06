@@ -184,7 +184,7 @@ public class InstallAction extends InfoGlueAbstractAction
 		{
 			int reason = InstallationController.getController().getBrokenDatabaseReason();
 			logger.error("reason:" + reason);
-			if(reason == InstallationController.DATABASE_SERVER_MISSING_DATABASE || reason == InstallationController.DATABASE_SERVER_MISSING_DATABASE_TABLES)
+			if(reason == InstallationController.DATABASE_SERVER_MISSING_DATABASE || reason == InstallationController.DATABASE_SERVER_MISSING_DATABASE_TABLES || reason == InstallationController.ALL_OK)
 				dbConfigExists = true;
 		}
 		catch (Exception e) 

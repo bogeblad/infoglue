@@ -1576,8 +1576,8 @@
     <field name="creationDateTime" type="java.util.Date">
       <sql name="creationDateTime" type="timestamp" dirty="ignore" />
     </field>
-    <field name="repository" type="org.infoglue.cms.entities.management.impl.simple.RepositoryImpl">
-      <sql name="repositoryId"/>
+    <field name="repositoryId" type="java.lang.Integer">
+      <sql name="repositoryId" type="integer" dirty="check"/>
     </field>
     <field name="creator" type="java.lang.String">
       <sql name="creator" type="varchar" dirty="check" />

@@ -85,15 +85,31 @@ public class InstallationController extends BaseController
 
 	public void validateDatabaseConnection() throws Exception
 	{
-		Database db = CastorDatabaseService.getDatabase();
-
 		try 
 		{
-			beginTransaction(db);
-			
-			LanguageController.getController().getLanguageList(db);
-			
-			commitTransaction(db);
+			Database db = CastorDatabaseService.getDatabase();
+	
+			try 
+			{
+				beginTransaction(db);
+				
+				LanguageController.getController().getLanguageList(db);
+				
+				commitTransaction(db);
+			} 
+			catch (Exception e) 
+			{
+				logger.error("--------------------------------------------------");
+				logger.error("Error:" + e.getMessage());
+				logger.error("--------------------------------------------------");
+				
+				if(e.getMessage().contains("The method "))
+					return;
+				
+				//e.printStackTrace();
+				rollbackTransaction(db);
+				throw new SystemException(e.getMessage());
+			}
 		} 
 		catch (Exception e) 
 		{
@@ -103,9 +119,7 @@ public class InstallationController extends BaseController
 			
 			if(e.getMessage().contains("The method "))
 				return;
-			
-			//e.printStackTrace();
-			rollbackTransaction(db);
+
 			throw new SystemException(e.getMessage());
 		}
 	}

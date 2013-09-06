@@ -97,9 +97,13 @@ public class InstallationController extends BaseController
 		} 
 		catch (Exception e) 
 		{
-			logger.info("--------------------------------------------------");
-			logger.info("Error:" + e.getMessage());
-			logger.info("--------------------------------------------------");
+			logger.error("--------------------------------------------------");
+			logger.error("Error:" + e.getMessage());
+			logger.error("--------------------------------------------------");
+			
+			if(e.getMessage().contains("The method "))
+				return;
+			
 			//e.printStackTrace();
 			rollbackTransaction(db);
 			throw new SystemException(e.getMessage());

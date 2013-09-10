@@ -383,6 +383,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    
 	    populate(ps, "useApprovalFlow");
 	    populate(ps, "autoShowApprovalButtons");
+	    populate(ps, "metaInfoAttributesToShowInCreatePageDialog");
 
 	    try
 	    {

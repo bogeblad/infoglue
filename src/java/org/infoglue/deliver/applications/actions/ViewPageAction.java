@@ -1428,6 +1428,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 		}
 	    catch(Exception e)
 	    {
+	    	logger.info("Error locating page:" + e.getMessage(), e);
 			throw new PageNotFoundException("There is no page with the requested specification. SiteNodeId:" + getSiteNodeId());
 	    }
 		

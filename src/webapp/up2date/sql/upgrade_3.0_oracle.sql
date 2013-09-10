@@ -36,7 +36,7 @@ ALTER TABLE cmSiNo ADD isDeleted number DEFAULT 0 NOT NULL;
 ALTER TABLE cmCont ADD isDeleted number DEFAULT 0 NOT NULL;
 ALTER TABLE cmRepository ADD isDeleted number DEFAULT 0 NOT NULL;
 
-ALTER TABLE cmContentTypeDef ADD parentContentTypeDefinitionId number DEFAULT -1;
+ALTER TABLE cmContentTypeDef ADD parentContTypeDefId number DEFAULT -1;
 ALTER TABLE cmContentTypeDef ADD detailPageResolverClass varchar2(255) DEFAULT '';
 ALTER TABLE cmContentTypeDef ADD detailPageResolverData varchar2(1024) DEFAULT '';
 
@@ -59,6 +59,8 @@ ALTER TABLE cmGroup ADD source varchar2(255) default 'infoglue' NOT NULL;
 ALTER TABLE cmGroup ADD modifiedDateTime date default sysdate;
 ALTER TABLE cmGroup ADD isActive number default 1 NOT NULL;
 
+CREATE SEQUENCE cmPageDeliveryMetaData_seq START WITH 1 INCREMENT BY 1;
+
 CREATE TABLE cmPageDeliveryMetaData (
   pageDeliveryMetaDataId number NOT NULL,
   siteNodeId number NOT NULL,
@@ -69,6 +71,8 @@ CREATE TABLE cmPageDeliveryMetaData (
   lastModifiedTimeout date default -1 NOT NULL,
   PRIMARY KEY (pageDeliveryMetaDataId) 
 );
+
+CREATE SEQUENCE cmPageDeliveryMetaDataEnt_seq START WITH 1 INCREMENT BY 1;
 
 CREATE  TABLE cmPageDeliveryMetaDataEnt (
   pageDeliveryMetaDataEntityId number NOT NULL,

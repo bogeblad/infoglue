@@ -16,8 +16,32 @@
 			resizeScrollArea();
 		}});
 
+		$("input[name='name']").blur(function() {
+		  	//alert( "Handler for .blur() called." );
+		  	$(".autofill").val($("input[name='name']").val());
+		  	
+		  	var originalValue = $("input[name='NiceURIName']").val();
+		  	var newValue = replaceNiceURINonAsciiWithSpecifiedChars(originalValue);
+		});
+
 		setTimeout("focusFirst();", 200);
 	});
+	
+	function replaceNiceURINonAsciiWithSpecifiedChars(text)
+	{
+		var data = "text=" + text;
+		$.ajax({
+			type: "GET",
+		   	url: "ViewCommonAjaxServices!replaceNiceURINonAsciiWithSpecifiedChars.action",
+		   	data: data,
+		   	dataType: "html", 
+		   	cache: false,
+		   	success: function(msg, textStatus){
+				$("input[name='NiceURIName']").val(msg);
+		   }
+		});
+	}
+
 		
 	var selectedAssetElement;
 	var contentId;
@@ -26,7 +50,7 @@
 	{
 		if(selectedAssetElement)
 		{
-			selectedAssetElement.style.border 	= "1px solid black";
+			selectedAssetElement.style.outline 	= "1px solid black";
 		}
 
 		contentId = aContentId;
@@ -35,7 +59,7 @@
 
 		if(selectedAssetElement)
 		{
-			selectedAssetElement.style.border 	= "4px solid rgb(255, 137, 30)";
+			selectedAssetElement.style.outline 	= "4px solid rgb(255, 137, 30)";
 		}
 
 		document.editForm.pageTemplateContentId.value = contentId;
@@ -80,9 +104,32 @@
 	
 			<div id="basicTab" class="inlineTabDiv">
 				<p>#editTextField("SiteNode.name" "name" $!name "30" "normaltextfield" "")</p>
-				<p>$ui.getString("tool.common.publicationSpan.label")</p>
-				<p>#editDateField("SiteNode.publishDateTime" "publishDateTime" $!publishDateTime "30" "date"  "ViewCalendar.action?date=$!publishDateTimeAsLong&formPath=document.editForm.publishDateTime" "$dateReadonly")</p>
-				<p>#editDateField("SiteNode.expireDateTime" "expireDateTime" $!expireDateTime "30" "date"  "ViewCalendar.action?date=$!expireDateTimeAsLong&formPath=document.editForm.expireDateTime" "$dateReadonly")</p>
+				
+				<div style="float: left;">
+					<p><b>Meta fields</b></p>
+					#foreach($attribute in $specialMetaAttributes)
+
+						#set($attributeTitle = "")
+						#set($attributeTitle = $!attribute.getContentTypeAttribute("title").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+						#if($attributeTitle == "")
+							#set($attributeTitle = "$attribute.name")
+						#end
+						
+						#set($attributeDescription = "")
+						#set($attributeDescription = $!attribute.getContentTypeAttribute("description").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+						#if($attributeDescription != "")
+							#set($attributeDescription = "- $attributeDescription")
+						#end
+						<p>$attributeTitle $attributeDescription<br/><input type="text" id="$attribute.name" name="$attribute.name" value="" class="normaltextfield autofill"/></p>
+					#end
+					
+				</div>
+				<div style="float: left; margin-left: 30px;">
+					<p><b>$ui.getString("tool.common.publicationSpan.label")</b></p>
+					<p>#editDateField("SiteNode.publishDateTime" "publishDateTime" $!publishDateTime "30" "date"  "ViewCalendar.action?date=$!publishDateTimeAsLong&formPath=document.editForm.publishDateTime" "$dateReadonly")</p>
+					<p>#editDateField("SiteNode.expireDateTime" "expireDateTime" $!expireDateTime "30" "date"  "ViewCalendar.action?date=$!expireDateTimeAsLong&formPath=document.editForm.expireDateTime" "$dateReadonly")</p>
+				</div>
+				<div style="clear: both;"></div>
 				<p>
 					<h3>$ui.getString("tool.structuretool.pageTemplates.header") #if(!$pageTemplateIsOptional) ($ui.getString("tool.common.mandatory.label"))#end</h3>
 					#set($counter = 0)
@@ -96,7 +143,7 @@
 							#end
 							<div style="float: left; margin-left: 16px; margin-bottom: 16px; width: 200px; min-height: 140px; background:url(css/images/v3/imgbox_bg.gif) repeat; border:solid 1px #d8d8d8;">
 								<div style="float: left; width: 100%; margin-top: 6px;">
-									<img id="digitalAsset$content.id" src="$imageUrl" onclick="markPageTemplate(this, $content.id);" border="0" style="width: 100px; border: 1px solid black; margin: 4px 50px 4px 50px;" alt="$content.getName()" title="$content.getName()">
+									<img id="digitalAsset$content.id" src="$imageUrl" onclick="markPageTemplate(this, $content.id);" border="0" style="width: 100px; outline: 1px solid black; margin: 4px 50px 4px 50px;" alt="$content.getName()" title="$content.getName()">
 								</div><br/>
 								
 								<div style="float: left; text-align: center; width: 100%;">

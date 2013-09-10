@@ -378,6 +378,7 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.useApprovalFlow" "useApprovalFlow" "$this.getPropertyValue('useApprovalFlow')" "$!cmsPH.useApprovalFlow")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.autoShowApprovalButtons" "autoShowApprovalButtons" "$this.getPropertyValue('autoShowApprovalButtons')" "$!cmsPH.autoShowApprovalButtons")
 
+				#editPropertyFieldCSS("ServerNode.property.metaInfoAttributesToShowInCreatePageDialog" "metaInfoAttributesToShowInCreatePageDialog" "$this.getPropertyValue('metaInfoAttributesToShowInCreatePageDialog')" "51" "$!serverNodeId" "$!cmsPH.metaInfoAttributesToShowInCreatePageDialog")
 
 				#set($option1 = ["fckeditor2", "FCKEditor 2.x"])
 				#set($option2 = ["ckeditor4", "CKEditor 4.x"])

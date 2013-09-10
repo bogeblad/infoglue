@@ -1950,6 +1950,11 @@ public class CmsPropertyHandler
 	    return getServerNodeProperty("defaultPublicationEventFilter", true, "all");
 	}
 
+	public static String getMetaInfoAttributesToShowInCreatePageDialog()
+	{
+	    return getServerNodeProperty("metaInfoAttributesToShowInCreatePageDialog", true, "NiceURIName");
+	}
+
 	public static String getPreferredLanguageCode(String userName)
 	{
         String langCode = getPropertySet().getString("principal_" + userName + "_languageCode");

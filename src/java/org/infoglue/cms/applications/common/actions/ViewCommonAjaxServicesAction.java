@@ -34,6 +34,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.databeans.ProcessBean;
 import org.infoglue.cms.applications.databeans.ReferenceBean;
 import org.infoglue.cms.applications.databeans.ReferenceVersionBean;
@@ -394,6 +395,19 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 
     	this.getResponse().setContentType("text/plain");
 		this.getResponse().getWriter().print("ok");
+		
+		return NONE;
+	}
+	
+	public String doReplaceNiceURINonAsciiWithSpecifiedChars() throws Exception
+	{
+		String text = getRequest().getParameter("text");
+		
+		VisualFormatter formatter = new VisualFormatter();
+		text = formatter.replaceNiceURINonAsciiWithSpecifiedChars(text, CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
+		
+    	this.getResponse().setContentType("text/plain");
+		this.getResponse().getWriter().print(text);
 		
 		return NONE;
 	}

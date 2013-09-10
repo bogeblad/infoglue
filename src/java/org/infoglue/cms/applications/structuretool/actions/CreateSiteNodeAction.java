@@ -25,8 +25,10 @@ package org.infoglue.cms.applications.structuretool.actions;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
@@ -36,6 +38,7 @@ import org.infoglue.cms.applications.databeans.LinkBean;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
@@ -46,6 +49,8 @@ import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeTypeDefinitionController;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
+import org.infoglue.cms.entities.management.ContentTypeAttribute;
+import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.structure.SiteNode;
@@ -80,6 +85,8 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
    	private String sortProperty = "name";
    	private String userSessionKey;
    	private Integer changeTypeId = new Integer(0);
+   	
+   	private List<ContentTypeAttribute> specialMetaAttributes = new ArrayList<ContentTypeAttribute>();
    	
 	public CreateSiteNodeAction()
 	{
@@ -310,7 +317,18 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
             newSiteNodeVO = newSiteNode.getValueObject();
             t.printElapsedTime("acCreate took");
             
-            SiteNodeController.getController().createSiteNodeMetaInfoContent(db, newSiteNodeVO, this.repositoryId, this.getInfoGluePrincipal(), this.pageTemplateContentId, new ArrayList());
+            Map<String,String> metaAttributes = new HashMap<String,String>();
+    	    ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Meta info");
+    	    List<ContentTypeAttribute> attributes = ContentTypeDefinitionController.getController().getContentTypeAttributes(ctdVO, false);
+    	    for(ContentTypeAttribute attribute : attributes)
+    	    {
+    	    	if(getRequest().getParameter(attribute.getName()) != null && !getRequest().getParameter(attribute.getName()).equals(""))
+    	    	{
+    	    		metaAttributes.put(attribute.getName(), getRequest().getParameter(attribute.getName()));
+    	    	}
+    	    }
+
+            SiteNodeController.getController().createSiteNodeMetaInfoContent(db, newSiteNodeVO, metaAttributes, this.repositoryId, this.getInfoGluePrincipal(), this.pageTemplateContentId, new ArrayList());
             t.printElapsedTime("createSiteNodeMetaInfoContent took");
             
             commitTransaction(db);
@@ -382,6 +400,18 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 	    setActionMessage(userSessionKey, createSiteNodeInlineOperationDoneHeader);
 	    addActionLink(userSessionKey, new LinkBean("currentPageUrl", createSiteNodeInlineOperationBackToCurrentPageLinkText, createSiteNodeInlineOperationBackToCurrentPageTitleText, createSiteNodeInlineOperationBackToCurrentPageTitleText, this.originalAddress, false, ""));
 
+	    String metaInfoAttributesToShowInCreatePageDialog = CmsPropertyHandler.getMetaInfoAttributesToShowInCreatePageDialog();
+	    
+	    ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Meta info");
+	    List<ContentTypeAttribute> attributes = ContentTypeDefinitionController.getController().getContentTypeAttributes(ctdVO, false);
+	    for(ContentTypeAttribute attribute : attributes)
+	    {
+	    	if(metaInfoAttributesToShowInCreatePageDialog.contains(attribute.getName()))
+	    	{
+	    		this.specialMetaAttributes.add(attribute);
+	    	}
+	    }
+	    
 		return "inputV3";
     }
         
@@ -475,4 +505,11 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 	{
 		this.changeTypeId = changeTypeId;
 	}
+
+	public List<ContentTypeAttribute> getSpecialMetaAttributes() 
+	{
+		return specialMetaAttributes;
+	}
+	
+
 }

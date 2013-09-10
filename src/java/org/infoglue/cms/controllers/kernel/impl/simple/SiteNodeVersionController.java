@@ -147,12 +147,41 @@ public class SiteNodeVersionController extends BaseController
 
 		return siteNodeVersionList;
 	}
-	
+
    	/**
 	 * This method returns the latest active content version.
 	 */
     
 	public List<SiteNodeVO> getLatestSiteNodeVersionIds(Set<Integer> siteNodeIds/*, Integer stateId*/, Database db) throws SystemException, Bug, Exception
+	{
+		List<SiteNodeVO> allNodes = new ArrayList<SiteNodeVO>();
+		Set<Integer> remainingSiteNodeIds = new HashSet<Integer>();
+		remainingSiteNodeIds.addAll(siteNodeIds);
+		
+		while(remainingSiteNodeIds.size() > 0)
+		{
+			Set<Integer> subsetSiteNodeIds = new HashSet<Integer>();
+			Iterator<Integer> remainingSiteNodeIdsIterator = remainingSiteNodeIds.iterator();
+			int i = 0;
+			while(remainingSiteNodeIdsIterator.hasNext() && i < 90)
+			{
+				subsetSiteNodeIds.add(remainingSiteNodeIdsIterator.next());
+				remainingSiteNodeIdsIterator.remove();
+				
+				i++;
+			}
+			
+			allNodes.addAll(getLatestSiteNodeVersionIdsImpl(subsetSiteNodeIds, db));
+		}
+		
+		return allNodes;
+	}
+	
+   	/**
+	 * This method returns the latest active content version.
+	 */
+    
+	public List<SiteNodeVO> getLatestSiteNodeVersionIdsImpl(Set<Integer> siteNodeIds/*, Integer stateId*/, Database db) throws SystemException, Bug, Exception
 	{
 		List<SiteNodeVO> siteNodeVersionIdSet = new ArrayList<SiteNodeVO>();
 		if(siteNodeIds == null || siteNodeIds.size() == 0)
@@ -162,7 +191,14 @@ public class SiteNodeVersionController extends BaseController
 		
 		StringBuilder variables = new StringBuilder();
 	    for(int i=0; i<siteNodeIds.size(); i++)
+	    {
+	    	if(i>98)
+	    	{	
+	    		variables.replace(variables.length()-1, variables.length(), "");
+	    		break;
+	    	}
 	    	variables.append("?" + (i+2) + (i+1!=siteNodeIds.size() ? "," : ""));
+	    }
 	    	//variables.append("$" + (i+2) + (i+1!=siteNodeIds.size() ? "," : ""));
 	    //System.out.println("variables:" + variables);
 
@@ -175,7 +211,8 @@ public class SiteNodeVersionController extends BaseController
 		{
 			sb.append("select max(snv.siteNodeVersionId) AS id, snv.siteNodeId as column1Value, max(snv.stateId) as column2Value, sn.repositoryId as column3Value, max(snv.versionModifier) as column4Value, max(snv.modifiedDateTime) as column5Value, '' as column6Value, '' as column7Value from cmSiteNodeVersion snv, cmSiteNode sn where sn.siteNodeId = snv.siteNodeId AND snv.isActive = ?1 AND snv.siteNodeId IN (" + variables + ") group by snv.siteNodeId, sn.repositoryId ");
 		}
-
+		System.out.println("SQL:" + sb.toString());
+		
 		Connection conn = (Connection) db.getJdbcConnection();
 		
 		PreparedStatement psmt = conn.prepareStatement(sb.toString());
@@ -186,6 +223,10 @@ public class SiteNodeVersionController extends BaseController
     	for(Integer entityId : siteNodeIds)
     	{
     		psmt.setInt(i, entityId);
+	    	if(i>98)
+	    		break;
+
+    		System.out.print(","+entityId);
     		i++;
     	}
 

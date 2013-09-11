@@ -49,6 +49,7 @@ import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
+import org.infoglue.cms.util.XMLHelper;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -500,6 +501,8 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
         
     public void setVersionValue(java.lang.String versionValue) throws Exception
     {
+    	versionValue = XMLHelper.stripInvalidXmlCharacters(versionValue);
+
     	try
     	{
     		SAXReader reader = new SAXReader(false);

@@ -30,6 +30,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import org.apache.xerces.parsers.DOMParser;
+import org.apache.xerces.util.XMLChar;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -187,6 +188,19 @@ public class XMLHelper
 
 	}
 	
+	public static String stripInvalidXmlCharacters(String input) 
+	{
+	    StringBuilder sb = new StringBuilder();
+	    for (int i = 0; i < input.length(); i++) {
+	        char c = input.charAt(i);
+	        if (XMLChar.isValid(c)) {
+	            sb.append(c);
+	        }
+	    }
+
+	    return sb.toString();
+	}
+
 	/**
 	 * This method fetches the document-root(DOM) from a xml-document located on disc specified
 	 * by user argument.

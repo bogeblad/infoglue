@@ -102,6 +102,7 @@ public class QuartzInitializerServlet extends HttpServlet {
     public void init(ServletConfig cfg) throws javax.servlet.ServletException {
         super.init(cfg);
 
+        System.out.println("AAAAAAAAAAAAAAAA Quartz Initializer Servlet loaded, initializing Scheduler...");
         log("Quartz Initializer Servlet loaded, initializing Scheduler...");
         
         StdSchedulerFactory factory;

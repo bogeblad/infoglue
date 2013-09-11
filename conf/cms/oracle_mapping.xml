@@ -1661,9 +1661,10 @@
     <field name="assetFileSize" type="java.lang.Integer">
       <sql name="assetFileSize" type="integer" dirty="check" />
     </field>
-    <field name="contentVersions" type="org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl" lazy="true" collection="collection">
+    <field name="contentVersions" type="org.infoglue.cms.entities.content.impl.simple.MediumContentVersionImpl" lazy="true" collection="collection">
       <sql many-key="DigAssetId" many-table="cmContVerDigAsset"/>
     </field>
+    <!--  
     <field name="userProperties" type="org.infoglue.cms.entities.management.impl.simple.UserPropertiesImpl" lazy="true" collection="collection">
       <sql many-key="DigAssetId" many-table="cmUserPropDigAsset"/>
     </field>
@@ -1673,6 +1674,7 @@
     <field name="groupProperties" type="org.infoglue.cms.entities.management.impl.simple.GroupPropertiesImpl" lazy="true" collection="collection">
       <sql many-key="DigAssetId" many-table="cmGroupPropDigAsset"/>
     </field>
+    -->
   </class>
   
 <!--  Mapping for DigitalAsset  -->

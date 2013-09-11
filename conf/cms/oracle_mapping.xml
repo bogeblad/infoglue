@@ -760,9 +760,9 @@
   <class name="org.infoglue.cms.entities.structure.impl.simple.SmallServiceBindingImpl" identity="serviceBindingId" key-generator="SEQUENCE">
     <description>ServiceBinding</description>
     <cache-type type="unlimited" capacity="10000"/>
-    <map-to table="cmServiceBinding"/>
+    <map-to table="cmServBind"/>
       <field name="serviceBindingId" type="java.lang.Integer">
-      <sql name="serviceBindingId" type="integer" dirty="check" />
+      <sql name="servBindId" type="integer" dirty="check" />
     </field>
         <field name="name" type="java.lang.String">
       <sql name="name" type="varchar" dirty="check" />

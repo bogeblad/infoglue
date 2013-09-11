@@ -1123,7 +1123,7 @@
       <sql name="modifiedDateTime" type="timestamp" dirty="ignore" />
     </field>
     <field name="versionComment" type="java.lang.String">
-      <sql name="versionComment" type="varchar" dirty="check" />
+      <sql name="verComment" type="varchar" dirty="check" />
     </field>
     <field name="isCheckedOut" type="java.lang.Boolean">
       <sql name="isCheckedOut" type="integer" dirty="ignore" />

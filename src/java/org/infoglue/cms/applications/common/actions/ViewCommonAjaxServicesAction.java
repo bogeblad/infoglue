@@ -313,7 +313,7 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 		}
 
 		ProcessBean processBean = ProcessBean.createProcessBean(ViewListSiteNodeVersionAction.class.getName(), "" + getInfoGluePrincipal().getName());
-		SiteNodeVersionController.getController().getSiteNodeAndAffectedItemsRecursive(siteNodeId, SiteNodeVersionVO.WORKING_STATE, siteNodeVersionVOList, contentVersionVOList, false, false, this.getInfoGluePrincipal(), processBean, getLocale(), 100);
+		SiteNodeVersionController.getController().getSiteNodeAndAffectedItemsRecursive(siteNodeId, SiteNodeVersionVO.WORKING_STATE, siteNodeVersionVOList, contentVersionVOList, false, false, this.getInfoGluePrincipal(), processBean, getLocale(), -1);
 		
 		this.getResponse().setContentType("text/plain");
 		this.getResponse().setCharacterEncoding("UTF-8");

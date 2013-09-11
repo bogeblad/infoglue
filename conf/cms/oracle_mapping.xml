@@ -1270,9 +1270,6 @@
     <field name="creator" type="java.lang.String">
       <sql name="creator" type="varchar" dirty="check" />
     </field>
-    <field name="contentTypeDefinition" type="org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl">
-      <sql name="contentTypeDefId"/>
-    </field>
     <field name="contentTypeDefinitionId" type="java.lang.Integer">
       <sql name="contentTypeDefId" type="integer"/>
     </field>

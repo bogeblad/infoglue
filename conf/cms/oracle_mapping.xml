@@ -777,7 +777,7 @@
       <sql many-key="serviceBindingId"/>
     </field>
         <field name="siteNodeVersionId" type="java.lang.Integer">
-      <sql name="siteNodeVersionId" type="integer" dirty="check" />
+      <sql name="SiNoVerId" type="integer" dirty="check" />
     </field>
         <field name="availableServiceBinding" type="org.infoglue.cms.entities.management.impl.simple.AvailableServiceBindingImpl">
       <sql name="availableServiceBindingId"/>

@@ -126,7 +126,9 @@ public class CmsJDOCallback implements CallbackInterceptor
 
 	public Class loaded(Object arg0, AccessMode arg1) throws Exception 
 	{
-    	//System.out.println("Loaded 2" + arg0.getClass().getName());
+		//System.out.println("Loaded 2" + arg0.getClass().getName());
+    	//if(arg0.getClass().getName().contains("RegistryImpl"))
+    	//	Thread.dumpStack();
 		//System.out.println("Loaded 2" + arg0.getClass().getName());
 		
 		//if(arg1.getId() == AccessMode.Shared.getId() && arg0.getClass().getName().indexOf(".CategoryImpl") > -1)

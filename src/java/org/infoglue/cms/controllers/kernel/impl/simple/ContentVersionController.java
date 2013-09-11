@@ -1328,15 +1328,12 @@ public class ContentVersionController extends BaseController
 
     public MediumContentVersionImpl createMedium(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, Database db) throws ConstraintException, SystemException, Exception
     {
-    	//Beh�vs verkligen content h�r? M�t tiderna ocks�
-    	Timer t = new Timer();		
     	MediumContentVersionImpl contentVersion = new MediumContentVersionImpl();
 		contentVersion.setValueObject(contentVersionVO);
 		contentVersion.getValueObject().setLanguageId(languageId);
 		contentVersion.getValueObject().setContentId(contentId);
 		
 		db.create(contentVersion); 
-		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("create 3.0", t.getElapsedTime());
 
         return contentVersion;
     }     

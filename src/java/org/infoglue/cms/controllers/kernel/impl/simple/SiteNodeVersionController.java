@@ -1651,16 +1651,16 @@ public class SiteNodeVersionController extends BaseController
 	 * Recursive methods to get all contentVersions of a given state under the specified parent content.
 	 */ 
 	
-    public void getSiteNodeAndAffectedItemsRecursive(Integer siteNodeId, Integer stateId, Set<SiteNodeVersionVO> siteNodeVersionVOList, Set<ContentVersionVO> contentVersionVOList, boolean includeMetaInfo, InfoGluePrincipal principal, ProcessBean processBean, Locale locale) throws ConstraintException, SystemException
+    public void getSiteNodeAndAffectedItemsRecursive(Integer siteNodeId, Integer stateId, Set<SiteNodeVersionVO> siteNodeVersionVOList, Set<ContentVersionVO> contentVersionVOList, boolean includeMetaInfo, InfoGluePrincipal principal, ProcessBean processBean, Locale locale, int maxItems) throws ConstraintException, SystemException
 	{
-    	getSiteNodeAndAffectedItemsRecursive(siteNodeId, stateId, siteNodeVersionVOList, contentVersionVOList, includeMetaInfo, true, principal, processBean, locale);
+    	getSiteNodeAndAffectedItemsRecursive(siteNodeId, stateId, siteNodeVersionVOList, contentVersionVOList, includeMetaInfo, true, principal, processBean, locale, maxItems);
 	}
 	
 	/**
 	 * Recursive methods to get all contentVersions of a given state under the specified parent content.
 	 */ 
 	
-    public void getSiteNodeAndAffectedItemsRecursive(Integer siteNodeId, Integer stateId, Set<SiteNodeVersionVO> siteNodeVersionVOList, Set<ContentVersionVO> contentVersionVOList, boolean includeMetaInfo, boolean recurseSiteNodes, InfoGluePrincipal principal, ProcessBean processBean, Locale locale) throws ConstraintException, SystemException
+    public void getSiteNodeAndAffectedItemsRecursive(Integer siteNodeId, Integer stateId, Set<SiteNodeVersionVO> siteNodeVersionVOList, Set<ContentVersionVO> contentVersionVOList, boolean includeMetaInfo, boolean recurseSiteNodes, InfoGluePrincipal principal, ProcessBean processBean, Locale locale, int maxItems) throws ConstraintException, SystemException
 	{
     	Timer t = new Timer();
     	
@@ -1686,7 +1686,7 @@ public class SiteNodeVersionController extends BaseController
         	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getSiteNodeAndAffectedItemsRecursive", t.getElapsedTime());
 
         	//Takes the base list of pages in the structure clicked and fetches the relations. Store them in .
-        	getReferencedItemsRecursive(stateId, siteNodeVersionVOList, contentVersionVOList, includeMetaInfo, principal, db, siteNode, localSiteNodeVersionIdSet, new HashSet<Integer>(), 2, 0, processBean, locale);
+        	getReferencedItemsRecursive(stateId, siteNodeVersionVOList, contentVersionVOList, includeMetaInfo, principal, db, siteNode, localSiteNodeVersionIdSet, new HashSet<Integer>(), 2, 0, processBean, locale, maxItems);
             
             commitTransaction(db);
         }
@@ -1698,7 +1698,7 @@ public class SiteNodeVersionController extends BaseController
         }
 	}
 
-	public void getReferencedItemsRecursive(Integer stateId, Set<SiteNodeVersionVO> siteNodeVersionIdList, Set<ContentVersionVO> contentVersionVOList, boolean includeMetaInfo, InfoGluePrincipal principal, Database db, SiteNodeVO siteNode, Set<Integer> relatedSiteNodeVersionIdsToCheck, Set<Integer> relatedContentVersionIdsToCheck, int limit, int currentLevel, ProcessBean processBean, Locale locale) throws SystemException, Exception, Bug 
+	public void getReferencedItemsRecursive(Integer stateId, Set<SiteNodeVersionVO> siteNodeVersionIdList, Set<ContentVersionVO> contentVersionVOList, boolean includeMetaInfo, InfoGluePrincipal principal, Database db, SiteNodeVO siteNode, Set<Integer> relatedSiteNodeVersionIdsToCheck, Set<Integer> relatedContentVersionIdsToCheck, int limit, int currentLevel, ProcessBean processBean, Locale locale, int maxItems) throws SystemException, Exception, Bug 
 	{
     	processBean.updateProcess(getLocalizedString(locale, "tool.structuretool.publicationProcess.checkingForRelatedItems"));
 
@@ -1716,7 +1716,7 @@ public class SiteNodeVersionController extends BaseController
 	    	List<Integer> subList = siteNodeVersionVOListSubList.subList(0, (siteNodeVersionVOListSubList.size() > slotSize ? slotSize : siteNodeVersionVOListSubList.size()));
 	    	while(subList != null && subList.size() > 0)
 	    	{
-	    		relatedSiteNodes.addAll(RegistryController.getController().getMatchingRegistryVOListForReferencingEntities(SiteNodeVersion.class.getName(), subList, db));
+	    		relatedSiteNodes.addAll(RegistryController.getController().getMatchingRegistryVOListForReferencingEntities(SiteNodeVersion.class.getName(), subList, db, maxItems));
 	    		siteNodeVersionVOListSubList = siteNodeVersionVOListSubList.subList(subList.size()-1, siteNodeVersionVOListSubList.size()-1);
 	    		subList =  siteNodeVersionVOListSubList.subList(0, (siteNodeVersionVOListSubList.size() > slotSize ? slotSize : siteNodeVersionVOListSubList.size()));
 	    	}
@@ -1750,7 +1750,7 @@ public class SiteNodeVersionController extends BaseController
     		List<Integer> subList = relatedContentVersionIdsToCheckSubList.subList(0, (relatedContentVersionIdsToCheckSubList.size() > slotSize ? slotSize : relatedContentVersionIdsToCheckSubList.size()));
         	while(subList != null && subList.size() > 0)
         	{
-        		relatedContents.addAll(RegistryController.getController().getMatchingRegistryVOListForReferencingEntities(ContentVersion.class.getName(), subList, db));
+        		relatedContents.addAll(RegistryController.getController().getMatchingRegistryVOListForReferencingEntities(ContentVersion.class.getName(), subList, db, maxItems));
         		relatedContentVersionIdsToCheckSubList = relatedContentVersionIdsToCheckSubList.subList(subList.size()-1, relatedContentVersionIdsToCheckSubList.size() -1);
         		subList = relatedContentVersionIdsToCheckSubList.subList(0, (relatedContentVersionIdsToCheckSubList.size() > slotSize ? slotSize : relatedContentVersionIdsToCheckSubList.size()));
         	}
@@ -1849,7 +1849,7 @@ public class SiteNodeVersionController extends BaseController
 			}
 			processBean.updateProcess(getLocalizedString(locale, "tool.structuretool.publicationProcess.foundSoFar", siteNodeVersionIdList.size() + "/" + contentVersionVOList.size()));
 			
-			getReferencedItemsRecursive(stateId, siteNodeVersionIdList, contentVersionVOList, includeMetaInfo, principal, db, siteNode, localRelatedSiteNodeVersionIdSet, localRelatedContentVersionIdSet, limit, currentLevel+1, processBean, locale);
+			getReferencedItemsRecursive(stateId, siteNodeVersionIdList, contentVersionVOList, includeMetaInfo, principal, db, siteNode, localRelatedSiteNodeVersionIdSet, localRelatedContentVersionIdSet, limit, currentLevel+1, processBean, locale, maxItems);
 		}
 	}
 	

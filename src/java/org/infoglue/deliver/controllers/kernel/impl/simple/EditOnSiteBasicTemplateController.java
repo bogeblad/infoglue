@@ -137,9 +137,14 @@ public class EditOnSiteBasicTemplateController extends BasicTemplateController
             if(CmsPropertyHandler.getPersonalDisableEditOnSightToolbar(getPrincipal().getName()))
             	isInlineEditingOn = false;
             
+            boolean isHTML = attributeValue.contains("<");
+            String tag = "span";
+            if(isHTML)
+            	tag = "div";
+            
             if(className != null && className.equalsIgnoreCase("textfield"))
     		{	
-                decoratedAttributeValue.append("<div " + (isInlineEditingOn ? "contenteditable=\"true\"" : "")  + " class=\"" + className + " attribute" + contentId + "\" id=\"attribute" + contentId + attributeName + "\" oncontextmenu=\"" + setContentItemParametersJavascript + "\">" + attributeValue + "</div>");
+                decoratedAttributeValue.append("<" + tag + " " + (isInlineEditingOn ? "contenteditable=\"true\"" : "")  + " style=\"display:inline;\" class=\"" + className + " attribute" + contentId + "\" id=\"attribute" + contentId + attributeName + "\" oncontextmenu=\"" + setContentItemParametersJavascript + "\">" + attributeValue + "</" + tag + ">");
                 
                 decoratedAttributeValue.append("<script type=\"text/javascript\">");
                 if(!CmsPropertyHandler.getPersonalDisableEditOnSightToolbar(getPrincipal().getName()))
@@ -163,7 +168,7 @@ public class EditOnSiteBasicTemplateController extends BasicTemplateController
     		}
     		else if(className != null && className.equalsIgnoreCase("textarea"))
     		{
-                decoratedAttributeValue.append("<div " + (isInlineEditingOn ? "contenteditable=\"" + enableWYSIWYG + "\"" : "") + " class=\"" + className + " attribute" + contentId + "\" id=\"attribute" + contentId + attributeName + "\" oncontextmenu=\"" + setContentItemParametersJavascript + "\">" + attributeValue + "</div>");
+                decoratedAttributeValue.append("<" + tag + " " + (isInlineEditingOn ? "contenteditable=\"" + enableWYSIWYG + "\"" : "") + " style=\"display:inline;\" class=\"" + className + " attribute" + contentId + "\" id=\"attribute" + contentId + attributeName + "\" oncontextmenu=\"" + setContentItemParametersJavascript + "\">" + attributeValue + "</" + tag + ">");
                 
                 decoratedAttributeValue.append("<script type=\"text/javascript\">");
                 if(!CmsPropertyHandler.getPersonalDisableEditOnSightToolbar(getPrincipal().getName()))
@@ -187,7 +192,7 @@ public class EditOnSiteBasicTemplateController extends BasicTemplateController
     		}
     		else
     		{
-                decoratedAttributeValue.append("<div " + (isInlineEditingOn ? "contenteditable=\"false\"" : "") + " class=\"" + className + " attribute" + contentId + "\" id=\"attribute" + contentId + attributeName + "\" oncontextmenu=\"" + setContentItemParametersJavascript + "\">" + attributeValue + "</div>");
+                decoratedAttributeValue.append("<" + tag + " " + (isInlineEditingOn ? "contenteditable=\"false\"" : "") + " style=\"display:inline;\" class=\"" + className + " attribute" + contentId + "\" id=\"attribute" + contentId + attributeName + "\" oncontextmenu=\"" + setContentItemParametersJavascript + "\">" + attributeValue + "</" + tag + ">");
     		}
             
             /*

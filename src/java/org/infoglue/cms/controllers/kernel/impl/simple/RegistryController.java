@@ -2869,7 +2869,7 @@ public class RegistryController extends BaseController
 	/**
 	 * Gets matching references
 	 */
-	public List<RegistryVO> getMatchingRegistryVOListForReferencingEntities(String referencingEntityName, List<Integer> referencingEntityIds, Database db) throws SystemException, Exception
+	public List<RegistryVO> getMatchingRegistryVOListForReferencingEntities(String referencingEntityName, List<Integer> referencingEntityIds, Database db, int limit) throws SystemException, Exception
 	{
 		List<RegistryVO> matchingRegistryVOList = new ArrayList<RegistryVO>();
 		   
@@ -2889,10 +2889,14 @@ public class RegistryController extends BaseController
         {
             Registry registry = (Registry)results.next();
             RegistryVO registryVO = registry.getValueObject();
-    	    //logger.info("found match:" + registryVO.getEntityName() + ":" + registryVO.getEntityId());
+    	    //System.out.println("found match:" + registryVO.getEntityName() + ":" + registryVO.getEntityId());
             
             matchingRegistryVOList.add(registryVO);
+            
+            if(limit > -1 && matchingRegistryVOList.size() > limit)
+            	break;
         }       
+		System.out.println("matchingRegistryVOList:" + matchingRegistryVOList.size());
 		
 		results.close();
 		oql.close();

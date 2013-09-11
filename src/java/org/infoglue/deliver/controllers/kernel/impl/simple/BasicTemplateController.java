@@ -4995,12 +4995,11 @@ public class BasicTemplateController implements TemplateController
 	/**
 	 * This method searches for all contents matching
 	 */
-	/*
+
 	public List getMatchingContents(String contentTypeDefinitionNamesString, String categoryConditionString, String freeText, List freeTextAttributeNames, Date fromDate, Date toDate, Date expireFromDate, Date expireToDate, String versionModifier, Integer maximumNumberOfItems, boolean useLanguageFallback, boolean cacheResult, int cacheInterval, String cacheName, String cacheKey, List<Integer> repositoryIdList, Integer languageId, Boolean skipLanguageCheck)
 	{
-		return getMatchingContents(contentTypeDefinitionNamesString, categoryConditionString, freeText, freeTextAttributeNames, fromDate, toDate, expireFromDate, expireToDate, versionModifier, maximumNumberOfItems, useLanguageFallback, cacheResult, cacheInterval, cacheName, cacheKey, repositoryIdList, languageId, skipLanguageCheck, null, false);
+		return getMatchingContents(contentTypeDefinitionNamesString, categoryConditionString, freeText, freeTextAttributeNames, fromDate, toDate, expireFromDate, expireToDate, versionModifier, maximumNumberOfItems, useLanguageFallback, cacheResult, cacheInterval, cacheName, cacheKey, repositoryIdList, languageId, skipLanguageCheck, null);
 	}
-	*/
 
 	/**
 	 * This method searches for all contents matching
@@ -5111,12 +5110,10 @@ public class BasicTemplateController implements TemplateController
 	/**
 	 * This method searches for all contents matching
 	 */
-	/*
 	public List getMatchingContents(String contentTypeDefinitionNamesString, String categoryConditionString, String freeText, List freeTextAttributeNames, Date fromDate, Date toDate, Date expireFromDate, Date expireToDate, String versionModifier, Integer maximumNumberOfItems, boolean useLanguageFallback, boolean cacheResult, int cacheInterval, String cacheName, String cacheKey, List<Integer> repositoryIdList, Integer languageId, Boolean skipLanguageCheck, Integer startNodeId)
-	{
-		return getMatchingContents(contentTypeDefinitionNamesString, categoryConditionString, freeText, freeTextAttributeNames, fromDate, toDate, expireFromDate, expireToDate, versionModifier, maximumNumberOfItems, useLanguageFallback, cacheResult, cacheInterval, cacheName, cacheKey, false, -1, repositoryIdList, languageId, skipLanguageCheck, startNodeId, null, null, false, true, false, false, false);
+	{																																																																																								
+		return getMatchingContents(contentTypeDefinitionNamesString, categoryConditionString, freeText, freeTextAttributeNames, fromDate, toDate, expireFromDate, expireToDate, versionModifier, maximumNumberOfItems, useLanguageFallback, cacheResult, cacheInterval, cacheName, cacheKey, false, -1, repositoryIdList, languageId, skipLanguageCheck, startNodeId, null, null, false, true, false, false);
 	}
-	*/
 
 	/**
 	 * This method searches for all contents matching
@@ -5313,8 +5310,8 @@ public class BasicTemplateController implements TemplateController
 			    }
 	
 			    final CategoryConditions categoryConditions = CategoryConditions.parse(categoryConditionString, getDatabase());
-
-				final ExtendedSearchCriterias criterias = new ExtendedSearchCriterias(this.getOperatingMode().intValue());
+			    
+			    final ExtendedSearchCriterias criterias = new ExtendedSearchCriterias(this.getOperatingMode().intValue());
 				criterias.setCategoryConditions(categoryConditions);
 				criterias.setLanguage(this.getLanguage(localLanguageId));
 				if(skipLanguageCheck != null)
@@ -8729,31 +8726,5 @@ public class BasicTemplateController implements TemplateController
     {
         return ( this instanceof EditOnSiteBasicTemplateController );
     }
-
-	@Override
-	public List getMatchingContents(String contentTypeDefinitionNamesString,
-			String categoryConditionString, String freeText,
-			List freeTextAttributeNames, Date fromDate, Date toDate,
-			Date expireFromDate, Date expireToDate, String versionModifier,
-			Integer maximumNumberOfItems, boolean useLanguageFallback,
-			boolean cacheResult, int cacheInterval, String cacheName,
-			String cacheKey, List<Integer> repositoryIdList,
-			Integer languageId, Boolean skipLanguageCheck) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List getMatchingContents(String contentTypeDefinitionNamesString,
-			String categoryConditionString, String freeText,
-			List freeTextAttributeNames, Date fromDate, Date toDate,
-			Date expireFromDate, Date expireToDate, String versionModifier,
-			Integer maximumNumberOfItems, boolean useLanguageFallback,
-			boolean cacheResult, int cacheInterval, String cacheName,
-			String cacheKey, List<Integer> repositoryIdList,
-			Integer languageId, Boolean skipLanguageCheck, Integer startNodeId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }

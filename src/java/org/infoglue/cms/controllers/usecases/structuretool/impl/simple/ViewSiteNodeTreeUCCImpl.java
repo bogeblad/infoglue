@@ -37,6 +37,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeTypeDefinitionController;
 import org.infoglue.cms.controllers.usecases.structuretool.ViewSiteNodeTreeUCC;
+import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.management.Repository;
 import org.infoglue.cms.entities.management.SiteNodeTypeDefinition;
 import org.infoglue.cms.entities.structure.SiteNode;
@@ -66,15 +67,17 @@ public class ViewSiteNodeTreeUCCImpl extends BaseUCCController implements ViewSi
 
         try
         {
-            logger.info("Fetching the root siteNode for the repository " + repositoryId);
-			OQLQuery oql = db.getOQLQuery( "SELECT c FROM org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl c WHERE is_undefined(c.parentSiteNode) AND c.repository.repositoryId = $1");
-			oql.bind(repositoryId);
+        	logger.info("Fetching the root siteNode for the repository " + repositoryId);
+			siteNodeVO = SiteNodeController.getController().getRootSiteNodeVO(repositoryId, db);
+            
+			//OQLQuery oql = db.getOQLQuery( "SELECT c FROM org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl c WHERE is_undefined(c.parentSiteNode) AND c.repository.repositoryId = $1");
+			//oql.bind(repositoryId);
 			
-        	QueryResults results = oql.execute(Database.ReadOnly);
+			//QueryResults results = oql.execute(Database.ReadOnly);
 			
-			if (results.hasMore()) 
+			if (siteNodeVO != null /*results.hasMore()*/) 
             {
-			    siteNodeVO = ((SiteNode)results.next()).getValueObject();
+			    //siteNodeVO = ((SiteNode)results.next()).getValueObject();
             }
             else
             {
@@ -97,11 +100,11 @@ public class ViewSiteNodeTreeUCCImpl extends BaseUCCController implements ViewSi
 				SiteNodeVO newSiteNodeVO = siteNodeVO;
 				
             	//Also creates an initial meta info for the sitenode.
-				SiteNodeController.getController().createSiteNodeMetaInfoContent(db, siteNodeVO, repositoryId, infoGluePrincipal, null, new ArrayList());
+				SiteNodeController.getController().createSiteNodeMetaInfoContent(db, siteNode.getValueObject(), repositoryId, infoGluePrincipal, null, new ArrayList<ContentVersion>());
 			}
 			
-			results.close();
-			oql.close();
+			//results.close();
+			//oql.close();
             
             //If any of the validations or setMethods reported an error, we throw them up now before create. 
             ceb.throwIfNotEmpty();

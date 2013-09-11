@@ -70,6 +70,7 @@
 	if(typeof CKEDITOR == "undefined")
 	{
 	 	var maxAutogrowHeight = $(window).height()-200;
+	 	CKEDITOR.dtd.$editable.span = 1;
 		CKEDITOR.config.extraPlugins = 'ckeditor_autogrow';
 		CKEDITOR.config.minHeight = 200;
 	    CKEDITOR.config.maxHeight = maxAutogrowHeight;
@@ -144,7 +145,7 @@
 						id = id.substr(id.lastIndexOf("_")+1).replace("Comp","");
 						//console.log("id: " + id);
 						$(this).find(">:first-child").css("position", "relative");
-						$(this).find(">:first-child").prepend("<img src=\"css/images/v3/menu_img.png\" class=\"propertiesButton\" style=\"display: block; position: absolute; top: 0px; right:0px; background-color: white; border: 1px solid #ccc; padding: 2px; z-index: 200000;\" onclick=\"showComponentProperties('component" + id + "Properties');\"/>");
+						$(this).find(">:first-child").append("<img src=\"css/images/v3/menu_img.png\" class=\"propertiesButton\" style=\"display: block; position: absolute; top: 0px; right:0px; width: 16px; height: 16px; background-color: white; border: 1px solid #ccc; padding: 2px; margin: 0 0 0 0; z-index: 200000;\" onclick=\"showComponentProperties('component" + id + "Properties');\"/>");
 					}
 				}
 				else
@@ -155,7 +156,7 @@
 						var id = $(this).closest( ".sortableComponent" ).attr("id");
 						id = id.substr(id.lastIndexOf("_")+1).replace("Comp","");
 						//console.log("id: " + id);
-						$(this).prepend("<img src=\"css/images/v3/menu_img.png\" class=\"propertiesButton\" style=\"display: block; position: absolute; top: 0px; right:0px; background-color: white; border: 1px solid #ccc; padding: 2px; z-index: 200000;\" onclick=\"showComponentProperties('component" + id + "Properties');\"/>");				
+						$(this).append("<img src=\"css/images/v3/menu_img.png\" class=\"propertiesButton\" style=\"display: block; position: absolute; top: 0px; right:0px; background-color: white; border: 1px solid #ccc; padding: 2px; margin: 0 0 0 0; z-index: 200000;\" onclick=\"showComponentProperties('component" + id + "Properties');\"/>");				
 					}
 				}
 				

@@ -23,7 +23,12 @@
 
 package org.infoglue.cms.util.workflow;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -38,6 +43,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.dbcp.ConnectionFactory;
 import org.apache.commons.dbcp.DriverManagerConnectionFactory;
@@ -48,14 +54,12 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
-import org.dom4j.Node;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.InstallationController;
 import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.dom.DOMBuilder;
 import org.infoglue.deliver.util.NullObject;
-import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Timer;
 
 import com.opensymphony.module.propertyset.InvalidPropertyTypeException;
@@ -106,26 +110,33 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
     String tableName;
 
     private boolean enableCache = true;
-    private boolean allKeysCached = false;
+    private boolean allKeysCachedType5 = false;
+    private boolean allKeysCachedType10 = false;
     private static boolean isRecacheCall = false;
     private static boolean reloadConfiguration = false;
     
-    private static Map typeMap = null;
-    private static Map valueMap = null;
+    private static Map type5Map = null;
+    private static Map type10Map = null;
+    private static Map valueMapType5 = null;
+    private static Map valueMapType10 = null;
     private static InfoGlueJDBCPropertySet instance = null;
     
-    private static Map typeMapFallback = null;
-    private static Map valueMapFallback = null;
+    private static Map typeMap5Fallback = null;
+    private static Map valueMap5Fallback = null;
+    private static Map typeMap10Fallback = null;
+    private static Map valueMap10Fallback = null;
     
     //~ Methods ////////////////////////////////////////////////////////////////
 
-    public Collection getKeys(String prefix, int type) throws PropertyException 
+    public Collection getKeys(String prefix, int type) throws PropertyException
     {
     	Timer t = new Timer();
-    	
-    	//logger.info("isRecacheCall:" + isRecacheCall);
-    	Map currentTypeMap = typeMap;
-    	Map currentValueMap = valueMap;
+
+    	//System.out.println("isRecacheCall:" + isRecacheCall); //valueMapType5 == null && !allKeysCachedType5
+    	Map currentType5Map = type5Map;
+    	Map currentValue5Map = valueMapType5;
+    	Map currentType10Map = type10Map;
+    	Map currentValue10Map = valueMapType10;
     	
         if (prefix == null) 
         {
@@ -145,11 +156,16 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
         		System.out.println("braking as connection was not yet ready");
         		throw new PropertyException("Problem getting connection"); 
         	}
-        	
+
             PreparedStatement ps = null;
             //String sql = "SELECT " + colItemKey + "," + colItemType + ", " + colString + ", " + colDate + ", " + colData + ", " + colFloat + ", " + colNumber + " FROM " + tableName + " WHERE " + colItemKey + " LIKE ? AND " + colGlobalKey + " = ?";
+
+        	String sql = "SELECT " + colItemKey + "," + colItemType + ", " + colString + ", " + colDate + ", " + colData + ", " + colFloat + ", " + colNumber + " FROM " + tableName;
+            if(type != 10)
+            {
+            	sql =  "SELECT " + colItemKey + "," + colItemType + ", " + colString + ", " + colDate + ", '' AS " + colData + ", " + colFloat + ", " + colNumber + " FROM " + tableName;
+            }
             
-            String sql =  "SELECT " + colItemKey + "," + colItemType + ", " + colString + ", " + colDate + ", " + colData + ", " + colFloat + ", " + colNumber + " FROM " + tableName;
             sql += " WHERE ";
             sql += "((" + colItemKey + " NOT LIKE 'content_%' AND ";
         	sql += "" + colItemKey + " NOT LIKE 'principal_%' AND  ";
@@ -162,7 +178,8 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
     		sql += "(" + colItemKey + " LIKE 'siteNode_%_enabledLanguages' AND string_val <> '') OR ";
     		sql += "(" + colItemKey + " LIKE 'siteNode_%_disabledLanguages' AND string_val <> ''))  AND  ";
     		sql += "" + colGlobalKey + " = ? ";
-			
+            
+    		//System.out.println("sql:" + sql);
             if(logger.isInfoEnabled())
             {
             	logger.info("app:" + CmsPropertyHandler.getApplicationName());
@@ -171,13 +188,11 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
             /*
             if(CmsPropertyHandler.getApplicationName().equalsIgnoreCase("deliver") && CmsPropertyHandler.getOperatingMode().equalsIgnoreCase("3"))
             {
-            	sql = "SELECT " + colItemKey + "," + colItemType + ", " + colString + ", " + colDate + ", " + colData + ", " + colFloat + ", " + colNumber + " FROM " + tableName;
+	            sql = "SELECT " + colItemKey + "," + colItemType + ", " + colString + ", " + colDate + ", " + colData + ", " + colFloat + ", " + colNumber + " FROM " + tableName;
 	            sql += " WHERE ";
 	            sql += "" + colItemKey + " LIKE ? AND ";
 	            sql += "" + colItemKey + " NOT LIKE 'principal_%_languageCode' AND ";
-	        	sql += "" + colItemKey + " NOT LIKE 'principal_%_defaultToolName' AND  ";
-	        	sql += "" + colItemKey + " NOT LIKE 'principal_%_defaultGUI' AND  ";
-	        	sql += "" + colItemKey + " NOT LIKE 'principal_%_theme' AND  ";
+	        	sql += "" + colItemKey + " NOT LIKE 'principal_%_defaultToolId' AND  ";
 	    		sql += "" + colItemKey + " NOT LIKE 'content_%_allowedContentTypeNames' AND  ";
 	    		sql += "" + colItemKey + " NOT LIKE 'content_%_defaultContentTypeName' AND  ";
 	    		sql += "" + colItemKey + " NOT LIKE 'content_%_initialLanguageId' AND  ";
@@ -191,7 +206,6 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
             }
             */
             
-            //System.out.println("sql:" + sql);
             if(logger.isInfoEnabled())
             	logger.info("sql:" + sql);
             //System.out.println("sql:" + sql);
@@ -218,12 +232,11 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
                 //System.out.println("arg2:" + globalKey);
                 //System.out.println("arg3:" + type);
             }
-            
+
             ArrayList list = new ArrayList();
             ResultSet rs = ps.executeQuery();
-            
-            //t.printElapsedTime("Executing SQL i getKeys took");
-            
+            logger.info("All rows " + sql);
+
             int rows = 0;
             while (rs.next()) 
             {
@@ -231,24 +244,45 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
             	String key = rs.getString(colItemKey);
                 int typeId = rs.getInt(colItemType);
             	
+            	//System.out.println("key[" + typeId + "]:" + key);
+                
             	if(logger.isInfoEnabled())
             		logger.info("key[" + typeId + "]:" + key);
                 
                 list.add(key);
                 
-                if(typeMap == null)
-                	typeMap = new HashMap();
-                if(typeMapFallback == null)
-                	typeMapFallback = new HashMap();
-                	
-            	currentTypeMap = typeMap;
-            	if(isRecacheCall)
-            		currentTypeMap = typeMapFallback;
+                if(type == 5 && type5Map == null)
+                	type5Map = new HashMap();
+                if(type == 5 && typeMap5Fallback == null)
+                	typeMap5Fallback = new HashMap();
 
-            	synchronized (currentTypeMap) 
+                if(type == 10 && type10Map == null)
+                	type10Map = new HashMap();
+                if(type == 10 && typeMap10Fallback == null)
+                	typeMap10Fallback = new HashMap();
+
+            	currentType5Map = type5Map;
+            	currentType10Map = type10Map;
+            	if(isRecacheCall)
             	{
-            		currentTypeMap.put(key, new Integer(typeId));	
-                }
+            		currentType5Map = typeMap5Fallback;
+            		currentType10Map = typeMap10Fallback;
+            	}
+
+            	if(type == 5)
+            	{
+	            	synchronized (currentType5Map) 
+	            	{
+	            		currentType5Map.put(key, new Integer(typeId));	
+	                }
+            	}
+            	if(type == 10)
+            	{
+	            	synchronized (currentType10Map) 
+	            	{
+	            		currentType10Map.put(key, new Integer(typeId));	
+	                }
+            	}
             	
             	Object o = null;
             	
@@ -261,10 +295,49 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
                     break;
 
                 case PropertySet.DATA:
-                    o = rs.getBytes(colData);
-
+                {
+                	//Ugly fix for old type of column in oracle which we used to run LONG RAW. We converted to blob and the code is different
+                	String columnTypeName = rs.getMetaData().getColumnTypeName(5);
+                	logger.info("columnTypeName: " + columnTypeName); 
+                	if(this.driverClassName.indexOf("oracle") > -1 && columnTypeName != null && columnTypeName.indexOf("RAW") == -1)
+                	{
+                		//System.out.println("Getting as blob");
+            	        Blob blob = rs.getBlob(colData);
+	                	//System.out.println("blob:" + blob);
+	                	if(blob != null)
+	                	{
+	                		try
+	                		{
+	                			InputStream in = blob.getBinaryStream();
+	                			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	                			byte[] buffer = new byte[(int)blob.length()];
+	                			InputStream is = in;
+    			                while (is.read(buffer) > 0) {
+    			                	baos.write(buffer);
+    			                }
+    			                baos.flush();
+    			                String s = baos.toString();
+    			                //System.out.println("S: " + s + "...");
+    			                o = s.getBytes();
+	                		}
+	                		catch (Exception e) 
+	                		{
+	                			e.printStackTrace();
+							}
+	                	}
+	                	else
+	                	{
+	                		o = null;
+	                	}
+                	}
+                	else
+                	{
+                		//System.out.println("Getting as raw bytes:" + key);
+                		o = rs.getBytes(colData);
+                	}
+                	
                     break;
-
+                }
                 case PropertySet.DATE:
                     o = rs.getTimestamp(colDate);
 
@@ -291,35 +364,60 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
                     break;
 
                 default:
-                    logger.error("JDBCPropertySet doesn't support this type yet:" + key + ":" + typeId);
-                	//throw new InvalidPropertyTypeException("JDBCPropertySet doesn't support this type yet:" + typeId);
+                    logger.info("JDBCPropertySet doesn't support this type yet:" + key + ":" + typeId);
                 }
 
-                if(valueMap == null)
-                	valueMap = new HashMap();
-                if(valueMapFallback == null)
-                	valueMapFallback = new HashMap();
+                if(type != 10 && valueMapType5 == null)
+                	valueMapType5 = new HashMap();
+                if(type != 10 && valueMap5Fallback == null)
+                	valueMap5Fallback = new HashMap();
 
-            	currentValueMap = valueMap;
+                if(type == 10 && valueMapType10 == null)
+                	valueMapType10 = new HashMap();
+                if(type == 10 && valueMap10Fallback == null)
+                	valueMap10Fallback = new HashMap();
+
+            	currentValue5Map = valueMapType5;
+            	currentValue10Map = valueMapType10;
             	if(isRecacheCall)
-            		currentValueMap = valueMapFallback;
-
-            	synchronized (currentValueMap) 
             	{
-            		currentValueMap.put(key, o);					            		
+            		currentValue5Map = valueMap5Fallback;
+            		currentValue10Map = valueMap10Fallback;            		
+            	}
+            	
+            	//System.out.println("Caching:" + key + "=" + o + "(type " + type + ")");
+            	if(type != 10)
+            	{
+	            	synchronized (currentValue5Map) 
+	            	{
+	            		currentValue5Map.put(key, o);					            		
+	            	}
+            	}
+            	if(type == 10)
+            	{
+	            	synchronized (currentValue10Map) 
+	            	{
+	            		currentValue10Map.put(key, o);					            		
+	            	}
             	}
             }
-            if(logger.isInfoEnabled())
-	            t.printElapsedTime("All rows in InfoGlueJDBCPropertySet [" + rows + "] took");
+            logger.warn("All rows in InfoGlueJDBCPropertySet [" + rows + "] took: " + t.getElapsedTime());
 
-            allKeysCached = true;
+            allKeysCachedType5 = true;
+            if(type == 10)
+            	allKeysCachedType10 = true;
             if(isRecacheCall)
             {
-            	//logger.info("Switching valueMap from:" + valueMap.hashCode() + " --> " + currentValueMap.hashCode());
-            	typeMap = currentTypeMap;
-            	valueMap = currentValueMap;
-            	typeMapFallback = new HashMap();
-            	valueMapFallback = new HashMap();
+            	//System.out.println("Switching valueMap from:" + valueMap.hashCode() + " --> " + currentValueMap.hashCode());
+            	type5Map = currentType5Map;
+            	valueMapType5 = currentValue5Map;
+            	typeMap5Fallback = new HashMap();
+            	valueMap5Fallback = new HashMap();
+
+            	type10Map = currentType10Map;
+            	valueMapType10 = currentValue10Map;
+            	typeMap10Fallback = new HashMap();
+            	valueMap10Fallback = new HashMap();
             }
             
             rs.close();
@@ -331,17 +429,22 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
         {
         	logger.error("Problem getting keys due to an SQL exception:" + e.getCause().getMessage(), e);
             throw new PropertyException(e.getMessage());
-        } 
+        }
         catch (Throwable tr) 
         {
-        	tr.printStackTrace();
-        	throw new PropertyException(tr.getMessage());
+        	logger.error("Problem getting keys:" + tr.getMessage(), tr);
+            throw new PropertyException(tr.getMessage());
+        }
+        /*
+        catch (UnsupportedEncodingException ue) 
+        {
+            throw new PropertyException(ue.getMessage());
         } 
+        */
         finally 
         {
             closeConnection(conn);
             isRecacheCall = false;
-            //t.printElapsedTime("getKeys took");
         }
     }
     
@@ -349,11 +452,22 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
     {
         Connection conn = null;
         
-		if(enableCache && typeMap != null)
+		if(enableCache && type5Map != null)
         {
-	    	synchronized (typeMap) 
+	    	synchronized (type5Map) 
 	    	{
-		        Integer typeInteger = (Integer)typeMap.get(key);
+		        Integer typeInteger = (Integer)type5Map.get(key);
+		        if(typeInteger != null)
+		        {
+		        	return typeInteger.intValue();
+		        }
+	        }
+    	} 
+		if(enableCache && type10Map != null)
+        {
+	    	synchronized (type10Map) 
+	    	{
+		        Integer typeInteger = (Integer)type10Map.get(key);
 		        if(typeInteger != null)
 		        {
 		        	return typeInteger.intValue();
@@ -363,8 +477,10 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
     	
         try 
         {
-        	conn = getConnection();
-
+            conn = getConnection();
+            
+            //System.out.println("globalKey:" + globalKey);
+            //System.out.println("key:" + key);
             String sql = "SELECT " + colItemType + " FROM " + tableName + " WHERE " + colGlobalKey + " = ? AND " + colItemKey + " = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, globalKey);
@@ -401,7 +517,7 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
     public void init(Map config, Map args) 
     {
     	reloadConfiguration = false;
-    	
+
         // args
         globalKey = (String) args.get("globalKey");
         
@@ -414,7 +530,7 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
         colData = (String) config.get("col.data");
         colFloat = (String) config.get("col.float");
         colNumber = (String) config.get("col.number");
-        
+
         this.userName = (String) config.get("username");
         this.password = (String) config.get("password");
         this.driverClassName = (String) config.get("driverClassName");
@@ -448,7 +564,7 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
     
     public void remove(String key) throws PropertyException 
     {
-    	Connection conn = null;
+        Connection conn = null;
 
         try 
         {
@@ -461,10 +577,15 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
             ps.executeUpdate();
             ps.close();
             
-            if(valueMap != null)
-            	valueMap.remove(key);
-            if(typeMap != null)
-            	typeMap.remove(key);
+            if(valueMapType5 != null)
+            	valueMapType5.remove(key);
+            if(type5Map != null)
+            	type5Map.remove(key);
+
+            if(valueMapType10 != null)
+            	valueMapType10.remove(key);
+            if(type10Map != null)
+            	type10Map.remove(key);
         } 
         catch (SQLException e) 
         {
@@ -498,11 +619,10 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
     				e1.printStackTrace();
     			}
             }
-            
-        	conn = getConnection();
+        	
+            conn = getConnection();
 
             String sql = "UPDATE " + tableName + " SET " + colString + " = ?, " + colDate + " = ?, " + colData + " = ?, " + colFloat + " = ?, " + colNumber + " = ?, " + colItemType + " = ? " + " WHERE " + colGlobalKey + " = ? AND " + colItemKey + " = ?";
-            //logger.info("SQL:" + sql);
             PreparedStatement ps = conn.prepareStatement(sql);
             setValues(ps, type, key, value);
 
@@ -541,28 +661,100 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
     {	    	
     	if(key.indexOf("allowedAdminIP") == -1 && key.indexOf("_") == -1 && globalKey.equals("infoglue"))
     	{
-    		//System.out.println("Returning null for key:" + key);
+    		logger.info("Returning null for key:" + key);
     		return null;
     	}
- 
-    	//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("get key: " + key, 1);
-    	//System.out.println("valueMap:" + valueMap);
-    	if(enableCache && valueMap == null && !allKeysCached)
+    	
+    	if(type != 10 && enableCache && valueMapType5 == null && !allKeysCachedType5)
     	{
-    		//logger.info("Caching...");
-            //System.out.println("Caching keys...");
+    		logger.info("Caching as:" + valueMapType5 + ":" + allKeysCachedType5);
+    		this.getKeys();
+    	}
+    	if(type == 10 && enableCache && valueMapType10 == null && !allKeysCachedType10)
+    	{
+    		//System.out.println("Caching...");
     		this.getKeys();
     	}
     	
-    	if(enableCache && valueMap != null)
+    	if(type != 10 && enableCache && valueMapType5 != null)
         {
-    		synchronized (valueMap) 
+	    	synchronized (valueMapType5) 
 	    	{
-	    		Object value = valueMap.get(key);
-	    		if(value == null && !allKeysCached)
+	    		Object value = valueMapType5.get(key);
+    			//System.out.println("value:" + value + ":" + allKeysCachedType5);
+	    		if(value == null && !allKeysCachedType5)
 	    		{
-	    			//if(key.indexOf("error") > -1)
-	    	    	//	logger.info("Should not return... should get value");
+	    		}
+	    		else
+	    		{
+	    			if(value != null && !(value instanceof NullObject))
+			    		return value;
+			    	else if(value instanceof NullObject)
+			    		return null;
+			    	else
+			    	{
+			    		if(key.indexOf("usePasswordEncryption") > -1 ||
+		    			   key.indexOf("ipAddressesToFallbackToBasicAuth") > -1 ||
+		    			   key.indexOf("inputCharacterEncoding") > -1 ||
+		    			   key.indexOf("anonymous.username") > -1 ||
+		    			   key.indexOf("niceURIEncoding") > -1 ||
+		    			   key.indexOf("defaultNumberOfYearsBeforeExpire") > -1 ||
+		    			   key.indexOf("setDerivedLastModifiedInLive") > -1 ||
+		    			   key.indexOf("digitalAssetPath.0") > -1 ||
+		    			   key.indexOf("enableNiceURIInWorking") > -1 ||
+		    			   key.indexOf("useImprovedContentCategorySearch") > -1 ||
+		    			   key.indexOf("useAccessBasedProtocolRedirects") > -1 ||
+		    			   key.indexOf("useHashCodeInCaches") > -1 ||
+		    			   key.indexOf("useSynchronizationOnCaches") > -1 ||
+		    			   key.indexOf("cacheSettings") > -1 ||
+		    			   key.indexOf("digitalAssetPath") > -1 ||
+		    			   key.indexOf("digitalAssetBaseUrl") > -1 ||
+		    			   key.indexOf("anonymous.password") > -1 ||
+		    			   key.indexOf("extranetCookieTimeout") > -1 ||
+		    			   key.indexOf("pageKey") > -1 ||
+		    			   key.indexOf("editOnSite") > -1 ||
+		    			   key.indexOf("decoratedPageInvoker") > -1 ||
+		    			   key.indexOf("internalDeliveryUrls") > -1 ||
+		    			   key.indexOf("mail.smtp.user") > -1 ||
+		    			   key.indexOf("mail.smtp.password") > -1 ||
+		    			   key.indexOf("mail.contentType") > -1 ||
+		    			   key.indexOf("propertiesParser") > -1 ||
+		    			   key.indexOf("componentEditorUrl") > -1 ||
+		    			   key.indexOf("unprotectedProtocolName") > -1 ||
+		    			   key.indexOf("unprotectedProtocolPort") > -1 ||
+		    			   key.indexOf("protectedProtocolName") > -1 ||
+		    			   key.indexOf("protectedProtocolPort") > -1 ||
+		    			   key.indexOf("componentRendererAction") > -1 ||
+		    			   key.indexOf("componentRendererUrl") > -1 ||
+		    			   key.indexOf("encodeValidateUrl") > -1 ||
+		    			   key.indexOf("encodeCasServiceUrl") > -1 ||
+		    			   key.indexOf("helpUrl") > -1 ||
+		    			   key.indexOf("headerHTML") > -1 ||
+		    			   key.indexOf("tree") > -1 ||
+		    			   key.indexOf("authorizerClass") > -1 ||
+    					   key.indexOf("invalidLoginUrl") > -1 ||
+						   key.indexOf("successLoginBaseUrl") > -1 ||
+						   key.indexOf("serverName") > -1 ||
+						   key.indexOf("casRenew") > -1 ||
+						   key.indexOf("casProxyValidateUrl") > -1 ||
+						   key.indexOf("authConstraint") > -1 ||
+		    			   key.indexOf("session.timeout") > -1
+			    			)
+		    			{
+		    				logger.info("Returning null!!!!!!!!!:" + key);
+		    				return null;
+		    			}
+			    	}
+			    }
+		    }
+	    }
+    	if(type == 10 && enableCache && valueMapType10 != null)
+        {
+	    	synchronized (valueMapType10) 
+	    	{
+	    		Object value = valueMapType10.get(key);
+	    		if(value == null && !allKeysCachedType10)
+	    		{
 	    		}
 	    		else
 	    		{
@@ -570,24 +762,60 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
 			    		return value;
 			    	else if(value instanceof NullObject)
 			    		return null;
-			    	/*
-			    	else if(allKeysCached)
-			    		return null;
-	    			*/
-	    		}
+			    }
 		    }
 	    }
 
-		//System.out.println("Getting value for key:" + key + ":" + type);
+    	//System.out.println("Getting value for key:" + key + ":" + type);
+    	/*
+		if(key.equalsIgnoreCase("serverNode_-1_logPath"))
+		{
+	        String sql = "SELECT accessRightId, interceptionPointId from cmAccessRight where interceptionPointId = 6";
+	        Object o = null;
+	        Connection conn = null;
+	        
+	        Timer t = new Timer();
+	        try 
+	        {
+	            conn = getConnection();
 
+	            PreparedStatement ps = conn.prepareStatement(sql);
+
+	            ResultSet rs = ps.executeQuery();
+	            while(rs.next()) 
+	            {
+	            	System.out.print(".");
+	            	rs.getInt("accessRightId");
+	            	//rs.getString("parameters");
+	            	rs.getInt("interceptionPointId");
+	            }
+	            t.printElapsedTime("Done...............");
+	        }
+	        catch (Exception e) 
+	        {
+	        	e.printStackTrace();
+			}
+	        finally 
+	        {
+	            closeConnection(conn);
+	        }
+		}
+		*/
+    	Timer t = new Timer();
+    	
     	if(logger.isInfoEnabled())
     		logger.info("Getting value for key:" + key + ":" + type);
-    	
+
         String sql = "SELECT " + colItemType + ", " + colString + ", " + colDate + ", " + colData + ", " + colFloat + ", " + colNumber + " FROM " + tableName + " WHERE " + colItemKey + " = ? AND " + colGlobalKey + " = ?";
+        if(type == 0 || type == 5)
+        	sql = "SELECT " + colItemType + ", " + colString + ", " + colDate + ", '' AS " + colData + ", " + colFloat + ", " + colNumber + " FROM " + tableName + " WHERE " + colItemKey + " = ? AND " + colGlobalKey + " = ?";
+
         //System.out.println("sql:" + sql);
         //System.out.println("key:" + key);
         //System.out.println("globalKey:" + globalKey);
-        
+
+		//Thread.dumpStack();
+
         Object o = null;
         Connection conn = null;
 
@@ -595,7 +823,7 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
         {
         	//t.printElapsedTime("SQL creation took..");
 
-        	conn = getConnection();
+            conn = getConnection();
 
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, key);
@@ -623,10 +851,48 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
 	                    break;
 	
 	                case PropertySet.DATA:
-	                    o = rs.getBytes(colData);
-	
+	                {
+	                	//Ugly fix for old type of column in oracle which we used to run LONG RAW. We converted to blob and the code is different
+	                	String columnTypeName = rs.getMetaData().getColumnTypeName(4);
+	                	logger.info("columnTypeName: " + columnTypeName); 
+	                	if(this.driverClassName.indexOf("oracle") > -1 && columnTypeName != null && columnTypeName.indexOf("RAW") == -1)
+	                	{
+	                		//System.out.println("Getting as blob");
+	            	        Blob blob = rs.getBlob(colData);
+		                	//System.out.println("blob:" + blob);
+		                	if(blob != null)
+		                	{
+		                		try
+		                		{
+		                			InputStream in = blob.getBinaryStream();
+		                			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		                			byte[] buffer = new byte[(int)blob.length()];
+		                			InputStream is = in;
+	    			                while (is.read(buffer) > 0) {
+	    			                	baos.write(buffer);
+	    			                }
+	    			                baos.flush();
+	    			                String s = baos.toString();
+	    			                //System.out.println("S: " + s + "...");
+	    			                o = s.getBytes();
+		                		}
+		                		catch (Exception e) 
+		                		{
+		                			e.printStackTrace();
+								}
+		                	}
+		                	else
+		                	{
+		                		o = null;
+		                	}
+	                	}
+	                	else
+	                	{
+	                		o = rs.getBytes(colData);
+	                	}
+						
 	                    break;
-	
+	                }
 	                case PropertySet.DATE:
 	                    o = rs.getTimestamp(colDate);
 	
@@ -659,6 +925,11 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
 
             rs.close();
             ps.close();
+
+    		//if(key.indexOf("error") > -1)
+    		//	System.out.println("o1:" + o);	
+            
+            //t.printElapsedTime("Read took + " + type + "=" + o);
         } 
         catch (SQLException e) 
         {
@@ -670,31 +941,55 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
         	logger.error("Problem getting property from database:" + e.getMessage());
         	throw new PropertyException(e.getMessage());
         }
+        /*
+        catch (UnsupportedEncodingException ue) 
+        {
+        	throw new PropertyException(ue.getMessage());
+        }
+        */
         finally 
         {
             closeConnection(conn);
         }
         
-        //long elapsedTime = t.getElapsedTime();
-        //System.out.println("get took:" + elapsedTime);
-        //RequestAnalyser.getRequestAnalyser().registerComponentStatistics("InfoGlueJDBCPropertySet.get()", elapsedTime);
-		if(valueMap == null)
-			valueMap = new HashMap();
-
-    	synchronized (valueMap) 
-    	{
-    		if(o != null)
-    			valueMap.put(key, o);  		
-    		else
-    			valueMap.put(key, new NullObject());  		    			
-    	}
+		if(type != 10 && valueMapType5 == null)
+			valueMapType5 = new HashMap();
+		if(type == 10 && valueMapType10 == null)
+			valueMapType10 = new HashMap();
+		
+		if(type != 10)
+		{
+	    	synchronized (valueMapType5) 
+	    	{
+	    		if(o != null)
+	    			valueMapType5.put(key, o);  		
+	    		else
+	    			valueMapType5.put(key, new NullObject());  		    			
+	    	}
+		}
+		if(type == 10)
+		{
+	    	synchronized (valueMapType10) 
+	    	{
+	    		if(o != null)
+	    			valueMapType10.put(key, o);  		
+	    		else
+	    			valueMapType10.put(key, new NullObject());  		    			
+	    	}
+		}
+		
+    	//if(key.indexOf("error") > -1)
+    	//	System.out.println("o:" + o);
 
         return o;
     }
 
     private void setValues(PreparedStatement ps, int type, String key, Object value) throws SQLException, PropertyException 
     {
-    	//Timer t = new Timer();
+    	//System.out.println("key:" + key);
+    	//if(!key.equalsIgnoreCase("serverNode_-1_shortcuts"))
+    	//	return;
+    	
         // Patched by Edson Richter for MS SQL Server JDBC Support!
         String driverName;
 
@@ -727,6 +1022,8 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
         ps.setString(7, globalKey);
         ps.setString(8, key);
 
+        //System.out.println(type);
+        
         switch (type) {
         case PropertySet.BOOLEAN:
 
@@ -736,12 +1033,21 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
             break;
 
         case PropertySet.DATA:
-
-            Data data = (Data) value;
-            ps.setBytes(3, data.getBytes());
-
-            break;
-
+        {
+        	Data data = (Data) value;
+        	ps.setBytes(3, data.getBytes());
+        	/*
+        	if(CmsPropertyHandler.getDatabaseEngine().equalsIgnoreCase("oracle"))
+        	{
+        		ps.setBinaryStream(3,new ByteArrayInputStream(data.getBytes()),data.getBytes().length);
+        	}
+        	else
+        	{
+	            ps.setBytes(3, data.getBytes());
+        	}
+        	*/
+        	break;
+        }
         case PropertySet.DATE:
 
             Date date = (Date) value;
@@ -771,23 +1077,33 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
             break;
 
         case PropertySet.STRING:
-        	ps.setString(1, (String) value);
-            
+            ps.setString(1, (String) value);
+
             break;
 
         default:
             throw new PropertyException("This type isn't supported!");
         }
         
-        if(valueMap == null)
-        	valueMap = new HashMap();
-        if(typeMap == null)
-        	typeMap = new HashMap();
-        
-        valueMap.put(key, value);
-        typeMap.put(key, new Integer(type));
-        
-        //t.printElapsedTime("setValues");
+        if(type != 10 && valueMapType5 == null)
+			valueMapType5 = new HashMap();
+        if(type != 10 && type5Map == null)
+        	type5Map = new HashMap();
+		if(type == 10 && valueMapType10 == null)
+			valueMapType10 = new HashMap();
+		if(type == 10 && type10Map == null)
+			type10Map = new HashMap();
+		
+		if(type != 10)
+		{
+	        valueMapType5.put(key, value);
+	        type5Map.put(key, new Integer(type));
+		}
+		if(type == 10)
+		{
+			valueMapType10.put(key, value);
+	        type10Map.put(key, new Integer(type));
+		}
     }
 
     private static long lastErrorCheck = -1;
@@ -910,12 +1226,18 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
 
         connectionPool = new GenericObjectPool(null, dbcpMaxActiveInt);
         connectionPool.setTestOnBorrow(false);
+        //connectionPool.setTestOnReturn(true);
         connectionPool.setTestWhileIdle(true);
         connectionPool.setTimeBetweenEvictionRunsMillis(10000);
-        
-        connectionFactory = new DriverManagerConnectionFactory(connectURI, userName, password);
-        poolableConnectionFactory = new PoolableConnectionFactory(connectionFactory,connectionPool,null,validationQuery,false,true);
 
+		Properties properties = new Properties();
+		properties.put("user", userName);
+		properties.put("password", password);
+		properties.put("defaultRowPrefetch","1000");
+
+        connectionFactory = new DriverManagerConnectionFactory(connectURI, properties /*userName, password*/);
+        poolableConnectionFactory = new PoolableConnectionFactory(connectionFactory,connectionPool,null,validationQuery,false,true);
+        
         poolableConnectionFactory.getPool().addObject();
 
         Class.forName("org.apache.commons.dbcp.PoolingDriver");
@@ -928,7 +1250,7 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
     {
         PoolingDriver driver = (PoolingDriver) DriverManager.getDriver("jdbc:apache:commons:dbcp:");
         ObjectPool connectionPool = driver.getConnectionPool("infoGlueJDBCPropertySet");
-
+        
         //System.out.println("NumActive: " + connectionPool.getNumActive());
         //System.out.println("NumIdle: " + connectionPool.getNumIdle());
 
@@ -957,33 +1279,50 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
     		e.printStackTrace();
     	}
 		*/
-		//logger.info("Setting to null:" + valueMap.hashCode());	
+		//System.out.println("Setting to null:" + valueMap.hashCode());	
 
-    	if(valueMap != null)
+    	if(valueMapType5 != null)
         {
-	    	synchronized (valueMap) 
+	    	synchronized (valueMapType5) 
 	    	{
-	    		valueMap = null;	
+	    		valueMapType5 = null;	
 			}
         }
-        if(typeMap != null)
+        if(type5Map != null)
         {
-	    	synchronized (typeMap) 
+	    	synchronized (type5Map) 
 	    	{
-	    		typeMap = null;
+	    		type5Map = null;
 			}
-        }    	
+        }   
         
-        instance.allKeysCached = false;
+        if(valueMapType10 != null)
+        {
+	    	synchronized (valueMapType5) 
+	    	{
+	    		valueMapType5 = null;	
+			}
+        }
+        if(type10Map != null)
+        {
+	    	synchronized (type10Map) 
+	    	{
+	    		type10Map = null;
+			}
+        }    
+                
+        instance.allKeysCachedType5 = false;
+        instance.allKeysCachedType10 = false;
     }
 
+    
     public static void reCache()
     {
     	//clearCaches();
     	/*
     	try
     	{
-    		logger.info("Cleared caches - pausing");
+    		System.out.println("Cleared caches - pausing");
     		Thread.sleep(5000);
     	}
     	catch (Exception e) 
@@ -991,10 +1330,10 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
     		e.printStackTrace();
 		}
     	*/
-    	//logger.info("Recaching keys");
+    	//System.out.println("Recaching keys");
     	isRecacheCall = true;
     	instance.getKeys();
-    	//logger.info("Recached keys");
+    	//System.out.println("Recached keys");
     }
 
     public void reloadConfiguration() throws Exception

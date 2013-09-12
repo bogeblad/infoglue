@@ -802,9 +802,13 @@ public class SearchController extends BaseController
 			for(int i=0; i<repositoryId.length; i++)
 				repositoryIdBindingMarkers.append((i>0 ? "," : "") + "$" + (i + 1 + bindIndex));
 			
-			String assetSQL = "CALL SQL SELECT da.digitalAssetId,da.assetFileName,da.assetKey,da.assetFilePath,da.assetContentType,da.assetFileSize FROM cmDigitalAsset da, cmContentVersionDigitalAsset cvda, cmContentVersion cv, cmContent c WHERE cvda.digitalAssetId = da.digitalAssetId AND cvda.contentVersionId = cv.contentVersionId AND cv.contentId = c.contentId " + assetFilterTerm + " AND c.repositoryId IN (" + repositoryIdBindingMarkers + ") ORDER BY da.digitalAssetId desc AS org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl";
-			if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
-				assetSQL = "CALL SQL SELECT da.DigAssetId,da.assetFileName,da.assetKey,da.assetFilePath,da.assetContentType,da.assetFileSize FROM cmDigAsset da, cmContVerDigAsset cvda, cmContVer cv, cmCont c WHERE cvda.DigAssetId = da.DigAssetId AND cvda.contVerId = cv.contVerId AND cv.contId = c.contId  " + assetFilterTerm + " AND c.repositoryId IN (" + repositoryIdBindingMarkers + ") ORDER BY da.DigAssetId desc AS org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl";
+			String assetSQL = "CALL SQL SELECT top " + maxRows + " distinct(da.digitalAssetId),da.assetFileName,da.assetKey,da.assetFilePath,da.assetContentType,da.assetFileSize FROM cmDigitalAsset da, cmContentVersionDigitalAsset cvda, cmContentVersion cv, cmContent c WHERE cvda.digitalAssetId = da.digitalAssetId AND cvda.contentVersionId = cv.contentVersionId AND cv.contentId = c.contentId " + assetFilterTerm + " AND c.repositoryId IN (" + repositoryIdBindingMarkers + ") ORDER BY da.digitalAssetId desc AS org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl";
+			if(CmsPropertyHandler.getDatabaseEngine().equalsIgnoreCase("mysql"))
+			{
+				assetSQL = "CALL SQL SELECT distinct(da.digitalAssetId),da.assetFileName,da.assetKey,da.assetFilePath,da.assetContentType,da.assetFileSize FROM cmDigitalAsset da, cmContentVersionDigitalAsset cvda, cmContentVersion cv, cmContent c WHERE cvda.digitalAssetId = da.digitalAssetId AND cvda.contentVersionId = cv.contentVersionId AND cv.contentId = c.contentId " + assetFilterTerm + " AND c.repositoryId IN (" + repositoryIdBindingMarkers + ") ORDER BY da.digitalAssetId desc LIMIT " + maxRows + " AS org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl";
+			}
+			else if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
+				assetSQL = "CALL SQL SELECT * from (select distinct(da.DigAssetId),da.assetFileName,da.assetKey,da.assetFilePath,da.assetContentType,da.assetFileSize FROM cmDigAsset da, cmContVerDigAsset cvda, cmContVer cv, cmCont c WHERE cvda.DigAssetId = da.DigAssetId AND cvda.contVerId = cv.contVerId AND cv.contId = c.contId  " + assetFilterTerm + " AND c.repositoryId IN (" + repositoryIdBindingMarkers + ") ORDER BY da.DigAssetId desc) where ROWNUM < " + maxRows + " AS org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl";
 			
 			logger.info("assetSQL:" + assetSQL);
 			
@@ -838,6 +842,8 @@ public class SearchController extends BaseController
 
 			assetResults.close();
 			assetOQL.close();
+			
+		    DigitalAssetController.getController().appendContentId(matchingAssets, db);
 			
 			commitTransaction(db);
 		}

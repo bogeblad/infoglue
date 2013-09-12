@@ -1956,7 +1956,10 @@ public class LuceneController extends BaseController implements NotificationList
 		try
 		{
 			SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, contentVersionVO.getSiteNodeId());
-			doc.add(new Field("siteNodeVersionId", "" + siteNodeVersionVO.getId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+			if(siteNodeVersionVO != null)
+				doc.add(new Field("siteNodeVersionId", "" + siteNodeVersionVO.getId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+			else
+				logger.warn("No site node version found on siteNode: " + contentVersionVO.getSiteNodeId());
 		}
 		catch (Exception e) 
 		{

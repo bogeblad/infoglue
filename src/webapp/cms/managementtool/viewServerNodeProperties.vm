@@ -367,6 +367,8 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.skipVersionComment" "skipVersionComment" "$this.getPropertyValue('skipVersionComment')" "$!cmsPH.skipVersionComment")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.allowOverrideModifyer" "allowOverrideModifyer" "$this.getPropertyValue('allowOverrideModifyer')" "$!cmsPH.allowOverrideModifyer")
 
+				#yesNoDropDownWithInheritCSS("ServerNode.property.allowPublicationEventFilter" "allowPublicationEventFilter" "$this.getPropertyValue('allowPublicationEventFilter')" "$!cmsPH.allowPublicationEventFilter")
+
 				#set($option1 = ["inherit", "$ui.getString('tool.common.inherit')"])
 				#set($option2 = ["$ui.getString('entity.ServerNode.property.allPublicationEventFilter.value')", "$ui.getString('entity.ServerNode.property.allPublicationEventFilter.label')"])
 				#set($option3 = ["$ui.getString('entity.ServerNode.property.groupBasedPublicationEventFilter.value')", "$ui.getString('entity.ServerNode.property.groupBasedPublicationEventFilter.label')"])
@@ -432,7 +434,6 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.protectContentTypes" "protectContentTypes" "$this.getPropertyValue('protectContentTypes')" "$!cmsPH.protectContentTypes")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.protectWorkflows" "protectWorkflows" "$this.getPropertyValue('protectWorkflows')" "$!cmsPH.protectWorkflows")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.protectCategories" "protectCategories" "$this.getPropertyValue('protectCategories')" "$!cmsPH.protectCategories")
-				#yesNoDropDownWithInheritCSS("ServerNode.property.allowPublicationEventFilter" "allowPublicationEventFilter" "$this.getPropertyValue('allowPublicationEventFilter')" "$!cmsPH.allowPublicationEventFilter")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.hideProtectedProperties" "hideProtectedProperties" "$this.getPropertyValue('hideProtectedProperties')" "$!cmsPH.hideProtectedProperties")
 					
 				#yesNoDropDownWithInheritCSS("ServerNode.property.protectDeliverWorking" "protectDeliverWorking" "$this.getPropertyValue('protectDeliverWorking')" "$!cmsPH.protectDeliverWorking")

@@ -3820,7 +3820,7 @@ public class ContentVersionController extends BaseController
 		{
 			IndexFriendlyContentVersionImpl contentVersion = (IndexFriendlyContentVersionImpl)results.next();
 			contentVersionVOList.add(contentVersion.getValueObject());
-System.out.print(".");
+			//System.out.print(".");
 			//String versionKey = "" + contentVersion.getValueObject().getContentId() + "_" + contentVersion.getLanguageId() + "_" + stateId + "_contentVersionVO";
         	//CacheController.cacheObjectInAdvancedCache("contentVersionCache", versionKey, contentVersion.getValueObject(), new String[]{CacheController.getPooledString(2, contentVersion.getValueObject().getId()), CacheController.getPooledString(1, contentVersion.getValueObject().getContentId())}, true);
 			//CacheController.cacheObjectInAdvancedCache("contentVersionCache", "" + contentVersion.getId(), contentVersion.getValueObject(), new String[]{CacheController.getPooledString(2, contentVersion.getValueObject().getId()), CacheController.getPooledString(1,  contentVersion.getValueObject().getContentId())}, true);

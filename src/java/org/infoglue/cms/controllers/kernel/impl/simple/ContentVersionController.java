@@ -3702,11 +3702,11 @@ public class ContentVersionController extends BaseController
    		StringBuffer SQL = new StringBuffer();
     	if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
     	{
-    		SQL.append("CALL SQL select cv.contVerId, cv.stateId, cv.modifiedDateTime, cv.verComment, cv.isCheckedOut, cv.isActive, cv.contId, cv.languageId, cv.versionModifier, cv.verValue, (select count(*) from cmContVerDigitalAsset cvda where cvda.contVerId = cv.contVerId) AS assetCount ");
+    		SQL.append("CALL SQL select cv.contVerId, cv.stateId, cv.modifiedDateTime, cv.verComment, cv.isCheckedOut, cv.isActive, cv.contId, cv.languageId, cv.versionModifier, cv.verValue, (select count(*) from cmContVerDigAsset cvda where cvda.contVerId = cv.contVerId) AS assetCount ");
     		if(includeSiteNode)
         		SQL.append(", (select sn.siNoId from cmSiNo sn where sn.metaInfoContentId = c.contId) AS siNoId, (select sn.name from cmSiNo sn where sn.metaInfoContentId = c.contId) AS siteNodeName ");
     		else
-        		SQL.append(", -1 as siteNodeId, '' as siteNodeName ");
+        		SQL.append(", -1 as siNoId, '' as siteNodeName ");
     		SQL.append(" from cmCont c, cmContVer cv ");
     		SQL.append("WHERE "); 
     		SQL.append("c.isDeleted = $1 AND  ");
@@ -3743,8 +3743,9 @@ public class ContentVersionController extends BaseController
 				SQL.append(" AND cv.contVerId > $" + index + "");
     			index++;
 			}
+			SQL.append(" AND rownum<=$" + index + " ");
 			
-    		SQL.append(" order by cv.contVerId " + (ascendingOrder ? "" : "DESC") + " limit $" + index + " AS org.infoglue.cms.entities.content.impl.simple.IndexFriendlyContentVersionImpl");
+    		SQL.append(" order by cv.contVerId " + (ascendingOrder ? "" : "DESC") + " AS org.infoglue.cms.entities.content.impl.simple.IndexFriendlyContentVersionImpl");
 	   	}
     	else
     	{
@@ -3792,7 +3793,8 @@ public class ContentVersionController extends BaseController
 			
     		SQL.append(" order by cv.contentVersionId " + (ascendingOrder ? "" : "DESC") + " limit $" + index + " AS org.infoglue.cms.entities.content.impl.simple.IndexFriendlyContentVersionImpl");
        	}
-
+    	
+    	//logger.info("SQL 2:" + SQL);
     	//logger.info("SQL:" + SQL);
     	//logger.info("parentSiteNodeId:" + parentSiteNodeId);
     	//logger.info("showDeletedItems:" + showDeletedItems);
@@ -3809,14 +3811,16 @@ public class ContentVersionController extends BaseController
 			oql.bind(languageId);
 		if(lastContentVersionId != null && lastContentVersionId > 0)
     		oql.bind(lastContentVersionId);
-		oql.bind(limit);
+		
+		//if(CmsPropertyHandler.getUseShortTableNames() == null || !CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
+			oql.bind(limit);
 		
 		QueryResults results = oql.execute(Database.ReadOnly);
 		while (results.hasMore()) 
 		{
 			IndexFriendlyContentVersionImpl contentVersion = (IndexFriendlyContentVersionImpl)results.next();
 			contentVersionVOList.add(contentVersion.getValueObject());
-
+System.out.print(".");
 			//String versionKey = "" + contentVersion.getValueObject().getContentId() + "_" + contentVersion.getLanguageId() + "_" + stateId + "_contentVersionVO";
         	//CacheController.cacheObjectInAdvancedCache("contentVersionCache", versionKey, contentVersion.getValueObject(), new String[]{CacheController.getPooledString(2, contentVersion.getValueObject().getId()), CacheController.getPooledString(1, contentVersion.getValueObject().getContentId())}, true);
 			//CacheController.cacheObjectInAdvancedCache("contentVersionCache", "" + contentVersion.getId(), contentVersion.getValueObject(), new String[]{CacheController.getPooledString(2, contentVersion.getValueObject().getId()), CacheController.getPooledString(1,  contentVersion.getValueObject().getContentId())}, true);

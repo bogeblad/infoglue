@@ -146,6 +146,8 @@ public class LuceneController extends BaseController implements NotificationList
 	private Directory getDirectory() throws Exception
 	{
 		String index = CmsPropertyHandler.getContextRootPath() + File.separator + "lucene" + File.separator + "index";
+		index = index.replaceAll("//", "/");
+		//System.out.println("index:" + index);
     	File INDEX_DIR = new File(index);
 		Directory directory = new NIOFSDirectory(INDEX_DIR);
 		boolean indexExists = IndexReader.indexExists(directory);
@@ -616,7 +618,7 @@ public class LuceneController extends BaseController implements NotificationList
 		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 		
 		stopIndexing.set(false);
-		logger.info("------------------------------Got indexAll directive....");
+		logger.warn("------------------------------Got indexAll directive....");
 		if (indexingInitialized.compareAndSet(false, true)) 
 		{
 			//createTestIndex();
@@ -630,7 +632,7 @@ public class LuceneController extends BaseController implements NotificationList
 				Timer t2 = new Timer();
 		
 				//Indexing all normal contents now
-				logger.info("Indexing all normal contents....");
+				logger.warn("Indexing all normal contents....");
 				List<LanguageVO> languageVOList = LanguageController.getController().getLanguageVOList();
 				Iterator<LanguageVO> languageVOListIterator = languageVOList.iterator();
 				
@@ -644,7 +646,7 @@ public class LuceneController extends BaseController implements NotificationList
 					if(previousIndexAllLastContentVersionId != null)
 						startID = previousIndexAllLastContentVersionId;
 					
-					logger.info("Starting from " + startID);
+					logger.warn("Starting from " + startID);
 					int newLastContentVersionId = getContentNotificationMessages(languageVO, startID);
 					logger.info("newLastContentVersionId: " + newLastContentVersionId + " on " + languageVO.getName());
 					
@@ -712,6 +714,7 @@ public class LuceneController extends BaseController implements NotificationList
 			}
 			catch (Exception e) 
 			{
+				e.printStackTrace();
 				//logger.error("Error indexing notifications:" + e.getMessage());
 				logger.warn("Error indexing notifications:" + e.getMessage(), e);
 			}
@@ -1359,7 +1362,7 @@ public class LuceneController extends BaseController implements NotificationList
 			{
 				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(null, contentTypeDefinitionVO.getId(), languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), lastContentVersionId, numberOfVersionToIndexInBatch, true, db, false);				
 			}
-			
+
 			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Index all : getContentVersionVOList", t.getElapsedTime());
 
 			logger.info("versions in getContentNotificationMessages:" + versions.size());
@@ -1412,8 +1415,11 @@ public class LuceneController extends BaseController implements NotificationList
 		}
 		catch ( Exception e )
 		{
+			e.printStackTrace();
+			System.out.println("Context:" + CmsPropertyHandler.getContextRootPath());
+			logger.error("Error in lucene indexing: " + e.getMessage(), e);
 			rollbackTransaction(db);
-			throw new SystemException("An error occurred when we tried to fetch a list of users in this role. Reason:" + e.getMessage(), e);			
+			throw new SystemException("An error occurred when we tried to getContentNotificationMessages. Reason:" + e.getMessage(), e);			
 		}
 		finally
 		{

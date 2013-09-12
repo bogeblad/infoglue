@@ -771,19 +771,19 @@
       <sql name="path" type="varchar" dirty="check" />
     </field>
         <field name="bindingTypeId" type="java.lang.Integer">
-      <sql name="bindingTypeId" type="integer" dirty="check" />
+      <sql name="BindTypeId" type="integer" dirty="check" />
     </field>
         <field name="bindingQualifyers" type="org.infoglue.cms.entities.structure.impl.simple.SmallQualifyerImpl" lazy="false" collection="collection">
-      <sql many-key="serviceBindingId"/>
+      <sql many-key="ServBindId"/>
     </field>
         <field name="siteNodeVersionId" type="java.lang.Integer">
       <sql name="SiNoVerId" type="integer" dirty="check" />
     </field>
         <field name="availableServiceBinding" type="org.infoglue.cms.entities.management.impl.simple.AvailableServiceBindingImpl">
-      <sql name="availableServiceBindingId"/>
+      <sql name="AvailServBindId"/>
     </field>
         <field name="serviceDefinition" type="org.infoglue.cms.entities.management.impl.simple.ServiceDefinitionImpl">
-      <sql name="serviceDefinitionId"/>
+      <sql name="ServDefId"/>
     </field>
     </class>
     
@@ -828,7 +828,7 @@
       <sql name="sortOrder" type="integer" dirty="check" />
     </field>
     <field name="serviceBinding" type="org.infoglue.cms.entities.structure.impl.simple.SmallServiceBindingImpl" lazy="true">
-      <sql name="serviceBindingId"/>
+      <sql name="ServBindId"/>
     </field>
   </class>
   

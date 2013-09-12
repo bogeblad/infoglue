@@ -1303,7 +1303,7 @@
       <sql name="isActive" type="integer" dirty="check" />
     </field>
 	<field name="contentId" type="java.lang.Integer">
-      <sql name="contentId" type="integer" dirty="ignore"/>
+      <sql name="contId" type="integer" dirty="ignore"/>
     </field>
     <field name="languageId" type="java.lang.Integer">
       <sql name="languageId"/>
@@ -1312,13 +1312,13 @@
       <sql name="versionModifier" type="varchar" dirty="check" />
     </field>
     <field name="versionValue" type="java.lang.String">
-      <sql name="versionValue" type="varchar" dirty="check" />
+      <sql name="verValue" type="varchar" dirty="check" />
     </field>
     <field name="assetCount" type="java.lang.Integer">
       <sql name="assetCount" type="integer" dirty="ignore"/>
     </field>
     <field name="siteNodeId" type="java.lang.Integer">
-      <sql name="siteNodeId" type="integer" dirty="ignore"/>
+      <sql name="siNoId" type="integer" dirty="ignore"/>
     </field>
     <field name="siteNodeName" type="java.lang.String">
       <sql name="siteNodeName" type="varchar" dirty="ignore" />

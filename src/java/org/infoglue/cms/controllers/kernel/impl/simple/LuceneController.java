@@ -1252,7 +1252,7 @@ public class LuceneController extends BaseController implements NotificationList
 			int newLastContentVersionId = getNotificationMessages(notificationMessages, languageVO, lastCommitedContentVersionId, lastCommitedDateTime, 1000);
 			while(newLastContentVersionId != -1)
 			{
-				Thread.sleep(1000);
+				Thread.sleep(5000);
 				
 				if(stopIndexing.get())
 					break outer;

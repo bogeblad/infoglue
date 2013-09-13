@@ -525,10 +525,12 @@ public class ViewPageFilter implements Filter
         		String dnsName = repositoryVO.getDnsName();
         		String serverName = request.getServerName();
         		int startIndex = dnsName.indexOf(serverName);
+        		int lastStartIndex = -1;
         		if(startIndex > -1)
         		{
-        			while(startIndex > -1)
+        			while(startIndex > -1 && lastStartIndex != startIndex)
         			{
+        				lastStartIndex = startIndex;
         				String domain = null;
         				int endIndex = dnsName.indexOf(",", startIndex);
         				if(endIndex > -1)

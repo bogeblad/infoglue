@@ -1232,6 +1232,9 @@ public class LuceneController extends BaseController implements NotificationList
 
 	public boolean indexIncremental(Integer lastCommitedContentVersionId, Date lastCommitedDateTime) throws Exception
 	{
+		if(true)
+			return false;
+		
 		if(!CmsPropertyHandler.getInternalSearchEngine().equalsIgnoreCase("lucene"))
 			return false;
 

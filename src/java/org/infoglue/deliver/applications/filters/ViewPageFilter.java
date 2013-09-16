@@ -114,11 +114,32 @@ public class ViewPageFilter implements Filter
 
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException 
     {       
+    	
         Timer t = new Timer();
 
         long end, start = System.currentTimeMillis();
         HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
+        /*
+        Enumeration enAttr = httpRequest.getAttributeNames(); 
+        while(enAttr.hasMoreElements()){
+         String attributeName = (String)enAttr.nextElement();
+         System.out.println("Attribute Name - "+attributeName+", Value - "+(httpRequest.getAttribute(attributeName)).toString());
+        }
+
+        System.out.println("To out-put All the request parameters received from request - ");
+
+        Enumeration enParams = httpRequest.getParameterNames(); 
+        while(enParams.hasMoreElements()){
+         String paramName = (String)enParams.nextElement();
+         System.out.println("Attribute Name - "+paramName+", Value - "+httpRequest.getParameter(paramName));
+        }
+
+        Enumeration headerNames = httpRequest.getHeaderNames();
+        while(headerNames.hasMoreElements()) {
+          String headerName = (String)headerNames.nextElement();
+          System.out.println(headerName + " = " + httpRequest.getHeader(headerName));
+        }*/
         
         if(httpRequest.getParameter("igEncodingTest") != null && !httpRequest.getParameter("igEncodingTest").equals(""))
         	logger.warn("httpRequest:" + httpRequest.getParameter("name"));

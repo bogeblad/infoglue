@@ -356,7 +356,7 @@ public class HttpHelper implements IOFetcher
 	    connection.setConnectTimeout(timeout);
 	    connection.setReadTimeout(timeout);
 	    connection.setUseCaches(false);
-	    
+	    	    
 	    Iterator mapIterator = requestProperties.keySet().iterator();
 	    while(mapIterator.hasNext())
 	    {

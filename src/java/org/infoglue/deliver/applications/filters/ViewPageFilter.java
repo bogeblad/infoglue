@@ -120,6 +120,7 @@ public class ViewPageFilter implements Filter
         long end, start = System.currentTimeMillis();
         HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
+        
         /*
         Enumeration enAttr = httpRequest.getAttributeNames(); 
         while(enAttr.hasMoreElements()){
@@ -139,7 +140,8 @@ public class ViewPageFilter implements Filter
         while(headerNames.hasMoreElements()) {
           String headerName = (String)headerNames.nextElement();
           System.out.println(headerName + " = " + httpRequest.getHeader(headerName));
-        }*/
+        }
+        */
         
         if(httpRequest.getParameter("igEncodingTest") != null && !httpRequest.getParameter("igEncodingTest").equals(""))
         	logger.warn("httpRequest:" + httpRequest.getParameter("name"));

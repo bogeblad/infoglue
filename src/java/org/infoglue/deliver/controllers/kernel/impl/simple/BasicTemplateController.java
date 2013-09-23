@@ -6735,7 +6735,7 @@ public class BasicTemplateController implements TemplateController
         String key = "" + siteNodeId + "_" + escapeHTML + "_" + hideUnauthorizedPages + "_" + levelsToPopulate + "_" + showHidden + "_" + nameFilter + "_" + this.getLanguageId();
 		logger.info("key in getChildSiteNodes:" + key);
 		List<WebPage> childPages = (List<WebPage>)CacheController.getCachedObjectFromAdvancedCache("childPagesCache", key);
-		
+		logger.info("childPages:" + childPages);
 		if(childPages == null)
 		{
 			try
@@ -6748,8 +6748,10 @@ public class BasicTemplateController implements TemplateController
 				//if(logger.isInfoEnabled())
 					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildPages.getPages(micro)", t.getElapsedTimeNanos() / 1000);
 					
+				/*
 				if(CmsPropertyHandler.getOperatingMode().equals("3"))
 					CacheController.cacheObjectInAdvancedCache("childPagesCache", key, childPages, new String[] {CacheController.getPooledString(3, siteNodeId)}, true);
+				*/
 			}
 			catch(Exception e)
 			{

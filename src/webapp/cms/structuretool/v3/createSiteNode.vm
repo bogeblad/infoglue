@@ -105,7 +105,7 @@
 			<div id="basicTab" class="inlineTabDiv">
 				<p>#editTextField("SiteNode.name" "name" $!name "30" "normaltextfield" "")</p>
 				
-				<div style="float: left; max-width: 50%;">
+				<div style="float: left; max-width: 70%;">
 					<p><b>Meta fields</b></p>
 					#foreach($attribute in $specialMetaAttributes)
 

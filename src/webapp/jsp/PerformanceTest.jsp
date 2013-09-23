@@ -21,7 +21,7 @@
 <%@page import="org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController"%>
 <%@page import="org.infoglue.cms.entities.content.*"%>
 <%@page import="org.infoglue.cms.entities.management.*"%>
-<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <html>
 <head>

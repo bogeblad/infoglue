@@ -201,6 +201,7 @@ pageContext.setAttribute("stacktrace", sb.toString());
 		<tr>
 			<td><img src="<%= request.getContextPath() %>/css/images/trans.gif" width="20" height="1"></td>
 			<td>
+				<p style="width:95%;">
 				<%
 					String redirectSuggestion = (String)request.getAttribute(RedirectController.REDIRECT_SUGGESTION);
 					if (redirectSuggestion != null) {
@@ -208,17 +209,21 @@ pageContext.setAttribute("stacktrace", sb.toString());
 				%>
 					There is no page at this address.<br/>
 					There used to be one. It has been moved to:<br/><br/>
-					<a href="<%= redirectSuggestion %>"><%=redirectName %></a>
+					<a href="<%= redirectSuggestion %>" style="word-wrap: break-word;"><%=redirectName %></a>
 
 					<!--
 					<%
 						java.util.List<String> redirectRules = (java.util.List<String>)request.getAttribute(RedirectController.SITE_NODE_REDIRECT_URLS);
-						for (String redirectRule : redirectRules)
+						if (redirectRules != null)
 						{
-							out.print(redirectRule + "\n");
+							for (String redirectRule : redirectRules)
+							{
+								out.print(redirectRule + "\n");
+							}
 						}
 					%>
 					 -->
+				</p>
 				<% } else { %>
 					Page not Found or an error occurred. Either way we could not serve your request.<br/><br/>
 					System message: <c:out value="${requestScope.error.message}"/><br/><br/>

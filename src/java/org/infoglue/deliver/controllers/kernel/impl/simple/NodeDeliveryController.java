@@ -273,7 +273,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 			oql.bind(new Boolean(true));
 			oql.bind(getOperatingMode());
 			
-	    	QueryResults results = oql.execute(Database.ReadOnly);
+	    	QueryResults results = oql.execute(Database.READONLY);
 
 			if (results.hasMore()) 
 	        {
@@ -528,7 +528,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 			oql.bind(getOperatingMode());
 			oql.bind(true);
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			
 			if (results.hasMore()) 
 		    {
@@ -572,7 +572,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 			oql.bind(getOperatingMode());
 			oql.bind(true);
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			
 			if (results.hasMore()) 
 		    {
@@ -2387,7 +2387,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 		OQLQuery oql = db.getOQLQuery( "SELECT c FROM org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl c WHERE is_undefined(c.parentSiteNode) AND c.repository.name = $1");
 		oql.bind(repositoryName);
 		
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 
 		if (results.hasMore()) 
         {
@@ -2439,7 +2439,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 			OQLQuery oql = db.getOQLQuery( "SELECT c FROM org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl c WHERE is_undefined(c.parentSiteNode) AND c.repositoryId = $1");
 			oql.bind(repositoryId);
 			
-	    	QueryResults results = oql.execute(Database.ReadOnly);
+	    	QueryResults results = oql.execute(Database.READONLY);
 			
 	    	if (results.hasMore()) 
 	        {
@@ -2719,7 +2719,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 			oql.bind(true);
 			oql.bind(getOperatingMode());
 	    	
-	    	QueryResults results = oql.execute(Database.ReadOnly);
+	    	QueryResults results = oql.execute(Database.READONLY);
 	    	t.printElapsedTime("Query took");
 	    	//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildSiteNodes part 1", t.getElapsedTime());
 	    	
@@ -2939,7 +2939,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 				if(nameFilter != null && !nameFilter.equals(""))
 					oql.bind(nameFilter);
 		    	
-		    	QueryResults results = oql.execute(Database.ReadOnly);
+		    	QueryResults results = oql.execute(Database.READONLY);
 		    	//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildSiteNodes part 1", t.getElapsedTime());
 		    	
 				while (results.hasMore()) 
@@ -3047,7 +3047,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 			oql.bind(getOperatingMode());
 			oql.bind(name);
 	    	
-	    	QueryResults results = oql.execute(Database.ReadOnly);
+	    	QueryResults results = oql.execute(Database.READONLY);
 	    	//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildSiteNodes part 1", t.getElapsedTime());
 	    	
 			while (results.hasMore()) 
@@ -3098,7 +3098,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 		OQLQuery oql = db.getOQLQuery( "SELECT q FROM org.infoglue.cms.entities.structure.impl.simple.QualifyerImpl q WHERE q.serviceBinding.serviceBindingId = $1 ORDER BY q.sortOrder");
 		oql.bind(serviceBindingId);
 		
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		while(results.hasMore()) 
         {
         	Qualifyer qualifyer = (Qualifyer)results.next();

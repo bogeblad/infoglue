@@ -201,7 +201,7 @@ public class EventController extends BaseController
 			oql.bind(entityClass);
 			oql.bind(entityId);
 
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 
 			while (results.hasMore())
 			{
@@ -257,7 +257,7 @@ public class EventController extends BaseController
         	oql.bind(1000);
         	
         	//logger.info("Fetching entity in read/write mode" + repositoryId);
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
         	
 			while (results.hasMore()) 
             {

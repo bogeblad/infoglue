@@ -135,7 +135,7 @@ public class SiteNodeVersionController extends BaseController
 		oql.bind(minimumId);
 		oql.bind(limit);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		while (results.hasMore()) 
         {
 			SiteNodeVersion siteNodeVersion = (SiteNodeVersion)results.next();
@@ -267,7 +267,7 @@ public class SiteNodeVersionController extends BaseController
     		oql.bind(entityId.toString());
     	}
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		while (results.hasMore()) 
         {
 			GeneralOQLResult resultBean = (GeneralOQLResult)results.next();
@@ -715,7 +715,7 @@ public class SiteNodeVersionController extends BaseController
 		oql.bind(siteNodeId);
 		oql.bind(new Boolean(true));
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		
 		if (results.hasMore()) 
 	    {
@@ -752,7 +752,7 @@ public class SiteNodeVersionController extends BaseController
 			    OQLQuery oql = db.getOQLQuery( "SELECT cv FROM org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeVersionImpl cv WHERE cv.siteNodeId = $1 ORDER BY cv.siteNodeVersionId desc");
 				oql.bind(siteNodeId);
 				
-				QueryResults results = oql.execute(Database.ReadOnly);
+				QueryResults results = oql.execute(Database.READONLY);
 				
 				if (results.hasMore()) 
 			    {
@@ -803,7 +803,7 @@ public class SiteNodeVersionController extends BaseController
 		    OQLQuery oql = db.getOQLQuery( "SELECT cv FROM org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeVersionImpl cv WHERE cv.siteNodeId = $1 ORDER BY cv.siteNodeVersionId desc");
 			oql.bind(siteNodeId);
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			
 			if (results.hasMore()) 
 		    {
@@ -848,7 +848,7 @@ public class SiteNodeVersionController extends BaseController
 			oql.bind(siteNodeId);
 			oql.bind(new Boolean(true));
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			
 			if (results.hasMore()) 
 		    {
@@ -888,7 +888,7 @@ public class SiteNodeVersionController extends BaseController
 		oql.bind(new Boolean(true));
 		oql.bind(stateId);
 
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 
 		if (results.hasMore()) 
 	    {
@@ -927,7 +927,7 @@ public class SiteNodeVersionController extends BaseController
         	
 			QueryResults results = null;
 			if(ReadOnly)
-			    results = oql.execute(Database.ReadOnly);
+			    results = oql.execute(Database.READONLY);
 			else
 			{
 				this.logger.info("Fetching entity in read/write mode");
@@ -969,7 +969,7 @@ public class SiteNodeVersionController extends BaseController
         	
 			QueryResults results = null;
 			if(ReadOnly)
-			    results = oql.execute(Database.ReadOnly);
+			    results = oql.execute(Database.READONLY);
 			else
 			{
 				this.logger.info("Fetching entity in read/write mode");
@@ -1101,7 +1101,7 @@ public class SiteNodeVersionController extends BaseController
             OQLQuery oql = db.getOQLQuery( "SELECT cv FROM org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl cv WHERE cv.owningSiteNode.siteNodeId = $1");
         	oql.bind(siteNodeId);
         	
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
 			
 			while (results.hasMore()) 
             {
@@ -1273,7 +1273,7 @@ public class SiteNodeVersionController extends BaseController
 		
     	QueryResults results = null;
 		if(ReadOnly)
-			results = oql.execute(Database.ReadOnly);
+			results = oql.execute(Database.READONLY);
 		else
 			results = oql.execute();
 			
@@ -1376,7 +1376,7 @@ public class SiteNodeVersionController extends BaseController
     	oql.bind(SiteNodeVersionVO.PUBLISHED_STATE);
     	oql.bind(true);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 
 		if (results.hasMore()) 
         {
@@ -1412,7 +1412,7 @@ public class SiteNodeVersionController extends BaseController
         	oql.bind(siteNodeId);
         	oql.bind(siteNodeVersionId);
         	
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
 			
 			if (results.hasMore()) 
             {
@@ -1473,7 +1473,7 @@ public class SiteNodeVersionController extends BaseController
     	oql.bind(new Boolean(true));
     	oql.bind(siteNodeVersionId);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		
 		if (results.hasMore()) 
         {
@@ -1501,7 +1501,7 @@ public class SiteNodeVersionController extends BaseController
     	oql.bind(new Boolean(true));
     	oql.bind(siteNodeVersionId);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		
 		if (results.hasMore()) 
         {
@@ -1554,7 +1554,7 @@ public class SiteNodeVersionController extends BaseController
     	oql.bind(stateId);
     	oql.bind(siteNodeVersionId);
 
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		
 		if (results.hasMore()) 
         {
@@ -2143,7 +2143,7 @@ public class SiteNodeVersionController extends BaseController
     	oql.bind(SiteNodeVersionVO.PUBLISHED_STATE);
     	oql.bind(true);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 
 		while (results.hasMore()) 
         {
@@ -2166,7 +2166,7 @@ public class SiteNodeVersionController extends BaseController
     	oql.bind(SiteNodeVersionVO.PUBLISHED_STATE);
     	oql.bind(true);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 
 		while (results.hasMore()) 
         {

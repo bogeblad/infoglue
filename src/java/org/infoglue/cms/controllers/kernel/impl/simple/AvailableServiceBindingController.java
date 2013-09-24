@@ -209,7 +209,7 @@ public class AvailableServiceBindingController extends BaseController
     		OQLQuery oql = db.getOQLQuery( "SELECT asb FROM org.infoglue.cms.entities.management.impl.simple.SmallAvailableServiceBindingImpl asb WHERE asb.name = $1");
     		oql.bind(name);
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			if (results.hasMore()) 
         	{
         		AvailableServiceBinding availableServiceBinding = (AvailableServiceBinding)results.next();
@@ -257,7 +257,7 @@ public class AvailableServiceBindingController extends BaseController
 			QueryResults results = null;
 			
 			if(readOnly)
-			    results = oql.execute(Database.ReadOnly);
+			    results = oql.execute(Database.READONLY);
 			else
 			{
 				this.logger.info("Fetching entity in read/write mode:" + name);
@@ -305,7 +305,7 @@ public class AvailableServiceBindingController extends BaseController
 			QueryResults results = null;
 			
 			if(readOnly)
-			    results = oql.execute(Database.ReadOnly);
+			    results = oql.execute(Database.READONLY);
 			else
 			{
 				this.logger.info("Fetching entity in read/write mode:" + name);

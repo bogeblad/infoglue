@@ -221,7 +221,7 @@ public class AccessRightController extends BaseController
 		
 		int duplicates = 0;
 		Map<String,Integer> accessRightsMap = new ConcurrentHashMap<String,Integer>();
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		int i=0;
 		while(results.hasMore()) 
 	    {
@@ -588,7 +588,7 @@ public class AccessRightController extends BaseController
 	    	oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.AccessRightImpl f WHERE f.interceptionPoint = $1 ORDER BY f.accessRightId");
 			oql.bind(interceptionPointId);
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			while (results.hasMore()) 
 			{
 				AccessRight accessRight = (AccessRight)results.next();
@@ -629,7 +629,7 @@ public class AccessRightController extends BaseController
 				oql.bind(parameters);
 			}
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			while (results.hasMore()) 
 			{
 				AccessRight accessRight = (AccessRight)results.next();
@@ -667,7 +667,7 @@ public class AccessRightController extends BaseController
 			OQLQuery oql = db.getOQLQuery(SQL);
 			oql.bind(repositoryId);
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			while (results.hasMore()) 
 			{
 				SmallAccessRightImpl smallAccessRight = (SmallAccessRightImpl)results.next();
@@ -707,7 +707,7 @@ public class AccessRightController extends BaseController
 			OQLQuery oql = db.getOQLQuery(SQL);
 			oql.bind(repositoryId);
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			while (results.hasMore()) 
 			{
 				SmallAccessRightImpl smallAccessRight = (SmallAccessRightImpl)results.next();
@@ -952,7 +952,7 @@ public class AccessRightController extends BaseController
 						
 			QueryResults results;
 			if(readOnly)
-				results = oql.execute(Database.ReadOnly);
+				results = oql.execute(Database.READONLY);
 			else
 				results = oql.execute();
 				
@@ -3067,7 +3067,7 @@ public class AccessRightController extends BaseController
 			QueryResults results = null;
 			
 			if(readOnly)
-				results = oql.execute(Database.ReadOnly);
+				results = oql.execute(Database.READONLY);
 			else
 				results = oql.execute();
 				
@@ -3182,7 +3182,7 @@ public class AccessRightController extends BaseController
 
 			QueryResults results;
 			if(readOnly)
-				results = oql.execute(Database.ReadOnly);
+				results = oql.execute(Database.READONLY);
 			else
 				results = oql.execute();
 				
@@ -3234,7 +3234,7 @@ public class AccessRightController extends BaseController
 			QueryResults results = null;
 			
 			if(readOnly)
-				results = oql.execute(Database.ReadOnly);
+				results = oql.execute(Database.READONLY);
 			else
 				results = oql.execute();
 				
@@ -3326,7 +3326,7 @@ public class AccessRightController extends BaseController
 			QueryResults results = null;
 			
 			if(readOnly)
-				results = oql.execute(Database.ReadOnly);
+				results = oql.execute(Database.READONLY);
 			else
 				results = oql.execute();
 				
@@ -3392,7 +3392,7 @@ public class AccessRightController extends BaseController
 		
 		OQLQuery oql = db.getOQLQuery("CALL SQL select max(accessRightUserId), userName, max(accessRightId) from cmAccessRightUser aru group by userName AS org.infoglue.cms.entities.management.impl.simple.AccessRightUserImpl");
  
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		while(results.hasMore()) 
         {
 			AccessRightUserImpl aru = (AccessRightUserImpl)results.next();
@@ -3417,7 +3417,7 @@ public class AccessRightController extends BaseController
 		
 		OQLQuery oql = db.getOQLQuery("CALL SQL select max(accessRightRoleId), roleName, max(accessRightId) from cmAccessRightRole arr group by roleName AS org.infoglue.cms.entities.management.impl.simple.AccessRightRoleImpl");
 		 
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		while(results.hasMore()) 
         {
 			AccessRightRoleImpl arr = (AccessRightRoleImpl)results.next();
@@ -3442,7 +3442,7 @@ public class AccessRightController extends BaseController
 
 		OQLQuery oql = db.getOQLQuery("CALL SQL select max(accessRightGroupId), groupName, max(accessRightId) from cmAccessRightGroup arr group by groupName AS org.infoglue.cms.entities.management.impl.simple.AccessRightGroupImpl");
 		 
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		while(results.hasMore()) 
         {
 			AccessRightGroupImpl arr = (AccessRightGroupImpl)results.next();
@@ -3489,7 +3489,7 @@ public class AccessRightController extends BaseController
 			
 		OQLQuery oql = db.getOQLQuery(sqlSNV);
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		while (results.hasMore()) 
 		{
 			TableCount tableCount = (TableCount)results.next();
@@ -3502,7 +3502,7 @@ public class AccessRightController extends BaseController
 			
 		OQLQuery oql = db.getOQLQuery(sql);
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		while (results.hasMore()) 
 		{
 			TableCount tableCount = (TableCount)results.next();
@@ -3550,7 +3550,7 @@ public class AccessRightController extends BaseController
 			
 		OQLQuery oql = db.getOQLQuery(sqlSNV);
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		int itemsRemoved = 0;
 		while (results.hasMore() && itemsRemoved < 1000) 
 		{
@@ -3578,7 +3578,7 @@ public class AccessRightController extends BaseController
 			
 		OQLQuery oql = db.getOQLQuery(sql);
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		while (results.hasMore()) 
 		{
 			TableCount tableCount = (TableCount)results.next();
@@ -3848,7 +3848,7 @@ public class AccessRightController extends BaseController
 		OQLQuery oql = db.getOQLQuery(SQL);
 		
 		int deletable=0;
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		while (results.hasMore()) 
 		{
 			AccessRight accessRight = (AccessRight)results.next();
@@ -3903,7 +3903,7 @@ public class AccessRightController extends BaseController
 		//System.out.println(sb.toString());
 		OQLQuery oql = db.getOQLQuery(sb.toString());
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		while (results.hasMore()) 
 		{
 			AccessRight accessRight = (AccessRight)results.next();

@@ -394,7 +394,7 @@ public class GroupController extends BaseController
         	oql = db.getOQLQuery( "CALL SQL SELECT r.groupName, r.description, r.source, r.groupType, r.isActive, r.modifiedDateTime FROM cmGroup r, cmSystemUserGroup sur WHERE r.groupName = sur.groupName AND sur.userName = $1 AS org.infoglue.cms.entities.management.impl.simple.GroupImpl");
         	oql.bind(userName);
         	
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
 			
 			while(results.hasMore()) 
             {
@@ -573,7 +573,7 @@ public class GroupController extends BaseController
         	OQLQuery oql = db.getOQLQuery( "SELECT g FROM org.infoglue.cms.entities.management.impl.simple.GroupImpl g WHERE g.groupName = $1");
         	oql.bind(groupName);
         	
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
 			
 			if (results.hasMore()) 
             {

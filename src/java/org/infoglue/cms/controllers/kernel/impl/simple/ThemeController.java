@@ -157,7 +157,7 @@ public class ThemeController extends BaseController
         oql.bind("zip/infoglue-theme");
         oql.bind(name);
 
-        QueryResults results = oql.execute(Database.ReadOnly);
+        QueryResults results = oql.execute(Database.READONLY);
 
         while (results.hasMore()) 
         {

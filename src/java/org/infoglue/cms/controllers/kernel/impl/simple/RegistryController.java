@@ -2600,7 +2600,7 @@ public class RegistryController extends BaseController
 		oql.bind(entityName);
 		oql.bind(entityId);
 
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 
 		int i = 0;
 		while (results.hasMore() && (maxRows == -1 || i < maxRows)) 
@@ -2658,7 +2658,7 @@ public class RegistryController extends BaseController
 			//t.printElapsedTime("bindings done");
 			
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			//t.printElapsedTime("results");
 	
 			int i = 0;
@@ -2845,7 +2845,7 @@ public class RegistryController extends BaseController
 			oql.bind(referencingEntityName);
 			oql.bind(referencingEntityId);
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			
 			while (results.hasMore()) 
 	        {
@@ -2883,7 +2883,7 @@ public class RegistryController extends BaseController
 		for(Integer entityId : referencingEntityIds)
 			oql.bind(entityId.toString());
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		
 		while (results.hasMore()) 
         {

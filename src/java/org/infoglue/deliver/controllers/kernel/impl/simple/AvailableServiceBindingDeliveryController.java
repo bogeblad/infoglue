@@ -77,7 +77,7 @@ public class AvailableServiceBindingDeliveryController extends BaseDeliveryContr
     		//OQLQuery oql = db.getOQLQuery( "CALL SQL SELECT availableServiceBindingId, name, description, visualizationAction, isMandatory, isUserEditable, isInheritable FROM cmAvailableServiceBinding WHERE (name = $1) AS org.infoglue.cms.entities.management.impl.simple.AvailableServiceBindingImpl");
         	oql.bind(availableServiceBindingName);
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			if (results.hasMore()) 
         	{
         		AvailableServiceBinding availableServiceBinding = (AvailableServiceBinding)results.next();
@@ -111,7 +111,7 @@ public class AvailableServiceBindingDeliveryController extends BaseDeliveryContr
 		OQLQuery oql = db.getOQLQuery( "SELECT asb FROM org.infoglue.cms.entities.management.impl.simple.AvailableServiceBindingImpl asb WHERE asb.name = $1");
     	oql.bind(availableServiceBindingName);
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		if (results.hasMore()) 
     	{
     		availableServiceBinding = (AvailableServiceBinding)results.next();

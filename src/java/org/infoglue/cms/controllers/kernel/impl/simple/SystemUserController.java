@@ -142,7 +142,7 @@ public class SystemUserController extends BaseController
         	OQLQuery oql = db.getOQLQuery("SELECT u FROM org.infoglue.cms.entities.management.impl.simple.SystemUserImpl u WHERE u.userName = $1");
         	oql.bind(userName);
         	
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
 			
 			if (results.hasMore()) 
             {
@@ -175,7 +175,7 @@ public class SystemUserController extends BaseController
         	oql = db.getOQLQuery( "SELECT u FROM org.infoglue.cms.entities.management.impl.simple.SystemUserImpl u WHERE u.userName = $1");
         	oql.bind(userName);
         	
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
 			
 			if (results.hasMore()) 
             {
@@ -206,7 +206,7 @@ public class SystemUserController extends BaseController
         	OQLQuery oql = db.getOQLQuery( "SELECT u FROM org.infoglue.cms.entities.management.impl.simple.SystemUserImpl u WHERE u.userName = $1");
         	oql.bind(userName);
         	
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
 			
 			if (results.hasMore()) 
             {
@@ -304,7 +304,7 @@ public class SystemUserController extends BaseController
 		oql.bind(userName);
 		oql.bind(password);
     	
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		
 		if (results.hasMore()) 
 		{
@@ -387,7 +387,7 @@ public class SystemUserController extends BaseController
 		OQLQuery oql = db.getOQLQuery( "SELECT u FROM org.infoglue.cms.entities.management.impl.simple.SystemUserImpl u WHERE u.password = $1 ORDER BY u.userName");
     	oql.bind(password);
     	
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		
 		while (results.hasMore()) 
 		{
@@ -532,7 +532,7 @@ public class SystemUserController extends BaseController
 			}
 		}
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 
 		while (results.hasMore()) 
 		{
@@ -695,7 +695,7 @@ public class SystemUserController extends BaseController
 			}
 		}
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 
 		while (results.hasMore()) 
 		{
@@ -862,7 +862,7 @@ public class SystemUserController extends BaseController
 			}
 		}
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		
 		while (results.hasMore()) 
 		{
@@ -911,7 +911,7 @@ public class SystemUserController extends BaseController
 			oql.bind(foreignKeyValue);				
 		}
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 
 		while (results.hasMore()) 
 		{
@@ -960,7 +960,7 @@ public class SystemUserController extends BaseController
 			oql.bind(foreignKeyValue);				
 		}
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 
 		while (results.hasMore()) 
 		{

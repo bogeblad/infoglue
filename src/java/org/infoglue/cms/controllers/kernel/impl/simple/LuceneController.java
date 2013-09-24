@@ -1552,7 +1552,7 @@ public class LuceneController extends BaseController implements NotificationList
 			oql.bind(lastContentVersionId);
 			oql.bind(date.getTime());
 					
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			
 			int processedItems = 0;
 			Integer previousContentId = null;

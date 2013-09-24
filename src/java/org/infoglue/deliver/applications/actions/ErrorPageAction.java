@@ -24,7 +24,6 @@
 
 package org.infoglue.deliver.applications.actions;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.servlet.RequestDispatcher;

@@ -937,6 +937,17 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
         return "successLuceneStatistics";
     }
 
+    public String doTestLucene() throws Exception
+    {
+    	String returnValue = handleAccess(this.getRequest());
+    	if(returnValue != null)
+    		return returnValue;
+
+    	LuceneController.getController().testSQL();
+
+        return "successLuceneStatistics";
+    }
+
     public String doDeleteIndex() throws Exception
     {
     	String returnValue = handleAccess(this.getRequest());

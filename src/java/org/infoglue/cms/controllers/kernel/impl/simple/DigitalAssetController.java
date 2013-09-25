@@ -855,6 +855,8 @@ public class DigitalAssetController extends BaseController
 
 	public static List<DigitalAssetVO> getDigitalAssetVOList(Integer contentVersionId, Database db) throws Exception
 	{
+		Timer t = new Timer();
+		
 		String key = "all_" + contentVersionId;
 		String cacheName = "digitalAssetCache";
 		@SuppressWarnings("unchecked")
@@ -891,7 +893,9 @@ public class DigitalAssetController extends BaseController
 
 		if(digitalAssetVOList != null)
 			CacheController.cacheObject(cacheName, key, digitalAssetVOList);
-
+		
+		//t.printElapsedTime("getDigitalAssetVOList took");
+		
 		return digitalAssetVOList;
 	}
 

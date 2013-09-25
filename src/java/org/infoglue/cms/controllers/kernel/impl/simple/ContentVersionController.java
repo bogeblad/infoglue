@@ -3598,7 +3598,7 @@ public class ContentVersionController extends BaseController
 
         try
         {
-        	contentVersionVOList = getContentVersionVOList(contentTypeDefinitionId, excludeContentTypeDefinitionId, languageId, showDeletedItems, stateId, lastContentVersionId, limit, ascendingOrder, db, includeSiteNode);            
+        	contentVersionVOList = getContentVersionVOList(contentTypeDefinitionId, excludeContentTypeDefinitionId, languageId, showDeletedItems, stateId, lastContentVersionId, limit, 10000, ascendingOrder, db, includeSiteNode);            
             commitTransaction(db);
         }
         catch(Exception e)
@@ -3691,18 +3691,51 @@ public class ContentVersionController extends BaseController
 	} 
 
 	
+	
 	/**
 	 * This method returns a list of the children a siteNode has.
 	 */
    	
-	public List<ContentVersionVO> getContentVersionVOList(Integer contentTypeDefinitionId, Integer excludeContentTypeDefinitionId, Integer languageId, boolean showDeletedItems, Integer stateId, Integer lastContentVersionId, Integer limit, boolean ascendingOrder, Database db, boolean includeSiteNode) throws Exception
+	public SmallestContentVersionVO getFirstContentVersionId(Integer languageId, Database db) throws Exception
+	{
+		Timer t = new Timer();
+		
+		SmallestContentVersionVO contentVersionVO = null;
+    	
+   		StringBuffer SQL = new StringBuffer();
+
+    	OQLQuery oql = db.getOQLQuery("CALL SQL select cv.contentVersionId, cv.stateId, cv.modifiedDateTime, cv.versionComment, cv.isCheckedOut, cv.isActive, cv.contentId, cv.languageId, cv.versionModifier FROM cmContentVersion cv where cv.languageId = $1 AS org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl");
+    	if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
+    		oql = db.getOQLQuery("CALL SQL select * from (select cv.contVerId, cv.stateId, cv.modifiedDateTime, cv.verComment, cv.isCheckedOut, cv.isActive, cv.contId, cv.languageId, cv.versionModifier FROM cmContVer cv where cv.languageId = $1 order by cv.contVerId) where rownum < 10 AS org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl");
+
+		//OQLQuery oql = db.getOQLQuery( "SELECT cv FROM org.infoglue.cms.entities.content.impl.simple.SmallContentVersionImpl cv WHERE cv.languageId = $1 ORDER BY cv.contentVersionId limit $2");
+    	oql.bind(languageId);
+    	//oql.bind(10);
+
+    	QueryResults results = oql.execute(Database.ReadOnly);
+    	
+		if (results.hasMore()) 
+        {
+			SmallestContentVersionImpl contentVersion = (SmallestContentVersionImpl)results.next();
+        	contentVersionVO = contentVersion.getValueObject();
+        }
+		
+		return contentVersionVO;
+	} 
+	
+	/**
+	 * This method returns a list of the children a siteNode has.
+	 */
+   	
+	public List<ContentVersionVO> getContentVersionVOList(Integer contentTypeDefinitionId, Integer excludeContentTypeDefinitionId, Integer languageId, boolean showDeletedItems, Integer stateId, Integer lastContentVersionId, Integer limit, Integer cvIdSpan, boolean ascendingOrder, Database db, boolean includeSiteNode) throws Exception
 	{
 		List<ContentVersionVO> contentVersionVOList = new ArrayList<ContentVersionVO>();
+		Timer t = new Timer();
 		
    		StringBuffer SQL = new StringBuffer();
     	if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
     	{
-    		SQL.append("CALL SQL select cv.contVerId, cv.stateId, cv.modifiedDateTime, cv.verComment, cv.isCheckedOut, cv.isActive, cv.contId, cv.languageId, cv.versionModifier, cv.verValue, (select count(*) from cmContVerDigAsset cvda where cvda.contVerId = cv.contVerId) AS assetCount ");
+    		SQL.append("CALL SQL select * from (select cv.contVerId, cv.stateId, cv.modifiedDateTime, cv.verComment, cv.isCheckedOut, cv.isActive, cv.contId, cv.languageId, cv.versionModifier, cv.verValue, (select count(*) from cmContVerDigAsset cvda where cvda.contVerId = cv.contVerId) AS assetCount ");
     		if(includeSiteNode)
         		SQL.append(", (select sn.siNoId from cmSiNo sn where sn.metaInfoContentId = c.contId) AS siNoId, (select sn.name from cmSiNo sn where sn.metaInfoContentId = c.contId) AS siteNodeName ");
     		else
@@ -3740,12 +3773,19 @@ public class ContentVersionController extends BaseController
     		}
 			if(lastContentVersionId != null && lastContentVersionId > 0)
 			{
-				SQL.append(" AND cv.contVerId > $" + index + "");
+				SQL.append(" AND cv.contVerId > $" + index + " and cv.contVerId < $" + (index+1) + "");
+    			index++;
     			index++;
 			}
-			SQL.append(" AND rownum<=$" + index + " ");
+			else
+			{
+				SQL.append(" AND cv.contVerId > $" + index + " and cv.contVerId < $" + (index+1) + "");
+    			index++;
+    			index++;
+			}
+			//SQL.append(" AND rownum<=$" + index + " ");
 			
-    		SQL.append(" order by cv.contVerId " + (ascendingOrder ? "" : "DESC") + " AS org.infoglue.cms.entities.content.impl.simple.IndexFriendlyContentVersionImpl");
+    		SQL.append(" order by cv.contVerId " + (ascendingOrder ? "" : "DESC") + ") where rownum<=$" + index + " AS org.infoglue.cms.entities.content.impl.simple.IndexFriendlyContentVersionImpl");
 	   	}
     	else
     	{
@@ -3794,7 +3834,7 @@ public class ContentVersionController extends BaseController
     		SQL.append(" order by cv.contentVersionId " + (ascendingOrder ? "" : "DESC") + " limit $" + index + " AS org.infoglue.cms.entities.content.impl.simple.IndexFriendlyContentVersionImpl");
        	}
     	
-    	//logger.info("SQL 2:" + SQL);
+    	//logger.error("SQL:" + SQL);
     	//logger.info("SQL:" + SQL);
     	//logger.info("parentSiteNodeId:" + parentSiteNodeId);
     	//logger.info("showDeletedItems:" + showDeletedItems);
@@ -3810,12 +3850,22 @@ public class ContentVersionController extends BaseController
 		if(languageId != null)
 			oql.bind(languageId);
 		if(lastContentVersionId != null && lastContentVersionId > 0)
-    		oql.bind(lastContentVersionId);
+		{
+			oql.bind(lastContentVersionId);
+			oql.bind(lastContentVersionId + (ascendingOrder? cvIdSpan : -cvIdSpan));
+		}
+		else
+		{
+			oql.bind(0);
+			oql.bind((ascendingOrder? cvIdSpan : -cvIdSpan));
+		}
 		
 		//if(CmsPropertyHandler.getUseShortTableNames() == null || !CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
 			oql.bind(limit);
 		
 		QueryResults results = oql.execute(Database.ReadOnly);
+		
+		logger.info("Getting all IndexFriendlyContentVersionImpl took:" +  t.getElapsedTime());
 		while (results.hasMore()) 
 		{
 			IndexFriendlyContentVersionImpl contentVersion = (IndexFriendlyContentVersionImpl)results.next();
@@ -3825,10 +3875,16 @@ public class ContentVersionController extends BaseController
         	//CacheController.cacheObjectInAdvancedCache("contentVersionCache", versionKey, contentVersion.getValueObject(), new String[]{CacheController.getPooledString(2, contentVersion.getValueObject().getId()), CacheController.getPooledString(1, contentVersion.getValueObject().getContentId())}, true);
 			//CacheController.cacheObjectInAdvancedCache("contentVersionCache", "" + contentVersion.getId(), contentVersion.getValueObject(), new String[]{CacheController.getPooledString(2, contentVersion.getValueObject().getId()), CacheController.getPooledString(1,  contentVersion.getValueObject().getContentId())}, true);
 		}
+		logger.info("Fetching all IndexFriendlyContentVersionImpl took:" +  t.getElapsedTime() + " and returned " + contentVersionVOList.size());
 
 		results.close();
 		oql.close();
-        
+
+		if(contentVersionVOList.size() == 0)
+		{
+			return getContentVersionVOList(contentTypeDefinitionId, excludeContentTypeDefinitionId, languageId, showDeletedItems, stateId, lastContentVersionId+cvIdSpan, cvIdSpan*2, limit, ascendingOrder, db, includeSiteNode);
+		}
+		
 		return contentVersionVOList;
 	} 
 	

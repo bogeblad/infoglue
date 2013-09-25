@@ -83,7 +83,6 @@ CREATE  TABLE cmPageDeliveryMetaDataEnt (
 );
 
 create index pageDeliveryMetaDataIDX on cmPageDeliveryMetaData(siteNodeId, languageId, contentId);
-
 drop index propCategoryAttrNameIndex;
 drop index propCategoryEntityNameIndex;
 drop index propCategoryEntityNameIndex;
@@ -117,7 +116,8 @@ CREATE INDEX userPropDigAssetIdIndex ON cmUserPropDigAsset(digAssetId);
 CREATE INDEX contVerDigAssetIdIndex ON cmContVerDigAsset(digAssetId);
 CREATE INDEX contVerContVerIdIndex ON cmContVerDigAsset(contVerId);
 
-
+ALTER TABLE cmSiNoVer MODIFY MODIFIEDDATETIME TIMESTAMP;
+ALTER TABLE cmContVer MODIFY MODIFIEDDATETIME TIMESTAMP;
 
 
 

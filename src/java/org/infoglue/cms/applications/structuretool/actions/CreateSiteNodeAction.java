@@ -406,7 +406,7 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 	    List<ContentTypeAttribute> attributes = ContentTypeDefinitionController.getController().getContentTypeAttributes(ctdVO, false);
 	    for(ContentTypeAttribute attribute : attributes)
 	    {
-	    	if(metaInfoAttributesToShowInCreatePageDialog.contains(attribute.getName()))
+	    	if(metaInfoAttributesToShowInCreatePageDialog.equalsIgnoreCase(attribute.getName()) || metaInfoAttributesToShowInCreatePageDialog.startsWith(attribute.getName() + ",") || metaInfoAttributesToShowInCreatePageDialog.contains("," + attribute.getName() + ",") || metaInfoAttributesToShowInCreatePageDialog.endsWith("," + attribute.getName()))
 	    	{
 	    		this.specialMetaAttributes.add(attribute);
 	    	}

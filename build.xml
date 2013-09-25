@@ -228,7 +228,7 @@
 		<my.javac destdir="${build.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" nowarn="true">
 			<src refid="build.sourcepath"/>
 		</my.javac>
-		<my.javac destdir="${test.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" depend="true" nowarn="true">
+		<my.javac destdir="${test.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" nowarn="true">
 			<src refid="test.sourcepath"/>
 		</my.javac>
 		<copy todir="${build.classes}">
@@ -271,10 +271,10 @@
 	</target>
 
 	<target name="compileRelease" depends="init">
-		<my.javac destdir="${build.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" depend="true" nowarn="true">
+		<my.javac destdir="${build.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" nowarn="true">
 			<src refid="build.sourcepath"/>
 		</my.javac>
-		<my.javac destdir="${test.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" depend="true" nowarn="true">
+		<my.javac destdir="${test.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" nowarn="true">
 			<src refid="test.sourcepath"/>
 		</my.javac>
 		<copy todir="${build.classes}">

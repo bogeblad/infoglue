@@ -702,6 +702,8 @@ CREATE TABLE cmRedirect (
   expireDateTime datetime,
   modifier TEXT,
   isUserManaged TINYINT NOT NULL DEFAULT '1',
+  siteNodeId int(11) NULL,
+  languageId int(11) NULL,
   PRIMARY KEY(id)
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 

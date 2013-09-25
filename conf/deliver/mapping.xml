@@ -2027,6 +2027,12 @@
 	    <field name="isUserManaged" type="java.lang.Boolean">
 	      <sql name="isUserManaged" type="integer" dirty="check" />
 	    </field>
+		<field name="siteNodeId" type="java.lang.Integer">
+			<sql name="siteNodeId" type="integer" dirty="check" />
+		</field>
+		<field name="languageId" type="java.lang.Integer">
+			<sql name="languageId" type="integer" dirty="check" />
+		</field>
   	</class>
 
 	<!--  Mapping for ServerNode  -->

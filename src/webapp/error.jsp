@@ -1,3 +1,4 @@
+<%@page import="org.infoglue.cms.controllers.kernel.impl.simple.RedirectController"%>
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c" %>
 
 <%
@@ -193,48 +194,58 @@ pageContext.setAttribute("stacktrace", sb.toString());
 		<table align="center" border="0" cellspacing="0" cellpadding="0" width="200">
 		<tr>
 			<td colspan="2" style="background-image: url(<%= request.getContextPath() %>/css/images/errorHeaderBackground.gif); background-repeat: repeat-x;" align="center"><img src="css/images/error.jpg"></td>
-		</tr>	
+		</tr>
 		<tr>
 			<td colspan="2"><img src="<%= request.getContextPath() %>/css/images/trans.gif" width="1" height="20"></td>
 		</tr>
 		<tr>
 			<td><img src="<%= request.getContextPath() %>/css/images/trans.gif" width="20" height="1"></td>
 			<td>
-				Page not Found or an error occurred. Either way we could not serve your request.<br/><br/>
-				System message: <c:out value="${requestScope.error.message}"/><br/><br/>
-				
-				<p>
-					Please help us make Infoglue better by filing a bug report<br/>
-					<a href="#" onclick="openReportDialog('reportBugDialog');" class="bug">Report bug</a> 
-					<a href="javascript:closeDialog();" class="close">Back / Close</a>
+				<p style="width:95%;">
+				<%
+					String redirectSuggestion = (String)request.getAttribute(RedirectController.REDIRECT_SUGGESTION);
+					if (redirectSuggestion != null) {
+						String redirectName = redirectSuggestion.replaceFirst("http.?://", "");
+				%>
+					There is no page at this address.<br/>
+					There used to be one. It has been moved to:<br/><br/>
+					<a href="<%= redirectSuggestion %>" style="word-wrap: break-word;"><%=redirectName %></a>
+
+					<!--
+					<%
+						java.util.List<String> redirectRules = (java.util.List<String>)request.getAttribute(RedirectController.SITE_NODE_REDIRECT_URLS);
+						if (redirectRules != null)
+						{
+							for (String redirectRule : redirectRules)
+							{
+								out.print(redirectRule + "\n");
+							}
+						}
+					%>
+					 -->
 				</p>
-								
+				<% } else { %>
+					Page not Found or an error occurred. Either way we could not serve your request.<br/><br/>
+					System message: <c:out value="${requestScope.error.message}"/><br/><br/>
+					<p>
+						Please help us make Infoglue better by filing a bug report<br/>
+						<a href="javascript:void(0)" onclick="openReportDialog('reportBugDialog');" class="bug">Report bug</a>
+						<a href="javascript:closeDialog();" class="close">Back / Close</a>
+					</p>
+				<% } %>
 			</td>
 		</tr>
 		</table>
 	</td>
-</tr>	
+</tr>
 </table>
-
 </div>
 
- 
 </body>
 </html>
 <%
 org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("InfoGlue");
 String errorUrl = (String)pageContext.getRequest().getAttribute("javax.servlet.error.request_uri");
-logger.warn("Error.jsp called - Possible errorUrl:" + errorUrl);
-
 Exception e = (Exception)pageContext.getRequest().getAttribute("error");
-if(e != null)
-{
-  System.out.println("Error: " + e.getMessage());
-  System.out.println(e.getStackTrace()[0].toString());
-  System.out.println(e.getStackTrace()[1].toString());
-  System.out.println(e.getStackTrace()[2].toString());
-  System.out.println(e.getStackTrace()[3].toString());
-  System.out.println(e.getStackTrace()[4].toString());
-  System.out.println(e.getStackTrace()[5].toString());
-}
+logger.warn("Error.jsp called - Possible errorUrl:" + errorUrl + ". Message: " + (e == null ? "-none-" : e.getMessage()));
 %>

@@ -197,6 +197,7 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.niceURIUseLowerCase" "niceURIUseLowerCase" "$this.getPropertyValue('niceURIUseLowerCase')" "$!cmsPH.niceURIUseLowerCase")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.niceURIDisableNiceURIForContent" "niceURIDisableNiceURIForContent" "$this.getPropertyValue('niceURIDisableNiceURIForContent')" "$!cmsPH.niceURIDisableNiceURIForContent")
 				#editPropertyFieldCSS("ServerNode.property.niceURIDefaultReplacementCharacterForContent" "niceURIDefaultReplacementCharacterForContent" "$this.getPropertyValue('niceURIDefaultReplacementCharacterForContent')" "51" "$!serverNodeId" "$!cmsPH.niceURIDefaultReplacementCharacterForContent")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.redirectUsingSystemRedirect" "redirectUsingSystemRedirect" "$this.getPropertyValue('redirectUsingSystemRedirect')" "$!cmsPH.redirectUsingSystemRedirect")
 			</div>
 		
 			<div class="inlineTabDiv" id="cacheSettings">

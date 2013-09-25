@@ -29,41 +29,49 @@ import org.infoglue.cms.exception.SystemException;
 
 public interface Redirect extends IBaseEntity
 {
-  	public Integer getId();
-       
-    public RedirectVO getValueObject();
-    
-    public void setValueObject(RedirectVO valueObject);
-    
-    public java.lang.Integer getRedirectId();
-    
-    public void setRedirectId(java.lang.Integer redirectId) throws SystemException;
-    
-    public java.lang.String getUrl();
-    
-    public void setUrl(java.lang.String url) throws ConstraintException;
-    
-    public java.lang.String getRedirectUrl();
-    
-    public void setRedirectUrl(java.lang.String redirectUrl) throws ConstraintException;
-        
-    public java.lang.String getModifier();
-    
-    public void setModifier(java.lang.String modifier) throws ConstraintException;
+	public Integer getId();
 
-    public java.util.Date getCreatedDateTime();
-    
-    public void setCreatedDateTime(java.util.Date createdDateTime);
+	public RedirectVO getValueObject();
 
-    public java.util.Date getPublishDateTime();
-    
-    public void setPublishDateTime(java.util.Date publishDateTime);
-    
-    public java.util.Date getExpireDateTime();
-    
-    public void setExpireDateTime(java.util.Date expireDateTime);
+	public void setValueObject(RedirectVO valueObject);
 
-    public Boolean getIsUserManaged();
-    
-    public void setIsUserManaged(Boolean isUserManaged);
+	public java.lang.Integer getRedirectId();
+
+	public void setRedirectId(java.lang.Integer redirectId) throws SystemException;
+
+	public java.lang.String getUrl();
+
+	public void setUrl(java.lang.String url) throws ConstraintException;
+
+	public java.lang.String getRedirectUrl();
+
+	public void setRedirectUrl(java.lang.String redirectUrl) throws ConstraintException;
+
+	public java.lang.String getModifier();
+
+	public void setModifier(java.lang.String modifier) throws ConstraintException;
+
+	public java.util.Date getCreatedDateTime();
+
+	public void setCreatedDateTime(java.util.Date createdDateTime);
+
+	public java.util.Date getPublishDateTime();
+
+	public void setPublishDateTime(java.util.Date publishDateTime);
+
+	public java.util.Date getExpireDateTime();
+
+	public void setExpireDateTime(java.util.Date expireDateTime);
+
+	public Boolean getIsUserManaged();
+
+	public void setIsUserManaged(Boolean isUserManaged);
+
+	public Integer getSiteNodeId();
+
+	public void setSiteNodeId(Integer siteNodeId);
+
+	public Integer getLanguageId();
+
+	public void setLanguageId(Integer languageId);
 }

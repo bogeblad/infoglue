@@ -15,7 +15,7 @@
 			#end
 			
 			$("#tabsContainer").tabs({ show:function() { resizeScrollArea(); } $selectedTabId });
-			#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null, null, null ]')
+			#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null, null, null, null, null ]')
 			#initDataTableImpl("dataTableUserManaged" $extraParameter)
 			#initDataTableImpl("dataTableSystemManaged" $extraParameter)
 			#initDeleteLink()
@@ -49,6 +49,8 @@
 					<th>$ui.getString("tool.common.action.label")</th>
 					<th>$ui.getString("entity.Redirect.url.label")</th>
 					<th>$ui.getString("entity.Redirect.redirectUrl.label")</th>
+					<th>$ui.getString("entity.Redirect.siteNode.label")</th>
+					<th>$ui.getString("entity.Redirect.language.label")</th>
 					<th>Active</th>
 				</tr>
 			</thead>
@@ -61,6 +63,8 @@
 							<a href="ViewRedirect.action?redirectId=$redirectVO.id" class="group">$redirectVO.url</a>
 						</td>
 						<td>$redirectVO.redirectUrl</td>
+						<td>$!redirectVO.siteNodeId</td>
+						<td>#if( "$!redirectVO.languageId" != "" ) $this.getLanguageVO($redirectVO.languageId).name #end</td>
 						<td>$formatter.formatDate($redirectVO.publishDateTime, "yyyy-MM-dd") - $formatter.formatDate($redirectVO.expireDateTime, "yyyy-MM-dd")</td>
 					</tr>
 				#end
@@ -78,6 +82,8 @@
 					<th>$ui.getString("tool.common.action.label")</th>
 					<th>$ui.getString("entity.Redirect.url.label")</th>
 					<th>$ui.getString("entity.Redirect.redirectUrl.label")</th>
+					<th>$ui.getString("entity.Redirect.siteNode.label")</th>
+					<th>$ui.getString("entity.Redirect.language.label")</th>
 					<th>Active</th>
 				</tr>
 			</thead>
@@ -90,6 +96,8 @@
 							<a href="ViewRedirect.action?redirectId=$redirectVO.id" class="group">$redirectVO.url</a>
 						</td>
 						<td>$redirectVO.redirectUrl</td>
+						<td>$!redirectVO.siteNodeId</td>
+						<td>#if( "$!redirectVO.languageId" != "" ) $this.getLanguageVO($redirectVO.languageId).name #end</td>
 						<td>$formatter.formatDate($redirectVO.publishDateTime, "yyyy-MM-dd") - $formatter.formatDate($redirectVO.expireDateTime, "yyyy-MM-dd")</td>
 					</tr>
 				#end

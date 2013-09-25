@@ -117,6 +117,8 @@ import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.DateHelper;
 import org.infoglue.cms.util.XMLHelper;
 import org.infoglue.cms.util.mail.MailServiceFactory;
+import org.infoglue.deliver.applications.databeans.DeliveryContext;
+import org.infoglue.deliver.controllers.kernel.URLComposer;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Timer;
@@ -1665,44 +1667,45 @@ public class SiteNodeController extends BaseController
 	/**
 	 * This method moves a siteNode after first making a couple of controls that the move is valid.
 	 */
-	
-    public void moveSiteNode(SiteNodeVO siteNodeVO, Integer newParentSiteNodeId, InfoGluePrincipal principal) throws ConstraintException, SystemException
-    {
-        Database db = CastorDatabaseService.getDatabase();
-        ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
+	public void moveSiteNode(SiteNodeVO siteNodeVO, Integer newParentSiteNodeId, InfoGluePrincipal principal) throws ConstraintException, SystemException
+	{
+		Database db = CastorDatabaseService.getDatabase();
+		ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 
-        SiteNode siteNode          = null;
+		SiteNode siteNode          = null;
 		SiteNode newParentSiteNode = null;
 		SiteNode oldParentSiteNode = null;
 		
-        beginTransaction(db);
+		Map<String,String> pageUrls = new HashMap<String, String>();
 
-        try
-        {
-            //Validation that checks the entire object
-            siteNodeVO.validate();
-            
-            if(newParentSiteNodeId == null)
-            {
-            	logger.warn("You must specify the new parent-siteNode......");
-            	throw new ConstraintException("SiteNode.parentSiteNodeId", "3403");
-            }
+		beginTransaction(db);
 
-            if(siteNodeVO.getId().intValue() == newParentSiteNodeId.intValue())
-            {
-            	logger.warn("You cannot have the siteNode as it's own parent......");
-            	throw new ConstraintException("SiteNode.parentSiteNodeId", "3401");
-            }
-            
-            siteNode          = getSiteNodeWithId(siteNodeVO.getSiteNodeId(), db);
-            oldParentSiteNode = siteNode.getParentSiteNode();
-            newParentSiteNode = getSiteNodeWithId(newParentSiteNodeId, db);
-            
-            if(oldParentSiteNode.getId().intValue() == newParentSiteNodeId.intValue())
-            {
-            	logger.warn("You cannot specify the same node as it originally was located in......");
-            	throw new ConstraintException("SiteNode.parentSiteNodeId", "3404");
-            }
+		try
+		{
+			//Validation that checks the entire object
+			siteNodeVO.validate();
+
+			if(newParentSiteNodeId == null)
+			{
+				logger.warn("You must specify the new parent-siteNode......");
+				throw new ConstraintException("SiteNode.parentSiteNodeId", "3403");
+			}
+
+			if(siteNodeVO.getId().intValue() == newParentSiteNodeId.intValue())
+			{
+				logger.warn("You cannot have the siteNode as it's own parent......");
+				throw new ConstraintException("SiteNode.parentSiteNodeId", "3401");
+			}
+
+			siteNode          = getSiteNodeWithId(siteNodeVO.getSiteNodeId(), db);
+			oldParentSiteNode = siteNode.getParentSiteNode();
+			newParentSiteNode = getSiteNodeWithId(newParentSiteNodeId, db);
+
+			if(oldParentSiteNode.getId().intValue() == newParentSiteNodeId.intValue())
+			{
+				logger.warn("You cannot specify the same node as it originally was located in......");
+				throw new ConstraintException("SiteNode.parentSiteNodeId", "3404");
+			}
 
 			SiteNode tempSiteNode = newParentSiteNode.getParentSiteNode();
 			while(tempSiteNode != null)
@@ -1710,36 +1713,18 @@ public class SiteNodeController extends BaseController
 				if(tempSiteNode.getId().intValue() == siteNode.getId().intValue())
 				{
 					logger.warn("You cannot move the node to a child under it......");
-            		throw new ConstraintException("SiteNode.parentSiteNodeId", "3402");
+					throw new ConstraintException("SiteNode.parentSiteNodeId", "3402");
 				}
 				tempSiteNode = tempSiteNode.getParentSiteNode();
-			}	
-			
-            logger.info("Setting the new Parent siteNode:" + siteNode.getSiteNodeId() + " " + newParentSiteNode.getSiteNodeId());
-            siteNode.setParentSiteNode((SiteNodeImpl)newParentSiteNode);
-            
-            /*
-            Integer metaInfoContentId = siteNode.getMetaInfoContentId();
-            //logger.info("metaInfoContentId:" + metaInfoContentId);
-            if(!siteNode.getRepository().getId().equals(newParentSiteNode.getRepository().getId()) && metaInfoContentId != null)
-            {
-            	Content metaInfoContent = ContentController.getContentController().getContentWithId(metaInfoContentId, db);
-            	Content newParentContent = ContentController.getContentController().getContentWithPath(newParentSiteNode.getRepository().getId(), "Meta info folder", true, principal, db);
-            	if(metaInfoContent != null && newParentContent != null)
-            	{
-            		//logger.info("Moving:" + metaInfoContent.getName() + " to " + newParentContent.getName());
-            		newParentContent.getChildren().add(metaInfoContent);
-            		Content previousParentContent = metaInfoContent.getParentContent();
-            		metaInfoContent.setParentContent((ContentImpl)newParentContent);
-            		previousParentContent.getChildren().remove(metaInfoContent);
+			}
 
-            		changeRepositoryRecursiveForContent(metaInfoContent, newParentSiteNode.getRepository());
-				}
-            }
-            */
-            
-            changeRepositoryRecursive(siteNode, newParentSiteNode.getRepository(), principal, db);
-            //siteNode.setRepository(newParentSiteNode.getRepository());
+			pageUrls = RedirectController.getController().getNiceURIMapBeforeMove(db, siteNodeVO.getRepositoryId(), siteNodeVO.getSiteNodeId(), principal);
+
+			logger.info("Setting the new Parent siteNode:" + siteNode.getSiteNodeId() + " " + newParentSiteNode.getSiteNodeId());
+			siteNode.setParentSiteNode((SiteNodeImpl)newParentSiteNode);
+
+			changeRepositoryRecursive(siteNode, newParentSiteNode.getRepository(), principal, db);
+			//siteNode.setRepository(newParentSiteNode.getRepository());
 			newParentSiteNode.getChildSiteNodes().add(siteNode);
 			oldParentSiteNode.getChildSiteNodes().remove(siteNode);
 
@@ -1752,8 +1737,8 @@ public class SiteNodeController extends BaseController
 
 				logger.info("publishedVersion:" + publishedVersion);
 				if(publishedVersion != null)
-	            {
-		            EventVO eventVO = new EventVO();
+				{
+					EventVO eventVO = new EventVO();
 					eventVO.setDescription("Moved page");
 					eventVO.setEntityClass(SiteNodeVersion.class.getName());
 					eventVO.setEntityId(publishedVersion.getId());
@@ -1761,11 +1746,11 @@ public class SiteNodeController extends BaseController
 					eventVO.setTypeId(EventVO.MOVED);
 					eventVO = EventController.create(eventVO, newParentSiteNode.getRepository().getId(), principal);
 					events.add(eventVO);
-	            }
+				}
 				
 				logger.info("publishedVersionOldParent:" + publishedVersionOldParent);
 				if(publishedVersionNewParent != null)
-	            {
+				{
 					EventVO eventVO = new EventVO();
 					eventVO.setDescription("New parent page");
 					eventVO.setEntityClass(SiteNodeVersion.class.getName());
@@ -1774,11 +1759,11 @@ public class SiteNodeController extends BaseController
 					eventVO.setTypeId(EventVO.PUBLISH);
 					eventVO = EventController.create(eventVO, newParentSiteNode.getRepository().getId(), principal);
 					events.add(eventVO);
-	            }
+				}
 				
 				logger.info("publishedVersionOldParent:" + publishedVersionOldParent);
 				if(publishedVersionOldParent != null)
-	            {
+				{
 					EventVO eventVO = new EventVO();
 					eventVO.setDescription("Move page");
 					eventVO.setEntityClass(SiteNodeVersion.class.getName());
@@ -1787,7 +1772,7 @@ public class SiteNodeController extends BaseController
 					eventVO.setTypeId(EventVO.PUBLISH);
 					eventVO = EventController.create(eventVO, oldParentSiteNode.getRepository().getId(), principal);
 					events.add(eventVO);
-	            }
+				}
 
 				/*
 				EventVO eventVO = new EventVO();
@@ -1811,33 +1796,51 @@ public class SiteNodeController extends BaseController
 					publicationVO.setRepositoryId(newParentSiteNode.getRepository().getId());
 					
 					publicationVO = PublicationController.getController().createAndPublish(publicationVO, events, false, principal);
-	            }
+				}
 			}
 			catch (Exception e) 
 			{
 				logger.error("Error publishing move:" + e.getMessage(), e);
 			}
-			
-            //If any of the validations or setMethods reported an error, we throw them up now before create.
-            ceb.throwIfNotEmpty();
-            
-            commitTransaction(db);
-        }
-        catch(ConstraintException ce)
-        {
-            logger.warn("An error occurred so we should not complete the transaction:" + ce, ce);
-            rollbackTransaction(db);
-            throw ce;
-        }
-        catch(Exception e)
-        {
+
+			// If any of the validations or setMethods reported an error, we throw them up now before create.
+			ceb.throwIfNotEmpty();
+
+			commitTransaction(db);
+		}
+		catch(ConstraintException ce)
+		{
+			logger.warn("An error occurred so we should not complete the transaction:" + ce, ce);
+			rollbackTransaction(db);
+			throw ce;
+		}
+		catch(Exception e)
+		{
 			logger.error("An error occurred so we should not complete the transaction: " + e.getMessage());
 			logger.warn("An error occurred so we should not complete the transaction: " + e.getMessage(), e);
-            rollbackTransaction(db);
-            throw new SystemException(e.getMessage());
-        }
-    }           
-    
+			rollbackTransaction(db);
+			throw new SystemException(e.getMessage());
+		}
+
+		if (pageUrls.size() > 0)
+		{
+			Database redirectDb = null;
+			try
+			{
+				redirectDb = CastorDatabaseService.getDatabase();
+				beginTransaction(redirectDb);
+				RedirectController.getController().createSystemRedirect(pageUrls, siteNodeVO.getRepositoryId(), siteNodeVO.getSiteNodeId(), principal, redirectDb);
+				commitTransaction(redirectDb);
+			}
+			catch (Throwable tr)
+			{
+				rollbackTransaction(redirectDb);
+				logger.error("An error occured when creating system redirect. Messge: " + tr.getMessage());
+				logger.warn("An error occured when creating system redirect.", tr);
+			}
+		}
+	}
+
 	/**
 	 * Recursively sets the sitenodes repositoryId.
 	 * @param sitenode

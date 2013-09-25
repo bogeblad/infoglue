@@ -27,6 +27,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -1667,6 +1668,41 @@ public class ContentController extends BaseController
     	
 		return contents;    	
 	}
+	
+	/**
+	 * The input is a list of hashmaps.
+	 */
+	
+	protected List getContentVOListByContentTypeIds(List<Integer> contentTypeDefinitionIdList, Database db) throws SystemException, Exception
+	{
+		List contents = new ArrayList();
+
+		StringBuffer sb = new StringBuffer();
+		for(Integer ctdId : contentTypeDefinitionIdList)
+		{
+			sb.append(ctdId+",");
+		}
+		sb.deleteCharAt(sb.length()-1);
+		
+		OQLQuery oql = null;
+
+		if(CmsPropertyHandler.getUseShortTableNames().equals("true"))
+			oql = db.getOQLQuery("CALL SQL SELECT c.contId, c.name, c.publishDateTime, c.expireDateTime, c.isBranch, c.isProtected, c.isDeleted, c.creator, c.contentTypeDefId, c.repositoryId, c.parentContId FROM cmCont c where c.contentTypeDefId IN(" + sb.toString() + ") AS org.infoglue.cms.entities.content.impl.simple.SmallContentImpl");
+		else
+			oql = db.getOQLQuery("CALL SQL SELECT c.contentId, c.name, c.publishDateTime, c.expireDateTime, c.isBranch, c.isProtected, c.isDeleted, c.creator, c.contentTypeDefinitionId, c.repositoryId, c.parentContentId FROM cmContent c where c.contentTypeDefinitionId IN(" + sb.toString() + ") AS org.infoglue.cms.entities.content.impl.simple.SmallContentImpl");
+
+    	QueryResults results = oql.execute(Database.ReadOnly);
+ 		while(results.hasMore()) 
+        {
+        	SmallContentImpl content = (SmallContentImpl)results.next();
+        	contents.add(content.getValueObject());
+        }
+		
+		results.close();
+		oql.close();
+    	
+		return contents;    	
+	}
 
 	protected List<ContentVersionVO> getLatestContentVersionVOListByContentTypeId(Integer[] contentTypeDefinitionIds, Database db) throws SystemException, Exception
 	{
@@ -1745,7 +1781,28 @@ public class ContentController extends BaseController
 		return contentVersionVOList;    	
 	}
 
-   	
+	protected List<ContentVersionVO> getLatestContentVersionVOListByContentTypeIdForSmallCollections(Integer[] contentTypeDefinitionIds, Database db) throws SystemException, Exception
+	{
+		List<ContentVersionVO> contentVersionVOList = new ArrayList<ContentVersionVO>();
+		Timer t = new Timer();
+		
+		List<ContentVO> contents = ContentController.getContentController().getContentVOListByContentTypeIds(Arrays.asList(contentTypeDefinitionIds), db);
+		logger.info("contents:" + contents.size());
+		logger.info("getContentVOListByContentTypeIds took: " + t.getElapsedTime());
+
+		Set<Integer> contentIds = new HashSet<Integer>();
+		for(ContentVO contentVO : contents)
+		{
+			contentIds.add(contentVO.getId());
+		}
+		
+		contentVersionVOList = ContentVersionController.getContentVersionController().getLatestContentVersionVOListPerLanguage(contentIds, db);
+		logger.info("getContentVOListByContentTypeIds took: " + t.getElapsedTime());
+		
+		return contentVersionVOList;    	
+	}
+	
+	
    	/**
 	 * This method fetches the root content for a particular repository.
 	 * If there is no such content we create one as all repositories need one to work.

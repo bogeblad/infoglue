@@ -347,44 +347,43 @@ public class ViewPageFilter implements Filter
 	                
 	                wrappedHttpRequest.getRequestDispatcher("/ViewPage.action").forward(wrappedHttpRequest, httpResponse);
 	            }
-	            catch (SystemException e) 
+	            catch (SystemException e)
 	            {
 	                BaseDeliveryController.rollbackTransaction(db);
 	                logger.error("Failed to resolve siteNodeId:" + e.getMessage());
 	                logger.warn("Failed to resolve siteNodeId:" + e.getMessage(), e);
-	                String systemRedirectUrl = RedirectController.getController().getSystemRedirectUrl(httpRequest);
-                    if(systemRedirectUrl != null && systemRedirectUrl.length() > 0)
+	                if (handleSystemRedirects(httpRequest, httpResponse))
                     {
-                    	httpResponse.setStatus(301);
-                    	httpResponse.setHeader("Location", systemRedirectUrl);
-                    	httpResponse.setHeader("Connection", "close");
-	                    return;
+						return;
                     }
                     else
                     {
 	                	throw new ServletException(e);
 	            	} 
 	            } 
-	            catch (Exception e) 
-	            {
-	                BaseDeliveryController.rollbackTransaction(db);
-	                
-	                logger.error("Failed to resolve siteNodeId: " + e.getMessage(), e);
-	                if(logger.isInfoEnabled())
-	                	logger.info("Failed to resolve siteNodeId: " + e.getMessage(), e);
-	                String systemRedirectUrl = RedirectController.getController().getSystemRedirectUrl(httpRequest);
-                    if(systemRedirectUrl != null && systemRedirectUrl.length() > 0)
-                    {
-                    	httpResponse.setStatus(301);
-                    	httpResponse.setHeader("Location", systemRedirectUrl);
-                    	httpResponse.setHeader("Connection", "close");
-	                    return;
-                    }
-                    else
-                    {
-	                	throw new ServletException(e);
-	            	}
-	            }
+				catch (Exception e)
+				{
+					BaseDeliveryController.rollbackTransaction(db);
+
+					if (e instanceof ServletException)
+					{
+						logger.error("Failed to resolve siteNodeId: " + e.getMessage());
+					}
+					else
+					{
+						logger.error("Failed to resolve siteNodeId: " + e.getMessage(), e);
+					}
+					if(logger.isInfoEnabled())
+						logger.info("Failed to resolve siteNodeId: " + e.getMessage(), e);
+					if (handleSystemRedirects(httpRequest, httpResponse))
+					{
+						return;
+					}
+					else
+					{
+						throw new ServletException(e);
+					}
+				}
 	            finally
 	            {
 	            	try
@@ -443,7 +442,27 @@ public class ViewPageFilter implements Filter
         	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ViewPageFilter", t.getElapsedTime());
     }
 
-    public void destroy() 
+	private boolean handleSystemRedirects(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws Exception
+	{
+		if (!CmsPropertyHandler.getRedirectUsingSystemRedirect())
+		{
+			RedirectController.getController().populateRequestWithRedirectSuggestions(httpRequest);
+		}
+		else
+		{
+			String systemRedirectUrl = RedirectController.getController().getSystemRedirectUrl(httpRequest);
+			if ( systemRedirectUrl != null && systemRedirectUrl.length() > 0)
+			{
+				httpResponse.setStatus(301);
+				httpResponse.setHeader("Location", systemRedirectUrl);
+				httpResponse.setHeader("Connection", "close");
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void destroy()
     {
         this.filterConfig = null;
     }

@@ -149,10 +149,19 @@ public class ComponentController extends BaseController
 				Timer t = new Timer();
 				List<ContentVersionVO> componentContentVersionVOList = null;
 				if(pagePartTemplateContentType != null)
-					componentContentVersionVOList = ContentControllerProxy.getController().getLatestContentVersionVOListByContentTypeId(new Integer[]{htmlTemplateContentType.getId(), pagePartTemplateContentType.getId()}, db);
+				{
+					componentContentVersionVOList = ContentControllerProxy.getController().getLatestContentVersionVOListByContentTypeIdForSmallCollections(new Integer[]{htmlTemplateContentType.getId(), pagePartTemplateContentType.getId()}, db);
+					logger.info("Getting componentContentVersionVOList 1 " + componentContentVersionVOList.size() + " took: " + t.getElapsedTime());
+					//componentContentVersionVOList = ContentControllerProxy.getController().getLatestContentVersionVOListByContentTypeId(new Integer[]{htmlTemplateContentType.getId(), pagePartTemplateContentType.getId()}, db);
+					//logger.error("Getting componentContentVersionVOList 2 " + componentContentVersionVOList.size() + " took: " + t.getElapsedTime());
+				}
 				else
-					componentContentVersionVOList = ContentControllerProxy.getController().getLatestContentVersionVOListByContentTypeId(new Integer[]{htmlTemplateContentType.getId()}, db);
-					
+				{
+					componentContentVersionVOList = ContentControllerProxy.getController().getLatestContentVersionVOListByContentTypeIdForSmallCollections(new Integer[]{htmlTemplateContentType.getId()}, db);
+					logger.info("Getting componentContentVersionVOList 1 " + componentContentVersionVOList.size() + " took: " + t.getElapsedTime());
+					//componentContentVersionVOList = ContentControllerProxy.getController().getLatestContentVersionVOListByContentTypeId(new Integer[]{htmlTemplateContentType.getId()}, db);
+				}
+				
 				logger.warn("Getting componentContentVersionVOList " + componentContentVersionVOList.size() + " took: " + t.getElapsedTime());
 				
 				templatesAndPagePartMap = new HashMap<String,List<ContentVO>>();

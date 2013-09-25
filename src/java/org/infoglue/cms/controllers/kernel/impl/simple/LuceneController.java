@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -96,6 +97,7 @@ import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl;
+import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.NotificationListener;
@@ -116,6 +118,7 @@ public class LuceneController extends BaseController implements NotificationList
 
     private static AtomicBoolean indexingInitialized = new AtomicBoolean(false);
     private static AtomicBoolean stopIndexing = new AtomicBoolean(false);
+    private static AtomicBoolean deleteIndexOnStop = new AtomicBoolean(false);
     
 	public static void setNumberOfVersionToIndexInBatch(Integer numberOfVersionToIndexInBatch) 
 	{
@@ -145,7 +148,7 @@ public class LuceneController extends BaseController implements NotificationList
 	
 	private Directory getDirectory() throws Exception
 	{
-		String index = CmsPropertyHandler.getContextRootPath() + File.separator + "lucene" + File.separator + "index";
+		String index = CmsPropertyHandler.getContextDiskPath() + File.separator + "lucene" + File.separator + "index";
 		index = index.replaceAll("//", "/");
 		//System.out.println("index:" + index);
     	File INDEX_DIR = new File(index);
@@ -170,7 +173,6 @@ public class LuceneController extends BaseController implements NotificationList
 	private IndexWriter getIndexWriter() throws Exception
 	{
 		Directory directory = getDirectory();
-		
     	StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_34);
 		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_34, analyzer);
 
@@ -488,6 +490,7 @@ public class LuceneController extends BaseController implements NotificationList
 	{
 		if (indexingInitialized.compareAndSet(false, true)) 
 		{
+			logger.warn("Clearing index..");
 			try
 			{
 				logger.info("NumDocs:" + getIndexReader().numDocs());
@@ -498,8 +501,9 @@ public class LuceneController extends BaseController implements NotificationList
 			}
 			catch (Exception e) 
 			{
-				//logger.error("Error indexing notifications:" + e.getMessage());
-				logger.warn("Error indexing notifications:" + e.getMessage(), e);
+				stopIndexing.set(true);
+				deleteIndexOnStop.set(true);
+				logger.error("Error clearing index:" + e.getMessage(), e);
 			}
 			finally
 			{
@@ -511,7 +515,8 @@ public class LuceneController extends BaseController implements NotificationList
 		else
 		{
 			stopIndexing.set(true);
-			logger.error("Could not delete index while clearing index.");
+			deleteIndexOnStop.set(true);
+			logger.error("Could not delete index while indexing. Queueing it....");
 		}
 	}
 
@@ -614,10 +619,21 @@ public class LuceneController extends BaseController implements NotificationList
 		if(!CmsPropertyHandler.getInternalSearchEngine().equalsIgnoreCase("lucene"))
 			return false;
 		
-		logger.warn("INDEXING ALL - correct?");
+		logger.warn("INDEXING ALL - correct: " + indexingInitialized + "/" + deleteIndexOnStop + "/" + stopIndexing + "?");
 		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 		
-		stopIndexing.set(false);
+		if(deleteIndexOnStop.get())
+		{
+			clearIndex();
+			deleteIndexOnStop.set(false);
+			stopIndexing.set(false);
+		}
+		else
+		{
+			stopIndexing.set(false);
+		}
+		
+		logger.warn("Resetting stopIndexing to false....");
 		logger.warn("------------------------------Got indexAll directive....");
 		if (indexingInitialized.compareAndSet(false, true)) 
 		{
@@ -632,7 +648,7 @@ public class LuceneController extends BaseController implements NotificationList
 				Timer t2 = new Timer();
 		
 				//Indexing all normal contents now
-				logger.warn("Indexing all normal contents....");
+				logger.info("Indexing all normal contents: " + CmsPropertyHandler.getContextDiskPath());
 				List<LanguageVO> languageVOList = LanguageController.getController().getLanguageVOList();
 				Iterator<LanguageVO> languageVOListIterator = languageVOList.iterator();
 				
@@ -646,7 +662,7 @@ public class LuceneController extends BaseController implements NotificationList
 					if(previousIndexAllLastContentVersionId != null)
 						startID = previousIndexAllLastContentVersionId;
 					
-					logger.warn("Starting from " + startID);
+					logger.info("Starting from " + startID);
 					int newLastContentVersionId = getContentNotificationMessages(languageVO, startID);
 					logger.info("newLastContentVersionId: " + newLastContentVersionId + " on " + languageVO.getName());
 					
@@ -656,6 +672,7 @@ public class LuceneController extends BaseController implements NotificationList
 					logger.info("newLastContentVersionId " + newLastContentVersionId);
 					while(newLastContentVersionId != -1)
 					{
+						logger.info("stopIndexing.get():" + stopIndexing.get());
 						if(stopIndexing.get())
 							break outer;
 						
@@ -694,6 +711,7 @@ public class LuceneController extends BaseController implements NotificationList
 					logger.info("newLastMetaContentVersionId " + newLastMetaContentVersionId);
 					while(newLastMetaContentVersionId != -1)
 					{
+						logger.info("stopIndexing.get():" + stopIndexing.get());
 						if(stopIndexing.get())
 							break outer;
 
@@ -714,13 +732,11 @@ public class LuceneController extends BaseController implements NotificationList
 			}
 			catch (Exception e) 
 			{
-				e.printStackTrace();
-				//logger.error("Error indexing notifications:" + e.getMessage());
-				logger.warn("Error indexing notifications:" + e.getMessage(), e);
+				logger.error("Error indexing notifications:" + e.getMessage(), e);
 			}
 			finally
 			{
-				logger.info("Releasing indexing flag");
+				logger.error("Releasing indexing flag");
 				this.indexingInitialized.set(false);
 			}
 		}
@@ -729,6 +745,7 @@ public class LuceneController extends BaseController implements NotificationList
 			logger.warn("-------------------: Allready running index all...");
 			return false;
 		}
+		
 		return true;
 	}
 	
@@ -848,8 +865,19 @@ public class LuceneController extends BaseController implements NotificationList
 		boolean initDoneLocally = false;
 		boolean finishDoneLocally = false;
 
-		stopIndexing.set(false);
-		logger.info("------------------------------->notifyListeners before check in " + CmsPropertyHandler.getContextRootPath());
+		logger.info("------------------------------->notifyListeners before check in " + CmsPropertyHandler.getContextRootPath() + "/" + deleteIndexOnStop.get() + "/" + stopIndexing.get());
+
+		if(deleteIndexOnStop.get())
+		{
+			clearIndex();
+			deleteIndexOnStop.set(false);
+			stopIndexing.set(false);
+		}
+		else
+		{
+			stopIndexing.set(false);
+		}
+		
 		if (!checkForIndexingJobs || indexingInitialized.compareAndSet(false, true)) 
 		{
 			if(checkForIndexingJobs)
@@ -1164,7 +1192,7 @@ public class LuceneController extends BaseController implements NotificationList
 		}
 		else
 		{
-			logger.warn("------------------------------->Indexing job allready running... skipping in " + CmsPropertyHandler.getContextRootPath());
+			logger.info("------------------------------->Indexing job allready running... skipping in " + CmsPropertyHandler.getContextRootPath());
 		}
 		logger.info("queued messages 1:" + qeuedMessages.size());
 	}
@@ -1175,7 +1203,19 @@ public class LuceneController extends BaseController implements NotificationList
 		if(!CmsPropertyHandler.getInternalSearchEngine().equalsIgnoreCase("lucene"))
 			return;
 		
-		stopIndexing.set(false);
+		logger.info("Start index: " + CmsPropertyHandler.getContextRootPath() + "/" + deleteIndexOnStop.get() + "/" + stopIndexing.get());
+
+		if(deleteIndexOnStop.get())
+		{
+			clearIndex();
+			deleteIndexOnStop.set(false);
+			stopIndexing.set(false);
+		}
+		else
+		{
+			stopIndexing.set(false);
+		}
+		
 		logger.info("################# starting index");
 		//if (indexStarted.compareAndSet(false, true)) 
 		//{
@@ -1216,7 +1256,7 @@ public class LuceneController extends BaseController implements NotificationList
 			}
 			catch (Exception e) 
 			{
-				//logger.error("Error indexing notifications:" + e.getMessage());
+				logger.error("Error indexing notifications:" + e.getMessage());
 				logger.warn("Error indexing notifications:" + e.getMessage(), e);
 			}
 		/*
@@ -1298,11 +1338,11 @@ public class LuceneController extends BaseController implements NotificationList
 			List<ContentVersionVO> versions = new ArrayList<ContentVersionVO>();
 			if(CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms"))
 			{
-				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, 0, newLastSiteNodeVersionId, numberOfVersionToIndexInBatch, true, db, true);
+				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, 0, newLastSiteNodeVersionId, numberOfVersionToIndexInBatch, numberOfVersionToIndexInBatch*10, true, db, true);
 			}
 			else
 			{
-				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), newLastSiteNodeVersionId, numberOfVersionToIndexInBatch, true, db, true);				
+				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), newLastSiteNodeVersionId, numberOfVersionToIndexInBatch, numberOfVersionToIndexInBatch*10, true, db, true);				
 			}
 			
 			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Index all : getContentVersionVOList", t.getElapsedTime());
@@ -1346,21 +1386,30 @@ public class LuceneController extends BaseController implements NotificationList
 		//t.printElapsedTime("Creating writer took");
 		
 		int newLastContentVersionId = -1;
-		
+				
 		Database db = CastorDatabaseService.getDatabase();
 		try
 		{
 			beginTransaction(db);
-			
+		
+			logger.info("lastContentVersionId:" + lastContentVersionId);
+			if(lastContentVersionId < 1)
+			{
+				SmallestContentVersionVO firstContentVersionVO = ContentVersionController.getContentVersionController().getFirstContentVersionId(languageVO.getId(), db);
+				if(firstContentVersionVO != null)
+					lastContentVersionId = firstContentVersionVO.getId();
+			}
+			logger.info("lastContentVersionId 2:" + lastContentVersionId);
+
 			ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Meta info", db);
 			List<ContentVersionVO> versions = new ArrayList<ContentVersionVO>();
 			if(CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms"))
 			{
-				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(null, contentTypeDefinitionVO.getId(), languageVO.getId(), false, 0, lastContentVersionId, numberOfVersionToIndexInBatch, true, db, false);
+				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(null, contentTypeDefinitionVO.getId(), languageVO.getId(), false, 0, lastContentVersionId, numberOfVersionToIndexInBatch, numberOfVersionToIndexInBatch*10, true, db, false);
 			}
 			else
 			{
-				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(null, contentTypeDefinitionVO.getId(), languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), lastContentVersionId, numberOfVersionToIndexInBatch, true, db, false);				
+				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(null, contentTypeDefinitionVO.getId(), languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), lastContentVersionId, numberOfVersionToIndexInBatch, numberOfVersionToIndexInBatch*10, true, db, false);				
 			}
 
 			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Index all : getContentVersionVOList", t.getElapsedTime());
@@ -1370,6 +1419,9 @@ public class LuceneController extends BaseController implements NotificationList
 			logger.info("Looping versions:" + versions.size());
 			for(ContentVersionVO version : versions)
 			{
+				if(stopIndexing.get())
+					return newLastContentVersionId;
+
 				Document document = getDocumentFromContentVersion(version, db);
 				String uid = document.get("uid");
 				logger.info("document: " + document);
@@ -1415,8 +1467,6 @@ public class LuceneController extends BaseController implements NotificationList
 		}
 		catch ( Exception e )
 		{
-			e.printStackTrace();
-			System.out.println("Context:" + CmsPropertyHandler.getContextRootPath());
 			logger.error("Error in lucene indexing: " + e.getMessage(), e);
 			rollbackTransaction(db);
 			throw new SystemException("An error occurred when we tried to getContentNotificationMessages. Reason:" + e.getMessage(), e);			
@@ -1457,11 +1507,11 @@ public class LuceneController extends BaseController implements NotificationList
 			List<ContentVersionVO> versions = new ArrayList<ContentVersionVO>();
 			if(CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms"))
 			{
-				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, 0, lastContentVersionId, numberOfVersionToIndexInBatch, true, db, true);
+				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, 0, lastContentVersionId, numberOfVersionToIndexInBatch, numberOfVersionToIndexInBatch*10, true, db, true);
 			}
 			else
 			{
-				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), lastContentVersionId, numberOfVersionToIndexInBatch, true, db, true);				
+				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), lastContentVersionId, numberOfVersionToIndexInBatch, numberOfVersionToIndexInBatch*10, true, db, true);				
 			}
 			
 			logger.info("versions:" + versions.size());
@@ -1472,6 +1522,9 @@ public class LuceneController extends BaseController implements NotificationList
 			logger.info("Looping versions:" + versions.size());
 			for(ContentVersionVO version : versions)
 			{
+				if(stopIndexing.get())
+					return newLastContentVersionId;
+				
 				Document documents = getSiteNodeDocument(version, writer, db);
 				if (documents != null)
 				{
@@ -1531,8 +1584,20 @@ public class LuceneController extends BaseController implements NotificationList
 		return newLastContentVersionId;
 	}
 
+	public void testSQL()
+	{
+		try {
+			getNotificationMessages(new ArrayList(), LanguageController.getController().getLanguageVOWithCode("sv"), 100000, new Date(), 1000);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("Errro:" + e.getMessage(), e);
+		}
+	}
+	
 	private int getNotificationMessages(List notificationMessages, LanguageVO languageVO, int lastContentVersionId, Date lastCheckDateTime, int batchSize) throws Exception
 	{
+		Timer t = new Timer();
 		logger.info("getNotificationMessages:" + languageVO.getName() + " : " + lastContentVersionId + ":" + lastCheckDateTime);
 
 		int newLastContentVersionId = -1;
@@ -1541,19 +1606,41 @@ public class LuceneController extends BaseController implements NotificationList
 		try
 		{
 			beginTransaction(db);
-			
+						
+			logger.info("**************Getting contents start:" + t.getElapsedTime() + ":" + lastCheckDateTime);
+
         	Calendar date = Calendar.getInstance();
         	date.setTime(lastCheckDateTime);
         	date.add(Calendar.DAY_OF_YEAR, -1);
         	
-			OQLQuery oql = db.getOQLQuery( "SELECT cv FROM " + SmallestContentVersionImpl.class.getName() + " cv WHERE cv.languageId = $1 AND cv.isActive = $2 AND (cv.contentVersionId > $3 OR cv.modifiedDateTime > $4) ORDER BY cv.contentVersionId");
+    	    //String SQL = "select cv.contentVersionId, cv.stateId, cv.modifiedDateTime, cv.versionComment, cv.isCheckedOut, cv.isActive, cv.contentId, cv.languageId, cv.versionModifier FROM cmContentVersion cv where cv.languageId = $1 AND cv.isActive = $2 AND ((cv.contentVersionId > $3 AND cv.contentVersionId < $4) OR cv.modifiedDateTime > $5) ORDER BY cv.contentVersionId";
+        	//if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
+        	//	SQL = "select cv.contVerId, cv.stateId, cv.modifiedDateTime, cv.verComment, cv.isCheckedOut, cv.isActive, cv.contId, cv.languageId, cv.versionModifier FROM cmContVer cv where cv.languageId = $1 AND cv.isActive = $2 AND ((cv.contVerId > $3 AND cv.contVerId < $4) OR cv.modifiedDateTime > TO_DATE('2013-03-20','YYYY-MM-DD')) ORDER BY cv.contVerId";
+    	    
+    	    //System.out.println("SQL:" + SQL);
+    	    
+    	    //OQLQuery oql = db.getOQLQuery("CALL SQL " + SQL + " AS org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl");
+        	//if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
+        	//	oql = db.getOQLQuery("CALL SQL " + SQL + " AS org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl");
+
+
+        	//oracle.sql.DATE oracleDate = new oracle.sql.DATE(new java.sql.Date(date.getTime().getTime()));
+
+			OQLQuery oql = db.getOQLQuery( "SELECT cv FROM " + SmallestContentVersionImpl.class.getName() + " cv WHERE cv.languageId = $1 AND cv.isActive = $2 AND ((cv.contentVersionId > $3 AND cv.contentVersionId < $4) OR cv.modifiedDateTime > $5) ORDER BY cv.contentVersionId limit $6");
+			//OQLQuery oql = db.getOQLQuery( "SELECT cv FROM " + SmallestContentVersionImpl.class.getName() + " cv WHERE cv.languageId = $1 AND cv.isActive = $2 AND ((cv.contentVersionId > $3 AND cv.contentVersionId < $4)) ORDER BY cv.contentVersionId limit $5");
 			oql.bind(languageVO.getId());
 			oql.bind(true);
 			oql.bind(lastContentVersionId);
+			oql.bind(lastContentVersionId+(batchSize*10));
+			//oql.bind(date.getTime());
 			oql.bind(date.getTime());
+			//oql.bind(batchSize);
 					
 			QueryResults results = oql.execute(Database.READONLY);
 			
+			if(logger.isInfoEnabled())
+				logger.info("Getting contents took: " + t.getElapsedTime());
+
 			int processedItems = 0;
 			Integer previousContentId = null;
 			while (results.hasMore()) 
@@ -1593,6 +1680,7 @@ public class LuceneController extends BaseController implements NotificationList
 			}
 						
 			results.close();
+			
 			logger.info("Finished round 4:" + processedItems + ":" + newLastContentVersionId);
 		}
 		catch ( Exception e )

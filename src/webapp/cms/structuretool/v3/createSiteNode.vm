@@ -106,7 +106,7 @@
 				<p>#editTextField("SiteNode.name" "name" $!name "30" "normaltextfield" "")</p>
 				
 				<div style="float: left; max-width: 70%;">
-					<p><b>Meta fields</b></p>
+					<p><b>$ui.getString("tool.structuretool.createSiteNode.metaFields")</b></p>
 					#foreach($attribute in $specialMetaAttributes)
 
 						#set($attributeTitle = "")

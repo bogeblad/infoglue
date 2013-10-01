@@ -461,10 +461,78 @@ ul.assignedEntities li
 	/*background-position: 0px -52px;*/
 }
 
-.workingState { font-weight: bold; color: #666; position: relative; right: 10px; top:20px; display: block; float: right; background:url(images/v3/greenBall.png) no-repeat right center; background-position: center top; padding-top: 30px; text-align: center;}
-.finalState { font-weight: bold; color: #666; position: relative; right: 10px; top:20px; display: block; float: right; background:url(images/v3/redBall.png) no-repeat right center; background-position: center top; padding-top: 30px; text-align: center;}
-.publishState { font-weight: bold; color: #666; position: relative; right: 10px; top:20px; display: block; float: right; background:url(images/v3/orangeBall.png) no-repeat right center; background-position: center top; padding-top: 30px; text-align: center;}
-.publishedState { font-weight: bold; color: #666; position: relative; right: 10px; top:20px; display: block; float: right; background:url(images/v3/publishedBall.png) no-repeat right center; background-position: center top; padding-top: 30px; text-align: center;}
+.workingState { 
+	position: relative; 
+	right: 10px; 
+	top:20px; 
+	display: block; 
+	float: right; 
+	padding-top: 30px; 
+	text-align: center;
+	margin-bottom: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+	margin-top: 7px !important;
+	font-size: 12px !important;
+	background-color: #f89406 !important;
+	color: white !important;
+	padding: 6px; 
+	border: 1px solid #B4B4B4 !important;
+	}
+.finalState { 
+	position: relative; 
+	right: 10px; 
+	top:20px; 
+	display: block; 
+	float: right; 
+	padding-top: 30px; 
+	text-align: center;
+	margin-bottom: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+	margin-top: 7px !important;
+	font-size: 12px !important;
+	background-color: #F54A1F !important;
+	color: white !important;
+	padding: 6px; 
+	border: 1px solid #B4B4B4 !important;
+	}
+.publishState { 
+	position: relative; 
+	right: 10px; 
+	top:20px; 
+	display: block; 
+	float: right; 
+	padding-top: 30px; 
+	text-align: center;
+	margin-bottom: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+	margin-top: 7px !important;
+	font-size: 12px !important;
+	background-color: #F54A1F !important;
+	color: white !important;
+	padding: 6px; 
+	border: 1px solid #B4B4B4 !important;
+	}
+.publishedState { 
+	position: relative; 
+	right: 10px; 
+	top:20px; 
+	display: block; 
+	float: right; 
+	padding-top: 30px; 
+	text-align: center;
+	margin-bottom: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+	margin-top: 7px !important;
+	font-size: 12px !important;
+	background-color: #4b883e !important;
+	color: white !important;
+	padding: 6px; 
+	border: 1px solid #B4B4B4 !important;
+	}		
 
 #footertoolbar input[type="submit"], 
 #footertoolbar input[type="reset"], 

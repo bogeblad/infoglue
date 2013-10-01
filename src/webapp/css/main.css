@@ -14,7 +14,7 @@ body.generaltooledit {
 #menutoolbar {
 	padding-top: 2px;
 	margin: 0px;
-	border-bottom: 1px solid #9caabd;
+	border-bottom: 1px solid #ccc;
 	width: 100%; 
 	height: 32px;
 	background-image: url("css/images/v3/toolbarBackground.gif");
@@ -25,6 +25,7 @@ body.generaltooledit {
 #menuToolbarRight
 {
 	float: right;
+	padding-top: 2px;
 }
 #footertoolbar {
 	position: fixed; 
@@ -211,7 +212,7 @@ img.scaledbordered {
 	height: 35px;
 	background-color:white;
 	background: url(images/v3/toolbarBackground.gif) repeat-x 0 0;
-	font-family:Tahoma, Verdana, Arial, sans-serif;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size:12px;
 	}
 .dialogDivLeftHandle {
@@ -231,7 +232,7 @@ img.scaledbordered {
 	}
 .dialogDivRightHandle a {
 	color:#555;
-	font-family: Tahoma, Verdana, Arial, sans-serif;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: 12px;
 	display: block;
 	text-indent: 20px;
@@ -301,8 +302,8 @@ img.scaledbordered {
 	background-image: url("css/images/v3/igButtonBackground.png");
 	background-position: 0px 0px;
 	background-repeat: no-repeat;
-	font-family: Tahoma, Verdana, Arial, sans-serif;
-	font-size: 14px;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 13px;
 	padding-left: 20px;
 	line-height: 26px;
 	text-decoration: none;
@@ -332,14 +333,13 @@ img.scaledbordered {
 /* Toolbar Button in IG */
 .igToolbarButton
 {
-	/*background-color: red;*/
 	background-image: url("css/images/v3/igToolbarButtonBackground.png");
 	background-position: 100% -26px;
 	background-repeat: no-repeat;
-	line-height: 26px;
-	height: 26px;
+	line-height: 24px;
+	height: 24px;
 	padding-right: 10px;
-	color: #555;
+	color: #292929;
 	display: block;
 	float: left;
 	margin: 4px;
@@ -355,9 +355,8 @@ img.scaledbordered {
 	background-image: url("css/images/v3/igToolbarButtonBackground.png");
 	background-position: 0px 0px;
 	background-repeat: no-repeat;
-	/*background-color: blue;*/
-	font-family: Tahoma, Verdana, Arial, sans-serif;
-	font-size: 14px;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 13px;
 	padding-left: 6px;
 	line-height: 26px;
 	text-decoration: none;
@@ -367,7 +366,6 @@ img.scaledbordered {
 }
 .igToolbarButtonOuterSpan span {
 	padding-left: 24px;
-	/*background-color: yellow;*/
 	display: block;
 	float: left;
 	line-height: 22px;
@@ -424,7 +422,7 @@ img.scaledbordered {
 	background-image: url("css/images/v3/igToolbarButtonBackground.png");
 	background-position: 0px 0px;
 	background-repeat: no-repeat;
-	font-family: Tahoma, Verdana, Arial, sans-serif;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: 10px;
 	padding-left: 6px;
 	line-height: 20px;
@@ -515,7 +513,7 @@ img.scaledbordered {
 .locale {background:url(images/v3/locale.png) no-repeat left center; background-position: 0px 2px;}
 .showDataAsXML {background:url(images/v3/xmlIcon.png) no-repeat left center; background-position: 0px 2px;}
 .compare {background:url(images/v3/compareIcon.png) no-repeat left center; background-position: 0px 2px;}
-.reloadSitenode {background:url(images/v3/reload.png) no-repeat left center; background-position: 0px 4px;}
+.reloadSitenode {background:url(images/v3/reload.png) no-repeat left center; background-position: 0px 2px;}
 
 li.content {background:url(images/v3/contentIcon.gif) no-repeat left center; background-position: 0px 0px; height: 20px; text-indent: 18px; }
 li.page {background:url(images/v3/pageIcon.gif) no-repeat left center; background-position: 0px 0px; height: 20px; text-indent: 18px; }
@@ -863,7 +861,7 @@ span.error {
 	background-image: url("images/grabHandle.png");
 	background-repeat: no-repeat;
 	background-position: center;
-	background-color: #A9A9A9;
+	background-color: #E4E4E4;
 	width: 8px;
 	cursor: move;
 	right: -8px;

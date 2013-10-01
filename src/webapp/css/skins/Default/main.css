@@ -12,7 +12,7 @@ body.generaltooledit {
 #menutoolbar {
 	padding-top: 2px;
 	margin: 0px;
-	border-bottom: 1px solid #9caabd;
+	border-bottom: 1px solid #ccc;
 	width: 100%; 
 	height: 32px;
 	background-image: url("../../images/v3/toolbarBackground.gif");
@@ -204,7 +204,7 @@ img.scaledbordered {
 	height: 35px;
 	background-color:white;
 	background: url(../../images/v3/toolbarBackground.gif) repeat-x 0 0;
-	font-family:Tahoma, Verdana, Arial, sans-serif;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size:12px;
 	}
 .dialogDivLeftHandle {
@@ -224,7 +224,7 @@ img.scaledbordered {
 	}
 .dialogDivRightHandle a {
 	color:#555;
-	font-family: Tahoma, Verdana, Arial, sans-serif;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: 12px;
 	display: block;
 	text-indent: 20px;
@@ -294,8 +294,8 @@ img.scaledbordered {
 	background-image: url("../../images/v3/igButtonBackground.png");
 	background-position: 0px 0px;
 	background-repeat: no-repeat;
-	font-family: Tahoma, Verdana, Arial, sans-serif;
-	font-size: 14px;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 13px;
 	padding-left: 20px;
 	line-height: 26px;
 	text-decoration: none;
@@ -329,16 +329,17 @@ img.scaledbordered {
 	background-image: url("../../images/v3/igToolbarButtonBackground.png");
 	background-position: 100% -26px;
 	background-repeat: no-repeat;
-	line-height: 26px;
-	height: 26px;
+	line-height: 24px;
+	height: 24px;
 	padding-right: 10px;
-	color: #555;
+	color: #292929;
 	display: block;
 	float: left;
 	margin: 4px;
 	margin-left: 0px;
 	margin-right: 4px;
 	margin-top: 2px;
+	margin-bottom: 0px;
 	cursor: pointer;
 	text-decoration: none;
 }
@@ -349,8 +350,8 @@ img.scaledbordered {
 	background-position: 0px 0px;
 	background-repeat: no-repeat;
 	/*background-color: blue;*/
-	font-family: Tahoma, Verdana, Arial, sans-serif;
-	font-size: 14px;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 13px;
 	padding-left: 6px;
 	line-height: 26px;
 	text-decoration: none;
@@ -417,7 +418,7 @@ img.scaledbordered {
 	background-image: url("../../images/v3/igToolbarButtonBackground.png");
 	background-position: 0px 0px;
 	background-repeat: no-repeat;
-	font-family: Tahoma, Verdana, Arial, sans-serif;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: 10px;
 	padding-left: 6px;
 	line-height: 20px;
@@ -476,7 +477,7 @@ img.scaledbordered {
 .pageDetails {background:url(../../images/v3/metadataIcon.gif) no-repeat left center; background-position: 0px 2px;}
 .pageStructureSimple {background:url(../../images/v3/structureIcon.gif) no-repeat left center; background-position: 0px 2px;}
 .logout {background:url(../../images/v3/exit.png) no-repeat left center; background-position: 0px 2px;}
-.trashcan {background:url(../../images/v3/trashcan_full.png) no-repeat left center; background-position: 0px 2px; background-size:20px 20px;}
+.trashcan {background:url(../../images/v3/trashcan_full.png) no-repeat left center; background-position: 0px 2px; background-size:16px 16px;}
 .clearTrashcan {background:url(../../images/v3/clearTrashcan.png) no-repeat left center; background-position: 0px 2px;}
 .accessRights {background:url(../../images/v3/file_locked.png) no-repeat left center; background-position: 0px 4px;}
 .transferUser {background:url(../../images/v3/group.png) no-repeat left center; background-position: 0px 4px;}

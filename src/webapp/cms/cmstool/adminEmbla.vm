@@ -23,8 +23,8 @@
 	
 		function resize()
 		{
-			$("#work").height((document.body.clientHeight - $("#header").height() - $("#footer").height()));
-			$("#work > iframe").height((document.body.clientHeight - $("#header").height() - $("#footer").height()));
+			$("#work").height((document.body.clientHeight - $("#header").height() - $("#footer").height()) - 1);
+			$("#work > iframe").height((document.body.clientHeight - $("#header").height() - $("#footer").height()) - 1);
 		}
 		
 		$(function() {
@@ -36,7 +36,7 @@
     		resize();
     		
 	   		window.onresize = function() {
-	   			resize()
+	   			resize();
     		}
 			
 			#foreach($tool in $userTools)
@@ -233,11 +233,11 @@
   		<div id="menucontent">
 			#foreach($tool in $userTools)
 				<span id="${tool.toolName}Tab" class="middleTabPart">
-				<span class="leftTabPart">
-				<span class="rightTabPart">
-				<a href="$tool.actionUrl" id="${tool.toolName}Link" class="menutab $tool.cssClass" onclick="return activateTool('${tool.toolName}', '$tool.title', '$tool.actionUrl', '');">$tool.title</a>
-				</span>
-				</span>
+					##<span class="leftTabPart">
+					##	<span class="rightTabPart">
+						<a href="$tool.actionUrl" id="${tool.toolName}Link" class="menutab $tool.cssClass" onclick="return activateTool('${tool.toolName}', '$tool.title', '$tool.actionUrl', '');">$tool.title</a>
+					##	</span>
+					##</span>
 				</span>
 			#end
 		</div>
@@ -248,15 +248,11 @@
 			</div>
 		#end
 				
-		<div style="float: right; padding-top: 10px;">
+		<div style="float: right; padding-top: 10px; margin-right: 10px; text-align: right;">
 		
-			#*
-			<form name="searchForm" id="searchForm" method="post" action="" onsubmit="return search($repositoryId, '$ui.getString("tool.common.searchTabLabelPrefix")');" style="float: left;">
-				<input type="text" name="searchField" id="searchField" value="$ui.getString("tool.common.searchDialog.searchFieldDefaultText")"/> <img id="searchButton" src="css/images/trans.gif" onclick="if($('#searchField').val() == '$ui.getString("tool.common.searchDialog.searchFieldDefaultText")') alert('State search text'); else search($repositoryId, '$ui.getString("tool.common.searchTabLabelPrefix")');" alt="Search"/>
-			</form>
-			*#
-				
-			<a style="margin-top: 8px;" class='igToolbarButton igToolbarHeaderButton' href="#" id="logoutButton" name="logoutButton" title="$ui.getString("header.link.signout")"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='logout' title="$ui.getString("header.link.signout")">$ui.getString("header.link.signout")</span></span></a>
+			<div style="margin-right: 10px; display: inline-block;">
+			$ui.getString("tool.common.loggedInAsLabel"): $infoGluePrincipal.displayName
+			<a href="#" id="logoutButton" name="logoutButton" title="$ui.getString("header.link.signout")">$ui.getString("header.link.signout")</a>
 			<script type="text/javascript">
 			<!--
 				$("#logoutButton").click(function(){
@@ -264,19 +260,8 @@
 	        	});
 			-->
 			</script>
-		</div>
-  	</div>
-  	
-  	<div id="work">
-		#foreach($tool in $userTools)
-  		<iframe id="${tool.toolName}Iframe" name="${tool.toolName}Iframe" class="inactiveTool" src="loading.html" width="100%" height="350" frameborder="0" allowtransparency="true"></iframe>
-		#end
-  	</div>
-  	
-  	<div id="footer">
-
-  		<div id="leftFooter" style="float: left;">
-			
+			</div>
+			<br/>
 			#if($this.switchInfoButtonLabelToThisHelpUrl != "")
 				<a class='igToolbarButton igToolbarHeaderButton' href="$this.switchInfoButtonLabelToThisHelpUrl" target="_blank" id="versionInfoButton" name="versionInfoButton" title="$ui.getString("header.link.versionInfo") - $infoGlueVersion"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='helpIndex' title="$ui.getString("header.link.versionInfo") - $infoGlueVersion">$infoButtonLabel</span></span></a>
 			#else
@@ -307,17 +292,16 @@
 	        	});
 			-->
 			</script>
-	  	</div>
-
-  		<div id="rightFooter" style="float: right; margin-top: 10px; margin-right: 10px;">
-	  		$ui.getString("tool.common.loggedInAsLabel"): $infoGluePrincipal.displayName
-	  		<!--Version: $infoGlueVersion ($infoGlueVersionReleaseDate)-->
-	  		
-	  		<!--<button id="logoButton"></button>-->	
-	  	</div>
-
+			
+		</div>
   	</div>
-
+  	
+  	<div id="work">
+		#foreach($tool in $userTools)
+  		<iframe id="${tool.toolName}Iframe" name="${tool.toolName}Iframe" class="inactiveTool" src="loading.html" width="100%" height="350" frameborder="0" allowtransparency="true"></iframe>
+		#end
+  	</div>
+	
 	<div id="messagesDiv" style="display: none;">
 		<div id="messages" style="border: 1px solid #ccc; height: 400px; overflow: auto;"></div>
 		<div id="messageInput" style="margin-top: 4px; padding: 2px; border: 1px solid #ccc; background-color: #dff0fc;"><input type="text" style="width: 80%;" id="chatMessage" name="chatMessage"/> <input type="button" onclick="sendMessage();" value="Send"/></div>

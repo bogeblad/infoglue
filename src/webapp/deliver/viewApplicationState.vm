@@ -178,6 +178,19 @@
 	    <a href="ViewApplicationState!cacheStatistics.action">Cache statistics</a>
     </td>
   </tr>
+  <tr>
+    <td colspan="4" class="text" align="left">
+    	<form action="ViewApplicationState!debugCache.action"> 
+	    	Entity:
+	    	<select name="entityName">
+				<option value="content">Content</option>
+				<option value="siteNode">Content</option>
+	    	</select>
+	    	<input type="text" name="entityId"/>
+	    	<input type="submit" value="Report cache entries"/>
+	    </form>
+    </td>
+  </tr>
 
   <tr>
 	<td colspan="4" class="text">

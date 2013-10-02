@@ -95,40 +95,60 @@
     <td colspan="4" class="text">&nbsp;</td>
   </tr>
   <tr class="label">
-    <td>Item</td>
-    <td colspan="3">Value</td>
-  </tr>
-  <tr class="label">
     <td>InfoGlue cache name</td>
     <td>Cached items</td>
+    <td>Estimated size</td>
+    <td>Hit/Miss Ratio</td>
     <td>Statistics</td>
     <td>Actions <a href="ViewApplicationState!clearCaches.action">Clear All</a></td>
   </tr>
-  
   <tr>
     <td style="border-bottom: 1px solid #999999;" class="text" valign="top">String pool</td>
     <td style="border-bottom: 1px solid #999999;" class="text" valign="top">$stringPoolSize</td>
+    <td style="border-bottom: 1px solid #999999;" class="text" valign="top">n/a</td>
+    <td style="border-bottom: 1px solid #999999;" class="text" valign="top">n/a</td>
     <td style="border-bottom: 1px solid #999999;" class="text" valign="top">$stringPoolHits hits</td>
     <td style="border-bottom: 1px solid #999999;" class="text" valign="top"><a href="ViewApplicationState!clearStringPool.action">Clear</a></td>
   </tr>
-  
-  #foreach($cacheName in $caches.keySet())
+  #foreach($cacheName in $sortedCaches)
       #set($cache = $caches.get($cacheName))
+      
+      #if($cache.class.name == "com.opensymphony.oscache.general.GeneralCacheAdministrator") 
+      	#set($elementOne = "")
+      	#set($elementTwo = "")
+      	#foreach($cacheEventListener in $cache.cache.cacheEventListenerList.listenerList)
+      		#if($velocityCount == 2)
+	      		#set($elementOne = "$cacheEventListener")
+      		#else
+      			#set($elementTwo = "$cacheEventListener")
+      		#end
+      	#end
+      	#set($parsedData = $this.parseData("$elementOne", "$elementTwo"))
+	  #end
 	  <tr>
 	    <td style="border-bottom: 1px solid #999999;" class="text" valign="top"><a href="ViewApplicationState!cacheDetailsStatistics.action?cacheName=$cacheName">$cacheName</a></td>
 	    <td style="border-bottom: 1px solid #999999;"  class="text" valign="top">#if($caches.get($cacheName).class.name == "com.opensymphony.oscache.general.GeneralCacheAdministrator") $cache.getCache().getSize() #else $cache.size() #end</td>
 	    <td style="border-bottom: 1px solid #999999;"  class="text" valign="top">
 	    	#if($cache.class.name == "com.opensymphony.oscache.general.GeneralCacheAdministrator") 
-	    		<span style="font-size: 8pt; font-style: italic;">$eventListeners.get("${cacheName}_cacheEntryEventListener").toString()
-		        <br/>
-		        $eventListeners.get("${cacheName}_cacheMapAccessEventListener").toString()<br>
-		        $this.getExtraStatistics($cacheName)
+      			$parsedData.estimatedSize<br/>
+		    #end
+	    </td>
+	    <td style="border-bottom: 1px solid #999999;"  class="text" valign="top">
+	    	#if($cache.class.name == "com.opensymphony.oscache.general.GeneralCacheAdministrator") 
+		        $parsedData.hitMissRatio %
+		    #end
+	    </td>
+	    <td style="border-bottom: 1px solid #999999;"  class="text" valign="top">
+	    	#if($cache.class.name == "com.opensymphony.oscache.general.GeneralCacheAdministrator") 
+	    		<span style="font-size: 8pt; font-style: italic;">
+		        $parsedData.originalSummary<br/>
+		        $parsedData.originalStats
 		        </span>
 	    	#else 
 	    		No additional statistics
 	    	#end
 	    </td>
-	    <td style="border-bottom: 1px solid #999999;"  class="text" valign="top"><a href="ViewApplicationState!clearCache.action?cacheName=$cacheName">Clear</a> | <a href="ViewApplicationState!clearCache.action?cacheName=$cacheName&clearFileCache=true">Clear (also fileCache)</a> | <a href="ViewApplicationState!flushCache.action?cacheName=$cacheName">Flush</a></td>
+	    <td style="border-bottom: 1px solid #999999;"  class="text" valign="top"><a href="ViewApplicationState!clearCache.action?cacheName=$cacheName&returnAddress=ViewApplicationState!cacheStatistics.action">Clear</a> | <a href="ViewApplicationState!clearCache.action?cacheName=$cacheName&clearFileCache=true">Clear (also fileCache)</a></td>
 	  </tr>
   #end  <tr>
     <td class="text" colspan="4"><a href="ViewApplicationState!resetComponentStatistics.action">Reset component stats</a></td>

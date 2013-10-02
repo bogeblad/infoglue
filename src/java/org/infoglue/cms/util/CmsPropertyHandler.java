@@ -2658,6 +2658,16 @@ public class CmsPropertyHandler
 		return getServerNodeProperty("authConstraint", true, "");
 	}
 
+	public static String getLightAuthConstraint()
+	{
+		return getServerNodeProperty("lightAuthConstraint", true, "lightCmsUser");
+	}
+
+	public static String getLightUserAllowedURIRegexp()
+	{
+		return getServerNodeProperty("lightUserAllowedURIRegexp", true, ".*?(Content|SiteNode|DigitalAsset|ViewCommonAjaxServices).*?");
+	}
+
 	public static String getExtraSecurityParameters()
 	{
 		return "";

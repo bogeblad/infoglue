@@ -120,7 +120,12 @@
 						#if($attributeDescription != "")
 							#set($attributeDescription = "- $attributeDescription")
 						#end
-						<p>$attributeTitle $attributeDescription<br/><input type="text" id="$attribute.name" name="$attribute.name" value="" class="normaltextfield autofill"/></p>
+						
+						#set($autofill = false)
+						#if($attribute.name == "Title" || $attribute.name == "NavigationTitle" || $attribute.name == "NavigationTitle" || $attribute.name == "NiceURIName")
+							#set($autofill = true)
+						#end
+						<p>$attributeTitle $attributeDescription<br/><input type="text" id="$attribute.name" name="$attribute.name" value="" class="normaltextfield #if($autofill)autofill#end"/></p>
 					#end
 					
 				</div>

@@ -2102,9 +2102,12 @@ public class SiteNodeController extends BaseController
         	if(metaAttributes == null || !metaAttributes.containsKey("MetaInfo"))
             	versionValue += "<MetaInfo><![CDATA[" + newSiteNode.getName() + "]]></MetaInfo>";
         	
-        	for(String metaAttributeName : metaAttributes.keySet())
+        	if(metaAttributes != null)
         	{
-        		versionValue += "<" + metaAttributeName + "><![CDATA[" + metaAttributes.get(metaAttributeName) + "]]></" + metaAttributeName + ">";
+	        	for(String metaAttributeName : metaAttributes.keySet())
+	        	{
+	        		versionValue += "<" + metaAttributeName + "><![CDATA[" + metaAttributes.get(metaAttributeName) + "]]></" + metaAttributeName + ">";
+	        	}
         	}
         	
         	versionValue += "<ComponentStructure><![CDATA[" + componentStructure + "]]></ComponentStructure>";

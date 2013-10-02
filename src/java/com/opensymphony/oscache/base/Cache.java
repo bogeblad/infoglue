@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -1026,4 +1027,29 @@ public class Cache implements Serializable {
 			return cacheMap.size();
 		}
 	}
+	
+    /**
+     * Get's all objects that belong to the supplied group.
+     *
+     * @param group The group to flush
+     */
+    public Set getGroup(String group) {
+        
+    	Set<String> copy = new HashSet<String>();
+    	// Flush all objects in the group
+        Set groupEntries = cacheMap.getGroup(group);
+
+        if (groupEntries != null) {
+            Iterator itr = groupEntries.iterator();
+            String key;
+            CacheEntry entry;
+
+            while (itr.hasNext()) {
+                key = (String) itr.next();
+                copy.add(key);
+            }
+        }
+        
+        return copy;
+    }
 }

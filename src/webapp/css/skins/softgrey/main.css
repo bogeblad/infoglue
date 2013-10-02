@@ -212,7 +212,7 @@ body.generaltooledit
     background-color: #afb9c7;
     background-image: url(images/headerToolbarBackground.gif);
     background-repeat: repeat-x;
-    border-bottom: 1px solid #9CAABD;
+    border-bottom: 1px solid #ccc;
 }
 #footertoolbar 
 {
@@ -228,7 +228,7 @@ body.generaltooledit
     background-position: left center;
     background-repeat: repeat-y;
     border: 1px solid #6593cf;
-    font-family: Tahoma,Arial,Helvetica,sans-serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 10pt;
 }
 #contextMenuDiv ul li a

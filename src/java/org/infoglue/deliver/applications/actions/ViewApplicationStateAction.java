@@ -70,12 +70,15 @@ import org.infoglue.deliver.applications.databeans.CacheEvictionBean;
 import org.infoglue.deliver.controllers.kernel.impl.simple.ExtranetController;
 import org.infoglue.deliver.portal.ServletConfigContainer;
 import org.infoglue.deliver.util.CacheController;
+import org.infoglue.deliver.util.CompressionHelper;
 import org.infoglue.deliver.util.RequestAnalyser;
 
 import webwork.action.ActionContext;
 
 import com.opensymphony.oscache.base.Cache;
+import com.opensymphony.oscache.base.CacheEntry;
 import com.opensymphony.oscache.base.OSCacheUtility;
+import com.opensymphony.oscache.general.GeneralCacheAdministrator;
 import com.opensymphony.oscache.web.ServletCache;
 import com.opensymphony.oscache.web.ServletCacheAdministrator;
 
@@ -95,8 +98,10 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
     private List states 					= new ArrayList();
     private Map applicationMap 				= new HashMap();
     private Object cache					= null;
-    
-	private boolean databaseConnectionOk 	= false;
+    private Object cacheMap					= null;
+    private String cacheKey					= null;    
+
+    private boolean databaseConnectionOk 	= false;
 	private boolean applicationSettingsOk 	= false;
 	private boolean testQueriesOk			= false;
 	private boolean diskPermissionOk 		= false;
@@ -348,7 +353,28 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 	    return principal;
 	}
 
-	
+    /**
+     * This action allows debugging caches for content or sitenodes.
+     */
+    public String doDebugCache() throws Exception
+    {
+    	String returnValue = handleAccess(this.getRequest());
+    	if(returnValue != null)
+    		return returnValue;
+        
+        CacheController.debugCache(getRequest().getParameter("entityName"), getRequest().getParameter("entityId"), (String)CmsPropertyHandler.getCacheSettings().get("cacheNamesToSkipInDebug"));
+        
+        //this.getHttpSession().invalidate();
+        if(this.returnAddress != null && !this.returnAddress.equals(""))
+        {
+            this.getResponse().sendRedirect(this.returnAddress);
+            
+            return NONE;
+        }
+ 
+        return "cleared";
+    }
+    
     /**
      * This action allows clearing of the given cache manually.
      */
@@ -898,10 +924,14 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
     	if(returnValue != null)
     		return returnValue;
 
-        
-        if(this.cacheName != null && !this.cacheName.equals(""))
+    	if(this.cacheName != null && !this.cacheName.equals(""))
+        {
         	this.cache = CacheController.getCaches().get(this.cacheName);
-        
+        	if(this.cache instanceof GeneralCacheAdministrator)
+        	{
+        		this.cacheMap = ((GeneralCacheAdministrator)this.cache).getCache().cacheMap;
+        	}
+        }        
         return "successCacheDetailsStatistics";
     }
 
@@ -1270,6 +1300,11 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
         this.cacheName = cacheName;
     }
 
+    public String getCacheName()
+    {
+        return this.cacheName;
+    }
+
     public void setClearFileCache(boolean clearFileCache)
     {
         this.clearFileCache = clearFileCache;
@@ -1353,6 +1388,80 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
     	return data;
     }
     
+    public String doCacheEntryGroups() throws Exception
+    {
+    	System.out.println(this.cacheName);
+    	if(this.cacheName != null && !this.cacheName.equals(""))
+        {
+        	this.cache = CacheController.getCaches().get(this.cacheName);
+        	if(this.cache instanceof GeneralCacheAdministrator)
+        	{
+        		this.cacheMap = ((GeneralCacheAdministrator)this.cache).getCache().cacheMap;
+        	}
+        }
+    	
+    	CacheEntry ce = null;
+
+    	Iterator ceIterator = ((GeneralCacheAdministrator)cache).getCache().cacheMap.values().iterator();
+    	while(ceIterator.hasNext())
+    	{
+    		ce = (CacheEntry)ceIterator.next();
+    		if(ce.getKey().equals(this.cacheKey))
+    		{
+    			break;
+    		}
+    	}
+    	getResponse().setContentType("text/plain");
+
+    	StringBuilder sb = new StringBuilder();
+    	
+    	if(ce != null && ce.getGroups() != null)
+    	{
+    		List<String> groups = new ArrayList<String>();
+    		groups.addAll(ce.getGroups());
+    		Collections.sort(groups);
+	    	for(Object group : groups)
+	    	{
+	    		sb.append("" + group + "\n");
+	    	}
+    	}
+
+    	getResponse().getWriter().println(sb.toString());
+    	
+    	return NONE;
+    }
+
+    public String doCacheEntryValue() throws Exception
+    {
+    	Object value = null;
+    	if(this.cacheName != null && !this.cacheName.equals(""))
+        {
+        	this.cache = CacheController.getCaches().get(this.cacheName);
+        	if(this.cache instanceof GeneralCacheAdministrator)
+        	{
+        		value = CacheController.getCachedObjectFromAdvancedCache(cacheName, cacheKey);
+        	}
+        	else
+        	{
+        		value = CacheController.getCachedObject(cacheName, cacheKey);        		
+        	}
+        }
+    	
+    	if(value != null && value instanceof byte[])
+    	{
+    	    CompressionHelper compressionHelper = new CompressionHelper();
+	    	value = compressionHelper.decompress((byte[])value);
+    	}
+    	getResponse().setContentType("text/plain");
+
+    	StringBuilder sb = new StringBuilder();
+    	
+    	sb.append("" + value + "\n");
+    	getResponse().getWriter().println(sb.toString());
+    	
+    	return NONE;
+    }
+    
     public Integer getStringPoolSize()
     {
     	return CacheController.getPooledStringSize();
@@ -1383,6 +1492,36 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
     	return this.cache;
     }
 
+    public Object getCacheMap()
+    {
+    	return this.cacheMap;
+    }
+    
+    public void setCacheKey(String cacheKey)
+    {
+    	this.cacheKey = cacheKey;
+    }
+
+    public int getLength(Object o)
+    {
+    	logger.info("o:" + o);
+    	if(o == null)
+    		return -1;
+    	if(o instanceof byte[])
+    	{
+    		byte[] array = (byte[])o;
+    		logger.info("array:" + array.length);
+    		return array.length;
+    	}
+    	else if(o instanceof String)
+    	{
+    		logger.info("object string:" + (String)o.toString());
+    		return o.toString().length();
+    	}
+    	else
+    		return o.toString().length();
+    }
+    
 	public void setAttributeName(String attributeName)
 	{
 		this.attributeName = attributeName;

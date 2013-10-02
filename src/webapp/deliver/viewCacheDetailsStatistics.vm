@@ -7,6 +7,10 @@
 	
 	<style>
 	<!--
+		body
+		{
+			font-size: 10px;
+		}
 		table 
 		{
 			width : 900px;
@@ -27,6 +31,12 @@
 			font-size		 : 8pt;
 			font-weight 	 : bold;
 			background-color : #CCCCCC;
+		}
+		.label
+		{
+			font-family		 : arial;
+			font-size		 : 8pt;
+			font-weight 	 : normal;
 		}
 		.labelsub
 		{
@@ -62,9 +72,38 @@
 	-->
 	</style>
 	
+	<script type="text/javascript" src="script/jquery/jquery-1.2.6.min.js"></script>
+	
+	<script type="text/javascript">
+	<!--
+		function showGroups(cacheName, cacheKey)
+		{
+			$("#groupsContent").load("ViewApplicationState!cacheEntryGroups.action", { 'cacheName': cacheName, 'cacheKey': cacheKey }, function(response, status, xhr) {
+				$("#groupsContent").text(response);
+			});
+			$("#groups").show();
+		}
+
+		function showValues(cacheName, cacheKey)
+		{
+			$("#groupsContent").load("ViewApplicationState!cacheEntryValue.action", { 'cacheName': cacheName, 'cacheKey': cacheKey }, function(response, status, xhr) {
+				$("#groupsContent").text(response);
+			});
+			$("#groups").show();
+		}
+		
+	-->	
+	</script>
+	
 </head>
 
 <body>
+
+<div id="groups" style="position: absolute; top: 100px; left: 50px; display:none; background: white; width: 70%; height: 300px; overflow: auto; border: 2px solid #333;">
+<a href="javascript:$('#groups').hide();">Close</a>
+<pre id="groupsContent">
+</pre>
+</div>
 
 <table cellpadding="4" cellspacing="0">
   <tr>
@@ -79,20 +118,24 @@
   </tr>
   <tr class="label">
     <td>InfoGlue cache name</td>
-    <td>Cached items</td>
-    <td>Statistics</td>
-    <td>Actions <a href="ViewApplicationState!clearCaches.action">Clear All</a></td>
+    <td>Item size in bytes</td>
+    <td>Details</td>
+    <td>Actions <a href="ViewApplicationState!clearCache.action?cacheName=$cacheName">Clear All</a></td>
   </tr>
   #if($cache.class.name == "com.opensymphony.oscache.general.GeneralCacheAdministrator") 
-  	  #foreach($key in $cache.keySet())
-	  <tr>
-	 	 <td>$key</td>
+  	  #foreach($cacheEntry in $cacheMap.values())
+	  <tr class="value">
+	 	 <td>$cacheEntry.key</td>
+	 	 <td><a href="javascript:showValues('$cacheName', '$cacheEntry.key');">View value</a></td>
+	 	 <td><a href="javascript:showGroups('$cacheName', '$cacheEntry.key');">View groups ($cacheEntry.groups.size() used)</a></td>
 	  </tr>
 	  #end
   #else  
   	  #foreach($key in $cache.keySet())
 	  <tr>
-	 	 <td>$key=$cache.get($key).size()</td>
+	 	 <td>$key</td>
+	 	 <td><a href="javascript:showGroups('$cacheName', '$cacheEntry.key');">View value</a></td>
+	 	 <td>&nbsp;</td>
 	  </tr>
 	  #end
   #end

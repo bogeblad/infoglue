@@ -509,6 +509,7 @@ public class CacheController extends Thread
 	
 	public static void cacheObject(String cacheName, Object key, Object value)
 	{
+		System.out.println("cacheName:" + cacheName + "=" + key);
 		if(cacheName == null || key == null || value == null)
 			return;
 			
@@ -1575,6 +1576,89 @@ public class CacheController extends Thread
 		return value;
 	}
 
+	/**
+	 * This method let's you get a list of caches and entries in which the given entity is located.
+	 * @param entityName
+	 * @param entityId
+	 */
+	public static void debugCache(String entityName, String entityId, String cacheNamesToDebug)
+	{
+		logger.info("Debugging " + entityName + "=" + entityName + " (" + cacheNamesToDebug + ")");
+		
+		if(cacheNamesToDebug == null)
+			cacheNamesToDebug = "contentAttributeCache,contentVersionCache,contentCache,contentVersionIdCache,componentPropertyCacheRepoGroups,componentPropertyVersionIdCacheRepoGroups";
+		
+		String[] cacheNamesToDebugArray = cacheNamesToDebug.split(",");
+		List<String> cacheNamesToDebugList = Arrays.asList(cacheNamesToDebugArray);
+		synchronized(caches) 
+		{
+			for (Iterator i = caches.entrySet().iterator(); i.hasNext(); ) 
+			{
+				Map.Entry e = (Map.Entry) i.next();
+				String cachName = (String)e.getKey();
+				//System.out.println("Cache: " + cachName);
+				if(!cacheNamesToDebugList.contains(cachName))
+				{
+					Object object = e.getValue();
+					if(object instanceof Map)
+					{
+						Map cacheInstance = (Map)e.getValue();
+						synchronized(cacheInstance)
+						{
+							Set<Map.Entry<String,Object>> entrySet = cacheInstance.entrySet();
+							Iterator<Map.Entry<String,Object>> entrySetIterator = entrySet.iterator();
+							while(entrySetIterator.hasNext())
+							{
+								Map.Entry<String,Object> entry = entrySetIterator.next();
+								if(entry.getKey().toLowerCase().contains("content") || entry.getKey().contains("selectiveCacheUpdateNonApplicable"))
+								{
+									System.out.println("Match: " + cachName + "=" + entry.getKey());
+								}
+							}
+						}
+					}
+					else
+					{
+					    GeneralCacheAdministrator cacheInstance = (GeneralCacheAdministrator)e.getValue();
+						synchronized(cacheInstance)
+						{
+							Set<String> entries = cacheInstance.getCache().getGroup(entityName + "_" + entityId);
+							for(String entry : entries)
+							{
+								System.out.println("Match advanced: " + cachName + "=" + entry);
+							}
+							
+							try
+							{
+								List<ContentTypeDefinitionVO> contentTypeDefinitionVOList = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList();
+								for(ContentTypeDefinitionVO ctdVO : contentTypeDefinitionVOList)
+								{
+									//System.out.println("Group:" + "selectiveCacheUpdateNonApplicable_contentTypeDefinitionId_" + ctdVO.getId());
+									Set<String> selectiveCacheUpdateNonApplicableEntries = cacheInstance.getCache().getGroup("selectiveCacheUpdateNonApplicable_contentTypeDefinitionId_" + ctdVO.getId());
+									for(String entry : selectiveCacheUpdateNonApplicableEntries)
+									{
+										System.out.println("Match selectiveCacheUpdateNonApplicable_contentTypeDefinitionId_" + ctdVO.getId() + "/" + cachName + "=" + entry);
+									}
+								}
+								Set<String> selectiveCacheUpdateNonApplicableEntries = cacheInstance.getCache().getGroup("selectiveCacheUpdateNonApplicable");
+								for(String entry : selectiveCacheUpdateNonApplicableEntries)
+								{
+									System.out.println("Match selectiveCacheUpdateNonApplicable: " + cachName + "=" + entry);
+								}
+							}
+							catch (Exception e2) 
+							{
+								e2.printStackTrace();
+							}
+						}
+					}
+				}
+				else
+					System.out.println("Skipping cache:" + cachName);
+			}
+		}
+	}
+	
 	public static void clearCachesStartingWith(String cacheNamePrefix)
 	{
 		Set keySet = new HashSet();

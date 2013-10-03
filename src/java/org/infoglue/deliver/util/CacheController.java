@@ -75,9 +75,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.entities.content.ContentCategoryVO;
 import org.infoglue.cms.entities.content.ContentVO;
-import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
-import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.content.SmallestContentVersionVO;
 import org.infoglue.cms.entities.content.impl.simple.ContentCategoryImpl;
 import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
@@ -509,7 +507,6 @@ public class CacheController extends Thread
 	
 	public static void cacheObject(String cacheName, Object key, Object value)
 	{
-		System.out.println("cacheName:" + cacheName + "=" + key);
 		if(cacheName == null || key == null || value == null)
 			return;
 			
@@ -1581,10 +1578,24 @@ public class CacheController extends Thread
 	 * @param entityName
 	 * @param entityId
 	 */
-	public static void debugCache(String entityName, String entityId, String cacheNamesToDebug)
+	public static String debugCache(String entityName, String entityId, String cacheNamesToDebug)
 	{
+		StringBuffer debug = new StringBuffer();
+		
 		logger.info("Debugging " + entityName + "=" + entityName + " (" + cacheNamesToDebug + ")");
 		
+		/*
+		Boolean isEntityPublicationProcessed = false;
+		try
+		{
+			isEntityPublicationProcessed = PublicationController.getController().getIsEntityPublicationProcessed(entityName, entityId);
+			System.out.println("isEntityPublicationProcessed: " + isEntityPublicationProcessed);
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		*/
 		if(cacheNamesToDebug == null)
 			cacheNamesToDebug = "contentAttributeCache,contentVersionCache,contentCache,contentVersionIdCache,componentPropertyCacheRepoGroups,componentPropertyVersionIdCacheRepoGroups";
 		
@@ -1612,7 +1623,7 @@ public class CacheController extends Thread
 								Map.Entry<String,Object> entry = entrySetIterator.next();
 								if(entry.getKey().toLowerCase().contains("content") || entry.getKey().contains("selectiveCacheUpdateNonApplicable"))
 								{
-									System.out.println("Match: " + cachName + "=" + entry.getKey());
+									debug.append("" + cachName + "=" + entry.getKey() + ",");
 								}
 							}
 						}
@@ -1625,7 +1636,7 @@ public class CacheController extends Thread
 							Set<String> entries = cacheInstance.getCache().getGroup(entityName + "_" + entityId);
 							for(String entry : entries)
 							{
-								System.out.println("Match advanced: " + cachName + "=" + entry);
+								debug.append("" + cachName + "=" + entry + ",");
 							}
 							
 							try
@@ -1637,13 +1648,13 @@ public class CacheController extends Thread
 									Set<String> selectiveCacheUpdateNonApplicableEntries = cacheInstance.getCache().getGroup("selectiveCacheUpdateNonApplicable_contentTypeDefinitionId_" + ctdVO.getId());
 									for(String entry : selectiveCacheUpdateNonApplicableEntries)
 									{
-										System.out.println("Match selectiveCacheUpdateNonApplicable_contentTypeDefinitionId_" + ctdVO.getId() + "/" + cachName + "=" + entry);
+										debug.append("selectiveCacheUpdateNonApplicable_contentTypeDefinitionId_" + ctdVO.getId() + "/" + cachName + "=" + entry + ",");
 									}
 								}
 								Set<String> selectiveCacheUpdateNonApplicableEntries = cacheInstance.getCache().getGroup("selectiveCacheUpdateNonApplicable");
 								for(String entry : selectiveCacheUpdateNonApplicableEntries)
 								{
-									System.out.println("Match selectiveCacheUpdateNonApplicable: " + cachName + "=" + entry);
+									debug.append("selectiveCacheUpdateNonApplicable: " + cachName + "=" + entry + ",");
 								}
 							}
 							catch (Exception e2) 
@@ -1657,6 +1668,8 @@ public class CacheController extends Thread
 					System.out.println("Skipping cache:" + cachName);
 			}
 		}
+		
+		return debug.toString();
 	}
 	
 	public static void clearCachesStartingWith(String cacheNamePrefix)

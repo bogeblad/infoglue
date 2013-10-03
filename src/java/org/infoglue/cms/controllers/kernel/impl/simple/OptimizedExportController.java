@@ -41,7 +41,6 @@ import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.xml.Marshaller;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.databeans.ProcessBean;
-import org.infoglue.cms.applications.managementtool.actions.ExportRepositoryAction;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
@@ -446,11 +445,15 @@ public class OptimizedExportController extends BaseController implements Runnabl
 					String name = new VisualFormatter().replaceNonAscii(repository.getName(), '_');
 					
 					String fileName = type + "_" + repository.getId() + ".xml";
+					
+					/*
 					if(exportFileName != null && !exportFileName.equals(""))
 						fileName = exportFileName;
+					*/
 					
 					String fileSystemName =  folderName + File.separator + fileName;
-								
+					System.out.println("Dumping to:" + fileSystemName);	
+					
 					String encoding = "UTF-8";
 					File file = new File(fileSystemName);
 		            FileOutputStream fos = new FileOutputStream(file);

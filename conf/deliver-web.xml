@@ -74,33 +74,33 @@
 	</filter> 
 
 	<filter>
-        <filter-name>ViewPageFilter</filter-name>
-        <filter-class>org.infoglue.deliver.applications.filters.ViewPageFilter</filter-class>
-        <init-param>
-            <param-name>RepositoryName</param-name>
-            <param-value>localhost</param-value>
-        </init-param>
-        <init-param>
-            <param-name>FilterURIs</param-name>
-            <param-value>
-                *.action,
-                /applications/FCKEditor/*,
-                /applications/jscalendar/*,
-                /digitalAssets/*,
-                /scripts/*,
-                /script/*,
-                /css/*,
-                /images/*,
-                /jsp/*,
-        		/robots.txt,
-                *.gif,
-                *.jpg,
-                *.png,
-                *.ico,
-                *.css,
-                *.js
-		    </param-value>
-        </init-param>
+		<filter-name>ViewPageFilter</filter-name>
+		<filter-class>org.infoglue.deliver.applications.filters.ViewPageFilter</filter-class>
+		<init-param>
+			<param-name>RepositoryName</param-name>
+			<param-value>localhost</param-value>
+		</init-param>
+		<init-param>
+			<param-name>FilterURIs</param-name>
+			<param-value>
+				*.action,
+				/applications/FCKEditor/*,
+				/applications/jscalendar/*,
+				/digitalAssets/*,
+				/scripts/*,
+				/script/*,
+				/css/*,
+				/images/*,
+				/jsp/*,
+				/robots.txt,
+				*.gif,
+				*.jpg,
+				*.png,
+				*.ico,
+				*.css,
+				*.js
+			</param-value>
+		</init-param>
         <!--
         <init-param>
             <param-name>AttributeName</param-name>
@@ -109,7 +109,7 @@
             <param-value>SiteNode.name</param-value>
         </init-param>
         -->
-    </filter>
+	</filter>
 
 	<filter>
         <filter-name>RedirectFilter</filter-name>
@@ -254,9 +254,9 @@
     </security-constraint>
 
 	<login-config>
-        <auth-method>BASIC</auth-method>
-        <realm-name>infoglue-security-domain</realm-name>
-    </login-config>
+		<auth-method>BASIC</auth-method>
+		<realm-name>infoglue-security-domain</realm-name>
+	</login-config>
 <!--
 	<login-config>
       	<auth-method>FORM</auth-method>
@@ -298,15 +298,6 @@
 	</error-page>
 
 	<jsp-config>	
-		<taglib>
-		  <taglib-uri>http://jakarta.apache.org/taglibs/mailer-1.1</taglib-uri>
-		  <taglib-location>/WEB-INF/tld/taglibs-mailer.tld</taglib-location>
-		</taglib>
-		<taglib>
-		  <taglib-uri>domino</taglib-uri>
-		  <taglib-location>/WEB-INF/tld/domtags.tld</taglib-location>
-		</taglib>
-	
 		<taglib>
 			<taglib-uri>infoglue-common</taglib-uri>
 			<taglib-location>/WEB-INF/tld/infoglue-common.tld</taglib-location>

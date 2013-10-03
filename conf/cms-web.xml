@@ -10,33 +10,33 @@
 	    <filter-name>CacheEvictionFilter</filter-name>
 	    <filter-class>org.infoglue.deliver.applications.filters.CacheEvictionFilter</filter-class>
 		<init-param>
-            <param-name>FilterURIs</param-name>
-            <param-value>
-                /DownloadProtectedAsset.action,
-                /UpdateCache.action,
-                /UpdateCache!test.action,
+			<param-name>FilterURIs</param-name>
+			<param-value>
+				/DownloadProtectedAsset.action,
+				/UpdateCache.action,
+				/UpdateCache!test.action,
 				/ViewApplicationState.action,
 				/ViewLogging.action,
 				/ErrorPage.action,
-                /digitalAssets/*,
-                /webdavedit/*,
-                /applications/*,
-                /scripts/*,
-                /script/*,
-                /css/*,
-                /images/*,
-                /img/*,
-                /jsp/*,
-                *.xml,
-                *.gif,
-                *.jpg,
-                *.png,
-                *.ico,
-                *.css,
-                *.js              
-            </param-value>
-        </init-param>
-    </filter> 
+				/digitalAssets/*,
+				/webdavedit/*,
+				/applications/*,
+				/scripts/*,
+				/script/*,
+				/css/*,
+				/images/*,
+				/img/*,
+				/jsp/*,
+				*.xml,
+				*.gif,
+				*.jpg,
+				*.png,
+				*.ico,
+				*.css,
+				*.js
+            		</param-value>
+        	</init-param>
+	</filter> 
 
 	<filter>
 		<filter-name>Set Character Encoding</filter-name>

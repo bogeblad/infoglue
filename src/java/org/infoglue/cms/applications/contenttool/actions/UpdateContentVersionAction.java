@@ -501,8 +501,37 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
         
     public void setVersionValue(java.lang.String versionValue) throws Exception
     {
-    	versionValue = XMLHelper.stripInvalidXmlCharacters(versionValue);
-
+    	try
+    	{
+	    	if(versionValue != null)
+		    {
+		    	String versionValueTest = new String(versionValue.getBytes("iso-8859-1"));
+		    	if(!versionValue.contains("\u00E5") &&
+		    			!versionValue.contains("\u00E4") &&
+		    			!versionValue.contains("\u00F6") &&
+		    			!versionValue.contains("\u00C5") &&
+		    			!versionValue.contains("\u00C4") &&
+		    			!versionValue.contains("\u00D6"))
+		    	{
+			    	if(versionValueTest.contains("\u00E5") ||
+			    			versionValueTest.contains("\u00E4") ||
+			    			versionValueTest.contains("\u00F6") ||
+			    			versionValueTest.contains("\u00C5") ||
+			    			versionValueTest.contains("\u00C4") ||
+			    			versionValueTest.contains("\u00D6"))
+			    	{
+			    		versionValue = versionValueTest;
+			    	}
+		    	}
+	
+		    	versionValue = XMLHelper.stripInvalidXmlCharacters(versionValue);
+		    }
+    	}
+    	catch (Exception e) 
+    	{
+    		logger.error("Error: " + e.getMessage());
+		}
+	   
     	try
     	{
     		SAXReader reader = new SAXReader(false);

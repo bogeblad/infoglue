@@ -1054,4 +1054,26 @@
             <rtexprvalue>false</rtexprvalue>
         </attribute>
 	</tag>
+
+	<tag>
+		<name>generalSetting</name>
+		<tagclass>org.infoglue.deliver.taglib.management.GeneralSettingTag</tagclass>
+		<bodycontent>empty</bodycontent>
+		<info>Gets a value from the general settings. TemplateController#getGeneralSetting()</info>
+		<attribute>
+			<name>id</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>key</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>default</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
 </taglib>

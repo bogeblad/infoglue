@@ -72,19 +72,19 @@ import com.opensymphony.module.propertyset.PropertySetManager;
 
 public class CmsPropertyHandler
 {
-    private final static Logger logger = Logger.getLogger(CmsPropertyHandler.class.getName());
+	private final static Logger logger = Logger.getLogger(CmsPropertyHandler.class.getName());
 
-    private final static HttpHelper httpHelper = new HttpHelper();
+	private final static HttpHelper httpHelper = new HttpHelper();
 
 	private static Properties cachedProperties 		= null;
 	private static PropertySet propertySet			= null; 
 
 	private static String serverNodeName			= null;
 	private static String digitalAssetPortletRegistryId = null;
-	
+
 	private static String globalSettingsServerNodeId= "-1";
 	private static String localSettingsServerNodeId	= null;
-	
+
 	private static String applicationName 			= null;
 	private static String contextRootPath 			= null;
 	private static String defaultScheme				= null;
@@ -93,7 +93,7 @@ public class CmsPropertyHandler
 	private static File propertyFile 				= null;
 	private static Date startupTime					= null;
 	private static String servletContext 			= null;
-	
+
 	//Variables which are caches very hard but must be cleared roughly
 	private static String inputCharacterEncoding 					= null;
 	private static String enforceRigidContentAccess 				= null;
@@ -108,8 +108,9 @@ public class CmsPropertyHandler
 	private static String useAccessBasedProtocolRedirects			= null;
 	private static Boolean useHashCodeInCaches						= null;
 	private static Boolean useSynchronizationOnCaches				= null;
-	private static Map cacheSettings						= null;
-	   
+	private static Map cacheSettings								= null;
+	private static Properties generalSettings						= null;
+
 	public static String getDigitalAssetPortletRegistryId()
 	{
 		 return digitalAssetPortletRegistryId;
@@ -270,6 +271,7 @@ public class CmsPropertyHandler
 		Boolean newUseSynchronizationOnCaches = getUseSynchronizationOnCaches(true);
 		String newOperatingMode = getOperatingMode(true);
 		Map newCacheSettings = getCacheSettings(true);
+		Properties newGeneralSettings = getGeneralSettings(true);
 
 		inputCharacterEncoding 						= newInputCharacterEncoding;
 		enforceRigidContentAccess 					= newEnforceRigidContentAccess;
@@ -285,7 +287,8 @@ public class CmsPropertyHandler
 		useHashCodeInCaches 						= newUseHashCodeInCaches;
 		useSynchronizationOnCaches					= newUseSynchronizationOnCaches;
 		operatingMode 								= newOperatingMode;
-		cacheSettings 						= newCacheSettings;
+		cacheSettings 								= newCacheSettings;
+		generalSettings								= newGeneralSettings;
 
 		logger.info("Done resetting hard cached settings...");
 	}
@@ -2431,8 +2434,41 @@ public class CmsPropertyHandler
 		return cacheSettings; 
 	}
 
+	private static Properties loadPropertiesFromString(String propertiesString, Properties currentProperties)
+	{
+		if (propertiesString != null && !propertiesString.equals(""))
+		{
+			try
+			{
+				currentProperties = new Properties(currentProperties);
+				currentProperties.load(new ByteArrayInputStream(propertiesString.getBytes("UTF-8")));
+				return currentProperties;
+			}
+			catch(Exception ex)
+			{
+				logger.error("Error loading general settings from string. Reason:" + ex.getMessage());
+				logger.warn("Error loading general settings from string.", ex);
+			}
+		}
+		return currentProperties;
+	}
 
-	
+	public static Properties getGeneralSettings(boolean skipCaches)
+	{
+		if (generalSettings == null || skipCaches)
+		{
+			String generalSettingsString = CmsPropertyHandler.getServerNodeDataProperty(null, "generalSettings", true, null, skipCaches);
+			CmsPropertyHandler.generalSettings = loadPropertiesFromString(generalSettingsString, null);
+			if (CmsPropertyHandler.getOperatingMode().equals("0"))
+			{
+				logger.debug("Loading extra general settings for working instance.");
+				String workingGeneralSettingsString = CmsPropertyHandler.getServerNodeDataProperty(null, "workingGeneralSettings", true, null, skipCaches);
+				CmsPropertyHandler.generalSettings = loadPropertiesFromString(workingGeneralSettingsString, CmsPropertyHandler.generalSettings);
+			}
+		}
+		return generalSettings;
+	}
+
 	public static List<String> getExtraPublicationPersistentCacheNames() 
 	{
 		List<String> cacheNames = new ArrayList<String>();

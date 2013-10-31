@@ -44,6 +44,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 
@@ -8729,4 +8730,27 @@ public class BasicTemplateController implements TemplateController
         return ( this instanceof EditOnSiteBasicTemplateController );
     }
 
+	public String getGeneralSetting(String key)
+	{
+		return getGeneralSetting(key, null);
+	}
+
+	public String getGeneralSetting(String key, String defaultValue)
+	{
+		Properties generalSettings = CmsPropertyHandler.getGeneralSettings(false);
+		String value = null;
+		if (generalSettings != null)
+		{
+			value = generalSettings.getProperty(key, defaultValue);
+		}
+		else
+		{
+			value = defaultValue;
+		}
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("Returning value <" + value + "> for general setting key <" + key + ">");
+		}
+		return value;
+	}
 }

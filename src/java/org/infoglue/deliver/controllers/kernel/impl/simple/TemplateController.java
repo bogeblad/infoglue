@@ -51,6 +51,7 @@ import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGlueGroup;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.security.InfoGlueRole;
+import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.DesEncryptionHelper;
 import org.infoglue.cms.util.DocumentConverterHelper;
 import org.infoglue.deliver.applications.databeans.DatabaseWrapper;
@@ -1788,5 +1789,24 @@ public interface TemplateController
      * @return true if the pagenode is rendered with EditOnSight decoration.
      */
     public boolean getIsDecorated();
+
+	/**
+	 * Gets the value for the given <em>key</em> from the general settings. If the key is not
+	 * present in the settings null is returned.
+	 * @param key A key that should match a property in the general settings.
+	 * @return The value corresponding to the given key, or null of the key is not present.
+	 * @see CmsPropertyHandler#getGeneralSettings(boolean)
+	 */
+	public String getGeneralSetting(String key);
+
+	/**
+	 * Gets the value for the given <em>key</em> from the general settings. If the key is not
+	 * present in the settings <em>defaultValue</em> is returned.
+	 * @param key A key that should match a property in the general settings.
+	 * @param defaultValue If no value is found for the given key this value is returned.
+	 * @return The value corresponding to the given key, or null of the key is not present.
+	 * @see CmsPropertyHandler#getGeneralSettings(boolean)
+	 */
+	public String getGeneralSetting(String key, String defaultValue);
 
 }

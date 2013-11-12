@@ -150,6 +150,8 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "pageKey");
 	    populate(ps, "componentKey");
 	    populateData(ps, "cacheSettings");
+	    populateData(ps, "generalSettings");
+	    populateData(ps, "workingGeneralSettings");
 	    populateData(ps, "extraPublicationPersistentCacheNames");
 	    populate(ps, "cmsBaseUrl");
 	    populate(ps, "cmsFullBaseUrl");

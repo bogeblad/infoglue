@@ -183,6 +183,8 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.duplicateAssetsBetweenVersions" "duplicateAssetsBetweenVersions" "$this.getPropertyValue('duplicateAssetsBetweenVersions')" $!cmsPH.duplicateAssetsBetweenVersions)
 				#editPropertyTextAreaCSS("ServerNode.property.assetUploadTransformationsSettings" "assetUploadTransformationsSettings" "$this.getDataPropertyValue('assetUploadTransformationsSettings')" "40" "6" "righttextarea" "$!serverNodeId" $!cmsPH.assetUploadTransformationsSettings)
 				#yesNoDropDownWithInheritCSS("ServerNode.property.onlyShowReferenceIfLatestVersion" "onlyShowReferenceIfLatestVersion" "$this.getPropertyValue('onlyShowReferenceIfLatestVersion')" $!cmsPH.onlyShowReferenceIfLatestVersion)
+				#editPropertyTextAreaCSS("ServerNode.property.generalSettings" "generalSettings" "$this.getDataPropertyValue('generalSettings')" "40" "6" "righttextarea" "$!serverNodeId" $!cmsPH.generalSettings)
+				#editPropertyTextAreaCSS("ServerNode.property.workingGeneralSettings" "workingGeneralSettings" "$this.getDataPropertyValue('workingGeneralSettings')" "40" "6" "righttextarea" "$!serverNodeId" $!cmsPH.workingGeneralSettings)
 			</div>
 		
 			<div class="inlineTabDiv" id="niceURISettings">

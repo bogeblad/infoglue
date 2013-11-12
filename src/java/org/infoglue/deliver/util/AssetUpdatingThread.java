@@ -57,9 +57,9 @@ class AssetUpdatingThread extends Thread
 				ContentVersionVO previousContentVersionVO = ContentVersionController.getContentVersionController().getSecondLatestActiveContentVersionVO(contentId, languageId, false, db);
 				if (logger.isInfoEnabled())
 				{
-					logger.info("Found previous content version for cache cleaning. ContentVersion.id:" + (previousContentVersionVO == null ? "null" : previousContentVersionVO.getContentVersionId()));
+					logger.info("Previous content version for cache cleaning of ContentVersion: " + contentVersionId + ". ContentVersion.id:" + (previousContentVersionVO == null ? "null" : previousContentVersionVO.getContentVersionId()));
 				}
-				if(previousContentVersionVO != null)
+				if (previousContentVersionVO != null)
 				{
 					List<DigitalAssetVO> previousDigitalAssets = DigitalAssetController.getController().getDigitalAssetVOList(previousContentVersionVO.getContentVersionId(), db);
 					for (DigitalAssetVO digitalAssetVO : previousDigitalAssets)
@@ -94,7 +94,7 @@ class AssetUpdatingThread extends Thread
 						boolean wasOldAsset = existingAssetIds.remove(digitalAssetVO.getDigitalAssetId());
 						if (wasOldAsset)
 						{
-							logger.debug("Asset still exists");
+							logger.debug("Asset still exists. AssetId: " + digitalAssetVO.getDigitalAssetId());
 						}
 
 						// Check if we should update file on disc

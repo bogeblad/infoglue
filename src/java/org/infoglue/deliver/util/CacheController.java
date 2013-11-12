@@ -3491,7 +3491,10 @@ public class CacheController extends Thread
 							    		}
 								    	//}
 
-										new AssetUpdatingThread(entityId).start();
+										if (cacheName.equals("contentVersionCache"))
+										{
+											new AssetUpdatingThread(entityId).start();
+										}
 							    	}
 							    	catch(SystemException se)
 							    	{

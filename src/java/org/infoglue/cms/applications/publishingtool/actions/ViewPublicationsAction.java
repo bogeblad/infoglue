@@ -59,7 +59,11 @@ public class ViewPublicationsAction extends InfoGlueAbstractAction
 	private List<String[]> publicationStatusList = new ArrayList<String[]>();
 	private EditionBrowser editionBrowser;
 	private String filter = null;
-
+	
+	private String entityName = "";
+	private String entityId = "";
+	private List<String[]> debugInformation;
+	
 	public List<String[]> getPublicationStatusList(){ return publicationStatusList; }
 
 	public int getStartIndex()			{ return startIndex; }
@@ -133,6 +137,31 @@ public class ViewPublicationsAction extends InfoGlueAbstractAction
 		return "showPublicationDetails";
 	}
 
+	/**
+	 * This command shows the items in a earlier publication. It also shows the status reported from all the 
+	 * deliver instances on if the publication was processed or not.
+	 */
+	public String doShowDebugEntityPublication() throws Exception
+	{
+		Boolean isEntityPublicationProcessed = PublicationController.getController().getIsEntityPublicationProcessed(entityName, entityId);
+		List<String[]> debug = PublicationController.getController().getCacheDebugList(entityName, entityId, false, isEntityPublicationProcessed);
+		this.debugInformation = debug;
+		
+		return "showDebugEntityPublication";
+	}
+	
+	/**
+	 * This command forces a cache clear on live servers.
+	 */
+	public String doFinishDebugEntityPublication() throws Exception
+	{
+		Boolean isEntityPublicationProcessed = PublicationController.getController().getIsEntityPublicationProcessed(entityName, entityId);
+		List<String[]> debug = PublicationController.getController().getCacheDebugList(entityName, entityId, true, isEntityPublicationProcessed);
+		this.debugInformation = debug;
+		
+		return "showDebugEntityPublicationFinished";
+	}
+
     public String doSystem() throws Exception
     {
         return "successSystem";
@@ -177,6 +206,11 @@ public class ViewPublicationsAction extends InfoGlueAbstractAction
 	{
 		return PublicationController.getOwningSiteNodeVO(id);
 	}
+
+	public List<String[]> getDebugInformation() throws SystemException
+	{
+		return this.debugInformation;
+	}
 	
 	/**
 	 * Escapes the string
@@ -195,5 +229,33 @@ public class ViewPublicationsAction extends InfoGlueAbstractAction
     {
         return publicationDetailVOList;
     }
+
+	/**
+	 * @return the entityName
+	 */
+	public String getEntityName() {
+		return entityName;
+	}
+
+	/**
+	 * @param entityName the entityName to set
+	 */
+	public void setEntityName(String entityName) {
+		this.entityName = entityName;
+	}
+
+	/**
+	 * @return the entityId
+	 */
+	public String getEntityId() {
+		return entityId;
+	}
+
+	/**
+	 * @param entityId the entityId to set
+	 */
+	public void setEntityId(String entityId) {
+		this.entityId = entityId;
+	}
     
 }

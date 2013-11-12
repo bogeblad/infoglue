@@ -321,6 +321,40 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
     }
 
     /**
+     * This method return debug information about a certain content or page from each live server. 
+     */
+         
+    public String doEntityCacheDebugInformation() throws Exception
+    {
+        String operatingMode = CmsPropertyHandler.getOperatingMode();
+		
+        if(operatingMode != null && operatingMode.equalsIgnoreCase("3"))
+        {
+	        if(!ServerNodeController.getController().getIsIPAllowed(this.getRequest()))
+	        {
+	        	logger.warn("A user from an IP(" + this.getRequest().getRemoteAddr() + ") which is not allowed tried to call UpdateCache!getPublicationState.");
+
+	            this.getResponse().setContentType("text/plain");
+	            this.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
+	            this.getResponse().getWriter().println("You have no access to this view - talk to your administrator if you should.");
+	            
+	            return NONE;
+	        }
+        }
+    
+        StringBuffer sb = new StringBuffer();
+
+        String cacheDebugInfo = CacheController.debugCache(getRequest().getParameter("entityName"), getRequest().getParameter("entityId"), (String)CmsPropertyHandler.getCacheSettings().get("cacheNamesToSkipInDebug"), getRequest().getParameter("forceClear"));
+        logger.info("cacheDebugInfo:" + cacheDebugInfo);
+       	sb.append(cacheDebugInfo);
+       	
+        this.getResponse().setContentType("text/plain");
+        this.getResponse().getWriter().println("" + sb.toString());
+        
+        return NONE;
+    }
+    
+    /**
      * This method will just reply to a testcall. 
      */
          
@@ -355,6 +389,11 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
          
     public String doExecute() throws Exception
     {
+    	/*
+    	System.out.println("PATH: " + getCurrentURL());
+    	if(getCurrentURL().contains("infoglueDeliverLive2"))
+    		return NONE;
+    	*/
     	logger.info("A cache update was received");
     	
     	if(!CmsPropertyHandler.getOperatingMode().equals("3"))

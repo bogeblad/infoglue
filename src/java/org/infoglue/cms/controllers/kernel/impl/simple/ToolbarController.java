@@ -1,14 +1,12 @@
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.ToolbarButton;
 import org.infoglue.cms.applications.common.VisualFormatter;
@@ -26,7 +24,6 @@ import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.management.ServiceDefinitionVO;
 import org.infoglue.cms.entities.management.SiteNodeTypeDefinitionVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
-import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.entities.workflow.EventVO;
 import org.infoglue.cms.entities.workflow.WorkflowDefinitionVO;
@@ -257,6 +254,12 @@ public class ToolbarController implements ToolbarProvider
 			
 			if(toolbarKey.equalsIgnoreCase("tool.contenttool.changeContentType.header"))
 				return getCommonFooterSaveOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
+
+			if(toolbarKey.equalsIgnoreCase("tool.publishingtool.forcePublicationHeader"))
+				return getCommonNextCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
+
+			if(toolbarKey.equalsIgnoreCase("tool.publishingtool.forcePublicationFinishedHeader"))
+				return asButtons(getDialogCloseButton(toolbarKey, principal, locale, request, disableCloseButton));
 			
 			if(toolbarKey.equalsIgnoreCase("tool.tasktool.availableTasks.header"))
 				return asButtons(getCommonFooterCancelButton(toolbarKey, principal, locale, request, disableCloseButton));
@@ -1143,6 +1146,19 @@ public class ToolbarController implements ToolbarProvider
 	
 			publishButton.getSubButtons().add(submitToPublishButton);
 		}
+		else
+		{
+			if(ContentController.getContentController().hasPublishedVersion(contentId) && !contentVO.getIsBranch())
+			{
+				ToolbarButton debugContentPublicationButton = new ToolbarButton("",
+						  getLocalizedString(locale, "tool.publishingtool.toolbarV3.forcePublicationLabel"), 
+						  getLocalizedString(locale, "tool.publishingtool.toolbarV3.forcePublicationTitle"),
+						  "ViewPublications!showDebugEntityPublication.action?entityName=Content&entityId=" + contentId,
+						  "",
+						  "refresh");
+				publishButton.getSubButtons().add(debugContentPublicationButton);
+			}
+		}
 		
 		buttons.add(publishButton);
 		
@@ -1911,6 +1927,15 @@ public class ToolbarController implements ToolbarProvider
 		//ToolbarButton unpublishStructureButton = StructureToolbarController.getUnpublishButton(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale, true);
 
 		publishButton.getSubButtons().add(unpublishButton);
+		
+		ToolbarButton debugContentPublicationButton = new ToolbarButton("",
+				  getLocalizedString(locale, "tool.publishingtool.toolbarV3.forcePublicationLabel"), 
+				  getLocalizedString(locale, "tool.publishingtool.toolbarV3.forcePublicationTitle"),
+				  "ViewPublications!showDebugEntityPublication.action?entityName=SiteNode&entityId=" + siteNodeVO.getId(),
+				  "",
+				  "refresh");
+		publishButton.getSubButtons().add(debugContentPublicationButton);
+
 		//publishButton.getSubButtons().add(unpublishStructureButton);
 		/*
 		unpublishButton.getSubButtons().add(unpublishStructureButton);

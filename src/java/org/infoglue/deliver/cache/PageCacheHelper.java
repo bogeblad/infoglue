@@ -86,7 +86,7 @@ public class PageCacheHelper implements Runnable
 			try
 			{
 				Thread.sleep(10000);
-
+				
 				List<String> localPageCacheEvicitionQueue = new ArrayList<String>();
 				synchronized (pageCacheEvicitionQueue) 
 				{
@@ -397,7 +397,7 @@ public class PageCacheHelper implements Runnable
             File file = new File(dir + File.separator + checksum);
          	if(logger.isInfoEnabled())
             	logger.info("Deleting " + file.getPath() + ":" + file.exists());
-            if(file.exists())
+         	if(file.exists())
             {
             	boolean deleted = file.delete();
             	if(logger.isInfoEnabled())

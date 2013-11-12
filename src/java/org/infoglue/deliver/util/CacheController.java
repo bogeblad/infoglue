@@ -1577,12 +1577,17 @@ public class CacheController extends Thread
 	 * This method let's you get a list of caches and entries in which the given entity is located.
 	 * @param entityName
 	 * @param entityId
+	 * @throws Exception 
 	 */
-	public static String debugCache(String entityName, String entityId, String cacheNamesToDebug)
+	public static String debugCache(String entityName, String entityId, String cacheNamesToDebug, String forceClear) throws Exception
 	{
 		StringBuffer debug = new StringBuffer();
 		
-		logger.info("Debugging " + entityName + "=" + entityName + " (" + cacheNamesToDebug + ")");
+		if(entityName.equalsIgnoreCase("content"))
+			entityName = "content";
+		if(entityName.equalsIgnoreCase("sitenode"))
+			entityName = "siteNode";
+		logger.error("Debugging " + entityName + "=" + entityId + " (" + cacheNamesToDebug + ")" + " - forceClear:" + forceClear);
 		
 		/*
 		Boolean isEntityPublicationProcessed = false;
@@ -1596,8 +1601,12 @@ public class CacheController extends Thread
 			e.printStackTrace();
 		}
 		*/
-		if(cacheNamesToDebug == null)
-			cacheNamesToDebug = "contentAttributeCache,contentVersionCache,contentCache,contentVersionIdCache,componentPropertyCacheRepoGroups,componentPropertyVersionIdCacheRepoGroups";
+		if(cacheNamesToDebug == null || cacheNamesToDebug.equals(""))
+			cacheNamesToDebug = "contentVersionCache,contentVersionIdCache,contentCache,matchingContentsCache,pageCache,pageCacheExtra";
+		logger.info("cacheNamesToDebug:" + cacheNamesToDebug);
+		
+		Set<String> pageCacheNotifications = new HashSet<String>();
+		List<String[]> entriesToClear = new ArrayList<String[]>();
 		
 		String[] cacheNamesToDebugArray = cacheNamesToDebug.split(",");
 		List<String> cacheNamesToDebugList = Arrays.asList(cacheNamesToDebugArray);
@@ -1608,8 +1617,9 @@ public class CacheController extends Thread
 				Map.Entry e = (Map.Entry) i.next();
 				String cachName = (String)e.getKey();
 				//System.out.println("Cache: " + cachName);
-				if(!cacheNamesToDebugList.contains(cachName))
+				if(cacheNamesToDebugList.contains(cachName))
 				{
+					//debug.append("Checked: " + cachName + ",");
 					Object object = e.getValue();
 					if(object instanceof Map)
 					{
@@ -1617,13 +1627,15 @@ public class CacheController extends Thread
 						synchronized(cacheInstance)
 						{
 							Set<Map.Entry<String,Object>> entrySet = cacheInstance.entrySet();
+							logger.info("entrySet:" + entrySet.size());
 							Iterator<Map.Entry<String,Object>> entrySetIterator = entrySet.iterator();
 							while(entrySetIterator.hasNext())
 							{
 								Map.Entry<String,Object> entry = entrySetIterator.next();
-								if(entry.getKey().toLowerCase().contains("content") || entry.getKey().contains("selectiveCacheUpdateNonApplicable"))
+								if(entry.getKey().toLowerCase().contains(entityName.toLowerCase()) || entry.getKey().contains("selectiveCacheUpdateNonApplicable"))
 								{
 									debug.append("" + cachName + "=" + entry.getKey() + ",");
+									entriesToClear.add(new String[]{cachName, entry.getKey()});
 								}
 							}
 						}
@@ -1633,28 +1645,42 @@ public class CacheController extends Thread
 					    GeneralCacheAdministrator cacheInstance = (GeneralCacheAdministrator)e.getValue();
 						synchronized(cacheInstance)
 						{
+							pageCacheNotifications.add(entityName + "_" + entityId);
+
 							Set<String> entries = cacheInstance.getCache().getGroup(entityName + "_" + entityId);
+							logger.info("entries:" + entries.size());
 							for(String entry : entries)
 							{
-								debug.append("" + cachName + "=" + entry + ",");
+								//debug.append("" + cachName + "=" + entry + ",");
+								entriesToClear.add(new String[]{cachName, entry});
 							}
 							
 							try
 							{
-								List<ContentTypeDefinitionVO> contentTypeDefinitionVOList = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList();
-								for(ContentTypeDefinitionVO ctdVO : contentTypeDefinitionVOList)
+								pageCacheNotifications.add("selectiveCacheUpdateNonApplicable");
+
+								if(entityName.toLowerCase().equals("content"))
 								{
-									//System.out.println("Group:" + "selectiveCacheUpdateNonApplicable_contentTypeDefinitionId_" + ctdVO.getId());
-									Set<String> selectiveCacheUpdateNonApplicableEntries = cacheInstance.getCache().getGroup("selectiveCacheUpdateNonApplicable_contentTypeDefinitionId_" + ctdVO.getId());
-									for(String entry : selectiveCacheUpdateNonApplicableEntries)
+									List<ContentTypeDefinitionVO> contentTypeDefinitionVOList = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList();
+									for(ContentTypeDefinitionVO ctdVO : contentTypeDefinitionVOList)
 									{
-										debug.append("selectiveCacheUpdateNonApplicable_contentTypeDefinitionId_" + ctdVO.getId() + "/" + cachName + "=" + entry + ",");
+										//System.out.println("Group:" + "selectiveCacheUpdateNonApplicable_contentTypeDefinitionId_" + ctdVO.getId());
+										Set<String> selectiveCacheUpdateNonApplicableEntries = cacheInstance.getCache().getGroup("selectiveCacheUpdateNonApplicable_contentTypeDefinitionId_" + ctdVO.getId());
+										for(String entry : selectiveCacheUpdateNonApplicableEntries)
+										{
+											//debug.append("selectiveCacheUpdateNonApplicable_contentTypeDefinitionId_" + ctdVO.getId() + "/" + cachName + "=" + entry + ",");
+											//debug.append("selectiveCacheUpdateNonApplicable_contentTypeDefinitionId_" + ctdVO.getId() + ",");
+											entriesToClear.add(new String[]{cachName, entry});
+											pageCacheNotifications.add("selectiveCacheUpdateNonApplicable_contentTypeDefinitionId_" + ctdVO.getId());
+										}
 									}
 								}
 								Set<String> selectiveCacheUpdateNonApplicableEntries = cacheInstance.getCache().getGroup("selectiveCacheUpdateNonApplicable");
 								for(String entry : selectiveCacheUpdateNonApplicableEntries)
 								{
-									debug.append("selectiveCacheUpdateNonApplicable: " + cachName + "=" + entry + ",");
+									//debug.append("selectiveCacheUpdateNonApplicable: " + cachName + "=" + entry + ",");
+									entriesToClear.add(new String[]{cachName, entry});
+									pageCacheNotifications.add("selectiveCacheUpdateNonApplicable");
 								}
 							}
 							catch (Exception e2) 
@@ -1665,7 +1691,44 @@ public class CacheController extends Thread
 					}
 				}
 				else
-					System.out.println("Skipping cache:" + cachName);
+					logger.info("Skipping cache:" + cachName);
+			}
+		}
+				
+		if(forceClear != null && forceClear.equalsIgnoreCase("true"))
+		{
+			logger.info("********** Clearing caches *********");
+			String entityNameFull = ContentImpl.class.getName();
+			if(entityName.toLowerCase().contains("sitenode"))
+				entityNameFull = SiteNodeImpl.class.getName();
+			CacheController.clearCaches(entityNameFull, entityId, null);
+		}
+		
+		for(String[] clearEntries : entriesToClear)
+		{
+			System.out.println("" + clearEntries[0] + "=" + clearEntries[1]);
+			debug.append("" + clearEntries[0] + "=" + clearEntries[1] + ",");
+			if(forceClear != null && forceClear.equalsIgnoreCase("true"))
+			{
+				clearCacheHard(clearEntries[0], clearEntries[1]);
+			}
+		}
+		for(String pageCacheNotification : pageCacheNotifications)
+		{
+			logger.info("Asking page cache to clear on: " + pageCacheNotification);
+			debug.append("PageCache: " + pageCacheNotification + ",");
+			if(forceClear != null && forceClear.equalsIgnoreCase("true"))
+				PageCacheHelper.getInstance().notify(pageCacheNotification);
+		}
+		if(forceClear != null && forceClear.equalsIgnoreCase("true"))
+			System.out.println("************************************");
+				
+		if(entityName.contains("siteNode"))
+		{
+			SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(entityId));
+			if(siteNodeVO != null && siteNodeVO.getMetaInfoContentId() != null)
+			{
+				debug.append(debugCache("Content", siteNodeVO.getMetaInfoContentId().toString(), cacheNamesToDebug, forceClear));
 			}
 		}
 		

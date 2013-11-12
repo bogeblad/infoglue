@@ -368,7 +368,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			extraHeader = extraHeader.replaceAll("\\$\\{userPrefferredLanguageCode\\}", "" + CmsPropertyHandler.getPreferredLanguageCode(principal.getName()));
 			extraHeader = extraHeader.replaceAll("\\$\\{userPrefferredWYSIWYG\\}", "" + CmsPropertyHandler.getPrefferedWYSIWYG());
 			extraHeader = extraHeader.replaceAll("\\$\\{WYSIWYGEditorJS\\}", WYSIWYGEditorFile);
-			
+
 			if(CmsPropertyHandler.getPersonalDisableEditOnSightToolbar(principal.getName()))
 			{				
 				extraHeader = extraHeader.replaceAll("\\$\\{editOnSightFooterToolbarIsActive\\}", "false");
@@ -433,7 +433,8 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 	    	String translateContentLabel 			= getLocalizedString(locale, "deliver.editOnSight.translateContentLabel");
 	    	
 	    	String confirmDeleteLabel				= getLocalizedString(locale, "deliver.editOnSight.confirmDeleteLabel");
-
+	    	String leaveWarningOnDirtyPageText		= getLocalizedString(locale, "deliver.editOnSight.leaveWarningOnDirtyPage.text");
+			
 			String saveTemplateUrl = "saveComponentStructure('" + componentEditorUrl + "CreatePageTemplate!input.action?contentId=" + templateController.getSiteNode(deliveryContext.getSiteNodeId()).getMetaInfoContentId() + "');";
 			String savePartTemplateUrl = "savePartComponentStructure('" + componentEditorUrl + "CreatePageTemplate!input.action?contentId=" + templateController.getSiteNode(deliveryContext.getSiteNodeId()).getMetaInfoContentId() + "');";
 			if(!hasSaveTemplateAccess)
@@ -473,7 +474,8 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			extraBody = extraBody.replaceAll("\\$submitToPublishHTML", submitToPublishHTML);
 			
 			extraBody = extraBody.replaceAll("\\$confirmDeleteLabel", confirmDeleteLabel);
-			
+			extraBody = extraBody.replaceAll("\\$\\{leaveWarningOnDirtyPageText\\}", leaveWarningOnDirtyPageText);
+
 			extraBody = extraBody.replaceAll("\\$notifyHTML", notifyLabel);
 			extraBody = extraBody.replaceAll("\\$subscribeToContentHTML", subscribeToContentLabel);
 			extraBody = extraBody.replaceAll("\\$subscribeToPageHTML", subscribeToPageLabel);
@@ -933,7 +935,10 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 								    }
 								    //<div id=\"dropZone"+ id + index + "_" + subComponent.getId() + "Comp\" class=\"moveDropZone\"></div>
 								    String changeUrl = componentEditorUrl + "ViewSiteNodePageComponents!listComponentsForChange.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + (contentId == null ? "-1" : contentId) + "&amp;componentId=" + subComponent.getId() + "&amp;slotId=" + id + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + ((allowedComponentNamesAsEncodedString != null) ? "&amp;" + allowedComponentNamesAsEncodedString : "")  + ((disallowedComponentNamesAsEncodedString != null) ? "&amp;" + disallowedComponentNamesAsEncodedString : "") + ((allowedComponentGroupNamesAsEncodedString != null) ? "&amp;" + allowedComponentGroupNamesAsEncodedString : "");
-								    subComponentString += "<div style=\"position: relative;\" style=\"display:inline;\" id=\""+ id + index + "_" + subComponent.getId() + "Comp\" class=\"moveZone sortableComponent clearFix\">" + childComponentsString + "<script type=\"text/javascript\">initializeComponentEventHandler('" + id + index + "_" + subComponent.getId() + "Comp', '" + subComponent.getId() + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + (contentId == null ? "-1" : contentId) + "&amp;parentComponentId=" + component.getId() + "&amp;slotId=" + id + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + ((allowedComponentNamesAsEncodedString != null) ? "&amp;" + allowedComponentNamesAsEncodedString : "") + ((disallowedComponentNamesAsEncodedString != null) ? "&amp;" + disallowedComponentNamesAsEncodedString : "") + ((allowedComponentGroupNamesAsEncodedString != null) ? "&amp;" + allowedComponentGroupNamesAsEncodedString : "") + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponent.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + contentId + "&amp;componentId=" + subComponent.getId() + "&amp;slotId=" + id + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "','" + changeUrl + "');</script></div>";
+								    String extraClass = "clearFix";
+								    if(childComponentsString.contains("noclearfix"))
+								    	extraClass = "clearFixNoBreak";
+								    subComponentString += "<div style=\"position: relative;\" style=\"display:inline;\" id=\""+ id + index + "_" + subComponent.getId() + "Comp\" class=\"moveZone sortableComponent " + extraClass + "\">" + childComponentsString + "<script type=\"text/javascript\">initializeComponentEventHandler('" + id + index + "_" + subComponent.getId() + "Comp', '" + subComponent.getId() + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + (contentId == null ? "-1" : contentId) + "&amp;parentComponentId=" + component.getId() + "&amp;slotId=" + id + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + ((allowedComponentNamesAsEncodedString != null) ? "&amp;" + allowedComponentNamesAsEncodedString : "") + ((disallowedComponentNamesAsEncodedString != null) ? "&amp;" + disallowedComponentNamesAsEncodedString : "") + ((allowedComponentGroupNamesAsEncodedString != null) ? "&amp;" + allowedComponentGroupNamesAsEncodedString : "") + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponent.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + contentId + "&amp;componentId=" + subComponent.getId() + "&amp;slotId=" + id + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "','" + changeUrl + "');</script></div>";
 								} 
 								else
 								{
@@ -1132,7 +1137,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		}
 		
 		sb.append("<div id=\"component" + componentId + "Properties\" class=\"componentProperties\" style=\"right:5px; top:5px; position: absolute; visibility:hidden; display: none;\">");
-		sb.append("	<div id=\"component" + componentId + "PropertiesHandle\" class=\"componentPropertiesHandle\"><div class=\"leftPaletteHandleCompProps\">Properties - " + componentName + " in slot " + slotName + "</div><div class=\"rightPaletteHandleCompProps close\" onclick=\"hideDiv('component" + componentId + "Properties');\">&nbsp;</div></div>");
+		sb.append("	<div id=\"component" + componentId + "PropertiesHandle\" class=\"componentPropertiesHandle\"><div class=\"leftPaletteHandleCompProps\">Properties - " + componentName + " in slot " + slotName + "</div><div class=\"rightPaletteHandleCompProps closeDialog\" onclick=\"hideDiv('component" + componentId + "Properties');\">&nbsp;</div></div>");
 
 		sb.append("	<form id=\"component" + componentId + "PropertiesForm\" name=\"component" + componentId + "PropertiesForm\" action=\"" + componentEditorUrl + "ViewSiteNodePageComponents!updateComponentProperties.action\" method=\"post\">");
 		if(languages.size() == 1 || skipLanguageDrop)
@@ -1906,7 +1911,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		sb.append("		<input type=\"button\" class=\"save\" value=\"" + getLocalizedString(locale, "tool.common.saveButton.label") + "\" onclick=\"submitForm('component" + componentId + "PropertiesForm');\"/>");
 		sb.append("		<input type=\"button\" class=\"saveAndExit\" value=\"" + getLocalizedString(locale, "tool.common.saveAndExitButton.label") + "\" onclick=\"submitFormAndExit('component" + componentId + "PropertiesForm');\"/>");
 		sb.append("		<input type=\"button\" style=\"display:none;\" class=\"cancel\" value=\"" + getLocalizedString(locale, "tool.common.cancelButton.label") + "\" onclick=\"hideDiv('component" + componentId + "Properties');\"/>");
-		sb.append("		<input type=\"button\" class=\"close\" value=\"" + getLocalizedString(locale, "tool.common.closeWindowButton.label") + "\" onclick=\"hideDiv('component" + componentId + "Properties');\"/>");
+		sb.append("		<input type=\"button\" class=\"closeDialog\" value=\"" + getLocalizedString(locale, "tool.common.closeWindowButton.label") + "\" onclick=\"hideDiv('component" + componentId + "Properties');\"/>");
 		sb.append("	  </div>	");
 		sb.append("	</div>	");
 		

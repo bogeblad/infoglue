@@ -440,6 +440,7 @@ border-bottom:1px solid #9CAABD;
 .save { background:url(images/v3/saveInlineIcon.gif) no-repeat left center; background-position: 0px 0px;}
 .saveAndExit {background:url(images/v3/saveAndExitInlineIcon.gif) no-repeat left center; background-position: 0px 0px;}
 .cancel {background:url(images/v3/cancel.png) no-repeat left center; background-position: 0px 3px;}
+.closeDialog {background:url(images/v3/closeWindowIcon.gif) no-repeat left center; background-position: 0px 4px;}
 .close {background:url(images/v3/closeWindowIcon.gif) no-repeat left center; background-position: 0px 4px;}
 .publish { background:url(images/v3/publishPageIcon.gif) no-repeat left center; background-position: 0px 0px;}
 .preview { background:url(images/v3/previewIcon.png) no-repeat left center; background-position: 0px 0px;}
@@ -616,6 +617,12 @@ Slot classes
    display: block; 
    height: 0; 
    clear: both;
+}
+.clearfix:afterNoBreak { 
+   content: " ";
+   display: block; 
+  /* height: 0; 
+   clear: both;*/
 }
 input.normaltextfield {
 	font-family: Tahoma, verdana, arial, sans-serif;

@@ -18,6 +18,8 @@
 	var approveEntityId = "${approveEntityId}";
 	var publishingEventId = "${publishingEventId}";
 			
+	var componentHandlers = new Object();
+			
 	${limitedUserWarning}
 	
 	try { document.execCommand('BackgroundImageCache', false, true); } catch(e) {}
@@ -145,7 +147,7 @@
 						id = id.substr(id.lastIndexOf("_")+1).replace("Comp","");
 						//console.log("id: " + id);
 						$(this).find(">:first-child").css("position", "relative");
-						$(this).find(">:first-child").append("<img src=\"css/images/v3/menu_img.png\" class=\"propertiesButton\" style=\"display: block; position: absolute; top: 0px; right:0px; width: 16px; height: 16px; background-color: white; border: 1px solid #ccc; padding: 2px; margin: 0 0 0 0; z-index: 200000;\" onclick=\"showComponentProperties('component" + id + "Properties');\"/>");
+						$(this).find(">:first-child").append("<img src=\"css/images/v3/menu_img.png\" class=\"propertiesButton\" componentid=\"" + id + "\" style=\"display: block; position: absolute; top: 0px; right:0px; width: 29px; height: 29px; background-color: white; margin: 0 0 0 0; z-index: 200000;\" onclick=\"componentHandlers[$(this).attr('componentid')].onContextMenu(event,this);\"/>");
 					}
 				}
 				else
@@ -156,7 +158,7 @@
 						var id = $(this).closest( ".sortableComponent" ).attr("id");
 						id = id.substr(id.lastIndexOf("_")+1).replace("Comp","");
 						//console.log("id: " + id);
-						$(this).append("<img src=\"css/images/v3/menu_img.png\" class=\"propertiesButton\" style=\"display: block; position: absolute; top: 0px; right:0px; background-color: white; border: 1px solid #ccc; padding: 2px; margin: 0 0 0 0; z-index: 200000;\" onclick=\"showComponentProperties('component" + id + "Properties');\"/>");				
+						$(this).append("<img src=\"css/images/v3/menu_img.png\" class=\"propertiesButton\" componentid=\"" + id + "\" style=\"display: block; position: absolute; top: 0px; right:0px; background-color: white; margin: 0 0 0 0; z-index: 200000;\" onclick=\"componentHandlers[$(this).attr('componentid')].onContextMenu(event,this);\"/>");				
 					}
 				}
 				

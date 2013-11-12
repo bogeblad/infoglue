@@ -609,6 +609,7 @@ ul.assignedEntities li
 .preview { background:url(images/v3/previewIcon.png) no-repeat left center; background-position: 4px 2px;}
 .publishPage {background:url(images/v3/publishPageIcon.gif) no-repeat left center; background-position: 0px 2px;}
 .publishPages {background:url(images/v3/publishPageIcon.gif) no-repeat left center; background-position: 0px 2px;}
+.refresh {background:url(images/v3/refresh.png) no-repeat left center; background-position: 0px 2px;}
 .denyPublication {background:url(images/v3/denyPublicationIcon.png) no-repeat left center; background-position: 0px 4px;}
 .pageCover {background:url(images/v3/pageCoverIcon.png) no-repeat left center; background-position: 0px 2px;}
 .pageDetails {background:url(images/v3/metadataIcon.gif) no-repeat left center; background-position: 0px 2px;}

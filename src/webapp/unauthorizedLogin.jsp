@@ -103,7 +103,6 @@
 			<td>You are not authorized to use<br> the administrative tools in InfoGlue. <br>
 				<br>Please talk to the system<br> administrator for access!<br>
 				<!--<%= request.getParameter("errorMessage") %>-->
-				<% session.invalidate(); %>
 				<br>
 				<br>
 				<a href="ViewCMSTool.action">Try again</a> | <a href="Login!logout.action">Logout</a>

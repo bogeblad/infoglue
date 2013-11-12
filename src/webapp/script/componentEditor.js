@@ -2238,7 +2238,7 @@ function viewSource()
 		    else if (window.event) {window.event.cancelBubble = true;}
 		}
 	}
-	
+		
 	function initializeComponentEventHandler(id, compId, insertUrl, deleteUrl, changeUrl)
 	{
 		insertUrl = insertUrl.replace(/\&amp;/g,'&');
@@ -2246,8 +2246,9 @@ function viewSource()
 		changeUrl = changeUrl.replace(/\&amp;/g,'&');
 		//if(insertUrl == "")
 		//	alert("insertUrl:" + insertUrl + " for " + id + ":" + compId);
-		//alert("initializeComponentEventHandler" + id + " " + deleteUrl);
+		//console.log("initializeComponentEventHandler " + compId);
 		var object = new componentEventHandler(id, id, compId, insertUrl, deleteUrl, changeUrl);
+		componentHandlers["" + compId] = object;
 	}
 		
 	function componentEventHandler(eleId, objName, objId, insertUrl, deleteUrl, changeUrl)

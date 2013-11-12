@@ -473,6 +473,7 @@ img.scaledbordered {
 .publishPage {background:url(../../images/v3/publishPageIcon.gif) no-repeat left center; background-position: 0px 2px;}
 .publishPages {background:url(../../images/v3/publishPageIcon.gif) no-repeat left center; background-position: 0px 2px;}
 .denyPublication {background:url(../../images/v3/denyPublicationIcon.png) no-repeat left center; background-position: 0px 2px;}
+.refresh {background:url(../../images/v3/refresh.png) no-repeat left center; background-position: 0px 2px;}
 .pageCover {background:url(../../images/v3/pageCoverIcon.png) no-repeat left center; background-position: 0px 2px;}
 .pageDetails {background:url(../../images/v3/metadataIcon.gif) no-repeat left center; background-position: 0px 2px;}
 .pageStructureSimple {background:url(../../images/v3/structureIcon.gif) no-repeat left center; background-position: 0px 2px;}
@@ -496,6 +497,7 @@ img.scaledbordered {
 .locale {background:url(../../images/v3/locale.png) no-repeat left center; background-position: 0px 2px;}
 .showDataAsXML {background:url(../../images/v3/xmlIcon.png) no-repeat left center; background-position: 0px 2px;}
 .compare {background:url(../../images/v3/compareIcon.png) no-repeat left center; background-position: 0px 2px;}
+.debug {background:url(../../images/v3/debugIcon.png) no-repeat left center; background-position: 0px 4px;}
 
 li.content {background:url(../../images/v3/contentIcon.gif) no-repeat left center; background-position: 0px 0px; height: 20px; text-indent: 18px; }
 li.page {background:url(../../images/v3/pageIcon.gif) no-repeat left center; background-position: 0px 0px; height: 20px; text-indent: 18px; }

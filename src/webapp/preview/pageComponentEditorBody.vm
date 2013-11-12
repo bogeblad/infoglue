@@ -65,6 +65,12 @@
 
 <script type="text/javascript">
 
+window.isPageDirty = false;
+window.onbeforeunload = function() {
+	if(window.isPageDirty)
+		return "${leaveWarningOnDirtyPageText}";
+}
+
 function validateW3C()
 {
 	var previewUrl = document.location.href;
@@ -169,6 +175,8 @@ function registerOnChange()
 				    //alert("E:" +e.editor.checkDirty());
 				    if (e.editor.checkDirty()) {
 				        $("#igSaveButton").show();
+				        window.saveButtonLabel = $("#igSaveButton").attr("value");
+				        window.isPageDirty = true;
 				    }
 				});
 
@@ -292,6 +300,7 @@ function toggleInline()
 
 function saveAllEditing()
 {
+	$("#igSaveButton").attr("value","Saving...");
 	var allSavedItems = 0;
 	for (key in editOnSightAttributeNames)
 	{
@@ -347,8 +356,15 @@ function saveAllEditing()
 			}
 		}
 	}
+	
 	if(noDirty)
-		$("#igSaveButton").hide();
+	{
+		window.isPageDirty = false;
+		setTimeout(function(){ $("#igSaveButton").attr("value","Saved!!"); }, 1000);
+		//$("#igSaveButton").hide();
+		setTimeout(function(){ $("#igSaveButton").fadeOut(1000);}, 2000);
+		$("#igSaveButton").attr("value", window.saveButtonLabel);
+	}
 			
 	if(allSavedItems == 0)
 		alert("No changes had been made and so nothing was saved");

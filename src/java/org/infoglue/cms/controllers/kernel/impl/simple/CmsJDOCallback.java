@@ -1112,7 +1112,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 					{
 						ComponentController.getController().reIndexComponentContentsDelayed(contentVersion.getContentId());
 					}
-					CacheController.clearCacheForGroup("contentVersionCache", "content_" + contentVersion.getOwningContent().getId());
+					CacheController.clearCacheForGroup("contentVersionCache", "content_" + contentVersion.getContentId());
 				}
 				catch (Exception e) 
 				{

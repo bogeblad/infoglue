@@ -204,8 +204,9 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 				}
 				//t.printElapsedTime("Finding content and language for an asset took");
 			}
-
-			folderName = "" + (contentId / 1000);
+			
+			if(contentId != null)
+				folderName = "" + (contentId / 1000);
 			//logger.info("New folderName is:" + folderName);
 		}
 		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getAssetFolderName", t.getElapsedTime());

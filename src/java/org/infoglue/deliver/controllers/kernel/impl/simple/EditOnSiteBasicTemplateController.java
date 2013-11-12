@@ -144,7 +144,7 @@ public class EditOnSiteBasicTemplateController extends BasicTemplateController
             
             if(className != null && className.equalsIgnoreCase("textfield"))
     		{	
-                decoratedAttributeValue.append("<" + tag + " " + (isInlineEditingOn ? "contenteditable=\"true\"" : "")  + " style=\"display:inline;\" class=\"" + className + " attribute" + contentId + "\" id=\"attribute" + contentId + attributeName + "\" oncontextmenu=\"" + setContentItemParametersJavascript + "\">" + attributeValue + "</" + tag + ">");
+                decoratedAttributeValue.append("<div " + (isInlineEditingOn ? "contenteditable=\"true\"" : "")  + " style=\"display:inline;\" class=\"" + className + " attribute" + contentId + "\" id=\"attribute" + contentId + attributeName + "\" oncontextmenu=\"" + setContentItemParametersJavascript + "\">" + attributeValue + "</div>");
                 
                 decoratedAttributeValue.append("<script type=\"text/javascript\">");
                 if(!CmsPropertyHandler.getPersonalDisableEditOnSightToolbar(getPrincipal().getName()))

@@ -61,12 +61,10 @@ import org.apache.oro.text.regex.Perl5Compiler;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.common.VisualFormatter;
-import org.infoglue.cms.applications.databeans.ReferenceBean;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.CategoryConditions;
 import org.infoglue.cms.controllers.kernel.impl.simple.CategoryController;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
@@ -76,7 +74,6 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ExtendedSearchCriterias;
 import org.infoglue.cms.controllers.kernel.impl.simple.GroupControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.GroupPropertiesController;
 import org.infoglue.cms.controllers.kernel.impl.simple.InfoGluePrincipalControllerProxy;
-import org.infoglue.cms.controllers.kernel.impl.simple.LuceneCategoryConditions;
 import org.infoglue.cms.controllers.kernel.impl.simple.RegistryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RoleControllerProxy;
@@ -93,7 +90,6 @@ import org.infoglue.cms.entities.management.ContentTypeAttribute;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
-import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.exception.SystemException;
@@ -107,7 +103,6 @@ import org.infoglue.cms.util.DesEncryptionHelper;
 import org.infoglue.cms.util.DocumentConverterHelper;
 import org.infoglue.cms.util.dom.DOMBuilder;
 import org.infoglue.cms.util.sorters.SiteNodeComparator;
-import org.infoglue.deliver.applications.actions.InfoGlueComponent;
 import org.infoglue.deliver.applications.databeans.ComponentBinding;
 import org.infoglue.deliver.applications.databeans.ComponentProperty;
 import org.infoglue.deliver.applications.databeans.DatabaseWrapper;
@@ -2698,8 +2693,6 @@ public class BasicTemplateController implements TemplateController
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
-			logger.error("An error occurred trying to get assetUrl on content with id: " + contentId + ":" + e.getMessage(), e);
 			logger.warn("An error occurred trying to get assetUrl on content with id: " + contentId + ":" + e.getMessage());
 		}
 				
@@ -5260,7 +5253,7 @@ public class BasicTemplateController implements TemplateController
 
 		List cachedMatchingContents = (List)CacheController.getCachedObjectFromAdvancedCache(cacheName, key/*, cacheInterval*/);
 		//List cachedMatchingContents = (List)CacheController.getCachedObjectFromAdvancedCache(cacheName, ""+key.hashCode()/*, cacheInterval*/);
-
+		
 		if(logger.isInfoEnabled())
 		{
 			logger.info("cacheInterval:" + cacheInterval);
@@ -5273,7 +5266,7 @@ public class BasicTemplateController implements TemplateController
 			logger.info("key.hash:" + key.hashCode());
 			logger.info("returnOnlyCachedResult:" + returnOnlyCachedResult);
 		}
-
+		
 		if((cachedMatchingContents == null || !cacheResult || forceRefetch) && !returnOnlyCachedResult)
 		{
 			/*
@@ -5360,7 +5353,7 @@ public class BasicTemplateController implements TemplateController
 				}
 
 				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getMatchingContents against db", t.getElapsedTime());
-				
+
 				if(cacheResult)
 				{
 					//CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet(cacheName, key, result, groups, true);
@@ -5368,6 +5361,8 @@ public class BasicTemplateController implements TemplateController
 					CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet(cacheName, key, result, groups, true);
 					//CacheController.cacheObjectInAdvancedCache(cacheName, ""+key.hashCode(), result, groups.toArray(new String[0]), true, true, true, "utf-8", 200, false, false);
 				}				
+				
+				return result;
 			}
 			catch(Exception e)
 			{

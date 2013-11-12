@@ -126,7 +126,7 @@
 			</p>		
 		
 			<p>
-				$ui.getString("tool.contenttool.lastUpdatedByLabel") $contentVO.creatorName <br/>Content ID: $contentVO.id
+				$ui.getString("tool.contenttool.lastUpdatedByLabel") $contentVO.creatorName
 			</p>
 			
 			#if($this.hasAccessTo("Common.ManageAccessRights", true, false, true))
@@ -177,6 +177,11 @@
 				$ui.getString("tool.contenttool.contentTypeLabel") $contentTypeDefinition.getName()
 			</p>			
 			#end
+			
+			<p>
+				Content ID: $contentVO.id (Repository ID: $contentVO.repositoryId)<br/>
+				Path: $this.getContentPath($contentVO.id)
+			</p>
 						
 	        #if($this.hasAccessTo("ToolTabsAndButtons.convertToFromFolderPart", true, false, true))
 			<p>

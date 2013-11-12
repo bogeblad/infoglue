@@ -362,7 +362,7 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
     	if(returnValue != null)
     		return returnValue;
         
-        CacheController.debugCache(getRequest().getParameter("entityName"), getRequest().getParameter("entityId"), (String)CmsPropertyHandler.getCacheSettings().get("cacheNamesToSkipInDebug"));
+        CacheController.debugCache(getRequest().getParameter("entityName"), getRequest().getParameter("entityId"), (String)CmsPropertyHandler.getCacheSettings().get("cacheNamesToSkipInDebug"), getRequest().getParameter("forceClear"));
         
         //this.getHttpSession().invalidate();
         if(this.returnAddress != null && !this.returnAddress.equals(""))

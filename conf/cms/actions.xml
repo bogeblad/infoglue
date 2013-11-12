@@ -1443,6 +1443,8 @@
 		<view name="successV3">/cms/publishingtool/v3/viewPublications.vm</view>
 		<view name="successSystem">/cms/publishingtool/v3/viewSystemPublications.vm</view>
 		<view name="showPublicationDetails">/cms/publishingtool/viewPublicationDetails.vm</view>
+		<view name="showDebugEntityPublication">/cms/publishingtool/viewDebugEntityPublication.vm</view>
+		<view name="showDebugEntityPublicationFinished">/cms/publishingtool/viewDebugEntityPublicationFinished.vm</view>
 		<view name="error">/cms/publishingtool/error.vm</view>
 	</action>
 

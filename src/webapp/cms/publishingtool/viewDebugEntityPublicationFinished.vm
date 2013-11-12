@@ -1,0 +1,36 @@
+#define($headerMarkup)
+<script type="text/javascript">
+	function next()
+	{
+		document.location.href = "ViewPublications!finishDebugEntityPublication.action?entityName=$entityName&entityId=$entityId";
+	}
+</script>	
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+#beginLightCommonToolV3Impl("tool.publishingtool.forcePublicationFinishedHeader" "" "" false true $!disableCloseButton $headerMarkup false "")
+
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+				
+	<h3>$ui.getString("tool.publishingtool.forcePublicationFinishedHeader")</h3>
+	
+	<p>$ui.getString("tool.publishingtool.forcePublicationFinishedIntro")</p>
+		
+	<h3 onclick="$('#debug').toggle();">Cleared caches >></h3>
+	<div id="debug" style="display: none; margin-left: 16px; width: 90%; height: 300px; overflow: auto; border: 1px solid #ccc;">	
+	#foreach($debugArray in $this.getDebugInformation())
+		<b>Analysing $debugArray[0]</b><br/>
+		#foreach($row in $debugArray[1].split(","))
+		$row<br/>
+		#end
+		$debugArray[2]<br/>
+	#end
+	</div>
+
+	#lightFooterToolbar($footerButtons)
+		
+#endLightCommonToolV3()

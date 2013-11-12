@@ -1,0 +1,42 @@
+#define($headerMarkup)
+<script type="text/javascript">
+	function next()
+	{
+		document.location.href = "ViewPublications!finishDebugEntityPublication.action?entityName=$entityName&entityId=$entityId";
+	}
+</script>	
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+#beginLightCommonToolV3Impl("tool.publishingtool.forcePublicationHeader" "" "" false true $!disableCloseButton $headerMarkup false "")
+
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+				
+	<h3>$ui.getString("tool.publishingtool.forcePublicationHeader")</h3>
+	
+	<p>$ui.getString("tool.publishingtool.forcePublicationIntro")</p>
+	
+	<p>
+		#foreach($debugArray in $this.getDebugInformation())
+			<b>Forcing clear on $debugArray[0]</b><br/>
+		#end
+	</p>
+		
+	<h3 onclick="$('#debug').toggle();">Debug data >></h3>
+	<div id="debug" style="display: none; margin-left: 16px; width: 90%; height: 300px; overflow: auto; border: 1px solid #ccc;">	
+	#foreach($debugArray in $this.getDebugInformation())
+		<b>Caches to clear on $debugArray[0]</b><br/>
+		#foreach($row in $debugArray[1].split(","))
+		$row<br/>
+		#end
+		$debugArray[2]<br/>
+	#end
+	</div>
+
+	#lightFooterToolbar($footerButtons)
+		
+#endLightCommonToolV3()

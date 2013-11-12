@@ -166,17 +166,18 @@ public class ComponentController extends BaseController
 				
 				templatesAndPagePartMap = new HashMap<String,List<ContentVO>>();
 				
-			    for(ContentVersionVO contentVersionVO : componentContentVersionVOList)
+			    for(ContentVersionVO incompleteContentVersionVO : componentContentVersionVOList) //The version is not populated with version value
 			    {
-		        	if(contentVersionVO != null)
+		        	if(incompleteContentVersionVO != null)
 		        	{
-			        	ContentVO contentVO = ContentController.getContentController().getSmallContentVOWithId(contentVersionVO.getContentId(), db, null);
+			        	ContentVO contentVO = ContentController.getContentController().getSmallContentVOWithId(incompleteContentVersionVO.getContentId(), db, null);
 			        	
 			        	String groupNameDefault = "Unknown";
-						String descriptionDefault = "Unknown";
-			        	String groupNameAttribute = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO, "GroupName", false);
-			        	String descriptionAttribute = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO, "Description", false);
-			        	logger.info("GroupInfo ContentVersionId:" + contentVersionVO.getId() + " - " + groupNameAttribute);
+						String descriptionDefault = "Unknown"; 
+						ContentVersionVO fullContentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(incompleteContentVersionVO.getId(), db);
+						String groupNameAttribute = ContentVersionController.getContentVersionController().getAttributeValue(fullContentVersionVO, "GroupName", false);
+			        	String descriptionAttribute = ContentVersionController.getContentVersionController().getAttributeValue(fullContentVersionVO, "Description", false);
+			        	logger.info("GroupInfo ContentVersionId:" + incompleteContentVersionVO.getId() + " - " + groupNameAttribute);
 						contentVO.getExtraProperties().put("GroupName", (groupNameAttribute == null ? groupNameDefault : groupNameAttribute));
 						contentVO.getExtraProperties().put("Description", (descriptionAttribute == null ? descriptionDefault : descriptionAttribute));
 	
@@ -612,7 +613,7 @@ public class ComponentController extends BaseController
 		{
 			Map<String,List<ContentVO>> templatesAndPagePartMap = (Map<String,List<ContentVO>>)CacheController.getCachedObject("componentContentsCache", cacheKey);
 			logger.info("templatesAndPagePartMap: " + templatesAndPagePartMap.size());
-
+			
 			Timer t = new Timer();
 			logger.info("Returning from cache....:" + allowedComponentNames + ":" + allowedComponentGroups);
 			List<ContentVO> results = new ArrayList<ContentVO>();

@@ -220,6 +220,45 @@ public class PublicationController extends BaseController
 	/**
 	 * This method returns a list of earlier editions for this site.
 	 */
+	public List<PublicationVO> getPublicationList(Date startDate, String entityName, String entityId) throws SystemException
+	{
+    	Database db = CastorDatabaseService.getDatabase();
+        beginTransaction(db);
+		List<PublicationVO> res = new ArrayList<PublicationVO>();
+		
+		try
+        {
+            OQLQuery oql = db.getOQLQuery( "SELECT p FROM org.infoglue.cms.entities.publishing.impl.simple.PublicationImpl p WHERE p.publicationDateTime > $1 AND p.publicationDetails.entityClass = $2 AND p.publicationDetails.entityClass = $3 order by p.publicationDateTime desc");
+			oql.bind(startDate);
+			oql.bind(entityName);
+			oql.bind(entityId);
+
+        	QueryResults results = oql.execute(Database.ReadOnly);
+
+			while (results.hasMore())
+            {
+            	PublicationDetail publication = (PublicationDetail)results.next();
+            	res.add(publication.getPublication().getValueObject());
+            }
+
+			results.close();
+			oql.close();
+
+			commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+
+        return res;
+	}
+	
+	/**
+	 * This method returns a list of earlier editions for this site.
+	 */
 	public static EditionBrowser getEditionPage(Integer repositoryId, int startIndex) throws SystemException
 	{
 		int pageSize = new Integer(CmsPropertyHandler.getEditionPageSize()).intValue();
@@ -1047,6 +1086,62 @@ public class PublicationController extends BaseController
         return publicationDetails;
 	}
 
+	
+	/**
+	 * This method checks if the deliver server has processed a certain entity after a specified timestamp. This is as a check to ensure that the publication process is not 
+	 * a problem causing contents/pages not to publish.  
+	 */
+	public Boolean getIsEntityPublicationProcessed(String entityName, String entityId) throws SystemException
+	{
+		Boolean isEntityPublicationProcessed = true;
+
+		Database db = CastorDatabaseService.getDatabase();
+		beginTransaction(db);
+
+        try
+        {
+        	isEntityPublicationProcessed = getIsEntityPublicationProcessed(entityName, entityId, db);
+
+			commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+
+        return isEntityPublicationProcessed;
+	}
+
+	/**
+	 * This method checks if the deliver server has processed a certain entity after a specified timestamp. This is as a check to ensure that the publication process is not 
+	 * a problem causing contents/pages not to publish.  
+	 */
+	public Boolean getIsEntityPublicationProcessed(String entityName, String entityId, Database db) throws SystemException
+	{
+		Boolean isEntityPublicationProcessed = true;
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.HOUR, -24);
+		
+		List<PublicationVO> publications = getPublicationList(calendar.getTime(), entityName, entityId);
+		for(PublicationVO publication : publications)
+		{
+			List<String[]> statuses = getPublicationStatusList(publication.getId());
+			for(String[] status : statuses)
+			{
+				if(status[1].contains("Error") || status[1].contains("Received"))
+				{
+					isEntityPublicationProcessed = false;
+				}
+			}
+			break;
+		}
+		
+        return isEntityPublicationProcessed;
+	}
+
 	/**
 	 * This method returns a list of all details a publication has.
 	 */
@@ -1119,6 +1214,95 @@ public class PublicationController extends BaseController
 		}
 		
         return publicationDetails;
+	}
+	
+	/**
+	 * This method returns a list of all details a publication has.
+	 * @throws Exception 
+	 */
+	public static List<String[]> getCacheDebugList(String entityName, String entityId, boolean forceClear, boolean isEntityPublicationProcessed)
+	{
+		List<String[]> debugInfo = new ArrayList<String[]>();
+
+		List<String> publicUrls = CmsPropertyHandler.getPublicDeliveryUrls();
+
+		for(String deliverUrl : publicUrls)
+		{
+			String address = deliverUrl + "/UpdateCache!entityCacheDebugInformation.action?entityName=" + entityName + "&entityId=" + entityId + "&forceClear=" + forceClear;
+			System.out.println("address:" + address);
+			if(address.indexOf("@") > -1)
+			{
+				debugInfo.add(new String[]{"" + deliverUrl, "Error", "Not valid server url"});
+			}
+			else
+			{
+				try
+				{
+					Boolean serverStatus = LiveInstanceMonitor.getInstance().getServerStatus(deliverUrl);
+					logger.info("serverStatus:" + serverStatus);
+					if(!serverStatus)
+					{
+						debugInfo.add(new String[]{"" + deliverUrl, "Error", "Server not available for status query"});					
+					}
+					else
+					{
+						HttpHelper httpHelper = new HttpHelper();
+						String response = httpHelper.getUrlContent(address, 2000);
+						logger.info("response:" + response);
+						if(response != null && response.indexOf("status=Unknown;") > -1)
+						{
+							debugInfo.add(new String[]{"" + deliverUrl, "N/A", "No information found"});							
+						}
+						else
+						{
+							/*
+							Map<String,String> responseMap = httpHelper.toMap(response.trim(), "utf-8");
+							CacheEvictionBean bean = CacheEvictionBean.getCacheEvictionBean(responseMap);
+							if(bean == null)
+								throw new Exception("No information found");
+							VisualFormatter visualFormatter = new VisualFormatter();
+							*/
+							debugInfo.add(new String[]{"" + deliverUrl, response.trim(), ""});
+						}
+					}
+				}
+				catch(Exception e)
+				{
+					logger.error("Problem getting publication status:" + e.getMessage());
+					debugInfo.add(new String[]{"" + deliverUrl, "Error", "" + e.getMessage()});
+				}
+
+			}
+		}
+		
+		if(forceClear)
+		{
+			StringBuffer message = new StringBuffer("<div><h1>Forced publication made (Was entity processed by all servers: " + isEntityPublicationProcessed + ")</h1>");
+			for(String[] debugArray : debugInfo)
+			{
+				message.append("<b>Caches to clear on " + debugArray[0] + "</b><br/>");
+				for(String row : debugArray[1].split(","))
+				{
+					message.append("" + row + "<br/>");
+					message.append("" + debugArray[2] + "<br/>");
+				}
+			}
+
+			String subject = "Forced publication made on " + CmsPropertyHandler.getServerName();
+	        String warningEmailReceiver = CmsPropertyHandler.getWarningEmailReceiver();
+
+			try 
+			{
+				logger.warn("" + subject + ": \n" + message);
+				MailServiceFactory.getService().sendEmail(CmsPropertyHandler.getMailContentType(), warningEmailReceiver, warningEmailReceiver, null, null, null, null, subject, message.toString(), "utf-8");
+			} 
+			catch (Exception e) 
+			{
+				logger.warn("Could not mail info: " + e.getMessage(), e);
+			}
+		}
+		
+        return debugInfo;
 	}
 	
 	/**

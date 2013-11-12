@@ -2660,7 +2660,7 @@ public class ContentVersionController extends BaseController
 		Iterator<ContentVersionVO> contentVersionsIterator = contentVersions.iterator();
 	    while(contentVersionsIterator.hasNext())
 	    {
-	        ContentVersionVO contentVersion = contentVersionsIterator.next();
+	    	ContentVersionVO contentVersion = contentVersionsIterator.next();
 	        
             ContentTypeDefinitionVO contentTypeDefinitionVO = null;
             if(contentVO.getContentTypeDefinitionId() != null)

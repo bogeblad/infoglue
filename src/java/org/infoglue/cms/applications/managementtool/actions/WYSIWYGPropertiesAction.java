@@ -89,6 +89,10 @@ public class WYSIWYGPropertiesAction extends InfoGlueAbstractAction
 			    if(WYSIWYGConfigBytes != null)
 			    {
 			    	this.WYSIWYGProperties = new String(WYSIWYGConfigBytes, "UTF-8");
+			    	if(!this.WYSIWYGProperties.trim().equals(""))
+			    	{
+				    	this.WYSIWYGProperties = this.WYSIWYGProperties + "//Repo properties: " + this.repositoryId;
+			    	}
 			    }
 		    }
 		     
@@ -105,6 +109,7 @@ public class WYSIWYGPropertiesAction extends InfoGlueAbstractAction
                 if(this.WYSIWYGProperties == null || this.WYSIWYGProperties.equals(""))
                 {
                     this.WYSIWYGProperties = FileHelper.getFileAsString(new File(CmsPropertyHandler.getContextRootPath() + "cms/contenttool/WYSIWYGConfig.js"));
+			    	this.WYSIWYGProperties = this.WYSIWYGProperties + "//File properties";
                 }
             }
             catch (Exception e1)
@@ -145,7 +150,7 @@ public class WYSIWYGPropertiesAction extends InfoGlueAbstractAction
 			VelocityTemplateProcessor vtp = new VelocityTemplateProcessor();
 			vtp.renderTemplate(parameters, pw, this.WYSIWYGProperties, true);
 			this.WYSIWYGProperties = tempString.toString();
-					
+	    	
 		    this.getResponse().setContentType("text/javascript");
 	    }
 	    catch (Throwable t1)

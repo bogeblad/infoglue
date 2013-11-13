@@ -192,7 +192,24 @@ public class SiteNodeControllerProxy extends SiteNodeController
 
 		delete(siteNodeVO, infogluePrincipal);
 	}   
-	
+
+	public void acDelete(InfoGluePrincipal infogluePrincipal, SiteNodeVO siteNodeVO, boolean forceDelete) throws ConstraintException, SystemException, Bug, Exception
+	{
+		Map hashMap = new HashMap();
+		hashMap.put("siteNodeId", siteNodeVO.getId());
+    	
+		boolean doesObjectExist = SiteNodeController.getController().getDoesSiteNodeExist(siteNodeVO.getId());
+		if(!doesObjectExist)
+		{
+			System.out.println("The page: " + siteNodeVO.getName() + " was allready deleted. Why?");
+			return;
+		}
+
+		intercept(hashMap, "SiteNodeVersion.DeleteSiteNode", infogluePrincipal);
+
+		delete(siteNodeVO, infogluePrincipal, forceDelete);
+	}   
+
 	/**
 	 * This method deletes a sitenode after first checking that the user has rights to delete it.
 	 */

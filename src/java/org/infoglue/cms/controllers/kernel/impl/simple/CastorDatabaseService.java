@@ -49,6 +49,7 @@ public class CastorDatabaseService //extends DatabaseService
             jdo.setConfiguration(CastorDatabaseService.class.getResource("/database.xml").toString());
             jdo.setClassLoader(CastorDatabaseService.class.getClassLoader());
             jdo.setCallbackInterceptor(new CmsJDOCallback());
+            jdo.setLockTimeout(10);
         }
         catch(Exception e)
         {

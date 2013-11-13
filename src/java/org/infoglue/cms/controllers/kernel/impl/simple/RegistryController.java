@@ -2896,7 +2896,7 @@ public class RegistryController extends BaseController
             if(limit > -1 && matchingRegistryVOList.size() > limit)
             	break;
         }       
-		System.out.println("matchingRegistryVOList:" + matchingRegistryVOList.size());
+		logger.info("matchingRegistryVOList:" + matchingRegistryVOList.size());
 		
 		results.close();
 		oql.close();

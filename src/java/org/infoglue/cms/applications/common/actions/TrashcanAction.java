@@ -140,7 +140,7 @@ public class TrashcanAction extends InfoGlueAbstractAction
 			SiteNodeVO siteNodeVO = siteNodesMarkedForDeletionIterator.next();
 			try
 			{
-				SiteNodeControllerProxy.getSiteNodeControllerProxy().acDelete(getInfoGluePrincipal(), siteNodeVO);
+				SiteNodeControllerProxy.getSiteNodeControllerProxy().acDelete(getInfoGluePrincipal(), siteNodeVO, true);
 			}
 			catch (Exception e) 
 			{
@@ -155,7 +155,7 @@ public class TrashcanAction extends InfoGlueAbstractAction
 			ContentVO contentVO = contentsMarkedForDeletionIterator.next();
 			try
 			{
-				ContentControllerProxy.getController().acDelete(getInfoGluePrincipal(), contentVO);
+				ContentControllerProxy.getController().acDelete(getInfoGluePrincipal(), contentVO, true);
 			}
 			catch (Exception e) 
 			{

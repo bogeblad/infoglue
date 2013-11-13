@@ -30,6 +30,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
+import org.exolab.castor.jdo.ObjectNotFoundException;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
@@ -351,7 +352,18 @@ public class SiteNodeStateController extends BaseController
     	ContentVO contentVO = null;
     	if(snVO.getMetaInfoContentId() != null)
     	{
-    		contentVO = ContentController.getContentController().getSmallContentVOWithId(snVO.getMetaInfoContentId(), db, null);
+    		try
+    		{
+    			contentVO = ContentController.getContentController().getSmallContentVOWithId(snVO.getMetaInfoContentId(), db, null);
+    		}
+    		catch (Exception e) 
+    		{
+    			if(e.getCause().getClass().getName().equals(ObjectNotFoundException.class.getName()))
+    			{
+    				logger.error("No meta info found on " + snVO.getId() + ". Returning as if ok.");
+    				return;
+    			}
+			}
     	}
     	else
     	{

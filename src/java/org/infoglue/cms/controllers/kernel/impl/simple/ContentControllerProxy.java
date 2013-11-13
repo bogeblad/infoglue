@@ -290,6 +290,27 @@ public class ContentControllerProxy extends ContentController
 
 	    delete(contentVO, infogluePrincipal);
 	}   
+	
+	/**
+	 * This method deletes a content after first checking that the user has rights to edit it.
+	 */
+
+	public void acDelete(InfoGluePrincipal infogluePrincipal, ContentVO contentVO, boolean forceDelete) throws ConstraintException, SystemException, Bug, Exception
+	{
+		Map hashMap = new HashMap();
+		hashMap.put("contentId", contentVO.getId());
+    	
+		boolean doesContentExist = ContentController.getContentController().getDoesContentExist(contentVO.getId());
+		if(!doesContentExist)
+		{
+			System.out.println("The content: " + contentVO.getName() + " was allready deleted. MetaInfo?");
+			return;
+		}
+		
+		intercept(hashMap, "Content.Delete", infogluePrincipal);
+
+	    delete(contentVO, infogluePrincipal, forceDelete);
+	}   
 
 	/**
 	 * This method deletes a content after first checking that the user has rights to edit it.

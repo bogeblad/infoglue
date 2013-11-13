@@ -688,7 +688,7 @@ public class SiteNodeController extends BaseController
         }
         catch(ConstraintException ce)
         {
-        	logger.warn("An error occurred so we should not complete the transaction:" + ce, ce);
+        	logger.warn("An error occurred so we should not complete the transaction:" + ce);
             rollbackTransaction(db);
             throw ce;
         }
@@ -741,7 +741,7 @@ public class SiteNodeController extends BaseController
         }
         catch(ConstraintException ce)
         {
-        	logger.warn("An error occurred so we should not complete the transaction:" + ce, ce);
+        	logger.info("An error occurred so we should not complete the transaction:" + ce, ce);
             rollbackTransaction(db);
             throw ce;
         }
@@ -4257,5 +4257,32 @@ public class SiteNodeController extends BaseController
 		}
 		
 		return erroneousSiteNodePaths;
+	}
+	
+	public boolean getDoesSiteNodeExist(Integer siteNodeId) throws Exception
+	{
+		boolean exists = true;
+		
+		Database db = CastorDatabaseService.getDatabase();
+        beginTransaction(db);
+		try
+        {	
+			db.load(SmallSiteNodeImpl.class, siteNodeId, Database.ReadOnly);
+	    	commitTransaction(db);
+        }
+		catch(ObjectNotFoundException onfe)
+        {
+        	exists = false;
+        	if(logger.isInfoEnabled())
+        		logger.info("An error occurred so we should not complete the transaction:" + onfe, onfe);
+            rollbackTransaction(db);
+        }  
+		catch(Exception e)
+        {
+        	logger.error("An error occurred so we should not complete the transaction:" + e, e);
+            rollbackTransaction(db);
+        }  
+        
+        return exists;
 	}
 }

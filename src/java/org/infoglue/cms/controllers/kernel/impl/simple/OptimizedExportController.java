@@ -452,7 +452,7 @@ public class OptimizedExportController extends BaseController implements Runnabl
 					*/
 					
 					String fileSystemName =  folderName + File.separator + fileName;
-					System.out.println("Dumping to:" + fileSystemName);	
+					logger.info("Dumping to:" + fileSystemName);	
 					
 					String encoding = "UTF-8";
 					File file = new File(fileSystemName);

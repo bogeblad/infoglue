@@ -70,6 +70,7 @@ import org.infoglue.cms.entities.management.CategoryVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinition;
 import org.infoglue.cms.entities.management.InterceptionPoint;
 import org.infoglue.cms.entities.management.Language;
+import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.Repository;
 import org.infoglue.cms.entities.management.RepositoryLanguage;
 import org.infoglue.cms.entities.management.ServiceDefinition;
@@ -726,21 +727,21 @@ public class OptimizedImportController extends BaseController implements Runnabl
 				throw new Exception("No contents file found. Looking for Contents_" + oldRepoId + ". in archive");
 
 			InfoGlueExportImpl contents = getInfoGlueExportImpl(contentsFile, encoding);
-			logger.warn("contents:" + contents);
+			logger.info("contents:" + contents);
 	
 			Iterator<Content> contentsIterator = contents.getContents().iterator();
 			while(contentsIterator.hasNext())
 			{
 				Content content = contentsIterator.next();
-				logger.warn("content:" + content + ":" + content.getValueObject().getId() + ":" + content.getValueObject().getRepositoryId() + ":" + content.getRepositoryId());
+				logger.info("content:" + content + ":" + content.getValueObject().getId() + ":" + content.getValueObject().getRepositoryId() + ":" + content.getRepositoryId());
 				contentMap.put(content.getContentId(), content);
 				if(content.getValueObject().getParentContentId() == null)
 				{
-					logger.warn("content was root:" + content + ":" + content.getValueObject().getId() + ":" + content.getValueObject().getRepositoryId() + ":" + content.getRepositoryId());
+					logger.info("content was root:" + content + ":" + content.getValueObject().getId() + ":" + content.getValueObject().getRepositoryId() + ":" + content.getRepositoryId());
 					if(!repositoryContentMap.containsKey("" + content.getRepositoryId()))
 						repositoryContentMap.put("" + content.getRepositoryId(), content);
 					else
-						logger.warn("content was root but skipping as registration allready there:" + content + ":" + content.getValueObject().getId() + ":" + content.getValueObject().getRepositoryId() + ":" + content.getRepositoryId());
+						logger.info("content was root but skipping as registration allready there:" + content + ":" + content.getValueObject().getId() + ":" + content.getValueObject().getRepositoryId() + ":" + content.getRepositoryId());
 								
 				}
 				//logger.info("readContentCandidate debug...:" + readContentCandidate.getName() + ":" + readContentCandidate.getId() + ":" + readContentCandidate.getRepositoryId());
@@ -750,14 +751,14 @@ public class OptimizedImportController extends BaseController implements Runnabl
 			while(contentsIterator.hasNext())
 			{
 				Content content = contentsIterator.next();
-				logger.warn("content:" + content.getName() + ":" + content.getValueObject().getParentContentId());
+				logger.info("content:" + content.getName() + ":" + content.getValueObject().getParentContentId());
 				
 				if(content.getValueObject().getParentContentId() != null)
 				{
 					Content parentContent = contentMap.get(content.getValueObject().getParentContentId());
 					if(parentContent != null)
 					{
-						logger.warn("parentContent:" + parentContent.getName() + ":" + parentContent);
+						logger.info("parentContent:" + parentContent.getName() + ":" + parentContent);
 						parentContent.getChildren().add(content);
 						content.setParentContent((ContentImpl)parentContent);
 						
@@ -769,7 +770,7 @@ public class OptimizedImportController extends BaseController implements Runnabl
 					}
 				}
 				
-				logger.warn("repositoryIdMap:" + repositoryIdMap);
+				logger.info("repositoryIdMap:" + repositoryIdMap);
 				//logger.info("Looking for repo:" + content.getRepositoryId());
 				Repository newRepository = (Repository)repositoryIdMap.get("" + content.getRepositoryId() + "_repository");
 				//logger.info("newRepository:" + newRepository);
@@ -799,15 +800,15 @@ public class OptimizedImportController extends BaseController implements Runnabl
 		
 		for(Repository repositoryRead : repositories)
 		{
-			logger.warn("Getting root content for: " + repositoryRead.getId());
+			logger.info("Getting root content for: " + repositoryRead.getId());
 			Content rootContent = (Content)repositoryContentMap.get("" + repositoryRead.getId());
-			logger.warn("rootContent: " + rootContent);
+			logger.info("rootContent: " + rootContent);
 			if(rootContent == null)
 			{
 				Integer oldRepoId = (Integer)repositoryIdMap.get("" + repositoryRead.getId() + "_old");
 				logger.info("Getting root content for: " + oldRepoId);
 				rootContent = (Content)repositoryContentMap.get("" + oldRepoId);
-				logger.warn("rootContent: " + rootContent);
+				logger.info("rootContent: " + rootContent);
 			}
 			
 			Database db = CastorDatabaseService.getDatabase();
@@ -817,11 +818,13 @@ public class OptimizedImportController extends BaseController implements Runnabl
 			
 				createContents(rootContent, allContentVersionMap, contentIdMap, contentTypeIdMap, allContents, languages, Collections.unmodifiableCollection(contentTypeDefinitions), categoryIdMap, allSmallAssets, assetVersionsMap, db, onlyLatestVersions, isCopyAction, replaceMap);
 				
+				logger.info("Contents created...");
+				
 				db.commit();
 			}
 			catch (Exception e) 
 			{
-				e.printStackTrace();
+				logger.error("Problem creating contents: " + e.getMessage(), e);
 				db.rollback();
 			}
 			finally
@@ -1295,8 +1298,6 @@ public class OptimizedImportController extends BaseController implements Runnabl
 	    if(content.getContentTypeDefinition() == null)
 	    	logger.warn("No content type definition for content:" + content.getId());
 	    	
-	    logger.warn("Creating content:" + content.getName());
-
 	    content.setName(substituteStrings(content.getName(), replaceMap));
 	    
 	    //if(content.getParentContent() != null)
@@ -1310,6 +1311,7 @@ public class OptimizedImportController extends BaseController implements Runnabl
 	    allContents.add(content);
 		
 		Integer newContentId = content.getContentId();
+	    logger.info("Creating content:" + content.getName() + ". " + originalContentId + "-->" + newContentId);
 		idMap.put(originalContentId.toString(), newContentId.toString());
 	
 		//logger.info("Getting versions for " + originalContentId);
@@ -1363,6 +1365,13 @@ public class OptimizedImportController extends BaseController implements Runnabl
 				ExportContentVersionImpl contentVersion = (ExportContentVersionImpl)contentVersionsIterator.next();
 				Integer languageId = contentVersion.getLanguageId();
 				Language oldLanguage = languages.get(languageId);
+				if(oldLanguage == null)
+				{
+					logger.warn("A null language.... strange... setting master language");
+					LanguageVO oldLanguageVO = LanguageController.getController().getMasterLanguage(content.getRepositoryId(), db);
+					oldLanguage = LanguageController.getController().getLanguageWithId(oldLanguageVO.getId(), db);
+				}
+				
 				Language language = LanguageController.getController().getLanguageWithCode(oldLanguage.getLanguageCode(), db);
 				logger.info("Creating contentVersion for language:" + oldLanguage + " on content " + content.getName());
 	

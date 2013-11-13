@@ -211,7 +211,7 @@ public class SiteNodeVersionController extends BaseController
 		{
 			sb.append("select max(snv.siteNodeVersionId) AS id, snv.siteNodeId as column1Value, max(snv.stateId) as column2Value, sn.repositoryId as column3Value, max(snv.versionModifier) as column4Value, max(snv.modifiedDateTime) as column5Value, '' as column6Value, '' as column7Value from cmSiteNodeVersion snv, cmSiteNode sn where sn.siteNodeId = snv.siteNodeId AND snv.isActive = ?1 AND snv.siteNodeId IN (" + variables + ") group by snv.siteNodeId, sn.repositoryId ");
 		}
-		System.out.println("SQL:" + sb.toString());
+		//logger.info("SQL:" + sb.toString());
 		
 		Connection conn = (Connection) db.getJdbcConnection();
 		

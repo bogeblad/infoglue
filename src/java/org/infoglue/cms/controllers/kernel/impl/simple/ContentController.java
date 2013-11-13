@@ -46,6 +46,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.ObjectNotFoundException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.applications.contenttool.wizards.actions.CreateContentWizardInfoBean;
 import org.infoglue.cms.applications.databeans.ProcessBean;
@@ -640,7 +641,7 @@ public class ContentController extends BaseController
         }
         catch(ConstraintException ce)
         {
-        	logger.warn("An error occurred so we should not complete the transaction:" + ce, ce);
+        	logger.warn("An error occurred so we should not complete the transaction:" + ce);
             rollbackTransaction(db);
             throw ce;
         }
@@ -3910,4 +3911,31 @@ public class ContentController extends BaseController
 			throw ex;
     	}
     }
+
+	public boolean getDoesContentExist(Integer contentId) throws Exception
+	{
+		boolean exists = true;
+		
+		Database db = CastorDatabaseService.getDatabase();
+        beginTransaction(db);
+		try
+        {	
+			db.load(SmallContentImpl.class, contentId, Database.ReadOnly);
+	    	commitTransaction(db);
+        }
+        catch(ObjectNotFoundException onfe)
+        {
+        	exists = false;
+        	if(logger.isInfoEnabled())
+        		logger.info("An error occurred so we should not complete the transaction:" + onfe, onfe);
+            rollbackTransaction(db);
+        }  
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+            rollbackTransaction(db);
+        }  
+        
+        return exists;
+	}
 }

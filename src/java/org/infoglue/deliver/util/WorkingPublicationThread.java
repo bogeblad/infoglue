@@ -469,7 +469,7 @@ public class WorkingPublicationThread extends Thread
 							handledCacheCalls.put("" + igCacheCall.get("className") + "_" + igCacheCall.get("objectId") + "_" + extraInformation, new Boolean(true));
 							
 						    elapsedTime = t.getElapsedTime();
-						    if(elapsedTime > 10)
+						    if(elapsedTime > 50)
 						    	logger.warn("Clearing all caches for " + igCacheCall.get("className") + ":" + igCacheCall.get("objectId"));
 						}
 					    

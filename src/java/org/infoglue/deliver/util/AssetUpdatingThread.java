@@ -7,21 +7,26 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
+import org.exolab.castor.jdo.ObjectNotFoundException;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
-class AssetUpdatingThread extends Thread
+public class AssetUpdatingThread extends Thread
 {
 	private static final Logger logger = Logger.getLogger(AssetUpdatingThread.class);
 	private String contentVersionIdString;
 
+	private static AtomicInteger numberOfRunningThreads = new AtomicInteger(0);
+	
 	AssetUpdatingThread(String contentVersionIdString)
 	{
 		this.contentVersionIdString = contentVersionIdString;
@@ -31,6 +36,22 @@ class AssetUpdatingThread extends Thread
 	@Override
 	public void run()
 	{
+		while(numberOfRunningThreads.get() > 10)
+		{
+			logger.info("To many threads - let's wait: ");
+			try 
+			{
+				Thread.sleep(1000);
+			} 
+			catch (InterruptedException e) 
+			{
+				e.printStackTrace();
+			}
+		}
+
+		numberOfRunningThreads.incrementAndGet();
+		logger.info("Running thread");
+		
 		Database db = null;
 		try
 		{
@@ -133,11 +154,28 @@ class AssetUpdatingThread extends Thread
 			CacheController.rollbackTransaction(db);
 			logger.warn("Failed to parse integer in asset clean thread. Message: " + nex);
 		}
+		catch (SystemException se)
+		{
+			CacheController.rollbackTransaction(db);
+			if(se.getCause() instanceof ObjectNotFoundException)
+			{
+				logger.info("Error when cleaning assets from disc for ContentVersion.id: " + contentVersionIdString + ". Object is probably deleted. Message: " + se.getMessage());				
+			}
+			else
+			{
+				logger.error("Error when cleaning assets from disc for ContentVersion.id: " + contentVersionIdString + ". Message: " + se.getMessage());
+				logger.warn("Error when cleaning assets from disc for ContentVersion.id: " + contentVersionIdString, se);
+			}
+		}
 		catch (Throwable ex)
 		{
 			CacheController.rollbackTransaction(db);
 			logger.error("Error when cleaning assets from disc for ContentVersion.id: " + contentVersionIdString + ". Message: " + ex.getMessage());
 			logger.warn("Error when cleaning assets from disc for ContentVersion.id: " + contentVersionIdString, ex);
+		}
+		finally
+		{
+			numberOfRunningThreads.decrementAndGet();
 		}
 	}
 }

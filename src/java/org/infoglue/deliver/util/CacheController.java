@@ -58,6 +58,7 @@ import org.apache.pluto.portalImpl.services.portletentityregistry.PortletEntityR
 import org.exolab.castor.jdo.CacheManager;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.ObjectNotFoundException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
@@ -3075,7 +3076,7 @@ public class CacheController extends Thread
 							    		cacheInstance.flushGroup("contentVersion_" + entityId);
 							    		//if(!cacheName.equals("contentCache") && !cacheName.equals("contentVersionCache") && !cacheName.equals("contentAttributeCache") && !cacheName.equals("contentVersionIdCache") && !cacheName.equals("contentCategoryCache") && !cacheName.equals("metaInfoContentAttributeCache"))
 							    			cacheInstance.flushGroup("selectiveCacheUpdateNonApplicable");
-								    	logger.warn("clearing " + e.getKey() + " with selectiveCacheUpdateNonApplicable");
+								    	logger.info("clearing " + e.getKey() + " with selectiveCacheUpdateNonApplicable");
 								    	//t.printElapsedTime("clearing " + e.getKey() + " with selectiveCacheUpdateNonApplicable");
 							    	}
 							    	logger.info("clearing " + e.getKey() + " with group " + "contentVersion_" + entityId);
@@ -3855,7 +3856,7 @@ public class CacheController extends Thread
 							    		String contentId = sentContentId;
 							    		if(contentId == null || contentId.equals(""))
 							    			contentId = ""+ContentVersionController.getContentVersionController().getContentIdForContentVersion(new Integer(entityId));
-	
+							    		
 							    		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(new Integer(contentId));
 							    		if(contentVO != null && contentVO.getContentTypeDefinitionId() != null)
 							    		{
@@ -3875,20 +3876,25 @@ public class CacheController extends Thread
 							    	}
 							    	catch (Exception e2) 
 							    	{
-							    		logger.warn("Error handling mixed caches: " + e2.getMessage(), e2);
+							    		if(e2.getCause() instanceof ObjectNotFoundException || (e2.getCause() != null && e2.getCause().getCause() instanceof ObjectNotFoundException))
+							    			logger.info("Error clearing caches - object was probably deleted.");
+							    		else
+							    			logger.warn("Error handling mixed caches: " + e2.getMessage(), e2);
 									}
 							    }
 							    else
 							    {
 							    	if(entity.indexOf("EventImpl") == -1 && entity.indexOf(".Publication") == -1)
 							    	{
-								    	logger.warn("WHOOOAAAAAAAAAA.. clearing all... on " + cacheName + ":" + entity);
+							    		if(logger.isInfoEnabled())
+							    			logger.info("WHOOOAAAAAAAAAA.. clearing all... on " + cacheName + ":" + entity);
 								    	//System.out.println("selectiveCacheUpdate:" + selectiveCacheUpdate);
 								    	//System.out.println("entity:" + entity);
 								    	//System.out.println("cacheName:" + cacheName);
 								    	//logger.info("Flushing all:" + cacheName);
 								    	cacheInstance.flushAll();
-										logger.info("clearing:" + e.getKey());
+								    	if(logger.isInfoEnabled())
+								    		logger.info("clearing:" + e.getKey());
 										//t.printElapsedTime("WHOOOAAAAAAAAAA.. clearing all... ", 10);
 									}
 							    }

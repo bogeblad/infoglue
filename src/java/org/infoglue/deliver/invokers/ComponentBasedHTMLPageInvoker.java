@@ -445,11 +445,11 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 	        contentVO = templateController.getContent(siteNodeVO.getMetaInfoContentId());
 	    else
 		    contentVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getBoundContent(db, templateController.getPrincipal(), siteNodeId, languageId, true, "Meta information", this.getDeliveryContext());		
-
+	    
 	    templateController.getDeliveryContext().addUsedContent(CacheController.getPooledString(1, templateController.getMetaInformationContentId()) + "_ComponentStructure");
 	    templateController.getDeliveryContext().addUsedContent(CacheController.getPooledString(1, templateController.getMetaInformationContentId()) + "_ComponentStructureDependency");
-
-		if(contentVO == null)
+		
+	    if(contentVO == null)
 			throw new SystemException("There was no Meta Information bound to this page which makes it impossible to render.");	
 
 	    String cacheName 	= "componentEditorCache";

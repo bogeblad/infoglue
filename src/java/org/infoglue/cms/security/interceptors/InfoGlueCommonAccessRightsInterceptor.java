@@ -257,7 +257,7 @@ public class InfoGlueCommonAccessRightsInterceptor implements InfoGlueIntercepto
 		{
 			Integer siteNodeId = (Integer)extradata.get("siteNodeId");
 			SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestSiteNodeVersionVO(siteNodeId);
-			if(!allowCreatorAccess || !siteNodeVersionVO.getVersionModifier().equalsIgnoreCase(infoGluePrincipal.getName()))
+			if(!allowCreatorAccess || (siteNodeVersionVO != null && !siteNodeVersionVO.getVersionModifier().equalsIgnoreCase(infoGluePrincipal.getName())))
 			{
 				Integer protectedSiteNodeVersionId = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getProtectedSiteNodeVersionId(siteNodeVersionVO.getId());
 				if(protectedSiteNodeVersionId != null && !AccessRightController.getController().getIsPrincipalAuthorized(infoGluePrincipal, "SiteNodeVersion.DeleteSiteNode", protectedSiteNodeVersionId.toString()))

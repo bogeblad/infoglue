@@ -139,13 +139,21 @@ public class ImportContentAction extends InfoGlueAbstractAction
 			logger.info("Found " + contentTypeDefinitions.size() + " content type definitions");
 			Collection categories = infoGlueExportImplRead.getCategories();
 			logger.info("Found " + categories.size() + " categories");
+			Collection<Language> languages = infoGlueExportImplRead.getLanguages();
+			logger.info("Found " + languages.size() + " languages");
 
 			Map categoryIdMap = new HashMap();
 			Map contentTypeIdMap = new HashMap();
 
 			importCategories(categories, null, categoryIdMap, db);
-			
 			updateContentTypeDefinitions(contentTypeDefinitions, categoryIdMap);
+			
+			Map<Integer,Language> languageIdMap = new HashMap<Integer,Language>();
+			logger.info("languages:" + languages);
+			for(Language lang : languages)
+			{
+				languageIdMap.put(lang.getId(), lang);
+			}
 			
 			List readContents = infoGlueExportImplRead.getRootContent();
 
@@ -162,7 +170,7 @@ public class ImportContentAction extends InfoGlueAbstractAction
 				readContent.setRepository((RepositoryImpl)parentContent.getRepository());
 				readContent.setParentContent((ContentImpl)parentContent);
 				
-				createContents(readContent, contentIdMap, contentTypeIdMap, allContents, Collections.unmodifiableCollection(contentTypeDefinitions), categoryIdMap, version, db);
+				createContents(readContent, contentIdMap, contentTypeIdMap, languageIdMap, allContents, Collections.unmodifiableCollection(contentTypeDefinitions), categoryIdMap, version, db);
 				parentContent.getChildren().add(readContent);
 			}
 					
@@ -248,54 +256,55 @@ public class ImportContentAction extends InfoGlueAbstractAction
 		}
 	}
 
-	private void importCategories(Collection categories, Category parentCategory, Map categoryIdMap, Database db) throws SystemException
+
+	private void importCategories(Collection<CategoryVO> categories, CategoryVO parentCategoryVO, Map categoryIdMap, Database db) throws SystemException
 	{
-		logger.info("We want to create a list of categories if not existing under the parent category " + parentCategory);
-		Iterator categoryIterator = categories.iterator();
+		logger.info("We want to create a list of categories if not existing under the parent category " + parentCategoryVO);
+		Iterator<CategoryVO> categoryIterator = categories.iterator();
 		while(categoryIterator.hasNext())
 		{
 			CategoryVO categoryVO = (CategoryVO)categoryIterator.next();
-			Category newParentCategory = null;
+			CategoryVO newParentCategoryVO = null;
 			
-			List existingCategories = null;
-			if(parentCategory != null)
-				existingCategories = CategoryController.getController().findByParent(parentCategory.getCategoryId(), db);
+			List<CategoryVO> existingCategories = null;
+			if(parentCategoryVO != null)
+				existingCategories = CategoryController.getController().findByParent(parentCategoryVO.getCategoryId(), db);
 			else
-				existingCategories = CategoryController.getController().findRootCategories(db);
+				existingCategories = CategoryController.getController().findRootCategoryVOList(db);
 				
-			Iterator existingCategoriesIterator = existingCategories.iterator();
+			Iterator<CategoryVO> existingCategoriesIterator = existingCategories.iterator();
 			while(existingCategoriesIterator.hasNext())
 			{
-				Category existingCategory = (Category)existingCategoriesIterator.next();
+				CategoryVO existingCategory = existingCategoriesIterator.next();
 				logger.info("existingCategory:" + existingCategory.getName());
 				if(existingCategory.getName().equals(categoryVO.getName()))
 				{
 					logger.info("Existed... setting " + existingCategory.getName() + " to new parent category.");
-					newParentCategory = existingCategory;
+					newParentCategoryVO = existingCategory;
 					break;
 				}
 			}
 
-			if(newParentCategory == null)
+			if(newParentCategoryVO == null)
 			{
 				logger.info("No existing category - we create it.");
 				Integer oldId = categoryVO.getId();
 				categoryVO.setCategoryId(null);
-				if(parentCategory != null)	
-					categoryVO.setParentId(parentCategory.getCategoryId());
+				if(parentCategoryVO != null)	
+					categoryVO.setParentId(parentCategoryVO.getCategoryId());
 				else
 					categoryVO.setParentId(null);
 					
 				Category newCategory = CategoryController.getController().save(categoryVO, db);
 				categoryIdMap.put(oldId, newCategory.getCategoryId());
-				newParentCategory = newCategory;
+				newParentCategoryVO = newCategory.getValueObject();
 			}
 			else
 			{
-				categoryIdMap.put(categoryVO.getId(), newParentCategory.getCategoryId());
+				categoryIdMap.put(categoryVO.getId(), newParentCategoryVO.getCategoryId());
 			}
 				
-			importCategories(categoryVO.getChildren(), newParentCategory, categoryIdMap, db);
+			importCategories(categoryVO.getChildren(), newParentCategoryVO, categoryIdMap, db);
 		}
 	}
 	
@@ -308,7 +317,7 @@ public class ImportContentAction extends InfoGlueAbstractAction
 	 * @throws Exception
 	 */
 	
-	private List createContents(Content content, Map idMap, Map contentTypeDefinitionIdMap, List allContents, Collection contentTypeDefinitions, Map categoryIdMap, int version, Database db) throws Exception
+	private List createContents(Content content, Map idMap, Map contentTypeDefinitionIdMap, Map<Integer,Language> languageIdMap, List allContents, Collection contentTypeDefinitions, Map categoryIdMap, int version, Database db) throws Exception
 	{
 		ContentTypeDefinition contentTypeDefinition = null;
 		
@@ -433,9 +442,22 @@ public class ImportContentAction extends InfoGlueAbstractAction
 		while(contentVersionsIterator.hasNext())
 		{
 			ContentVersion contentVersion = (ContentVersion)contentVersionsIterator.next();
-			Language language = LanguageController.getController().getLanguageWithCode(contentVersion.getLanguage().getLanguageCode(), db);
-			logger.info("Creating contentVersion for language:" + contentVersion.getLanguage().getLanguageCode() + " on content " + content.getName());
-
+			
+			Integer languageId = contentVersion.getLanguageId();
+			logger.info("languageId:" + languageId);
+			Language language = null;
+			if(languageIdMap.containsKey(languageId))
+			{
+				language = languageIdMap.get(languageId);
+				logger.info("found match:" + language);
+			}
+			else
+			{
+				throw new SystemException("No matching language found in the target repository");
+			}
+						
+			logger.info("Creating contentVersion for language:" + language.getLanguageCode() + " on content " + content.getName());
+			
 			contentVersion.setOwningContent((ContentImpl)content);
 			contentVersion.setLanguage((LanguageImpl)language);
 			
@@ -514,7 +536,7 @@ public class ImportContentAction extends InfoGlueAbstractAction
 				Content childContent = (Content)childContentsIterator.next();
 				childContent.setRepository(content.getRepository());
 				childContent.setParentContent((ContentImpl)content);
-				createContents(childContent, idMap, contentTypeDefinitionIdMap, allContents, contentTypeDefinitions, categoryIdMap, version, db);
+				createContents(childContent, idMap, contentTypeDefinitionIdMap, languageIdMap, allContents, contentTypeDefinitions, categoryIdMap, version, db);
 			}
 		}
 		

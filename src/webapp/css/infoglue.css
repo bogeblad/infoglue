@@ -1241,3 +1241,23 @@ tr.darkblue {
 	margin-left: 14px; 
 	margin-right: 14px;
 }
+
+#processDiv {  
+    position:fixed;  
+    width:300px;  
+    display: none;
+    top:150px;  
+    left:50%;  
+    height: 120px;
+    margin-left:-150px;  
+    text-align:center;  
+    padding:40px 0 0 0;  
+    color: black;
+    font:bold 11px Arial, Helvetica, sans-serif;  
+    -moz-border-radius: 10px;
+	border-radius: 10px;
+	border: 2px solid rgba(0,0,0,0.4);
+	background-color: rgba(255,255,255,1);
+	box-shadow: 3px 3px 50px rgba(0,0,0,0.7);
+	z-index: 10000;
+}  

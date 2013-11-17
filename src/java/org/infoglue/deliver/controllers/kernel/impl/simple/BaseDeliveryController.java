@@ -80,12 +80,12 @@ public abstract class BaseDeliveryController
 			{
 				if(retry)
 				{
-					logger.warn("Error getting object. Message: " + e.getMessage() + ". Retrying...");
+					logger.info("Error getting object. Message: " + e.getMessage() + ". Retrying...");
 					object = getObjectWithId(arg, id, db, false);
 				}
 				else
 				{
-					logger.warn("Error getting object. Message: " + e.getMessage() + ". Not retrying...");
+					logger.info("Error getting object. Message: " + e.getMessage() + ". Not retrying...");
 					throw new SystemException("An error occurred when we tried to fetch the object " + arg.getName() + ". Reason:" + e.getMessage(), e);
 				}
 			}
@@ -134,12 +134,12 @@ public abstract class BaseDeliveryController
 			{
 				if(retry)
 				{
-					logger.warn("Error getting object. Message: " + e.getMessage() + ". Retrying...");
+					logger.info("Error getting object. Message: " + e.getMessage() + ". Retrying...");
 					vo = (IBaseEntity)getVOWithId(arg, id, db, false);
 				}
 				else
 				{
-					logger.warn("Error getting object. Message: " + e.getMessage() + ". Not retrying...");
+					logger.info("Error getting object. Message: " + e.getMessage() + ". Not retrying...");
 					throw new SystemException("An error occurred when we tried to fetch the object " + arg.getName() + ". Reason:" + e.getMessage(), e);
 				}
 			}

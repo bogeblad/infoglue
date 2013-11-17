@@ -6620,7 +6620,6 @@ public class BasicTemplateController implements TemplateController
 		while(i.hasNext())
 		{
 			SiteNodeVO siteNodeVO = (SiteNodeVO)i.next();
-
 			this.getDeliveryContext().addUsedSiteNode(CacheController.getPooledString(3, siteNodeVO.getId()));
 			if((!hideUnauthorizedPages || getHasUserPageAccess(siteNodeVO.getId())) && (showHidden || !siteNodeVO.getIsHidden()))
 			{

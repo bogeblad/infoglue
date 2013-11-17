@@ -1227,6 +1227,26 @@ public class ContentVersionController extends BaseController
 		
 		return contentVersion;
     }
+	
+	public ContentVersionVO getLatestContentVersionVO(Integer languageId, Database db) throws SystemException, Bug, Exception
+    {
+        SmallContentVersionImpl contentVersion = null;
+        
+        OQLQuery oql = db.getOQLQuery( "SELECT cv FROM org.infoglue.cms.entities.content.impl.simple.SmallContentVersionImpl cv WHERE cv.languageId = $1 ORDER BY cv.contentVersionId desc");
+    	oql.bind(languageId);
+    	
+    	QueryResults results = oql.execute(Database.ReadOnly);
+		
+		if (results.hasMore()) 
+        {
+        	contentVersion = (SmallContentVersionImpl)results.next();
+        }
+		
+		results.close();
+		oql.close();
+		
+		return (contentVersion != null ? contentVersion.getValueObject() : null);
+    }
    	
 	/**
 	 * This method created a new contentVersion in the database.
@@ -3598,7 +3618,9 @@ public class ContentVersionController extends BaseController
 
         try
         {
-        	contentVersionVOList = getContentVersionVOList(contentTypeDefinitionId, excludeContentTypeDefinitionId, languageId, showDeletedItems, stateId, lastContentVersionId, limit, 10000, ascendingOrder, db, includeSiteNode);            
+        	ContentVersionVO lastContentVersionVO = getLatestContentVersionVO(languageId, db);
+        	logger.info("lastContentVersionVO 2:" + lastContentVersionVO.getId());
+        	contentVersionVOList = getContentVersionVOList(contentTypeDefinitionId, excludeContentTypeDefinitionId, languageId, showDeletedItems, stateId, lastContentVersionId, limit, 10000, ascendingOrder, db, includeSiteNode, lastContentVersionVO.getId());            
             commitTransaction(db);
         }
         catch(Exception e)
@@ -3727,8 +3749,9 @@ public class ContentVersionController extends BaseController
 	 * This method returns a list of the children a siteNode has.
 	 */
    	
-	public List<ContentVersionVO> getContentVersionVOList(Integer contentTypeDefinitionId, Integer excludeContentTypeDefinitionId, Integer languageId, boolean showDeletedItems, Integer stateId, Integer lastContentVersionId, Integer limit, Integer cvIdSpan, boolean ascendingOrder, Database db, boolean includeSiteNode) throws Exception
+	public List<ContentVersionVO> getContentVersionVOList(Integer contentTypeDefinitionId, Integer excludeContentTypeDefinitionId, Integer languageId, boolean showDeletedItems, Integer stateId, Integer lastContentVersionId, Integer limit, Integer cvIdSpan, boolean ascendingOrder, Database db, boolean includeSiteNode, Integer maxContentVersionIdForLanguageVersion) throws Exception
 	{
+		logger.info("maxContentVersionIdForLanguageVersion for " + languageId + "=" + maxContentVersionIdForLanguageVersion);
 		List<ContentVersionVO> contentVersionVOList = new ArrayList<ContentVersionVO>();
 		Timer t = new Timer();
 		
@@ -3827,10 +3850,17 @@ public class ContentVersionController extends BaseController
     		}
 			if(lastContentVersionId != null && lastContentVersionId > 0)
 			{
-				SQL.append(" AND cv.contentVersionId > $" + index + "");
+				SQL.append(" AND cv.contentVersionId > $" + index + " and cv.contentVersionId < $" + (index+1) + "");
+    			index++;
     			index++;
 			}
-			
+			else
+			{
+				SQL.append(" AND cv.contentVersionId > $" + index + " and cv.contentVersionId < $" + (index+1) + "");
+    			index++;
+    			index++;
+			}
+
     		SQL.append(" order by cv.contentVersionId " + (ascendingOrder ? "" : "DESC") + " limit $" + index + " AS org.infoglue.cms.entities.content.impl.simple.IndexFriendlyContentVersionImpl");
        	}
     	
@@ -3849,6 +3879,7 @@ public class ContentVersionController extends BaseController
     		oql.bind(excludeContentTypeDefinitionId);
 		if(languageId != null)
 			oql.bind(languageId);
+		
 		if(lastContentVersionId != null && lastContentVersionId > 0)
 		{
 			oql.bind(lastContentVersionId);
@@ -3880,9 +3911,12 @@ public class ContentVersionController extends BaseController
 		results.close();
 		oql.close();
 
-		if(contentVersionVOList.size() == 0)
+		if(maxContentVersionIdForLanguageVersion < 1000)
+			maxContentVersionIdForLanguageVersion = 10000;
+		
+		if(contentVersionVOList.size() == 0 && lastContentVersionId < maxContentVersionIdForLanguageVersion*2 && lastContentVersionId < Integer.MAX_VALUE/4)
 		{
-			return getContentVersionVOList(contentTypeDefinitionId, excludeContentTypeDefinitionId, languageId, showDeletedItems, stateId, lastContentVersionId+cvIdSpan, cvIdSpan*2, limit, ascendingOrder, db, includeSiteNode);
+			return getContentVersionVOList(contentTypeDefinitionId, excludeContentTypeDefinitionId, languageId, showDeletedItems, stateId, lastContentVersionId+cvIdSpan, cvIdSpan*2, limit, ascendingOrder, db, includeSiteNode, maxContentVersionIdForLanguageVersion);
 		}
 		
 		return contentVersionVOList;

@@ -107,6 +107,7 @@ public class ImportController extends BaseController
 		Unmarshaller unmarshaller = new Unmarshaller(map);
 		unmarshaller.setWhitespacePreserve(true);
 		unmarshaller.setValidation(false);
+		
 		InfoGlueExportImpl infoGlueExportImplRead = (InfoGlueExportImpl)unmarshaller.unmarshal(reader);
 
 		//if(mergeExistingRepositories && !isCopyAction)

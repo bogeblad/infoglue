@@ -36,6 +36,7 @@ import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.ExportContentVersionImpl;
 import org.infoglue.cms.entities.management.AccessRight;
+import org.infoglue.cms.entities.management.CategoryVO;
 import org.infoglue.cms.entities.management.Language;
 import org.infoglue.cms.entities.management.Repository;
 import org.infoglue.cms.entities.management.SiteNodeTypeDefinition;
@@ -136,12 +137,12 @@ public class InfoGlueExportImpl
 		this.contentTypeDefinitions = contentTypeDefinitions;
 	}
 
-	public Collection getCategories()
+	public Collection<CategoryVO> getCategories()
 	{
 		return categories;
 	}
 
-	public void setCategories(Collection categories)
+	public void setCategories(Collection<CategoryVO> categories)
 	{
 		this.categories = categories;
 	}

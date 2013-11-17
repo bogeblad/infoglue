@@ -2,13 +2,21 @@
 ##          CMS STUFF 	   	       #
 ####################################
 
-#macro(workingDiv)
-<div id="working" style="border: 1px solid black; left: 30%; top: 30%; z-index: 10; visibility: hidden; position:absolute; width:300px; height:115px; z-index:1; padding:10px; background-color: buttonface;">
-	<div style="left: 0px; width: 100%; text-align: center;">
-		<font face="Verdana" size="-1" color="#006699"><strong>System is working</strong></font>
-		<hr width="80%" SIZE="2">
+#macro(processDiv)
+#set($hash = "#")
+<script type="text/javascript">
+	window.onbeforeunload = function (e) {
+		setTimeout(function(){
+		  	document.getElementById("processDiv").style.display = 'block';
+		}, 500);
+		
+	};
+</script>
+<div id="processDiv">
+	<div style="float: left; left: 0px; width: 100%; text-align: center; margin-bottom: 10px;">
+		<font face="Verdana" size="-1" color="#006699"><strong>$ui.getString("tool.common.loading.label")</strong></font>
 	</div>
-	<div style="width: 100%; text-align: center;"><img alt="" src="css/images/workinganim.gif" /></div>
+	<div style="float: left; width: 100%; text-align: center;"><img alt="" src="css/images/v3/loadingAnimation.gif" /></div>
 </div>
 #end
 
@@ -377,6 +385,7 @@
 </head>
 
 <body class="generaltooledit yui-skin-sam">
+#processDiv()
 #set( $lvColor = "silver")
 #end
 
@@ -525,6 +534,7 @@
 </head>
 
 <body class="generaltooledit yui-skin-sam $!extraBodyClass">
+	#processDiv()
 
 	<div id="genericDialog" title="genericQuestion" style="display: none">
 		<h3>Confirmation</h3>
@@ -803,6 +813,7 @@
 </head>
 
 <body class="managementtooledit">
+#processDiv()
 
 #end
 
@@ -1042,6 +1053,7 @@
 </head>
 
 <body class="generaltooledit yui-skin-sam">
+#processDiv()
 #set( $lvColor = "silver")
 #end
 

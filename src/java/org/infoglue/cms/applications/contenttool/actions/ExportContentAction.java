@@ -41,6 +41,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.CategoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
+import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.management.impl.simple.InfoGlueExportImpl;
 import org.infoglue.cms.exception.SystemException;
@@ -118,6 +119,7 @@ public class ExportContentAction extends InfoGlueAbstractAction
 			
 			List contentTypeDefinitions = ContentTypeDefinitionController.getController().getContentTypeDefinitionList(db);
 			List categories = CategoryController.getController().getAllActiveCategories();
+			List languages = LanguageController.getController().getLanguageList(db);
 			
 			InfoGlueExportImpl infoGlueExportImpl = new InfoGlueExportImpl();
 			
@@ -144,6 +146,7 @@ public class ExportContentAction extends InfoGlueAbstractAction
 			//infoGlueExportImpl.getRootContents().add((ContentImpl)content);
 			//infoGlueExportImpl.getRootSiteNodes().add((SiteNodeImpl)siteNode);
 			
+			infoGlueExportImpl.setLanguages(languages);
 			infoGlueExportImpl.setContentTypeDefinitions(contentTypeDefinitions);
 			infoGlueExportImpl.setCategories(categories);
 			

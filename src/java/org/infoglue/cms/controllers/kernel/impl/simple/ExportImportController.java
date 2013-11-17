@@ -33,6 +33,7 @@ import org.infoglue.cms.entities.management.Category;
 import org.infoglue.cms.entities.management.CategoryVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinition;
 import org.infoglue.cms.entities.management.Language;
+import org.infoglue.cms.entities.management.SiteNodeTypeDefinition;
 import org.infoglue.cms.entities.management.impl.simple.CategoryImpl;
 import org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl;
 import org.infoglue.cms.entities.management.impl.simple.InfoGlueExportImpl;
@@ -176,10 +177,10 @@ public class ExportImportController extends BaseController
 				contents.add(content);
 			}
 			
-			List contentTypeDefinitions = ContentTypeDefinitionController.getController().getContentTypeDefinitionList(db);
-			List categories = CategoryController.getController().getAllActiveCategories();
-			List languages = LanguageController.getController().getLanguageList(db);
-			List siteNodeTypeDefinitions = SiteNodeTypeDefinitionController.getController().getSiteNodeTypeDefinitionList(db);
+			List<ContentTypeDefinition> contentTypeDefinitions = ContentTypeDefinitionController.getController().getContentTypeDefinitionList(db);
+			List<CategoryVO> categories = CategoryController.getController().getAllActiveCategories();
+			List<Language> languages = LanguageController.getController().getLanguageList(db);
+			List<SiteNodeTypeDefinition> siteNodeTypeDefinitions = SiteNodeTypeDefinitionController.getController().getSiteNodeTypeDefinitionList(db);
 			
 			InfoGlueExportImpl infoGlueExportImpl = new InfoGlueExportImpl();
 			
@@ -260,6 +261,8 @@ public class ExportImportController extends BaseController
 	
 			Unmarshaller unmarshaller = new Unmarshaller(map);
 			unmarshaller.setWhitespacePreserve(true);
+			unmarshaller.setValidation(false);
+			
 			InfoGlueExportImpl infoGlueExportImplRead = (InfoGlueExportImpl)unmarshaller.unmarshal(reader);
 			Collection contentTypeDefinitions = infoGlueExportImplRead.getContentTypeDefinitions();
 			logger.info("Found " + contentTypeDefinitions.size() + " content type definitions");

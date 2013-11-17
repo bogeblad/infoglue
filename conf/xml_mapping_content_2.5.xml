@@ -301,20 +301,9 @@
     <field name="assetFileSize" type="java.lang.Integer">
       <bind-xml name="assetFileSize" node="element"/>
     </field>
-    <!--
-    <field name="contentVersions" type="org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl" lazy="true" collection="collection">
-      <sql many-key="digitalAssetId" many-table="cmContentVersionDigitalAsset"/>
-    </field>
-    -->
     <field name="assetBytes" type="bytes" handler="org.infoglue.cms.util.handlers.DigitalAssetBytesHandler">
       <bind-xml name="assetBytes" node="element"/>
     </field>
-	<!--
-    <field name="assetBlob" type="stream" >
-      <sql name="assetBlob" type="blob" dirty="ignore" />
-      <bind-xml name="assetBlob" node="element"/>
-    </field>
-    -->
   </class>
     
       

@@ -634,7 +634,7 @@ public class ContentController extends BaseController
         beginTransaction(db);
 		try
         {		
-	    	delete(contentVO, db, false, false, forceDelete, infogluePrincipal);
+	    	delete(contentVO, db, (forceDelete ? true : false), false, forceDelete, infogluePrincipal);
 	    	
 	    	commitTransaction(db);
             

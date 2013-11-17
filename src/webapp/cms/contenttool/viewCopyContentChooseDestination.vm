@@ -60,7 +60,7 @@
 		{
 		   	document.inputForm.repositoryId.value = repositoryId;
 			
-			document.inputForm.action = 'MoveMultipleContent!V3.action';
+			document.inputForm.action = 'CopyContent!input.action';
 			document.inputForm.submit();
 		}
 	-->
@@ -70,6 +70,15 @@
 #beginLightCommonToolV3Impl("tool.contenttool.copyContent.header" "" "" false true $!disableCloseButton $headerMarkup false "")
 	
 	#lightMenuToolbar("" $buttons $rightButtons) 
+
+		<form id="inputForm" name="inputForm" action="CopyContent.action" method="post">
+			<input type="hidden" name="repositoryId" value="$repositoryId"/>
+			<input type="hidden" name="contentId" value="$contentId"/>
+			<input type="hidden" name="newParentContentId" value=""/>
+			<input type="hidden" name="changeTypeId" value="3">
+			<input type="hidden" name="returnAddress" value="$returnAddress">
+			<input type="hidden" name="originalAddress" value="$originalAddress">
+		</form>
 
 	<div style="clear: both;"></div>
 
@@ -85,9 +94,8 @@
 		    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
 		    #end
 		</select>
-		<p>
-			<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewContentHtmlTree!V3.action?showLeafs=no&repositoryId=${repositoryId}" width="90%" height="350" ></iframe>
-		</p>
+
+		<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewContentHtmlTree!V3.action?showLeafs=no&repositoryId=${repositoryId}" width="90%" height="350" ></iframe>
 
 		<p>
 			$ui.getString("tool.contenttool.exportContent.assetMaxSizeLabel"):
@@ -106,15 +114,7 @@
 			$ui.getString("tool.contenttool.importContent.onlyLatestVersionsLabel")
 			<input type="checkbox" name="onlyLatestVersionsCheckbox" value="true" checked="1">
 		</p>
-						
-		<form name="inputForm" action="CopyContent.action" method="post">
-			<input type="hidden" name="contentId" value="$contentId"/>
-			<input type="hidden" name="newParentContentId" value=""/>
-			<input type="hidden" name="changeTypeId" value="3">
-			<input type="hidden" name="returnAddress" value="$returnAddress">
-			<input type="hidden" name="originalAddress" value="$originalAddress">
-		</form>
-		
+								
 	</div>
 
 	#lightFooterToolbar($footerButtons)

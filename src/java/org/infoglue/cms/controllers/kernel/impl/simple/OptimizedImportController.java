@@ -314,6 +314,7 @@ public class OptimizedImportController extends BaseController implements Runnabl
 		Unmarshaller unmarshaller = new Unmarshaller(map);
 		unmarshaller.setWhitespacePreserve(true);
 		unmarshaller.setValidation(false);
+		
 		InfoGlueExportImpl infoGlueExportImplRead = (InfoGlueExportImpl)unmarshaller.unmarshal(reader);
 		reader.close();
 		return infoGlueExportImplRead;
@@ -838,10 +839,11 @@ public class OptimizedImportController extends BaseController implements Runnabl
 	
 	public void importFoundation(InfoGlueExportImpl master, String encoding, boolean isCopyAction, Map replaceMap, Map categoryIdMap, Map repositoryIdMap) throws Exception 
 	{
-		//Collection contentTypeDefinitions = master.getContentTypeDefinitions();
+		Collection<Language> languages = master.getLanguages();
 		Collection contentTypeDefinitions = master.getContentTypeDefinitions();
 		Collection<Repository> repositories = master.getRepositories();
 		logger.info("Found " + repositories.size() + " repositories");
+		logger.info("Found " + languages.size() + " languages");
 
 		logger.info("Found " + contentTypeDefinitions.size() + " content type definitions");
 		Collection categories = master.getCategories();

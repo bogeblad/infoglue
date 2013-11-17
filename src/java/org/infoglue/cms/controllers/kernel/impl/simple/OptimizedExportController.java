@@ -47,8 +47,12 @@ import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.content.impl.simple.ExportContentVersionImpl;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.AccessRight;
+import org.infoglue.cms.entities.management.CategoryVO;
+import org.infoglue.cms.entities.management.ContentTypeDefinition;
 import org.infoglue.cms.entities.management.InterceptionPointVO;
+import org.infoglue.cms.entities.management.Language;
 import org.infoglue.cms.entities.management.Repository;
+import org.infoglue.cms.entities.management.SiteNodeTypeDefinition;
 import org.infoglue.cms.entities.management.impl.simple.InfoGlueExportImpl;
 import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
@@ -242,12 +246,10 @@ public class OptimizedExportController extends BaseController implements Runnabl
 			}
 			processBean.updateProcess("Access rights: " + allAccessRights.size() + " exported in " + (t.getElapsedTime() / 1000) + " seconds");
 
-			List languages = LanguageController.getController().getLanguageList(db);
-			List contentTypeDefinitions = ContentTypeDefinitionController.getController().getContentTypeDefinitionList(db);
-			logger.info("contentTypeDefinitions");
-			List categories = CategoryController.getController().getAllActiveCategories();
-			logger.info("categories");
-			List siteNodeTypeDefinitions = SiteNodeTypeDefinitionController.getController().getSiteNodeTypeDefinitionList(db);
+			List<Language> languages = LanguageController.getController().getLanguageList(db);
+			List<ContentTypeDefinition> contentTypeDefinitions = ContentTypeDefinitionController.getController().getContentTypeDefinitionList(db);
+			List<CategoryVO> categories = CategoryController.getController().getAllActiveCategories();
+			List<SiteNodeTypeDefinition> siteNodeTypeDefinitions = SiteNodeTypeDefinitionController.getController().getSiteNodeTypeDefinitionList(db);
 			
 			processBean.updateProcess("Content type and categories exported in " + (t.getElapsedTime() / 1000) + " seconds");
 			

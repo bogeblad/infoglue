@@ -122,9 +122,9 @@ public class CopyContentAction extends InfoGlueAbstractAction
     {
         userSessionKey = "" + System.currentTimeMillis();
 
-        String copyContentInlineOperationDoneHeader = getLocalizedString(getLocale(), "tool.contenttool.moveContentsInlineOperationDoneHeader");
-		String copyContentInlineOperationBackToCurrentPageLinkText = getLocalizedString(getLocale(), "tool.contenttool.moveContentsInlineOperationBackToCurrentContentLinkText");
-		String copyContentInlineOperationBackToCurrentPageTitleText = getLocalizedString(getLocale(), "tool.contenttool.moveContentsInlineOperationBackToCurrentContentTitleText");
+        String copyContentInlineOperationDoneHeader = getLocalizedString(getLocale(), "tool.contenttool.copyContentsInlineOperationDoneHeader");
+		String copyContentInlineOperationBackToCurrentPageLinkText = getLocalizedString(getLocale(), "tool.contenttool.copyContentsInlineOperationBackToCurrentContentLinkText");
+		String copyContentInlineOperationBackToCurrentPageTitleText = getLocalizedString(getLocale(), "tool.contenttool.copyContentsInlineOperationBackToCurrentContentTitleText");
 		
 	    setActionMessage(userSessionKey, copyContentInlineOperationDoneHeader);
 	    addActionLink(userSessionKey, new LinkBean("currentPageUrl", copyContentInlineOperationBackToCurrentPageLinkText, copyContentInlineOperationBackToCurrentPageTitleText, copyContentInlineOperationBackToCurrentPageTitleText, this.originalAddress, false, ""));

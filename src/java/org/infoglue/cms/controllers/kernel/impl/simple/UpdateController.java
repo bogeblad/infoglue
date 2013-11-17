@@ -186,7 +186,7 @@ public class UpdateController extends BaseController
 			 {
 				Unmarshaller unmar = new Unmarshaller(mapping);
 				unmar.setWhitespacePreserve(true);
-				
+				unmar.setValidation(false);
 				// Fix url to updateserver, so that it filters
 				// packages allready installed locally
 				// also submit updatesystemversion
@@ -239,6 +239,7 @@ public class UpdateController extends BaseController
 		{
 			unmar = new Unmarshaller(mapping);
 			unmar.setWhitespacePreserve(true);
+			unmar.setValidation(false);
 			coll = (UpdateCollection) unmar.unmarshal(new InputSource(new FileReader(path + "installed.xml")));
 		} 
 		catch (MarshalException e2) 
@@ -268,6 +269,7 @@ public class UpdateController extends BaseController
 			try {
 				unmar = new Unmarshaller(mapping);
 				unmar.setWhitespacePreserve(true);
+				unmar.setValidation(false);
 			} catch (MappingException e1) {
 				e1.printStackTrace();
 			}
@@ -315,6 +317,7 @@ public class UpdateController extends BaseController
 		try {
 			unmar = new Unmarshaller(mapping);
 			unmar.setWhitespacePreserve(true);
+			unmar.setValidation(false);
 		} catch (MappingException e1) {
 			e1.printStackTrace();
 		}

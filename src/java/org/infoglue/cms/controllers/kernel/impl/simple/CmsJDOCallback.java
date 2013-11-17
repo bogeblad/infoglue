@@ -768,10 +768,13 @@ public class CmsJDOCallback implements CallbackInterceptor
 					if(content.getValueObject().getParentContentId() != null)
 					{
 						CacheController.clearCacheForGroup("childContentCache", "content_" + content.getValueObject().getParentContentId());
-						ContentVO parentContentVO = ContentController.getContentController().getContentVOWithId(content.getValueObject().getParentContentId(), false);
-						if(parentContentVO.getParentContentId() != null)
+						if(ContentController.getContentController().getDoesContentExist(content.getId()))
 						{
-							CacheController.clearCacheForGroup("childContentCache", "content_" + parentContentVO.getParentContentId());
+							ContentVO parentContentVO = ContentController.getContentController().getContentVOWithId(content.getValueObject().getParentContentId(), false);
+							if(parentContentVO.getParentContentId() != null)
+							{
+								CacheController.clearCacheForGroup("childContentCache", "content_" + parentContentVO.getParentContentId());
+							}
 						}
 					}
 				}

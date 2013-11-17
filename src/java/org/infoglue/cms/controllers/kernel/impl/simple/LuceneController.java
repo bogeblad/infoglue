@@ -1335,14 +1335,18 @@ public class LuceneController extends BaseController implements NotificationList
 			beginTransaction(db);
 			
 			ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Meta info", db);
-			List<ContentVersionVO> versions = new ArrayList<ContentVersionVO>();
+        	ContentVersionVO lastContentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(languageVO.getId(), db);
+        	Integer maxContentVersionId = (lastContentVersionVO == null ? 1000 : lastContentVersionVO.getId());
+        	logger.info("maxContentVersionId:" + maxContentVersionId + " for " + languageVO.getName());
+        	
+        	List<ContentVersionVO> versions = new ArrayList<ContentVersionVO>();
 			if(CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms"))
 			{
-				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, 0, newLastSiteNodeVersionId, numberOfVersionToIndexInBatch, numberOfVersionToIndexInBatch*10, true, db, true);
+				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, 0, newLastSiteNodeVersionId, numberOfVersionToIndexInBatch, numberOfVersionToIndexInBatch*10, true, db, true, maxContentVersionId);
 			}
 			else
 			{
-				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), newLastSiteNodeVersionId, numberOfVersionToIndexInBatch, numberOfVersionToIndexInBatch*10, true, db, true);				
+				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), newLastSiteNodeVersionId, numberOfVersionToIndexInBatch, numberOfVersionToIndexInBatch*10, true, db, true, maxContentVersionId);				
 			}
 			
 			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Index all : getContentVersionVOList", t.getElapsedTime());
@@ -1402,14 +1406,17 @@ public class LuceneController extends BaseController implements NotificationList
 			logger.info("lastContentVersionId 2:" + lastContentVersionId);
 
 			ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Meta info", db);
-			List<ContentVersionVO> versions = new ArrayList<ContentVersionVO>();
+        	ContentVersionVO lastContentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(languageVO.getId(), db);
+			Integer maxContentVersionId = (lastContentVersionVO == null ? 1000 : lastContentVersionVO.getId());
+			logger.info("maxContentVersionId 1:" + maxContentVersionId + " for " + languageVO.getName());
+        	List<ContentVersionVO> versions = new ArrayList<ContentVersionVO>();
 			if(CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms"))
 			{
-				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(null, contentTypeDefinitionVO.getId(), languageVO.getId(), false, 0, lastContentVersionId, numberOfVersionToIndexInBatch, numberOfVersionToIndexInBatch*10, true, db, false);
+				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(null, contentTypeDefinitionVO.getId(), languageVO.getId(), false, 0, lastContentVersionId, numberOfVersionToIndexInBatch, numberOfVersionToIndexInBatch*10, true, db, false, maxContentVersionId);
 			}
 			else
 			{
-				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(null, contentTypeDefinitionVO.getId(), languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), lastContentVersionId, numberOfVersionToIndexInBatch, numberOfVersionToIndexInBatch*10, true, db, false);				
+				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(null, contentTypeDefinitionVO.getId(), languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), lastContentVersionId, numberOfVersionToIndexInBatch, numberOfVersionToIndexInBatch*10, true, db, false, maxContentVersionId);				
 			}
 
 			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Index all : getContentVersionVOList", t.getElapsedTime());
@@ -1504,14 +1511,17 @@ public class LuceneController extends BaseController implements NotificationList
 			beginTransaction(db);
 			
 			ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Meta info", db);
-			List<ContentVersionVO> versions = new ArrayList<ContentVersionVO>();
+        	ContentVersionVO lastContentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(languageVO.getId(), db);
+        	Integer maxContentVersionId = (lastContentVersionVO == null ? 1000 : lastContentVersionVO.getId());
+        	logger.info("maxContentVersionId:" + maxContentVersionId + " for " + languageVO.getName());
+        	List<ContentVersionVO> versions = new ArrayList<ContentVersionVO>();
 			if(CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms"))
 			{
-				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, 0, lastContentVersionId, numberOfVersionToIndexInBatch, numberOfVersionToIndexInBatch*10, true, db, true);
+				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, 0, lastContentVersionId, numberOfVersionToIndexInBatch, numberOfVersionToIndexInBatch*10, true, db, true, maxContentVersionId);
 			}
 			else
 			{
-				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), lastContentVersionId, numberOfVersionToIndexInBatch, numberOfVersionToIndexInBatch*10, true, db, true);				
+				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), lastContentVersionId, numberOfVersionToIndexInBatch, numberOfVersionToIndexInBatch*10, true, db, true, maxContentVersionId);				
 			}
 			
 			logger.info("versions:" + versions.size());
@@ -1634,7 +1644,7 @@ public class LuceneController extends BaseController implements NotificationList
 			oql.bind(lastContentVersionId+(batchSize*10));
 			//oql.bind(date.getTime());
 			oql.bind(date.getTime());
-			//oql.bind(batchSize);
+			oql.bind(batchSize);
 					
 			QueryResults results = oql.execute(Database.ReadOnly);
 			

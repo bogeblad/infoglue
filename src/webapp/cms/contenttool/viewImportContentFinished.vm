@@ -12,7 +12,14 @@
 			}
 			else
 			{
-				top.frames['contentTreeIframe'].location.reload(true);
+				if(parent.parent.refreshContent)
+					parent.parent.refreshContent($!parentContentId, 1, $!parentContentId);
+				else
+					top.refreshContent($!parentContentId, 1, $!parentContentId);
+				
+				if(top.frames['contentTreeIframe'])
+					top.frames['contentTreeIframe'].location.reload(true);
+				
 				if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();
 			}
 		}	

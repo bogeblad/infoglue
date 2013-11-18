@@ -2062,7 +2062,7 @@ public class SiteNodeController extends BaseController
         	contentVO.setRepositoryId(repositoryId);
 
         	content = ContentControllerProxy.getController().create(db, parentFolderContent.getId(), metaInfoContentTypeDefinitionId, repositoryId, contentVO);
-            RequestAnalyser.getRequestAnalyser().registerComponentStatistics("content.create", t.getElapsedTime());
+        	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("content.create", t.getElapsedTime());
         	
         	newSiteNode.setMetaInfoContentId(contentVO.getId());
         	
@@ -2148,6 +2148,8 @@ public class SiteNodeController extends BaseController
         
         	//ServiceBindingController.getController().create(db, serviceBindingVO, qualifyerXML, availableServiceBindingId, siteNodeVersionVO.getId(), singleServiceDefinitionVO.getId());	
         	//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("meta info service bind", t.getElapsedTime());
+        
+        	SiteNodeController.getController().update(newSiteNode);
         }
 
         return content;
@@ -3970,6 +3972,31 @@ public class SiteNodeController extends BaseController
 	    
     }       
 
+    public SiteNodeVO update(SiteNodeVO siteNodeVO) throws ConstraintException, SystemException
+    {
+        Database db = CastorDatabaseService.getDatabase();
+
+        SiteNode siteNode = null;
+
+        beginTransaction(db);
+
+        try
+        {
+            siteNode = (SiteNode)getObjectWithId(SiteNodeImpl.class, siteNodeVO.getId(), db);
+    		siteNode.setVO(siteNodeVO);
+    		
+            commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+
+        return siteNode.getValueObject();
+    }        
     
 	/**
 	 * This method moves a siteNode after first making a couple of controls that the move is valid.

@@ -172,7 +172,17 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 			ContentVersionVO latestMetaInfoContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNodeVO.getMetaInfoContentId(), masterLanguageVO.getId());
 			logger.info("latestMetaInfoContentVersionVO:" + latestMetaInfoContentVersionVO);
 			if(latestMetaInfoContentVersionVO == null)
-				SiteNodeVersionController.getController().getAndRepairLatestContentVersionVO(siteNodeVO.getMetaInfoContentId(), masterLanguageVO.getId());
+			{
+				boolean exists = ContentController.getContentController().getDoesContentExist(siteNodeVO.getMetaInfoContentId());
+				logger.info("exists:" + exists);
+				if(!exists)
+				{
+	    		    SiteNodeVO siteNode = SiteNodeController.getController().getSiteNodeVOWithId(this.siteNodeVO.getId(), db);
+	    		    SiteNodeController.getController().createSiteNodeMetaInfoContent(db, siteNode, siteNode.getRepositoryId(), this.getInfoGluePrincipal(), null, new ArrayList()).getValueObject();
+				}
+				else
+					SiteNodeVersionController.getController().getAndRepairLatestContentVersionVO(siteNodeVO.getMetaInfoContentId(), masterLanguageVO.getId());
+			}
 		}
 
 		repairBrokenProtection(db);

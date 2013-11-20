@@ -328,7 +328,7 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
     	    	}
     	    }
 
-            SiteNodeController.getController().createSiteNodeMetaInfoContent(db, newSiteNodeVO, metaAttributes, this.repositoryId, this.getInfoGluePrincipal(), this.pageTemplateContentId, new ArrayList());
+            SiteNodeController.getController().createSiteNodeMetaInfoContent(db, newSiteNodeVO, metaAttributes, this.repositoryId, this.getInfoGluePrincipal(), this.pageTemplateContentId, new ArrayList(), false);
             t.printElapsedTime("createSiteNodeMetaInfoContent took");
             
             commitTransaction(db);

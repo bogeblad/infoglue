@@ -152,7 +152,7 @@ public class EditOnSiteBasicTemplateController extends BasicTemplateController
                 	decoratedAttributeValue.append( "CKEDITOR.inline('attribute" + contentId + attributeName + "', {" +
 							                		"				    removePlugins: 'toolbar'," +
 													"				    customConfig: '" + CmsPropertyHandler.getComponentEditorUrl() + "WYSIWYGProperties.action?" + parameterString + "'," + 
-							    					"					autoParagraph: false," + 	
+							    					"					autoParagraph: false," + 
 							    					WYSIWYGExtraConfig +
 							    					"				});");
                 }

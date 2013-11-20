@@ -1852,7 +1852,7 @@ public class SiteNodeController extends BaseController
 	    if(siteNode.getRepository().getId().intValue() != newRepository.getId().intValue())
 	    {
 	        Integer metaInfoContentId = siteNode.getMetaInfoContentId();
-        	ContentVO metaInfoContent = ContentController.getContentController().getContentVOWithId(metaInfoContentId, db);
+        	MediumContentImpl metaInfoContent = (MediumContentImpl)ContentController.getContentController().getMediumContentWithId(metaInfoContentId, db);
         	//String previousPath = ContentController.getContentController().getContentPath(metaInfoContentId, db);
         	
         	String siteNodePath = SiteNodeController.getController().getSiteNodePath(siteNode.getId(), db);
@@ -1999,10 +1999,15 @@ public class SiteNodeController extends BaseController
 
     public MediumContentImpl createSiteNodeMetaInfoContent(Database db, SiteNodeVO newSiteNode, Integer repositoryId, InfoGluePrincipal principal, Integer pageTemplateContentId, List<ContentVersion> newContentVersions) throws SystemException, Bug, Exception, ConstraintException
     {
-    	return createSiteNodeMetaInfoContent(db, newSiteNode, null, repositoryId, principal, pageTemplateContentId, newContentVersions);
+    	return createSiteNodeMetaInfoContent(db, newSiteNode, null, repositoryId, principal, pageTemplateContentId, newContentVersions, false);
     }
 
-    public MediumContentImpl createSiteNodeMetaInfoContent(Database db, SiteNodeVO newSiteNode, Map<String,String> metaAttributes, Integer repositoryId, InfoGluePrincipal principal, Integer pageTemplateContentId, List<ContentVersion> newContentVersions) throws SystemException, Bug, Exception, ConstraintException
+    public MediumContentImpl createSiteNodeMetaInfoContent(Database db, SiteNodeVO newSiteNode, Integer repositoryId, InfoGluePrincipal principal, Integer pageTemplateContentId, List<ContentVersion> newContentVersions, boolean checkIfMetaInfoIsBroken) throws SystemException, Bug, Exception, ConstraintException
+    {
+    	return createSiteNodeMetaInfoContent(db, newSiteNode, null, repositoryId, principal, pageTemplateContentId, newContentVersions, checkIfMetaInfoIsBroken);
+    }
+
+    public MediumContentImpl createSiteNodeMetaInfoContent(Database db, SiteNodeVO newSiteNode, Map<String,String> metaAttributes, Integer repositoryId, InfoGluePrincipal principal, Integer pageTemplateContentId, List<ContentVersion> newContentVersions, boolean checkIfMetaInfoIsBroken) throws SystemException, Bug, Exception, ConstraintException
     {
     	Timer t = new Timer();
     	MediumContentImpl content = null;
@@ -2148,8 +2153,9 @@ public class SiteNodeController extends BaseController
         
         	//ServiceBindingController.getController().create(db, serviceBindingVO, qualifyerXML, availableServiceBindingId, siteNodeVersionVO.getId(), singleServiceDefinitionVO.getId());	
         	//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("meta info service bind", t.getElapsedTime());
-        
-        	SiteNodeController.getController().update(newSiteNode);
+        	
+        	if(checkIfMetaInfoIsBroken)
+        		SiteNodeController.getController().update(newSiteNode, db);
         }
 
         return content;
@@ -3158,7 +3164,7 @@ public class SiteNodeController extends BaseController
 		//ContentVersion newCV = null;
 		List<ContentVersion> newContentVersions = new ArrayList<ContentVersion>();
 		
-		Content newMetaInfoContent = SiteNodeController.getController().createSiteNodeMetaInfoContent(db, newSiteNode, null, newParentSiteNode.getRepositoryId(), principal, null, newContentVersions);
+		Content newMetaInfoContent = SiteNodeController.getController().createSiteNodeMetaInfoContent(db, newSiteNode, null, newParentSiteNode.getRepositoryId(), principal, null, newContentVersions, false);
 	    RequestAnalyser.getRequestAnalyser().registerComponentStatistics("createSiteNodeMetaInfoContent", t.getElapsedTime());
 		//t.printElapsedTime("newMetaInfoContent:" + newMetaInfoContent);
         
@@ -3972,28 +3978,10 @@ public class SiteNodeController extends BaseController
 	    
     }       
 
-    public SiteNodeVO update(SiteNodeVO siteNodeVO) throws ConstraintException, SystemException
+    public SiteNodeVO update(SiteNodeVO siteNodeVO, Database db) throws ConstraintException, SystemException
     {
-        Database db = CastorDatabaseService.getDatabase();
-
-        SiteNode siteNode = null;
-
-        beginTransaction(db);
-
-        try
-        {
-            siteNode = (SiteNode)getObjectWithId(SiteNodeImpl.class, siteNodeVO.getId(), db);
-    		siteNode.setVO(siteNodeVO);
-    		
-            commitTransaction(db);
-        }
-        catch(Exception e)
-        {
-			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
-			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
-            rollbackTransaction(db);
-            throw new SystemException(e.getMessage());
-        }
+    	SiteNode siteNode = (SiteNode)getObjectWithId(SiteNodeImpl.class, siteNodeVO.getId(), db);
+		siteNode.setVO(siteNodeVO);
 
         return siteNode.getValueObject();
     }        

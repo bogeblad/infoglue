@@ -178,7 +178,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 				if(!exists)
 				{
 	    		    SiteNodeVO siteNode = SiteNodeController.getController().getSiteNodeVOWithId(this.siteNodeVO.getId(), db);
-	    		    SiteNodeController.getController().createSiteNodeMetaInfoContent(db, siteNode, siteNode.getRepositoryId(), this.getInfoGluePrincipal(), null, new ArrayList()).getValueObject();
+	    		    SiteNodeController.getController().createSiteNodeMetaInfoContent(db, siteNode, siteNode.getRepositoryId(), this.getInfoGluePrincipal(), null, new ArrayList(), true).getValueObject();
 				}
 				else
 					SiteNodeVersionController.getController().getAndRepairLatestContentVersionVO(siteNodeVO.getMetaInfoContentId(), masterLanguageVO.getId());

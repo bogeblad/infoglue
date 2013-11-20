@@ -170,14 +170,14 @@ function registerOnChange()
 			//alert("key:" + CKEDITOR.instances[key]);
 			if(CKEDITOR.instances[key])
 			{
+				console.log(CKEDITOR.instances[key]);
+			
 				//alert("regii:" + key);
-				CKEDITOR.instances[key].on('blur', function(e) {
+				CKEDITOR.instances[key].on('change', function(e) {
 				    //alert("E:" +e.editor.checkDirty());
-				    if (e.editor.checkDirty()) {
-				        $("#igSaveButton").show();
-				        window.saveButtonLabel = $("#igSaveButton").attr("value");
-				        window.isPageDirty = true;
-				    }
+				    $("#igSaveButton").show();
+			        window.saveButtonLabel = $("#igSaveButton").attr("value");
+			        window.isPageDirty = true;
 				});
 
 				CKEDITOR.instances[key].on('focus', function(e) {
@@ -360,10 +360,11 @@ function saveAllEditing()
 	if(noDirty)
 	{
 		window.isPageDirty = false;
+		var labelValue = window.saveButtonLabel;
 		setTimeout(function(){ $("#igSaveButton").attr("value","Saved!!"); }, 1000);
 		//$("#igSaveButton").hide();
 		setTimeout(function(){ $("#igSaveButton").fadeOut(1000);}, 2000);
-		$("#igSaveButton").attr("value", window.saveButtonLabel);
+		setTimeout(function(){ $("#igSaveButton").attr("value", window.saveButtonLabel);}, 3000);
 	}
 			
 	if(allSavedItems == 0)

@@ -495,6 +495,8 @@ public class ToolbarController implements ToolbarProvider
 
 			if(toolbarKey.equalsIgnoreCase("tool.structuretool.copyMultiplSiteNodes.header"))
 				return getCommonAddNextCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
+			if(toolbarKey.equalsIgnoreCase("tool.structuretool.copyMultiplSiteNodesChooseDestination.header"))
+				return getCommonFooterSaveOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
 			if(toolbarKey.equalsIgnoreCase("tool.structuretool.copyMultiplSiteNodes.finished"))
 				return asButtons(getDialogCloseButton(toolbarKey, principal, locale, request, disableCloseButton));
 

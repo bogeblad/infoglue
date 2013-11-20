@@ -383,7 +383,8 @@ public class ContentController extends BaseController
 			}
 		}
 		
-		return contentVO;    } 
+		return contentVO;    
+	} 
 
 	public ContentVO getSmallContentVOWithIdDirectly(Integer contentId, Database db) throws SystemException, Bug
     {

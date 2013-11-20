@@ -105,7 +105,7 @@
 			document.inputForm.qualifyerXML.value = xml;
 			document.inputForm.repositoryId.value = repositoryId;
 			
-			document.inputForm.action = 'MoveMultipleContent!inputV3.action';
+			document.inputForm.action = 'CopyMultipleSiteNodes!input.action';
 			document.inputForm.submit();
 		}
 	  

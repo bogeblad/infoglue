@@ -20,6 +20,7 @@ function enableComponentSort(componentId, slotName, parentComponentId)
 			if($(this).hasClass("sortableComponent"))
 			{
 				$(this).draggable({ 
+					handle: '.propertiesButton',
 					cursorAt: { left: 10, top: 10 },
 					cursor: 'move',
 					helper: function(event, el) { return $("<div id='" + $(this).attr("id") + "Helper' class='dropObject'>ID:" + $(this).attr("id") + "</div>").height(30); },
@@ -80,62 +81,10 @@ function enableComponentSort(componentId, slotName, parentComponentId)
 								}
 							}
 						});
-
 					}
 				});
 			}
 		});
-		
-		/*
-		//alert("Size:" + $('div[id^="' + slotName + '"]').size());
-		$('div[id^="' + slotName + '"]').each(function (i) {
-			//alert("" + $(this).attr("id") + "=="  + id);
-			if($(this).attr("id") != id)
-			{
-				//alert("Making droppable on:" + $(this).attr("id"));
-				//alert("The target is located on:" + $(this).children().first().offset().top + ", " + $(this).children().first().offset().left + " - " + $(this).children().first().position().top + ", " + $(this).children().first().position().left);
-				//$(this).text("Move component here");
-				var positionLeft = "" + ($(this).children().first().position().left + 20) + "px";
-				var positionTop = "" + ($(this).children().first().position().top + 10) + "px";
-				var offsetLeft = "" + $(this).children().first().offset().left + "px";
-				var offsetTop = "" + $(this).children().first().offset().top + "px";
-				var dropTargetWidth = "" + $(this).children().first().width();
-				
-				$(this).append("<div id='dropArea" + $(this).attr("id") + "' class='componentDropArea'>Drop component here " + positionLeft + ", " + offsetTop + " - " + offsetLeft + ", " + positionTop + "</div>");
-				$("#dropArea" + $(this).attr("id")).css("left", positionLeft);
-				$("#dropArea" + $(this).attr("id")).css("top", positionTop);
-				$("#dropArea" + $(this).attr("id")).width(dropTargetWidth - 40);
-
-				$("#dropArea" + $(this).attr("id")).droppable({			
-					hoverClass: "movezone-hover",
-					activeClass: "movezone",
-					tolerance: "pointer",
-					greedy: false,
-					drop: function( event, ui ) {
-						//alert("Droppen " + ui.draggable.attr("id") + " on me: " + $(this).attr("id"));
-						
-						var position = $(this).attr("id").replace("dropArea" + slotName, "");
-						position = position.substring(0,position.indexOf("_"));
-						//alert("position:" + position);
-						
-						//alert("Moved:" + $(this).attr("id") + ":" + ui.position + ":" + ui.item.attr("id") + ":" + ui.item.index());
-						var componentId = ui.draggable.attr("id").substring(ui.draggable.attr("id").lastIndexOf("_") + 1).replace("Comp","");
-						var moveUrl = "" + sortBaseUrl + "&componentId=" + componentId + "&newPosition=" + position;
-						//alert("moveUrl:" + moveUrl);
-						
-						$("#genericDialog").dialog("destroy");
-						$("#genericDialog").dialog({
-							modal: true
-						});
-						
-						//alert("111:" + $("#genericDialog").size());
-						document.location.href = moveUrl;
-					},
-					deactivate: function(event, ui) {  }
-				});
-			}
-		});
-		*/
 	}
 	return false;
 }

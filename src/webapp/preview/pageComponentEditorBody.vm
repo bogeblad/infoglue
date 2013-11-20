@@ -101,7 +101,7 @@ function validateW3C()
 					
 					if(errors > 0)
 					{
-						$(".errorCountW3C").css("display","table").html(errors);
+						$(".errorCountW3C").css("display","block").html(errors);
 						var confirmQuestion = "${deliver.editOnSight.toolbarValidateW3CErrorsQuestion.label}";
 						confirmQuestion = confirmQuestion.replace("{0}",errors);
 						if(confirm(confirmQuestion))

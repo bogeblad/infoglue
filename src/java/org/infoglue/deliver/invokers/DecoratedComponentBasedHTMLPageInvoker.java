@@ -2198,8 +2198,8 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			if(maxPosition > position)
 				sb.append("<div class=\"igmenuitems linkMoveComponentDown\" onclick=\"invokeAddress('" + downUrl + "');\"><a href='#'>" + moveComponentDownHTML + "</a></div>");
 
-		if(hasMoveComponentUpAccess || hasMoveComponentDownAccess)
-			sb.append("<div class=\"igmenuitems linkEnableSortComponent\" onclick=\"enableComponentSort(" + component.getId() + ", '" + component.getSlotName() + "', " + (component.getParentComponent() != null ? component.getParentComponent().getId() : "-1") + "); return false;\"><a href='javascript:return false;'>" + enableSortComponentsHTML + "</a></div>");
+		//if(hasMoveComponentUpAccess || hasMoveComponentDownAccess)
+		//	sb.append("<div class=\"igmenuitems linkEnableSortComponent\" onclick=\"enableComponentSort(" + component.getId() + ", '" + component.getSlotName() + "', " + (component.getParentComponent() != null ? component.getParentComponent().getId() : "-1") + "); return false;\"><a href='javascript:return false;'>" + enableSortComponentsHTML + "</a></div>");
 
 		sb.append("<div style='border-top: 1px solid #bbb; height: 1px; margin: 0px; padding: 0px; line-height: 1px;'></div>");
 		sb.append("<div class=\"igmenuitems linkComponentProperties\" onclick=\"showComponent(event);\"><a name='void'>" + propertiesHTML + "</a></div>");
@@ -2222,6 +2222,8 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		sb.append("window.hasAccessToDeleteComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToDeleteComponent + ";\n");
 		sb.append("window.hasAccessToChangeComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToChangeComponent + ";\n");
 		sb.append("window.hasAccessToAccessRights = " + hasAccessToAccessRights + ";\n");
+		if(hasMoveComponentUpAccess || hasMoveComponentDownAccess)
+			sb.append("enableComponentSort(" + component.getId() + ", '" + component.getSlotName() + "', " + (component.getParentComponent() != null ? component.getParentComponent().getId() : "-1") + ");\n");
 		sb.append("</script>");
 		
 		return sb.toString();

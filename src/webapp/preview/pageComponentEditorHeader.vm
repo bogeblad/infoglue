@@ -53,6 +53,7 @@
 	setTimeout("keepSession()", 60000);
 -->	
 </script>
+
 <script type="text/javascript" src="${contextName}/script/componentEditor.js"></script>
 <link rel="stylesheet" type="text/css" href="${contextName}/css/componentEditor.css" />
 
@@ -62,6 +63,7 @@
 
 <script type="text/javascript" src="${contextName}/script/jqueryplugins-latest/thickbox/thickbox-compressed.js"></script>
 <style type="text/css" media="all">@import "${contextName}/script/jqueryplugins-latest/thickbox/thickbox.css";</style>
+
 
 <script type="text/javascript" src="${contextName}/applications/${WYSIWYGEditorJS}"></script>
 #set($userPreferredWYSIWYG = "${userPrefferredWYSIWYG}")
@@ -280,6 +282,8 @@ margin-bottom: 43px !important;
 	display: inline-block;
 	width: 100%;
 	position: relative;
+	height: 20px;
+	padding-top: 2px;
 }
 /*
 .slotMenuButton{
@@ -291,9 +295,11 @@ margin-bottom: 43px !important;
 */
 
 .addComponentButton {
-	display: none;
     width: 16px;
 	height: 16px;
+	background: url('${contextName}/css/images/v3/addPlus.png') no-repeat 2px 2px; 
+	background-size:16px 16px; 
+	padding: 4px 0px 2px 20px; 
 }
 .addComponentText {
 	clear: both;
@@ -303,6 +309,7 @@ margin-bottom: 43px !important;
 }
 .slotDisplayName {
 	margin-bottom: 4px;
+	display: none;
 }
 .rightClickToAddText {
 	display: none;

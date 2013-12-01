@@ -170,7 +170,7 @@ function registerOnChange()
 			//alert("key:" + CKEDITOR.instances[key]);
 			if(CKEDITOR.instances[key])
 			{
-				console.log(CKEDITOR.instances[key]);
+				//console.log(CKEDITOR.instances[key]);
 			
 				//alert("regii:" + key);
 				CKEDITOR.instances[key].on('change', function(e) {
@@ -260,8 +260,8 @@ function toggleInline()
 			{
 				if(!turnOn)
 				{
-					console.log("regii:" + key);
-					console.log(CKEDITOR.instances[key]);
+					//console.log("regii:" + key);
+					//console.log(CKEDITOR.instances[key]);
 					CKEDITOR.instances[key].destroy();
 					$("#" + key).attr("contenteditable", "false");
 				}

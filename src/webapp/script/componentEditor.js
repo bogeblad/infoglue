@@ -2145,7 +2145,7 @@ function viewSource()
 		
 		try
 		{
-			$("[id='" + eleId + "'] > div > img.addComponentButton").click(function(e) {
+			$("[id='" + eleId + "'] > div > .addComponentButton").click(function(e) {
 				openInlineDiv(insertUrl, 600, 750, true);
 				e.stopPropagation();
 				return false;

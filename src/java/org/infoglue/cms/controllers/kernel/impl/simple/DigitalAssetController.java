@@ -34,6 +34,9 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -62,6 +65,7 @@ import org.infoglue.cms.entities.content.impl.simple.DigitalAssetImpl;
 import org.infoglue.cms.entities.content.impl.simple.MediumContentVersionImpl;
 import org.infoglue.cms.entities.content.impl.simple.MediumDigitalAssetImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl;
+import org.infoglue.cms.entities.content.impl.simple.SmallStateContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.GeneralOQLResult;
@@ -2050,9 +2054,50 @@ public class DigitalAssetController extends BaseController
 			return;
 		
 		StringBuilder variables = new StringBuilder();
+	    for(int i=0; i<matchingAssets.size(); i++)
+	    	variables.append("?" + (i+1!=matchingAssets.size() ? "," : ""));
+	    
+		StringBuilder sql = new StringBuilder();
+		if(CmsPropertyHandler.getUseShortTableNames().equals("true"))
+			sql.append("select distinct(da.DigAssetId) AS id, cv.contId as contentId FROM cmDigAsset da, cmContVerDigAsset cvda, cmContVer cv WHERE cvda.DigAssetId = da.DigAssetId AND cvda.contVerId = cv.contVerId AND da.digAssetId IN (" + variables + ") ");
+		else
+			sql.append("select distinct(da.digitalAssetId) AS id, cv.contentId as contentId FROM cmDigitalAsset da, cmContentVersionDigitalAsset cvda, cmContentVersion cv WHERE cvda.digitalAssetId = da.digitalAssetId AND cvda.contentVersionId = cv.contentVersionId AND da.digitalAssetId IN (" + variables + ") ");
+
+		Connection conn = (Connection) db.getJdbcConnection();
+		
+		PreparedStatement psmt = conn.prepareStatement(sql.toString());
+		int i=1;
+    	for(DigitalAssetVO assetVO : matchingAssets)
+    	{
+    		psmt.setInt(i, assetVO.getId());
+    		i++;
+    	}
+
+    	Map<Integer,Integer> idMappingMap = new HashMap<Integer,Integer>();
+		ResultSet rs = psmt.executeQuery();
+		while(rs.next())
+		{
+			Integer digitalAssetId = new Integer(rs.getString(1));
+			Integer contentId = new Integer(rs.getString(2));
+			idMappingMap.put(digitalAssetId, contentId);
+		}
+		
+		for(DigitalAssetVO asset : matchingAssets)
+		{
+			Integer contentId = idMappingMap.get(asset.getId());
+			if(contentId != null)
+				asset.setContentId(contentId);
+		}
+		
+		rs.close();
+		psmt.close();
+		
+		/*
+		
+		StringBuilder variables = new StringBuilder();
 		for(int i=0; i<matchingAssets.size(); i++)
 			variables.append("$" + (i+1) + (i+1!=matchingAssets.size() ? "," : ""));
-		
+				
 		StringBuilder sql = new StringBuilder();
 		if(CmsPropertyHandler.getUseShortTableNames().equals("true"))
 		{
@@ -2087,6 +2132,7 @@ public class DigitalAssetController extends BaseController
 		
 		results.close();
 		oql.close();
+		*/
 	}
 
 	

@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -48,6 +49,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
@@ -2314,20 +2316,29 @@ public class ViewPageAction extends InfoGlueAbstractAction
 				{
 					String attribute = (String)attributeNames.nextElement();
 					Object value = ActionContext.getServletContext().getAttribute(attribute);
-					logger.info("" + attribute + " = " + value);
+					logger.error("" + attribute + " = " + value);
 				}
-			}
+	    	}
 			*/
 			if(encodedUserNameCookie != null && !encodedUserNameCookie.equals(""))
 			{
 				encodedUserNameCookie = encodedUserNameCookie.replaceAll("IGEQ", "=");
 			    logger.info("encodedUserNameCookie2:" + encodedUserNameCookie);
-				String servletContextUserName = (String)ActionContext.getServletContext().getAttribute(encodedUserNameCookie);
+			    
+			    String servletContextUserName = (String)ActionContext.getServletContext().getAttribute(encodedUserNameCookie);
 				logger.info("servletContextUserName:" + servletContextUserName);
+				if(servletContextUserName == null)
+				{
+				    byte[] encryptedNameBytes = Base64.decodeBase64(encodedUserNameCookie);
+				    encodedUserNameCookie = new String(encryptedNameBytes, "utf-8");
+				    logger.info("encodedUserNameCookie3:" + encodedUserNameCookie);
+				    servletContextUserName = (String)ActionContext.getServletContext().getAttribute(encodedUserNameCookie);
+				}
+				
 				if(servletContextUserName != null && !servletContextUserName.equals(""))
 				{
 					principal = getAuthenticatedUser(servletContextUserName);
-					//System.out.println("principal:" + principal);
+					logger.info("principal:" + principal);
 					if(principal != null)
 					{
 					    this.getHttpSession().setAttribute("infogluePrincipal", principal);

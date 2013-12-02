@@ -1914,9 +1914,13 @@ public class ToolbarController implements ToolbarProvider
 
 		ToolbarButton pageDetailButton = StructureToolbarController.getPageDetailButtons(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale, principal);
 		pageMetaDataButton.getSubButtons().add(pageDetailButton);
-		ToolbarButton pageDetailSimpleButton = StructureToolbarController.getPageDetailSimpleButtons(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale, principal);
-		pageMetaDataButton.getSubButtons().add(pageDetailSimpleButton);
 		buttons.add(pageMetaDataButton);
+		
+		if(siteNodeVO != null && hasAccessTo(principal, "ToolTabsAndButtons.PageSimpleModeButton", true))
+		{
+			ToolbarButton pageDetailSimpleButton = StructureToolbarController.getPageDetailSimpleButtons(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale, principal);
+			pageMetaDataButton.getSubButtons().add(pageDetailSimpleButton);
+		}
 		
 		buttons.add(StructureToolbarController.getPreviewButtons(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale));
 

@@ -59,6 +59,7 @@
 			#else
 				#set($dateReadonly = "readonly='readonly'")
 			#end
+			<p>$ui.getString("tool.common.publicationSpan.label")</p>
 			<p>#editDateField("Content.publishDateTime" "publishDateTime" $!publishDateTime "30" "date" "ViewCalendar.action?date=$!publishDateTimeAsLong&formPath=document.editForm.publishDateTime" "$dateReadonly")</p>
 			<p>#editDateField("Content.expireDateTime" "expireDateTime" $!expireDateTime "30" "date" "ViewCalendar.action?date=$!expireDateTimeAsLong&formPath=document.editForm.expireDateTime" "$dateReadonly")</p>
 			<p>

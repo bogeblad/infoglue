@@ -317,7 +317,7 @@ iframe.inactiveTool {
 #popupAlertMessageDivContainer {
 	overflow: hidden;
 	position: absolute;
-	bottom: 34px;
+	bottom: 44px;
 	right: 100px;
 	height: 1px;
 	left: 50%;
@@ -325,7 +325,7 @@ iframe.inactiveTool {
 }
 #popupAlertMessageDiv {
 	margin-top: 35px;
-	background-color: darkgray;
+	background-color: #fcfcfc;
 	height: 35px;
 	border-radius: 10px;
 	padding: 10px;

@@ -28,11 +28,7 @@
 		}
 		
 		$(function() {
-	
-			#if($infoGluePrincipal.isAdministrator)
-				alert("You should only use this account to solve access rights issues etc as this is not a normal user account and some features are disabled because of that.");
-			#end
-			
+				
     		resize();
     		
 	   		window.onresize = function() {
@@ -100,6 +96,10 @@
 			});
 		
 			initMessageSystem();
+			
+			#if($infoGluePrincipal.isAdministrator)
+				setTimeout(function() { alert("You should only use this account to solve access rights issues etc as this is not a normal user account and some features are disabled because of that."); }, 1000);
+			#end
 		});
 				
 	-->
@@ -117,7 +117,7 @@
 	
 		function activateTool(toolName, windowTitle, url, workAreaUrl)
 		{
-			//alert("" + activeToolName + "=" + toolName + "," + url + ":" + workAreaUrl);
+			//console.log("" + activeToolName + "=" + toolName + "," + url + ":" + workAreaUrl);
 			if(activeToolName == toolName && workAreaUrl == "")
 				return false;
 			
@@ -152,18 +152,14 @@
 			var oldIframe = document.getElementById("" + activeToolName + "Iframe");
 			var targetIframe = document.getElementById("" + toolName + "Iframe");
 			
-			//alert("src:" + targetIframe.src);
 			if(targetIframe.src.indexOf("loading.html") > -1)
 			{
 				targetIframe.src = url;
 				if(workAreaUrl && workAreaUrl != "")
 				{
 					$(targetIframe).load(function() {
-						//alert("workAreaUrl:" + workAreaUrl);
-						//alert("targetIframe:" + targetIframe + ":" + targetIframe.contentWindow.openUrlInWorkArea);
 						if(workAreaUrl && workAreaUrl != "" && targetIframe && targetIframe.contentWindow.openUrlInWorkArea)
 						{
-							//alert("targetIframe:" + targetIframe + ":" + targetIframe.contentWindow.openUrlInWorkArea);
 							targetIframe.contentWindow.openUrlInWorkArea(workAreaUrl);
 						}
 					});
@@ -171,10 +167,9 @@
 			}
 			else
 			{	
-				//alert("workAreaUrl:" + workAreaUrl);
 				if(workAreaUrl && workAreaUrl != "" && targetIframe && targetIframe.contentWindow.openUrlInWorkArea)
 				{
-					//alert("targetIframe:" + targetIframe + ":" + targetIframe.contentWindow.openUrlInWorkArea);
+					console.log("targetIframe:" + targetIframe + ":" + targetIframe.contentWindow.openUrlInWorkArea);
 					targetIframe.contentWindow.openUrlInWorkArea(workAreaUrl);
 				}
 			}

@@ -31,10 +31,14 @@
 		
 		function refreshCallerWindow()
 		{
-			if(window.opener && window.opener.parent && window.opener.parent.frames['main'])
-				window.opener.parent.frames['main'].location.reload();
-			else
-				window.opener.location.reload();	
+			try 
+        	{
+                if(window.opener && window.opener.parent && window.opener.parent.frames['main'])
+                	window.opener.parent.frames['main'].location.reload();
+                else
+                    window.opener.location.reload();
+            }
+            catch(err) {console.log("Could not update parent window: " + err);}	
 	
 			window.close();
 		}

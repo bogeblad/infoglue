@@ -53,6 +53,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.RedirectController;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
+import org.infoglue.cms.exception.PageNotFoundException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -334,7 +335,7 @@ public class ViewPageFilter implements Filter
 	        			extraInformation += "User IP: " + httpRequest.getRemoteAddr();
 	        			
 	        			logger.info("Could not map URI " + requestURI + " against any page on this website." + "\n" + extraInformation);
-	                    throw new ServletException("Could not map URI " + requestURI + " against any page on this website.");	                    	
+	        			throw new PageNotFoundException("Could not map URI " + requestURI + " against any page on this website.");	                    	
 	                }
 	                else
 	                    logger.info("Mapped URI " + requestURI + " --> " + siteNodeId + " in " + (end - start) + "ms");
@@ -350,8 +351,15 @@ public class ViewPageFilter implements Filter
 	            catch (SystemException e)
 	            {
 	                BaseDeliveryController.rollbackTransaction(db);
-	                logger.error("Failed to resolve siteNodeId:" + e.getMessage());
-	                logger.warn("Failed to resolve siteNodeId:" + e.getMessage(), e);
+					if (e instanceof PageNotFoundException)
+					{
+						logger.info("Failed to resolve siteNodeId: " + e.getMessage());
+					}
+					else
+					{
+		                logger.error("Failed to resolve siteNodeId:" + e.getMessage());
+		                logger.warn("Failed to resolve siteNodeId:" + e.getMessage(), e);
+					}
 	                if (handleSystemRedirects(httpRequest, httpResponse))
                     {
 						return;
@@ -365,7 +373,11 @@ public class ViewPageFilter implements Filter
 				{
 					BaseDeliveryController.rollbackTransaction(db);
 
-					if (e instanceof ServletException)
+					if (e instanceof PageNotFoundException)
+					{
+						logger.info("Failed to resolve siteNodeId: " + e.getMessage());
+					}
+					else if (e instanceof ServletException)
 					{
 						logger.error("Failed to resolve siteNodeId: " + e.getMessage());
 					}

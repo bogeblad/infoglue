@@ -1710,7 +1710,7 @@ public class CmsPropertyHandler
 
 	public static String getInfoGlueVersion()
 	{
-	    return getServerNodeProperty("infoGlueVersion", true, "3.1.1.0 GA");
+	    return getServerNodeProperty("infoGlueVersion", true, "3.1.2.0 GA");
 	}
 
 	public static String getInfoGlueDBVersion()

@@ -300,6 +300,9 @@ margin-bottom: 43px !important;
 	background: url('${contextName}/css/images/v3/addPlus.png') no-repeat 2px 2px; 
 	background-size:16px 16px; 
 	padding: 4px 0px 2px 20px; 
+	text-decoration: underline;
+	color: blue;
+	cursor: pointer;
 }
 .addComponentText {
 	clear: both;

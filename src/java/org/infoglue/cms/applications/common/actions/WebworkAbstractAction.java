@@ -50,6 +50,7 @@ import org.infoglue.cms.util.StringManager;
 import org.infoglue.cms.util.StringManagerFactory;
 import org.infoglue.deliver.util.BrowserBean;
 import org.infoglue.deliver.util.RequestAnalyser;
+import org.infoglue.deliver.util.ThreadMonitor;
 import org.infoglue.deliver.util.Timer;
 
 import webwork.action.Action;
@@ -126,9 +127,13 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
     public String execute() throws Exception 
     {
     	Timer t = new Timer();
-
+    	
     	String result = "";
     	
+        ThreadMonitor tm = null;
+    	if(getRequest().getParameter("trackThread") != null && getRequest().getParameter("trackThread").equals("true"))
+    		tm = new ThreadMonitor(10000L, request, "Action took to long", false);
+	
         try 
         {
         	//This registers what the system needs to know about the port etc to be able to call update cache actions etc. 
@@ -209,6 +214,11 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
             final Bug bug = new Bug("Uncaught exception!", e);
             setError(bug, bug.getCause());
             result = ERROR;
+        }
+        finally
+        {
+	    	if(tm != null && !tm.getIsDoneRunning())
+	    		tm.done();
         }
         
         try
@@ -375,6 +385,10 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
   	{
   		Timer t = new Timer();
   		
+        ThreadMonitor tm = null;
+    	if(getRequest().getParameter("trackThread") != null && getRequest().getParameter("trackThread").equals("true"))
+    		tm = new ThreadMonitor(10L, request, "Command took to long", false);
+
     	final StringBuffer methodName = new StringBuffer("do" + this.commandName);
     	methodName.setCharAt(2, Character.toUpperCase(methodName.charAt(2)));
 
@@ -459,7 +473,12 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 				result = ERROR;
 			}	        
     	}
-
+    	finally
+        {
+	    	if(tm != null && !tm.getIsDoneRunning())
+	    		tm.done();
+        }
+    	
     	try
         {
         	ChangeNotificationController.getInstance().notifyListeners();

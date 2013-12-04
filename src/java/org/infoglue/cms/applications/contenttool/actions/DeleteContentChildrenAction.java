@@ -82,7 +82,13 @@ public class DeleteContentChildrenAction extends InfoGlueAbstractAction
 	{
     	String userSessionKey = "" + System.currentTimeMillis();
     	
-    	List<LanguageVO> languageVOList = LanguageController.getController().getLanguageVOList(contentVO.getRepositoryId());
+    	Integer repositoryId = contentVO.getRepositoryId();
+    	if(repositoryId == null)
+    	{
+    		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(this.contentVO.getContentId());
+    		repositoryId = contentVO.getRepositoryId();
+    	}
+    	List<LanguageVO> languageVOList = LanguageController.getController().getLanguageVOList(repositoryId);
     	
 		List children = ContentController.getContentController().getContentChildrenVOList(contentVO.getContentId(), languageVOList, null, false);
 		Iterator childrenIterator = children.iterator();
@@ -184,6 +190,11 @@ public class DeleteContentChildrenAction extends InfoGlueAbstractAction
 	public void setParentContentId(Integer parentContentId)
 	{
 		this.parentContentId = parentContentId;
+	}
+
+	public void setRepositoryId(Integer repositoryId)
+	{
+		this.contentVO.setRepositoryId(repositoryId);
 	}
 
 	public void setChangeTypeId(Integer changeTypeId)

@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE web-app SYSTEM "web-app_2_3.dtd">
-<web-app>	
-
-<!--
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 		 xmlns="http://java.sun.com/xml/ns/javaee" 
-		 xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
-		 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
-		 id="WebApp_ID" 
-		 version="2.5">
+		 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" 
+		 version="3.0">
     <display-name>Infoglue</display-name>
--->
 
 	<!-- This filter clears any cache waiting to be cleared -->
 	<filter>
@@ -81,33 +74,33 @@
 	</filter> 
 
 	<filter>
-        <filter-name>ViewPageFilter</filter-name>
-        <filter-class>org.infoglue.deliver.applications.filters.ViewPageFilter</filter-class>
-        <init-param>
-            <param-name>RepositoryName</param-name>
-            <param-value>localhost</param-value>
-        </init-param>
-        <init-param>
-            <param-name>FilterURIs</param-name>
-            <param-value>
-                *.action,
-                /applications/FCKEditor/*,
-                /applications/jscalendar/*,
-                /digitalAssets/*,
-                /scripts/*,
-                /script/*,
-                /css/*,
-                /images/*,
-                /jsp/*,
-        		/robots.txt,
-                *.gif,
-                *.jpg,
-                *.png,
-                *.ico,
-                *.css,
-                *.js
-		    </param-value>
-        </init-param>
+		<filter-name>ViewPageFilter</filter-name>
+		<filter-class>org.infoglue.deliver.applications.filters.ViewPageFilter</filter-class>
+		<init-param>
+			<param-name>RepositoryName</param-name>
+			<param-value>localhost</param-value>
+		</init-param>
+		<init-param>
+			<param-name>FilterURIs</param-name>
+			<param-value>
+				*.action,
+				/applications/FCKEditor/*,
+				/applications/jscalendar/*,
+				/digitalAssets/*,
+				/scripts/*,
+				/script/*,
+				/css/*,
+				/images/*,
+				/jsp/*,
+				/robots.txt,
+				*.gif,
+				*.jpg,
+				*.png,
+				*.ico,
+				*.css,
+				*.js
+			</param-value>
+		</init-param>
         <!--
         <init-param>
             <param-name>AttributeName</param-name>
@@ -116,7 +109,7 @@
             <param-value>SiteNode.name</param-value>
         </init-param>
         -->
-    </filter>
+	</filter>
 
 	<filter>
         <filter-name>RedirectFilter</filter-name>
@@ -218,7 +211,7 @@
 			<param-name>packageNames</param-name>
 			<param-value>org.infoglue.cms.applications,org.infoglue.cms.entities</param-value>
 		</init-param>
-		<load-on-startup/>
+		<load-on-startup>0</load-on-startup>
 	</servlet>
 	<servlet>
 		<servlet-name>xslt</servlet-name>
@@ -261,9 +254,9 @@
     </security-constraint>
 
 	<login-config>
-        <auth-method>BASIC</auth-method>
-        <realm-name>infoglue-security-domain</realm-name>
-    </login-config>
+		<auth-method>BASIC</auth-method>
+		<realm-name>infoglue-security-domain</realm-name>
+	</login-config>
 <!--
 	<login-config>
       	<auth-method>FORM</auth-method>
@@ -303,38 +296,31 @@
 		<error-code>501</error-code>
 		<location>/ErrorPage.action?responseCode=501</location>
 	</error-page>
-	
-	<taglib>
-	  <taglib-uri>http://jakarta.apache.org/taglibs/mailer-1.1</taglib-uri>
-	  <taglib-location>/WEB-INF/tld/taglibs-mailer.tld</taglib-location>
-	</taglib>
-	<taglib>
-	  <taglib-uri>domino</taglib-uri>
-	  <taglib-location>/WEB-INF/tld/domtags.tld</taglib-location>
-	</taglib>
-	
-	<taglib>
-		<taglib-uri>infoglue-common</taglib-uri>
-		<taglib-location>/WEB-INF/tld/infoglue-common.tld</taglib-location>
-	</taglib>
-	<taglib>
-		<taglib-uri>infoglue-content</taglib-uri>
-		<taglib-location>/WEB-INF/tld/infoglue-content.tld</taglib-location>
-	</taglib>
-	<taglib>
-		<taglib-uri>infoglue-structure</taglib-uri>
-		<taglib-location>/WEB-INF/tld/infoglue-structure.tld</taglib-location>
-	</taglib>
-	<taglib>
-		<taglib-uri>infoglue-management</taglib-uri>
-		<taglib-location>/WEB-INF/tld/infoglue-management.tld</taglib-location>
-	</taglib>
-	<taglib>
-		<taglib-uri>infoglue-page</taglib-uri>
-		<taglib-location>/WEB-INF/tld/infoglue-page.tld</taglib-location>
-	</taglib>
-	<taglib>
-		<taglib-uri>infoglue-workflow</taglib-uri>
-		<taglib-location>/WEB-INF/tld/infoglue-workflow.tld</taglib-location>
-	</taglib>
+
+	<jsp-config>	
+		<taglib>
+			<taglib-uri>infoglue-common</taglib-uri>
+			<taglib-location>/WEB-INF/tld/infoglue-common.tld</taglib-location>
+		</taglib>
+		<taglib>
+			<taglib-uri>infoglue-content</taglib-uri>
+			<taglib-location>/WEB-INF/tld/infoglue-content.tld</taglib-location>
+		</taglib>
+		<taglib>
+			<taglib-uri>infoglue-structure</taglib-uri>
+			<taglib-location>/WEB-INF/tld/infoglue-structure.tld</taglib-location>
+		</taglib>
+		<taglib>
+			<taglib-uri>infoglue-management</taglib-uri>
+			<taglib-location>/WEB-INF/tld/infoglue-management.tld</taglib-location>
+		</taglib>
+		<taglib>
+			<taglib-uri>infoglue-page</taglib-uri>
+			<taglib-location>/WEB-INF/tld/infoglue-page.tld</taglib-location>
+		</taglib>
+		<taglib>
+			<taglib-uri>infoglue-workflow</taglib-uri>
+			<taglib-location>/WEB-INF/tld/infoglue-workflow.tld</taglib-location>
+		</taglib>
+	</jsp-config>
 </web-app>

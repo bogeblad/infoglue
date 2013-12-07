@@ -109,6 +109,12 @@
 		<pathelement location="${test.java}"/>
 	</path>
 
+	<presetdef name="my.javac">
+ 		<javac includeantruntime="false" deprecation="off">
+			<!--<compilerarg value="-Xlint:unchecked"/>-->
+		</javac>
+	</presetdef>
+
 	<!--
 	* Initializes the build
 	-->
@@ -219,12 +225,12 @@
 	* for more info.
 	-->
 	<target name="compile" depends="init">
-		<javac destdir="${build.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" depend="true" nowarn="true">
+		<my.javac destdir="${build.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" nowarn="true">
 			<src refid="build.sourcepath"/>
-		</javac>
-		<javac destdir="${test.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" depend="true" nowarn="true">
+		</my.javac>
+		<my.javac destdir="${test.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" nowarn="true">
 			<src refid="test.sourcepath"/>
-		</javac>
+		</my.javac>
 		<copy todir="${build.classes}">
 			<fileset dir="${conf}">
 				<include name="*.properties"/>
@@ -265,12 +271,12 @@
 	</target>
 
 	<target name="compileRelease" depends="init">
-		<javac destdir="${build.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" depend="true" nowarn="true">
+		<my.javac destdir="${build.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" nowarn="true">
 			<src refid="build.sourcepath"/>
-		</javac>
-		<javac destdir="${test.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" depend="true" nowarn="true">
+		</my.javac>
+		<my.javac destdir="${test.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" nowarn="true">
 			<src refid="test.sourcepath"/>
-		</javac>
+		</my.javac>
 		<copy todir="${build.classes}">
 			<fileset dir="${conf}">
 				<include name="*.properties"/>
@@ -707,8 +713,8 @@
     -->
     <target name="deploy-pluto" description="Moves pluto classes to shared/lib">
     	<echo message="Copying pluto to ${deploy.dir.shared}lib from ${lib}/shared"/>
-		<delete verbose="true" defaultexcludes="true">
-			<fileset dir="${deploy.dir.shared}lib">
+		<delete verbose="true">
+			<fileset dir="${deploy.dir.shared}lib" defaultexcludes="true">
 				<include name="saxon8.jar"/>
 				<include name="saxon8-ant.jar"/>
 				<include name="saxon8-dom.jar"/>

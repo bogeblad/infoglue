@@ -1,50 +1,42 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!-- <!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd"> -->
-<!DOCTYPE web-app SYSTEM "web-app_2_3.dtd">
-<web-app>	
-
-<!--  
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 		 xmlns="http://java.sun.com/xml/ns/javaee" 
-		 xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
-		 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
-		 id="WebApp_ID" 
-		 version="2.5">
+		 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" 
+		 version="3.0">
     <display-name>Infoglue</display-name>
--->
 
 	<!-- This filter clears any cache waiting to be cleared -->
 	<filter>
 	    <filter-name>CacheEvictionFilter</filter-name>
 	    <filter-class>org.infoglue.deliver.applications.filters.CacheEvictionFilter</filter-class>
 		<init-param>
-            <param-name>FilterURIs</param-name>
-            <param-value>
-                /DownloadProtectedAsset.action,
-                /UpdateCache.action,
-                /UpdateCache!test.action,
+			<param-name>FilterURIs</param-name>
+			<param-value>
+				/DownloadProtectedAsset.action,
+				/UpdateCache.action,
+				/UpdateCache!test.action,
 				/ViewApplicationState.action,
 				/ViewLogging.action,
 				/ErrorPage.action,
-                /digitalAssets/*,
-                /webdavedit/*,
-                /applications/*,
-                /scripts/*,
-                /script/*,
-                /css/*,
-                /images/*,
-                /img/*,
-                /jsp/*,
-                *.xml,
-                *.gif,
-                *.jpg,
-                *.png,
-                *.ico,
-                *.css,
-                *.js              
-            </param-value>
-        </init-param>
-    </filter> 
+				/digitalAssets/*,
+				/webdavedit/*,
+				/applications/*,
+				/scripts/*,
+				/script/*,
+				/css/*,
+				/images/*,
+				/img/*,
+				/jsp/*,
+				*.xml,
+				*.gif,
+				*.jpg,
+				*.png,
+				*.ico,
+				*.css,
+				*.js
+            		</param-value>
+        	</init-param>
+	</filter> 
 
 	<filter>
 		<filter-name>Set Character Encoding</filter-name>
@@ -193,7 +185,7 @@
 			<param-name>packageNames</param-name>
 			<param-value>org.infoglue.cms.applications,org.infoglue.cms.entities</param-value>
 		</init-param>
-		<load-on-startup/>
+		<load-on-startup>0</load-on-startup>
 	</servlet>
 	<servlet>
 		<servlet-name>xslt</servlet-name>
@@ -334,22 +326,24 @@
 		<location>/ErrorPage.action?responseCode=501</location>
 	</error-page>
 
-	<taglib>
-		<taglib-uri>infoglue-common</taglib-uri>
-		<taglib-location>/WEB-INF/tld/infoglue-common.tld</taglib-location>
-	</taglib>
-	<taglib>
-		<taglib-uri>infoglue-cms-management</taglib-uri>
-		<taglib-location>/WEB-INF/tld/infoglue-cms-management.tld</taglib-location>
-	</taglib>
-	<taglib>
-		<taglib-uri>infoglue-cms-content</taglib-uri>
-		<taglib-location>/WEB-INF/tld/infoglue-cms-content.tld</taglib-location>
-	</taglib>
-	<taglib>
-		<taglib-uri>infoglue-workflow</taglib-uri>
-		<taglib-location>/WEB-INF/tld/infoglue-workflow.tld</taglib-location>
-	</taglib>
+	<jsp-config>
+		<taglib>
+			<taglib-uri>infoglue-common</taglib-uri>
+			<taglib-location>/WEB-INF/tld/infoglue-common.tld</taglib-location>
+		</taglib>
+		<taglib>
+			<taglib-uri>infoglue-cms-management</taglib-uri>
+			<taglib-location>/WEB-INF/tld/infoglue-cms-management.tld</taglib-location>
+		</taglib>
+		<taglib>
+			<taglib-uri>infoglue-cms-content</taglib-uri>
+			<taglib-location>/WEB-INF/tld/infoglue-cms-content.tld</taglib-location>
+		</taglib>
+		<taglib>
+			<taglib-uri>infoglue-workflow</taglib-uri>
+			<taglib-location>/WEB-INF/tld/infoglue-workflow.tld</taglib-location>
+		</taglib>
+	</jsp-config>
 
 	<!-- End WebWork -->
 

@@ -69,6 +69,7 @@ import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.exception.NoBaseTemplateFoundException;
 import org.infoglue.cms.exception.PageNotFoundException;
+import org.infoglue.cms.exception.PageNotPublishedException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.AuthenticationModule;
 import org.infoglue.cms.security.AuthorizationModule;
@@ -617,6 +618,22 @@ public class ViewPageAction extends InfoGlueAbstractAction
 			extraInformation += "User IP: " + getRequest().getRemoteAddr();
 			
 			logger.warn("A user requested a non existing page:" + e.getMessage() + "\n" + extraInformation);
+			rollbackTransaction(dbWrapper.getDatabase());
+
+			getResponse().setContentType("text/html; charset=UTF-8");
+			getRequest().setAttribute("responseCode", "404");
+			getRequest().setAttribute("error", e);
+			getRequest().setAttribute("errorUrl", getErrorUrl());
+			getRequest().getRequestDispatcher("/ErrorPage.action").forward(getRequest(), getResponse());
+		}
+		catch(PageNotPublishedException e)
+		{
+			String extraInformation = "Original URL: " + getOriginalFullURL() + "\n";
+			extraInformation += "Referer: " + getRequest().getHeader("Referer") + "\n";
+			extraInformation += "UserAgent: " + getRequest().getHeader("User-Agent") + "\n";
+			extraInformation += "User IP: " + getRequest().getRemoteAddr();
+			
+			logger.info("A user requested page which has no published version:" + e.getMessage() + "\n" + extraInformation);
 			rollbackTransaction(dbWrapper.getDatabase());
 
 			getResponse().setContentType("text/html; charset=UTF-8");
@@ -1199,6 +1216,22 @@ public class ViewPageAction extends InfoGlueAbstractAction
 			getRequest().setAttribute("errorUrl", getErrorUrl());
 			getRequest().getRequestDispatcher("/ErrorPage.action").forward(getRequest(), getResponse());
 		}
+		catch(PageNotPublishedException e)
+		{
+			String extraInformation = "Original URL: " + getOriginalFullURL() + "\n";
+			extraInformation += "Referer: " + getRequest().getHeader("Referer") + "\n";
+			extraInformation += "UserAgent: " + getRequest().getHeader("User-Agent") + "\n";
+			extraInformation += "User IP: " + getRequest().getRemoteAddr();
+			
+			logger.info("A user requested page which has no published version:" + e.getMessage() + "\n" + extraInformation);
+			rollbackTransaction(dbWrapper.getDatabase());
+
+			getResponse().setContentType("text/html; charset=UTF-8");
+			getRequest().setAttribute("responseCode", "404");
+			getRequest().setAttribute("error", e);
+			getRequest().setAttribute("errorUrl", getErrorUrl());
+			getRequest().getRequestDispatcher("/ErrorPage.action").forward(getRequest(), getResponse());
+		}
 		catch(NoBaseTemplateFoundException e)
 		{
 			String extraInformation = "Original URL: " + getOriginalFullURL() + "\n";
@@ -1409,7 +1442,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 		{
 			SiteNodeVersionVO latestSiteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, getSiteNodeId(), new Integer(CmsPropertyHandler.getOperatingMode()));
 			if(latestSiteNodeVersionVO == null)
-				throw new SystemException("There was no active published version on this page");
+				throw new PageNotPublishedException("There was no active published version on this page");
 		}
 		
 		if(getSiteNodeId() == null)

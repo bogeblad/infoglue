@@ -137,8 +137,11 @@ public class LiveInstanceMonitor implements Runnable
     		}
 			catch(Exception e)
 			{		
-				logger.warn("Error in instance monitor: " + serverBase + ", Message: " + e.getMessage());
-
+				if(address.contains("Preview"))
+					logger.info("Error in instance monitor: " + serverBase + ", Message: " + e.getMessage());
+				else
+					logger.warn("Error in instance monitor: " + serverBase + ", Message: " + e.getMessage());
+					
 				try
 				{
 					String cause = "" + e.getMessage();
@@ -206,7 +209,7 @@ public class LiveInstanceMonitor implements Runnable
 			}
 			catch(Exception e)
 			{
-				logger.error("Error in instance monitor: " + serverBase + ", Message: " + e.getMessage());
+				logger.info("Error in instance monitor: " + serverBase + ", Message: " + e.getMessage());
 				try
 				{
 					String cause = "" + e.getMessage();

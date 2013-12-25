@@ -22,64 +22,96 @@ if(error != null)
 pageContext.setAttribute("stacktrace", sb.toString());
 %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
+<!DOCTYPE HTML>
 <html>
-<head>
-	<title>InfoGlue Error</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <head>
+    <title>InfoGlue Error</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
 	<meta http-equiv="Cache-Control" content="no-cache" />
 	<meta http-equiv="Pragma" content="no-cache" />
-
+  	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<style>
-		
+		* {
+			box-sizing: border-box;
+		}
 		body {
 			color            : #123456;
-			background-color : #FFFFFF;
-			font-family      : verdana, arial, sans-serif;
-			font-size        : 8pt;
+			background-color : #FAF8F8;
+			font-family      : "trebuchet ms", trebuchet;
+			font-size        : 14px;
+			background		 : url(css/images/v3/body-bg2.jpg) center center fixed no-repeat;
+			background-size	 : cover;
+			-webkit-background-size	: cover;
+			-moz-background-size	: cover;
+			-o-background-size		: cover;
 		}
 		
-		.loginbox {
-			background-color : #FFFFFF;
-			border-style	 : solid;
-			border-width	 : 1px;
-			border-color	 : #cecbce;
-		}
-
-		.borderedCell {
-			background-color : #FFFFFF;
-			border-style	 : solid;
-			border-width	 : 1px;
-			border-color	 : #cecbce;
-		}
-		
-		td {
-			font-family      : verdana, arial, sans-serif;
-			font-size        : 8pt;
-			color		 	 : #333333;
+		.loginBox {
+			position: absolute;
+		  	top: 0;
+		  	right: 0;
+		 	bottom: 0;
+		 	left: 0;
+		 	margin: auto;
+		 	width: 410px;
+		  	height: 300px;
+			min-width: 360px;
+			border: 1px solid #eee;
+			padding: 30px;
+			background-color: white;
 		}
 		
-		.input {
-			font-family      : verdana, arial, sans-serif;
-			font-size        : 8pt;
-			border-style	 : solid;
-			border-width	 : 1px;	
-			border-color     : #cecbce;
+		.namePart1 {
+			font-family: "trebuchet ms", trebuchet;
+			font-size: 70px;
+			color:#5acbed;
+		}
+		.namePart2 {
+			font-family: "trebuchet ms", trebuchet;
+			font-size: 70px;
+			color: #FFAD32;
+		}
+		.loginBody {
+			margin-left: 10px;
 		}
 		
-		div.fullymarginalized {
-			margin-top		 : 20%;
-			margin-bottom	 : 20%;
-			width 			 : 100%;	
+		input[type="text"],input[type="password"] { 
+			width: 220px; 
+			font-size: 14px; 
+			border-radius: 3px;
+			font-family: verdana; 
+			padding: 8px; 
+			background-color: white; 
+			border: 1px solid #ccc; 
 		}
-
-		td.headline {
-			font-size        : 10pt;
-			font-weight		 : bold;
+			
+		input:-webkit-autofill {
+	        -webkit-box-shadow: 0 0 0px 1000px white inset;
+	    }
+		.login {
+			##margin-top: 20px;
+			padding: 4px 10px 4px 4px;
+			font-size: 14px;
+			font-family: verdana;
+			border: 1px solid #ffaa00;
+			padding: 10px 10px;
+			width: 220px;
+			text-align: center;
+			border-radius: 3px;
+			background: #ffd644; /* Old browsers */
+			background: -moz-linear-gradient(top,  #ffd644 0%, #ffad33 100%); /* FF3.6+ */
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffd644), color-stop(100%,#ffad33)); /* Chrome,Safari4+ */
+			background: -webkit-linear-gradient(top,  #ffd644 0%,#ffad33 100%); /* Chrome10+,Safari5.1+ */
+			background: -o-linear-gradient(top,  #ffd644 0%,#ffad33 100%); /* Opera 11.10+ */
+			background: -ms-linear-gradient(top,  #ffd644 0%,#ffad33 100%); /* IE10+ */
+			background: linear-gradient(to bottom,  #ffd644 0%,#ffad33 100%); /* W3C */
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffd644', endColorstr='#ffad33',GradientType=0 ); /* IE6-9 */
 		}
-
+		
+		label {
+			display: none;
+		}
 	</style> 
 	
 	<link type="text/css" href="<%= request.getContextPath() %>/script/jqueryplugins-latest/ui/css/jquery-ui.css" rel="stylesheet" />	
@@ -140,29 +172,9 @@ pageContext.setAttribute("stacktrace", sb.toString());
 		-->
 	</script>
 	
-	<style type="text/css">
-		body { font-size: 62.5%; }
-		label, input { display:block; }
-		input.text { margin-bottom:12px; width:95%; padding: .4em; }
-		textarea { margin-bottom:12px; width:95%; height: 120px; padding: .4em; }
-		fieldset { padding:0; border:0; margin-top:10px; }
-		h1 { font-size: 1.2em; margin: .6em 0; }
-		div#users-contain {  width: 350px; margin: 20px 0; }
-		div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
-		div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
-		.ui-button { outline: 0; margin:0; padding: .4em 1em .5em; text-decoration:none;  !important; cursor:pointer; position: relative; text-align: center; }
-		.ui-dialog .ui-state-highlight, .ui-dialog .ui-state-error { padding: .3em;  }
-		
-		.bug { display: block; float: left; line-height: 24px; width: 100%; background: url(<%= request.getContextPath() %>/css/images/v3/bug.png) no-repeat 0px 2px; text-indent: 24px; }
-		.stack { display: block; float: left; line-height: 24px; width: 100%; background: url(<%= request.getContextPath() %>/css/images/v3/stack.png) no-repeat 0px 2px; text-indent: 24px; }
-		.close { display: block; float: left; line-height: 24px; width: 100%; background:url(<%= request.getContextPath() %>/css/images/v3/closeWindowIcon.gif) no-repeat 3px 4px; text-indent: 24px; margin-top: 20px; }
-		
-	</style>
-	
-
 </head>
 
-<body>
+<body onLoad="javascript:expandAndFocus();">
 
 <div id="reportBugDialog" title="Report bug">
 	<form id="bugForm" method="post" action="http://www.infoglue.org/bugs/bugreport" target="_blank">
@@ -185,60 +197,45 @@ pageContext.setAttribute("stacktrace", sb.toString());
 	</form>
 </div>
 
-<div class="fullymarginalized">
+<div id="loginBox" class="loginBox">
 
-<table class="loginbox" align="center" border="1" cellspacing="5" cellpadding="0">
-<tr>
-	<td valign="top" class="borderedCell"><img src="<%= request.getContextPath() %>/css/images/login.jpg" width="130" height="237"/></td>
-	<td valign="top" class="borderedCell">
-		<table align="center" border="0" cellspacing="0" cellpadding="0" width="200">
-		<tr>
-			<td colspan="2" style="background-image: url(<%= request.getContextPath() %>/css/images/errorHeaderBackground.gif); background-repeat: repeat-x;" align="center"><img src="css/images/error.jpg"></td>
-		</tr>
-		<tr>
-			<td colspan="2"><img src="<%= request.getContextPath() %>/css/images/trans.gif" width="1" height="20"></td>
-		</tr>
-		<tr>
-			<td><img src="<%= request.getContextPath() %>/css/images/trans.gif" width="20" height="1"></td>
-			<td>
-				<p style="width:95%;">
-				<%
-					String redirectSuggestion = (String)request.getAttribute(RedirectController.REDIRECT_SUGGESTION);
-					if (redirectSuggestion != null) {
-						String redirectName = redirectSuggestion.replaceFirst("http.?://", "");
-				%>
-					There is no page at this address.<br/>
-					There used to be one. It has been moved to:<br/><br/>
-					<a href="<%= redirectSuggestion %>" style="word-wrap: break-word;"><%=redirectName %></a>
+	<div class="loginHeader" style="background: url(css/images/v3/infoglueBox.png) no-repeat; text-indent: 90px;"><span class="namePart1">Info</span><span class="namePart2">glue</span></div>
+	<div class="loginBody">
+		<%
+			String redirectSuggestion = (String)request.getAttribute(RedirectController.REDIRECT_SUGGESTION);
+			if (redirectSuggestion != null) {
+				String redirectName = redirectSuggestion.replaceFirst("http.?://", "");
+		%>
+			There is no page at this address.<br/>
+			There used to be one. It has been moved to:<br/><br/>
+			<a href="<%= redirectSuggestion %>" style="word-wrap: break-word;"><%=redirectName %></a>
 
-					<!--
-					<%
-						java.util.List<String> redirectRules = (java.util.List<String>)request.getAttribute(RedirectController.SITE_NODE_REDIRECT_URLS);
-						if (redirectRules != null)
-						{
-							for (String redirectRule : redirectRules)
-							{
-								out.print(redirectRule + "\n");
-							}
-						}
-					%>
-					 -->
-				</p>
-				<% } else { %>
-					Page not Found or an error occurred. Either way we could not serve your request.<br/><br/>
-					System message: <c:out value="${requestScope.error.message}"/><br/><br/>
-					<p>
-						Please help us make Infoglue better by filing a bug report<br/>
-						<a href="javascript:void(0)" onclick="openReportDialog('reportBugDialog');" class="bug">Report bug</a>
-						<a href="javascript:closeDialog();" class="close">Back / Close</a>
-					</p>
-				<% } %>
-			</td>
-		</tr>
-		</table>
-	</td>
-</tr>
-</table>
+			<!--
+			<%
+				java.util.List<String> redirectRules = (java.util.List<String>)request.getAttribute(RedirectController.SITE_NODE_REDIRECT_URLS);
+				if (redirectRules != null)
+				{
+					for (String redirectRule : redirectRules)
+					{
+						out.print(redirectRule + "\n");
+					}
+				}
+			%>
+			 -->
+		</p>
+		<% } else { %>
+			Page not Found or an error occurred. Either way we could not serve your request.<br/><br/>
+			System message: <c:out value="${requestScope.error.message}"/><br/><br/>
+			<c:if test="${requestScope.error.cause.class.name != 'org.infoglue.cms.exception.PageNotFoundException'}">
+			<p>
+				Please help us make Infoglue better by filing a bug report<br/>
+				<a href="javascript:void(0)" onclick="openReportDialog('reportBugDialog');" class="bug">Report bug</a>
+				<a href="javascript:closeDialog();" class="close">Back / Close</a>
+			</p>
+			</c:if>
+		<% } %>
+			
+	</div>
 </div>
 
 </body>
@@ -249,3 +246,4 @@ String errorUrl = (String)pageContext.getRequest().getAttribute("javax.servlet.e
 Exception e = (Exception)pageContext.getRequest().getAttribute("error");
 logger.warn("Error.jsp called - Possible errorUrl:" + errorUrl + ". Message: " + (e == null ? "-none-" : e.getMessage()));
 %>
+

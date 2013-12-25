@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE web-app SYSTEM "web-app_2_3.dtd">
 <web-app>	
-
-<!--
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-		 xmlns="http://java.sun.com/xml/ns/javaee" 
-		 xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
-		 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
-		 id="WebApp_ID" 
-		 version="2.5">
-    <display-name>Infoglue</display-name>
+<!--  
+<web-app 
+    xmlns="http://java.sun.com/xml/ns/javaee" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
+    version="2.5">
 -->
 
 	<!-- This filter clears any cache waiting to be cleared -->
@@ -200,7 +197,6 @@
 	<!-- Start Quarz -->
 	<servlet>
 		<servlet-name>QuartzInitializer</servlet-name>
-		<display-name>Quartz Initializer Servlet</display-name>
 		<servlet-class>org.infoglue.deliver.jobs.QuartzInitializerServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
@@ -218,7 +214,7 @@
 			<param-name>packageNames</param-name>
 			<param-value>org.infoglue.cms.applications,org.infoglue.cms.entities</param-value>
 		</init-param>
-		<load-on-startup/>
+		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet>
 		<servlet-name>xslt</servlet-name>
@@ -304,15 +300,7 @@
 		<location>/ErrorPage.action?responseCode=501</location>
 	</error-page>
 	
-	<taglib>
-	  <taglib-uri>http://jakarta.apache.org/taglibs/mailer-1.1</taglib-uri>
-	  <taglib-location>/WEB-INF/tld/taglibs-mailer.tld</taglib-location>
-	</taglib>
-	<taglib>
-	  <taglib-uri>domino</taglib-uri>
-	  <taglib-location>/WEB-INF/tld/domtags.tld</taglib-location>
-	</taglib>
-	
+	<!--<jsp-config>-->
 	<taglib>
 		<taglib-uri>infoglue-common</taglib-uri>
 		<taglib-location>/WEB-INF/tld/infoglue-common.tld</taglib-location>
@@ -337,4 +325,5 @@
 		<taglib-uri>infoglue-workflow</taglib-uri>
 		<taglib-location>/WEB-INF/tld/infoglue-workflow.tld</taglib-location>
 	</taglib>
+	<!--</jsp-config>-->
 </web-app>

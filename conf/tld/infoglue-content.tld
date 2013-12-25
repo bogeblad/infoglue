@@ -14,7 +14,7 @@
         <attribute>
     	    <name>id</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
             <name>contentVersion</name>
@@ -29,7 +29,7 @@
         <attribute>
             <name>propertyName</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>languageId</name>
@@ -39,57 +39,57 @@
         <attribute>
             <name>attributeName</name>
             <required>true</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>disableEditOnSight</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>useAttributeLanguageFallback</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>useInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>useRepositoryInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>useStructureInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>parse</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>escapeVelocityCode</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>fullBaseUrl</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>mapKeyName</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>defeatCaches</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
 
@@ -101,7 +101,7 @@
         <attribute>
     	    <name>id</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
             <name>contentId</name>
@@ -111,27 +111,27 @@
         <attribute>
             <name>propertyName</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>assetKey</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>useInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>useRepositoryInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>useStructureInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
 
@@ -143,32 +143,32 @@
         <attribute>
     	    <name>id</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
             <name>contentId</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>propertyName</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>useInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>useRepositoryInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>useStructureInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>        
     </tag>
 
@@ -180,7 +180,7 @@
         <attribute>
     	    <name>id</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
             <name>digitalAssetId</name>
@@ -195,32 +195,32 @@
         <attribute>
             <name>propertyName</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>assetKey</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>useInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>useRepositoryInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>useStructureInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>        
         <attribute>
             <name>useDownloadAction</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>        
     </tag>
 
@@ -232,7 +232,7 @@
          <attribute>
     	    <name>id</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
             <name>digitalAssetId</name>
@@ -247,37 +247,37 @@
         <attribute>
             <name>propertyName</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>assetKey</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>width</name>
             <required>true</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>height</name>
             <required>true</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>useInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>useRepositoryInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>useStructureInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
 
@@ -289,7 +289,7 @@
         <attribute>
     	    <name>id</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
             <name>digitalAssetId</name>
@@ -306,7 +306,7 @@
         <attribute>
     	    <name>id</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
             <name>data</name>
@@ -316,12 +316,12 @@
         <attribute>
             <name>fileNamePrefix</name>
             <required>true</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>fileNameSuffix</name>
             <required>true</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
 
@@ -333,7 +333,7 @@
         <attribute>
     	    <name>id</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
             <name>contentId</name>
@@ -343,42 +343,42 @@
         <attribute>
             <name>assetKey</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>fileNames</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>autoCreateMarkup</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>addToHTMLHeader</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>addToHTMLBody</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>addToBundledIncludes</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>bundleName</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
     	    <name>prepend</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
     </tag>
 
@@ -390,7 +390,7 @@
         <attribute>
     	    <name>id</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
             <name>contentIdList</name>
@@ -405,17 +405,17 @@
         <attribute>
             <name>fileNamePrefix</name>
             <required>true</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>includeContentTypeDefinitions</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>includeCategories</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
     
@@ -427,7 +427,7 @@
 	    <attribute>
 		    <name>id</name>
 	    	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>contentId</name>
@@ -437,7 +437,7 @@
 	    <attribute>
 		    <name>contentTypeDefinitionName</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
 
@@ -449,7 +449,7 @@
 	    <attribute>
 		    <name>id</name>
 	    	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>contentId</name>
@@ -459,7 +459,7 @@
 	    <attribute>
 		    <name>attributeName</name>
 	    	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>onlyFirst</name>
@@ -486,7 +486,7 @@
 	    <attribute>
 		    <name>id</name>
 	    	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>contentId</name>
@@ -496,12 +496,12 @@
 	    <attribute>
 		    <name>maxPages</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>excludeCurrentPage</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
 	
@@ -513,7 +513,7 @@
 	   	<attribute>
     	    <name>id</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
             <name>siteNodeId</name>
@@ -528,42 +528,42 @@
         <attribute>
             <name>propertyName</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
     	    <name>useInheritance</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
             <name>useRepositoryInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>useStructureInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
             	<attribute>
     	    <name>escapeHTML</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>hideUnauthorizedPages</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>disableValidateBindingOnPage</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>disableFallback</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
 	</tag>
 	
@@ -576,12 +576,12 @@
         <attribute>
     	    <name>id</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
             <name>contentVersionId</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>content</name>
@@ -591,12 +591,12 @@
         <attribute>
             <name>languageId</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>useLanguageFallback</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
 
@@ -608,12 +608,12 @@
         <attribute>
     	    <name>id</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
             <name>content</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>contentId</name>
@@ -623,12 +623,12 @@
         <attribute>
             <name>languageId</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>includeAllLanguages</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
 
@@ -640,37 +640,37 @@
         <attribute>
     	    <name>id</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
 		<attribute>
             <name>contentTypeDefinitionName</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
 		<attribute>
             <name>userName</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
 		<attribute>
             <name>publishStartDate</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
 		<attribute>
             <name>publishEndDate</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
 		<attribute>
             <name>expireStartDate</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
 		<attribute>
             <name>expireEndDate</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
 
@@ -682,7 +682,7 @@
         <attribute>
     	    <name>id</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
             <name>siteNodeId</name>
@@ -697,7 +697,7 @@
         <attribute>
             <name>propertyName</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>repositoryId</name>
@@ -712,22 +712,22 @@
         <attribute>
             <name>path</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
     	    <name>useInheritance</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
             <name>useRepositoryInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>useStructureInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
 
@@ -739,7 +739,7 @@
         <attribute>
     	    <name>id</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
             <name>siteNodeId</name>
@@ -749,22 +749,22 @@
         <attribute>
     	    <name>propertyName</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>useInheritance</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
             <name>useRepositoryInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>useStructureInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
 	</tag>	 
 
@@ -776,27 +776,27 @@
         <attribute>
     	    <name>id</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>propertyName</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>useInheritance</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
             <name>useRepositoryInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>useStructureInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
 	</tag>
 
@@ -808,7 +808,7 @@
 		<attribute>
 			<name>id</name>
 			<required>true</required>
-			<rtexprvalue>false</rtexprvalue>
+			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
 			<name>siteNodeId</name>
@@ -818,22 +818,22 @@
 		<attribute>
 			<name>propertyName</name>
 			<required>true</required>
-			<rtexprvalue>false</rtexprvalue>
+			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
 			<name>useInheritance</name>
 			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
+			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
 			<name>useRepositoryInheritance</name>
 			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
+			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
 			<name>useStructureInheritance</name>
 			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
+			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
 
@@ -845,7 +845,7 @@
 		<attribute>
 			<name>id</name>
 			<required>true</required>
-			<rtexprvalue>false</rtexprvalue>
+			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
 			<name>siteNodeId</name>
@@ -855,22 +855,22 @@
 		<attribute>
 			<name>propertyName</name>
 			<required>true</required>
-			<rtexprvalue>false</rtexprvalue>
+			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
 			<name>useInheritance</name>
 			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
+			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
 			<name>useRepositoryInheritance</name>
 			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
+			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
 			<name>useStructureInheritance</name>
 			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
+			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
 	
@@ -882,7 +882,7 @@
         <attribute>
     	    <name>id</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>contentId</name>
@@ -892,52 +892,52 @@
         <attribute>
     	    <name>propertyName</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>useInheritance</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
             <name>useRepositoryInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>useStructureInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
     	    <name>searchRecursive</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>sortAttribute</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>sortOrder</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>includeFolders</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>matchingName</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>returnOnlyFirst</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
 	</tag>	 
 
@@ -949,27 +949,27 @@
         <attribute>
     	    <name>id</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>contentTypeDefinitionNames</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>languageId</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>skipLanguageCheck</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>repositoryIds</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>categoryCondition</name>
@@ -1081,17 +1081,17 @@
         <attribute>
     	    <name>id</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>input</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
     	<attribute>
   			<name>comparatorClass</name>
         	<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
+			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>	 
 	<tag>
@@ -1102,12 +1102,12 @@
         <attribute>
     	    <name>name</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>ascending</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
 	</tag>	 
 	<tag>
@@ -1118,12 +1118,12 @@
         <attribute>
     	    <name>name</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>ascending</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
 	</tag>	 
 	<tag>
@@ -1134,22 +1134,22 @@
         <attribute>
     	    <name>name</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>className</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>ascending</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>caseSensitive</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
 	</tag>	 
 
@@ -1161,12 +1161,12 @@
         <attribute>
     	    <name>id</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>propertyName</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>contentId</name>
@@ -1176,32 +1176,32 @@
         <attribute>
     	    <name>languageId</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>categoryKey</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>useInheritance</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>useAttributeLanguageFallback</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
             <name>useRepositoryInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>useStructureInheritance</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
 	</tag>	 
 	
@@ -1213,7 +1213,7 @@
         <attribute>
     	    <name>id</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
             <name>contentId</name>
@@ -1224,7 +1224,7 @@
         <attribute>
             <name>propertyName</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
 -->
         <attribute>
@@ -1235,17 +1235,17 @@
         <attribute>
             <name>attributeName</name>
             <required>true</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>html</name>
             <required>true</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>showInPublishedMode</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
     
@@ -1257,37 +1257,37 @@
         <attribute>
     	    <name>id</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
             <name>propertyName</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>createNew</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>html</name>
             <required>true</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>showInPublishedMode</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>showDecorated</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>hideComponentPropertiesOnLoad</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>extraParameters</name>
@@ -1305,22 +1305,22 @@
         <attribute>
     	    <name>id</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>targetEndpointAddress</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>operationName</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>principal</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
 	</tag>
 	
@@ -1332,7 +1332,7 @@
         <attribute>
     	    <name>name</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>parentContentId</name>
@@ -1342,42 +1342,42 @@
         <attribute>
     	    <name>contentPath</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>contentTypeDefinitionId</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>repositoryId</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>expireDateTime</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>isBranch</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>isProtected</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>publishDateTime</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>creatorName</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
 	</tag>
 
@@ -1389,32 +1389,32 @@
         <attribute>
     	    <name>languageId</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>stateId</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>allowHTMLContent</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>allowExternalLinks</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>allowDollarSigns</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>allowAnchorSigns</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
 	</tag>
 	
@@ -1426,12 +1426,12 @@
 	    <attribute>
 		    <name>name</name>
 	    	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>value</name>
 	    	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
 
@@ -1443,37 +1443,37 @@
 	    <attribute>
 		    <name>assetKey</name>
 	    	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>fileName</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>filePath</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>contentType</name>
 	    	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>bytes</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>file</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
 		    <name>fileItem</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
 
@@ -1485,12 +1485,12 @@
 	    <attribute>
 		    <name>categoryKey</name>
 	    	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>fullCategoryName</name>
 	    	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
 	
@@ -1502,7 +1502,7 @@
 	    <attribute>
     	    <name>id</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
 	    <attribute>
     	    <name>contentId</name>
@@ -1512,17 +1512,17 @@
 	    <attribute>
     	    <name>forceDelete</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
      	<attribute>
     	    <name>targetEndpointAddress</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>operationName</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
 	</tag>
 	
@@ -1534,7 +1534,7 @@
 	    <attribute>
     	    <name>id</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
 	    <attribute>
     	    <name>contentId</name>
@@ -1544,27 +1544,27 @@
         <attribute>
     	    <name>name</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>publishDateTime</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>expireDateTime</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
      	<attribute>
     	    <name>targetEndpointAddress</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>operationName</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>    	
 	</tag>
 
@@ -1576,22 +1576,22 @@
 	    <attribute>
     	    <name>id</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
 	    <attribute>
     	    <name>contentVersionId</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
      	<attribute>
     	    <name>targetEndpointAddress</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>operationName</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>    	
 	</tag>
 
@@ -1603,7 +1603,7 @@
         <attribute>
     	    <name>id</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>contentId</name>
@@ -1613,72 +1613,72 @@
         <attribute>
     	    <name>languageId</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>contentVersionId</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>stateId</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>versionComment</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>allowHTMLContent</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>allowExternalLinks</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>allowDollarSigns</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>allowAnchorSigns</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
     	<attribute>
     	    <name>targetEndpointAddress</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>operationName</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>keepExistingAttributes</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>keepExistingCategories</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>updateExistingAssets</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>createVersionIfNotExists</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
 	</tag>
 
@@ -1690,12 +1690,12 @@
         <attribute>
     	    <name>id</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>contentVersionId</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
      	<attribute>
     	    <name>contentId</name>
@@ -1705,22 +1705,22 @@
         <attribute>
     	    <name>languageId</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
     	<attribute>
     	    <name>assetKey</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
      	<attribute>
     	    <name>targetEndpointAddress</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>operationName</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
     	
 	</tag>
@@ -1733,7 +1733,7 @@
 	    <attribute>
     	    <name>id</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
 	    <attribute>
     	    <name>contentId</name>
@@ -1743,17 +1743,17 @@
 	    <attribute>
     	    <name>languageId</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
      	<attribute>
     	    <name>targetEndpointAddress</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>operationName</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
 	</tag>
 	
@@ -1765,17 +1765,17 @@
         <attribute>
     	    <name>id</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
     	<attribute>
             <name>contentId</name>
             <required>true</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>interceptionPointName</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
 	</tag>
 
@@ -1787,22 +1787,22 @@
         <attribute>
     	    <name>id</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
     	<attribute>
             <name>contentId</name>
             <required>true</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>languageId</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>stateId</name>
             <required>true</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
 	</tag>
 	

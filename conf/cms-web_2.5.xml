@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app 
+    xmlns="http://java.sun.com/xml/ns/javaee" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
+    version="2.5">
+
+	<!-- This filter clears any cache waiting to be cleared -->
+	<filter>
+	    <filter-name>CacheEvictionFilter</filter-name>
+	    <filter-class>org.infoglue.deliver.applications.filters.CacheEvictionFilter</filter-class>
+		<init-param>
+            <param-name>FilterURIs</param-name>
+            <param-value>
+                /DownloadProtectedAsset.action,
+                /UpdateCache.action,
+                /UpdateCache!test.action,
+				/ViewApplicationState.action,
+				/ViewLogging.action,
+				/ErrorPage.action,
+                /digitalAssets/*,
+                /webdavedit/*,
+                /applications/*,
+                /scripts/*,
+                /script/*,
+                /css/*,
+                /images/*,
+                /img/*,
+                /jsp/*,
+                *.xml,
+                *.gif,
+                *.jpg,
+                *.png,
+                *.ico,
+                *.css,
+                *.js              
+            </param-value>
+        </init-param>
+    </filter> 
+
+	<filter>
+		<filter-name>Set Character Encoding</filter-name>
+		<filter-class>org.infoglue.cms.util.SetCharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<!--<param-value>UTF-8</param-value>-->
+			<param-value>@inputCharacterEncoding@</param-value>
+		</init-param>
+	</filter>
+
+	<filter>
+		<filter-name>InfoGlue Authentication Filter</filter-name>
+		<filter-class>org.infoglue.cms.security.InfoGlueAuthenticationFilter</filter-class>
+		<init-param>
+			<param-name>org.infoglue.cms.security.loginUrl</param-name>
+			<param-value>Login.action</param-value>
+		</init-param>
+		<init-param>
+      		<param-name>org.infoglue.cms.security.logoutUrl</param-name>
+     		<param-value>Login!logout.action</param-value>
+	    </init-param>
+	    <!--
+		<init-param>
+			<param-name>org.infoglue.cms.security.successLoginBaseUrl</param-name>
+			<param-value>http://localhost:8080</param-value>
+		</init-param>
+		-->
+		<init-param>
+			<param-name>org.infoglue.cms.security.invalidLoginUrl</param-name>
+			<param-value>Login!invalidLogin.action</param-value>
+		</init-param>
+		<init-param>
+			<param-name>org.infoglue.cms.security.authenticatorClass</param-name>
+			<param-value>org.infoglue.cms.security.InfoGlueBasicAuthenticationModule</param-value>
+		</init-param>
+		<init-param>
+			<param-name>org.infoglue.cms.security.authorizerClass</param-name>
+			<param-value>org.infoglue.cms.security.InfoGlueBasicAuthorizationModule</param-value>
+		</init-param>
+		<init-param>
+			<param-name>org.infoglue.cms.security.authConstraint</param-name>
+			<param-value>cmsUser</param-value>
+		</init-param>
+		<init-param>
+			<param-name>org.infoglue.cms.security.extraParametersFile</param-name>
+			<param-value>InfoGlueAuthorizationParameters.properties</param-value>
+		</init-param>
+		<init-param>
+            <param-name>FilterURIs</param-name>
+            <param-value>
+                /DownloadProtectedAsset.action,
+                /UpdateCache.action,
+                /UpdateCache!test.action,
+				/ViewApplicationState.action,
+				/ViewApplicationState!setLogLevel.action,
+				/Install.action,
+				/Install!input.action,
+				/ViewMessageCenter!getSystemMessages.action,
+				/ErrorPage.action,
+				/CreateDigitalAsset!multiple.action,
+				/CreateContentAndAssetFromUpload!multiple.action,
+                /index-cms.html,
+                /scripts/*,
+                /script/*,
+                /css/*,
+                /images/*,
+                /unauthorizedLogin.jsp,
+                /robots.txt,
+                /services/*,
+                /webdavedit/*,
+                *.xml,
+                *.gif,
+                *.jpg,
+                *.png,
+                *.ico,
+                *.css,
+                *.js
+            </param-value>
+        </init-param>
+		
+	</filter>
+	
+	<!-- This filter sets expires headers and gzip the appropriate resources -->
+	<filter>  
+	    <filter-name>ResourceFilter</filter-name>  
+     	<filter-class>org.infoglue.deliver.applications.filters.ResourceFilter</filter-class>  
+  	</filter>  
+	
+	<!-- Define filter mappings for the defined filters -->
+	<filter-mapping>
+		<filter-name>CacheEvictionFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<filter-mapping>
+		<filter-name>Set Character Encoding</filter-name>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+	
+	<filter-mapping>
+		<filter-name>InfoGlue Authentication Filter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>ResourceFilter</filter-name>
+		<url-pattern>/css/*</url-pattern>
+	</filter-mapping>
+	
+	<filter-mapping>
+		<filter-name>ResourceFilter</filter-name>
+		<url-pattern>/images/*</url-pattern>
+	</filter-mapping>
+	
+	<filter-mapping>
+		<filter-name>ResourceFilter</filter-name>
+		<url-pattern>/script/*</url-pattern>
+	</filter-mapping>
+
+	<listener>
+		<listener-class>org.infoglue.cms.util.CmsContextListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>org.infoglue.cms.util.CmsSessionContextListener</listener-class>
+	</listener>
+
+	<!-- Start Quarz -->
+	<servlet>
+		<servlet-name>QuartzInitializer</servlet-name>
+		<servlet-class>org.infoglue.deliver.jobs.QuartzInitializerServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<!-- Start WebWork -->
+	<servlet>
+		<servlet-name>action</servlet-name>
+		<servlet-class>org.infoglue.deliver.portal.dispatcher.PortalServletDispatcher</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet>
+		<servlet-name>velocity</servlet-name>
+		<servlet-class>org.infoglue.cms.applications.common.actions.VelocityServlet</servlet-class>
+		<init-param>
+			<param-name>packageNames</param-name>
+			<param-value>org.infoglue.cms.applications,org.infoglue.cms.entities</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet>
+		<servlet-name>xslt</servlet-name>
+		<servlet-class>webwork.view.xslt.XSLTServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>dispatch</servlet-name>
+		<servlet-class>webwork.dispatcher.ClientServletDispatcher</servlet-class>
+	</servlet>
+	 	
+	<!-- ****************************************** -->
+	<!-- This part is for Apache Axis			    -->
+	<!-- ****************************************** -->
+	<servlet>
+		<servlet-name>AxisServlet</servlet-name>
+	    <servlet-class>org.apache.axis.transport.http.AxisServlet</servlet-class>
+    </servlet>
+    
+   <servlet>
+        <servlet-name>milton</servlet-name>
+        <servlet-class>com.bradmcevoy.http.MiltonServlet</servlet-class>
+        <init-param>
+		<param-name>resource.factory.factory.class</param-name>
+		<param-value>org.infoglue.cms.util.webdav.RepositoryResourceFactoryFactory</param-value>		
+        </init-param>
+        <init-param>
+            <param-name>resource.factory.class</param-name>
+            <param-value>org.infoglue.cms.util.webdav.RepositoryResourceFactory</param-value>
+        </init-param>
+        <init-param>
+            <param-name>authentication.handler.classes</param-name>
+            <param-value>com.bradmcevoy.http.http11.auth.BasicAuthHandler</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>not.found.url</param-name>
+            <param-value>/404.jsp</param-value>
+        </init-param>    
+	<!--
+	<init-param>
+	    <param-name>filter_0</param-name>
+  	    <param-value>com.bradmcevoy.http.DebugFilter</param-value>
+	</init-param>
+	-->
+    </servlet>    	
+	  
+	<!-- ************************************* -->
+	<!-- This part is for the tree services    -->
+	<!-- ************************************* -->
+	<servlet>
+		<servlet-name>ContentTreeService</servlet-name>
+		<servlet-class>org.infoglue.cms.treeservice.ContentService</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>SiteNodeTreeService</servlet-name>
+		<servlet-class>org.infoglue.cms.treeservice.SiteNodeService</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ContentTreeService</servlet-name>
+		<url-pattern>/ContentTreeService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>SiteNodeTreeService</servlet-name>
+		<url-pattern>/SiteNodeTreeService</url-pattern>
+	</servlet-mapping>
+	<!-- ************************************* -->
+	<!-- This part is for webworks / velocity  -->
+	<!-- ************************************* -->
+	<servlet-mapping>
+		<servlet-name>action</servlet-name>
+		<url-pattern>*.action</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>velocity</servlet-name>
+		<url-pattern>*.vm</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>xslt</servlet-name>
+		<url-pattern>*.xslt</url-pattern>
+	</servlet-mapping>
+	
+	<!-- ****************************************** -->
+	<!-- This part is for Apache Axis			    -->
+	<!-- ****************************************** -->
+	<servlet-mapping>
+	    <servlet-name>AxisServlet</servlet-name>
+    	<url-pattern>/servlet/AxisServlet</url-pattern>
+  	</servlet-mapping>
+	<servlet-mapping>
+    	<servlet-name>AxisServlet</servlet-name>
+    	<url-pattern>*.jws</url-pattern>
+  	</servlet-mapping>
+	<servlet-mapping>
+    	<servlet-name>AxisServlet</servlet-name>
+    	<url-pattern>/services/*</url-pattern>
+  	</servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>milton</servlet-name>
+        <url-pattern>/webdavedit/*</url-pattern>
+    </servlet-mapping>    
+	
+  
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+
+	<mime-mapping>
+        <extension>js</extension>
+        <mime-type>text/javascript;charset=UTF-8</mime-type>
+    </mime-mapping>
+	
+	<welcome-file-list>
+		<welcome-file>index-cms.html</welcome-file>
+	</welcome-file-list>
+
+	<error-page>
+		<error-code>400</error-code>
+		<location>/ErrorPage.action?responseCode=400</location>
+	</error-page>
+	<!--
+	<error-page>
+		<error-code>403</error-code>
+		<location>/jsp/protected/unauthorized.jsp</location>
+	</error-page>
+	-->
+	<error-page>
+		<error-code>404</error-code>
+		<location>/ErrorPage.action?responseCode=404</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/ErrorPage.action?responseCode=500</location>
+	</error-page>
+	<error-page>
+		<error-code>501</error-code>
+		<location>/ErrorPage.action?responseCode=501</location>
+	</error-page>
+
+	<jsp-config>
+		<taglib>
+			<taglib-uri>infoglue-common</taglib-uri>
+			<taglib-location>/WEB-INF/tld/infoglue-common.tld</taglib-location>
+		</taglib>
+		<taglib>
+			<taglib-uri>infoglue-cms-management</taglib-uri>
+			<taglib-location>/WEB-INF/tld/infoglue-cms-management.tld</taglib-location>
+		</taglib>
+		<taglib>
+			<taglib-uri>infoglue-cms-content</taglib-uri>
+			<taglib-location>/WEB-INF/tld/infoglue-cms-content.tld</taglib-location>
+		</taglib>
+		<taglib>
+			<taglib-uri>infoglue-workflow</taglib-uri>
+			<taglib-location>/WEB-INF/tld/infoglue-workflow.tld</taglib-location>
+		</taglib>
+	</jsp-config>
+
+	<!-- End WebWork -->
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>General Protected Area</web-resource-name>
+            <url-pattern>/jsp/protected/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>cmsUser</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+	<login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>BASIC-Based InfoGlue Authentication Area</realm-name>
+    </login-config>
+
+<!--
+	<login-config>
+      	<auth-method>FORM</auth-method>
+      	<realm-name>Form-Based InfoGlue Authentication Area</realm-name>
+      	<form-login-config>
+        	<form-login-page>/jsp/protected/login.jsp</form-login-page>
+        	<form-error-page>/jsp/protected/error.jsp</form-error-page>
+      	</form-login-config>
+    </login-config>
+-->
+
+	<security-role>
+        <description>Security role we are testing for</description>
+        <role-name>cmsUser</role-name>
+    </security-role>
+
+</web-app>

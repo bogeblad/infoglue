@@ -1,140 +1,124 @@
-<?xml version="1.0" encoding="UTF-8"?> 
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
+<!DOCTYPE HTML>
 <html>
-<head>
-	<title>$error.getName()</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <head>
+    <title>$error.getName()</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
 	<meta http-equiv="Cache-Control" content="no-cache" />
 	<meta http-equiv="Pragma" content="no-cache" />
-
+  	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<style>
-		
+		* {
+			box-sizing: border-box;
+		}
 		body {
 			color            : #123456;
-			background-color : #FFFFFF;
-			font-family      : verdana, arial, sans-serif;
-			font-size        : 11px;
-		}
-		
-		.loginbox {
-			background-color : #FFFFFF;
-			border-style	 : solid;
-			border-width	 : 1px;
-			border-color	 : #cecbce;
-		}
-
-		.borderedCell {
-			background-color : #FFFFFF;
-			border-style	 : solid;
-			border-width	 : 1px;
-			border-color	 : #cecbce;
-		}
-		
-		td {
-			font-family      : verdana, arial, sans-serif;
-			font-size        : 11px;
-			color		 	 : #333333;
-		}
-		
-		.input {
-			font-family      : verdana, arial, sans-serif;
-			font-size        : 11px;
-			border-style	 : solid;
-			border-width	 : 1px;	
-			border-color     : #cecbce;
-		}
-		
-		div.fullymarginalized {
-			margin-top		 : 20%;
-			margin-bottom	 : 20%;
-			width 			 : 100%;	
-		}
-
-		td.headline {
+			background-color : #FAF8F8;
+			font-family      : "trebuchet ms", trebuchet;
 			font-size        : 14px;
-			font-weight		 : bold;
+			background		 : url(css/images/v3/body-bg2.jpg) center center fixed no-repeat;
+			background-size	 : cover;
+			-webkit-background-size	: cover;
+			-moz-background-size	: cover;
+			-o-background-size		: cover;
 		}
-
+		
+		.loginBox {
+			position: absolute;
+		  	top: 0;
+		  	right: 0;
+		 	bottom: 0;
+		 	left: 0;
+		 	margin: auto;
+		 	width: 410px;
+		  	height: 300px;
+			min-width: 360px;
+			border: 1px solid #eee;
+			padding: 30px;
+			background-color: white;
+		}
+		
+		.namePart1 {
+			font-family: "trebuchet ms", trebuchet;
+			font-size: 70px;
+			color:#5acbed;
+		}
+		.namePart2 {
+			font-family: "trebuchet ms", trebuchet;
+			font-size: 70px;
+			color: #FFAD32;
+		}
+		.loginBody {
+			margin-left: 10px;
+		}
+		
+		input[type="text"],input[type="password"] { 
+			width: 220px; 
+			font-size: 14px; 
+			border-radius: 3px;
+			font-family: verdana; 
+			padding: 8px; 
+			background-color: white; 
+			border: 1px solid #ccc; 
+		}
+			
+		input:-webkit-autofill {
+	        -webkit-box-shadow: 0 0 0px 1000px white inset;
+	    }
+		.login {
+			##margin-top: 20px;
+			padding: 4px 10px 4px 4px;
+			font-size: 14px;
+			font-family: verdana;
+			border: 1px solid #ffaa00;
+			padding: 10px 10px;
+			width: 220px;
+			text-align: center;
+			border-radius: 3px;
+			background: #ffd644; /* Old browsers */
+			background: -moz-linear-gradient(top,  #ffd644 0%, #ffad33 100%); /* FF3.6+ */
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffd644), color-stop(100%,#ffad33)); /* Chrome,Safari4+ */
+			background: -webkit-linear-gradient(top,  #ffd644 0%,#ffad33 100%); /* Chrome10+,Safari5.1+ */
+			background: -o-linear-gradient(top,  #ffd644 0%,#ffad33 100%); /* Opera 11.10+ */
+			background: -ms-linear-gradient(top,  #ffd644 0%,#ffad33 100%); /* IE10+ */
+			background: linear-gradient(to bottom,  #ffd644 0%,#ffad33 100%); /* W3C */
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffd644', endColorstr='#ffad33',GradientType=0 ); /* IE6-9 */
+		}
+		
+		label {
+			display: none;
+		}
 	</style> 
 	
 	<script type="text/javascript" language="Javascript">
 	<!--
-	
 		function expandAndFocus()
 		{
-			document.inputForm.elements[0].focus();
+			document.getElementById("j_username").focus();
+			
+			var i = document.createElement('input');
+			if(!"placeholder" in i)
+			{
+				document.getElementById("labelUserName").style.display = "block";
+			  	document.getElementById("labelPassword").style.display = "block";
+			  	document.getElementById("loginBox").style.height = "330px";
+			}
 		}			
-
-		function toggleStacktrace()
-		{
-			var stacktrace = document.getElementById("stacktrace");
-			if(stacktrace.style.display == "block")
-				stacktrace.style.display = "none";
-			else
-				stacktrace.style.display = "block";
-		}
 		-->
 	</script>
 
-	
-
 </head>
 
-<body>
+<body onLoad="javascript:expandAndFocus();">
 
-<div class="fullymarginalized">
+<div id="loginBox" class="loginBox">
 
-<table class="loginbox" align="center" border="1" cellspacing="5" cellpadding="0">
-<tr>
-	<td valign="top" class="borderedCell"><img src="$this.getURLBase()/css/images/login.jpg" width="130" height="237"/></td>
-	<td valign="top" class="borderedCell">
-		<table align="center" border="0" cellspacing="0" cellpadding="0" width="200">
-		<tr>
-			<td colspan="2" style="background-image: url($this.getURLBase()/css/images/errorHeaderBackground.gif); background-repeat: repeat-x;" align="center"><img src="$this.getURLBase()css//images/error.jpg"></td>
-		</tr>	
-		<tr>
-			<td colspan="2"><img src="$this.getURLBase()css//images/trans.gif" width="1" height="20"></td>
-		</tr>	
-		<tr>
-			<td><img src="$this.getURLBase()css//images/trans.gif" width="20" height="1"></td>
-			<td>Message: $error.getMessage()</td>
-		</tr>
-		<tr>
-			<td colspan="2">&nbsp;</td>
-		</tr>
-		<tr>
-			<td><img src="$this.getURLBase()css//images/trans.gif" width="20" height="1"></td>
-			<td>Click <a href="javascript:toggleStacktrace();">here</a> to toggle stacktrace</td>
-		</tr>
-		<tr>
-			<td colspan="2">
-				<table id="stacktrace" style="display:none;">
-				<tr>
-		            <td><img src="$this.getURLBase()css//images/trans.gif" width="20" height="1"></td>
-		            <td>$error.getStackTrace()</td>
-		        </tr>
-		        #if($error.hasCause())
-		        <tr>
-		          <td><img src="$this.getURLBase()/css/images/trans.gif" width="20" height="1"></td>
-		          <td>$error.getCauseMessage()</td>
-		        </tr>
-		        <tr>
-		          <td><img src="$this.getURLBase()/css/images/trans.gif" width="20" height="1"></td>
-		          <td>$error.getCauseStackTrace()</td>
-		        </tr>
-		        #end
-		        </table>
-	        </td>
-        </tr>
-		</table>
-	</td>
-</tr>	
-</table>
-
+	<div class="loginHeader" style="background: url(css/images/v3/infoglueBox.png) no-repeat; text-indent: 90px;"><span class="namePart1">Info</span><span class="namePart2">glue</span></div>
+	<div class="loginBody">
+		Message: $error.getMessage()
+			
+	</div>
 </div>
- 
+
 </body>
 </html>

@@ -14,7 +14,7 @@
         <attribute>
     	    <name>id</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
     </tag>
 
@@ -26,62 +26,62 @@
         <attribute>
     	    <name>id</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>useFullUrl</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>disablePageCache</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>disableNiceUri</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>trimResponse</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>evaluateFullPage</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>validateOnDates</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>contentType</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>pageCacheTimeout</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>considerEditorInDecoratedMode</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
     	<attribute>
     	    <name>selectiveCacheUpdateNonApplicable</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
     	<attribute>
     	    <name>operatingMode</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
     </tag>
 
@@ -93,17 +93,17 @@
         <attribute>
     	    <name>id</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	       	<rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>name</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>value</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
     </tag>
 
@@ -115,12 +115,12 @@
         <attribute>
     	    <name>value</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>prepend</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
     </tag>
 
@@ -132,12 +132,12 @@
         <attribute>
     	    <name>value</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>prepend</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
     </tag>
 
@@ -149,12 +149,12 @@
         <attribute>
     	    <name>name</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>value</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
     </tag>
 
@@ -166,12 +166,12 @@
         <attribute>
     	    <name>entity</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>entityId</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
     </tag>
 
@@ -183,83 +183,83 @@
         <attribute>
     	    <name>id</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
             <name>html</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>showInPublishedMode</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>contentId</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>showEditMetaData</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>showCreateSubpage</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>showEditInline</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>showEditContent</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>showCategorizeContent</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
 
         <attribute>
             <name>showPublishPage</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>showNotifyUserOfPage</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>showPageNotifications</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>showContentNotifications</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>showTranslateArticle</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>showCreateNewsFromContent</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>showMySettings</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
 

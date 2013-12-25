@@ -15,7 +15,7 @@
 	    <attribute>
 		    <name>id</name>
 	    	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>list</name>
@@ -42,17 +42,19 @@
 	    <attribute>
 		    <name>id</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>list</name>
 	    	<required>false</required>
 	        <rtexprvalue>true</rtexprvalue>
+	        <type>java.util.List</type>
 		</attribute>
 	    <attribute>
 		    <name>map</name>
 	    	<required>false</required>
 	        <rtexprvalue>true</rtexprvalue>
+	        <type>java.util.Map</type>
 		</attribute>
 	</tag>
 
@@ -64,22 +66,22 @@
 	    <attribute>
 		    <name>visibleElementsId</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>visibleSlotsId</name>
 	    	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>lastSlotId</name>
 	    	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>elements</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>maxSlots</name>
@@ -110,7 +112,7 @@
 	    <attribute>
 		    <name>id</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>value</name>
@@ -132,7 +134,7 @@
 	    <attribute>
 		    <name>id</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>value</name>
@@ -148,7 +150,7 @@
 	    <attribute>
 		    <name>id</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>value</name>
@@ -164,42 +166,42 @@
 	    <attribute>
 		    <name>id</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>baseURL</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>query</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>excludedQueryStringParameters</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>fullBaseUrl</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>disableNiceURI</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
 		    <name>allowMultipleArguments</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>		
 		<attribute>
 		    <name>includeCurrentQueryString</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>		
 	</tag>
 	<tag>
@@ -210,22 +212,22 @@
 	    <attribute>
 		    <name>name</name>
 	    	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>value</name>
 	    	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>scope</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>encodeWithEncoding</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
 	<tag>
@@ -236,37 +238,37 @@
         <attribute>
     	    <name>id</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>targetEndpointAddress</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>operationName</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>principalName</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>languageId</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>workflowName</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>inputs</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
     </tag>
 	<tag>
@@ -277,42 +279,42 @@
         <attribute>
     	    <name>id</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>targetEndpointAddress</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>operationName</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>principalName</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>languageId</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>workflowId</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>actionId</name>
         	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
     	    <name>inputs</name>
         	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
     </tag>
     <tag>
@@ -323,7 +325,7 @@
 	    <attribute>
 		    <name>id</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>contentId</name>
@@ -364,7 +366,7 @@
 	    <attribute>
 		    <name>id</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>url</name>
@@ -425,7 +427,7 @@
 	    <attribute>
 		    <name>id</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>url</name>
@@ -482,7 +484,7 @@
 	    <attribute>
 		    <name>id</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>text</name>
@@ -749,17 +751,17 @@
         <attribute>
             <name>id</name>
             <required>true</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>propertyName</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute >
             <name>contentId</name>
             <required>false</required>
-            <rtexprvalue>false</rtexprvalue>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <name>text</name>
@@ -1347,17 +1349,17 @@
 	    <attribute>
 		    <name>id</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>portletName</name>
 	    	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>action</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
 	<tag>
@@ -1368,17 +1370,17 @@
 	    <attribute>
 		    <name>name</name>
 	    	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>value</name>
 	    	<required>true</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>scope</name>
 	    	<required>false</required>
-	        <rtexprvalue>false</rtexprvalue>
+	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
 

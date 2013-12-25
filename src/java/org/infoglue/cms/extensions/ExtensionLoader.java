@@ -4,22 +4,32 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.io.FileHelper;
-import org.infoglue.cms.providers.ComponentModel;
 import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.deliver.invokers.DecoratedComponentBasedHTMLPageInvoker;
 
 import webwork.config.XMLActionConfigurationExtendor;
 
 public class ExtensionLoader 
 {
 	private final static Logger logger = Logger.getLogger(ExtensionLoader.class.getName());
+
+	private static List<String> extensions = new ArrayList<String>();
+	
+	/**
+	 * @return the extensions
+	 */
+	public static List<String> getExtensions() 
+	{
+		return extensions;
+	}
 
 	public void startExtensions() 
 	{
@@ -38,12 +48,12 @@ public class ExtensionLoader
 					logger.info("extensionFile:" + extensionFile.getPath());	
 				
 					String extensionDirName = extensionFile.getName().replaceAll(".jar", "");
-
+					
 					File extensionDir = new File(CmsPropertyHandler.getContextRootPath() + "extensions" + File.separator + extensionDirName);
 					extensionDir.delete();
 					extensionDir.mkdirs();
 
-					FileHelper.unjarFile(extensionFile, extensionDir.getPath(), new String[]{".class"});
+					FileHelper.unjarFileDirectories(extensionFile, extensionDir.getPath(), new String[]{"js","css","extra"});
 					logger.info("Unpacking resource into cms directory extensions/" + extensionDirName);
 					
 					Set<String> actionClassNames = new HashSet<String>();
@@ -105,7 +115,8 @@ public class ExtensionLoader
 							e.printStackTrace();
 						}
 					}
-					
+
+					extensions.add(extensionDirName);
 				}
 			}
 		}

@@ -467,10 +467,17 @@ public class OptimizedImportController extends BaseController implements Runnabl
 				
 				if(value != null && !value.equals("null"))
 				{
-					if(key.indexOf("_WYSIWYGConfig") > -1 || key.indexOf("_StylesXML") > -1 || key.indexOf("_extraProperties") > -1)
-						ps.setData(key, value.getBytes("utf-8"));
-					else
-						ps.setString(key, value);
+					try
+					{
+						if(key.indexOf("_WYSIWYGConfig") > -1 || key.indexOf("_StylesXML") > -1 || key.indexOf("_extraProperties") > -1)
+							ps.setData(key, value.getBytes("utf-8"));
+						else
+							ps.setString(key, value);
+					}
+					catch (Exception e) 
+					{
+						logger.error("Error saving property " + key + ":" + e.getMessage());
+					}
 				}
 			}
 		}
@@ -486,8 +493,15 @@ public class OptimizedImportController extends BaseController implements Runnabl
 			{
 				String oldContentId = splittedString[1];
 				key = key.replaceAll(oldContentId, (String)contentIdMap.get(oldContentId));
-				if(value != null && !value.equals("null"))
-					ps.setString(key, value);
+				try
+				{
+					if(value != null && !value.equals("null"))
+						ps.setString(key, value);
+				}
+				catch (Exception e) 
+				{
+					logger.error("Error saving property " + key + ":" + e.getMessage());
+				}
 			}
 		}
 
@@ -502,8 +516,15 @@ public class OptimizedImportController extends BaseController implements Runnabl
 			{
 				String oldSiteNodeId = splittedString[1];
 				key = key.replaceAll(oldSiteNodeId, (String)siteNodeIdMap.get(oldSiteNodeId));
-				if(value != null && !value.equals("null"))
-					ps.setString(key, value);
+				try
+				{
+					if(value != null && !value.equals("null"))
+						ps.setString(key, value);
+				}
+				catch (Exception e) 
+				{
+					logger.error("Error saving property " + key + ":" + e.getMessage());
+				}
 			}
 		}
 
@@ -1572,7 +1593,7 @@ public class OptimizedImportController extends BaseController implements Runnabl
 	            	            
 	            
 	            //logger.info("contentVersionValue before:" + contentVersionValue);
-	            
+
 	            Iterator contentIdMapIterator = contentIdMap.keySet().iterator();
 	            while (contentIdMapIterator.hasNext()) 
 	            {

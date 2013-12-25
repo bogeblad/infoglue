@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE web-app SYSTEM "web-app_2_3.dtd">
 <web-app>	
-<!--  
-<web-app 
-    xmlns="http://java.sun.com/xml/ns/javaee" 
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
-    version="2.5">
--->
 
 	<!-- This filter clears any cache waiting to be cleared -->
 	<filter>
@@ -140,12 +133,22 @@
             </param-value>
         </init-param>
     </filter>
-
+    
 	<!-- This filter sets expires headers and gzip the appropriate resources -->
 	<filter>  
 	    <filter-name>ResourceFilter</filter-name>  
      	<filter-class>org.infoglue.deliver.applications.filters.ResourceFilter</filter-class>  
   	</filter>  
+
+    <filter>
+        <filter-name>ExtensionFilter</filter-name>
+        <filter-class>org.infoglue.deliver.applications.filters.ExtensionFilter</filter-class>
+    </filter>
+
+	<filter-mapping>
+		<filter-name>ExtensionFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 
 	<filter-mapping>
 		<filter-name>CacheEvictionFilter</filter-name>
@@ -300,7 +303,6 @@
 		<location>/ErrorPage.action?responseCode=501</location>
 	</error-page>
 	
-	<!--<jsp-config>-->
 	<taglib>
 		<taglib-uri>infoglue-common</taglib-uri>
 		<taglib-location>/WEB-INF/tld/infoglue-common.tld</taglib-location>
@@ -325,5 +327,4 @@
 		<taglib-uri>infoglue-workflow</taglib-uri>
 		<taglib-location>/WEB-INF/tld/infoglue-workflow.tld</taglib-location>
 	</taglib>
-	<!--</jsp-config>-->
 </web-app>

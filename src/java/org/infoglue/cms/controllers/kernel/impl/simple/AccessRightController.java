@@ -2022,8 +2022,8 @@ public class AccessRightController extends BaseController
 			try 
 			{
 				preCacheUserAccessRightVOList(infoGluePrincipal, db);
-				logger.info("Done precaching all access rights for this user");
-				t.printElapsedTime("Done precaching all access rights for this user");
+				logger.info("Done precaching all access rights for this user.");
+				t.printElapsedTime("Done precaching all access rights for this user", 1000);
 			} 
 			catch (Exception e) 
 			{
@@ -2666,7 +2666,7 @@ public class AccessRightController extends BaseController
 			{
 				preCacheUserAccessRightVOList(infoGluePrincipal, db);
 				logger.info("Done precaching all access rights for this user");
-				t.printElapsedTime("Done precaching all access rights for this user");
+				t.printElapsedTime("Done precaching all access rights for this user", 1000);
 			} 
 			catch (Exception e) 
 			{

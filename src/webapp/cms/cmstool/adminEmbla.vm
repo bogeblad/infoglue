@@ -6,8 +6,11 @@
 	<script type="text/javascript" src="script/jqueryplugins-latest/ui/js/jquery-ui.min.js"></script>
 	
 	<link rel="stylesheet" type="text/css" href="css/admin.css" media="screen" />
-	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />	
-	
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />
+	#foreach($extension in $extensions)
+	<link rel="stylesheet" type="text/css" href="extensions/$extension/css/main.css" />	
+	#end	
+
 	<script type="text/javascript">
 	<!--	
 		/* Proxy functions */
@@ -210,6 +213,9 @@
 	
 	<script type="text/javascript" src="script/embla/drag.js"></script>
 	<script type="text/javascript" src="script/embla/admin.js"></script>
+	#foreach($extension in $extensions)
+	<script type="text/javascript" src="extensions/$extension/js/main.js"></script>	
+	#end	
 	
 	<link rel="icon" href="css/images/icons/ig-16.png" type="image/png" />
 	<link rel="SHORTCUT ICON" href="css/images/icons/ig-16.png" />

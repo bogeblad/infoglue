@@ -130,6 +130,9 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
 
     public Collection getKeys(String prefix, int type) throws PropertyException
     {
+    	if(wasDatabaseFaulty)
+    		return new ArrayList();
+    	
     	Timer t = new Timer();
 
     	//System.out.println("isRecacheCall:" + isRecacheCall); //valueMapType5 == null && !allKeysCachedType5

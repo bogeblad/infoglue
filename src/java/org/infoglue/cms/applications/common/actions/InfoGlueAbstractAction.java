@@ -70,6 +70,7 @@ import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
+import org.infoglue.cms.extensions.ExtensionLoader;
 import org.infoglue.cms.security.AuthenticationModule;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.security.interceptors.InfoGlueInterceptor;
@@ -1108,6 +1109,11 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		return AdminToolsService.getService().getTools(getInfoGluePrincipal(), getLocale());
 	}
 
+	public List<String> getExtensions()
+	{
+		return ExtensionLoader.getExtensions();
+	}
+	
     public String getToolName()
     {
         return this.getSession().getToolName();

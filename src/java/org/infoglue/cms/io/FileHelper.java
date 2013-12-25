@@ -516,7 +516,7 @@ public class FileHelper
 	}
 	
 	/**
-	 * This method unjars a file.
+	 * This method unjars a file skipping files with certain endings.
 	 */
 	
 	public static void unjarFile(File file, String targetFolder, String[] skipFileTypes) throws Exception
@@ -555,6 +555,49 @@ public class FileHelper
 	        {	
 	        	File targetFile = new File(targetFolder + File.separator + entry.getName());
 	        	//targetFile.mkdirs();
+	        	copyInputStream(zipFile.getInputStream(entry), new BufferedOutputStream(new FileOutputStream(targetFile)));
+	        }
+	    }
+	
+	    zipFile.close();
+	}
+	
+	/**
+	 * This method unjars a file skipping directories not included.
+	 */
+	
+	public static void unjarFileDirectories(File file, String targetFolder, String[] allowedDirectoriesArray) throws Exception
+	{
+		List<String> allowedDirectories = new ArrayList<String>();
+		if(allowedDirectoriesArray != null)
+			allowedDirectories = Arrays.asList(allowedDirectoriesArray);
+		
+    	Enumeration entries;
+    	
+    	JarFile zipFile = new JarFile(file);
+    	
+    	File extensionFolder = new File(targetFolder);
+    	if(extensionFolder.exists())
+    		extensionFolder.delete();
+    	
+    	extensionFolder.mkdir();
+    	
+      	entries = zipFile.entries();
+
+      	while(entries.hasMoreElements()) 
+      	{
+        	ZipEntry entry = (ZipEntry)entries.nextElement();
+        	logger.info("entry:" + entry.getName());
+        	
+	        if(entry.isDirectory() && allowedDirectories.contains(entry.getName().replaceFirst("/", ""))) 
+	        {
+	          	(new File(targetFolder + File.separator + entry.getName())).mkdir();
+	          	continue;
+	        }
+	
+	        if(allowedDirectories.contains(entry.getName().replaceFirst("/.*", "")))
+	        {	
+	        	File targetFile = new File(targetFolder + File.separator + entry.getName());
 	        	copyInputStream(zipFile.getInputStream(entry), new BufferedOutputStream(new FileOutputStream(targetFile)));
 	        }
 	    }

@@ -664,7 +664,7 @@ public class CmsPropertyHandler
 	{
 		String contextDiskPath = getProperty("contextDiskPath");
 		
-		if(contextDiskPath == null || contextDiskPath.equals(""))
+		if(contextDiskPath == null || contextDiskPath.equals("") || contextDiskPath.contains("@deploy.dir.working@"))
 			return getContextRootPath();
 		else
 			return contextDiskPath;
@@ -1180,7 +1180,7 @@ public class CmsPropertyHandler
 
 	public static String getPrefferedWYSIWYG()
 	{
-		return getServerNodeProperty("prefferedWYSIWYG", true, "fckeditor2");
+		return getServerNodeProperty("prefferedWYSIWYG", true, "ckeditor4");
 	}
 
 	public static String getDefaultNumberOfYearsBeforeExpire()
@@ -1955,7 +1955,7 @@ public class CmsPropertyHandler
 
 	public static String getMetaInfoAttributesToShowInCreatePageDialog()
 	{
-	    return getServerNodeProperty("metaInfoAttributesToShowInCreatePageDialog", true, "NiceURIName");
+	    return getServerNodeProperty("metaInfoAttributesToShowInCreatePageDialog", true, "Title,NavigationTitle,NiceURIName");
 	}
 
 	public static String getPreferredLanguageCode(String userName)

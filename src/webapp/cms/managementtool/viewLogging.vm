@@ -8,39 +8,69 @@
 		}
 	-->
 	</script>
+
+	<style type="text/css">
+		html, body, .fullymarginalized {height: 100%;}
+		#logControllers {
+			display: block;
+			width: 100%;
+			height: 160px;
+			padding: 20px;
+			box-sizing: border-box;
+		}
+		#logViewContainer {
+			width:100%;
+			height: 360px;
+			height: -moz-calc(100% - 160px);
+			height: -webkit-calc(100% - 160px);
+			height: calc(100% - 160px);
+			box-sizing:border-box;
+			padding: 20px;
+			padding-top: 0;
+		}
+		#logViewContainer > textarea {
+			width: 100%;
+			height: 100%;
+			font-family: Arial;
+			font-size: 10px;
+			border: 1px solid #333333;
+			box-sizing: border-box;
+		}
+	</style>
 #end
 
 #beginLightCommonToolV3Impl("tool.managementtool.viewSystemTools.header" "" "" false true false $headerMarkup false "")
 
 <div class="fullymarginalized">
 
+	<header id="logControllers">
 	<h3>$ui.getString("tool.managementtool.loggingTool.header")</h3>
-	<form id="logForm" name="logForm" action="ViewLogging.action"> 
-		<strong>$ui.getString("tool.managementtool.logFiles.label"):</strong><br/>
-		<select id="logFileName" name="logFileName">
-			#foreach($file in $logFiles)
-			#set($fileSize = $this.getFileSize($file.length()))
-			<option value="$file.path" #checkSelected("$file.path" $!logFileName)>$file.name ($this.getLastModifiedDateString($file.lastModified()) - Size: $fileSize)</option>
-			#end
-		</select>
-		<strong>$ui.getString("tool.managementtool.logLines.label"):</strong>
-		<select id="logLines" name="logLines">
-			<option value="10" #checkSelected("$logLines" "10")>10</option>
-			<option value="50" #checkSelected("$logLines" "50")>50</option>
-			<option value="100" #checkSelected("$logLines" "100")>100</option>
-			<option value="500" #checkSelected("$logLines" "500")>500</option>
-			<option value="1000" #checkSelected("$logLines" "1000")>1000</option>
-			<option value="10000" #checkSelected("$logLines" "10000")>10000</option>
-		</select>
-		<a href="#" onclick="downloadFile(); return false;">$ui.getString("tool.common.download.label")</a>
-		<br/>
-		
-		<strong>$ui.getString("tool.managementtool.logFragment.label"):</strong><br/>
-  	</form>
-  	<p>
-  		<textarea id="logFragment" name="logFragment" class="normaltextfield" rows="10" cols="50" style="width:90%; height: 400px; border: 1px solid #333333; font-family: Arial; font-size: 10px;">$logFragment</textarea><br/>
-		<input id="submit" type="submit" value="$ui.getString("tool.managementtool.logRefresh.label")" onclick="document.logForm.submit();"/>
-	</p>
+		<form id="logForm" name="logForm" action="ViewLogging.action">
+			<strong>$ui.getString("tool.managementtool.logFiles.label"):</strong><br/>
+			<select id="logFileName" name="logFileName">
+				#foreach($file in $logFiles)
+				#set($fileSize = $this.getFileSize($file.length()))
+				<option value="$file.path" #if("$file.path" == "$!logFileName") selected="selected" #end>$file.name ($this.getLastModifiedDateString($file.lastModified()) - Size: $fileSize)</option>
+				#end
+			</select>
+			<strong>$ui.getString("tool.managementtool.logLines.label"):</strong>
+			<select id="logLines" name="logLines">
+				<option value="10" #if("$logLines" == "10") selected="selected" #end>10</option>
+				<option value="50" #if("$logLines" == "50") selected="selected" #end>50</option>
+				<option value="100" #if("$logLines" == "100") selected="selected" #end>100</option>
+				<option value="500" #if("$logLines" == "500") selected="selected" #end>500</option>
+				<option value="1000" #if("$logLines" == "1000") selected="selected" #end>1000</option>
+				<option value="10000" #if("$logLines" == "10000") selected="selected" #end>10000</option>
+			</select>
+			<input id="submit" type="submit" value="$ui.getString("tool.managementtool.logRefresh.label")" onclick="document.logForm.submit();"/>
+			<a href="#" onclick="downloadFile(); return false;">$ui.getString("tool.common.download.label")</a>
+			<br/><br/>
+			<strong>$ui.getString("tool.managementtool.logFragment.label") ($!logFileName):</strong><br/>
+		</form>
+	</header>
+	<div id="logViewContainer">
+		<textarea id="logFragment" name="logFragment" class="normaltextfield" rows="10" cols="50">$logFragment</textarea><br/>
+	</div>
 </div>
 
 </body>

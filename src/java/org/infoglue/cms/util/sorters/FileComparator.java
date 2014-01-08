@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
  * @author Mattias Bogeblad
  */
 
-public class FileComparator implements Comparator
+public class FileComparator implements Comparator<Object>
 {
     private final static Logger logger = Logger.getLogger(FileComparator.class.getName());
 

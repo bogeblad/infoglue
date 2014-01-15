@@ -859,7 +859,7 @@ public class LuceneController extends BaseController implements NotificationList
 	
 	public void notifyListeners(boolean forceVersionIndexing, boolean checkForIndexingJobs) throws IOException, Exception
 	{
-		if(!CmsPropertyHandler.getInternalSearchEngine().equalsIgnoreCase("lucene"))
+		if(!CmsPropertyHandler.getInternalSearchEngine().equalsIgnoreCase("lucene") || CmsPropertyHandler.getContextDiskPath().contains("@deploy.dir"))
 			return;
 
 		boolean initDoneLocally = false;

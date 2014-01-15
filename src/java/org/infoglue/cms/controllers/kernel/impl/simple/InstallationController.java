@@ -54,6 +54,8 @@ import org.dom4j.Element;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.mapping.Mapping;
 import org.infoglue.cms.applications.common.VisualFormatter;
+import org.infoglue.cms.applications.databeans.ProcessBean;
+import org.infoglue.cms.applications.managementtool.actions.ImportRepositoryAction;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.exception.SystemException;
@@ -584,7 +586,7 @@ public class InstallationController extends BaseController
 		contents = contents.replaceAll("@protectContentTypes@", "false");
 		contents = contents.replaceAll("@protectWorkflows@", "false");
 		contents = contents.replaceAll("@protectCategories@", "false");
-		contents = contents.replaceAll("@wysiwygEditor@", "FCKEditor");
+		contents = contents.replaceAll("@wysiwygEditor@", "ckeditor4");
 		contents = contents.replaceAll("@edition.pageSize@", "20");
 		contents = contents.replaceAll("@masterServer@", "");
 		contents = contents.replaceAll("@slaveServer@", "");
@@ -1032,77 +1034,20 @@ public class InstallationController extends BaseController
 
 	private void createSampleSites() throws SystemException 
 	{
-		Database db = CastorDatabaseService.getDatabase();
+		VisualFormatter visualFormatter = new VisualFormatter();
+
+		File file = new File(CmsPropertyHandler.getSQLUpgradePath() + File.separator + "www.infoglue.org.zip");
+		if(file == null || !file.exists())
+			throw new SystemException("The file upload must have gone bad as no example site was found.");
 		
+		String exportId = "Import_" + visualFormatter.formatDate(new Date(), "yyyy-MM-dd_HHmm");
+		ProcessBean processBean = ProcessBean.createProcessBean(ImportRepositoryAction.class.getName(), exportId);
 		try 
 		{
-			//now restore the value and list what we get
-			File file = new File(CmsPropertyHandler.getSQLUpgradePath() + File.separator + "www.infoglue.org.xml");
-			if(file == null || !file.exists())
-				throw new SystemException("The file upload must have gone bad as no example site was found.");
-			
-			String encoding = "UTF-8";
-			int version = 2;
-			
-            Mapping map = new Mapping();
-		    logger.info("MappingFile:" + CastorDatabaseService.class.getResource("/xml_mapping_site_2.5.xml").toString());
-		    map.loadMapping(CastorDatabaseService.class.getResource("/xml_mapping_site_2.5.xml").toString());	
-
-			// All ODMG database access requires a transaction
-			db.begin();
-			
-			Map contentIdMap = new HashMap();
-			Map siteNodeIdMap = new HashMap();
-			List allContentIds = new ArrayList();
-
-			Map<String,String> replaceMap = new HashMap<String,String>();
-			ImportController.getController().importRepository(db, map, file, encoding, version, "false", false, contentIdMap, siteNodeIdMap, allContentIds, replaceMap, false);
-			
-			db.commit();
-			db.close();
-			
-			Iterator allContentIdsIterator = allContentIds.iterator();
-			while(allContentIdsIterator.hasNext())
-			{
-				Integer contentId = (Integer)allContentIdsIterator.next();
-				try
-				{
-					db = CastorDatabaseService.getDatabase();
-					db.begin();
-	
-					Content content = ContentController.getContentController().getContentWithId(contentId, db);
-					ImportController.getController().updateContentVersions(content, contentIdMap, siteNodeIdMap, "false", new HashMap());
-	
-					db.commit();
-				}
-				catch(Exception e)
-				{
-					try
-					{
-						db.rollback();
-					}
-					catch(Exception e2) { e2.printStackTrace(); }
-	                logger.error("An error occurred when updating content version for content: " + e.getMessage(), e);					
-				}
-				finally
-				{
-					db.close();					
-				}
-			}
-		} 
+			OptimizedImportController.importRepositories(file, "false", null, null, processBean);
+		}
 		catch ( Exception e) 
-		{
-			try
-            {
-                db.rollback();
-                db.close();
-            } 
-			catch (Exception e1)
-            {
-                logger.error("An error occurred when importing a repository: " + e.getMessage(), e);
-    			throw new SystemException("An error occurred when importing a repository: " + e.getMessage(), e);
-            }
-			
+		{	
 			logger.error("An error occurred when importing a repository: " + e.getMessage(), e);
 			throw new SystemException("An error occurred when importing a repository: " + e.getMessage(), e);
 		}
@@ -2037,7 +1982,7 @@ public class InstallationController extends BaseController
 			String igUser = getJDBCParamFromCastorXML("//param[@name='username']");
 			String igPassword = getJDBCParamFromCastorXML("//param[@name='password']");
 			
-			if(jdbcDriverName.indexOf("@database.url@") > -1)
+			if(jdbcDriverName.indexOf("@database.driver.class@") > -1)
 				return DATABASE_PARAMETERS_MISSING;
 			
 			Connection conn = getConnection(jdbcDriverName, jdbcURL, igUser, igPassword);
@@ -2068,7 +2013,7 @@ public class InstallationController extends BaseController
 	    		logger.error("Was a missing database error based on errorMessage");
 	    		return DATABASE_SERVER_MISSING_DATABASE;
 	    	}
-	    	else if(e instanceof ConnectException || e.getCause() != null && e.getCause() instanceof ConnectException || e.getCause().getCause() != null && e.getCause().getCause() instanceof ConnectException)
+	    	else if(e instanceof ConnectException || (e.getCause() != null && e.getCause() instanceof ConnectException) || (e.getCause() != null && e.getCause().getCause() != null && e.getCause().getCause() instanceof ConnectException))
 	    	{
 	    		logger.error("Was a connection error based on ConnectException");
 	    		return DATABASE_SERVER_DOWN;

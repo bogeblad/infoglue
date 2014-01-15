@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 /**
  * Sort on a particular property, using reflection to find the value
  *
- * @author Frank Febbraro (frank@phase2technology.com)
+ * @author Mattias Bogeblad
  */
 public class ReflectionComparator implements Comparator
 {

@@ -1323,6 +1323,10 @@
 		<view name="success">ViewSiteNode.action?stay=true</view>
 		<view name="error">/cms/structuretool/error.vm</view>
 	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.UpdateSiteNodeVersionAction" alias="UpdateSiteNodeVersion">
+		<view name="success">ExtendedRedirect.action?url=ViewSiteNodeHistory.action#siteNodeId#inline</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>
 	<action name="org.infoglue.cms.applications.structuretool.actions.ChangeSiteNodeStateAction" alias="ChangeSiteNodeState">
 		<view name="success">ViewSiteNode.action?stay=true</view>
 		<view name="commentVersion">/cms/structuretool/viewSiteNodeVersionComment.vm</view>

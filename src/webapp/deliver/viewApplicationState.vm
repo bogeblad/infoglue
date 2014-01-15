@@ -57,7 +57,32 @@
 			margin-right: 50px;
 			margin-top	: 10%;
 		}
-		
+
+		ul.linkList {
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+		}
+
+		ul.linkList a:visited {
+			color: blue;
+		}
+
+		li.linkList {
+			margin: 0 0 0 10px;
+			padding: 0;
+			display: inline-block;
+		}
+
+		li.linkList::before {
+			content: "|";
+			margin-right: 10px;
+		}
+		li.linkList:first-child::before {
+			margin: 0;
+			content: "";
+		}
+
 	-->
 	</style>
 	<script type="text/javascript">
@@ -77,10 +102,10 @@
 				if(div && div.style.display == 'table-row')
 					div.style.display = 'none';
 				else
-					div.style.display = 'table-row';				
+					div.style.display = 'table-row';
 			}
 		}
-	-->		
+	-->
 	</script>
 </head>
 
@@ -146,20 +171,40 @@
   <tr class="label">
     <td colspan="4">Log settings</td>
   </tr>
+  #if($currentModifications.size() > 0)
+  <tr>
+    <td colspan="4" class="text" style="border-bottom: 1px solid #999999;" align="left">
+      <strong>Current log modifications</strong>
+    </td>
+  </tr>
+  #end
+  #foreach($modification in $currentModifications)
+  <tr>
+    <td style="border-bottom: 1px solid #999999;" class="text">
+      $modification.name
+    </td>
+    <td colspan="3" style="border-bottom: 1px solid #999999; text-transform:lowercase;" class="text">
+      #foreach($entry in $levels.entrySet())
+       <a href="ViewApplicationState!setLogLevel.action?className=$modification.name&logLevel=$entry.key" #if($modification.level == $entry.value) style="text-decoration: none; color:black;" onclick="return false;" #end>$entry.value</a> |
+	  #end
+	  <a href="ViewApplicationState!setLogLevel.action?className=$modification.name"><strong>clear</strong></a>
+    </td>
+  </tr>
+  #end
   <tr>
     <td colspan="4" class="text" align="left">
-    	<form action="ViewApplicationState!setLogLevel.action"> 
+    	<form action="ViewApplicationState!setLogLevel.action" id="logForm"> 
 	    	ClassName:
-	    	<input type="textfield" name="className">
+	    	<input type="textfield" name="className" id="classNameField">
 	    	Log level:
 	    	<select name="logLevel">
-	    		<option value="debug">Debug</option>
-	    		<option value="info">Information</option>
-	    		<option value="warn">Warning</option>
-	    		<option value="error">Error</option>
+	    		#foreach($entry in $levels.entrySet())
+	    			<option value="$entry.key">$entry.value</option>
+	    		#end
 	    	</select>
 	    	<input type="submit" value="Submit"/>
 	    </form>
+	    
     </td>
   </tr>
   <tr>

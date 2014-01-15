@@ -3,6 +3,10 @@
 
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
 
+	<!--
+	By default error level messages are logged here.
+	On a normal Tomcat installation events logged to the console will be piped
+	to catalina.out. -->
 	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
 		<param name="Target" value="System.out"/>
 		<param name="Threshold" value="ERROR"/>
@@ -11,29 +15,48 @@
 		</layout>
 	</appender>
 
-	<appender name="CONSOLE-DEBUG" class="org.apache.log4j.ConsoleAppender">
-		<param name="Target" value="System.out"/>
-		<param name="Threshold" value="DEBUG"/>
-		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%d{dd MMM yyyy HH:mm:ss.SSS} [%-5p] [%t] [%c] - %m%n"/>
-		</layout>
-	</appender>
-
+	<!--
+	Used to log warning level messages from Infoglue.
+	OBS: This has to be a subclass of the FileAppender class since Infoglue
+	  will set the file path to the log file dynamically. Also the name of the appender
+	  have to be 'INFOGLUE-FILE' and nothing else. -->
 	<appender name="INFOGLUE-FILE" class="org.apache.log4j.RollingFileAppender">
-		<!--<param name="File" value="${catalina.base}/logs/infoglue.log"/>-->
 		<param name="Append" value="true"/>
- 		<param name="MaxFileSize" value="10MB"/>
+		<param name="MaxFileSize" value="10MB"/>
 		<param name="MaxBackupIndex" value="5"/>
 		<param name="Threshold" value="WARNING"/>
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d{dd MMM yyyy HH:mm:ss.SSS} [%-5p] [%t] [%c] - %m%n"/>
 		</layout>
 		<filter class="org.apache.log4j.varia.LevelRangeFilter">
-      		<param name="LevelMin" value="WARN" />
-      		<param name="LevelMax" value="WARN" />
-    	</filter>
-   	</appender>
+			<param name="LevelMin" value="WARN" />
+			<param name="LevelMax" value="WARN" />
+		</filter>
+	</appender>
 
+	<!--
+	This appender is used to log events from categories whose level has been changed using
+	Infoglue's debug logging feature. See the Infoglue documentation for more information about this.
+	The appender type may be changed but the name has to be 'INFOGLUE-DEBUG' for the debug logging
+	feature to work. -->
+	<appender name="INFOGLUE-DEBUG" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.out"/>
+		<param name="Threshold" value="TRACE"/>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{dd MMM yyyy HH:mm:ss.SSS} [%-5p] [%t] [%c] - %m%n"/>
+		</layout>
+	</appender>
+
+	<!-- Not used anymore. Included for compatibility. -->
+	<appender name="CONSOLE-DEBUG" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.out"/>
+		<param name="Threshold" value="TRACE"/>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{dd MMM yyyy HH:mm:ss.SSS} [%-5p] [%t] [%c] - %m%n"/>
+		</layout>
+	</appender>
+
+	<!-- Not used anymore. Included for compatibility. -->
 	<appender name="INFOGLUE-FILE-DEBUG" class="org.apache.log4j.RollingFileAppender">
 		<param name="File" value="${catalina.base}/logs/infoglue-debug.log"/>
 		<param name="Append" value="true"/>
@@ -44,11 +67,11 @@
 			<param name="ConversionPattern" value="%d{dd MMM yyyy HH:mm:ss.SSS} [%-5p] [%t] [%c] - %m%n"/>
 		</layout>
 		<filter class="org.apache.log4j.varia.LevelRangeFilter">
-      		<param name="LevelMin" value="DEBUG" />
-      		<param name="LevelMax" value="INFO" />
-    	</filter>
-   	</appender>
- 
+			<param name="LevelMin" value="DEBUG" />
+			<param name="LevelMax" value="INFO" />
+		</filter>
+	</appender>
+
 	<!-- Appender Chainsaw GUI Log viewer
 	<appender name="CHAINSAW" class="org.apache.log4j.net.SocketAppender">
 		<param name="remoteHost" value="localhost"/>
@@ -148,6 +171,15 @@
 	
 	<category name="net.sf.hibernate">
 		<priority value="WARN"/>
+	</category>
+
+	<!--
+	This category is used by Infoglue to access the INFOGLUE-DEBUG appender
+	If this category is changed or removed Infoglue's debug loggin feature
+	may stop working. -->
+	<category name="org.infoglue.debug-dummy">
+		<priority value="ERROR"/>
+		<appender-ref ref="INFOGLUE-DEBUG"/>
 	</category>
 
 	<!-- Anyhing not caught by the above categories will be caught here -->

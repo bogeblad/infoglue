@@ -35,14 +35,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Appender;
 import org.apache.log4j.Category;
 import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.Term;
@@ -68,6 +71,7 @@ import org.infoglue.cms.util.CmsSessionContextListener;
 import org.infoglue.cms.util.sorters.AverageInvokingTimeComparator;
 import org.infoglue.deliver.applications.databeans.CacheEvictionBean;
 import org.infoglue.deliver.controllers.kernel.impl.simple.ExtranetController;
+import org.infoglue.deliver.controllers.kernel.impl.simple.LogModifierController;
 import org.infoglue.deliver.portal.ServletConfigContainer;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.CompressionHelper;
@@ -83,9 +87,9 @@ import com.opensymphony.oscache.web.ServletCache;
 import com.opensymphony.oscache.web.ServletCacheAdministrator;
 
 /**
- * This is the action that shows the application state and also can be used to set up surveilence.
- * The idea is to have one command which allways returns a known resultpage if it's ok. Otherwise it prints
- * an error-statement. This action is then called every x minutes by the surveilence and an alarm is raised if something is wrong.
+ * This is the action that shows the application state and also can be used to set up surveillance.
+ * The idea is to have one command which always returns a known resultpage if it's OK. Otherwise it prints
+ * an error-statement. This action is then called every x minutes by the surveillance and an alarm is raised if something is wrong.
  * We also have a command which can list more status about the application.
  *
  * @author Mattias Bogeblad
@@ -111,7 +115,8 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 	private boolean preCache 				= false;
 
 	private String className				= "";
-	private String logLevel					= "";
+	private Integer logLevel				= null;
+	private Boolean storeFavorite			= null;
 
 	private String attributeName			= "";
 	private String returnAddress			= null;
@@ -120,28 +125,29 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 	private String searchString				= "";
 	private Integer maxHits					= 100;
 	private List<Document> docs 			= null;
-	
+
 	private static VisualFormatter formatter = new VisualFormatter();
-	
+
 	/**
 	 * The constructor for this action - contains nothing right now.
 	 */
-    
+
     public ViewApplicationStateAction() 
     {
-	
     }
-    
+
     private Category getDeliverCategory()
     {
-        Enumeration enumeration = Logger.getCurrentCategories();
+    	@SuppressWarnings("unchecked")
+		Enumeration<Logger> enumeration = LogManager.getLoggerRepository().getCurrentLoggers();
+
         while(enumeration.hasMoreElements())
         {
-            Category category = (Category)enumeration.nextElement();
-            if(category.getName().equalsIgnoreCase("org.infoglue.deliver"))
-                return category;
+        	Logger logger = enumeration.nextElement();
+            if(logger.getName().equalsIgnoreCase("org.infoglue.deliver"))
+                return logger;
         }
-        
+
         return null;
     }
 
@@ -578,38 +584,15 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
         return "cleared";
     }
 
-    /**
-     * This action allows setting of the loglevel on any class.
-     */
-    public String doSetLogLevel() throws Exception
-    {
-    	Level newLevel = Level.ERROR;
-    	if(this.logLevel.equalsIgnoreCase("debug"))
-    		newLevel = Level.DEBUG;
-    	if(this.logLevel.equalsIgnoreCase("info"))
-    		newLevel = Level.INFO;
-    	else if(this.logLevel.equalsIgnoreCase("warn"))
-    		newLevel = Level.WARN;
-    	else if(this.logLevel.equalsIgnoreCase("error"))
-    		newLevel = Level.ERROR;
-    	
-    	Category category = getCategory(this.className);
-    	if(category != null)
-    	{
-    		category.setLevel(newLevel);
-    		
-			Enumeration enumeration = Logger.getLogger("org.infoglue.console-debug-dummy").getAllAppenders();
-	        while(enumeration.hasMoreElements())
-	        {
-	        	Appender appender = (Appender)enumeration.nextElement();
-	           	category.addAppender(appender);
-	            break;
-	        }
+	/**
+	 * This action allows setting of the loglevel on any class.
+	 */
+	public String doSetLogLevel() throws Exception
+	{
+		LogModifierController.getController().changeLogLevel(this.className, this.logLevel);
 
-    	}
-    	
-        return "cleared";
-    }
+		return "cleared";
+	}
 
     /**
      * This action allows setting of the loglevel on some basic classes.
@@ -623,7 +606,7 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
         CacheController.logger.setLevel(Level.INFO);
         getDeliverCategory().setLevel(Level.INFO);
         getCastorJDOCategory().setLevel(Level.INFO);
-        
+
         return "cleared";
     }
 
@@ -1387,7 +1370,17 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 		}
     	return data;
     }
-    
+
+	public Map<Integer, Level> getLevels()
+	{
+		return LogModifierController.getController().getLevels();
+	}
+
+	public Set<Logger> getCurrentModifications()
+	{
+		return LogModifierController.getController().getCurrentModifications();
+	}
+
     public String doCacheEntryGroups() throws Exception
     {
     	System.out.println(this.cacheName);
@@ -1477,7 +1470,7 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 		this.className = className;
 	}
 
-	public void setLogLevel(String logLevel) 
+	public void setLogLevel(Integer logLevel) 
 	{
 		this.logLevel = logLevel;
 	}
@@ -1565,6 +1558,11 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 	public void setMaxHits(Integer maxHits)
 	{
 		this.maxHits = maxHits;
+	}
+	
+	public void setStoreFavorite(Boolean storeFavorite)
+	{
+		this.storeFavorite = storeFavorite;
 	}
 
 	public List<Document> getSearchResult()

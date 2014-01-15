@@ -57,10 +57,10 @@ public class ViewLoggingAction extends InfoGlueAbstractAction
     private final static Logger logger = Logger.getLogger(ViewLoggingAction.class.getName());
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private String logFragment = "";
 	private int logLines = 50;
-	private List logFiles = new ArrayList();
+	private List<File> logFiles = new ArrayList<File>();
 	private String logFileName = null;
 
 	/**
@@ -69,20 +69,16 @@ public class ViewLoggingAction extends InfoGlueAbstractAction
 	 */
 	public String doDownloadFile() throws Exception
 	{
-		boolean allowAccess = true;
         if(!ServerNodeController.getController().getIsIPAllowed(getRequest()))
         {
         	java.security.Principal principal = (java.security.Principal)getHttpSession().getAttribute("infogluePrincipal");
     		if(principal == null)
     			principal = getInfoGluePrincipal();
-    		
     		if(principal != null && org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController.getController().getIsPrincipalAuthorized((org.infoglue.cms.security.InfoGluePrincipal)principal, "ViewApplicationState.Read", false, true))
     		{
-    			allowAccess = true;
     		}
     		else
     		{
-    			allowAccess = false;
     			logger.error("A client with IP " + getRequest().getRemoteAddr() + " was denied access to the download action. Could be a hack attempt or you have just not configured the allowed IP-addresses correct.");
                	this.getResponse().setContentType("text/plain");
                 this.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -90,24 +86,24 @@ public class ViewLoggingAction extends InfoGlueAbstractAction
                 return NONE;
     		}
         }
-    	
+
     	if(logFileName != null && !logFileName.equals(""))
     	{
         	String catalinaBase = System.getProperty("catalina.base");
         	if(catalinaBase == null || catalinaBase.equals(""))
-        	{	
+        	{
         		catalinaBase = CmsPropertyHandler.getContextRootPath().substring(0, CmsPropertyHandler.getContextRootPath().lastIndexOf("/"));
         	}
         	catalinaBase = catalinaBase + File.separator + "logs";
 
         	String velocityLog = CmsPropertyHandler.getContextRootPath() + File.separator + "velocity.log";
 
-    		List fileList = Arrays.asList(new File(catalinaBase).listFiles());
+    		List<File> fileList = Arrays.asList(new File(catalinaBase).listFiles());
     		logFiles.addAll(fileList);
-    		
-    		List debugFileList = Arrays.asList(new File(CmsPropertyHandler.getContextRootPath() + File.separator + "logs").listFiles());
+
+    		List<File> debugFileList = Arrays.asList(new File(CmsPropertyHandler.getContextRootPath() + File.separator + "logs").listFiles());
     		logFiles.addAll(debugFileList);
-    		
+
     		File velocityLogFile = new File(velocityLog);
     		if(velocityLogFile.exists())
     		{
@@ -123,10 +119,10 @@ public class ViewLoggingAction extends InfoGlueAbstractAction
 	    		HttpServletResponse response = this.getResponse();
 	    		response.addHeader("Content-Type", "application/force-download");
 	    		response.addHeader("Content-Disposition", "attachment; filename=\"downloadedLog.txt\"");
-	    		
+
 		        // print some html
 		        ServletOutputStream out = response.getOutputStream();
-		        
+
 		        // print the file
 		        InputStream in = null;
 		        try 
@@ -151,51 +147,48 @@ public class ViewLoggingAction extends InfoGlueAbstractAction
                 return NONE; 
     		}
     	}
-    	
+
 		return NONE;
 	}
-	
+
 	/**
 	 * This is the normal log view action. Takes a file name as input and tail the file with x-lines.
 	 */
     public String doExecute() throws Exception
     {
-    	boolean allowAccess = true;
     	if(!ServerNodeController.getController().getIsIPAllowed(this.getRequest()))
         {
     		java.security.Principal principal = (java.security.Principal)getHttpSession().getAttribute("infogluePrincipal");
     		if(principal == null)
     			principal = getInfoGluePrincipal();
-    		
+
     		if(principal != null && org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController.getController().getIsPrincipalAuthorized((org.infoglue.cms.security.InfoGluePrincipal)principal, "ViewApplicationState.Read", false, true))
     		{
-    			allowAccess = true;
     		}
     		else
     		{
-    			allowAccess = false;
     			this.getResponse().setContentType("text/plain");
                 this.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
                 this.getResponse().getWriter().println("You have no access to this view - talk to your administrator if you should. Try go through the ViewApplicationState.action if you have an account that have access.");
                 return NONE;
     		}
         }
-    	
+
     	String catalinaBase = System.getProperty("catalina.base");
     	if(catalinaBase == null || catalinaBase.equals(""))
-    	{	
+    	{
     		catalinaBase = CmsPropertyHandler.getContextRootPath().substring(0, CmsPropertyHandler.getContextRootPath().lastIndexOf("/"));
     	}
     	catalinaBase = catalinaBase + File.separator + "logs";
 
     	String velocityLog = CmsPropertyHandler.getContextRootPath() + File.separator + "velocity.log";
 
-		List fileList = Arrays.asList(new File(catalinaBase).listFiles());
+		List<File> fileList = Arrays.asList(new File(catalinaBase).listFiles());
 		logFiles.addAll(fileList);
-		
-		List debugFileList = Arrays.asList(new File(CmsPropertyHandler.getContextRootPath() + File.separator + "logs").listFiles());
+
+		List<File> debugFileList = Arrays.asList(new File(CmsPropertyHandler.getContextRootPath() + File.separator + "logs").listFiles());
 		logFiles.addAll(debugFileList);
-		
+
 		File velocityLogFile = new File(velocityLog);
 		if(velocityLogFile.exists())
 		{
@@ -211,10 +204,10 @@ public class ViewLoggingAction extends InfoGlueAbstractAction
 			if(logFiles.size() > 0)
 			{
 				fileName = ((File)logFiles.get(0)).getPath();
-				Iterator filesIterator = logFiles.iterator();
+				Iterator<File> filesIterator = logFiles.iterator();
 				while(filesIterator.hasNext())
 				{
-					File file = (File)filesIterator.next();
+					File file = filesIterator.next();
 					if(file.getName().equals("catalina.out"))
 					{
 						fileName = file.getPath();
@@ -222,26 +215,27 @@ public class ViewLoggingAction extends InfoGlueAbstractAction
 					}
 				}
 			}
+			logFileName = fileName;
 		}
 		else
 		{
 			fileName = "An invalid file requested - could be an hack attempt:" + logFileName;
-			Iterator filesIterator = logFiles.iterator();
+			Iterator<File> filesIterator = logFiles.iterator();
 			while(filesIterator.hasNext())
 			{
-				File file = (File)filesIterator.next();
+				File file = filesIterator.next();
 				if(file.getPath().equals(logFileName))
 				{
 					fileName = logFileName;
 					break;
 				}
-			}			
+			}
 		}
-					
+
 		File file = new File(fileName);
-		
+
     	logFragment = FileHelper.tail(file, logLines);
-    	
+
         return "success";
     }
 
@@ -250,7 +244,7 @@ public class ViewLoggingAction extends InfoGlueAbstractAction
 		return logFragment;
 	}
 
-	public List getLogFiles() 
+	public List<File> getLogFiles() 
 	{
 		return logFiles;
 	}
@@ -274,19 +268,19 @@ public class ViewLoggingAction extends InfoGlueAbstractAction
 	{
 		this.logFileName = logFileName;
 	}
-    
+
 	public String getLastModifiedDateString(long lastModified)
 	{
 		Date date = new Date(lastModified);
 		String lastModifiedDateString = new VisualFormatter().formatDate(date, "yy-MM-dd HH:ss");
-		
+
 		return lastModifiedDateString;
 	}
 
 	public String getFileSize(long size)
 	{
 		String fileSize = new MathHelper().fileSize(size);
-		
+
 		return fileSize;
 	}
 }

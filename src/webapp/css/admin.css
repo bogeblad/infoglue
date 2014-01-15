@@ -37,7 +37,7 @@ html,body {
 	background-image: url(images/tileGradient.gif);
 	background-position: left center;
 	background-repeat: repeat-y;
-	border: 1px solid #6593cf;
+	border: 1px solid #9E9E9E;
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: 13px;
 	cursor:pointer;
@@ -98,6 +98,9 @@ html,body {
 }
 #CalendarToolTab.middleTabPart, #CalendarToolTab.middleTabPartSelected {
 	border-top: 3px solid red;
+}
+#FormsToolTab.middleTabPart, #FormsToolTab.middleTabPartSelected {
+	border-top: 3px solid brown;
 }
 #SearchToolTab.middleTabPart, #SearchToolTab.middleTabPartSelected {
 	border-top: 3px solid indigo;

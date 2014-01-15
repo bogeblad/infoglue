@@ -112,7 +112,7 @@
 						var offset = $(this).offset();
 						var top = offset.top;
 						var left = offset.left;
-						$("#subButtons$parentCount").css("top", (top + $(this).parent().height()-2) + "px")
+						$("#subButtons$parentCount").css("top", (top + $(this).parent().height()) + "px")
 						$("#subButtons$parentCount").css("left", left - 13 + "px");
 						$("#subButtons$parentCount").show();
 					}).mouseleave(function(){

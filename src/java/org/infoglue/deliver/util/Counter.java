@@ -390,56 +390,107 @@ public class Counter
 
     static void shortenPageStatistics()
     {
+		logger.info("shortenPageStatistics");
+
     	try
     	{
 	    	synchronized (allPageStatistics) 
 	    	{
-	    		if(allPageStatistics.size() < 50)
+	    		if(allPageStatistics.size() > 50)
 	    		{
-	    			return;
+		    		Map shortPageStatistics = new HashMap();
+		
+		            List unsortedPageUrls = new ArrayList();
+		            Set pageUrls = allPageStatistics.keySet();
+		            Iterator pageUrlsIterator = pageUrls.iterator();
+		            while(pageUrlsIterator.hasNext())
+		            {
+		            	String pageUrl = (String)pageUrlsIterator.next();
+		            	Map pageStatistics = (Map)allPageStatistics.get(pageUrl);
+		            	synchronized (pageStatistics) 
+		            	{
+		                	Long totalElapsedTime = (Long)pageStatistics.get("totalElapsedTime");
+		                	Integer pageNumberOfHits = (Integer)pageStatistics.get("totalNumberOfInvokations");
+		                	long pageAverageElapsedTime = totalElapsedTime / pageNumberOfHits;
+		                	unsortedPageUrls.add(getList("" + pageUrl, new Long(pageAverageElapsedTime)));
+		            	}
+		            }
+		
+		            Collections.sort(unsortedPageUrls, new AverageInvokingTimeComparator());
+		            
+		            if(unsortedPageUrls.size() > 50)
+		            	unsortedPageUrls = unsortedPageUrls.subList(0, 50);
+		            
+		            Iterator unsortedPageUrlsIterator = unsortedPageUrls.iterator();
+		            while(unsortedPageUrlsIterator.hasNext())
+		            {
+		            	List item = (List)unsortedPageUrlsIterator.next();
+		            	if(item.size() > 1)
+		            	{
+		            		String pageUrl = (String)item.get(0);
+		            		shortPageStatistics.put(pageUrl, allPageStatistics.get(pageUrl));
+		            	}
+		            }
+		            
+		            allPageStatistics = shortPageStatistics;
 	    		}
-	
-	    		Map shortPageStatistics = new HashMap();
-	
-	            List unsortedPageUrls = new ArrayList();
-	            Set pageUrls = allPageStatistics.keySet();
-	            Iterator pageUrlsIterator = pageUrls.iterator();
-	            while(pageUrlsIterator.hasNext())
-	            {
-	            	String pageUrl = (String)pageUrlsIterator.next();
-	            	Map pageStatistics = (Map)allPageStatistics.get(pageUrl);
-	            	synchronized (pageStatistics) 
-	            	{
-	                	Long totalElapsedTime = (Long)pageStatistics.get("totalElapsedTime");
-	                	Integer pageNumberOfHits = (Integer)pageStatistics.get("totalNumberOfInvokations");
-	                	long pageAverageElapsedTime = totalElapsedTime / pageNumberOfHits;
-	                	unsortedPageUrls.add(getList("" + pageUrl, new Long(pageAverageElapsedTime)));
-	            	}
-	            }
-	
-	            Collections.sort(unsortedPageUrls, new AverageInvokingTimeComparator());
-	            
-	            if(unsortedPageUrls.size() > 50)
-	            	unsortedPageUrls = unsortedPageUrls.subList(0, 50);
-	            
-	            Iterator unsortedPageUrlsIterator = unsortedPageUrls.iterator();
-	            while(unsortedPageUrlsIterator.hasNext())
-	            {
-	            	List item = (List)unsortedPageUrlsIterator.next();
-	            	if(item.size() > 1)
-	            	{
-	            		String pageUrl = (String)item.get(0);
-	            		shortPageStatistics.put(pageUrl, allPageStatistics.get(pageUrl));
-	            	}
-	            }
-	            
-	            allPageStatistics = shortPageStatistics;
 	    	}
     	}
     	catch (Exception e) 
     	{
     		logger.error("Error in shortenPageStatistics:" + e.getMessage());
 		}
+    	
+    	try
+    	{
+    		logger.info("Shortening allComponentsStatistics: " + allComponentsStatistics.size());
+	    	synchronized (allComponentsStatistics) 
+	    	{
+	    		if(allComponentsStatistics.size() > 500)
+	    		{
+		    		Map shortComponentsStatistics = new HashMap();
+		
+		            List unsortedComponentStatistics = new ArrayList();
+		            Set componentUrls = allComponentsStatistics.keySet();
+		            Iterator componentUrlsIterator = componentUrls.iterator();
+		            while(componentUrlsIterator.hasNext())
+		            {
+		            	String componentUrl = (String)componentUrlsIterator.next();
+		            	Map componentStatistics = (Map)allComponentsStatistics.get(componentUrl);
+		            	synchronized (componentStatistics) 
+		            	{
+		                	Long totalElapsedTime = (Long)componentStatistics.get("totalElapsedTime");
+		                	Integer componentNumberOfHits = (Integer)componentStatistics.get("totalNumberOfInvokations");
+		                	long componentAverageElapsedTime = totalElapsedTime / componentNumberOfHits;
+		                	unsortedComponentStatistics.add(getList("" + componentUrl, new Long(componentAverageElapsedTime)));
+		            	}
+		            }
+		
+		            Collections.sort(unsortedComponentStatistics, new AverageInvokingTimeComparator());
+		            
+		            if(unsortedComponentStatistics.size() > 500)
+		            	unsortedComponentStatistics = unsortedComponentStatistics.subList(0, 500);
+		            
+		            Iterator unsortedComponentUrlsIterator = unsortedComponentStatistics.iterator();
+		            while(unsortedComponentUrlsIterator.hasNext())
+		            {
+		            	List item = (List)unsortedComponentUrlsIterator.next();
+		            	if(item.size() > 1)
+		            	{
+		            		String componentUrl = (String)item.get(0);
+		            		shortComponentsStatistics.put(componentUrl, allComponentsStatistics.get(componentUrl));
+		            	}
+		            }
+		            
+		            allComponentsStatistics = shortComponentsStatistics;
+	    		}
+	    	}
+	    	logger.info("After resizing....:" + allComponentsStatistics.size());
+    	}
+    	catch (Exception e) 
+    	{
+    		logger.error("Error in shortenComponentStatistics:" + e.getMessage());
+		}    	
    	}
 
     static List getList(String key, Object value)

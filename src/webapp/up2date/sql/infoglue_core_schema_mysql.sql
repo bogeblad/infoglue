@@ -117,7 +117,7 @@ CREATE TABLE cmDigitalAsset (
   assetFileName text NOT NULL,
   assetFilePath text NOT NULL,
   assetFileSize int(11) NOT NULL default '0',
-  assetContentType varchar(255) NOT NULL,
+  assetContentType VARCHAR(255),
   assetBlob longblob,
   PRIMARY KEY  (digitalAssetId)
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
@@ -198,6 +198,9 @@ CREATE TABLE cmRepositoryLanguage (
 CREATE TABLE cmRole (
   roleName varchar(200) NOT NULL,
   description text NOT NULL,
+  source VARCHAR(45) NOT NULL DEFAULT 'infoglue',
+  isActive TINYINT NOT NULL DEFAULT 1,
+  modifiedDateTime TIMESTAMP NOT NULL DEFAULT '2010-01-01 12:00:00',
   PRIMARY KEY  (roleName)
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
@@ -294,13 +297,15 @@ CREATE TABLE cmSiteNodeVersion (
 
 
 
-
 CREATE TABLE cmSystemUser (
   userName varchar(200) NOT NULL,
   password varchar(255) NOT NULL,
   firstName text NOT NULL,
   lastName text NOT NULL,
   email text NOT NULL,
+  source VARCHAR(45) NOT NULL DEFAULT 'infoglue',
+  isActive TINYINT NOT NULL DEFAULT 1,
+  modifiedDateTime TIMESTAMP NOT NULL DEFAULT '2010-01-01 12:00:00',
   PRIMARY KEY  (userName)
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
@@ -620,6 +625,10 @@ CREATE TABLE cmRegistry
 CREATE TABLE cmGroup (
   groupName varchar(255) NOT NULL default '',
   description text NOT NULL,
+  source VARCHAR(45) NOT NULL DEFAULT 'infoglue',
+  groupType VARCHAR(45) NOT NULL DEFAULT '',
+  isActive TINYINT NOT NULL DEFAULT 1,
+  modifiedDateTime TIMESTAMP NOT NULL DEFAULT '2010-01-01 12:00:00',
   PRIMARY KEY  (groupName)
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
@@ -757,8 +766,8 @@ CREATE TABLE cmSubscription (
   interceptionPointId INTEGER UNSIGNED NOT NULL,
   name varchar(100) NOT NULL,
   isGlobal tinyint(4) NOT NULL default '0',
-  entityName varchar(100) default NULL,
-  entityId varchar(200) default NULL,
+  entityName varchar(100) DEFAULT NULL,
+  entityId varchar(200) DEFAULT NULL,
   userName varchar(150) NOT NULL,
   userEmail varchar(150) default NULL,
   lastNotifiedDateTime timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
@@ -776,7 +785,24 @@ CREATE TABLE cmSubscriptionFilter (
   PRIMARY KEY(id)
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
+CREATE  TABLE cmPageDeliveryMetaData (
+  pageDeliveryMetaDataId INT NOT NULL AUTO_INCREMENT ,
+  siteNodeId INT NOT NULL ,
+  languageId INT NOT NULL ,
+  contentId INT NOT NULL ,
+  lastModifiedDateTime TIMESTAMP NOT NULL ,
+  selectiveCacheUpdateNotApplicable TINYINT NOT NULL DEFAULT 0 ,
+  lastModifiedTimeout INT NOT NULL DEFAULT -1 ,
+  PRIMARY KEY (pageDeliveryMetaDataId) )
+ENGINE = MyISAM;
 
+CREATE  TABLE cmPageDeliveryMetaDataEntity (
+  pageDeliveryMetaDataEntityId INT NOT NULL AUTO_INCREMENT ,
+  pageDeliveryMetaDataId INT NOT NULL ,
+  siteNodeId INT NULL ,
+  contentId INT NULL ,
+  PRIMARY KEY (pageDeliveryMetaDataEntityId) )
+ENGINE = MyISAM;
 
 CREATE TABLE cmInfoGlueProperties (
   propertyId int(11) NOT NULL auto_increment,
@@ -786,8 +812,9 @@ CREATE TABLE cmInfoGlueProperties (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 INSERT INTO cmInfoGlueProperties(name, value) VALUES
-  ('version', '2.9.8.7');
+  ('version', '3.1.1.0');
  
+create index pageDeliveryMetaDataIDX on cmPageDeliveryMetaData(siteNodeId, languageId, contentId);
 CREATE INDEX serviceBindingId ON cmQualifyer(serviceBindingId);
 CREATE INDEX serviceDefinitionId ON cmServiceBinding(serviceDefinitionId);
 CREATE INDEX availableServiceBindingId ON cmServiceBinding(availableServiceBindingId);

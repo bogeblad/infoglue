@@ -1707,7 +1707,6 @@ public class CacheController extends Thread
 		
 		for(String[] clearEntries : entriesToClear)
 		{
-			System.out.println("" + clearEntries[0] + "=" + clearEntries[1]);
 			debug.append("" + clearEntries[0] + "=" + clearEntries[1] + ",");
 			if(forceClear != null && forceClear.equalsIgnoreCase("true"))
 			{

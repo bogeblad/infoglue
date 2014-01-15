@@ -18,6 +18,8 @@
     #if($siteNodeVO.childCount > 0)
     <li><a id="publishTree" href="javascript:void(0);" class="publish">$ui.getString("tool.structuretool.toolbarV3.publishPagesLabel")</a></li>
     #end
+    <li><a id="unpublishAll" href="javascript:void(0);" class="unpublish">$ui.getString("tool.common.unpublishing.unpublishButtonLabel")</a></li>
+    <li><a id="unpublish" href="javascript:void(0);" class="unpublish">$ui.getString("tool.contenttool.toolbarV3.unpublishContentsLabel")</a></li>
 </ul>
 
 <script type="text/javascript">
@@ -55,6 +57,16 @@
 	//Event listener for publish option
 	$("#contextMenuDiv #publishTree").click(function () { 
     	openInlineDiv("ViewListSiteNodeVersion!v3.action?siteNodeId=$siteNodeId&contentId=-1&repositoryId=$repositoryId&recurseSiteNodes=true&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 600, 800, true, true, "New page"); 
+		});
+
+	//Event listener for unpublishAll option
+	$("#contextMenuDiv #unpublishAll").click(function () { 
+    	openInlineDiv("UnpublishSiteNodeVersion!inputChooseSiteNodesV3.action?siteNodeId=$siteNodeId&recurseSiteNodes=true&unpublishAll=true&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 600, 800, true, true, "New page"); 
+		});
+
+	//Event listener for unpublish option
+	$("#contextMenuDiv #unpublish").click(function () { 
+    	openInlineDiv("UnpublishSiteNodeVersion!inputChooseSiteNodesV3.action?siteNodeId=$siteNodeId&recurseSiteNodes=true&unpublishAll=false&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 600, 800, true, true, "New page"); 
 		});
 
 	//Event listener for delete option

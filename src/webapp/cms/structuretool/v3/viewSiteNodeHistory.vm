@@ -88,10 +88,47 @@
 				alert("Choose two versions to compare");
 			}
 		}
+		
+		function previewPage(baseUrl)
+		{
+			var siteNodeVersionId = "";
+			$('#siteNodeVersions input[type=checkbox]').filter(':checked').each(function(index) {
+															siteNodeVersionId = $(this).val();
+														 });
+			if(siteNodeVersionId != "")
+			{
+				openPopup(baseUrl + "&siteNodeVersionId=" + siteNodeVersionId, 'Preview', 'resizable=yes,toolbar=yes,scrollbars=yes,status=yes,location=yes,menubar=yes');
+			}
+			else
+			{
+				alert("Choose a version to preview");
+			}
+		}
+
+		function reactivate()
+		{
+			var siteNodeVersionId = "";
+			$('#siteNodeVersions input[type=checkbox]').filter(':checked').each(function(index) {
+															siteNodeVersionId = $(this).val();
+														 });
+			
+			if(siteNodeVersionId != "")
+			{
+				if(confirm("$ui.getString("tool.structuretool.reactivateWarning")"))
+				{
+					document.location.href = "UpdateSiteNodeVersion!reactivate.action?siteNodeId=$siteNodeId&inline=true&siteNodeVersionId=" + siteNodeVersionId;
+				}
+			}
+			else
+			{
+				alert("Choose a version to revert to");
+			}
+		}
+
 	
 		$(document).ready(function(){
 
-			#set($extraParameter = '')
+			#set($extraParameter = '"aaSorting": [[ 1, "desc" ]]')
 			#initDataTableImpl("siteNodeVersions" $extraParameter)
 			#initDeleteLink()
 			
@@ -111,6 +148,7 @@
 				<th>$ui.getString("tool.common.action.label")</th>
 				<th>$ui.getString("tool.structuretool.versionID")</th>
 				<th>$ui.getString("tool.structuretool.versionState")</th>
+				<th>$ui.getString("tool.structuretool.isActive")</th>
 				<th>$ui.getString("tool.structuretool.versionModifiedDateTime")</th>
 				<th>$ui.getString("tool.structuretool.versionModifier")</th>
 				<th>$ui.getString("tool.structuretool.versionComment")</th>
@@ -123,6 +161,7 @@
 					<td>
 						<input type="checkbox" id="siteNodeVersionId" value="$siteNodeVersionVO.id"/>
 						#*
+						<a href="UpdateSiteNodeVersion!inactive.action?siteNodeVersionId=$siteNodeVersionVO.id">Inactivate</a>
 						<a href="ViewPage.action?siteNodeId=$siteNodeId&siteNodeVersionId=$siteNodeVersionVO.id" target="_blank">View</a>
 						<a href="ActivateSiteNodeVersion.action?siteNodeVersionId=$siteNodeVersionVO.id">Activate</a>
 						<a href="DeleteSiteNodeVersion.action?siteNodeVersionId=$siteNodeVersionVO.id">Delete</a>
@@ -130,7 +169,8 @@
 					</td>
 					<td>$siteNodeVersionVO.id</td>
 					<td>#stateInText($siteNodeVersionVO.stateId)</td>
-					<td>$siteNodeVersionVO.modifiedDateTime</td>
+					<td>$siteNodeVersionVO.isActive</td>
+					<td>$formatter.formatDate($siteNodeVersionVO.modifiedDateTime, 'yyyy-MM-dd HH:mm:ss')</td>
 					<td>$siteNodeVersionVO.versionModifier</td>
 					<td>$siteNodeVersionVO.versionComment</td>
 				</tr>

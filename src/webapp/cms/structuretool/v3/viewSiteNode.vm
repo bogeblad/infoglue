@@ -49,6 +49,8 @@
 		//alert("index:" + index);
 		//alert("pageAccessRightsSrcUrl:" + pageAccessRightsSrcUrl);
 		$("input.compare").hide();
+		$("input.reset").hide();
+		$("input.preview").hide();
 		if(tabHref.indexOf("basicTab") > -1) 
 		{
 			$("#pageMetaDataFrame").attr("src", pageMetaDataSrcUrl);
@@ -57,6 +59,8 @@
 		{
 			$("#pageHistoryFrame").attr("src", pageHistorySrcUrl);
 			$("input.compare").show();
+			$("input.reset").show();
+			$("input.preview").show();
 		}
 		else if(tabHref.indexOf("pageReferences") > -1) 
 		{
@@ -74,6 +78,18 @@
 	{
 		if($("#pageHistoryFrame").get(0).contentWindow.compare)
 			$("#pageHistoryFrame").get(0).contentWindow.compare();
+	}
+	
+	function previewPage(baseUrl)
+	{
+		if($("#pageHistoryFrame").get(0).contentWindow.previewPage)
+			$("#pageHistoryFrame").get(0).contentWindow.previewPage(baseUrl);
+	}
+	
+	function reactivate()
+	{
+		if($("#pageHistoryFrame").get(0).contentWindow.reactivate)
+			$("#pageHistoryFrame").get(0).contentWindow.reactivate();
 	}
 	
 	function save()
@@ -104,6 +120,8 @@
 	
 	$(document).ready(function(){
 		$("input.compare").hide();
+		$("input.reset").hide();
+		$("input.preview").hide();
   		$("#tabsContainer").tabs({ 
   				cache: false, 
   				show: function(event, ui) { resizeScrollArea(); },
@@ -183,7 +201,7 @@
 					#else
 						#set($dateReadonly = "readonly")
 					#end
-				<p>$ui.getString("tool.common.publicationSpan.label")</p>
+				<p><b>$ui.getString("tool.common.publicationSpan.label")</b></p>
 				<p>					
 					#editDateFieldCSS("entity.SiteNode.publishDateTime.label" "publishDateTime" $!publishDateTime "30" "date"  "ViewCalendar.action?date=$!publishDateTimeAsLong&formPath=document.editForm.publishDateTime" "$dateReadonly")<br/>
 				</p>

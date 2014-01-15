@@ -82,14 +82,23 @@
 			var overrideVersionModifyerElm = document.getElementById("xoverrideVersionModifyer");
 			if (checkMarkedVersions() == 0)
 			{
-				alert('Select one or more versions to publish');
+				alert('Select one or more pages to unpublish');
 			  	return;
 			}
 			else
 			{
+				#if($unpublishAll)
 				if(attemptDirectPublishing == "false" || confirm("$ui.getString("tool.structuretool.unpublishSiteNode.warning")"))
+				#else
+				if(attemptDirectPublishing == "false" || confirm("$ui.getString("tool.structuretool.unpublishSiteNodeLatestVersion.warning")"))
+				#end
 				{
-					listForm.action = "UnpublishSiteNodeVersion!unpublishAll.action"
+					#if($unpublishAll)
+						listForm.action = "UnpublishSiteNodeVersion!unpublishAll.action"
+					#else
+						listForm.action = "UnpublishSiteNodeVersion!unpublishLatest.action"
+					#end
+		
 					listForm.versionComment.value = commentElm.value;
 
 					if(overrideVersionModifyerElm)
@@ -153,74 +162,53 @@
 
 	<div style="clear: both;"></div>
 
-	<h3>$ui.getString("tool.structuretool.unpublishSiteNode.header")</h3>
+	#if($unpublishAll)
+		<h3>$ui.getString("tool.structuretool.unpublishSiteNode.header")</h3>
+	#else
+		<h3>$ui.getString("tool.structuretool.unpublishSiteNodeLatestVersion.header")</h3>
+	#end
 		
 	<div class="inlineTabDiv">	
 		
-	<table width="95%" border="0">
-	<tr>
-		<td>
-			<table width="90%" border="0" cellpadding="0" cellspacing="0">
 
-				#if($this.hasAccessTo("Common.SubmitToPublishButton", true, false, false))
-					#if($allowPublicationEventFilter == "true")
-						#if($defaultPublicationEventFilter == "emailBased")
-							<tr>
-								<td colspan="3">
-									$ui.getString("tool.common.recipientEmail.label")<br>
-									<input type="text" name="xrecipientFilter" id="xrecipientFilter" class="longtextfield" style="float: left;"/><a class="showUsers" href="javascript:showUsers();" style="display: block; float:left; height: 20px; width: 20px; background: url(css/images/spyglassIcon.gif) no-repeat 0px 0px; margin-left: 4px;">&nbsp;</a>
-								</td>
-							</tr>		
-						#else
-							#if($infoGluePrincipal.groups.size() > 1)
-								<tr>
-									<td colspan="3">
-										$ui.getString("tool.common.recipientFilter.label")<br>
-										<select name="xrecipientFilter" id="xrecipientFilter">
-											<option value="">$ui.getString("entity.ServerNode.property.nonePublishersFilter.label")</option>
-											<!--<option value="all">$ui.getString("entity.ServerNode.property.allPublishersFilter.label")</option>-->
-											<option value="groupBased" selected="1">$ui.getString("entity.ServerNode.property.groupBasePublishersFilter.label")</option>
-											#if($infoGluePrincipal.groups.size() > 1)
-												#foreach($group in $infoGluePrincipal.groups)
-													<option value="groupNameBased_$group.name">$ui.getString("entity.ServerNode.property.groupNameBasedPublisherFilter.label") $group.name</option>
-												#end
-											#end
-										</select>
-									</td>
-								</tr>		
-							#else
-								<input type="hidden" name="xrecipientFilter" id="xrecipientFilter" value="groupBased"/>		
-							#end	
-						#end
-					#end
-				#end
-
-				#if($this.skipVersionComment == false)
-					<tr>
-						<td colspan="3">#editTextArea("SiteNodeVersion.versionComment" "xversionComment" $!versionComment "10" "5" "tinytextarea")</td>
-					</tr>		
-					<tr>
-						<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
-					</tr>
+	<p>
+		#if($this.hasAccessTo("Common.SubmitToPublishButton", true, false, false))
+			#if($allowPublicationEventFilter == "true")
+				#if($defaultPublicationEventFilter == "emailBased")
+					$ui.getString("tool.common.recipientEmail.label")<br>
+					<input type="text" name="xrecipientFilter" id="xrecipientFilter" class="longtextfield" style="float: left;"/><a class="showUsers" href="javascript:showUsers();" style="display: block; float:left; height: 20px; width: 20px; background: url(css/images/spyglassIcon.gif) no-repeat 0px 0px; margin-left: 4px;">&nbsp;</a>
 				#else
-					<input type="hidden" name="xversionComment" id="xversionComment" value=""/>		
-				#end			
-				<tr>
-					<td colspan="3">#yesNoCheckBox("SiteNodeVersion.overrideVersionModifyer" "xoverrideVersionModifyer" "true" $ui.getString('tool.common.yes'))<br/><br/></td>
-				</tr>	
+					#if($infoGluePrincipal.groups.size() > 1)
+						$ui.getString("tool.common.recipientFilter.label")<br>
+						<select name="xrecipientFilter" id="xrecipientFilter">
+							<option value="">$ui.getString("entity.ServerNode.property.nonePublishersFilter.label")</option>
+							<!--<option value="all">$ui.getString("entity.ServerNode.property.allPublishersFilter.label")</option>-->
+							<option value="groupBased" selected="1">$ui.getString("entity.ServerNode.property.groupBasePublishersFilter.label")</option>
+							#if($infoGluePrincipal.groups.size() > 1)
+								#foreach($group in $infoGluePrincipal.groups)
+									<option value="groupNameBased_$group.name">$ui.getString("entity.ServerNode.property.groupNameBasedPublisherFilter.label") $group.name</option>
+								#end
+							#end
+						</select>
+					#else
+						<input type="hidden" name="xrecipientFilter" id="xrecipientFilter" value="groupBased"/>		
+					#end	
+				#end
+			#end
+		#end
+	</p>
+	#if($this.skipVersionComment == false)
+		<p>#editTextArea("SiteNodeVersion.versionComment" "xversionComment" $!versionComment "10" "5" "tinytextarea")</p>
+	#else
+		<input type="hidden" name="xversionComment" id="xversionComment" value=""/>		
+	#end			
+		<p>#yesNoCheckBox("SiteNodeVersion.overrideVersionModifyer" "xoverrideVersionModifyer" "true" $ui.getString('tool.common.yes'))</p>
 				
-			</table>
-		</td>
-		<td align="right" valign="top">
-			<br>
-			
-		</td>
-	</tr>
-	<tr>
-		<td colspan="2">
-			$ui.getString("tool.common.unpublishing.markPagesText")
-		</td>
-	</tr>
+	<p>
+		$ui.getString("tool.common.unpublishing.markPagesText")
+	</p>
+	
+	<table width="95%" border="0">
 	<tr>
 		<td colspan="2">
 	
@@ -243,6 +231,7 @@
 	#hiddenField("returnAddress" $!returnAddress)
 	#hiddenField("userSessionKey" $!userSessionKey)
 	#hiddenField("disableCloseButton" $!disableCloseButton)		
+	#hiddenField("unpublishAll" $!unpublishAll)		
 	
 	#set($lvChkBoxName = "sel")
 

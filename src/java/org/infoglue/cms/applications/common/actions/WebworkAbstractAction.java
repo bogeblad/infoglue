@@ -26,6 +26,7 @@ package org.infoglue.cms.applications.common.actions;
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -144,7 +145,12 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
         	result = isCommand() ? invokeCommand() : doExecute();
         	setStandardResponseHeaders();
 
-        	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("" + this.getUnencodedCurrentURI(), t.getElapsedTime());
+        	long elapsedTime = t.getElapsedTime();
+        	long memoryDiff = t.getMemoryDifferenceAsMegaBytes();
+        	if(elapsedTime > 5000 || memoryDiff > 100)
+        	{
+        		logger.warn("The " + CmsPropertyHandler.getApplicationName() + " request: " + this.getUnencodedCurrentURIWithParameters() + " took " + elapsedTime + " ms to render and seems to have allocated " + memoryDiff + " MB of memory)");
+        	}
         } 
         catch(ResultException e) 
         {
@@ -583,4 +589,24 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
     {
     	return getHttpSession().getId();
     }
+    
+	/**
+	 * This method returns the URI to the current page.
+	 */
+	
+	public String getUnencodedCurrentURIWithParameters() throws Exception
+	{
+		String urlBase = getRequest().getRequestURI().toString();
+		String queryString = "";
+		Enumeration parameterNames = getRequest().getParameterNames();
+		while(parameterNames.hasMoreElements())
+		{
+			String name = (String)parameterNames.nextElement();
+			queryString += "&" + name + "=" + getRequest().getParameter(name);
+		}
+		if(queryString != null && !queryString.equals(""))
+			urlBase = urlBase + "?" + queryString.substring(1);
+
+		return urlBase;
+	}
 }

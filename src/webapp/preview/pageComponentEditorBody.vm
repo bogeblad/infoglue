@@ -170,11 +170,8 @@ function registerOnChange()
 			//alert("key:" + CKEDITOR.instances[key]);
 			if(CKEDITOR.instances[key])
 			{
-				//console.log(CKEDITOR.instances[key]);
-			
 				//alert("regii:" + key);
 				CKEDITOR.instances[key].on('change', function(e) {
-				    //alert("E:" +e.editor.checkDirty());
 				    $("#igSaveButton").show();
 			        window.saveButtonLabel = $("#igSaveButton").attr("value");
 			        window.isPageDirty = true;

@@ -66,7 +66,7 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 {
     private final static Logger logger = Logger.getLogger(UnpublishSiteNodeVersionAction.class.getName());
 
-	private List siteNodeVersionVOList = new ArrayList();
+	private List<SiteNodeVersionVO> siteNodeVersionVOList = new ArrayList<SiteNodeVersionVO>();
 	private List siteNodeVOList = new ArrayList();
 	private Integer siteNodeId;
 	private Integer siteNodeVersionId;
@@ -81,7 +81,9 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 	private String returnAddress;
    	private String userSessionKey;
    	private String recipientFilter = null;
+	private Boolean unpublishAll = true;
 	
+
 	public String doInput() throws Exception 
 	{
 		if(this.siteNodeId != null)
@@ -106,6 +108,7 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 
 			//siteNodeVersionVOList = SiteNodeVersionController.getController().getSiteNodeVersionVOWithParentRecursive(siteNodeId, SiteNodeVersionVO.PUBLISHED_STATE);
 			siteNodeVersionVOList = SiteNodeVersionController.getController().getPublishedSiteNodeVersionVOWithParentRecursive(siteNodeId);
+
 		}
 
 	    return "input";
@@ -403,6 +406,128 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
     }
 
 
+	/**
+	 * This method will try to unpublish latest live versions of this sitenode. 
+	 */
+	   
+    public String doUnpublishLatest() throws Exception
+    {   
+    	ProcessBean processBean = ProcessBean.createProcessBean(UnpublishSiteNodeVersionAction.class.getName(), "" + getInfoGluePrincipal().getName());
+		processBean.setStatus(ProcessBean.RUNNING);
+
+		try
+		{
+			String[] siteNodeIds = getRequest().getParameterValues("sel");
+	
+			List<EventVO> events = new ArrayList<EventVO>();
+	
+			List<Integer> siteNodeVersionIdList = new ArrayList<Integer>();
+			for(int i=0; i < siteNodeIds.length; i++)
+				siteNodeVersionIdList.add(new Integer(siteNodeIds[i]));
+	
+			Map<Integer,SiteNodeVO> siteNodeMap = SiteNodeController.getController().getSiteNodeVOMapWithNoStateCheck(siteNodeVersionIdList);
+			Map<Integer,ContentVO> contentMap = new HashMap<Integer,ContentVO>();
+	
+			processBean.updateProcess("Found " + siteNodeMap.size() + " pages");	
+			processBean.updateProcess("Processing " + siteNodeIds.length + " pages");
+			
+	        for(int i=0; i < siteNodeIds.length; i++)
+			{
+	        	if (i % 10 == 0)
+	        		processBean.updateLastDescription("Unpublished " + i + " pages");
+
+	            String siteNodeIdString = siteNodeIds[i];
+	            SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestPublishedSiteNodeVersionVO(new Integer(siteNodeIdString));
+
+	            SiteNodeVersionVO latestSiteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(siteNodeVersionVO.getSiteNodeId());
+				//SiteNodeVO siteNodeVO = siteNodeMap.get(siteNodeVersionVO.getId());
+				//if(siteNodeVO == null)
+				SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersionVO.getSiteNodeId());
+				
+				if(attemptDirectPublishing.equals("true"))
+				{
+					if(siteNodeVersionVO.getId().equals(latestSiteNodeVersionVO.getId()))
+					{
+						logger.info("Creating a new working version as there was no active working version left...");
+						SiteNodeVersionVO newSiteNodeVersionVO = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), siteNodeVO, SiteNodeVersionVO.WORKING_STATE, "new working version", false, this.getInfoGluePrincipal(), events);
+						siteNodeMap.put(newSiteNodeVersionVO.getId(), siteNodeVO);
+					}
+				}
+				
+				EventVO eventVO = new EventVO();
+				eventVO.setDescription(this.versionComment);
+				eventVO.setEntityClass(SiteNodeVersion.class.getName());
+				eventVO.setEntityId(siteNodeVersionVO.getId());
+				eventVO.setName(siteNodeVO.getName());
+				eventVO.setTypeId(EventVO.UNPUBLISH_LATEST);
+				eventVO = EventController.create(eventVO, this.repositoryId, this.getInfoGluePrincipal());
+				events.add(eventVO);
+				
+				List contentVersionVOList = SiteNodeVersionController.getController().getMetaInfoContentVersionVOList(siteNodeVersionVO, siteNodeVO, this.getInfoGluePrincipal());
+				Iterator contentVersionVOListIterator = contentVersionVOList.iterator();
+				while(contentVersionVOListIterator.hasNext())
+				{
+				    ContentVersionVO currentContentVersionVO = (ContentVersionVO)contentVersionVOListIterator.next();
+				    
+					ContentVersionVO latestContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(currentContentVersionVO.getContentId(), currentContentVersionVO.getLanguageId());
+					ContentVO contentVO = ContentController.getContentController().getContentVOWithId(currentContentVersionVO.getContentId());
+					contentMap.put(currentContentVersionVO.getId(), contentVO);
+					if(attemptDirectPublishing.equals("true"))
+					{
+						if(currentContentVersionVO.getId().equals(latestContentVersionVO.getId()))
+						{
+							logger.info("Creating a new working version as there was no active working version left...:" + currentContentVersionVO.getLanguageName());
+							ContentStateController.changeState(currentContentVersionVO.getId(), contentVO, ContentVersionVO.WORKING_STATE, "new working version", false, null, this.getInfoGluePrincipal(), currentContentVersionVO.getContentId(), events);
+						}
+						
+						EventVO versionEventVO = new EventVO();
+						versionEventVO.setDescription(this.versionComment);
+						versionEventVO.setEntityClass(ContentVersion.class.getName());
+						versionEventVO.setEntityId(currentContentVersionVO.getId());
+						versionEventVO.setName(contentVO.getName());
+						versionEventVO.setTypeId(EventVO.UNPUBLISH_LATEST);
+						versionEventVO = EventController.create(versionEventVO, this.repositoryId, this.getInfoGluePrincipal());
+						events.add(versionEventVO);			    
+					}
+				}
+			}
+
+			
+			if(!attemptDirectPublishing.equalsIgnoreCase("true"))
+			{
+				if(recipientFilter != null && !recipientFilter.equals("") && events != null && events.size() > 0)
+					PublicationController.mailPublishNotification(events, repositoryId, getInfoGluePrincipal(), recipientFilter, true);
+			}
+
+			if(attemptDirectPublishing.equalsIgnoreCase("true"))
+			{
+			    PublicationVO publicationVO = new PublicationVO();
+			    publicationVO.setName("Direct publication by " + this.getInfoGluePrincipal().getName());
+			    publicationVO.setDescription(getVersionComment());
+			    //publicationVO.setPublisher(this.getInfoGluePrincipal().getName());
+			    publicationVO.setRepositoryId(repositoryId);
+			    publicationVO = PublicationController.getController().createAndPublish(publicationVO, events, siteNodeMap, contentMap, false, this.getInfoGluePrincipal());
+			}
+		}
+		finally
+		{
+			processBean.setStatus(ProcessBean.FINISHED);
+			processBean.removeProcess();
+		}
+		
+		if(this.returnAddress != null && !this.returnAddress.equals(""))
+        {
+	        String arguments 	= "userSessionKey=" + userSessionKey + "&attemptDirectPublishing=" + attemptDirectPublishing + "&isAutomaticRedirect=false";
+	        String messageUrl 	= returnAddress + (returnAddress.indexOf("?") > -1 ? "&" : "?") + arguments;
+	        
+	        this.getResponse().sendRedirect(messageUrl);
+	        return NONE;
+        }
+        else
+        {
+        	return "success";
+        }
+    }
 
 	public List getSiteNodeVersions()
 	{
@@ -589,4 +714,17 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 		this.recipientFilter = recipientFilter;
 	}
 
+	/**
+	 * @return the unpublishAll
+	 */
+	public Boolean getUnpublishAll() {
+		return unpublishAll;
+	}
+
+	/**
+	 * @param unpublishAll the unpublishAll to set
+	 */
+	public void setUnpublishAll(Boolean unpublishAll) {
+		this.unpublishAll = unpublishAll;
+	}
 }

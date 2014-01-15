@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.structuretool.actions;
 
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
@@ -39,7 +40,8 @@ public class UpdateSiteNodeVersionAction extends ViewSiteNodeVersionAction
 	private Integer siteNodeId;
 	private Integer languageId;
 	private Integer siteNodeVersionId;
-
+	private String inline = "true";
+	
 	private ConstraintExceptionBuffer ceb;
 	
 	public UpdateSiteNodeVersionAction()
@@ -69,8 +71,23 @@ public class UpdateSiteNodeVersionAction extends ViewSiteNodeVersionAction
 		return "saveAndExit";
 	}
 
+	public String doInactive() throws Exception
+    {
+		SiteNodeVersionController.getController().inactivate(this.siteNodeVersionId);
+						 
+		return "saveAndExit";
+	}
+
+	public String doReactivate() throws Exception
+    {
+		SiteNodeVersionController.getController().reactivate(this.siteNodeVersionId, this.getInfoGluePrincipal());
+						 
+		return "success";
+	}
+
 	public void setSiteNodeVersionId(Integer siteNodeVersionId)
 	{
+		this.siteNodeVersionId = siteNodeVersionId;
 		this.siteNodeVersionVO.setSiteNodeVersionId(siteNodeVersionId);	
 	}
 
@@ -108,6 +125,15 @@ public class UpdateSiteNodeVersionAction extends ViewSiteNodeVersionAction
     {
         return this.languageId;
     }
-            
+         
+	public String getInline() 
+	{
+		return inline;
+	}
+
+	public void setInline(String inline) {
+		this.inline = inline;
+	}
+
 
 }

@@ -11,7 +11,7 @@
 		if($("#dbPort").val() == "")
 			setDefaulPort("mysql");
 		
-		if("$!createDatabase" != "true")
+		if("$!createDatabase" != "true" && "$!createDatabase" != "")
 		{
 			//$("#examples").hide();
 			$("#dbaAccount").hide();
@@ -21,8 +21,10 @@
         	if($("#dbProvider").val() == "mssqlserver" || $("#dbProvider").val() == "mysql")
         	{
         		//alert("Val: " + $("#createDatabase").attr("checked"));
-        		if($("#createDatabase").attr("checked") == true)
+        		if($("#createDatabase").attr("checked") == true || $("#createDatabase").attr("checked") == "checked")
+	          	{
 	          		$("#dbaAccount").show();
+	          	}
 	          	else
 	          		$("#dbaAccount").hide();
 	        }
@@ -131,7 +133,7 @@
 		    <label for="addExampleRepositories">$ui.getString("tool.common.install.database.addExampleRepositories")</label>
 			<input type="checkbox" name="addExampleRepositories" value="true" #if($!addExampleRepositories == "true")checked="checked" #end/>
 		</span>
-		
+
 		<span id="dbaAccount" #if($dbProvider == "oracle" || $dbProvider == "db2")style="display:none;"#end>
 		    <label for="dbUser">$ui.getString("tool.common.install.database.dbUser")</label>
 			<input type="text" name="dbUser" value="$!dbUser"/>

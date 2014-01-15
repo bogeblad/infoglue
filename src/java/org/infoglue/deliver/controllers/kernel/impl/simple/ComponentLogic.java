@@ -41,13 +41,16 @@ import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.databeans.ComponentPropertyDefinition;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.content.EntityVOWithSupplementingEntityVO;
+import org.infoglue.cms.entities.content.impl.simple.MediumContentVersionImpl;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
+import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -485,20 +488,10 @@ public class ComponentLogic
 	{
 		String attributeValue = "";
 
-		if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
-		{
-			templateController.getDeliveryContext().setDebugMode(true);
-		}
-
 		Map property = getInheritedComponentProperty(this.infoGlueComponent, propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
 		Integer contentId = getContentId(property);
 		if(contentId != null)
 			attributeValue = templateController.getContentAttribute(contentId, languageId, attributeName, disableEditOnSight);
-		
-		if((propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages")) && (attributeValue == null || attributeValue.equals("")))
-		{
-			logger.warn(templateController.getDeliveryContext().getDebugInformation());
-		}
 		
 		return attributeValue;
 	}
@@ -1549,6 +1542,14 @@ public class ComponentLogic
 			*/
 			templateController.getDeliveryContext().addDebugInformation("DEBUG key:" + key + "=" + propertyCandidate);
 			
+			if(templateController.getOperatingMode() == 0 && templateController.getHttpServletRequest().getParameter("siteNodeVersionId") != null && !templateController.getHttpServletRequest().getParameter("siteNodeVersionId").equals(""))
+		    {
+		    	propertyCandidate = null;
+		    	propertyCandidateVersions = null;
+		    	propertyUsedEntities = null;
+		    }
+		    
+			
 			if(propertyCandidate != null)
 			{
 				if(propertyCandidate instanceof NullObject)
@@ -1610,14 +1611,18 @@ public class ComponentLogic
 
 				//System.out.println("relatedRepositoryIds:" + relatedRepositoryIds.size());
 				groups.addAll(relatedRepositoryIds);
+				
+				if(templateController.getHttpServletRequest().getParameter("siteNodeVersionId") == null || templateController.getHttpServletRequest().getParameter("siteNodeVersionId").equals(""))
+				{
 					CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet(cacheName, key, property, groups, true);
 				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet(cacheNameID, versionKey, contentVersionIdList, groups, true);
 				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet(cacheNameID, entitiesKey, usedContentEntities, groups, true);
-/*
+				}
+				    /*
 					CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyCache", key, property, groups, true);
 				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", versionKey, contentVersionIdList, groups, true);
 				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", entitiesKey, usedContentEntities, groups, true);
-*/
+				    */
 				//}
 			}
 		}
@@ -1903,10 +1908,13 @@ public class ComponentLogic
 					    
 					    if(groups.size() < 20)
 					    {
-						    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyCache", key, property, groups, true);
-						    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", versionKey, contentVersionIdList, groups, true);
-						    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", entitiesKey, usedContentEntities, groups, true);
-					    }
+							if(templateController.getHttpServletRequest().getParameter("siteNodeVersionId") == null || templateController.getHttpServletRequest().getParameter("siteNodeVersionId").equals(""))
+							{
+							    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyCache", key, property, groups, true);
+							    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", versionKey, contentVersionIdList, groups, true);
+							    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", entitiesKey, usedContentEntities, groups, true);
+							}
+						}
 			        }
 					//TODO - TEST
 					/*
@@ -2003,6 +2011,23 @@ public class ComponentLogic
 			{
 				LanguageVO languageVO = LanguageController.getController().getMasterLanguage(this.templateController.getSiteNode().getRepositoryId(), this.templateController.getDatabase());
 				String pageComponentsXML = this.templateController.getContentAttribute(this.templateController.getMetaInformationContentId(), languageVO.getId(), "ComponentStructure", true);
+				
+				String siteNodeVersionId = templateController.getHttpServletRequest().getParameter("siteNodeVersionId");
+				if(this.templateController.getOperatingMode() == 0 && siteNodeVersionId != null)
+				{
+					SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(siteNodeVersionId), this.templateController.getDatabase());
+					List<MediumContentVersionImpl> contentVersionList = ContentVersionController.getContentVersionController().getMediumContentVersionList(this.templateController.getMetaInformationContentId(), languageVO.getId(), this.templateController.getDatabase());
+					for(MediumContentVersionImpl cv : contentVersionList)
+					{
+						if(Math.abs(cv.getModifiedDateTime().getTime() - siteNodeVersionVO.getModifiedDateTime().getTime()) < 1000)
+						{
+							pageComponentsXML = templateController.getContentAttribute(cv.getValueObject(), "ComponentStructure", true);
+							break;
+						}
+					}
+				}
+
+				
 				int propertyHashCode = getPropertyAsStringHashCode(pageComponentsXML, this.infoGlueComponent.getId(), propertyName, this.templateController.getSiteNodeId(), this.templateController.getLanguageId());
 				//logger.info("propertyHashCode:" + propertyHashCode);
 				this.templateController.getDeliveryContext().addUsedContent("content_" + this.templateController.getMetaInformationContentId() + "_ComponentStructure(" + this.infoGlueComponent.getId() + "," + propertyName + "," + this.templateController.getSiteNodeId() + "," + this.templateController.getLanguageId() + ")=" + propertyHashCode);
@@ -2042,6 +2067,23 @@ public class ComponentLogic
 					{
 						LanguageVO languageVO = LanguageController.getController().getMasterLanguage(this.templateController.getSiteNode().getRepositoryId(), this.templateController.getDatabase());
 						String pageComponentsXML = this.templateController.getContentAttribute(this.templateController.getMetaInformationContentId(), languageVO.getId(), "ComponentStructure", true);
+						
+						String siteNodeVersionId = templateController.getHttpServletRequest().getParameter("siteNodeVersionId");
+						if(this.templateController.getOperatingMode() == 0 && siteNodeVersionId != null)
+						{
+							SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(siteNodeVersionId), this.templateController.getDatabase());
+							List<MediumContentVersionImpl> contentVersionList = ContentVersionController.getContentVersionController().getMediumContentVersionList(this.templateController.getMetaInformationContentId(), languageVO.getId(), this.templateController.getDatabase());
+							for(MediumContentVersionImpl cv : contentVersionList)
+							{
+								if(Math.abs(cv.getModifiedDateTime().getTime() - siteNodeVersionVO.getModifiedDateTime().getTime()) < 1000)
+								{
+									pageComponentsXML = templateController.getContentAttribute(cv.getValueObject(), "ComponentStructure", true);
+									break;
+								}
+							}
+						}
+
+						
 						int propertyHashCode = getPropertyAsStringHashCode(pageComponentsXML, parentComponent.getId(), propertyName, this.templateController.getSiteNodeId(), this.templateController.getLanguageId());
 						//System.out.println("propertyHashCode:" + propertyHashCode);
 						this.templateController.getDeliveryContext().addUsedContent("content_" + this.templateController.getMetaInformationContentId() + "_ComponentStructure(" + parentComponent.getId() + "," + propertyName + "," + this.templateController.getSiteNodeId() + "," + this.templateController.getLanguageId() + ")=" + propertyHashCode);
@@ -2070,16 +2112,11 @@ public class ComponentLogic
 				    	usedRepositoryIds.add(parentSiteNodeVO.getRepositoryId());
 				    	relatedRepositoryIds.add("" + parentSiteNodeVO.getRepositoryId());
 				    	property = getInheritedComponentProperty(this.templateController, parentSiteNodeVO.getId(), this.templateController.getLanguageId(), this.templateController.getContentId(), this.infoGlueComponent.getId(), propertyName, contentVersionIdList, usedContentEntities);
-				    	if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
-				    		this.templateController.getDeliveryContext().addDebugInformation("property:" + property + " taken from " + parentSiteNodeVO.getId());
 				    	
 				    	if(!useStructureInheritance)
 				    		break;
 				    	
 					    SiteNodeVO newParentSiteNodeVO = nodeDeliveryController.getParentSiteNode(templateController.getDatabase(), parentSiteNodeVO.getId());
-					    if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
-					    	this.templateController.getDeliveryContext().addDebugInformation("newParentSiteNodeVO:" + newParentSiteNodeVO);
-					
 					    if(newParentSiteNodeVO == null && useRepositoryInheritance)
 						{
 						    Integer parentRepositoryId = this.templateController.getParentRepositoryId(parentSiteNodeVO.getRepositoryId());
@@ -2093,9 +2130,6 @@ public class ComponentLogic
 						    if(parentRepositoryId != null && !usedRepositoryIds.contains(parentRepositoryId))
 						    {
 						        newParentSiteNodeVO = this.templateController.getRepositoryRootSiteNode(parentRepositoryId);
-							    if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
-							    	this.templateController.getDeliveryContext().addDebugInformation("newParentSiteNodeVO from parent repo:" + newParentSiteNodeVO);
-
 						        if(newParentSiteNodeVO != null)
 						        	usedRepositoryIds.add(newParentSiteNodeVO.getRepositoryId());
 							}
@@ -2188,11 +2222,16 @@ public class ComponentLogic
 		Object propertyCandidate = CacheController.getCachedObjectFromAdvancedCache("componentPropertyCache", key.toString());
 		Set propertyCandidateVersions = (Set)CacheController.getCachedObjectFromAdvancedCache("componentPropertyVersionIdCache", versionKey);
 		Set<String> propertyCandidateUsedEntities = (Set<String>)CacheController.getCachedObjectFromAdvancedCache("componentPropertyVersionIdCache", usedEntitiesKey);
+
+		if(templateController.getOperatingMode() == 0 && templateController.getHttpServletRequest().getParameter("siteNodeVersionId") != null && !templateController.getHttpServletRequest().getParameter("siteNodeVersionId").equals(""))
+		{
+			propertyCandidate = null;
+			propertyCandidateVersions = null;
+			propertyCandidateUsedEntities = null;
+		}
+
 		Map property = null;
 
-		if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
-			templateController.getDeliveryContext().addDebugInformation("DEBUG getInheritedComponentProperty key:" + key + "=" + propertyCandidate);
-		
 		if(propertyCandidate != null)
 		{
 			if(propertyCandidate instanceof NullObject)
@@ -2200,8 +2239,6 @@ public class ComponentLogic
 			else
 				property = (Map)propertyCandidate;
 				
-			if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
-				this.templateController.getDeliveryContext().addDebugInformation("propertyCandidateVersions:" + propertyCandidateVersions);
 			if(propertyCandidateVersions != null)
 			{
 				try
@@ -2241,16 +2278,27 @@ public class ComponentLogic
 		else
 		{
 			String inheritedPageComponentsXML = getPageComponentsString(templateController, siteNodeId, languageId, contentId, contentVersionIdList, usedContentEntities);
-			if(propertyName.equals("GUFlashImages") || propertyName.equals("MiniArticleShortcuts"))
+			
+			String siteNodeVersionId = templateController.getHttpServletRequest().getParameter("siteNodeVersionId");
+			if(this.templateController.getOperatingMode() == 0 && siteNodeVersionId != null)
 			{
-				String xmlRep = "";
-				if(inheritedPageComponentsXML == null) 
-					xmlRep = "Null - no XML found";
-				else
-					xmlRep = inheritedPageComponentsXML;
-				
-				this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO inheritedPageComponentsXML: " + inheritedPageComponentsXML.length() + " (Thread" + Thread.currentThread().getId() + "). Cached item:" + propertyCandidate + "\n");
-				this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO xmlRep: " + xmlRep + " (Thread" + Thread.currentThread().getId() + "). Cached item:" + propertyCandidate + "\n");
+				SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(siteNodeVersionId), templateController.getDatabase());
+				if(siteNodeVersionVO.getSiteNodeId() == siteNodeId)
+				{
+					NodeDeliveryController ndc = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId);
+					SiteNodeVO siteNodeVO = ndc.getSiteNodeVO(templateController.getDatabase(), siteNodeId);
+					
+					Integer masterLanguageId = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForRepository(templateController.getDatabase(), siteNodeVO.getRepositoryId()).getId();
+					List<MediumContentVersionImpl> contentVersionList = ContentVersionController.getContentVersionController().getMediumContentVersionList(this.templateController.getMetaInformationContentId(), masterLanguageId, this.templateController.getDatabase());
+					for(MediumContentVersionImpl cv : contentVersionList)
+					{
+						if(Math.abs(cv.getModifiedDateTime().getTime() - siteNodeVersionVO.getModifiedDateTime().getTime()) < 1000)
+						{
+							inheritedPageComponentsXML = templateController.getContentAttribute(cv.getValueObject(), "ComponentStructure", true);
+							break;
+						}
+					}
+				}
 			}
 			
 			if(logger.isDebugEnabled())
@@ -2312,17 +2360,15 @@ public class ComponentLogic
 			    groups.add(CacheController.getPooledString(3, siteNodeId));
 				*/
 			    //TODO - TEST - NOT SAFE
-			    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyCache", key, property, groups, true);
-			    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", versionKey, contentVersionIdList, groups, true);
-			    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", usedEntitiesKey, usedContentEntities, groups, true);
+				if(templateController.getHttpServletRequest().getParameter("siteNodeVersionId") == null || templateController.getHttpServletRequest().getParameter("siteNodeVersionId").equals(""))
+				{
+				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyCache", key, property, groups, true);
+				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", versionKey, contentVersionIdList, groups, true);
+				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", usedEntitiesKey, usedContentEntities, groups, true);
+				}
 		    }
 			else
 			{
-				if(propertyName.equals("GUFlashImages") || propertyName.equals("MiniArticleShortcuts"))
-					this.templateController.getDeliveryContext().addDebugInformation("contentVersionIdList: " + contentVersionIdList + " / property: " + property);
-				if(propertyName.equals("GUFlashImages") || propertyName.equals("MiniArticleShortcuts"))
-					this.templateController.getDeliveryContext().addDebugInformation("DEBUG: Going to store a NullObject in componentPropertyCache for " + propertyName + ". key:" + key);
-								
 				if(property == null && contentVersionIdList.size() > 0)
 				{
 				    Set groups = new HashSet();
@@ -2356,9 +2402,12 @@ public class ComponentLogic
 //				  	TODO - TEST - NOT SAFE
 				    //if(propertyName.equals("GUFlashImages") || key.indexOf("MiniArticleShortcuts") > -1)
 				    //	logger.warn("Storing NULL 1:" + templateController.getDeliveryContext().getDebugInformation());
-				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyCache", key.toString(), new NullObject(), groups, true);
-				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", versionKey, contentVersionIdList, groups, true);
-				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", usedEntitiesKey, usedContentEntities, groups, true);
+					if(templateController.getHttpServletRequest().getParameter("siteNodeVersionId") == null || templateController.getHttpServletRequest().getParameter("siteNodeVersionId").equals(""))
+					{
+					    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyCache", key.toString(), new NullObject(), groups, true);
+					    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", versionKey, contentVersionIdList, groups, true);
+					    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", usedEntitiesKey, usedContentEntities, groups, true);
+					}
 				}
 				/*
 				else
@@ -3032,9 +3081,12 @@ public class ComponentLogic
 
 			    if(groups.size() < 20)
 			    {
-				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyCache", key, properties, groups, true);
-				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", versionKey, contentVersionIdList, groups, true);
-				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", entitiesKey, usedContentEntities, groups, true);
+					if(templateController.getHttpServletRequest().getParameter("siteNodeVersionId") == null || templateController.getHttpServletRequest().getParameter("siteNodeVersionId").equals(""))
+					{
+					    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyCache", key, properties, groups, true);
+					    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", versionKey, contentVersionIdList, groups, true);
+					    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", entitiesKey, usedContentEntities, groups, true);
+					}
 			    }
 	        }
 		}

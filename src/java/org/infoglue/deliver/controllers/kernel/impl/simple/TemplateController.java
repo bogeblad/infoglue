@@ -68,7 +68,7 @@ import org.infoglue.deliver.util.webservices.WebServiceHelper;
 
 
 /**
- * @author Mattias Bogeblad
+ * @author Mattias Bogeblad 
  */
 public interface TemplateController
 {

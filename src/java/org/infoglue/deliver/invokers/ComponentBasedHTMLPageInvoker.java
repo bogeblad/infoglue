@@ -45,12 +45,15 @@ import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
+import org.infoglue.cms.entities.content.impl.simple.MediumContentVersionImpl;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
+import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.providers.ComponentModel;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -456,15 +459,20 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 		String cacheKey		= "pageComponentString_" + siteNodeId + "_" + languageId + "_" + contentId;
 		String versionKey 	= cacheKey + "_contentVersionId";
 
-		String attributeName = "ComponentStructure";
+		//String attributeName = "ComponentStructure";
 		//String attributeKey = "" + contentVO.getId() + "_" + languageId + "_" + attributeName + "_" + siteNodeId + "_" + true;
 		//String attributeKey = "" + contentVO.getId() + "_" + languageId + "_" + attributeName + "_" + true + "_" + false;
 		//String versionKey 	= attributeKey + "_contentVersionId";
 
 	    String cachedPageComponentsString = (String)CacheController.getCachedObjectFromAdvancedCache(cacheName, cacheKey);
 	    Set contentVersionId = (Set)CacheController.getCachedObjectFromAdvancedCache("componentEditorVersionIdCache", versionKey);
-
-		if(cachedPageComponentsString != null)
+	    
+	    if(templateController.getOperatingMode() == 0 && templateController.getHttpServletRequest().getParameter("siteNodeVersionId") != null && !templateController.getHttpServletRequest().getParameter("siteNodeVersionId").equals(""))
+	    {
+	    	cachedPageComponentsString = null;
+	    }
+	    
+	    if(cachedPageComponentsString != null)
 		{
 			if(contentVersionId != null)
 			{    
@@ -489,28 +497,46 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
    					
 		//logger.info("contentVO in getPageComponentsString: " + contentVO.getContentId());
 		Integer masterLanguageId = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForSiteNode(db, siteNodeId).getId();
-	    pageComponentsString = templateController.getMetaInfoContentAttribute(contentVO.getContentId(), masterLanguageId, "ComponentStructure", true);
+		pageComponentsString = templateController.getMetaInfoContentAttribute(contentVO.getContentId(), masterLanguageId, "ComponentStructure", true);
+		
+		String siteNodeVersionId = templateController.getHttpServletRequest().getParameter("siteNodeVersionId");
+		if(siteNodeVersionId != null)
+		{
+			SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(siteNodeVersionId), db);
+			List<MediumContentVersionImpl> contentVersionList = ContentVersionController.getContentVersionController().getMediumContentVersionList(siteNodeVO.getMetaInfoContentId(), masterLanguageId, db);
+			for(MediumContentVersionImpl cv : contentVersionList)
+			{
+				if(Math.abs(cv.getModifiedDateTime().getTime() - siteNodeVersionVO.getModifiedDateTime().getTime()) < 1000)
+				{
+					pageComponentsString = templateController.getContentAttribute(cv.getValueObject(), "ComponentStructure", true);
+					break;
+				}
+			}
+		}
 		
 		if(pageComponentsString == null)
 			throw new SystemException("There was no Meta Information bound to this page which makes it impossible to render.");	
 	
-		CacheController.cacheObjectInAdvancedCache(cacheName, cacheKey, pageComponentsString);
-		
-	    Set contentVersionIds = new HashSet();
-	    //TODO - m�ste fixa s� att inte nulls sl�ngs in i getUsedPageMetaInfoContentVersionIdSet... hur det kan h�nda
-	    contentVersionIds.addAll(templateController.getDeliveryContext().getUsedPageMetaInfoContentVersionIdSet());
-    	
-		Set groups = new HashSet();
-		if(templateController.getDeliveryContext().getUsedPageMetaInfoContentVersionIdSet().size() > 0)
+		if(templateController.getHttpServletRequest().getParameter("siteNodeVersionId") == null || templateController.getHttpServletRequest().getParameter("siteNodeVersionId").equals(""))
 		{
-			ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getSmallContentVersionVOWithId((Integer)templateController.getDeliveryContext().getUsedPageMetaInfoContentVersionIdSet().toArray()[0], templateController.getDatabase());
-			groups.add(CacheController.getPooledString(2, contentVersionVO.getId()));
-			groups.add(CacheController.getPooledString(1, contentVersionVO.getContentId()));
-		}
-		
-		if(groups.size() > 0)
-		{
-			CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentEditorVersionIdCache", versionKey, contentVersionIds, groups, true);
+			CacheController.cacheObjectInAdvancedCache(cacheName, cacheKey, pageComponentsString);
+
+			Set contentVersionIds = new HashSet();
+		    //TODO - m�ste fixa s� att inte nulls sl�ngs in i getUsedPageMetaInfoContentVersionIdSet... hur det kan h�nda
+		    contentVersionIds.addAll(templateController.getDeliveryContext().getUsedPageMetaInfoContentVersionIdSet());
+	    	
+			Set groups = new HashSet();
+			if(templateController.getDeliveryContext().getUsedPageMetaInfoContentVersionIdSet().size() > 0)
+			{
+				ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getSmallContentVersionVOWithId((Integer)templateController.getDeliveryContext().getUsedPageMetaInfoContentVersionIdSet().toArray()[0], templateController.getDatabase());
+				groups.add(CacheController.getPooledString(2, contentVersionVO.getId()));
+				groups.add(CacheController.getPooledString(1, contentVersionVO.getContentId()));
+			}
+			
+			if(groups.size() > 0)
+			{
+				CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentEditorVersionIdCache", versionKey, contentVersionIds, groups, true);
+			}
 		}
 		
 		return pageComponentsString;
@@ -2716,6 +2742,13 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 			
 		Object componentsCandidate = CacheController.getCachedObjectFromAdvancedCache("pageComponentsCache", key.toString());
 		Object childComponentsCandidate = CacheController.getCachedObjectFromAdvancedCache("pageComponentsCache", keyChildComponents);
+		
+		if(templateController.getOperatingMode() == 0 && templateController.getHttpServletRequest().getParameter("siteNodeVersionId") != null && !templateController.getHttpServletRequest().getParameter("siteNodeVersionId").equals(""))
+		{
+			componentsCandidate = null;
+			childComponentsCandidate = null;
+		}
+		
 		List components = new ArrayList();
 		List childComponents = new ArrayList();
 		String[] groups = null;
@@ -3098,15 +3131,18 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 			if(groups == null)
 				groups = new String[]{"selectiveCacheUpdateNonApplicable"};
 			
-			if(components != null)
+			if(templateController.getHttpServletRequest().getParameter("siteNodeVersionId") == null || templateController.getHttpServletRequest().getParameter("siteNodeVersionId").equals(""))
 			{
-				CacheController.cacheObjectInAdvancedCache("pageComponentsCache", key, components, groups, false);				
-				CacheController.cacheObjectInAdvancedCache("pageComponentsCache", keyChildComponents, childComponents, groups, false);				
-			}
-			else
-			{
-				CacheController.cacheObjectInAdvancedCache("pageComponentsCache", key, new NullObject(), groups, false);
-				CacheController.cacheObjectInAdvancedCache("pageComponentsCache", keyChildComponents, new NullObject(), groups, false);
+				if(components != null)
+				{
+					CacheController.cacheObjectInAdvancedCache("pageComponentsCache", key, components, groups, false);				
+					CacheController.cacheObjectInAdvancedCache("pageComponentsCache", keyChildComponents, childComponents, groups, false);				
+				}
+				else
+				{
+					CacheController.cacheObjectInAdvancedCache("pageComponentsCache", key, new NullObject(), groups, false);
+					CacheController.cacheObjectInAdvancedCache("pageComponentsCache", keyChildComponents, new NullObject(), groups, false);
+				}
 			}
 		}		
 		

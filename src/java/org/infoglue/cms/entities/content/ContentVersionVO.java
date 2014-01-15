@@ -260,7 +260,8 @@ public class ContentVersionVO implements BaseEntityVO
 		ContentVersionVO copy = new ContentVersionVO();
 		
 		copy.setContentId(new Integer(this.contentId.intValue()));
-		copy.setContentTypeDefinitionId(new Integer(this.contentTypeDefinitionId.intValue()));
+		if(this.contentTypeDefinitionId != null)
+			copy.setContentTypeDefinitionId(new Integer(this.contentTypeDefinitionId.intValue()));
 		copy.setIsActive(new Boolean(this.isActive.booleanValue()));
 		copy.setIsCheckedOut(new Boolean(this.isCheckedOut.booleanValue()));
 		copy.setLanguageId(new Integer(this.languageId.intValue()));

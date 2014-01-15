@@ -388,6 +388,8 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "autoShowApprovalButtons");
 	    populate(ps, "metaInfoAttributesToShowInCreatePageDialog");
 
+	    populate(ps, "defaultSystemTheme");
+
 	    try
 	    {
 	    	UserControllerProxy.getController().updateAnonymousUserPassword();

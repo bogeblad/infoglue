@@ -414,6 +414,8 @@
 	
 				#editPropertyTextAreaCSS("ServerNode.property.toolLanguages" "toolLanguages" "$this.getDataPropertyValue('toolLanguages')" "50" "3" "normaltextarea" "$!serverNodeId" $!cmsPH.toolLanguages)
 	
+				#selectFieldCSS("ServerNode.property.defaultSystemTheme" "defaultSystemTheme" $this.getPropertyValue('defaultSystemTheme') $!cmsPH.availableThemesAsMap "$!cmsPH.defaultSystemTheme")
+	
 				#set($customContentTypeIcons = $this.getDataPropertyValue("customContentTypeIcons"))
 				#set($customContentTypeIcons = $customContentTypeIcons.replaceAll("&amp;", "&amp;amp;"))
 				#editPropertyTextAreaCSS("ServerNode.property.customContentTypeIcons" "customContentTypeIcons" "$customContentTypeIcons" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.customContentTypeIcons")
@@ -429,6 +431,7 @@
 				#set($WYSIWYGEditorAreaCSS = $this.getDataPropertyValue("WYSIWYGEditorAreaCSS"))
 				#set($WYSIWYGEditorAreaCSS = $WYSIWYGEditorAreaCSS.replaceAll("&amp;", "&amp;amp;"))
 				#editPropertyTextAreaCSS("ServerNode.property.WYSIWYGEditorAreaCSS" "WYSIWYGEditorAreaCSS" "$WYSIWYGEditorAreaCSS" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.WYSIWYGEditorAreaCSS")
+
 			</div>
 		
 			<div class="inlineTabDiv" id="protectionSettings">

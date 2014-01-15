@@ -48,6 +48,7 @@ import org.infoglue.cms.applications.managementtool.actions.deployment.VersionCo
 import org.infoglue.cms.controllers.kernel.impl.simple.InstallationController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LabelController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ServerNodeController;
+import org.infoglue.cms.controllers.kernel.impl.simple.ThemeController;
 import org.infoglue.cms.entities.management.ServerNodeVO;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.HttpHelper;
@@ -1990,8 +1991,34 @@ public class CmsPropertyHandler
 	public static String getTheme(String userName)
 	{
 		String theme = getPropertySet().getString("principal_" + userName + "_theme");
+		return (theme == null ? getDefaultSystemTheme() : theme);
+	}
 
-		return (theme == null ? "" : theme);
+	public static String getDefaultSystemTheme()
+	{
+		String theme = getServerNodeProperty("defaultSystemTheme", true, "Default");
+
+		return (theme == null ? "Default" : theme);
+	}
+
+	public List getAvailableThemes()
+	{
+		return ThemeController.getController().getAvailableThemes();
+	}
+
+	public List<List<String>> getAvailableThemesAsMap()
+	{
+		List<List<String>> list = new ArrayList<List<String>>();
+		
+		for(String themeName : (List<String>)ThemeController.getController().getAvailableThemes())
+		{
+			List list2 = new ArrayList<String>();
+			list2.add(themeName);
+			list2.add(themeName);
+			list.add(list2);
+		}
+	
+		return list;
 	}
 
 	public static String getDisableEditOnSightToolbar()

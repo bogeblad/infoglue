@@ -43,7 +43,7 @@ public class StructureToolbarController
 
    	private static VisualFormatter formatter = new VisualFormatter();
 
-	public static ToolbarButton getPreviewButtons(Integer repositoryId, Integer siteNodeId, Locale locale) throws Exception
+	public static ToolbarButton getPreviewButtons(Integer repositoryId, Integer siteNodeId, String siteNodeVersionId, Locale locale) throws Exception
 	{
 		RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);
 		
@@ -75,23 +75,57 @@ public class StructureToolbarController
 	    ToolbarButton previewPage = new ToolbarButton("previewPage",
 				  getLocalizedString(locale, "tool.structuretool.toolbarV3.previewPageLabel"), 
 				  getLocalizedString(locale, "tool.structuretool.toolbarV3.previewPageLabel"),
-				  "javascript:openPopup('" + workingUrl + "?siteNodeId=" + siteNodeId + "', 'Import', 'resizable=yes,toolbar=yes,scrollbars=yes,status=yes,location=yes,menubar=yes');",
+				  "javascript:openPopup('" + workingUrl + "?siteNodeId=" + siteNodeId + (siteNodeVersionId != null ? "&siteNodeVersionId=" + siteNodeVersionId : "") + "', 'Import', 'resizable=yes,toolbar=yes,scrollbars=yes,status=yes,location=yes,menubar=yes');",
 				  "",
 				  "left",
 				  "preview",
 				  true);
 	    	    
 	    return previewPage;
-		/*
-		return new ToolbarButton("",
-				getLocalizedString(locale, "tool.structuretool.toolbarV3.previewPageLabel"), 
-				getLocalizedString(locale, "tool.structuretool.toolbarV3.previewPageTitle"),
-				"" + workingUrl + "?siteNodeId=" + siteNodeId,
-				"",
-				"preview");
-		*/
 	}
+	
+	
+	public static ToolbarButton getPreviewButton(Integer repositoryId, Integer siteNodeId, Locale locale) throws Exception
+	{
+		RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);
+		
+		String dnsName = repositoryVO.getDnsName();
 
+	    String workingUrl = null;
+	    
+	    String keyword = "working=";
+	    int startIndex = (dnsName == null) ? -1 : dnsName.indexOf(keyword);
+	    if(startIndex != -1)
+	    {
+	        int endIndex = dnsName.indexOf(",", startIndex);
+		    if(endIndex > -1)
+	            dnsName = dnsName.substring(startIndex, endIndex);
+	        else
+	            dnsName = dnsName.substring(startIndex);
+
+		    String hostName = dnsName.split("=")[1];
+		    if(hostName.indexOf("localhost") == -1)
+			    workingUrl = hostName + CmsPropertyHandler.getComponentRendererUrl() + "ViewPage.action";
+		    else
+		    	workingUrl = CmsPropertyHandler.getComponentRendererUrl() + "ViewPage.action";
+	    }
+	    else
+	    {
+	        workingUrl = CmsPropertyHandler.getPreviewDeliveryUrl();
+	    }
+	    
+	    ToolbarButton previewPage = new ToolbarButton("previewPage",
+				  getLocalizedString(locale, "tool.structuretool.toolbarV3.previewPageLabel"), 
+				  getLocalizedString(locale, "tool.structuretool.toolbarV3.previewPageLabel"),
+				  "previewPage('" + workingUrl + "?siteNodeId=" + siteNodeId + "');",
+				  "",
+				  "left",
+				  "preview",
+				  true);
+	    	    
+	    return previewPage;
+	}
+	
 	public static ToolbarButton getPageDetailButtons(Integer repositoryId, Integer siteNodeId, Locale locale, InfoGluePrincipal principal)
 	{
 		return new ToolbarButton("pageDetail",
@@ -251,23 +285,26 @@ public class StructureToolbarController
 				"publishPage");
 	}
 
-	public static ToolbarButton getUnpublishButton(Integer repositoryId, Integer siteNodeId, Locale locale, boolean recursive)
+	public static ToolbarButton getUnpublishButton(Integer repositoryId, Integer siteNodeId, Locale locale, boolean recursive, boolean onlyLatestVersion)
 	{
-		String labelKey = "tool.common.unpublishing.unpublishPageButtonLabel";
+		String labelKey = "tool.common.unpublishing.unpublishButtonLabel";
 		if(recursive)
-			labelKey = "tool.common.unpublishing.unpublishPagesButtonLabel";
+			labelKey = "tool.common.unpublishing.unpublishButtonLabel";
+		if(onlyLatestVersion)
+			labelKey = "tool.contenttool.toolbarV3.unpublishContentsLabel";
 		
 		return new ToolbarButton("unpublishPage",
 				getLocalizedString(locale, labelKey), 
 				getLocalizedString(locale, labelKey),
-				getUnpublishButtonLink(siteNodeId, recursive),
+				getUnpublishButtonLink(siteNodeId, recursive, onlyLatestVersion),
 				"",
 				"unpublishPage");
 	}
 
-	public static String getUnpublishButtonLink(Integer siteNodeId, boolean recursive)
+
+	public static String getUnpublishButtonLink(Integer siteNodeId, boolean recursive, boolean onlyLatestVersion)
 	{
-		return "UnpublishSiteNodeVersion!inputChooseSiteNodesV3.action?siteNodeId=" + siteNodeId + "&recurseSiteNodes=" + recursive + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent";
+		return "UnpublishSiteNodeVersion!inputChooseSiteNodesV3.action?siteNodeId=" + siteNodeId + "&recurseSiteNodes=" + recursive + "&unpublishAll=" + !onlyLatestVersion + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent";
 	}
 	
 	/*

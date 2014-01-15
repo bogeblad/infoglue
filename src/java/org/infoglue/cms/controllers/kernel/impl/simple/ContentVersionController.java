@@ -778,6 +778,31 @@ public class ContentVersionController extends BaseController
 
 		return contentVersionVOList;
 	}
+	
+   	/**
+	 * This method returns the latest active content version.
+	 */
+    
+	public List<MediumContentVersionImpl> getMediumContentVersionList(Integer contentId, Integer languageId, Database db) throws SystemException, Bug, Exception
+	{
+		List<MediumContentVersionImpl> contentVersionList = new ArrayList<MediumContentVersionImpl>();
+
+        OQLQuery oql = db.getOQLQuery( "SELECT cv FROM org.infoglue.cms.entities.content.impl.simple.MediumContentVersionImpl cv WHERE cv.contentId = $1 AND cv.languageId = $2 ORDER BY cv.contentVersionId");
+    	oql.bind(contentId);
+		oql.bind(languageId);
+    	
+    	QueryResults results = oql.execute();
+		while (results.hasMore()) 
+        {
+			MediumContentVersionImpl contentVersion = (MediumContentVersionImpl)results.next();
+			contentVersionList.add(contentVersion);
+        }
+		
+		results.close();
+		oql.close();
+
+		return contentVersionList;
+	}
 
    	/**
 	 * This method returns the latest active content version.

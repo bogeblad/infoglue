@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -269,7 +270,7 @@ public class SiteNodeController extends BaseController
 		if(siteNodeVO != null)
 		{
 			if(siteNodeVO.getChildCount() == null)
-				logger.error("Fail: a siteNodeVO was read the old way...");
+				logger.info("Fail: a siteNodeVO was read the old way...");
 			//logger.info("There was an cached siteNodeVO:" + siteNodeVO);
 		}
 		else
@@ -363,7 +364,7 @@ public class SiteNodeController extends BaseController
 		if(siteNodeVO != null)
 		{
 			if(siteNodeVO.getChildCount() == null)
-				logger.error("Fail: a siteNodeVO was read the old way...");
+				logger.info("Fail: a siteNodeVO was read the old way...");
 			//logger.info("There was an cached siteNodeVO:" + siteNodeVO);
 		}
 		else
@@ -2376,7 +2377,7 @@ public class SiteNodeController extends BaseController
         return siteNodeVO;
     }       
 
-    private static Map<Integer,Integer> metaInfoSiteNodeIdMap = new HashMap<Integer,Integer>();
+    private static Map<Integer,Integer> metaInfoSiteNodeIdMap = new ConcurrentHashMap<Integer,Integer>();
     
     public SiteNodeVO getSiteNodeVOWithMetaInfoContentId(Database db, Integer contentId) throws ConstraintException, SystemException, Exception
     {

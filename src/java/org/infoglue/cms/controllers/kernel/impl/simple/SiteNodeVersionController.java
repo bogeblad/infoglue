@@ -29,6 +29,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -48,6 +49,7 @@ import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.SmallestContentVersionVO;
+import org.infoglue.cms.entities.content.impl.simple.MediumContentVersionImpl;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.AvailableServiceBinding;
 import org.infoglue.cms.entities.management.AvailableServiceBindingVO;
@@ -2000,51 +2002,34 @@ public class SiteNodeVersionController extends BaseController
 				    contentVersions.add(contentVersion);
 			}
 		}
-		/*
-		else
-		{
-			Integer metaInfoAvailableServiceBindingId = null;
-			Integer serviceBindingId = null;
-			AvailableServiceBindingVO availableServiceBindingVO = AvailableServiceBindingController.getController().getAvailableServiceBindingVOWithName("Meta information", db);
-			if(availableServiceBindingVO != null)
-				metaInfoAvailableServiceBindingId = availableServiceBindingVO.getAvailableServiceBindingId();
-			
-			Collection serviceBindings = siteNodeVersion.getServiceBindings();
-			Iterator serviceBindingIterator = serviceBindings.iterator();
-			while(serviceBindingIterator.hasNext())
-			{
-				ServiceBinding serviceBinding = (ServiceBinding)serviceBindingIterator.next();
-				if(serviceBinding.getAvailableServiceBinding().getId().intValue() == metaInfoAvailableServiceBindingId.intValue())
-				{
-					serviceBindingId = serviceBinding.getId();
-					break;
-				}
-			}
-	
-			if(serviceBindingId != null)
-			{
-				List boundContents = ContentController.getBoundContents(serviceBindingId); 
-				if(boundContents.size() > 0)
-				{
-					ContentVO contentVO = (ContentVO)boundContents.get(0);
-					
-					Iterator<LanguageVO> languageIterator = languageVOList.iterator();
-					while(languageIterator.hasNext())
-					{
-						LanguageVO language = languageIterator.next();
-						ContentVersion contentVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersion(contentVO.getId(), language.getId(), db);
-						
-						if(contentVersion != null)
-						    contentVersions.add(contentVersion);
-					}
-				}
-			}
-		}
-		*/
+
 		return contentVersions;
     }
 
-	
+
+    private void inactivateMetaInfoMatchingSiteNodeVersion(SiteNodeVersionVO siteNodeVersionVO/*, InfoGluePrincipal infoGluePrincipal*/, Database db) throws ConstraintException, SystemException, Exception
+    {
+        List<ContentVersionVO> contentVersions = new ArrayList<ContentVersionVO>();
+        
+        SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersionVO.getSiteNodeId(), db);
+        
+        LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId(), db);
+		if(siteNodeVO.getMetaInfoContentId() != null)
+		{
+			List<MediumContentVersionImpl> contentVersionList = ContentVersionController.getContentVersionController().getMediumContentVersionList(siteNodeVO.getMetaInfoContentId(), masterLanguageVO.getId(), db);
+			for(MediumContentVersionImpl cv : contentVersionList)
+			{
+				System.out.println("" + Math.abs(cv.getModifiedDateTime().getTime() - siteNodeVersionVO.getModifiedDateTime().getTime()));
+				if(Math.abs(cv.getModifiedDateTime().getTime() - siteNodeVersionVO.getModifiedDateTime().getTime()) < 1000)
+				{
+					cv.setIsActive(false);
+					break;
+				}
+			}
+		}
+    }
+
+    
 	/**
 	 * Updates the SiteNodeVersion.
 	 */
@@ -2180,6 +2165,85 @@ public class SiteNodeVersionController extends BaseController
 		return siteNodeVersionList;
     }
 
+	public void inactivate(Integer siteNodeVersionId) throws Exception
+	{
+		Database db = CastorDatabaseService.getDatabase();
+
+	    beginTransaction(db);
+
+        try
+        {
+            SiteNodeVersion siteNodeVersion = getSiteNodeVersionWithId(siteNodeVersionId, db);
+            siteNodeVersion.setIsActive(false);
+            
+            inactivateMetaInfoMatchingSiteNodeVersion(siteNodeVersion.getValueObject(), db);
+            
+            commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+	}
+
+	public void reactivate(Integer siteNodeVersionId, InfoGluePrincipal infoGluePrincipal) throws Exception
+	{
+		Database db = CastorDatabaseService.getDatabase();
+
+	    beginTransaction(db);
+
+        try
+        {
+        	Date now = new Date();
+        	
+            SiteNodeVersionVO siteNodeVersionVO = getSiteNodeVersionVOWithId(siteNodeVersionId, db);
+                       
+            List<ContentVersionVO> contentVersions = new ArrayList<ContentVersionVO>();
+            
+            SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersionVO.getSiteNodeId(), db);
+            
+            ContentVersionVO wantedContentVersionVO = null;
+            LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId(), db);
+    		if(siteNodeVO.getMetaInfoContentId() != null)
+    		{
+    			List<MediumContentVersionImpl> contentVersionList = ContentVersionController.getContentVersionController().getMediumContentVersionList(siteNodeVO.getMetaInfoContentId(), masterLanguageVO.getId(), db);
+    			for(MediumContentVersionImpl cv : contentVersionList)
+    			{
+    				if(Math.abs(cv.getModifiedDateTime().getTime() - siteNodeVersionVO.getModifiedDateTime().getTime()) < 1000)
+    				{
+    					wantedContentVersionVO = cv.getValueObject().copy();
+    					break;
+    				}
+    			}
+    		}
+    		
+    		if(wantedContentVersionVO != null)
+    		{
+	            siteNodeVersionVO.setStateId(0);
+	            siteNodeVersionVO.setIsActive(true);
+	            siteNodeVersionVO.setModifiedDateTime(now);
+	            SiteNodeVersionController.getController().createSmall(siteNodeVersionVO.getSiteNodeId(), infoGluePrincipal, siteNodeVersionVO, db);
+	
+	            wantedContentVersionVO.setVersionModifier(infoGluePrincipal.getName());
+	            wantedContentVersionVO.setModifiedDateTime(new Date());
+	            wantedContentVersionVO.setStateId(ContentVersionVO.WORKING_STATE);
+	    		
+	    		ContentVersionController.getContentVersionController().create(wantedContentVersionVO.getContentId(), wantedContentVersionVO.getLanguageId(), wantedContentVersionVO, wantedContentVersionVO.getId(), true, false);
+    		}
+    		
+            commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+	}
+
+	
 	/**
 	 * This is a method that gives the user back an newly initialized ValueObject for this entity that the controller
 	 * is handling.

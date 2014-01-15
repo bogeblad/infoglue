@@ -1834,7 +1834,6 @@ public class ToolbarController implements ToolbarProvider
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
 		String siteNodeId = request.getParameter("siteNodeId");
-		//String repositoryId = request.getParameter("repositoryId");
 		SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(siteNodeId));
 		
 		SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(new Integer(siteNodeId));
@@ -1922,16 +1921,17 @@ public class ToolbarController implements ToolbarProvider
 			pageMetaDataButton.getSubButtons().add(pageDetailSimpleButton);
 		}
 		
-		buttons.add(StructureToolbarController.getPreviewButtons(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale));
+		buttons.add(StructureToolbarController.getPreviewButtons(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), null, locale));
 
 		ToolbarButton publishButton = StructureToolbarController.getPublishCurrentNodeButton(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale);
 		ToolbarButton publishStructureButton = StructureToolbarController.getPublishButtons(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale);
 		publishButton.getSubButtons().add(publishStructureButton);
 		buttons.add(publishButton);
 		
-		ToolbarButton unpublishButton = StructureToolbarController.getUnpublishButton(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale, true);
-		//ToolbarButton unpublishStructureButton = StructureToolbarController.getUnpublishButton(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale, true);
+		ToolbarButton unpublishAllButton = StructureToolbarController.getUnpublishButton(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale, true, false);
+		ToolbarButton unpublishButton = StructureToolbarController.getUnpublishButton(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale, true, true);
 
+		publishButton.getSubButtons().add(unpublishAllButton);
 		publishButton.getSubButtons().add(unpublishButton);
 		
 		ToolbarButton debugContentPublicationButton = new ToolbarButton("",
@@ -2036,7 +2036,9 @@ public class ToolbarController implements ToolbarProvider
 		
 		buttons.addAll(getCommonFooterSaveOrSaveAndExitOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton, "UpdateSiteNode!saveAndExitV3Inline.action"));
 		
-		buttons.add(getCompareButton(toolbarKey, principal, locale, request, disableCloseButton));
+		buttons.add(getPreviewButton(toolbarKey, principal, locale, request, disableCloseButton));
+		buttons.add(getReactivateButton(toolbarKey, principal, locale, request, disableCloseButton));
+		//buttons.add(getCompareButton(toolbarKey, principal, locale, request, disableCloseButton));
 
 		return buttons;
 	}
@@ -2090,6 +2092,27 @@ public class ToolbarController implements ToolbarProvider
 									  true);
 	}
 
+	private ToolbarButton getReactivateButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	{
+		return new ToolbarButton("reactivate",
+									  getLocalizedString(locale, "tool.common.revertButton.label"), 
+									  getLocalizedString(locale, "tool.common.revertButton.label"),
+									  "reactivate();",
+									  "css/images/v3/compareIcon.gif",
+									  "left",
+									  "reset",
+									  true);
+	}
+
+	private ToolbarButton getPreviewButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	{
+		String siteNodeId = request.getParameter("siteNodeId");
+		SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(siteNodeId));
+
+		return StructureToolbarController.getPreviewButton(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale);
+	}
+
+	
 	private List<ToolbarButton> getCreateSiteNodeFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();

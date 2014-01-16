@@ -665,7 +665,7 @@ public class CmsPropertyHandler
 	{
 		String contextDiskPath = getProperty("contextDiskPath");
 		
-		if(contextDiskPath == null || contextDiskPath.equals("") || contextDiskPath.contains("@deploy.dir.working@"))
+		if(contextDiskPath == null || contextDiskPath.equals("") || contextDiskPath.contains("@"))
 			return getContextRootPath();
 		else
 			return contextDiskPath;
@@ -1105,7 +1105,12 @@ public class CmsPropertyHandler
 
 	public static String getWysiwygEditor()
 	{
-		return getServerNodeProperty("wysiwygEditor", true, "ckeditor4");
+		return getServerNodeProperty("prefferedWYSIWYG", true, "ckeditor4");
+	}
+
+	public static String getPrefferedWYSIWYG()
+	{
+		return getServerNodeProperty("prefferedWYSIWYG", true, "ckeditor4");
 	}
 
 	public static String getDisableImageEditor()
@@ -1177,11 +1182,6 @@ public class CmsPropertyHandler
 	public static String getComponentBindningAssetBrowser()
 	{
 		return getServerNodeProperty("componentBindningAssetBrowser", true, "default");
-	}
-
-	public static String getPrefferedWYSIWYG()
-	{
-		return getServerNodeProperty("prefferedWYSIWYG", true, "ckeditor4");
 	}
 
 	public static String getDefaultNumberOfYearsBeforeExpire()

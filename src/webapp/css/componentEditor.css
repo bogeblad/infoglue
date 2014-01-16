@@ -151,7 +151,7 @@ Component palette classes
 	visibility: inherit;
 	z-index: 20;
 	overflow: auto;
-	space: nowrap;
+	white-space: nowrap;
 	padding: 0px 4px 0px 4px;
 }
 
@@ -293,14 +293,7 @@ Other classes
 Page components classes
 */
 #pageComponents {
-	aposition: fixed;
-	awidth: 250px;
-	abackground-color: #F4F4F4;
-	aborder: 1px solid #333333;
 	z-index: 70;
-	aright: 5px;
-	atop: 100px;
-	aheight: 400px;
 }
 /*
 #pageComponentsHandle {
@@ -382,10 +375,8 @@ font-size: 12pt;
 height:32px;
 float: left;
 margin:0;
-apadding-top:2px;
 width:100%;
 padding: 0px;
-aposition:relative;
 background-color:white;
 background-image:url("images/v3/toolbarBackground.gif");
 background-repeat:repeat-x;
@@ -409,7 +400,6 @@ border-bottom:1px solid #9CAABD;
     background-image: url("images/v3/footerBackground.gif");
     background-repeat: repeat-x;
     border-top: 0 solid #9CAABD;
-    abottom: 0;
     float: left;
     height: 43px;
     margin: 0;

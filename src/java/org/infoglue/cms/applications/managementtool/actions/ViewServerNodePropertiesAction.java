@@ -279,6 +279,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "gaCode");
 	    populate(ps, "w3cValidationServiceUrl");
 	    populate(ps, "componentBindningAssetBrowser");
+	    populate(ps, "wysiwygEditor");
 	    populate(ps, "prefferedWYSIWYG");
 	    
 	    populate(ps, "defaultNumberOfYearsBeforeExpire");

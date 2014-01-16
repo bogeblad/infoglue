@@ -147,7 +147,7 @@ public class EditOnSiteBasicTemplateController extends BasicTemplateController
                 decoratedAttributeValue.append("<div " + (isInlineEditingOn ? "contenteditable=\"true\"" : "")  + " style=\"display:inline;\" class=\"" + className + " attribute" + contentId + "\" id=\"attribute" + contentId + attributeName + "\" oncontextmenu=\"" + setContentItemParametersJavascript + "\">" + attributeValue + "</div>");
                 
                 decoratedAttributeValue.append("<script type=\"text/javascript\">");
-                if(!CmsPropertyHandler.getPersonalDisableEditOnSightToolbar(getPrincipal().getName()))
+                if(!CmsPropertyHandler.getPersonalDisableEditOnSightToolbar(getPrincipal().getName()) && CmsPropertyHandler.getWysiwygEditor().equalsIgnoreCase("ckeditor4"))
                 {
                 	decoratedAttributeValue.append( "CKEDITOR.inline('attribute" + contentId + attributeName + "', {" +
 							                		"				    removePlugins: 'toolbar'," +
@@ -171,7 +171,7 @@ public class EditOnSiteBasicTemplateController extends BasicTemplateController
                 decoratedAttributeValue.append("<" + tag + " " + (isInlineEditingOn ? "contenteditable=\"" + enableWYSIWYG + "\"" : "") + " style=\"display:inline;\" class=\"" + className + " attribute" + contentId + "\" id=\"attribute" + contentId + attributeName + "\" oncontextmenu=\"" + setContentItemParametersJavascript + "\">" + attributeValue + "</" + tag + ">");
                 
                 decoratedAttributeValue.append("<script type=\"text/javascript\">");
-                if(!CmsPropertyHandler.getPersonalDisableEditOnSightToolbar(getPrincipal().getName()))
+                if(!CmsPropertyHandler.getPersonalDisableEditOnSightToolbar(getPrincipal().getName()) && CmsPropertyHandler.getWysiwygEditor().equalsIgnoreCase("ckeditor4"))
                 {
                 	decoratedAttributeValue.append(	"CKEDITOR.inline( 'attribute" + contentId + attributeName + "', {" +
 								            		"				    toolbar: '" + WYSIWYGToolbar + "'," +

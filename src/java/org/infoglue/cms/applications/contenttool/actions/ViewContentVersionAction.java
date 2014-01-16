@@ -400,11 +400,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
     {
     	this.initialize(getContentVersionId(), getContentId(), this.languageId);
         
-    	String wysiwygEditor = CmsPropertyHandler.getWysiwygEditor();
-    	if(wysiwygEditor == null || wysiwygEditor.equalsIgnoreCase("") || wysiwygEditor.equalsIgnoreCase("HTMLArea"))
-    	    return "success";
-    	else
-    	    return "successForFCKEditor";
+	    return "successForFCKEditor";
     }
 
     public String doV3() throws Exception
@@ -417,12 +413,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	public String doStandalone() throws Exception
 	{
 	    this.initialize(getContentVersionId(), getContentId(), this.languageId);
-		    
-    	String wysiwygEditor = CmsPropertyHandler.getWysiwygEditor();
-    	if(wysiwygEditor == null || wysiwygEditor.equalsIgnoreCase("") || wysiwygEditor.equalsIgnoreCase("HTMLArea"))
-    	    return "standalone";
-    	else
-    	    return "standaloneForFCKEditor";
+	    return "standaloneForFCKEditor";
 	}
 
 	public String doBackground() throws Exception

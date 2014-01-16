@@ -138,11 +138,7 @@ public class CreateContentWizardFinishAction extends CreateContentWizardAbstract
 			
 			if(versionDone == null || versionDone.equals("false"))
 			{
-				String wysiwygEditor = CmsPropertyHandler.getWysiwygEditor();
-		    	if(wysiwygEditor == null || wysiwygEditor.equalsIgnoreCase("") || wysiwygEditor.equalsIgnoreCase("HTMLArea"))
-		    	    return "inputContentVersions";
-		    	else
-		    	    return "inputContentVersionsForFCKEditor";
+	    	    return "inputContentVersionsForFCKEditor";
 			}
 			//ceb.throwIfNotEmpty();
 	    						

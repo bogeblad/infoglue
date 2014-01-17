@@ -23,7 +23,6 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
@@ -89,28 +88,37 @@ public class ViewGroupAction extends InfoGlueAbstractAction
 			byte[] bytes = Base64.decodeBase64(groupName);
 			String decodedGroupName = new String(bytes, "utf-8");
 			logger.info("decodedGroupName:" + decodedGroupName);
-			if(GroupControllerProxy.getController().groupExists(decodedGroupName))
+			try
 			{
-				groupName = decodedGroupName;
-			}
-			else
-			{
-				logger.info("No match on base64-based groupName:" + groupName);
-				
-				String fromEncoding = CmsPropertyHandler.getURIEncoding();
-				String toEncoding = "utf-8";
-				
-				logger.info("groupName:" + groupName);
-				String testGroupName = new String(groupName.getBytes(fromEncoding), toEncoding);
-				if(logger.isInfoEnabled())
+				if(GroupControllerProxy.getController().groupExists(decodedGroupName))
 				{
-					for(int i=0; i<groupName.length(); i++)
-						logger.info("c:" + groupName.charAt(i) + "=" + (int)groupName.charAt(i));
+					groupName = decodedGroupName;
 				}
-				if(testGroupName.indexOf((char)65533) == -1)
-					groupName = testGroupName;
-				
-				logger.info("groupName after:" + groupName);
+				else
+				{
+					logger.info("No match on base64-based groupName:" + groupName);
+					
+					String fromEncoding = CmsPropertyHandler.getURIEncoding();
+					String toEncoding = "utf-8";
+					
+					logger.info("groupName:" + groupName);
+					String testGroupName = new String(groupName.getBytes(fromEncoding), toEncoding);
+					if(logger.isInfoEnabled())
+					{
+						for(int i=0; i<groupName.length(); i++)
+							logger.info("c:" + groupName.charAt(i) + "=" + (int)groupName.charAt(i));
+					}
+					if(testGroupName.indexOf((char)65533) == -1)
+						groupName = testGroupName;
+					
+					logger.info("groupName after:" + groupName);
+				}
+			}
+			catch (Exception e) 
+			{
+				logger.error("Error getting group: " + e.getMessage());
+				logger.warn("Error getting group: " + e.getMessage(), e);
+				throw e;
 			}
 		}
 		

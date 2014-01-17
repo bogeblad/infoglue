@@ -26,9 +26,6 @@ package org.infoglue.cms.applications.managementtool.actions;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.HashMap;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
@@ -161,22 +158,31 @@ public class ViewSystemUserAction extends InfoGlueAbstractAction
 			else
 			{
 				logger.info("No match on base64-based userName:" + userName);
-				if(!UserControllerProxy.getController().userExists(userName))
+				try
 				{
-					String fromEncoding = CmsPropertyHandler.getURIEncoding();
-					String toEncoding = "utf-8";
-					
-					logger.info("userName:" + userName);
-					String testUserName = new String(userName.getBytes(fromEncoding), toEncoding);
-					if(logger.isInfoEnabled())
+					if(!UserControllerProxy.getController().userExists(userName))
 					{
-						for(int i=0; i<userName.length(); i++)
-							logger.info("c:" + userName.charAt(i) + "=" + (int)userName.charAt(i));
+						String fromEncoding = CmsPropertyHandler.getURIEncoding();
+						String toEncoding = "utf-8";
+						
+						logger.info("userName:" + userName);
+						String testUserName = new String(userName.getBytes(fromEncoding), toEncoding);
+						if(logger.isInfoEnabled())
+						{
+							for(int i=0; i<userName.length(); i++)
+								logger.info("c:" + userName.charAt(i) + "=" + (int)userName.charAt(i));
+						}
+						if(testUserName.indexOf((char)65533) == -1)
+							userName = testUserName;
+						
+						logger.info("userName after:" + userName);
 					}
-					if(testUserName.indexOf((char)65533) == -1)
-						userName = testUserName;
-					
-					logger.info("userName after:" + userName);
+				}
+				catch (Exception e) 
+				{
+					logger.error("Error getting system user: " + e.getMessage());
+					logger.warn("Error getting system user: " + e.getMessage(), e);
+					throw e;
 				}
 			}
 		}

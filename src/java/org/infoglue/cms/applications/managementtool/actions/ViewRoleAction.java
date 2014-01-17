@@ -56,11 +56,18 @@ public class ViewRoleAction extends InfoGlueAbstractAction
 
     protected void initialize(String roleName) throws Exception
     {
-		this.infoGlueRole				= RoleControllerProxy.getController().getRole(roleName);
-		this.supportsUpdate				= this.infoGlueRole.getAutorizationModule().getSupportUpdate();
-			
-		this.contentTypeDefinitionVOList 			= ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList(ContentTypeDefinitionVO.EXTRANET_ROLE_PROPERTIES);
-		this.assignedContentTypeDefinitionVOList 	= RolePropertiesController.getController().getContentTypeDefinitionVOList(roleName);  
+    	try
+    	{
+			this.infoGlueRole				= RoleControllerProxy.getController().getRole(roleName);
+			this.supportsUpdate				= this.infoGlueRole.getAutorizationModule().getSupportUpdate();
+				
+			this.contentTypeDefinitionVOList 			= ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList(ContentTypeDefinitionVO.EXTRANET_ROLE_PROPERTIES);
+			this.assignedContentTypeDefinitionVOList 	= RolePropertiesController.getController().getContentTypeDefinitionVOList(roleName);  
+    	}
+    	catch (Exception e) 
+    	{
+    		
+		}
     } 
 
     public String doExecute() throws Exception
@@ -90,27 +97,36 @@ public class ViewRoleAction extends InfoGlueAbstractAction
 			byte[] bytes = Base64.decodeBase64(roleName);
 			String decodedRoleName = new String(bytes, "utf-8");
 			logger.info("decodedRoleName:" + decodedRoleName);
-			if(RoleControllerProxy.getController().roleExists(decodedRoleName))
+			try
 			{
-				roleName = decodedRoleName;
-			}
-			else
-			{
-				logger.info("No match on base64-based rolename:" + roleName);
-				String fromEncoding = CmsPropertyHandler.getURIEncoding();
-				String toEncoding = "utf-8";
-				
-				logger.info("roleName:" + roleName);
-				String testRoleName = new String(roleName.getBytes(fromEncoding), toEncoding);
-				if(logger.isInfoEnabled())
+				if(RoleControllerProxy.getController().roleExists(decodedRoleName))
 				{
-					for(int i=0; i<roleName.length(); i++)
-						logger.info("c:" + roleName.charAt(i) + "=" + (int)roleName.charAt(i));
+					roleName = decodedRoleName;
 				}
-				if(testRoleName.indexOf((char)65533) == -1)
-					roleName = testRoleName;
-				
-				logger.info("roleName after:" + roleName);
+				else
+				{
+					logger.info("No match on base64-based rolename:" + roleName);
+					String fromEncoding = CmsPropertyHandler.getURIEncoding();
+					String toEncoding = "utf-8";
+					
+					logger.info("roleName:" + roleName);
+					String testRoleName = new String(roleName.getBytes(fromEncoding), toEncoding);
+					if(logger.isInfoEnabled())
+					{
+						for(int i=0; i<roleName.length(); i++)
+							logger.info("c:" + roleName.charAt(i) + "=" + (int)roleName.charAt(i));
+					}
+					if(testRoleName.indexOf((char)65533) == -1)
+						roleName = testRoleName;
+					
+					logger.info("roleName after:" + roleName);
+				}
+			}
+			catch (Exception e) 
+			{
+				logger.error("Error getting role: " + e.getMessage());
+				logger.warn("Error getting role: " + e.getMessage(), e);
+				throw e;
 			}
 		}
 		

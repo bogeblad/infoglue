@@ -289,7 +289,7 @@ public class StructureToolbarController
 	{
 		String labelKey = "tool.common.unpublishing.unpublishButtonLabel";
 		if(recursive)
-			labelKey = "tool.common.unpublishing.unpublishButtonLabel";
+			labelKey = "tool.common.unpublishing.unpublishPageButtonLabel";
 		if(onlyLatestVersion)
 			labelKey = "tool.contenttool.toolbarV3.unpublishContentsLabel";
 		

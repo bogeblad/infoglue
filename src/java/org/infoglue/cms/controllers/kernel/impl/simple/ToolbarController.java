@@ -819,8 +819,8 @@ public class ToolbarController implements ToolbarProvider
 					  "",
 					  "unpublish");
 	
-			unpublishButton.getSubButtons().add(unpublishAllButton);
-			buttons.add(unpublishButton);
+			unpublishAllButton.getSubButtons().add(unpublishButton);
+			buttons.add(unpublishAllButton);
 		}
 		
 		if(contentVO.getIsProtected().intValue() == ContentVO.YES.intValue())
@@ -1180,8 +1180,8 @@ public class ToolbarController implements ToolbarProvider
 					  "",
 					  "unpublish");
 	
-			unpublishButton.getSubButtons().add(unpublishAllButton);
-			buttons.add(unpublishButton);
+			unpublishAllButton.getSubButtons().add(unpublishButton);
+			buttons.add(unpublishAllButton);
 		}
 		
 		if(contentVO.getContentTypeDefinitionId() != null)
@@ -1929,11 +1929,11 @@ public class ToolbarController implements ToolbarProvider
 		buttons.add(publishButton);
 		
 		ToolbarButton unpublishAllButton = StructureToolbarController.getUnpublishButton(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale, true, false);
-		ToolbarButton unpublishButton = StructureToolbarController.getUnpublishButton(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale, true, true);
+		ToolbarButton unpublishLatestButton = StructureToolbarController.getUnpublishButton(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale, true, true);
 
-		publishButton.getSubButtons().add(unpublishAllButton);
-		publishButton.getSubButtons().add(unpublishButton);
-		
+		unpublishAllButton.getSubButtons().add(unpublishLatestButton);
+		buttons.add(unpublishAllButton);
+
 		ToolbarButton debugContentPublicationButton = new ToolbarButton("",
 				  getLocalizedString(locale, "tool.publishingtool.toolbarV3.forcePublicationLabel"), 
 				  getLocalizedString(locale, "tool.publishingtool.toolbarV3.forcePublicationTitle"),

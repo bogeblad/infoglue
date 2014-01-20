@@ -117,10 +117,8 @@
 	<style type="text/css">
 		.linkContainer {
 			width: 660px;
-			aheight: 420px;
 			display: block;
 			float: left;
-			aoverflow: auto;
 		}
 		
 		.optionalContent {

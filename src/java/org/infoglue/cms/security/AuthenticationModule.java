@@ -84,7 +84,7 @@ public abstract class AuthenticationModule
 		    String casProxyValidateUrl 	= InfoGlueAuthenticationFilter.casProxyValidateUrl;
 		    String casLogoutUrl 		= InfoGlueAuthenticationFilter.casLogoutUrl;
 		    
-		    if(authenticatorClass.equals("org.infoglue.cms.security.CASBasicAuthenticationModule") && (forceBasicModule || fallBackToBasicBasedOnIP(request)))
+		    if(authenticatorClass.contains("CAS") && (forceBasicModule || fallBackToBasicBasedOnIP(request)))
 		    {
 		    	authenticationModule = (AuthenticationModule)Class.forName("org.infoglue.cms.security.InfoGlueBasicAuthenticationModule").newInstance();
 				authenticationModule.setAuthenticatorClass("org.infoglue.cms.security.InfoGlueBasicAuthenticationModule");

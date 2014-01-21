@@ -49,6 +49,7 @@ import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.Language;
+import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.publishing.EditionBrowser;
 import org.infoglue.cms.entities.publishing.Publication;
 import org.infoglue.cms.entities.publishing.PublicationDetail;
@@ -1722,8 +1723,10 @@ public class PublicationController extends BaseController
 	        	{
 	        		String cmsBaseUrl = (String)CmsPropertyHandler.getCmsFullBaseUrl();
 	        		Integer siteNodeId = null;
+	        		Integer languageId = null;
 	        		String approveEntityName = null;
 	        		String approveEntityId = null;
+	        		String extraInfo = null;
 	        		
 	        		if(event.getEntityClass().contains("SiteNodeVersion"))
 	        		{
@@ -1736,9 +1739,12 @@ public class PublicationController extends BaseController
 	        		{
 	        			logger.info("event.getEntityClass():" + event.getEntityClass());
 	        			ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(event.getEntityId(), db);
+	        			LanguageVO language = LanguageController.getController().getLanguageVOWithId(cvVO.getLanguageId(), db);
+	        			languageId = language.getId();
 	        			approveEntityName = "Content";
 	        			approveEntityId = ""+cvVO.getContentId();
-
+	        			extraInfo = "" + language.getDisplayLanguage() + "";
+	        			
 	        			List<ReferenceBean> referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(cvVO.getContentId(), 100, true, true);
 	        			for(ReferenceBean bean : referenceBeanList)
 	        			{
@@ -1777,7 +1783,7 @@ public class PublicationController extends BaseController
 	        			}
 	        		}
 	        		
-	        		String editOnSightUrl = cmsBaseUrl.replaceFirst("infoglueCMS", "infoglueDeliverWorking") + "/ViewPage!renderDecoratedPage.action?siteNodeId=" + siteNodeId + "&approveEntityName=" + approveEntityName + "&approveEntityId=" + approveEntityId + "&publishingEventId=" + event.getEventId();
+	        		String editOnSightUrl = cmsBaseUrl.replaceFirst("infoglueCMS", "infoglueDeliverWorking") + "/ViewPage!renderDecoratedPage.action?siteNodeId=" + siteNodeId + (languageId != null ? "&languageId=" + languageId : "") + "&approveEntityName=" + approveEntityName + "&approveEntityId=" + approveEntityId + "&publishingEventId=" + event.getEventId();
 	        		if(unpublishRequest && approveEntityName.equals("SiteNode"))
 	        			editOnSightUrl = cmsBaseUrl + "/Admin.action?siteNodeId=" + approveEntityId;
 	        		else if(unpublishRequest && approveEntityName.equals("Content"))
@@ -1790,15 +1796,17 @@ public class PublicationController extends BaseController
 		        		comment = event.getDescription();
 		        						
 		        	if(resultingEvents.size() > 1)
-		        		eventHref.add("<a href=\"" + editOnSightUrl + "\">" + event.getName() + "</a>");
+		        		eventHref.add("<a href=\"" + editOnSightUrl + "\">" + event.getName() + (extraInfo != null ? " (" + extraInfo + ")" : "") + "</a>");
 		        	else
-		        		eventHref.add("<a href=\"" + editOnSightUrl + "\">" + event.getName() + " (" + event.getDescription() + ")</a>");
+		        		eventHref.add("<a href=\"" + editOnSightUrl + "\">" + event.getName() + (extraInfo != null ? " (" + extraInfo + ")" : "") + " - " + event.getDescription() + "</a>");
 	        	}
 	        }
 
 	        
-	        Map parameters = new HashMap();
-	        parameters.put("ui", LabelController.getController(new Locale(CmsPropertyHandler.getPreferredLanguageCode(principal.getName()))));
+	        LabelController lc = LabelController.getController(new Locale(CmsPropertyHandler.getPreferredLanguageCode(principal.getName())));
+	        
+	        Map<String,Object> parameters = new HashMap<String,Object>();
+	        parameters.put("ui", lc);
 	        parameters.put("unpublishRequest", unpublishRequest);
 	        parameters.put("comment", comment);
 	        parameters.put("events", resultingEvents);
@@ -1815,7 +1823,8 @@ public class PublicationController extends BaseController
 			if(systemEmailSender == null || systemEmailSender.equalsIgnoreCase(""))
 				systemEmailSender = "InfoGlueCMS@" + CmsPropertyHandler.getMailSmtpHost();
 
-			MailServiceFactory.getService().sendEmail(contentType, systemEmailSender, systemEmailSender, recipients, null, null, null, "CMS - " + principal.getFirstName() + " " + principal.getLastName() + " submitted " + resultingEvents.size() + " items for action", email, "utf-8");
+			String subjectLabel = lc.getString("tool.publishingtool.itemsSubmitted.emailSubject", principal.getFirstName() + " " + principal.getLastName(), resultingEvents.size());
+			MailServiceFactory.getService().sendEmail(contentType, systemEmailSender, recipients, null, null, null, null, subjectLabel, email, "utf-8");
 	    }
 		catch(Exception e)
 		{

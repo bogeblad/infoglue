@@ -6,7 +6,7 @@
 	#end
 </div>
 <div>
-	$principal.firstName $principal.lastName ($principal.name) $ui.getString("tool.publishingtool.approveMail.submittedText", $events.size())<br/>
+	$principal.firstName $principal.lastName (<a href="mailto:$principal.email">$principal.name</a>) $ui.getString("tool.publishingtool.approveMail.submittedText", $events.size())<br/>
 	<br/>
 	$comment
 	#*

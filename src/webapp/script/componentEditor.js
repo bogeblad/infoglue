@@ -610,7 +610,7 @@ function showComponentInTreeMenu(event, element, compId, anInsertUrl, anDeleteUr
 	
 	try
 	{
-		var access = eval("window.hasAccessToDeleteComponent" + convertName(slotName)); 
+		var access = eval("window.hasAccessToDeleteComponent" + compId + "_" + convertName(slotName)); 
 	    //alert("access:" + access);
 	    if(access) 
 	    {
@@ -623,7 +623,7 @@ function showComponentInTreeMenu(event, element, compId, anInsertUrl, anDeleteUr
 	    	document.getElementById("componentInTreeMenuTopSeparator").style.display = "none";
 	    }
 
-		var changeAccess = eval("window.hasAccessToChangeComponent" + convertName(slotName)); 
+		var changeAccess = eval("window.hasAccessToChangeComponent" + compId + "_" + convertName(slotName)); 
 	    //alert("changeAccess:" + changeAccess);
 	    if(changeAccess) 
 	    {

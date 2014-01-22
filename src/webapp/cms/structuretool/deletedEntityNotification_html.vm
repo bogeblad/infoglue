@@ -1,0 +1,78 @@
+<h1>$ui.getString("tool.structuretool.registry.notificationEmail.headline")</h1>
+<p>$ui.getString("tool.structuretool.registry.notificationEmail.intro")</p>
+<p style="color:black;">
+	<strong>
+		$ui.getString("tool.structuretool.registry.notificationEmail.siteNodeLabel")
+	</strong>
+	<ul>
+	#foreach ( $siteNodeVO in $removedSiteNodes)
+		<li>
+			## Putting a-tags around each entry will prevent email clients from trying to linkify the entries
+			<a style="color:black;">
+				$this.getSiteNodePath($siteNodeVO, false, true, $db)
+			</a>
+		</li>
+	#end
+	</ul>
+</p>
+<hr style="border: 1px solid gray;"/>
+<div>
+	<p>$ui.getString("tool.structuretool.registry.notificationEmail.listHeader.intro")</p>
+	#foreach( $affectedNode in $affectedNodes.entrySet() )
+		<h3 style="margin-bottom:4px;color:black;">
+			<a style="color:black;">$affectedNode.key</a>
+		</h3>
+		<ul style="margin: 5px 0;padding-left: 10px;">
+			#set( $contents = $affectedNode.value.get("content") )
+			#if( $contents.size() > 0 )
+				<li style="margin-bottom: 5px;">
+					<b>$ui.getString("tool.structuretool.registry.notificationEmail.listHeader.content")</b>
+					<ul style="padding-left: 10px;">
+						#foreach( $reference in $contents )
+							#set( $contentVO = $reference.referencingCompletingObject )
+							#if( "$!reference.path" != "" )
+								#set( $path = $reference.path )
+							#else
+								#set( $path = $reference.name )
+							#end
+							#if( $reference.versions.size() == 0 )
+								<li>
+									<a href="$baseURL/Admin.action?contentId=$contentVO.contentId">$path</a>
+								</li>
+							#else
+								#foreach( $versionBean in $reference.versions )
+									#set( $versionVO = $versionBean.referencingObject )
+									<li>
+										<a href="$baseURL/Admin.action?contentId=$contentVO.contentId&languageId=$versionVO.languageId">$path</a> ($versionVO.languageName)
+									</li>
+								#end
+							#end
+						#end
+					</ul>
+				</li>
+			#end
+			#set( $siteNodes = $affectedNode.value.get("siteNode") )
+			#if( $siteNodes.size() > 0 )
+				<li style="margin-bottom: 5px;">
+					<b>$ui.getString("tool.structuretool.registry.notificationEmail.listHeader.siteNode")</b>
+					<ul style="padding-left: 10px;">
+						#foreach( $reference in $siteNodes )
+							#set( $siteNodeVO = $reference.referencingCompletingObject )
+							#if( "$!reference.path" != "" )
+								#set( $path = $reference.path )
+							#else
+								#set( $path = $reference.name )
+							#end
+							<li>
+								<a href="$baseURL/Admin.action?siteNodeId=$siteNodeVO.siteNodeId">$path</a>
+							</li>
+						#end
+					</ul>
+				</li>
+			#end
+		</ul>
+	#end
+</div>
+<p>
+	&#47; Infoglue
+</p>

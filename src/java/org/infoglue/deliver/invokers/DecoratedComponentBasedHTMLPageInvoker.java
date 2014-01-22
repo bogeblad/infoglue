@@ -401,6 +401,12 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 				extraHeader = extraHeader.replaceAll("\\$\\{approveEntityId\\}", "");
 				extraHeader = extraHeader.replaceAll("\\$\\{publishingEventId\\}", "");
 			}
+				
+			String theme = CmsPropertyHandler.getTheme(principal.getName());
+			if(!theme.equalsIgnoreCase("Default"))
+				extraHeader = extraHeader.replaceAll("\\$\\{skinDeliveryCSS\\}", "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + this.getRequest().getContextPath() + "/css/skins/" + theme + "/componentEditor.css\" />");
+			else
+				extraHeader = extraHeader.replaceAll("\\$\\{skinDeliveryCSS\\}", "");
 			
 			String sortBaseUrl = componentEditorUrl + "ViewSiteNodePageComponents!moveComponent.action?siteNodeId=" + templateController.getSiteNodeId() + "&languageId=" + templateController.getLanguageId() + "&contentId=" + templateController.getContentId() + "&showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "";
 			extraHeader = extraHeader.replaceAll("\\$\\{sortBaseUrl\\}", sortBaseUrl);

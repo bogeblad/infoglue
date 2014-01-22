@@ -147,7 +147,7 @@
 
 				#if($this.hasAccessTo("ToolTabsAndButtons.MySettingsExtendedGUIFields", true, false))
 				
-				<p style="clear: both;">	
+				<p style="clear: both; display: none;">	
 					<label for="defaultGUI">$ui.getString("tool.managementtool.mysettings.defaultGUI.label")</label>
 					<select class="sitedropbox" name="defaultGUI">
 						<option value="default" #if($defaultGUI == "default")selected="1"#end>$ui.getString("tool.common.default")</option>
@@ -165,7 +165,7 @@
 					</select>				
 				</p>
 
-				<p style="clear: both;">		
+				<p style="clear: both; display: none;">		
 					<label for="toolbarVariant">$ui.getString("tool.managementtool.mysettings.toolbarVariant.label")</label>
 					<select class="sitedropbox" name="toolbarVariant">
 						##<option value="default" #if($toolbarVariant == "default")selected="1"#end>Default</option>

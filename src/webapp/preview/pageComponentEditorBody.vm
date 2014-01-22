@@ -28,16 +28,16 @@
 </div>
 
 <div id="componentInTreeMenu" class="skin0">
-<div id="deleteComponentInTreeMenuItem" class="igmenuitems linkDeleteComponent" onclick="deleteComponent('$confirmDeleteLabel');"><a href='#'>$deleteComponentHTML</a></div>
-<div id="changeComponentInTreeMenuItem" class="igmenuitems linkChangeComponent" onclick="changeComponent();"><a href='#'>$changeComponentHTML</a></div>
-<div class="igmenuitems linkCreatePageTemplate" onclick="$saveTemplateUrl"><a href='#'>$savePageTemplateHTML</a></div>
-<div class="igmenuitems linkCreatePageTemplate" onclick="$savePartTemplateUrl"><a href='#'>$savePagePartTemplateHTML</a></div>
-<hr id="componentInTreeMenuTopSeparator" style="border:0px; border-top:1px solid #bbb; margin-top:4px; margin-bottom:4px;"/>
-<div class="igmenuitems linkComponentProperties" onclick="javascript:showComponent();"><a href='#'>$propertiesHTML</a></div>
-<hr id="emptySlotMenuMiddleSeparator" style="border:0px; border-top:1px solid #bbb; margin-top:4px; margin-bottom:4px;"/>
-<div class="igmenuitems linkPageComponents" onclick="toggleDiv('pageComponents');"><a href='#'>$pageComponents</a></div>
-<div class="igmenuitems linkOpenInNewWindow" onclick="window.open(document.location.href,'PageComponents','');"><a href='#'>$componentEditorInNewWindowHTML</a></div>
-<div class="igmenuitems linkViewSource"><a href='javascript:viewSource();'>$viewSource</a></div>
+	<div id="deleteComponentInTreeMenuItem" class="igmenuitems linkDeleteComponent" onclick="deleteComponent('$confirmDeleteLabel');"><a href='#'>$deleteComponentHTML</a></div>
+	<div id="changeComponentInTreeMenuItem" class="igmenuitems linkChangeComponent" onclick="changeComponent();"><a href='#'>$changeComponentHTML</a></div>
+	<div class="igmenuitems linkCreatePageTemplate" onclick="$saveTemplateUrl"><a href='#'>$savePageTemplateHTML</a></div>
+	<div class="igmenuitems linkCreatePageTemplate" onclick="$savePartTemplateUrl"><a href='#'>$savePagePartTemplateHTML</a></div>
+	<hr id="componentInTreeMenuTopSeparator" style="border:0px; border-top:1px solid #bbb; margin-top:4px; margin-bottom:4px;"/>
+	<div class="igmenuitems linkComponentProperties" onclick="javascript:showComponent();"><a href='#'>$propertiesHTML</a></div>
+	<hr id="emptySlotMenuMiddleSeparator" style="border:0px; border-top:1px solid #bbb; margin-top:4px; margin-bottom:4px;"/>
+	<div class="igmenuitems linkPageComponents" onclick="toggleDiv('pageComponents');"><a href='#'>$pageComponents</a></div>
+	<div class="igmenuitems linkOpenInNewWindow" onclick="window.open(document.location.href,'PageComponents','');"><a href='#'>$componentEditorInNewWindowHTML</a></div>
+	<div class="igmenuitems linkViewSource"><a href='javascript:viewSource();'>$viewSource</a></div>
 </div>
 
 <div id="pageToolbar" class="editOnSightFooterToolbar buttonPane">

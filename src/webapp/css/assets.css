@@ -29,7 +29,7 @@
 	float:left;
 	text-align:center;	
 	width: 101px;
-	margin: 0 0 0 16px;	
+	margin: 4px 0 0 16px;	
 }
 .imgBoxTopInner img {
 	border: none;
@@ -64,13 +64,13 @@
 .editImg {
 	background:url(images/v3/edit_img.gif) no-repeat center;}
 .updateImg {
-	background:url(images/v3/update_img.gif) no-repeat center;}
+	background:url(images/v3/switch.png) no-repeat center;}
 .deleteImg {
 	background:url(images/v3/delete_img.gif) no-repeat center;}
 .moveImg {
 	background:url(images/v3/moveIcon.png) no-repeat center;}
 .menuImg {
-	background:url(images/v3/menu_img.png) no-repeat center;
+	background:url(images/v3/menu-alt.png) no-repeat center;
 	background-repeat: no-repeat;
 	background-position: center;
 	margin: 0 11px;

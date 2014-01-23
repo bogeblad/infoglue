@@ -304,6 +304,11 @@
 	<link type="text/css" rel="stylesheet" href="script/xloadtree/xtree.css" />
 	<link rel="stylesheet" type="text/css" href="css/menu.css" />
 	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />
+	
+	<style type="text/css">
+		.webfx-tree-slot { height: 3px; border: 0; }
+		.treeSlotActive { background-color: black; height: 3px; }
+	</style>
 
 </head>
 <body class="generaltooledit" onload="onloadFn()" style="margin:0px">
@@ -352,7 +357,7 @@
 	var tree = new WebFXLoadTree("$rootNode.Title", "SimpleStructureXml.action?action=SimpleStructureXml.action&createAction=true&repositoryId=$!{repositoryId}$par", "javascript:htmlTreeItemClick('$rootNode.Id','${repositoryId}','$formatter.escapeExtendedHTML($rootNode.Title)');");
 	tree.myId = "$rootNode.Id";	
 	document.write(tree);
-	
+
 	$("#" + tree.id + " a").droppable({
 		hoverClass: 'ui-state-active',
 		tolerance: 'pointer',
@@ -368,7 +373,7 @@
 			moveNode(movedNodeId, newParentNodeId, parentNodeId);
 		}
 	});
-	
+		
 	var oldSelected = null;
 	function onTreeItemClick(elem, itemId, repoId, path)
 	{
@@ -409,9 +414,12 @@
 		*/
 	}
 	
-	function moveNode(siteNodeId, newParentSiteNodeId, oldParentSiteNodeId)
+	function moveNode(siteNodeId, newParentSiteNodeId, oldParentSiteNodeId, beforeNodeId)
 	{
-		jQuery.get("MoveSiteNode!ajax.action", { siteNodeId:"" + siteNodeId, newParentSiteNodeId:"" + newParentSiteNodeId }, function(data){
+		if(typeof(beforeNodeId )=="undefined")
+			beforeNodeId = "-1";
+			
+		jQuery.get("MoveSiteNode!ajax.action", { siteNodeId:"" + siteNodeId, newParentSiteNodeId:"" + newParentSiteNodeId, beforeSiteNodeId:"" + beforeNodeId }, function(data){
 		  	//alert("Moved: " + data);
 		  	parent.refreshNode(oldParentSiteNodeId, 4, null);
 		  	parent.refreshNode(newParentSiteNodeId, 4, null);

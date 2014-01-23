@@ -126,7 +126,7 @@
 		});
 	});
 
-	//Event listener for moveDown option
+	//Event listener for hidePage option
 	$("#contextMenuDiv #hidePage").click(function () {
 		jQuery.get("ChangeSiteNodeSortOrder!toggleHidden.action", { siteNodeId:"$siteNodeId"}, function(data){
 		  	//alert("Hidden: " + data);

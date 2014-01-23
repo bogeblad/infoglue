@@ -229,12 +229,21 @@ public class SiteNodeControllerProxy extends SiteNodeController
 		markForDeletion(siteNodeVO, infogluePrincipal, forceDelete);
 	}
 
-	
+
 	/**
 	 * This method moves a content after first checking that the user has rights to edit it.
 	 */
 
 	public void acMoveSiteNode(InfoGluePrincipal infogluePrincipal, SiteNodeVO siteNodeVO, Integer newParentSiteNodeId) throws ConstraintException, SystemException, Bug, Exception
+	{
+		acMoveSiteNode(infogluePrincipal, siteNodeVO, newParentSiteNodeId, null);
+	}
+	
+	/**
+	 * This method moves a content after first checking that the user has rights to edit it.
+	 */
+
+	public void acMoveSiteNode(InfoGluePrincipal infogluePrincipal, SiteNodeVO siteNodeVO, Integer newParentSiteNodeId, Integer beforeSiteNodeId) throws ConstraintException, SystemException, Bug, Exception
 	{
 		Map hashMap = new HashMap();
 		hashMap.put("siteNodeId", siteNodeVO.getId());
@@ -246,7 +255,18 @@ public class SiteNodeControllerProxy extends SiteNodeController
 
 		intercept(hashMap, "SiteNodeVersion.CreateSiteNode", infogluePrincipal);
 
-		moveSiteNode(siteNodeVO, newParentSiteNodeId, infogluePrincipal);
+		try
+		{
+			moveSiteNode(siteNodeVO, newParentSiteNodeId, infogluePrincipal);
+		}
+		catch (ConstraintException ce) 
+		{
+			if(beforeSiteNodeId == null)
+				throw ce;
+		}
+	
+		if(beforeSiteNodeId != null)
+			changeSiteNodeSortOrder(siteNodeVO.getId(), beforeSiteNodeId, null, infogluePrincipal);
 	}   
 	
 	public void acChangeSiteNodeSortOrder(InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer beforeSiteNodeId, String direction) throws Exception

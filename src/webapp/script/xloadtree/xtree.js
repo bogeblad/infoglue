@@ -230,7 +230,28 @@ WebFXTreeAbstractNode.prototype.add = function (node, bNoIdent) {
 		}
 		webFXTreeHandler.insertHTMLBeforeEnd(document.getElementById(this.id + '-cont'), node.toString());
 		//alert("Regging draggable on:" + node.id);
-		$("#" + node.id + "").draggable({ helper: 'clone' });
+		$("#" + node.id + "").draggable({ stop: function( event, ui ) {$(".webfx-tree-slot").remove();}, start: function( event, ui ) { 
+			$(".webfx-tree-item").before("<div class='webfx-tree-slot'></div>"); 
+			$(".webfx-tree-slot").droppable({
+				hoverClass: 'treeSlotActive',
+				tolerance: 'pointer',
+				drop: function(event, ui) { 
+			    	var dragEl = $(ui.draggable); 
+					var aTag = dragEl.children("a");
+					var nodeId = aTag.attr("id");
+					var movedNodeId = aTag.attr("entityId");
+					var parentNodeId = aTag.attr("parentEntityId");
+					var beforeNode = $(event.target).next(".webfx-tree-item");	
+					var beforeNodeId = beforeNode.find("a").attr("entityid");
+					var beforeNodeParentId = beforeNode.find("a").attr("parententityid");
+					
+					moveNode(movedNodeId, beforeNodeParentId, parentNodeId, beforeNodeId);
+					$(".webfx-tree-slot").remove();
+				}
+			});
+		
+		},  helper: 'clone' });
+		
 		//$("#" + node.id + " a").draggable({ helper: 'clone' });
 		//$("#" + node.id + " img").draggable({ helper: 'clone' });
 		//$("#" + node.id + " a").text($("#" + node.id + " a").text() + ":" + node.myType)
@@ -240,13 +261,14 @@ WebFXTreeAbstractNode.prototype.add = function (node, bNoIdent) {
 				hoverClass: 'ui-state-active',
 				tolerance: 'pointer',
 			    drop: function(event, ui) { 
-					var dragEl = $(ui.draggable); 
+			    	var dragEl = $(ui.draggable); 
 					var aTag = dragEl.children("a");
 					var movedNodeId = aTag.attr("entityId");
 					var parentNodeId = aTag.attr("parentEntityId");
 					var newParentNodeId = $("#" + node.id + " a").attr("entityId");		
 					
 					moveNode(movedNodeId, newParentNodeId, parentNodeId);
+					$(".webfx-tree-slot").remove();
 				}
 			});
 		}

@@ -3919,7 +3919,70 @@ public class SiteNodeController extends BaseController
             
             if(beforeSiteNodeId != null)
             {
-                SiteNode beforeSiteNode = getSiteNodeWithId(beforeSiteNodeId, db);
+            	Integer oldSortOrder = 0;
+            	Integer newSortOrder = 0;
+
+                SiteNodeVO siteNodeVO = getSiteNodeVOWithId(siteNodeId, db);
+            	SiteNodeVO beforeSiteNodeVO = getSiteNodeVOWithId(beforeSiteNodeId, db);
+            	if(beforeSiteNodeVO.getParentSiteNodeId().intValue() != siteNodeVO.getParentSiteNodeId().intValue())
+            	{
+            		logger.info("Was new parent - let's fix that as well");
+            	}
+            	else
+            	{
+            		logger.info("Parent was the same...");
+
+            		List<SiteNodeVO> newChildSiteNodeList = new ArrayList<SiteNodeVO>();
+                	
+            		int insertPosition = 0;
+            		List<SiteNodeVO> childrenVOList = SiteNodeController.getController().getChildSiteNodeVOList(siteNodeVO.getParentSiteNodeId(), false, db);
+    				Iterator<SiteNodeVO> childrenVOListIterator = childrenVOList.iterator();
+    				while(childrenVOListIterator.hasNext())
+    				{
+    					SiteNodeVO childSiteNodeVO = childrenVOListIterator.next();
+    					if(childSiteNodeVO.getSiteNodeId().equals(beforeSiteNodeId))
+    					{
+    						insertPosition = newChildSiteNodeList.size();
+    					}
+
+    					if(!childSiteNodeVO.getSiteNodeId().equals(siteNodeId))
+    					{
+    						newChildSiteNodeList.add(childSiteNodeVO);
+    					}
+    				}
+
+    				logger.info("newChildSiteNodeList:" + newChildSiteNodeList.size());
+    				logger.info("insertPosition:" + insertPosition);
+    				newChildSiteNodeList.add(insertPosition, siteNodeVO);
+    				
+    				Iterator<SiteNodeVO> newChildSiteNodeListIterator = newChildSiteNodeList.iterator();
+    				int i=0;
+    				int highestSortOrder = 0;
+    				while(newChildSiteNodeListIterator.hasNext())
+    				{
+    					logger.info("i:" + i);
+    					logger.info("highestSortOrder:" + highestSortOrder);
+    					SiteNodeVO orderedSiteNodeVO = newChildSiteNodeListIterator.next();
+    					
+    					List events = new ArrayList();
+    					SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestSiteNodeVersionVO(db, orderedSiteNodeVO.getId());
+    					System.out.println(orderedSiteNodeVO.getName() + " - siteNodeVersionVO.getSortOrder():" + siteNodeVersionVO.getSortOrder());
+    					if(siteNodeVersionVO.getSortOrder() < highestSortOrder)
+    					{
+    						siteNodeVersionVO = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), SiteNodeVersionVO.WORKING_STATE, "Changed sortOrder", false, infoGluePrincipal, siteNodeVersionVO.getSiteNodeId(), events);
+    						siteNodeVersionVO.setSortOrder(i);
+    						SiteNodeVersionController.getController().update(siteNodeVersionVO);
+    					}
+    					else
+    						logger.info("No action - sort order was ok");
+    					
+    					highestSortOrder = siteNodeVersionVO.getSortOrder();
+    					if(highestSortOrder > i)
+    						i = highestSortOrder;
+    					
+    					i++;
+    				}
+            	}
             }
             else if(direction.equalsIgnoreCase("up") || direction.equalsIgnoreCase("down"))
             {

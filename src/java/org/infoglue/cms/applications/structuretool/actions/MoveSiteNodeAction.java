@@ -43,6 +43,7 @@ public class MoveSiteNodeAction extends InfoGlueAbstractAction
     private Integer siteNodeId;
     private Integer parentSiteNodeId;
     private Integer newParentSiteNodeId;
+    private Integer beforeSiteNodeId; //If used overrides direction
     private Integer repositoryId;
     private Integer changeTypeId;
     private String hideLeafs;
@@ -118,6 +119,12 @@ public class MoveSiteNodeAction extends InfoGlueAbstractAction
 	{
 		return this.hideLeafs;
 	}    
+
+	public void setBeforeSiteNodeId(Integer beforeSiteNodeId)
+	{
+		if(beforeSiteNodeId != -1)
+			this.beforeSiteNodeId = beforeSiteNodeId;
+	}
 
 	public String getUserSessionKey()
 	{
@@ -216,7 +223,7 @@ public class MoveSiteNodeAction extends InfoGlueAbstractAction
     		this.parentSiteNodeId = siteNodeVO.getParentSiteNodeId();
     		logger.info("parentSiteNodeId:" + parentSiteNodeId);
             
-    		SiteNodeControllerProxy.getSiteNodeControllerProxy().acMoveSiteNode(this.getInfoGluePrincipal(), siteNodeVO, this.newParentSiteNodeId);
+    		SiteNodeControllerProxy.getSiteNodeControllerProxy().acMoveSiteNode(this.getInfoGluePrincipal(), siteNodeVO, this.newParentSiteNodeId, this.beforeSiteNodeId);
         }
         catch(ConstraintException ce)
         {

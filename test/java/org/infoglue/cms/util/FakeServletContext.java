@@ -129,4 +129,9 @@ public class FakeServletContext implements ServletContext
 	public void setAttribute(String s, Object o)	{}
 	public void removeAttribute(String s)			{}
 	public String getServletContextName()			{ return null; }
+
+	@Override
+	public String getContextPath() {
+		return System.getProperty("webapp.dir");
+	}
 }

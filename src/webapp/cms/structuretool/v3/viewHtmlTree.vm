@@ -306,8 +306,10 @@
 	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />
 	
 	<style type="text/css">
-		.webfx-tree-slot { height: 3px; border: 0; }
-		.treeSlotActive { background-color: black; height: 3px; }
+		.webfx-tree-slot { height: 6px; border: 0; position: absolute; width: 100%; margin-top: -3px; z-index: 100000000;}
+		.treeSlotActive { height: 6px; z-index: 100000000; background: url('css/images/v3/margin-dot.png') repeat-x;}
+		.ui-state-disabled, .ui-widget-content .ui-state-disabled, .ui-widget-header .ui-state-disabled { opacity: .95 !important; filter:Alpha(Opacity=95) !important; background-image: none; }
+		.notActive { outline: 0px !important; background: transparent url(images/trans.gif) 50% 50% repeat-x !important;} 
 	</style>
 
 </head>
@@ -359,6 +361,7 @@
 	document.write(tree);
 
 	$("#" + tree.id + " a").droppable({
+		greedy: true,
 		hoverClass: 'ui-state-active',
 		tolerance: 'pointer',
 	    drop: function(event, ui) { 

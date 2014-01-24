@@ -114,7 +114,7 @@
 }
 .ui-state-active, .ui-widget-content .ui-state-active 
 { 
-	border: 1px solid #d0d1d0;
+	outline: 1px solid #d0d1d0;
 }
 .topDiv, .cleanTopDiv
 {

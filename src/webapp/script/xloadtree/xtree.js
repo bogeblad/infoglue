@@ -233,6 +233,7 @@ WebFXTreeAbstractNode.prototype.add = function (node, bNoIdent) {
 		$("#" + node.id + "").draggable({ stop: function( event, ui ) {$(".webfx-tree-slot").remove();}, start: function( event, ui ) { 
 			$(".webfx-tree-item").before("<div class='webfx-tree-slot'></div>"); 
 			$(".webfx-tree-slot").droppable({
+				greedy: true,
 				hoverClass: 'treeSlotActive',
 				tolerance: 'pointer',
 				drop: function(event, ui) { 
@@ -247,7 +248,17 @@ WebFXTreeAbstractNode.prototype.add = function (node, bNoIdent) {
 					
 					moveNode(movedNodeId, beforeNodeParentId, parentNodeId, beforeNodeId);
 					$(".webfx-tree-slot").remove();
+					$(".moveIntoTarget").droppable( "enable" );
+				},
+				over: function( event, ui ) {
+					$(".moveIntoTarget").droppable( "disable" );
+					$(".ui-state-active").addClass("notActive");
+				},
+				out: function( event, ui ) {
+					$(".moveIntoTarget").droppable( "enable" );
+					$(".ui-state-active").removeClass("notActive");
 				}
+			
 			});
 		
 		},  helper: 'clone' });
@@ -257,7 +268,8 @@ WebFXTreeAbstractNode.prototype.add = function (node, bNoIdent) {
 		//$("#" + node.id + " a").text($("#" + node.id + " a").text() + ":" + node.myType)
 		if(webFXTreeConfig.allowDropOnLeafs || node.folder || node.myType == "Folder")
 		{
-			$("#" + node.id + "").droppable({
+			$("#" + node.id + "").addClass("moveIntoTarget").droppable({
+				greedy: true,
 				hoverClass: 'ui-state-active',
 				tolerance: 'pointer',
 			    drop: function(event, ui) { 
@@ -269,6 +281,7 @@ WebFXTreeAbstractNode.prototype.add = function (node, bNoIdent) {
 					
 					moveNode(movedNodeId, newParentNodeId, parentNodeId);
 					$(".webfx-tree-slot").remove();
+					$(".moveIntoTarget").droppable( "enable" );
 				}
 			});
 		}

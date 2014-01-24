@@ -24,11 +24,15 @@
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
+import java.io.File;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -43,8 +47,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.ObjectNotFoundException;
@@ -52,32 +57,21 @@ import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.databeans.ProcessBean;
 import org.infoglue.cms.applications.databeans.ReferenceBean;
-import org.infoglue.cms.applications.databeans.ReferenceVersionBean;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentCategory;
 import org.infoglue.cms.entities.content.ContentCategoryVO;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
-import org.infoglue.cms.entities.content.SmallestContentVersionVO;
-import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.MediumContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.MediumContentVersionImpl;
-import org.infoglue.cms.entities.content.impl.simple.SmallContentImpl;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.AccessRight;
 import org.infoglue.cms.entities.management.AccessRightGroup;
 import org.infoglue.cms.entities.management.AccessRightRole;
 import org.infoglue.cms.entities.management.AccessRightUser;
-import org.infoglue.cms.entities.management.AccessRightVO;
-import org.infoglue.cms.entities.management.Category;
-import org.infoglue.cms.entities.management.ContentTypeDefinition;
 import org.infoglue.cms.entities.management.InterceptionPoint;
-import org.infoglue.cms.entities.management.InterceptionPointVO;
-import org.infoglue.cms.entities.management.Language;
 import org.infoglue.cms.entities.management.LanguageVO;
-import org.infoglue.cms.entities.management.Registry;
-import org.infoglue.cms.entities.management.RegistryVO;
 import org.infoglue.cms.entities.management.Repository;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.management.ServiceDefinition;
@@ -87,42 +81,35 @@ import org.infoglue.cms.entities.management.impl.simple.AccessRightGroupImpl;
 import org.infoglue.cms.entities.management.impl.simple.AccessRightImpl;
 import org.infoglue.cms.entities.management.impl.simple.AccessRightRoleImpl;
 import org.infoglue.cms.entities.management.impl.simple.AccessRightUserImpl;
-import org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl;
 import org.infoglue.cms.entities.management.impl.simple.RepositoryImpl;
 import org.infoglue.cms.entities.management.impl.simple.SiteNodeTypeDefinitionImpl;
 import org.infoglue.cms.entities.publishing.PublicationVO;
-import org.infoglue.cms.entities.structure.Qualifyer;
-import org.infoglue.cms.entities.structure.ServiceBinding;
 import org.infoglue.cms.entities.structure.ServiceBindingVO;
 import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.entities.structure.impl.simple.MediumSiteNodeVersionImpl;
-import org.infoglue.cms.entities.structure.impl.simple.ServiceBindingImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallQualifyerImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallServiceBindingImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl;
-import org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeVersionImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl;
-import org.infoglue.cms.entities.workflow.Event;
 import org.infoglue.cms.entities.workflow.EventVO;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
+import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
-import org.infoglue.cms.util.DateHelper;
 import org.infoglue.cms.util.XMLHelper;
 import org.infoglue.cms.util.mail.MailServiceFactory;
-import org.infoglue.deliver.applications.databeans.DeliveryContext;
-import org.infoglue.deliver.controllers.kernel.URLComposer;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Timer;
+import org.infoglue.deliver.util.VelocityTemplateProcessor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -4163,148 +4150,120 @@ public class SiteNodeController extends BaseController
 		return result;
 	}
 
-    private void notifyContactPersonsForSiteNode(SiteNodeVO siteNodeVO, List<ReferenceBean> contacts, Database db) throws SystemException, Exception
-    {
+	private void notifyContactPersonsForSiteNode(SiteNodeVO siteNodeVO, List<ReferenceBean> contacts, Database db) throws SystemException, Exception
+	{
 		notifyContactPersonsForSiteNode(Collections.singletonMap(siteNodeVO, contacts), db);
-    }
+	}
 
-    private void notifyContactPersonsForSiteNode(Map<SiteNodeVO, List<ReferenceBean>> contacts, Database db) throws SystemException, Exception
-    {
-    	Map<String, Map<SiteNodeVO, List<ReferenceBean>>> contactMap = groupByContactPerson(contacts);
-
-    	if (logger.isInfoEnabled())
-    	{
-    		logger.info("Will notify people about registry change. " + contactMap);
-    	}
-
-    	String registryContactMailLanguage = CmsPropertyHandler.getRegistryContactMailLanguage();
-    	Locale locale = new Locale(registryContactMailLanguage);
-
+	private void notifyContactPersonsForSiteNode(Map<SiteNodeVO, List<ReferenceBean>> contacts, Database db) throws SystemException, Exception
+	{
+		Map<String, Map<SiteNodeVO, List<ReferenceBean>>> contactMap = groupByContactPerson(contacts);
+		if (logger.isInfoEnabled())
+		{
+			logger.info("Will notify people about registry change. " + contactMap);
+		}
+		String registryContactMailLanguage = CmsPropertyHandler.getRegistryContactMailLanguage();
+		Locale locale = new Locale(registryContactMailLanguage);
+		LabelController lc = LabelController.getController(locale);
 		try
 		{
 			String from = CmsPropertyHandler.getSystemEmailSender();
-    		String subject = getLocalizedString(locale, "tool.structuretool.registry.notificationEmail.subject");
+			String subject = getLocalizedString(locale, "tool.structuretool.registry.notificationEmail.subject");
 
-    		// This loop iterate once for each contact person
+			// This loop iterate once for each contact person
 			for (Map.Entry<String, Map<SiteNodeVO, List<ReferenceBean>>> entry : contactMap.entrySet())
 			{
 				String contactPersonEmail = entry.getKey();
+				Map<String,Object> parameters = new HashMap<String,Object>();
 				Set<SiteNodeVO> siteNodesForPerson = entry.getValue().keySet();
 				Map<SiteNodeVO, List<ReferenceBean>> affectedNodes = entry.getValue();
-	    		StringBuilder mailContent = new StringBuilder();
 
-	    		mailContent.append(getLocalizedString(locale, "tool.structuretool.registry.notificationEmail.intro"));
-	    		mailContent.append("<p style=\"color:black;\">");
-	    		mailContent.append(getLocalizedString(locale, "tool.structuretool.registry.notificationEmail.siteNodeLabel"));
-	    		mailContent.append("<ul>");
-	    		for (SiteNodeVO siteNodeVO : siteNodesForPerson)
-	    		{
-					mailContent.append("<li>");
-					// Putting a-tags around each entry will prevent email clients from trying to linkify the entries
-					mailContent.append("<a style=\"color:black;\">");
-					mailContent.append(getSiteNodePath(siteNodeVO, false, true, db));
-					mailContent.append("</a>");
-					mailContent.append("</li>");
-	    		}
-				mailContent.append("</ul>");
-				mailContent.append("</p>");
+				parameters.put("removedSiteNodes", siteNodesForPerson);
+				parameters.put("baseURL", CmsPropertyHandler.getCmsFullBaseUrl());
+				parameters.put("db", db);
+				parameters.put("this", this);
+				parameters.put("ui", lc);
 
+				Map<String, Map<String, List<ReferenceBean>>> nodes = new HashMap<String, Map<String,List<ReferenceBean>>>();
 				boolean hasInformation = false;
-		    	for (Map.Entry<SiteNodeVO, List<ReferenceBean>> affectedNode : affectedNodes.entrySet())
-		    	{
-					StringBuilder sb = new StringBuilder();
-					sb.append("<h4 style=\"margin-bottom:4px;color:black;\">");
-					sb.append("<a style=\"color:black;\">");
-					sb.append(getSiteNodePath(affectedNode.getKey(), false, true, db));
-					sb.append("</a>");
+				for (Map.Entry<SiteNodeVO, List<ReferenceBean>> affectedNode : affectedNodes.entrySet())
+				{
+					String removedSiteNodePath = getSiteNodePath(affectedNode.getKey(), false, true, db);
+					List<ReferenceBean> affectedContents = new LinkedList<ReferenceBean>();
+					List<ReferenceBean> affectedSiteNodes = new LinkedList<ReferenceBean>();
 
-					String path;
-					String url;
-					StringBuilder siteNodeBuilder = new StringBuilder();
-					StringBuilder contentBuilder = new StringBuilder();
 					for (ReferenceBean reference : affectedNode.getValue())
 					{
-						if (reference.getPath() != null && !reference.getPath().equals(""))
-						{
-							path = reference.getPath();
-						}
-						else
-						{
-							path = reference.getName();
-						}
-
 						if (reference.getReferencingCompletingObject().getClass().getName().indexOf("Content") != -1)
 						{
-							Integer languageId;
-							if (reference.getVersions().size() == 0)
-							{
-								if (reference.getReferencingCompletingObject() instanceof ContentVO)
-								{
-									languageId = LanguageController.getController().getMasterLanguage(((ContentVO)reference.getReferencingCompletingObject()).getRepositoryId(), db).getLanguageId();
-								}
-								else
-								{
-									languageId = ((LanguageVO)LanguageController.getController().getLanguageVOList(db).get(0)).getLanguageId();
-								}
-								url = CmsPropertyHandler.getCmsFullBaseUrl() + "/Admin.action?contentId=" + ((ContentVO)reference.getReferencingCompletingObject()).getContentId() + "&languageId=" + languageId;
-								contentBuilder.append("<li><a href=\"" + url + "\">" + path + "</a></li>");
-							}
-							else
-							{
-								for(ReferenceVersionBean versionBean : reference.getVersions())
-								{
-									ContentVersionVO version = (ContentVersionVO)versionBean.getReferencingObject();
-									languageId = version.getLanguageId();
-									url = CmsPropertyHandler.getCmsFullBaseUrl() + "/Admin.action?contentId=" + ((ContentVO)reference.getReferencingCompletingObject()).getContentId() + "&languageId=" + languageId;
-									contentBuilder.append("<li><a href=\"" + url + "\">" + path + "</a> (" + version.getLanguageName() + ")</li>");
-								}
-							}
+							affectedContents.add(reference);
 						}
 						else
 						{
-							url = CmsPropertyHandler.getCmsFullBaseUrl() + "/Admin.action?siteNodeId=" + ((SiteNodeVO)reference.getReferencingCompletingObject()).getSiteNodeId();
-							siteNodeBuilder.append("<li><a href=\"" + url + "\">" + path + "</a></li>");
+							affectedSiteNodes.add(reference);
 						}
 					}
-					if (contentBuilder.length() > 0)
-					{
-						hasInformation = true;
-						sb.append(getLocalizedString(locale, "tool.structuretool.registry.notificationEmail.listHeader.content"));
-						sb.append("<ul>");
-						sb.append(contentBuilder);
-						sb.append("</ul>");
-					}
-					if (siteNodeBuilder.length() > 0)
-					{
-						hasInformation = true;
-						sb.append(getLocalizedString(locale, "tool.structuretool.registry.notificationEmail.listHeader.siteNode"));
-						sb.append("<ul>");
-						sb.append(siteNodeBuilder);
-						sb.append("</ul>");
-					}
-					sb.append("</p>");
-					mailContent.append(sb);
-				} // end loop: one SiteNode for one contact person
 
-		    	mailContent.append(getLocalizedString(locale, "tool.structuretool.registry.notificationEmail.footer"));
+					Map<String, List<ReferenceBean>> nodeMap = new HashMap<String, List<ReferenceBean>>();
+					nodeMap.put("content", affectedContents);
+					nodeMap.put("siteNode", affectedSiteNodes);
+					hasInformation = hasInformation || !affectedContents.isEmpty() || !affectedSiteNodes.isEmpty();
+					nodes.put(removedSiteNodePath, nodeMap);
+				} // end loop: one SiteNode for one contact person
+				parameters.put("affectedNodes", nodes);
+
 				if (hasInformation)
 				{
 					logger.debug("Sending notification email to: " + contactPersonEmail);
-					MailServiceFactory.getService().sendEmail("text/html", from, contactPersonEmail, null, null, null, null, subject, mailContent.toString(), "utf-8");
+					String emailTemplate = getDeleteNotificationEmailTemplate();
+					if (logger.isTraceEnabled())
+					{
+						logger.trace("Generating delete notification email with parameters: " + parameters);
+					}
+					String email = generateEmailBodyForDeleteNotification(emailTemplate, parameters);
+					MailServiceFactory.getService().sendEmail("text/html", from, contactPersonEmail, null, null, null, null, subject, email, "utf-8");
 				}
 				else
 				{
 					logger.warn("No Contents or SiteNodes were found for the given person. This is very strange. Contact person: " + contactPersonEmail + ", SiteNode.ids: " + contacts.keySet());
 				}
 			} // end-loop: contact person
-    	}
-    	catch (Exception ex)
-    	{
-    		logger.error("Failed to generate email for contact person notfication. Message: " + ex.getMessage() + ". Type: " + ex.getClass());
+		}
+		catch (Exception ex)
+		{
+			logger.error("Failed to generate email for contact person notfication. Message: " + ex.getMessage() + ". Type: " + ex.getClass());
 			logger.warn("Failed to generate email for contact person notfication.", ex);
 			throw ex;
-    	}
-    }
+		}
+	}
+
+	private String generateEmailBodyForDeleteNotification(String template, Map<String, Object> parameters) throws Exception
+	{
+		StringWriter tempString = new StringWriter();
+		PrintWriter pw = new PrintWriter(tempString);
+		new VelocityTemplateProcessor().renderTemplate(parameters, pw, template, true);
+		String email = tempString.toString();
+		return email;
+	}
+
+	private String getDeleteNotificationEmailTemplate() throws Exception
+	{
+		String template;
+		String contentType = CmsPropertyHandler.getMailContentType();
+		if(contentType == null || contentType.length() == 0)
+		{
+			contentType = "text/html";
+		}
+		if(contentType.equalsIgnoreCase("text/plain"))
+		{
+			template = FileHelper.getFileAsString(new File(CmsPropertyHandler.getContextRootPath() + "cms/structuretool/deletedEntityNotification_plain.vm"));
+		}
+		else
+		{
+			template = FileHelper.getFileAsString(new File(CmsPropertyHandler.getContextRootPath() + "cms/structuretool/deletedEntityNotification_html.vm"));
+		}
+		return template;
+	}
 
 	public List<String> getErroneousSiteNodeNames(List<Integer> erroneousSiteNodeIds) throws Exception, SystemException
 	{

@@ -49,6 +49,7 @@ import org.infoglue.cms.entities.management.InterceptionPointVO;
 import org.infoglue.cms.entities.management.InterceptorVO;
 import org.infoglue.cms.entities.management.TableCount;
 import org.infoglue.cms.exception.Bug;
+import org.infoglue.cms.exception.ConfigurationError;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
@@ -1386,9 +1387,19 @@ public abstract class BaseController
 
 	public String getLocalizedString(Locale locale, String key, Object arg1) 
   	{
-    	StringManager stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.applications", locale);
-
-    	return stringManager.getString(key, arg1);
+		String message = null;
+		
+		StringManager stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.applications", locale);
+    	try
+    	{
+	    	message = stringManager.getString(key, arg1);
+    	}
+    	catch (ConfigurationError e) 
+    	{
+    		StringManager stringManagerBackup = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.entities", locale);
+        	message = stringManagerBackup.getString(key, arg1);
+		}
+    	return message; 
   	}
 
 	public String getLocalizedString(Locale locale, String key, Object arg1, Object arg2) 

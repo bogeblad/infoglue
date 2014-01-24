@@ -2999,13 +2999,14 @@ public class SiteNodeController extends BaseController
             	logger.warn("You must specify the new parent-siteNode......");
             	throw new ConstraintException("SiteNode.parentSiteNodeId", "3403");
             }
-
+            /*
             if(siteNodeVO.getId().intValue() == newParentSiteNodeId.intValue())
             {
             	logger.warn("You cannot have the siteNode as it's own parent......");
             	throw new ConstraintException("SiteNode.parentSiteNodeId", "3401");
             }
-            
+            */
+
             SiteNodeVO siteNode = getSiteNodeVOWithId(siteNodeVO.getSiteNodeId(), db);
             SiteNodeVO oldParentSiteNode = getSiteNodeVOWithId(siteNodeVO.getParentSiteNodeId(), db); //siteNode.getParentSiteNode();
             SiteNodeVO newParentSiteNode = getSiteNodeVOWithId(newParentSiteNodeId, db);

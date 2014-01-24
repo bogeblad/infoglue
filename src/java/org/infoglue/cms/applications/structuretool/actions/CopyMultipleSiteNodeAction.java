@@ -36,10 +36,12 @@ import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.applications.databeans.ProcessBean;
 import org.infoglue.cms.applications.contenttool.actions.CopyContentAction;
 import org.infoglue.cms.applications.databeans.LinkBean;
+import org.infoglue.cms.controllers.kernel.impl.simple.LabelController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeControllerProxy;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
+import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.dom.DOMBuilder;
 
@@ -134,6 +136,7 @@ public class CopyMultipleSiteNodeAction extends InfoGlueAbstractAction
         
         ceb.throwIfNotEmpty();
     	
+        String errorMessage = "";
         
 		ProcessBean processBean = ProcessBean.createProcessBean(this.getClass().getName(), "" + getInfoGluePrincipal().getName());
 		processBean.setStatus(ProcessBean.RUNNING);
@@ -153,20 +156,29 @@ public class CopyMultipleSiteNodeAction extends InfoGlueAbstractAction
 					{		
 				    	SiteNodeControllerProxy.getSiteNodeControllerProxy().acCopySiteNode(this.getInfoGluePrincipal(), siteNodeVO, this.newParentSiteNodeId, processBean);
 					}
+					catch(ConstraintException ce)
+					{
+						logger.warn("Limitation in copy site nodes:" + ce.getMessage());
+						errorMessage = LabelController.getController(getLocale()).getLocalizedString(getLocale(), ce.getErrorCode(), getSiteNodeVO(newParentSiteNodeId).getName());
+					    this.errorsOccurred = true;
+					}
 					catch(Exception e)
 					{
 						logger.error("Error in copy site nodes:" + e.getMessage(), e);
+						errorMessage = e.getMessage();
 					    this.errorsOccurred = true;
 					}
 					i++;
 		    	}
 		    }
-	    	processBean.updateProcess("Finished - cleaning up");
+
+            processBean.updateProcess("Finished - cleaning up");
             Thread.sleep(1000);
 		}
 		catch(Exception e)
 		{
 			logger.error("Error in copy site nodes:" + e.getMessage(), e);
+	        setActionExtraData(userSessionKey, "confirmationMessage", e.getMessage() /*getLocalizedString(getLocale(), "tool.contenttool.siteNodeCopied.confirmation", getSiteNodeVO(newParentSiteNodeId).getName())*/);
 		}
 		finally
 		{
@@ -181,7 +193,10 @@ public class CopyMultipleSiteNodeAction extends InfoGlueAbstractAction
         setActionExtraData(userSessionKey, "unrefreshedNodeId", "" + newParentSiteNodeId);
         setActionExtraData(userSessionKey, "changeTypeId", "" + this.changeTypeId);
 
-        setActionExtraData(userSessionKey, "confirmationMessage", getLocalizedString(getLocale(), "tool.contenttool.siteNodeCopied.confirmation", getSiteNodeVO(newParentSiteNodeId).getName()));
+        if(errorsOccurred)
+        	setActionExtraData(userSessionKey, "confirmationMessage", errorMessage);        	
+        else
+        	setActionExtraData(userSessionKey, "confirmationMessage", getLocalizedString(getLocale(), "tool.contenttool.siteNodeCopied.confirmation", getSiteNodeVO(newParentSiteNodeId).getName()));
 
 		this.topSiteNodeId = SiteNodeController.getController().getRootSiteNodeVO(this.repositoryId).getId();
 		    

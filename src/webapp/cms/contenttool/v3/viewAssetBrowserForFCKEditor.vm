@@ -141,8 +141,25 @@
 		
 		try
 		{
-			//alert("CURRENT:" + window.opener.document.getElementById("txtUrl").value);
-			var txtUrl = window.opener.document.getElementById("txtUrl").value;
+			if(window.top.opener && typeof(window.top.opener.CKEDITOR) != 'undefined')
+			{
+				var instanceName = getRequestParameter(window.location.href, "CKEditor");
+			   	if(window.top.opener.CKEDITOR.instances[instanceName]._.filebrowserSe.getDialog()._.contents.info.url)
+			    	txtUrl = window.top.opener.CKEDITOR.instances[instanceName]._.filebrowserSe.getDialog()._.contents.info.url._.initValue;
+			   	else if(window.top.opener.CKEDITOR.instances[instanceName]._.filebrowserSe.getDialog()._.contents.info.txtUrl)
+			   		txtUrl = window.top.opener.CKEDITOR.instances[instanceName]._.filebrowserSe.getDialog()._.contents.info.txtUrl._.initValue;
+			}
+			else if(window.top.opener)
+			{
+				if(top.opener.document.getElementById("txtLnkUrl"))
+			   	{
+			    	txtUrl = top.opener.document.getElementById("txtLnkUrl").value;
+			    	if(txtUrl == "")
+			     		txtUrl = top.opener.document.getElementById("txtUrl").value;
+			   	}
+			}
+		
+			//console.log("txtUrl", txtUrl);
 			if(txtUrl && txtUrl != "")
 			{
 				var contentId = getRequestParameter(txtUrl, "contentId");

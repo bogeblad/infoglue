@@ -162,7 +162,9 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	//Set to true if version was a state change
 	private Boolean stateChanged = false;
 	private Boolean considerLatest = false;
-	
+
+	private boolean isMetainfoContent = false;
+
 	public String getQualifyerPath(String entity, String entityId)
 	{	
 		StringBuffer sb = new StringBuffer("");
@@ -375,12 +377,20 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 		}
 		*/
 
-        if(this.contentTypeDefinitionVO != null)
-        {
-            this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().validateAndUpdateContentType(this.contentTypeDefinitionVO);
-            this.attributes = ContentTypeDefinitionController.getController().getContentTypeAttributes(this.contentTypeDefinitionVO, true);
-            this.tabbedAttributes = ContentTypeDefinitionController.getController().getTabbedContentTypeAttributes(this.contentTypeDefinitionVO, true);
-        }
+		if(this.contentTypeDefinitionVO != null)
+		{
+			this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().validateAndUpdateContentType(this.contentTypeDefinitionVO);
+			this.attributes = ContentTypeDefinitionController.getController().getContentTypeAttributes(this.contentTypeDefinitionVO, true);
+			this.tabbedAttributes = ContentTypeDefinitionController.getController().getTabbedContentTypeAttributes(this.contentTypeDefinitionVO, true);
+			if (this.contentTypeDefinitionVO.getName().equals(CmsPropertyHandler.getMetaDataContentTypeDefinitionName()))
+			{
+				if (logger.isDebugEnabled())
+				{
+					logger.debug("This content is a meta info! Content.id: " + contentId + ". The content type is: <" + contentTypeDefinitionVO.getName() + "> and the system metadata content type is <" + CmsPropertyHandler.getMetaDataContentTypeDefinitionName() + ">");
+				}
+				this.isMetainfoContent = true;
+			}
+		}
 
         if(this.fromLanguageId != null)
 			this.originalLanguageContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, fromLanguageId);
@@ -2103,6 +2113,35 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	public void setConsiderLatest(Boolean considerLatest) 
 	{
 		this.considerLatest = considerLatest;
+	}
+
+	public boolean getIsMetainfoContent()
+	{
+		return isMetainfoContent;
+	}
+
+	public String getCategoriesInterceptionPoint()
+	{
+		if (isMetainfoContent)
+		{
+			return "SiteNodeVersionEditor.Categories";
+		}
+		else
+		{
+			return "ContentVersionEditor.Categories";
+		}
+	}
+
+	public String getAttachmentsInterceptionPoint()
+	{
+		if (isMetainfoContent)
+		{
+			return "SiteNodeVersionEditor.Attachments";
+		}
+		else
+		{
+			return "ContentVersionEditor.Attachments";
+		}
 	}
 
 }

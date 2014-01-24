@@ -117,7 +117,9 @@ public class InterceptionPointController extends BaseController
 	    systemInterceptionPoints.put("SiteNodeVersion.ChangeAccessRights", new InterceptionPointVO("SiteNodeVersion", "SiteNodeVersion.ChangeAccessRights", "Intercepts the attempt to change access rights", true));
 	    systemInterceptionPoints.put("SiteNodeVersion.Publish", new InterceptionPointVO("SiteNodeVersion", "SiteNodeVersion.Publish", "Intercepts the direct publishing of a siteNode version", true));
 	    systemInterceptionPoints.put("SiteNode.ExpireDateComingUp", new InterceptionPointVO("SiteNode", "SiteNode.ExpireDateComingUp", "Intercepts the event of a site node coming close to it's expire date", true));
-	    
+		systemInterceptionPoints.put("SiteNodeVersionEditor.Categories", new InterceptionPointVO("SiteNodeVersionEditor", "SiteNodeVersionEditor.Categories", "Intercepts the the categories on SiteNodes", false));
+		systemInterceptionPoints.put("SiteNodeVersionEditor.Attachments", new InterceptionPointVO("SiteNodeVersionEditor", "SiteNodeVersionEditor.Attachments", "Intercepts the the attachments on SiteNodes", false));
+
 	    systemInterceptionPoints.put("StructureTool.PageTemplateIsOptional", new InterceptionPointVO("StructureTool", "StructureTool.PageTemplateIsOptional", "This interception point limits who has to supply a page template when creating a page", false));
 	    systemInterceptionPoints.put("StructureTool.Palette", new InterceptionPointVO("StructureTool", "StructureTool.Palette", "This interception point limits who sees the toolbar", false));
 	    

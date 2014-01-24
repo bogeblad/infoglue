@@ -3872,9 +3872,15 @@ public class ToolbarController implements ToolbarProvider
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
+		String label = "tool.structuretool.removeAndCleanAllReferences";
+		if (CmsPropertyHandler.getNotifyResponsibleOnReferenceChange())
+		{
+			label = "tool.structuretool.removeAndNotifyAllReferences";
+		}
+
 		buttons.add(new ToolbarButton("",
-				getLocalizedString(locale, "tool.structuretool.removeAllReferences"), 
-				getLocalizedString(locale, "tool.structuretool.removeAllReferences"),
+				getLocalizedString(locale, label),
+				getLocalizedString(locale, label),
 				"deleteAllReferences();",
 				"",
 				"left",
@@ -3888,9 +3894,15 @@ public class ToolbarController implements ToolbarProvider
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
+		String label = "tool.structuretool.removeAndCleanAllReferences";
+		if (CmsPropertyHandler.getNotifyResponsibleOnReferenceChange())
+		{
+			label = "tool.structuretool.removeAndNotifyAllReferences";
+		}
+
 		buttons.add(new ToolbarButton("",
-				getLocalizedString(locale, "tool.structuretool.removeAllReferences"), 
-				getLocalizedString(locale, "tool.structuretool.removeAllReferences"),
+				getLocalizedString(locale, label),
+				getLocalizedString(locale, label),
 				"deleteAllReferences();",
 				"",
 				"left",

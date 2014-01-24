@@ -1,0 +1,48 @@
+$ui.getString("tool.structuretool.registry.notificationEmail.headline")
+
+$ui.getString("tool.structuretool.registry.notificationEmail.intro")
+
+$ui.getString("tool.structuretool.registry.notificationEmail.siteNodeLabel")
+#foreach ( $siteNodeVO in $removedSiteNodes)
+ - $this.getSiteNodePath($siteNodeVO, false, true, $db);
+#end
+
+----------------------
+
+#foreach( $affectedNode in $affectedNodes.entrySet() )
+ - $affectedNode.key
+#set( $contents = $affectedNode.value.get("content") )
+#if( $contents.size() > 0 )
+$ui.getString("tool.structuretool.registry.notificationEmail.listHeader.content")
+#foreach( $reference in $contents )
+#set( $contentVO = $reference.referencingCompletingObject )
+#if( "$!reference.path" != "" )
+	#set( $path = $reference.path )
+#else
+	#set( $path = $reference.name )
+#end
+#if( $reference.versions.size() == 0 )
+ - $path ($baseURL/Admin.action?contentId=$contentVO.contentId)
+#else
+#foreach( $versionBean in $reference.versions )
+#set( $versionVO = $versionBean.referencingObject )
+ - $path ($versionVO.languageName) ($baseURL/Admin.action?contentId=$contentVO.contentId&languageId=$versionVO.languageId)
+#end
+#end
+#end
+#end
+#set( $siteNodes = $affectedNode.value.get("siteNode") )
+#if( $siteNodes.size() > 0 )
+$ui.getString("tool.structuretool.registry.notificationEmail.listHeader.siteNode")
+#foreach( $reference in $siteNodes )
+#set( $siteNodeVO = $reference.referencingCompletingObject )
+#if( "$!reference.path" != "" )
+	#set( $path = $reference.path )
+#else
+	#set( $path = $reference.name )
+#end
+ - $path ($baseURL/Admin.action?siteNodeId=$siteNodeVO.siteNodeId)
+#end
+#end
+#end
+/ Infoglue

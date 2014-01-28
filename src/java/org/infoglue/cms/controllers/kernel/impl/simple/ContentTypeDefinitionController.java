@@ -992,8 +992,17 @@ public class ContentTypeDefinitionController extends BaseController
 
 	public List<ContentTypeAttribute> getContentTypeAttributes(ContentTypeDefinitionVO contentTypeDefinitionVO, Boolean includeInherited)
 	{
+		return getContentTypeAttributes(contentTypeDefinitionVO, includeInherited, null);
+	}
+	
+	/**
+	 * This method returns the attributes in the content type definition for generation.
+	 */
+
+	public List<ContentTypeAttribute> getContentTypeAttributes(ContentTypeDefinitionVO contentTypeDefinitionVO, Boolean includeInherited, String languageCode)
+	{
 		List<ContentTypeAttribute> attributes = new ArrayList<ContentTypeAttribute>();
-		attributes.addAll(getContentTypeAttributes(contentTypeDefinitionVO.getSchemaValue(), false, null, null, null));
+		attributes.addAll(getContentTypeAttributes(contentTypeDefinitionVO.getSchemaValue(), false, languageCode, null, null));
 		for(ContentTypeAttribute attribute : attributes)
 			attribute.setInherited(false);
 		
@@ -1029,13 +1038,22 @@ public class ContentTypeDefinitionController extends BaseController
 
 	public Map<ContentTypeAttribute,List<ContentTypeAttribute>> getTabbedContentTypeAttributes(ContentTypeDefinitionVO contentTypeDefinitionVO, Boolean includeInherited)
 	{
+		return getTabbedContentTypeAttributes(contentTypeDefinitionVO, includeInherited, null);
+	}
+	
+	/**
+	 * This method returns the attributes in the content type definition divided into tabs as defined in the content type for generation.
+	 */
+
+	public Map<ContentTypeAttribute,List<ContentTypeAttribute>> getTabbedContentTypeAttributes(ContentTypeDefinitionVO contentTypeDefinitionVO, Boolean includeInherited, String languageCode)
+	{
 		Map<ContentTypeAttribute,List<ContentTypeAttribute>> tabbedAttributes = new LinkedHashMap<ContentTypeAttribute,List<ContentTypeAttribute>>();
 		
 		ContentTypeAttribute currentTab = new ContentTypeAttribute();
 		currentTab.setName("default");
 		List<ContentTypeAttribute> currentAttributes = new ArrayList<ContentTypeAttribute>();
 		
-		List<ContentTypeAttribute> attributes = getContentTypeAttributes(contentTypeDefinitionVO, includeInherited);
+		List<ContentTypeAttribute> attributes = getContentTypeAttributes(contentTypeDefinitionVO, includeInherited, languageCode);
 		for(ContentTypeAttribute attribute : attributes)
 		{
 			if(!attribute.getInputType().equalsIgnoreCase("tab"))
@@ -1064,7 +1082,7 @@ public class ContentTypeDefinitionController extends BaseController
 	{
 		//List attributes = new ArrayList();
 
-	    String key = "schemaValue_" + schemaValue.hashCode();
+	    String key = "schemaValue_" + schemaValue.hashCode() + "_" + languageCode;
 	    //logger.info("key:" + key);
 		Object attributesCandidate = CacheController.getCachedObject("contentTypeDefinitionCache", key);
 		List attributes = new ArrayList();
@@ -1147,7 +1165,10 @@ public class ContentTypeDefinitionController extends BaseController
 							arguments.put(varName, varValue);
 						}	    
 
-					    String msgText = validatorNode.element("msg").attributeValue("key");
+						String msgText = validatorNode.element("msg").attributeValue("key_" + languageCode);
+						if(msgText == null || msgText.equals(""))
+					    	msgText = validatorNode.element("msg").attributeValue("key");
+
 					    if(msgText != null)
 							arguments.put("msgText", msgText);
 
@@ -1377,240 +1398,6 @@ public class ContentTypeDefinitionController extends BaseController
 		return attributes;
 	}
 
-	private List getAttributesWithXalan(String schemaValue, boolean addPriorityAttribute)
-	{
-		List attributes = new ArrayList();
-		
-		int i = 0;
-		try
-		{
-			InputSource xmlSource = new InputSource(new StringReader(schemaValue));
-
-			DOMParser parser = new DOMParser();
-			parser.parse(xmlSource);
-			Document document = parser.getDocument();
-
-			String attributesXPath = "/xs:schema/xs:complexType/xs:all/xs:element/xs:complexType/xs:all/xs:element";
-			NodeList anl = org.apache.xpath.XPathAPI.selectNodeList(document.getDocumentElement(), attributesXPath);
-
-			for(i = 0; i < anl.getLength(); i++)
-			{
-				Element child = (Element)anl.item(i);
-				String attributeName = child.getAttribute("name");
-				String attributeType = child.getAttribute("type");
-
-				ContentTypeAttribute contentTypeAttribute = new ContentTypeAttribute();
-				contentTypeAttribute.setPosition(i);
-				contentTypeAttribute.setName(attributeName);
-				contentTypeAttribute.setInputType(attributeType);
-
-				String validatorsXPath = "/xs:schema/xs:complexType[@name = 'Validation']/xs:annotation/xs:appinfo/form-validation/formset/form/field[@property = '"+ attributeName +"']";
-
-				// Get validators
-				NodeList validatorNodeList = org.apache.xpath.XPathAPI.selectNodeList(document.getDocumentElement(), validatorsXPath);
-				for(int j=0; j < validatorNodeList.getLength(); j++)
-				{
-					Element validatorNode = (Element)validatorNodeList.item(j);
-					if (validatorNode != null)
-					{
-					    Map arguments = new HashMap();
-					    
-					    NodeList varNodeList = validatorNode.getElementsByTagName("var");
-					    for(int k=0; k < varNodeList.getLength(); k++)
-						{
-							Element varNode = (Element)varNodeList.item(k);
-				
-							String varName = getElementValue(varNode, "var-name");
-							String varValue = getElementValue(varNode, "var-value");
-
-							arguments.put(varName, varValue);
-						}	    
-					    
-					    NodeList msgNodeList = validatorNode.getElementsByTagName("msg");
-					    if(msgNodeList != null && msgNodeList.getLength() > 0)
-					    {
-						    String msgText = ((Element)msgNodeList.item(0)).getAttribute("key");
-						    if(msgText != null)
-								arguments.put("msgText", msgText);
-					    }
-					    
-					    String attribute = ((Element)validatorNode).getAttribute("depends");
-					    String[] depends = attribute.split(",");
-					    for(int dependsIndex=0; dependsIndex < depends.length; dependsIndex++)
-					    {
-					        String name = depends[dependsIndex];
-
-					        ContentTypeAttributeValidator contentTypeAttributeValidator = new ContentTypeAttributeValidator();
-					        contentTypeAttributeValidator.setName(name);
-					        contentTypeAttributeValidator.setArguments(arguments);
-					        contentTypeAttribute.getValidators().add(contentTypeAttributeValidator);					        
-					    }
-					    
-					    
-					}
-				}
-				
-				// Get extra parameters
-				Node paramsNode = org.apache.xpath.XPathAPI.selectSingleNode(child, "xs:annotation/xs:appinfo/params");
-				if (paramsNode != null)
-				{
-					NodeList childnl = ((Element)paramsNode).getElementsByTagName("param");
-					Map existingParams = new HashMap();
-					for(int ci=0; ci < childnl.getLength(); ci++)
-					{
-						Element param = (Element)childnl.item(ci);
-						String paramId = param.getAttribute("id");
-						String paramInputTypeId = param.getAttribute("inputTypeId");
-
-						ContentTypeAttributeParameter contentTypeAttributeParameter = new ContentTypeAttributeParameter();
-						contentTypeAttributeParameter.setId(paramId);
-						if(paramInputTypeId != null && paramInputTypeId.length() > 0)
-							contentTypeAttributeParameter.setType(Integer.parseInt(paramInputTypeId));
-
-						contentTypeAttribute.putContentTypeAttributeParameter(paramId, contentTypeAttributeParameter);
-						existingParams.put(paramId, contentTypeAttributeParameter);
-						
-						NodeList valuesNodeList = param.getElementsByTagName("values");
-						for(int vsnli=0; vsnli < valuesNodeList.getLength(); vsnli++)
-						{
-							NodeList valueNodeList = param.getElementsByTagName("value");
-							for(int vnli=0; vnli < valueNodeList.getLength(); vnli++)
-							{
-								Element value = (Element)valueNodeList.item(vnli);
-								String valueId = value.getAttribute("id");
-
-								ContentTypeAttributeParameterValue contentTypeAttributeParameterValue = new ContentTypeAttributeParameterValue();
-								contentTypeAttributeParameterValue.setId(valueId);
-
-								NamedNodeMap nodeMap = value.getAttributes();
-								for(int nmi =0; nmi < nodeMap.getLength(); nmi++)
-								{
-									Node attribute = (Node)nodeMap.item(nmi);
-									String valueAttributeName = attribute.getNodeName();
-									String valueAttributeValue = attribute.getNodeValue();
-									contentTypeAttributeParameterValue.addAttribute(valueAttributeName, valueAttributeValue);
-								}
-
-								contentTypeAttributeParameter.addContentTypeAttributeParameterValue(valueId, contentTypeAttributeParameterValue);
-							}
-						}
-					}
-					
-					//
-					if((attributeType.equals("select") || attributeType.equals("radiobutton") || attributeType.equals("checkbox")) && !existingParams.containsKey("widget"))
-					{
-						ContentTypeAttributeParameter contentTypeAttributeParameter = new ContentTypeAttributeParameter();
-						contentTypeAttributeParameter.setId("widget");
-						contentTypeAttributeParameter.setType(0);
-						contentTypeAttribute.putContentTypeAttributeParameter("widget", contentTypeAttributeParameter);
-
-						ContentTypeAttributeParameterValue contentTypeAttributeParameterValue = new ContentTypeAttributeParameterValue();
-						contentTypeAttributeParameterValue.setId("0");
-						contentTypeAttributeParameterValue.addAttribute("id", "default");
-						contentTypeAttributeParameterValue.addAttribute("label", "Default");
-						contentTypeAttributeParameter.addContentTypeAttributeParameterValue("0", contentTypeAttributeParameterValue);
-					}
-				}
-				
-				// End extra parameters
-				attributes.add(contentTypeAttribute);
-			}
-			
-			if(addPriorityAttribute)
-			{
-				ContentTypeAttribute contentTypeAttribute = new ContentTypeAttribute();
-				contentTypeAttribute.setPosition(i);
-				contentTypeAttribute.setName("PropertyPriority");
-				contentTypeAttribute.setInputType("select");
-
-				ContentTypeAttributeParameter contentTypeAttributeParameter = new ContentTypeAttributeParameter();
-				contentTypeAttributeParameter.setId("title");
-				contentTypeAttributeParameter.setType(0);
-				contentTypeAttribute.putContentTypeAttributeParameter("title", contentTypeAttributeParameter);
-				ContentTypeAttributeParameterValue contentTypeAttributeParameterValue = new ContentTypeAttributeParameterValue();
-				contentTypeAttributeParameterValue.setId("title");
-				contentTypeAttributeParameterValue.addAttribute("title", "PropertyPriority");
-				contentTypeAttributeParameter.addContentTypeAttributeParameterValue("title", contentTypeAttributeParameterValue);
-
-				contentTypeAttributeParameter = new ContentTypeAttributeParameter();
-				contentTypeAttributeParameter.setId("description");
-				contentTypeAttributeParameter.setType(0);
-				contentTypeAttribute.putContentTypeAttributeParameter("description", contentTypeAttributeParameter);
-				contentTypeAttributeParameterValue = new ContentTypeAttributeParameterValue();
-				contentTypeAttributeParameterValue.setId("description");
-				contentTypeAttributeParameterValue.addAttribute("description", "What prio should this have");
-				contentTypeAttributeParameter.addContentTypeAttributeParameterValue("description", contentTypeAttributeParameterValue);
-
-				contentTypeAttributeParameter = new ContentTypeAttributeParameter();
-				contentTypeAttributeParameter.setId("initialData");
-				contentTypeAttributeParameter.setType(0);
-				contentTypeAttribute.putContentTypeAttributeParameter("initialData", contentTypeAttributeParameter);
-				contentTypeAttributeParameterValue = new ContentTypeAttributeParameterValue();
-				contentTypeAttributeParameterValue.setId("initialData");
-				contentTypeAttributeParameterValue.addAttribute("initialData", "");
-				contentTypeAttributeParameter.addContentTypeAttributeParameterValue("initialData", contentTypeAttributeParameterValue);
-
-				contentTypeAttributeParameter = new ContentTypeAttributeParameter();
-				contentTypeAttributeParameter.setId("class");
-				contentTypeAttributeParameter.setType(0);
-				contentTypeAttribute.putContentTypeAttributeParameter("class", contentTypeAttributeParameter);
-				contentTypeAttributeParameterValue = new ContentTypeAttributeParameterValue();
-				contentTypeAttributeParameterValue.setId("class");
-				contentTypeAttributeParameterValue.addAttribute("class", "longtextfield");
-				contentTypeAttributeParameter.addContentTypeAttributeParameterValue("class", contentTypeAttributeParameterValue);
-
-				contentTypeAttributeParameter = new ContentTypeAttributeParameter();
-				contentTypeAttributeParameter.setId("values");
-				contentTypeAttributeParameter.setType(1);
-				contentTypeAttribute.putContentTypeAttributeParameter("values", contentTypeAttributeParameter);
-
-				contentTypeAttribute.getOptions().add(new ContentTypeAttributeOptionDefinition("Lowest", "1"));
-				contentTypeAttribute.getOptions().add(new ContentTypeAttributeOptionDefinition("Low", "2"));
-				contentTypeAttribute.getOptions().add(new ContentTypeAttributeOptionDefinition("Medium", "3"));
-				contentTypeAttribute.getOptions().add(new ContentTypeAttributeOptionDefinition("High", "4"));
-				contentTypeAttribute.getOptions().add(new ContentTypeAttributeOptionDefinition("Highest", "5"));
-
-				contentTypeAttributeParameterValue = new ContentTypeAttributeParameterValue();
-				contentTypeAttributeParameterValue.setId("1");
-				contentTypeAttributeParameterValue.addAttribute("id", "1");
-				contentTypeAttributeParameterValue.addAttribute("label", "Lowest");
-				contentTypeAttributeParameter.addContentTypeAttributeParameterValue("1", contentTypeAttributeParameterValue);
-
-				contentTypeAttributeParameterValue = new ContentTypeAttributeParameterValue();
-				contentTypeAttributeParameterValue.setId("2");
-				contentTypeAttributeParameterValue.addAttribute("id", "2");
-				contentTypeAttributeParameterValue.addAttribute("label", "Low");
-				contentTypeAttributeParameter.addContentTypeAttributeParameterValue("2", contentTypeAttributeParameterValue);
-
-				contentTypeAttributeParameterValue = new ContentTypeAttributeParameterValue();
-				contentTypeAttributeParameterValue.setId("3");
-				contentTypeAttributeParameterValue.addAttribute("id", "3");
-				contentTypeAttributeParameterValue.addAttribute("label", "Medium");
-				contentTypeAttributeParameter.addContentTypeAttributeParameterValue("3", contentTypeAttributeParameterValue);
-
-				contentTypeAttributeParameterValue = new ContentTypeAttributeParameterValue();
-				contentTypeAttributeParameterValue.setId("4");
-				contentTypeAttributeParameterValue.addAttribute("id", "4");
-				contentTypeAttributeParameterValue.addAttribute("label", "High");
-				contentTypeAttributeParameter.addContentTypeAttributeParameterValue("4", contentTypeAttributeParameterValue);
-
-				contentTypeAttributeParameterValue = new ContentTypeAttributeParameterValue();
-				contentTypeAttributeParameterValue.setId("5");
-				contentTypeAttributeParameterValue.addAttribute("id", "5");
-				contentTypeAttributeParameterValue.addAttribute("label", "Highest");
-				contentTypeAttributeParameter.addContentTypeAttributeParameterValue("5", contentTypeAttributeParameterValue);
-				// End extra parameters
-
-				attributes.add(contentTypeAttribute);
-			}
-		}
-		catch(Exception e)
-		{
-			logger.error("An error occurred when we tried to get the attributes of the content type: " + e.getMessage(), e);
-		}
-		
-		return attributes;
-	}
 
 	/**
 	 * This method adds a new content type attribute to the contentTypeDefinition. It sets some default values.

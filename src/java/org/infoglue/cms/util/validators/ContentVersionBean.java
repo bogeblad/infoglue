@@ -16,8 +16,8 @@ import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 public class ContentVersionBean implements Map {
 	private Map delegate = new HashMap();
 	
-	public ContentVersionBean(ContentTypeDefinitionVO contentType, ContentVersionVO contentVersionVO) {
-		List contentTypeAttributes = ContentTypeDefinitionController.getController().getContentTypeAttributes(contentType, true);
+	public ContentVersionBean(ContentTypeDefinitionVO contentType, ContentVersionVO contentVersionVO, String languageCode) {
+		List contentTypeAttributes = ContentTypeDefinitionController.getController().getContentTypeAttributes(contentType, true, languageCode);
 		for(Iterator i=contentTypeAttributes.iterator(); i.hasNext();) {
 			ContentTypeAttribute attribute = (ContentTypeAttribute) i.next();
 			String name  = attribute.getName();

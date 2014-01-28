@@ -378,8 +378,8 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
         if(this.contentTypeDefinitionVO != null)
         {
             this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().validateAndUpdateContentType(this.contentTypeDefinitionVO);
-            this.attributes = ContentTypeDefinitionController.getController().getContentTypeAttributes(this.contentTypeDefinitionVO, true);
-            this.tabbedAttributes = ContentTypeDefinitionController.getController().getTabbedContentTypeAttributes(this.contentTypeDefinitionVO, true);
+            this.attributes = ContentTypeDefinitionController.getController().getContentTypeAttributes(this.contentTypeDefinitionVO, true, CmsPropertyHandler.getPreferredLanguageCode(getUserName()));
+            this.tabbedAttributes = ContentTypeDefinitionController.getController().getTabbedContentTypeAttributes(this.contentTypeDefinitionVO, true, CmsPropertyHandler.getPreferredLanguageCode(getUserName()));
         }
 
         if(this.fromLanguageId != null)

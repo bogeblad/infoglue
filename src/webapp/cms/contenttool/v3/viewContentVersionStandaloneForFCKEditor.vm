@@ -103,10 +103,6 @@
 
  		<script type="text/javascript" src="${root}/applications/ckeditor/ckeditor.js"></script>
 		<script type="text/javascript" src="${root}/script/editorForFCKEditor.js"></script>
-		<script type="text/javascript">
-			CKEDITOR.env.cssClass = CKEDITOR.env.cssClass.replace(" cke_hc", "");
-			CKEDITOR.env.hc = false;
-		</script>
 
 	#else
 	 	

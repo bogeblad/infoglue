@@ -2961,4 +2961,15 @@ public class CmsPropertyHandler
 
 		return Boolean.parseBoolean(redirectUsingSystemRedirect);
 	}
+
+	/**
+	 * Dev note: This method is not used at all places where it should be used so don't depend on that. However
+	 * it is good if new features utilize this property so that in the future we can depend on this attribute.
+	 * (Comment written on 2014-01-24)
+	 */
+	public static String getMetaDataContentTypeDefinitionName()
+	{
+		return getServerNodeProperty("metaDataContentTypeDefinitionName", true, "Meta info");
+	}
+
 }

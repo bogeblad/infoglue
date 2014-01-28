@@ -248,6 +248,20 @@ public class WYSIWYGPropertiesAction extends InfoGlueAbstractAction
 		
 	    return NONE;
 	}
+
+	public String getWYSIWYGSettings()
+	{
+		try
+		{
+			return FileHelper.getFileAsString(new File(CmsPropertyHandler.getContextRootPath() + "cms/contenttool/WYSIWYGSettings.js"));
+		}
+		catch (Exception ex)
+		{
+			logger.error("Error when getting WYSIWYG settings. Message: " + ex.getMessage());
+			logger.warn("Error when getting WYSIWYG settings.", ex);
+			return "/* WYSIWYG settings threw an exception. Message: " + ex.getMessage() + " */";
+		}
+	}
 	
     public void setRepositoryId(Integer repositoryId)
     {

@@ -179,7 +179,7 @@ function registerOnChange()
 				        window.isPageDirty = true;
 					});
 	
-					CKEDITOR.instances[key].on('focus', function(e) {
+					#*CKEDITOR.instances[key].on('focus', function(e) {
 						//alert("on focus:" + key);
 						//alert("on focus:" + e.editor.element.getId());
 						var attributeName = editOnSightAttributeNames[e.editor.element.getId()];
@@ -208,7 +208,7 @@ function registerOnChange()
 							 			{
 							 				//alert(msg);
 								 			e.editor.setData(msg, function() {
-											    this.checkDirty(); // true
+												this.checkDirty(); // true
 											});
 										}
 							 		}
@@ -229,7 +229,7 @@ function registerOnChange()
 							   }
 						   }
 						});
-					});
+					});*#
 				}
 			}
 		}

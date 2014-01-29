@@ -31,8 +31,8 @@ public class ContentVersionValidator
 	 */
 	public ConstraintExceptionBuffer validate(ContentTypeDefinitionVO contentType, ContentVersionVO contentVersionVO, String languageCode) {
 		try {
-			ContentVersionBean bean = new ContentVersionBean(contentType, contentVersionVO);
-			ValidatorResources resources = loadResources(contentType);
+			ContentVersionBean bean = new ContentVersionBean(contentType, contentVersionVO, languageCode);
+			ValidatorResources resources = loadResources(contentType, languageCode);
 			Validator validator = new Validator(resources, "requiredForm");
 			validator.setOnlyReturnErrors(true);
 			validator.setParameter(Validator.BEAN_PARAM, bean);
@@ -94,9 +94,9 @@ public class ContentVersionValidator
 	/**
 	 * 
 	 */
-    private ValidatorResources loadResources(ContentTypeDefinitionVO contentType) {
+    private ValidatorResources loadResources(ContentTypeDefinitionVO contentType, String languageCode) {
 		try {
-			InputStream is = readValidatorXML(contentType);
+			InputStream is = readValidatorXML(contentType, languageCode);
 			return new ValidatorResources(is);
 		} catch(Exception e) {
 			logger.error("Error loading resource: " + e.getMessage());
@@ -107,11 +107,24 @@ public class ContentVersionValidator
 	/**
 	 * TODO: remove - read from ContentTypeDefinition
 	 */
-	private InputStream readValidatorXML(ContentTypeDefinitionVO contentTypeDefinition) throws Exception
+	private InputStream readValidatorXML(ContentTypeDefinitionVO contentTypeDefinition, String languageCode) throws Exception
 	{
 		String xml = contentTypeDefinition.getSchemaValue();
 		String validationSchema = xml.substring(xml.indexOf("<form-validation>"), xml.indexOf("</form-validation>") + 18);
-		
+		try
+		{
+			int startIndex = validationSchema.indexOf("key_" + languageCode);
+			if(startIndex > -1)
+			{
+				String langKey = validationSchema.substring(startIndex+8, validationSchema.indexOf("\"", startIndex+8));
+				if(langKey.length() > 0)
+					validationSchema = validationSchema.replaceAll("key=", "key_default=").replaceAll("key_" + languageCode + "=", "key=");
+			}
+		}
+		catch (Exception e) 
+		{
+			logger.warn("Problem parsing content type:" + e.getMessage(), e);
+		}
 		return new ByteArrayInputStream(validationSchema.getBytes("UTF-8"));		 
 	}
 }	

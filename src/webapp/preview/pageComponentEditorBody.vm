@@ -207,9 +207,11 @@ function registerOnChange()
 							 			if(!e.editor.checkDirty())
 							 			{
 							 				//alert(msg);
+								 			/*
 								 			e.editor.setData(msg, function() {
-											    this.checkDirty(); // true
+												this.checkDirty(); // true
 											});
+											*/
 										}
 							 		}
 							 	}

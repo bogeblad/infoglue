@@ -223,9 +223,9 @@
 		<input type="hidden" name="attributeName" value="$attribute.name">
 		<input type="hidden" name="attributeValidatorName" value="$validator.name">
 		<input type="hidden" name="attributeValidatorIndex" value="${velocityCount}">
+		<input type="hidden" name="currentContentTypeEditorViewLanguageCode" value="$!currentContentTypeEditorViewLanguageCode">
 		<!--
 		<input type="hidden" name="attributeParameterValueLocale" value="$!currentContentTypeEditorViewLanguageCode">
-		<input type="hidden" name="currentContentTypeEditorViewLanguageCode" value="$!currentContentTypeEditorViewLanguageCode">
 		-->
 		<input type="hidden" name="attributeToExpand" value="${attribute.name}">
 		</form>

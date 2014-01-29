@@ -48,6 +48,11 @@ public class ToolbarButton
 	private String confirmationText			= null;
 	private List<ToolbarButton> subButtons 	= new ArrayList<ToolbarButton>();
 
+	public ToolbarButton(String id, String text, String title, String actionURL, String cssClass)
+	{
+		this(id, text, title, actionURL, "", "left", cssClass, false, false, "", "", "inlineDiv", null, null);
+	}
+
 	public ToolbarButton(String id, String text, String title, String actionURL, String backgroundImageURL, String cssClass)
 	{
 		this(id, text, title, actionURL, backgroundImageURL, "left", cssClass, false, false, "", "", "inlineDiv", null, null);

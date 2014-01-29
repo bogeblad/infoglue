@@ -520,9 +520,9 @@ public class ToolbarController implements ToolbarProvider
 				return getDeleteContentFooterButtons(locale);
 
 			if(toolbarKey.equalsIgnoreCase("tool.deliver.editOnSight.toolbarLeft"))
-				getEditOnSightFooterButtonsLeft(toolbarKey, principal, locale, request, false);
+				return getEditOnSightFooterButtonsLeft(toolbarKey, principal, locale, request, false);
 			if(toolbarKey.equalsIgnoreCase("tool.deliver.editOnSight.toolbarRight"))
-				getEditOnSightFooterButtonsRight(toolbarKey, principal, locale, request, false);
+				return getEditOnSightFooterButtonsRight(toolbarKey, principal, locale, request, false);
 		}
 		catch(Exception e) {e.printStackTrace();}			
 					
@@ -4384,62 +4384,14 @@ public class ToolbarController implements ToolbarProvider
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		/*
-		String contentIdString = request.getParameter("contentId");
-		if(contentIdString == null || contentIdString.equals(""))
-			contentIdString = (String)request.getAttribute("contentId");
-		
-		if(contentIdString == null || contentIdString.equals(""))
+		if(toolbarKey.equalsIgnoreCase("tool.deliver.editOnSight.toolbarRight"))
 		{
-			logger.error("No contentId was sent in to getContentVersionButtons so we cannot continue. Check why. Original url: " + request.getRequestURI() + "?" + request.getQueryString());
-			return buttons;
+			buttons.add(new ToolbarButton("exampleToolbarButtonEOS", 
+					  "ExampleButton", 
+					  "Click button to invoke action", 
+					  "alert('An example plugin...');", 
+					  "deathStar"));
 		}
-		
-		Integer contentId = new Integer(contentIdString);
-		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId);
-		
-		String contentVersionIdString = request.getParameter("contentVersionId");
-		Integer contentVersionId = null;
-		if(contentVersionIdString == null)
-		{
-			LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(contentVO.getRepositoryId());
-			ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, masterLanguageVO.getId());
-			if(contentVersionVO != null)
-				contentVersionId = contentVersionVO.getId();
-		}
-		else
-		{
-			contentVersionId = new Integer(contentVersionIdString);
-		}
-		
-		buttons.add(new ToolbarButton("useSelectedAsset", 
-				  getLocalizedString(locale, "tool.contenttool.assetDialog.chooseAttachment"), 
-				  getLocalizedString(locale, "tool.contenttool.assetDialog.chooseAttachment"), 
-				  "useSelectedAsset();", 
-				  "", 
-				  "", 
-				  "linkInsert", 
-				  true, 
-				  false, 
-				  "", 
-				  "", 
-				  ""));
-
-		buttons.add(new ToolbarButton("uploadAsset", 
-				  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
-				  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
-				  "uploadAsset()", //"ViewDigitalAsset.action?contentVersionId=" + contentVersionId
-				  "",
-				  "",
-				  "attachAsset",
-				  true,
-				  false,
-				  "",
-				  "",
-				  "inlineDiv",
-				  500,
-				  550));
-
-		buttons.add(getCommonFooterCancelButton(toolbarKey, principal, locale, request, disableCloseButton));
 		*/
 		
 		return buttons;

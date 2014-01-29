@@ -45,6 +45,7 @@ import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.tree.DefaultAttribute;
+import org.infoglue.cms.applications.common.ToolbarButton;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.databeans.GenericOptionDefinition;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
@@ -53,6 +54,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.PageTemplateController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
+import org.infoglue.cms.controllers.kernel.impl.simple.ToolbarController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
@@ -62,6 +64,7 @@ import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.security.InfoGluePrincipal;
+import org.infoglue.cms.services.AdminToolbarService;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.StringManager;
 import org.infoglue.cms.util.StringManagerFactory;
@@ -556,6 +559,14 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		    extraBody = extraBody.replaceAll("\\$\\{deliver.editOnSight.toolbarMySettingsButton.title\\}", getLocalizedString(new Locale(CmsPropertyHandler.getPreferredLanguageCode(principal.getName())), "deliver.editOnSight.toolbarMySettingsButton.title"));
 		    extraBody = extraBody.replaceAll("\\$\\{deliver.editOnSight.toolbarValidateW3CErrorsQuestion.label\\}", getLocalizedString(new Locale(CmsPropertyHandler.getPreferredLanguageCode(principal.getName())), "deliver.editOnSight.toolbarValidateW3CErrorsQuestion.label"));
 		    extraBody = extraBody.replaceAll("\\$\\{deliver.editOnSight.toolbarValidateW3CNoErrors.label\\}", getLocalizedString(new Locale(CmsPropertyHandler.getPreferredLanguageCode(principal.getName())), "deliver.editOnSight.toolbarValidateW3CNoErrors.label"));
+
+			StringBuffer userDefinedButtonsSB = new StringBuffer();
+			List<ToolbarButton> buttons = AdminToolbarService.getService().getFooterToolbarButtons("tool.deliver.editOnSight.toolbarRight", principal, locale, templateController.getHttpServletRequest(), true);
+			for(ToolbarButton button : buttons)
+			{
+				userDefinedButtonsSB.append("<div class=\"right editOnSightToolbarButton " + button.getCssClass() + "\" title=\"" + button.getTitle() + "\" onclick=\"" + button.getActionURL() + "\"></div>");	
+			}
+			extraBody = extraBody.replaceAll("\\$\\{userDefinedButtons\\}", userDefinedButtonsSB.toString());
 
 		    //List tasks = getTasks();
 			//component.setTasks(tasks);

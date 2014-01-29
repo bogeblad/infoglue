@@ -427,6 +427,9 @@ border-bottom:1px solid #9CAABD;
 { 
 	background-color: #d0e5f5;
 }
+
+.editOnSightToolbarButton { background:no-repeat left center; background-position: 10px 0px; background-size: 16px 16px; width: 16px; height: 16px;}
+
 .save { background:url(images/v3/saveInlineIcon.gif) no-repeat left center; background-position: 0px 0px;}
 .saveAndExit {background:url(images/v3/saveAndExitInlineIcon.gif) no-repeat left center; background-position: 0px 0px;}
 .cancel {background:url(images/v3/cancel.png) no-repeat left center; background-position: 0px 3px;}

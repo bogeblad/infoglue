@@ -106,28 +106,28 @@ public class CopyContentAction extends InfoGlueAbstractAction
 		this.onlyLatestVersions = onlyLatestVersions;
 	}
 
-    public List getRepositories()
-    {
-        return repositories;
-    }
+	public List getRepositories()
+	{
+		return repositories;
+	}
 
-    public String doInput() throws Exception
-    {    	
+	public String doInput() throws Exception
+	{
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
-    	this.returnAddress = "ViewInlineOperationMessages.action"; //ViewContent!V3.action?contentId=" + contentId + "&repositoryId=" + this.repositoryId;
-    	return "input";
-    }
-	
-    public String doExecute() throws Exception
-    {
-        userSessionKey = "" + System.currentTimeMillis();
+		this.returnAddress = "ViewInlineOperationMessages.action"; //ViewContent!V3.action?contentId=" + contentId + "&repositoryId=" + this.repositoryId;
+		return "input";
+	}
 
-        String copyContentInlineOperationDoneHeader = getLocalizedString(getLocale(), "tool.contenttool.copyContentsInlineOperationDoneHeader");
+	public String doExecute() throws Exception
+	{
+		userSessionKey = "" + System.currentTimeMillis();
+
+		String copyContentInlineOperationDoneHeader = getLocalizedString(getLocale(), "tool.contenttool.copyContentsInlineOperationDoneHeader");
 		String copyContentInlineOperationBackToCurrentPageLinkText = getLocalizedString(getLocale(), "tool.contenttool.copyContentsInlineOperationBackToCurrentContentLinkText");
 		String copyContentInlineOperationBackToCurrentPageTitleText = getLocalizedString(getLocale(), "tool.contenttool.copyContentsInlineOperationBackToCurrentContentTitleText");
-		
-	    setActionMessage(userSessionKey, copyContentInlineOperationDoneHeader);
-	    addActionLink(userSessionKey, new LinkBean("currentPageUrl", copyContentInlineOperationBackToCurrentPageLinkText, copyContentInlineOperationBackToCurrentPageTitleText, copyContentInlineOperationBackToCurrentPageTitleText, this.originalAddress, false, ""));
+
+		setActionMessage(userSessionKey, copyContentInlineOperationDoneHeader);
+		addActionLink(userSessionKey, new LinkBean("currentPageUrl", copyContentInlineOperationBackToCurrentPageLinkText, copyContentInlineOperationBackToCurrentPageTitleText, copyContentInlineOperationBackToCurrentPageTitleText, this.originalAddress, false, ""));
         setActionExtraData(userSessionKey, "refreshToolbarAndMenu", "" + true);
         setActionExtraData(userSessionKey, "repositoryId", "" + this.repositoryId);
         setActionExtraData(userSessionKey, "contentId", "" + newParentContentId);
@@ -141,14 +141,14 @@ public class CopyContentAction extends InfoGlueAbstractAction
     		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
             return "input";
         }
-        
+
 		ContentControllerProxy.getController().acCopyContent(this.getInfoGluePrincipal(), contentId, newParentContentId, maxAssetSize, onlyLatestVersions);
-		
+
         if(this.returnAddress != null && !this.returnAddress.equals(""))
         {
-	        String arguments 	= "userSessionKey=" + userSessionKey + "&isAutomaticRedirect=false";
-	        String messageUrl 	= returnAddress + (returnAddress.indexOf("?") > -1 ? "&" : "?") + arguments;
-	        
+	        String arguments	= "userSessionKey=" + userSessionKey + "&isAutomaticRedirect=false";
+	        String messageUrl	= returnAddress + (returnAddress.indexOf("?") > -1 ? "&" : "?") + arguments;
+
 	        this.getResponse().sendRedirect(messageUrl);
 	        return NONE;
         }

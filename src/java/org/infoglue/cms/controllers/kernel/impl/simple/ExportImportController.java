@@ -24,6 +24,7 @@ import org.exolab.castor.xml.Unmarshaller;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentCategory;
+import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
@@ -33,6 +34,7 @@ import org.infoglue.cms.entities.management.Category;
 import org.infoglue.cms.entities.management.CategoryVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinition;
 import org.infoglue.cms.entities.management.Language;
+import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.SiteNodeTypeDefinition;
 import org.infoglue.cms.entities.management.impl.simple.CategoryImpl;
 import org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl;
@@ -45,6 +47,9 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.handlers.DigitalAssetBytesHandler;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
 import org.infoglue.deliver.util.Timer;
+
+import com.opensymphony.module.propertyset.PropertySet;
+import com.opensymphony.module.propertyset.PropertySetManager;
 
 public class ExportImportController extends BaseController
 {
@@ -228,8 +233,33 @@ public class ExportImportController extends BaseController
 		
 		return file;
 	}
-	
-	
+
+	private String getInitialLanguageId(ContentVO contentVO) throws Exception
+	{
+		String initialLanguageId = InfoGlueSettingsController.getInfoGlueSettingsController().getProperty("content_" + contentVO.getContentId() + "_initialLanguageId", "applicationProperties", null, false, false, false, false, null);
+
+		while ((initialLanguageId == null || initialLanguageId.equalsIgnoreCase("-1")) && contentVO.getParentContentId() != null)
+		{
+			initialLanguageId = InfoGlueSettingsController.getInfoGlueSettingsController().getProperty("content_" + contentVO.getParentContentId() + "_initialLanguageId", "applicationProperties", null, false, false, false, false, null);
+			contentVO = ContentController.getContentController().getContentVOWithId(contentVO.getParentContentId());
+		}
+
+		return initialLanguageId;
+	}
+
+	private LanguageVO getPreferredLanguageForContent(Content content) throws NumberFormatException, SystemException, Exception
+	{
+		String languageId = getInitialLanguageId(content.getValueObject());
+		if (languageId != null && !languageId.equals("") && !languageId.equals("-1"))
+		{
+			return LanguageController.getController().getLanguageVOWithId(new Integer(languageId));
+		}
+		else
+		{
+			return LanguageController.getController().getMasterLanguage(content.getRepositoryId());
+		}
+	}
+
 	public void importContent(File contentFile, Integer parentContentId, String onlyLatestVersions) throws SystemException, Exception
 	{
 		Database db = CastorDatabaseService.getDatabase();
@@ -276,40 +306,46 @@ public class ExportImportController extends BaseController
 			
 			updateContentTypeDefinitions(contentTypeDefinitions, categoryIdMap);
 			
-			List readContents = infoGlueExportImplRead.getRootContent();
+			List<Content> readContents = infoGlueExportImplRead.getRootContent();
 	
 			Map contentIdMap = new HashMap();
 			Map siteNodeIdMap = new HashMap();
 			
-			List allContents = new ArrayList();
-			
-			Iterator readContentsIterator = readContents.iterator();
+			List<Content> allContents = new ArrayList<Content>();
+
+			String suffix = "";
+			LanguageVO languageVO = getPreferredLanguageForContent(parentContent);
+			if (languageVO != null)
+			{
+				suffix = LabelController.getController(languageVO.getLocale()).getString("tool.contenttool.importContent.suffix");
+			}
+			Iterator<Content> readContentsIterator = readContents.iterator();
 			while(readContentsIterator.hasNext())
 			{
-				Content readContent = (Content)readContentsIterator.next();
+				Content readContent = readContentsIterator.next();
 				
 				readContent.setRepository((RepositoryImpl)parentContent.getRepository());
 				readContent.setParentContent((ContentImpl)parentContent);
 				
-				createContents(readContent, contentIdMap, contentTypeIdMap, allContents, Collections.unmodifiableCollection(contentTypeDefinitions), categoryIdMap, version, db, onlyLatestVersions);
+				createContents(readContent, contentIdMap, contentTypeIdMap, allContents, Collections.unmodifiableCollection(contentTypeDefinitions), categoryIdMap, version, db, onlyLatestVersions, suffix);
 				parentContent.getChildren().add(readContent);
 			}
-					
-			List allContentIds = new ArrayList();
-			Iterator allContentsIterator = allContents.iterator();
+
+			List<Integer> allContentIds = new ArrayList<Integer>();
+			Iterator<Content> allContentsIterator = allContents.iterator();
 			while(allContentsIterator.hasNext())
 			{
-				Content content = (Content)allContentsIterator.next();
+				Content content = allContentsIterator.next();
 				allContentIds.add(content.getContentId());
 			}
-	
+
 			db.commit();
 			db.close();
-						
-			Iterator allContentIdsIterator = allContentIds.iterator();
+
+			Iterator<Integer> allContentIdsIterator = allContentIds.iterator();
 			while(allContentIdsIterator.hasNext())
 			{
-				Integer contentId = (Integer)allContentIdsIterator.next();
+				Integer contentId = allContentIdsIterator.next();
 				try
 				{
 					db = CastorDatabaseService.getDatabase();
@@ -327,15 +363,15 @@ public class ExportImportController extends BaseController
 						db.rollback();
 					}
 					catch(Exception e2) { e2.printStackTrace(); }
-	                logger.error("An error occurred when updating content version for content: " + e.getMessage(), e);					
+					logger.error("An error occurred when updating content version for content: " + e.getMessage(), e);
 				}
 				finally
 				{
-					db.close();					
+					db.close();
 				}
 			}
 			
-			reader.close();			
+			reader.close();
 		} 
 		catch ( Exception e) 
 		{
@@ -433,7 +469,7 @@ public class ExportImportController extends BaseController
 	 * @throws Exception
 	 */
 	
-	private List createContents(Content content, Map idMap, Map contentTypeDefinitionIdMap, List allContents, Collection contentTypeDefinitions, Map categoryIdMap, int version, Database db, String onlyLatestVersions) throws Exception
+	private List createContents(Content content, Map idMap, Map contentTypeDefinitionIdMap, List allContents, Collection contentTypeDefinitions, Map categoryIdMap, int version, Database db, String onlyLatestVersions, String newNameSuffix) throws Exception
 	{
 		ContentTypeDefinition contentTypeDefinition = null;
 		
@@ -493,7 +529,8 @@ public class ExportImportController extends BaseController
 	    	
 	    logger.info("Creating content:" + content.getName());
 
-	    db.create(content);
+		content.setName(content.getName() + newNameSuffix);
+		db.create(content);
 		
 		allContents.add(content);
 		
@@ -654,7 +691,7 @@ public class ExportImportController extends BaseController
 				Content childContent = (Content)childContentsIterator.next();
 				childContent.setRepository(content.getRepository());
 				childContent.setParentContent((ContentImpl)content);
-				createContents(childContent, idMap, contentTypeDefinitionIdMap, allContents, contentTypeDefinitions, categoryIdMap, version, db, onlyLatestVersions);
+				createContents(childContent, idMap, contentTypeDefinitionIdMap, allContents, contentTypeDefinitions, categoryIdMap, version, db, onlyLatestVersions, newNameSuffix);
 			}
 		}
 		

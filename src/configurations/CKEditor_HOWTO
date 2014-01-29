@@ -1,0 +1,6 @@
+HOWTO UPGRADE CKEDITOR
+------------------------------
+Yougo to ckeditor.com and choose custom build. You then upload a build config file and you should use the 
+src/configurations/ckeditor_build_config.js in the Infoglue-project as a template.
+
+If you have additions like 

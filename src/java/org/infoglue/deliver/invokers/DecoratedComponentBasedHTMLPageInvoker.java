@@ -513,6 +513,8 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			extraBody = extraBody.replaceAll("\\$\\{tool.common.publishing.publishButtonLabel\\}", getLocalizedString(locale, "tool.common.publishing.publishButtonLabel"));
 			extraBody = extraBody.replaceAll("\\$\\{tool.structuretool.toolbarV3.previewPageLabel\\}", getLocalizedString(locale, "tool.structuretool.toolbarV3.previewPageLabel"));
 
+			extraBody = extraBody.replaceAll("\\$\\{tool.structuretool.toolbarV3.disableEditmodeNotAllowed\\}", getLocalizedString(locale, "tool.structuretool.toolbarV3.disableEditmodeNotAllowed"));
+
 			extraBody = extraBody.replaceAll("\\$\\{homeURL\\}", personalStartUrl);
 
 			extraBody = extraBody.replaceAll("\\$\\{currentLanguageCode\\}", ""+templateController.getLanguageCode(templateController.getLanguageId()).getLanguage().toUpperCase());

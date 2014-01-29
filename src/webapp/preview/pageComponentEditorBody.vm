@@ -54,7 +54,7 @@
 	<div class="right mySettings" style="display:none;" title="${deliver.editOnSight.toolbarMySettingsButton.title}" onclick="openInlineDivImpl(componentEditorUrl + '/ViewMySettings.action', 700, 750, true, true);"></div>
 	<div class="right openInNewWindow" style="display:none;" title="${deliver.editOnSight.toolbarNewWindowButton.title}" onclick="window.open(document.location.href,'PageComponents','');"></div>
 	<div class="right validateW3C" style="display:none;" title="${deliver.editOnSight.toolbarValidateW3CButton.title}" onclick="validateW3C();"><div class="errorCountW3C"></div></div>
-	<div class="right">${deliver.editOnSight.toolbarInlineEditing.title}: <input type="checkbox" id="inlineEditing" value="true" checked="checked" onclick="toggleInline();"/></div>
+	<div class="right">${deliver.editOnSight.toolbarInlineEditing.title}: <input type="checkbox" id="inlineEditing" value="true" checked="checked" onclick="toggleInline(event);"/></div>
 	<div class="right languageContext" style="display:none;"><span title="${currentLanguageName}" onclick="$('#languageSelector').toggle();">${currentLanguageCode}</span><div id="languageSelector" style="display: none; position: fixed; padding: 6px 0 0 10px; bottom: 42px; margin-left: -11px; width: 28px; color: black; background-color: white; box-shadow: rgba(0, 0, 0, 0.2) 0px -3px 3px;"><ul style="list-style: none;">${languageList}</ul></div></div>
 	<div id="igStatusDiv" class="right loadingState">${deliver.editOnSight.toolbarState.title}: <span id="igStatus">-</span></div>
 </div>
@@ -240,69 +240,118 @@ function registerOnChange()
 
 var inlineOff = false;
 
-function toggleInline()
+function hasDirtyEditors()
+{
+	for (key in editOnSightAttributeNames)
+	{
+		if(CKEDITOR.instances[key])
+		{
+			if (CKEDITOR.instances[key].checkDirty()) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+function initWYSIWYGInstance(key)
+{
+	var WYSIWYGToolbar = editOnSightAttributeNames[key + "_WYSIWYGToolbar"];
+	var WYSIWYGExtraConfig = editOnSightAttributeNames[key + "_WYSIWYGExtraConfig"];
+	var ckTextContentId = editOnSightAttributeNames[key + "_contentId"];
+	var ckTextLanguageId = editOnSightAttributeNames[key + "_languageId"];
+	var configParameters = "repositoryId=" + repositoryId + "&contentId=" + ckTextContentId + "&languageId=" + ckTextLanguageId;
+	var config;
+	try
+	{
+		config = eval("({" + WYSIWYGExtraConfig + "})");
+	}
+	catch(err)
+	{
+		if (typeof console === "object")
+		{
+			console.log("Error in extra config", err);
+		}
+	}
+	if (typeof config !== "object")
+	{
+		config = {};
+	}
+	config["toolbar"] = WYSIWYGToolbar;
+	config["customConfig"] = cmsBaseUrl + "/WYSIWYGProperties.action?" + configParameters;
+	config["language"] = ckTextLanguageId;
+	CKEDITOR.inline( key, config );
+}
+
+function toggleInline(event)
 {
 	if(typeof(CKEDITOR) == 'undefined')
 	{
 		return;
 	}
-	
-	var turnOn = false;
-	if(inlineOff)
-		turnOn = true;
-	
-	for (key in editOnSightAttributeNames)
+
+	if (!inlineOff && hasDirtyEditors())
 	{
-		//alert("key:" + key);
-		if(key.indexOf("_type") == -1 && 
-		   key.indexOf("_enableWYSIWYG") == -1 && 
-		   key.indexOf("_WYSIWYGToolbar") == -1 &&
-		   key.indexOf("_WYSIWYGExtraConfig") == -1 &&
-		   key.indexOf("_contentId") == -1 &&
-		   key.indexOf("_languageId") == -1)
+		alert("${tool.structuretool.toolbarV3.disableEditmodeNotAllowed}");
+		event.preventDefault();
+	}
+	else
+	{
+		var turnOn = false;
+		if(inlineOff)
+			turnOn = true;
+		for (key in editOnSightAttributeNames)
 		{
 			//alert("key:" + key);
-			//alert("key:" + CKEDITOR.instances[key]);
-			if(CKEDITOR.instances[key])
+			if(key.indexOf("_type") == -1 && 
+			   key.indexOf("_enableWYSIWYG") == -1 && 
+			   key.indexOf("_WYSIWYGToolbar") == -1 &&
+			   key.indexOf("_WYSIWYGExtraConfig") == -1 &&
+			   key.indexOf("_contentId") == -1 &&
+			   key.indexOf("_languageId") == -1)
 			{
-				if(!turnOn)
+				//alert("key:" + key);
+				//alert("key:" + CKEDITOR.instances[key]);
+				if(CKEDITOR.instances[key])
 				{
-					//console.log("regii:" + key);
-					//console.log(CKEDITOR.instances[key]);
-					CKEDITOR.instances[key].destroy();
-					$("#" + key).attr("contenteditable", "false");
-				}
-			}
-			else
-			{	
-				//alert("ON again:" + editOnSightAttributeNames[key + "_type"]);
-				$("#" + key).attr("contenteditable", "true");
-				if(editOnSightAttributeNames[key + "_type"] == "textfield")
-				{
-	        		CKEDITOR.inline( key , {
-					    removePlugins: 'toolbar',
-					    /*customConfig: '" + CmsPropertyHandler.getComponentEditorUrl() + "WYSIWYGProperties.action?" + parameterString + "'," + */
-						autoParagraph: false,	
-						/*WYSIWYGExtraConfig +*/
-						});
+					if(!turnOn)
+					{
+						//console.log("regii:" + key);
+						//console.log(CKEDITOR.instances[key]);
+						CKEDITOR.instances[key].destroy();
+						$("#" + key).attr("contenteditable", "false");
+					}
 				}
 				else
-				{				
-					CKEDITOR.inline( key, {
-						toolbar: '" + WYSIWYGToolbar + "',
-					    /*customConfig: '" + CmsPropertyHandler.getComponentEditorUrl() + "WYSIWYGProperties.action?" + parameterString + "'," + 
-						language: '" + languageCode + "'," +
-						WYSIWYGExtraConfig +*/
-						});
-				}									
+				{
+					//alert("ON again:" + editOnSightAttributeNames[key + "_type"]);
+					$("#" + key).attr("contenteditable", "true");
+					if(editOnSightAttributeNames[key + "_type"] == "textfield")
+					{
+		        		CKEDITOR.inline( key , {
+						    removePlugins: 'toolbar',
+						    /*customConfig: '" + CmsPropertyHandler.getComponentEditorUrl() + "WYSIWYGProperties.action?" + parameterString + "'," + */
+							autoParagraph: false,	
+							/*WYSIWYGExtraConfig +*/
+							});
+					}
+					else
+					{
+						initWYSIWYGInstance(key);
+					}
+				}
 			}
 		}
+		if(turnOn)
+		{
+			inlineOff = false;
+			registerOnChange();
+		}
+		else
+		{
+			inlineOff = true;
+		}
 	}
-	
-	if(turnOn)
-		inlineOff = false;
-	else
-		inlineOff = true;
 }
 
 function saveAllEditing()

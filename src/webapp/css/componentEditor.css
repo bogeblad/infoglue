@@ -186,6 +186,12 @@ Component palette classes
 	text-decoration: underline;
 	color: black;
 }
+.igmenuitems.noActionMenuItem a {
+	font-style: italic;
+}
+.igmenuitems.noActionMenuItem a:hover {
+	text-decoration: none;
+}
 
 /*
 This can be replaced by componentEditor.js:highighi5 and lowlighti5

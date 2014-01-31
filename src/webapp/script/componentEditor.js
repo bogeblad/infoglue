@@ -597,67 +597,102 @@ function showComponentMenu(event, element, compId, anInsertUrl, anDeleteUrl, anC
 	return false;
 }
 
-
 function showComponentInTreeMenu(event, element, compId, anInsertUrl, anDeleteUrl, anChangeUrl, slotId, slotContentIdVar, aActiveComponentName) 
 {
+	var checkAccessAndEnable = function(accessVarName, domId)
+	{
+		var changeAccess = eval(accessVarName);
+		if(changeAccess)
+		{
+			document.getElementById(domId).style.display = "block";
+			return true;
+		}
+		else
+		{
+			document.getElementById(domId).style.display = "none";
+			return false;
+		}
+	}
+
+	hidepreviousmenues();
+
 	activeMenuId 		= "componentInTreeMenu";
 	slotName 			= slotId;
 	slotContentId 		= slotContentIdVar;
 	activeComponentName = aActiveComponentName;
-	
-	//alert("slotId:" + slotId);
-	//alert("compId:" + compId);
-	
+
 	try
 	{
-		var access = eval("window.hasAccessToDeleteComponent" + compId + "_" + convertName(slotName)); 
-	    //alert("access:" + access);
-	    if(access) 
-	    {
-	    	document.getElementById("deleteComponentInTreeMenuItem").style.display = "block";
-	    	document.getElementById("componentInTreeMenuTopSeparator").style.display = "block";
+		var componentIdentifer = compId + "_" + convertName(slotName);
+		var hasTopSectionItems = false;
+		var hasBottomSectionItems = false;
+		var access = eval("window.hasAccessToDeleteComponent" + componentIdentifer);
+		if(access)
+		{
+			document.getElementById("deleteComponentInTreeMenuItem").style.display = "block";
+			hasTopSectionItems = true;
 		}
 		else
 		{
-	    	document.getElementById("deleteComponentInTreeMenuItem").style.display = "none";
-	    	document.getElementById("componentInTreeMenuTopSeparator").style.display = "none";
-	    }
+			document.getElementById("deleteComponentInTreeMenuItem").style.display = "none";
+		}
 
 		var changeAccess = eval("window.hasAccessToChangeComponent" + compId + "_" + convertName(slotName)); 
-	    //alert("changeAccess:" + changeAccess);
-	    if(changeAccess) 
-	    {
-	    	document.getElementById("changeComponentInTreeMenuItem").style.display = "block";
-	    }
+		if(changeAccess)
+		{
+			hasTopSectionItems = true;
+			document.getElementById("changeComponentInTreeMenuItem").style.display = "block";
+		}
 		else
 		{
-	    	document.getElementById("changeComponentInTreeMenuItem").style.display = "none";
-	    }
+			document.getElementById("changeComponentInTreeMenuItem").style.display = "none";
+		}
+		hasTopSectionItems = checkAccessAndEnable("window.hasAccessToSavePageTemplate", "createPageTemplateInTreeMenuItem") || hasTopSectionItems;
+		hasBottomSectionItems = checkAccessAndEnable("window.hasAccessToEditProperties" + componentIdentifer, "componentPropertiesInTreeMenuItem");
+		if (hasTopSectionItems && hasBottomSectionItems)
+		{
+			document.getElementById("componentInTreeMenuTopSeparator").style.display = "block";
+		}
+		else
+		{
+			document.getElementById("componentInTreeMenuTopSeparator").style.display = "none";
+		}
 	}
 	catch(e)
 	{
-		//alert("Error:" + e);
+		if (typeof console === "object")
+		{
+			console.log("Error when generating component menu in tree.", e);
+		}
+	}
+
+	var childrenHiddenFilter = function() {return $(this).css("display") === "block";};
+	if ($("#componentInTreeMenu").children(":not(#noActionAvailableMenuItem)").filter(childrenHiddenFilter).length === 0)
+	{
+		$("#noActionAvailableMenuItem").css("display", "block");
+	}
+	else
+	{
+		$("#noActionAvailableMenuItem").css("display", "none");
 	}
 
 	componentId = compId;
 	insertUrl = anInsertUrl;
 	deleteUrl = anDeleteUrl;
 	changeUrl = anChangeUrl;
-	//alert("componentId" + componentId);
-    //alert("changeUrl:" + changeUrl);
-    
-    document.body.onclick = hidemenuie5;
+
+	document.body.onclick = hidemenuie5;
 	getActiveMenuDiv().className = menuskin;
-	
+
 	clientX = getEventPositionX(event);
 	clientY = getEventPositionY(event);
-	
+
 	var rightedge = document.body.clientWidth - clientX;
 	//var bottomedge = document.body.clientHeight - clientY;
 	var bottomedge = getWindowHeight() - clientY;
 
 	menuDiv = getActiveMenuDiv();
-	
+
 	/*
 	if (rightedge < menuDiv.offsetWidth)
 		newLeft = (document.body.scrollLeft + clientX - menuDiv.offsetWidth);
@@ -705,84 +740,60 @@ function showEmptySlotMenu(slotId, event, compId, anInsertUrl, slotContentIdVar)
 	
 	try
 	{
-	    if(window.hasAccessToPageNotifications) 
-	    	$(".linkTakePage").css("display","block");
-		else
-	    	$(".linkTakePage").css("display","none");
-
-	    if(window.hasAccessToContentNotifications) 
-	    	$(".linkTakeContent").css("display","block");
-		else
-	    	$(".linkTakeContent").css("display","none");
-
-	    if(window.hasAccessToSavePageTemplate) 
-	    	$(".linkCreatePageTemplate").css("display","block");
-		else
-	    	$(".linkCreatePageTemplate").css("display","none");
-
-	    if(window.hasPageStructureAccess) 
-	    	$(".linkPageComponents").css("display", "block");
-		else
-	    	$(".linkPageComponents").css("display", "none");
-
-	    if(window.hasOpenInNewWindowAccess) 
-	    	$(".linkOpenInNewWindow").css("display","block");
-		else
-	    	$(".linkOpenInNewWindow").css("display","none");
-
-	    if(window.hasAccessToViewSource) 
-	    	$(".linkViewSource").css("display","block");
-		else
-	    	$(".linkViewSource").css("display","none");
-	    
-	    
-	    var access = eval("window.hasAccessToAddComponent" + convertName(compId)); 
-	    if(access) 
-	    {
-	    	$(".linkAddComponent").css("display", "block");
-	    	$("#emptySlotMenuTopSeparator").css("display", "block");
+		var showTopItem = false;
+		var access = eval("window.hasAccessToAddComponent" + convertName(compId));
+		if(access)
+		{
+			$(".linkAddComponent").css("display", "block");
+			$("#emptySlotMenuTopSeparator").css("display", "block");
+			showTopItem = true;
 		}
 		else
 		{
 			$(".linkAddComponent").css("display", "none");
-	    	$("#emptySlotMenuTopSeparator").css("display", "none");
-	    }
+		}
 
 		var accessToAccessRights = eval("window.hasAccessToAccessRights"); 
-	    if(accessToAccessRights) 
-	    {
-	    	document.getElementById("accessRightsMenuItem").style.display = "block";
+		if(accessToAccessRights)
+		{
+			if (showTopItem)
+			{
+				$("#emptySlotMenuTopSeparator").css("display", "block");
+			}
+			else
+			{
+				$("#emptySlotMenuTopSeparator").css("display", "none");
+			}
+			document.getElementById("accessRightsMenuItem").style.display = "block";
 		}
 		else
 		{
-	    	document.getElementById("accessRightsMenuItem").style.display = "none";
-	    }
-
-		var hasAccessToChangeComponent = eval("window.hasAccessToChangeComponent" + convertName(compId)); 
-	    //alert("hasAccessToChangeComponent:" + hasAccessToChangeComponent);
-	    if(hasAccessToChangeComponent) 
-	    {
-	    	document.getElementById("changeComponentMenuItem").style.display = "block";
+			$("#emptySlotMenuTopSeparator").css("display", "none");
+			document.getElementById("accessRightsMenuItem").style.display = "none";
 		}
-		else
-		{
-	    	document.getElementById("changeComponentMenuItem").style.display = "none";
-	    }
 	}
 	catch(e)
 	{
-		//alert("Error:" + e);
+		if (typeof console === "object")
+		{
+			console.log("Error when generating menu for slot in tree.", e);
+		}
 	}
-	 
+
+	var childrenHiddenFilter = function() {return $(this).css("display") === "block";};
+	if ($("#emptySlotMenu").children(":not(#noActionAvailableSlotMenuItem)").filter(childrenHiddenFilter).length === 0)
+	{
+		$("#noActionAvailableSlotMenuItem").css("display", "block");
+	}
+	else
+	{
+		$("#noActionAvailableSlotMenuItem").css("display", "none");
+	}
+
 	slotId = compId;
 	insertUrl = anInsertUrl;
-	//alert("slotId:" + slotId);
-	//alert("slotName:" + slotName);
-	//alert("slotContentId:" + slotContentId);
-	//alert("CompId:" + compId);
-    //alert(insertUrl);
-	
-    document.body.onclick = hidemenuie5;
+
+	document.body.onclick = hidemenuie5;
 	getActiveMenuDiv().className = menuskin;
 	
 	clientX = getEventPositionX(event);
@@ -1736,7 +1747,7 @@ function setAccessRights(slotId, slotContentId)
 	//alert("slotId in setAccessRights:" + slotId);
 	//alert("currentUrl:" + document.location.href);
 	//alert("slotId: " + slotId + " - slotContentId:" + slotContentId);
-	openInlineDiv(componentEditorUrl + "ViewAccessRights!V3.action?interceptionPointCategory=ComponentEditor&extraParameters=" + slotContentId + "_" + slotId + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 800, 600, true);
+	openInlineDiv(componentEditorUrl + "ViewAccessRights!V3.action?interceptionPointCategory=ComponentEditor&extraParameters=" + slotContentId + "_" + slotId + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 600, 800, true);
 }
 
 function deleteComponent(aConfirmText) 

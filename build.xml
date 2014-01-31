@@ -33,6 +33,7 @@
 	* The master filterset, created from build.properties
 	-->
 	<filterset id="project.filters" onmissingfiltersfile="warn">
+		<filter token="webappVersion" value="2.3"/>
 		<filter token="database.validationQuery" value="select 1 from cmInfoGlueProperties"/>
 		<filtersfile file="${local.buildfile}"/>
 		<filtersfile file="build.properties"/>
@@ -188,7 +189,7 @@
 				<include name="*.xml"/>
 				<include name="*.dtd"/>
 				<include name="LICENSE.HTML"/>
-				<exclude name="*web.xml"/>
+				<exclude name="*web_*.xml"/>
 			</fileset>
 			<filterset refid="project.filters"/>
 			<filterset>
@@ -231,7 +232,7 @@
 				<include name="*.xml"/>
 				<include name="*.dtd"/>
 				<include name="LICENSE.HTML"/>
-				<exclude name="*web.xml"/>
+				<exclude name="*web_*.xml"/>
 			</fileset>
 			<filterset refid="project.filters"/>
 			<filterset>
@@ -277,7 +278,7 @@
 				<include name="*.xml"/>
 				<include name="*.dtd"/>
 				<include name="LICENSE.HTML"/>
-				<exclude name="*web.xml"/>
+				<exclude name="*web_*.xml"/>
 			</fileset>
 			<!--<filterset refid="project.filters"/>-->
 			<filterset>
@@ -332,7 +333,7 @@
 		    <fileset dir="${build.classes}" includes="mapping.xml,oracle_mapping.xml,webwork.properties,actions.xml,jobs.xml"/>
         </delete>
 
-		<war warfile="${cms.war.file}" webxml="${conf}/cms-web.xml">
+		<war warfile="${cms.war.file}" webxml="${conf}/cms-web_${webappVersion}.xml">
 			<fileset dir="${webapp}"/>
 			<classes dir="${build.classes}"/>
 			<!--lib refid="build.libs"/-->
@@ -385,7 +386,7 @@
 	        </filterchain>
 	    </copy>
 
-		<war warfile="infoglueCMS.war" webxml="${conf}/cms-web.xml">
+		<war warfile="infoglueCMS.war" webxml="${conf}/cms-web_${webappVersion}.xml">
 			<fileset dir="${webapp}"/>
 			<classes dir="${build.classes}"/>
 			<!--lib refid="build.libs"/-->
@@ -429,7 +430,7 @@
 		    <fileset dir="${build.classes}" includes="mapping.xml,oracle_mapping.xml,webwork.properties,actions.xml,jobs.xml"/>
         </delete>
 
-		<war warfile="${deliver.war.file}" webxml="${conf}/deliver-web.xml">
+		<war warfile="${deliver.war.file}" webxml="${conf}/deliver-web_${webappVersion}.xml">
 			<fileset dir="${webapp}"/>
 			<classes dir="${build.classes}"/>
 			<!--lib refid="build.libs"/-->
@@ -483,7 +484,7 @@
 	        </filterchain>
 	    </copy>
 
-		<war warfile="infoglueDeliverWorking.war" webxml="${conf}/deliver-web.xml">
+		<war warfile="infoglueDeliverWorking.war" webxml="${conf}/deliver-web_${webappVersion}.xml">
 			<fileset dir="${webapp}"/>
 			<classes dir="${build.classes}"/>
 			<lib dir="${lib}/build" includes="**/*.jar" excludes="pluto-1.0.1-rc2.jar,pluto-1.0.1-rc4.jar,pluto-1.0.1.jar,portlet-api-1.0.jar"/>
@@ -521,7 +522,7 @@
 	        </filterchain>
 	    </copy>
 
-		<war warfile="infoglueDeliverPreview.war" webxml="${conf}/deliver-web.xml">
+		<war warfile="infoglueDeliverPreview.war" webxml="${conf}/deliver-web_${webappVersion}.xml">
 			<fileset dir="${webapp}"/>
 			<classes dir="${build.classes}"/>
 			<lib dir="${lib}/build" includes="**/*.jar" excludes="pluto-1.0.1-rc2.jar,pluto-1.0.1-rc4.jar,pluto-1.0.1.jar,portlet-api-1.0.jar"/>
@@ -559,7 +560,7 @@
 	        </filterchain>
 	    </copy>
 
-		<war warfile="infoglueDeliverLive.war" webxml="${conf}/deliver-web.xml">
+		<war warfile="infoglueDeliverLive.war" webxml="${conf}/deliver-web_${webappVersion}.xml">
 			<fileset dir="${webapp}"/>
 			<classes dir="${build.classes}"/>
 			<lib dir="${lib}/build" includes="**/*.jar" excludes="pluto-1.0.1-rc2.jar,pluto-1.0.1-rc4.jar,pluto-1.0.1.jar,portlet-api-1.0.jar"/>
@@ -595,7 +596,7 @@
 	-->
 	<target name="deploy-cms" depends="clean,war-cms" description="Unpacks war to deploy dir" if="deploy.dir.cms">
 		<unwar src="${cms.war.file}" dest="${deploy.dir.cms}"/>
-		<copy file="${conf}/cms-web.xml" tofile="${deploy.dir.cms}/WEB-INF/web.xml" overwrite="true">
+		<copy file="${conf}/cms-web_${webappVersion}.xml" tofile="${deploy.dir.cms}/WEB-INF/web.xml" overwrite="true">
 			<filterset refid="project.filters"/>
 		</copy>
 		<copy file="${conf}/web-app_2_3.dtd" tofile="${deploy.dir.cms}/WEB-INF/web-app_2_3.dtd" overwrite="true">
@@ -626,7 +627,7 @@
 				<filter token="portletBase" value="${portletBase.working}"/>
 			</filterset>
 		</copy>
-		<copy file="${conf}/deliver-web.xml" tofile="${deploy.dir.working}/WEB-INF/web.xml" overwrite="true">
+		<copy file="${conf}/deliver-web_${webappVersion}.xml" tofile="${deploy.dir.working}/WEB-INF/web.xml" overwrite="true">
 			<filterset refid="project.filters"/>
 		</copy>
 		<copy file="${conf}/web-app_2_3.dtd" tofile="${deploy.dir.working}/WEB-INF/web-app_2_3.dtd" overwrite="true">
@@ -656,7 +657,7 @@
 				<filter token="portletBase" value="${portletBase.preview}"/>
 			</filterset>
 		</copy>
-		<copy file="${conf}/deliver-web.xml" tofile="${deploy.dir.preview}/WEB-INF/web.xml" overwrite="true">
+		<copy file="${conf}/deliver-web_${webappVersion}.xml" tofile="${deploy.dir.preview}/WEB-INF/web.xml" overwrite="true">
 			<filterset refid="project.filters"/>
 		</copy>
 		<copy file="${conf}/web-app_2_3.dtd" tofile="${deploy.dir.preview}/WEB-INF/web-app_2_3.dtd" overwrite="true">
@@ -686,7 +687,7 @@
 				<filter token="portletBase" value="${portletBase.live}"/>
 			</filterset>
 		</copy>
-		<copy file="${conf}/deliver-web.xml" tofile="${deploy.dir.live}/WEB-INF/web.xml" overwrite="true">
+		<copy file="${conf}/deliver-web_${webappVersion}.xml" tofile="${deploy.dir.live}/WEB-INF/web.xml" overwrite="true">
 			<filterset refid="project.filters"/>
 		</copy>
 		<copy file="${conf}/web-app_2_3.dtd" tofile="${deploy.dir.live}/WEB-INF/web-app_2_3.dtd" overwrite="true">
@@ -707,25 +708,12 @@
     -->
     <target name="deploy-pluto" description="Moves pluto classes to shared/lib">
     	<echo message="Copying pluto to ${deploy.dir.shared}lib from ${lib}/shared"/>
-		<delete verbose="true" defaultexcludes="true">
-			<fileset dir="${deploy.dir.shared}lib">
-				<include name="saxon8.jar"/>
-				<include name="saxon8-ant.jar"/>
-				<include name="saxon8-dom.jar"/>
-				<include name="saxon8-dom4j.jar"/>
-				<include name="saxon8-jdom.jar"/>
-				<include name="saxon8-sql.jar"/>
-				<include name="saxon8-xom.jar"/>
-				<include name="saxon8-xpath.jar"/>
-				<include name="saxon8-xqj.jar"/>
-	  		</fileset>
-	    	</delete>
-	        <copy todir="${deploy.dir.shared}lib" overwrite="true">
-	       		<fileset dir="${lib}/shared">
-			      	<include name="activation.jar"/>
-			      	<include name="mail.jar"/>
-			        <include name="pluto-1.0.1.jar"/>
-			        <include name="portlet-api-1.0.jar"/>
+        <copy todir="${deploy.dir.shared}lib" overwrite="true" verbose="true">
+       		<fileset dir="${lib}/shared">
+		      	<include name="activation.jar"/>
+		      	<include name="mail.jar"/>
+		        <include name="pluto-1.0.1.jar"/>
+		        <include name="portlet-api-1.0.jar"/>
 				<include name="saxon9.jar"/>
 				<include name="saxon9-ant.jar"/>
 				<include name="saxon9-dom.jar"/>
@@ -950,8 +938,8 @@
 		<copy todir="${deploy.dir.cms}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${build.classes}">
 				<include name="**/*.*"/>
-				<exclude name="cms-web.xml"/>
-				<exclude name="deliver-web.xml"/>
+				<exclude name="cms-web*.xml"/>
+				<exclude name="deliver-web*.xml"/>
 			</fileset>
 		</copy>
 
@@ -978,8 +966,8 @@
 		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${build.classes}">
 				<include name="**/*.*"/>
-				<exclude name="cms-web.xml"/>
-				<exclude name="deliver-web.xml"/>
+				<exclude name="cms-web*.xml"/>
+				<exclude name="deliver-web*.xml"/>
 			</fileset>
 		</copy>
 
@@ -1020,7 +1008,7 @@
 				<include name="*.xml"/>
 				<include name="*.dtd"/>
 				<include name="LICENSE.HTML"/>
-				<exclude name="*web.xml"/>
+				<exclude name="*web_*.xml"/>
 			</fileset>
 			<filterset refid="project.filters"/>
 			<filterset>
@@ -1036,7 +1024,7 @@
 			<filterset refid="project.filters"/>
 		</copy>
 
-		<copy file="${conf}/deliver-web.xml" tofile="${deploy.dir.working}/WEB-INF/web.xml" overwrite="true">
+		<copy file="${conf}/deliver-web_${webappVersion}.xml" tofile="${deploy.dir.working}/WEB-INF/web.xml" overwrite="true">
 			<filterset refid="project.filters"/>
 			<filterset>
 				<filter token="context.root.deliver" value="${context.root.working}"/>
@@ -1076,7 +1064,7 @@
 				<include name="*.xml"/>
 				<include name="*.dtd"/>
 				<include name="LICENSE.HTML"/>
-				<exclude name="*web.xml"/>
+				<exclude name="*web_*.xml"/>
 			</fileset>
 			<filterset refid="project.filters"/>
 			<filterset>
@@ -1093,7 +1081,7 @@
 			<filterset refid="project.filters"/>
 		</copy>
 
-		<copy file="${conf}/cms-web.xml" tofile="${deploy.dir.cms}/WEB-INF/web.xml" overwrite="true">
+		<copy file="${conf}/cms-web_${webappVersion}.xml" tofile="${deploy.dir.cms}/WEB-INF/web.xml" overwrite="true">
 			<filterset refid="project.filters"/>
 			<filterset>
 				<filter token="context.root.deliver" value="${context.root.working}"/>
@@ -1111,7 +1099,6 @@
 		<copy todir="${deploy.dir.cms}/META-INF" overwrite="true">
 			<fileset dir="${conf}" includes="context.xml"/>
 		</copy>					
-
 		<unzip dest="${deploy.dir.cms}/applications/">
 		    <fileset dir="${deploy.dir.cms}/applications/">
 		        <include name="*.zip"/>
@@ -1122,7 +1109,6 @@
 		        <include name="*.zip"/>
 		    </fileset>
 		</unzip>
-
 	</target>
 
 	<target name="install" depends="server-clean-cms,server-clean-working,server-clean-preview,server-clean-live,deploy-pluto,installCMS,installDeliverWorking,installDeliverPreview,installDeliverLive" description="Compiles the classes if class and moves configs to the right spot" >
@@ -1155,8 +1141,8 @@
 		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${build.classes}">
 				<include name="**/*.*"/>
-				<exclude name="cms-web.xml"/>
-				<exclude name="deliver-web.xml"/>
+				<exclude name="cms-web*.xml"/>
+				<exclude name="deliver-web*.xml"/>
 			</fileset>
 		</copy>
 
@@ -1188,14 +1174,14 @@
 				<include name="*.xml"/>
 				<include name="*.dtd"/>
 				<include name="LICENSE.HTML"/>
-				<exclude name="*web.xml"/>
+				<exclude name="*web_*.xml"/>
 			</fileset>
 		</copy>
 		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${conf}/deliver" includes="mapping.xml,oracle_mapping.xml,jobs.xml"/>
 			<fileset dir="${conf}/deliver" includes="webwork.properties,actions.xml,jobs.xml"/>
 		</copy>
-		<copy file="${conf}/deliver-web.xml" tofile="${deploy.dir.working}/WEB-INF/web.xml" overwrite="true">
+		<copy file="${conf}/deliver-web_${webappVersion}.xml" tofile="${deploy.dir.working}/WEB-INF/web.xml" overwrite="true">
 		</copy>
 		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${src}" includes="workflows/*.xml"/>
@@ -1246,8 +1232,8 @@
 		<copy todir="${deploy.dir.preview}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${build.classes}">
 				<include name="**/*.*"/>
-				<exclude name="cms-web.xml"/>
-				<exclude name="deliver-web.xml"/>
+				<exclude name="cms-web*.xml"/>
+				<exclude name="deliver-web*.xml"/>
 			</fileset>
 		</copy>
 
@@ -1278,14 +1264,14 @@
 				<include name="*.xml"/>
 				<include name="*.dtd"/>
 				<include name="LICENSE.HTML"/>
-				<exclude name="*web.xml"/>
+				<exclude name="*web_*.xml"/>
 			</fileset>
 		</copy>
 		<copy todir="${deploy.dir.preview}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${conf}/deliver" includes="mapping.xml,oracle_mapping.xml,jobs.xml"/>
 			<fileset dir="${conf}/deliver" includes="webwork.properties,actions.xml,jobs.xml"/>
 		</copy>
-		<copy file="${conf}/deliver-web.xml" tofile="${deploy.dir.preview}/WEB-INF/web.xml" overwrite="true">
+		<copy file="${conf}/deliver-web_${webappVersion}.xml" tofile="${deploy.dir.preview}/WEB-INF/web.xml" overwrite="true">
 		</copy>
 		<copy todir="${deploy.dir.preview}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${src}" includes="workflows/*.xml"/>
@@ -1336,8 +1322,8 @@
 		<copy todir="${deploy.dir.live}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${build.classes}">
 				<include name="**/*.*"/>
-				<exclude name="cms-web.xml"/>
-				<exclude name="deliver-web.xml"/>
+				<exclude name="cms-web*.xml"/>
+				<exclude name="deliver-web*.xml"/>
 			</fileset>
 		</copy>
 
@@ -1368,14 +1354,14 @@
 				<include name="*.xml"/>
 				<include name="*.dtd"/>
 				<include name="LICENSE.HTML"/>
-				<exclude name="*web.xml"/>
+				<exclude name="*web_*.xml"/>
 			</fileset>
 		</copy>
 		<copy todir="${deploy.dir.live}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${conf}/deliver" includes="mapping.xml,oracle_mapping.xml,jobs.xml"/>
 			<fileset dir="${conf}/deliver" includes="webwork.properties,actions.xml,jobs.xml"/>
 		</copy>
-		<copy file="${conf}/deliver-web.xml" tofile="${deploy.dir.live}/WEB-INF/web.xml" overwrite="true">
+		<copy file="${conf}/deliver-web_${webappVersion}.xml" tofile="${deploy.dir.live}/WEB-INF/web.xml" overwrite="true">
 		</copy>
 		<copy todir="${deploy.dir.live}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${src}" includes="workflows/*.xml"/>
@@ -1427,8 +1413,8 @@
 		<copy todir="${deploy.dir.cms}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${build.classes}">
 				<include name="**/*.*"/>
-				<exclude name="cms-web.xml"/>
-				<exclude name="deliver-web.xml"/>
+				<exclude name="cms-web*.xml"/>
+				<exclude name="deliver-web*.xml"/>
 			</fileset>
 		</copy>
 
@@ -1470,7 +1456,7 @@
 				<include name="*.xml"/>
 				<include name="*.dtd"/>
 				<include name="LICENSE.HTML"/>
-				<exclude name="*web.xml"/>
+				<exclude name="*web_*.xml"/>
 			</fileset>
 		</copy>
 		<copy todir="${deploy.dir.cms}/WEB-INF/classes" overwrite="true">
@@ -1478,7 +1464,7 @@
 			<fileset dir="${conf}/cms" includes="webwork.properties,actions.xml,jobs.xml"/>
 		</copy>
 
-		<copy file="${conf}/cms-web.xml" tofile="${deploy.dir.cms}/WEB-INF/web.xml" overwrite="true">
+		<copy file="${conf}/cms-web_${webappVersion}.xml" tofile="${deploy.dir.cms}/WEB-INF/web.xml" overwrite="true">
 		</copy>
 
 		<copy todir="${deploy.dir.cms}/WEB-INF" overwrite="true">
@@ -1520,8 +1506,8 @@
 		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${build.classes}">
 				<include name="**/*.*"/>
-				<exclude name="cms-web.xml"/>
-				<exclude name="deliver-web.xml"/>
+				<exclude name="cms-web*.xml"/>
+				<exclude name="deliver-web*.xml"/>
 			</fileset>
 		</copy>
 
@@ -1553,7 +1539,7 @@
 				<include name="*.xml"/>
 				<include name="*.dtd"/>
 				<include name="LICENSE.HTML"/>
-				<exclude name="*web.xml"/>
+				<exclude name="*web_*.xml"/>
 				<exclude name="database.xml"/>
 				<exclude name="propertyset.xml"/>
 				<exclude name="hibernate.cfg.xml"/>
@@ -1563,7 +1549,7 @@
 			<fileset dir="${conf}/deliver" includes="mapping.xml,oracle_mapping.xml,jobs.xml"/>
 			<fileset dir="${conf}/deliver" includes="webwork.properties,actions.xml,jobs.xml"/>
 		</copy>
-		<copy file="${conf}/deliver-web.xml" tofile="${deploy.dir.working}/WEB-INF/web.xml" overwrite="true">
+		<copy file="${conf}/deliver-web_${webappVersion}.xml" tofile="${deploy.dir.working}/WEB-INF/web.xml" overwrite="true">
 		</copy>
 		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${src}" includes="workflows/*.xml"/>
@@ -1612,8 +1598,8 @@
 		<copy todir="${deploy.dir.preview}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${build.classes}">
 				<include name="**/*.*"/>
-				<exclude name="cms-web.xml"/>
-				<exclude name="deliver-web.xml"/>
+				<exclude name="cms-web*.xml"/>
+				<exclude name="deliver-web*.xml"/>
 			</fileset>
 		</copy>
 
@@ -1644,7 +1630,7 @@
 				<include name="*.xml"/>
 				<include name="*.dtd"/>
 				<include name="LICENSE.HTML"/>
-				<exclude name="*web.xml"/>
+				<exclude name="*web_*.xml"/>
 				<exclude name="database.xml"/>
 				<exclude name="propertyset.xml"/>
 				<exclude name="hibernate.cfg.xml"/>
@@ -1654,7 +1640,7 @@
 			<fileset dir="${conf}/deliver" includes="mapping.xml,oracle_mapping.xml,jobs.xml"/>
 			<fileset dir="${conf}/deliver" includes="webwork.properties,actions.xml,jobs.xml"/>
 		</copy>
-		<copy file="${conf}/deliver-web.xml" tofile="${deploy.dir.preview}/WEB-INF/web.xml" overwrite="true">
+		<copy file="${conf}/deliver-web_${webappVersion}.xml" tofile="${deploy.dir.preview}/WEB-INF/web.xml" overwrite="true">
 		</copy>
 		<copy todir="${deploy.dir.preview}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${src}" includes="workflows/*.xml"/>
@@ -1701,8 +1687,8 @@
 		<copy todir="${deploy.dir.live}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${build.classes}">
 				<include name="**/*.*"/>
-				<exclude name="cms-web.xml"/>
-				<exclude name="deliver-web.xml"/>
+				<exclude name="cms-web*.xml"/>
+				<exclude name="deliver-web*.xml"/>
 			</fileset>
 		</copy>
 
@@ -1733,7 +1719,7 @@
 				<include name="*.xml"/>
 				<include name="*.dtd"/>
 				<include name="LICENSE.HTML"/>
-				<exclude name="*web.xml"/>
+				<exclude name="*web_*.xml"/>
 				<exclude name="database.xml"/>
 				<exclude name="propertyset.xml"/>
 				<exclude name="hibernate.cfg.xml"/>
@@ -1743,7 +1729,7 @@
 			<fileset dir="${conf}/deliver" includes="mapping.xml,oracle_mapping.xml,jobs.xml"/>
 			<fileset dir="${conf}/deliver" includes="webwork.properties,actions.xml,jobs.xml"/>
 		</copy>
-		<copy file="${conf}/deliver-web.xml" tofile="${deploy.dir.live}/WEB-INF/web.xml" overwrite="true">
+		<copy file="${conf}/deliver-web_${webappVersion}.xml" tofile="${deploy.dir.live}/WEB-INF/web.xml" overwrite="true">
 		</copy>
 		<copy todir="${deploy.dir.live}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${src}" includes="workflows/*.xml"/>
@@ -1791,8 +1777,8 @@
 		<copy todir="${deploy.dir.cms}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${build.classes}">
 				<include name="**/*.*"/>
-				<exclude name="cms-web.xml"/>
-				<exclude name="deliver-web.xml"/>
+				<exclude name="cms-web*.xml"/>
+				<exclude name="deliver-web*.xml"/>
 			</fileset>
 		</copy>
 
@@ -1834,7 +1820,7 @@
 				<include name="*.xml"/>
 				<include name="*.dtd"/>
 				<include name="LICENSE.HTML"/>
-				<exclude name="*web.xml"/>
+				<exclude name="*web_*.xml"/>
 				<exclude name="database.xml"/>
 				<exclude name="propertyset.xml"/>
 				<exclude name="hibernate.cfg.xml"/>
@@ -1845,7 +1831,7 @@
 			<fileset dir="${conf}/cms" includes="webwork.properties,actions.xml,jobs.xml"/>
 		</copy>
 
-		<copy file="${conf}/cms-web.xml" tofile="${deploy.dir.cms}/WEB-INF/web.xml" overwrite="true">
+		<copy file="${conf}/cms-web_${webappVersion}.xml" tofile="${deploy.dir.cms}/WEB-INF/web.xml" overwrite="true">
 		</copy>
 
 		<copy todir="${deploy.dir.cms}/WEB-INF" overwrite="true">

@@ -736,9 +736,10 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 				for(int nlIndex=0; nlIndex < nl1.getLength(); nlIndex++)
 				{
 				    Element messageElement = (Element)nl1.item(nlIndex);
-				    messageElement.setAttribute("key", msgText);
 				    if(currentContentTypeEditorViewLanguageCode != null && !currentContentTypeEditorViewLanguageCode.equals(""))
 				    	messageElement.setAttribute("key_" + currentContentTypeEditorViewLanguageCode, msgText);
+				    else
+				    	messageElement.setAttribute("key", msgText);
 				}
 			}
 

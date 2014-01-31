@@ -52,6 +52,7 @@ import org.infoglue.cms.entities.management.ContentTypeAttributeParameterValue;
 import org.infoglue.cms.entities.management.ContentTypeAttributeValidator;
 import org.infoglue.cms.entities.management.ContentTypeDefinition;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
+import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
@@ -1165,8 +1166,16 @@ public class ContentTypeDefinitionController extends BaseController
 							arguments.put(varName, varValue);
 						}	    
 
+						List<LanguageVO> languageVOList = LanguageController.getController().getLanguageVOList();
+						for(LanguageVO languageVO : languageVOList)
+						{
+							String msgText = validatorNode.element("msg").attributeValue("key_" + languageVO.getLanguageCode());
+						    if(msgText != null)
+								arguments.put("msgText_" + languageVO.getLanguageCode(), msgText);
+						}
+
 						String msgText = validatorNode.element("msg").attributeValue("key_" + languageCode);
-						if(msgText == null || msgText.equals(""))
+					    if(msgText == null || msgText.equals(""))
 					    	msgText = validatorNode.element("msg").attributeValue("key");
 
 					    if(msgText != null)

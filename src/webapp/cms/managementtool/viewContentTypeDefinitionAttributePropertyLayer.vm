@@ -189,7 +189,7 @@
 		</tr>
 		#set($index = 0)
 		#foreach($key in $validator.arguments.keySet())
-			#if($key != "msgText")
+			#if(!$key.contains("msgText"))
 				<tr>
 					<td>
 						<input type="hidden" name="${index}_argumentName" value="$key">
@@ -203,7 +203,12 @@
 		<tr>
 			<td colspan="2">
 				Error message (leave with code for default message):<br/>
-				<input type="textfield" name="errorMessage" value="$validator.arguments.get("msgText")" class="normaltextfield">
+				#set($msgTextVar = "msgText_$!currentContentTypeEditorViewLanguageCode")
+				#set($msgText = "$!validator.arguments.get($msgTextVar)")
+				#if($msgText == "")
+					#set($msgText = $validator.arguments.get("msgText"))
+				#end
+				<input type="textfield" name="errorMessage" value="$msgText" class="normaltextfield">
 			</td>
 		</tr>
 		<tr>

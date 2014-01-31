@@ -87,8 +87,9 @@ public class InterceptionPointController extends BaseController
 	    systemInterceptionPoints.put("Content.ChangeAccessRights", new InterceptionPointVO("Content", "Content.ChangeAccessRights", "Intercepts the attempt to change access rights", true));
 	    systemInterceptionPoints.put("Content.CreateVersion", new InterceptionPointVO("Content", "Content.CreateVersion", "Intercepts the creation of a new contentversion", true));
 	    systemInterceptionPoints.put("Content.ExpireDateComingUp", new InterceptionPointVO("Content", "Content.ExpireDateComingUp", "Intercepts the event of a content coming close to it's expire date", true));
-	    
-	    systemInterceptionPoints.put("Component.Select", new InterceptionPointVO("Component", "Component.Select", "Intercepts the read of a content when user want to list components to add in a slot", true));
+
+		systemInterceptionPoints.put("Component.Select", new InterceptionPointVO("Component", "Component.Select", "Intercepts the read of a content when user want to list components to add in a slot", true));
+		systemInterceptionPoints.put("Component.EditProperties", new InterceptionPointVO("Component", "Component.EditProperties", "This interception point limits who can see the properties menu in edit on sight", true));
 
 	    systemInterceptionPoints.put("ContentTypeDefinition.Read", new InterceptionPointVO("ContentTypeDefinition", "ContentTypeDefinition.Read", "This point checks access to read/use a content type definition", true));
 	    systemInterceptionPoints.put("ContentVersion.Delete", new InterceptionPointVO("ContentVersion", "ContentVersion.Delete", "Intercepts the deletion of a contentversion", true));
@@ -137,6 +138,7 @@ public class InterceptionPointController extends BaseController
 		systemInterceptionPoints.put("ComponentEditor.CreateSubpage", new InterceptionPointVO("ComponentEditor", "ComponentEditor.CreateSubpage", "This interception point limits who can see the create subpage menu in edit on sight", false));
 		systemInterceptionPoints.put("ComponentEditor.EditPageMetadata", new InterceptionPointVO("ComponentEditor", "ComponentEditor.EditPageMetadata", "This interception point limits who can see the edit page meta info menu in edit on sight", false));
 		systemInterceptionPoints.put("ComponentEditor.SavePageTemplate", new InterceptionPointVO("ComponentEditor", "ComponentEditor.SavePageTemplate", "This interception point limits who can see the save page template menu in edit on sight", false));
+		systemInterceptionPoints.put("ComponentEditor.MySettings", new InterceptionPointVO("ComponentEditor", "ComponentEditor.MySettings", "This interception point limits who can see the properties menu in edit on sight", false));
 		
 		systemInterceptionPoints.put("ComponentEditor.NotifyUserOfPage", new InterceptionPointVO("ComponentEditor", "ComponentEditor.NotifyUserOfPage", "This interception point limits who can see the notify user menu in edit on sight", false));
 		systemInterceptionPoints.put("ComponentEditor.ContentNotifications", new InterceptionPointVO("ComponentEditor", "ComponentEditor.ContentNotifications", "This interception point limits who can see the content notification info menu in edit on sight", false));

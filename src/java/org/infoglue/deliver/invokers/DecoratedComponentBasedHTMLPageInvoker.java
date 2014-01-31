@@ -317,7 +317,6 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			boolean hasAccessToDeleteComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.DeleteComponent", "" + component.getContentId() + "_" + component.getSlotName());
 			boolean hasAccessToChangeComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ChangeComponent", "" + component.getContentId() + "_" + component.getSlotName());
 			boolean hasSaveTemplateAccess 		= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.SavePageTemplate", true, false, true);
-
 		    boolean hasSubmitToPublishAccess 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.SubmitToPublish", true, false, true);
 		    boolean hasPageStructureAccess 		= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.PageStructure", true, false, true);
 		    boolean hasOpenInNewWindowAccess 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.OpenInNewWindow", true, false, true);
@@ -435,6 +434,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			String editInlineHTML 					= getLocalizedString(locale, "deliver.editOnSight.editContentInlineLabel");
 			String propertiesHTML 					= getLocalizedString(locale, "deliver.editOnSight.propertiesHTML");
 			String favouriteComponentsHeader		= getLocalizedString(locale, "tool.common.favouriteComponentsHeader");
+			String noActionAvailableHTML 			= getLocalizedString(locale, "deliver.editOnSight.noActionAvailableHTML");
 	    	
 			String notifyLabel 						= getLocalizedString(locale, "deliver.editOnSight.notifyLabel");
 	    	String subscribeToContentLabel 			= getLocalizedString(locale, "deliver.editOnSight.subscribeToContentLabel");
@@ -503,6 +503,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		    extraBody = extraBody.replaceAll("\\$viewSource", viewSourceHTML);
 			extraBody = extraBody.replaceAll("\\$propertiesHTML", propertiesHTML);
 			extraBody = extraBody.replaceAll("\\$favouriteComponentsHeader", favouriteComponentsHeader);
+			extraBody = extraBody.replaceAll("\\$noActionAvailableHTML", noActionAvailableHTML);
 
 			extraBody = extraBody.replaceAll("\\$\\{deliver.editOnSight.pendingPageApproval.title\\}", getLocalizedString(locale, "deliver.editOnSight.pendingPageApproval.title"));
 			extraBody = extraBody.replaceAll("\\$\\{deliver.editOnSight.pendingContentApproval.title\\}", getLocalizedString(locale, "deliver.editOnSight.pendingContentApproval.title"));
@@ -2060,6 +2061,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 	    boolean hasCreateSubpageAccess 		= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.CreateSubpage", true, false, true);
 	    boolean hasCreatePagesAccess 		= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "Common.CreatePage", true, false, true);
 	    boolean hasEditPageMetadataAccess 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.EditPageMetadata", true, false, true);
+	    boolean hasAccessToEditProperties	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "Component.EditProperties", "" + component.getContentId(), true);
 
 	    boolean showNotifyUserOfPage 		= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.NotifyUserOfPage", true, false, true);
 	    boolean showContentNotifications 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ContentNotifications", true, false, true);
@@ -2099,6 +2101,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		    sb.append("window.hasAccessToAddComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToAddComponent + ";");
 			sb.append("window.hasAccessToDeleteComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToDeleteComponent + ";");
 			sb.append("window.hasAccessToChangeComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToChangeComponent + ";");
+			sb.append("window.hasAccessToEditProperties" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToEditProperties + ";");
 			sb.append("window.hasAccessToAccessRights = " + hasAccessToAccessRights + ";");
 			sb.append("</script>");
 			return sb.toString();
@@ -2220,9 +2223,12 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		//if(hasMoveComponentUpAccess || hasMoveComponentDownAccess)
 		//	sb.append("<div class=\"igmenuitems linkEnableSortComponent\" onclick=\"enableComponentSort(" + component.getId() + ", '" + component.getSlotName() + "', " + (component.getParentComponent() != null ? component.getParentComponent().getId() : "-1") + "); return false;\"><a href='javascript:return false;'>" + enableSortComponentsHTML + "</a></div>");
 
-		sb.append("<div style='border-top: 1px solid #bbb; height: 1px; margin: 0px; padding: 0px; line-height: 1px;'></div>");
-		sb.append("<div class=\"igmenuitems linkComponentProperties\" onclick=\"showComponent(event);\"><a name='void'>" + propertiesHTML + "</a></div>");
-		if(hasPageStructureAccess || hasOpenInNewWindowAccess || hasViewSourceAccess)
+		if(hasAccessToEditProperties)
+		{
+			sb.append("<div style='border-top: 1px solid #bbb; height: 1px; margin: 0px; padding: 0px; line-height: 1px;'></div>");
+			sb.append("<div class=\"igmenuitems linkComponentProperties\" onclick=\"showComponent(event);\"><a name='void'>" + propertiesHTML + "</a></div>");
+		}
+		if(hasPageStructureAccess || hasOpenInNewWindowAccess || hasViewSourceAccess || hasMySettingsAccess)
 			sb.append("<div style='border-top: 1px solid #bbb; height: 1px; margin:0px; padding: 0px; line-height: 1px;'></div>");
 		if(hasPageStructureAccess)
 			sb.append("<div class=\"igmenuitems linkPageComponents\" onclick=\"javascript:toggleDiv('pageComponents');\"><a href='javascript:void(0);'>" + pageComponentsHTML + "</a></div>");
@@ -2240,6 +2246,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		sb.append("window.hasAccessToAddComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToAddComponent + ";\n");
 		sb.append("window.hasAccessToDeleteComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToDeleteComponent + ";\n");
 		sb.append("window.hasAccessToChangeComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToChangeComponent + ";\n");
+		sb.append("window.hasAccessToEditProperties" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToEditProperties + ";\n");
 		sb.append("window.hasAccessToAccessRights = " + hasAccessToAccessRights + ";\n");
 		if(hasMoveComponentUpAccess || hasMoveComponentDownAccess)
 			sb.append("enableComponentSort(" + component.getId() + ", '" + component.getSlotName() + "', " + (component.getParentComponent() != null ? component.getParentComponent().getId() : "-1") + ");\n");

@@ -342,7 +342,7 @@ CREATE TABLE cmPublicationDetail (
   description text NOT NULL,
   entityClass text NOT NULL,
   entityId integer(11) NOT NULL default '0',
-  creationDateTime timestamp(14) NOT NULL,
+  creationDateTime timestamp NOT NULL,
   typeId integer(11) NOT NULL default '0',
   publisher text NOT NULL,
   PRIMARY KEY  (publicationDetailId)
@@ -358,7 +358,7 @@ CREATE TABLE cmEvent (
   description text NOT NULL,
   entityClass text NOT NULL,
   entityId integer(11) NOT NULL default '0',
-  creationDateTime timestamp(14) NOT NULL,
+  creationDateTime timestamp NOT NULL,
   typeId integer(11) NOT NULL default '0',
   creator text NOT NULL,
   PRIMARY KEY  (eventId)
@@ -468,7 +468,7 @@ CREATE TABLE OS_PROPERTYENTRY
 	double_val double,
 	int_val int,
 	primary key (entity_name, entity_id, entity_key)
-)TYPE=InnoDB;
+)ENGINE=InnoDB;
 
 
 
@@ -478,7 +478,7 @@ CREATE TABLE OS_WFENTRY
     NAME varchar(60),
     STATE integer,
     primary key (ID)
-)TYPE=InnoDB;
+)ENGINE=InnoDB;
 
 
 
@@ -500,7 +500,7 @@ CREATE TABLE OS_CURRENTSTEP
     index (OWNER),
     index (CALLER),
     stepIndex integer NOT NULL default '0'
-)TYPE=InnoDB;
+)ENGINE=InnoDB;
 
 
 CREATE TABLE OS_HISTORYSTEP
@@ -521,7 +521,7 @@ CREATE TABLE OS_HISTORYSTEP
     index (OWNER),
     index (CALLER),
     stepIndex integer NOT NULL default '0'
-)TYPE=InnoDB;
+)ENGINE=InnoDB;
 
 
 CREATE TABLE OS_CURRENTSTEP_PREV
@@ -533,7 +533,7 @@ CREATE TABLE OS_CURRENTSTEP_PREV
     foreign key (ID) references OS_CURRENTSTEP(ID),
     index (PREVIOUS_ID),
     foreign key (PREVIOUS_ID) references OS_HISTORYSTEP(ID)
-)TYPE=InnoDB;
+)ENGINE=InnoDB;
 
 
 CREATE TABLE OS_HISTORYSTEP_PREV
@@ -545,14 +545,14 @@ CREATE TABLE OS_HISTORYSTEP_PREV
     foreign key (ID) references OS_HISTORYSTEP(ID),
     index (PREVIOUS_ID),
     foreign key (PREVIOUS_ID) references OS_HISTORYSTEP(ID)
-)TYPE=InnoDB;
+)ENGINE=InnoDB;
 
 
 CREATE TABLE OS_STEPIDS
 (
 	 ID bigint NOT NULL AUTO_INCREMENT,
 	 PRIMARY KEY (id)
- )TYPE=InnoDB;
+ )ENGINE=InnoDB;
  
 
 
@@ -660,7 +660,7 @@ CREATE TABLE cmSystemUserGroup (
   userName varchar(150) NOT NULL default '',
   groupName varchar(150) NOT NULL default '',
   PRIMARY KEY  (userName,groupName)
-) CHARACTER SET utf8 COLLATE utf8_general_ci TYPE=InnoDB;
+) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
 

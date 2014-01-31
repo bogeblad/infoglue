@@ -32,7 +32,7 @@ CREATE TABLE cmAccessRightUser (
   accessRightId int(11) NOT NULL default '0',
   userName varchar(150) NOT NULL default '',
   PRIMARY KEY  (accessRightUserId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 -- Adds needed table for server nodes
@@ -44,7 +44,7 @@ CREATE TABLE cmServerNode (
   description text NOT NULL,
   dnsName text NOT NULL,
   PRIMARY KEY  (serverNodeId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 -- Adds new disable language column

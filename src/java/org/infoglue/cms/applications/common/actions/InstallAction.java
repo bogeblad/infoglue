@@ -130,7 +130,7 @@ public class InstallAction extends InfoGlueAbstractAction
 			}
 			catch (Exception e) 
 			{
-				e.printStackTrace();
+				logger.error("Error in installer (updateDatabaseFromExisting):" + e.getMessage(), e);
 				this.errorMessage = e.getMessage();
 				return doInputDatabaseExisting();
 			}
@@ -143,7 +143,7 @@ public class InstallAction extends InfoGlueAbstractAction
 			}
 			catch (Exception e) 
 			{
-				e.printStackTrace();
+				logger.error("Error in installer (updateDatabase):" + e.getMessage(), e);
 				this.errorMessage = e.getMessage();
 				return doInputDatabase();
 			}
@@ -156,7 +156,7 @@ public class InstallAction extends InfoGlueAbstractAction
 			}
 			catch (Exception e) 
 			{
-				e.printStackTrace();
+				logger.error("Error in installer (updateDatabaseTables):" + e.getMessage(), e);
 				this.errorMessage = e.getMessage();
 				return doInputDatabaseUpgrade();
 			}
@@ -169,6 +169,7 @@ public class InstallAction extends InfoGlueAbstractAction
 			}
 			catch (Exception e) 
 			{
+				logger.error("Error in installer (updateServer):" + e.getMessage(), e);
 				this.errorMessage = e.getMessage();
 				return doInputServer();
 			}

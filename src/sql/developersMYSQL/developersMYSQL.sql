@@ -9,7 +9,7 @@ CREATE TABLE cmAvailableServiceBinding (
   isUserEditable tinyint(4) NOT NULL default '0',
   isInheritable tinyint(4) NOT NULL default '0',
   PRIMARY KEY  (availableServiceBindingId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmAvailableServiceBindingSiteNodeTypeDefinition;
@@ -19,7 +19,7 @@ CREATE TABLE cmAvailableServiceBindingSiteNodeTypeDefinition (
   availableServiceBindingId integer(11) NOT NULL default '0',
   siteNodeTypeDefinitionId integer(11) NOT NULL default '0',
   PRIMARY KEY  (availableServiceBindingSiteNodeTypeDefinitionId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmContent;
@@ -36,7 +36,7 @@ CREATE TABLE cmContent (
   isBranch tinyint(4) NOT NULL default '0',
   isProtected tinyint(4) NOT NULL default '2',
   PRIMARY KEY  (contentId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmContentRelation;
@@ -48,7 +48,7 @@ CREATE TABLE cmContentRelation (
   sourceContentId integer(11) NOT NULL default '0',
   destinationContentId integer(11) NOT NULL default '0',
   PRIMARY KEY  (contentRelationId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmContentTypeDefinition;
@@ -59,7 +59,7 @@ CREATE TABLE cmContentTypeDefinition (
   name varchar(255) NOT NULL,
   type tinyint(4) NOT NULL default '0',
   PRIMARY KEY  (contentTypeDefinitionId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmContentVersion;
@@ -76,7 +76,7 @@ CREATE TABLE cmContentVersion (
   languageId integer(11) NOT NULL default '0',
   versionModifier text NOT NULL,
   PRIMARY KEY  (contentVersionId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmContentVersionDigitalAsset;
@@ -86,7 +86,7 @@ CREATE TABLE cmContentVersionDigitalAsset (
   contentVersionId integer(11) unsigned NOT NULL default '0',
   digitalAssetId integer(11) unsigned NOT NULL default '0',
   PRIMARY KEY  (contentVersionDigitalAssetId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmUserPropertiesDigitalAsset;
@@ -96,7 +96,7 @@ CREATE TABLE cmUserPropertiesDigitalAsset (
   userPropertiesId integer(11) unsigned NOT NULL default '0',
   digitalAssetId integer(11) unsigned NOT NULL default '0',
   PRIMARY KEY  (userPropertiesDigitalAssetId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmRolePropertiesDigitalAsset;
@@ -106,7 +106,7 @@ CREATE TABLE cmRolePropertiesDigitalAsset (
   rolePropertiesId integer(11) unsigned NOT NULL default '0',
   digitalAssetId integer(11) unsigned NOT NULL default '0',
   PRIMARY KEY  (rolePropertiesDigitalAssetId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmDigitalAsset;
@@ -120,7 +120,7 @@ CREATE TABLE cmDigitalAsset (
   assetContentType text NOT NULL,
   assetBlob longblob,
   PRIMARY KEY  (digitalAssetId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmLanguage;
@@ -131,7 +131,7 @@ CREATE TABLE cmLanguage (
   languageCode text NOT NULL,
   charset text NOT NULL,
   PRIMARY KEY  (languageId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmPublication;
@@ -144,7 +144,7 @@ CREATE TABLE cmPublication (
   publisher text NOT NULL,
   repositoryId integer(11) NOT NULL default '0',
   PRIMARY KEY  (publicationId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmQualifyer;
@@ -156,7 +156,7 @@ CREATE TABLE cmQualifyer (
   sortOrder integer(11) NOT NULL default '0',
   serviceBindingId integer(11) NOT NULL default '0',
   PRIMARY KEY  (qualifyerId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmRepository;
@@ -167,7 +167,7 @@ CREATE TABLE cmRepository (
   description text NOT NULL,
   dnsName text NOT NULL,
   PRIMARY KEY  (repositoryId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmRepositoryContentTypeDefinition;
@@ -177,7 +177,7 @@ CREATE TABLE cmRepositoryContentTypeDefinition (
   repositoryId integer(11) NOT NULL default '0',
   contentTypeDefinitionId integer(11) NOT NULL default '0',
   PRIMARY KEY  (repositoryContentTypeDefinitionId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmRepositoryLanguage;
@@ -189,7 +189,7 @@ CREATE TABLE cmRepositoryLanguage (
   isPublished tinyint(4) NOT NULL default '0',
   sortOrder tinyint(4) NOT NULL default '0',
   PRIMARY KEY  (repositoryLanguageId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmRole;
@@ -198,7 +198,7 @@ CREATE TABLE cmRole (
   roleName varchar(200) NOT NULL,
   description text NOT NULL,
   PRIMARY KEY  (roleName)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmServiceBinding;
@@ -212,7 +212,7 @@ CREATE TABLE cmServiceBinding (
   availableServiceBindingId integer(11) NOT NULL default '0',
   siteNodeVersionId integer(11) NOT NULL default '0',
   PRIMARY KEY  (serviceBindingId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmServiceDefinition;
@@ -223,7 +223,7 @@ CREATE TABLE cmServiceDefinition (
   name varchar(255) NOT NULL,
   description text NOT NULL,
   PRIMARY KEY  (serviceDefinitionId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmServiceDefinitionAvailableServiceBinding;
@@ -233,7 +233,7 @@ CREATE TABLE cmServiceDefinitionAvailableServiceBinding (
   serviceDefinitionId integer(11) NOT NULL default '0',
   availableServiceBindingId integer(11) NOT NULL default '0',
   PRIMARY KEY  (serviceDefinitionAvailableServiceBindingId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmSiteNode;
@@ -250,7 +250,7 @@ CREATE TABLE cmSiteNode (
   isBranch tinyint(4) NOT NULL default '0',
   metaInfoContentId INTEGER NULL DEFAULT '-1',
   PRIMARY KEY  (siteNodeId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmSiteNodeTypeDefinition;
@@ -261,7 +261,7 @@ CREATE TABLE cmSiteNodeTypeDefinition (
   name varchar(255) NOT NULL,
   description text NOT NULL,
   PRIMARY KEY  (siteNodeTypeDefinitionId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmSiteNodeVersion;
@@ -285,7 +285,7 @@ CREATE TABLE cmSiteNodeVersion (
   contentType text,
   pageCacheKey varchar(255) NOT NULL default 'default',
   PRIMARY KEY  (siteNodeVersionId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmSystemUser;
@@ -297,7 +297,7 @@ CREATE TABLE cmSystemUser (
   lastName text NOT NULL,
   email text NOT NULL,
   PRIMARY KEY  (userName)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmSystemUserRole;
@@ -306,7 +306,7 @@ CREATE TABLE cmSystemUserRole (
   userName varchar(100) NOT NULL,
   roleName varchar(200) NOT NULL,
   PRIMARY KEY  (userName, roleName)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmTransactionHistory;
@@ -320,7 +320,7 @@ CREATE TABLE cmTransactionHistory (
   transactionObjectName text NOT NULL,
   systemUserName text NOT NULL,
   PRIMARY KEY  (transactionHistoryId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmPublicationDetail;
@@ -332,11 +332,11 @@ CREATE TABLE cmPublicationDetail (
   description text NOT NULL,
   entityClass text NOT NULL,
   entityId integer(11) NOT NULL default '0',
-  creationDateTime timestamp(14) NOT NULL,
+  creationDateTime timestamp NOT NULL,
   typeId integer(11) NOT NULL default '0',
   publisher text NOT NULL,
   PRIMARY KEY  (publicationDetailId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmEvent;
@@ -348,11 +348,11 @@ CREATE TABLE cmEvent (
   description text NOT NULL,
   entityClass text NOT NULL,
   entityId integer(11) NOT NULL default '0',
-  creationDateTime timestamp(14) NOT NULL,
+  creationDateTime timestamp NOT NULL,
   typeId integer(11) NOT NULL default '0',
   creator text NOT NULL,
   PRIMARY KEY  (eventId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmRoleContentTypeDefinition;
@@ -362,7 +362,7 @@ CREATE TABLE cmRoleContentTypeDefinition (
   roleName text NOT NULL,
   contentTypeDefinitionId int(11) NOT NULL default '0',
   PRIMARY KEY  (roleContentTypeDefinitionId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmRoleProperties;
@@ -374,7 +374,7 @@ CREATE TABLE cmRoleProperties (
   value text NOT NULL,
   languageId int(11) NOT NULL default '0',
   PRIMARY KEY  (rolePropertiesId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmUserContentTypeDefinition;
@@ -384,7 +384,7 @@ CREATE TABLE cmUserContentTypeDefinition (
   userName text NOT NULL,
   contentTypeDefinitionId int(11) NOT NULL default '0',
   PRIMARY KEY  (userContentTypeDefinitionId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmUserProperties;
@@ -396,7 +396,7 @@ CREATE TABLE cmUserProperties (
   value text NOT NULL,
   languageId int(11) NOT NULL default '0',
   PRIMARY KEY  (userPropertiesId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmAccessRight;
@@ -406,7 +406,7 @@ CREATE TABLE cmAccessRight (
   parameters text NULL,
   interceptionPointId int(11) NOT NULL,
   PRIMARY KEY  (accessRightId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmInterceptionPoint;
@@ -418,7 +418,7 @@ CREATE TABLE cmInterceptionPoint (
   description text NOT NULL,
   usesExtraDataForAccessControl int(11) default '0' NULL,
   PRIMARY KEY  (interceptionPointId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmInterceptionPointInterceptor;
@@ -427,7 +427,7 @@ CREATE TABLE cmInterceptionPointInterceptor (
   interceptionPointId int(11) NOT NULL,
   interceptorId int(11) NOT NULL,
   PRIMARY KEY  (interceptionPointId, interceptorId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmInterceptor;
@@ -438,7 +438,7 @@ CREATE TABLE cmInterceptor (
   className text NOT NULL,
   description text NOT NULL,
   PRIMARY KEY  (interceptorId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 
@@ -458,7 +458,7 @@ CREATE TABLE OS_PROPERTYENTRY
 	double_val double,
 	int_val int,
 	primary key (entity_name, entity_id, entity_key)
-)TYPE=InnoDB;
+)ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS OS_WFENTRY cascade;
@@ -468,7 +468,7 @@ CREATE TABLE OS_WFENTRY
     NAME varchar(60),
     STATE integer,
     primary key (ID)
-)TYPE=InnoDB;
+)ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS OS_CURRENTSTEP;
@@ -490,7 +490,7 @@ CREATE TABLE OS_CURRENTSTEP
     index (OWNER),
     index (CALLER),
     stepIndex integer NOT NULL default '0'
-)TYPE=InnoDB;
+)ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS OS_HISTORYSTEP;
 CREATE TABLE OS_HISTORYSTEP
@@ -511,7 +511,7 @@ CREATE TABLE OS_HISTORYSTEP
     index (OWNER),
     index (CALLER),
     stepIndex integer NOT NULL default '0'
-)TYPE=InnoDB;
+)ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS OS_CURRENTSTEP_PREV;
 CREATE TABLE OS_CURRENTSTEP_PREV
@@ -523,7 +523,7 @@ CREATE TABLE OS_CURRENTSTEP_PREV
     foreign key (ID) references OS_CURRENTSTEP(ID),
     index (PREVIOUS_ID),
     foreign key (PREVIOUS_ID) references OS_HISTORYSTEP(ID)
-)TYPE=InnoDB;
+)ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS OS_HISTORYSTEP_PREV;
 CREATE TABLE OS_HISTORYSTEP_PREV
@@ -535,14 +535,14 @@ CREATE TABLE OS_HISTORYSTEP_PREV
     foreign key (ID) references OS_HISTORYSTEP(ID),
     index (PREVIOUS_ID),
     foreign key (PREVIOUS_ID) references OS_HISTORYSTEP(ID)
-)TYPE=InnoDB;
+)ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS OS_STEPIDS;
 CREATE TABLE OS_STEPIDS
 (
 	 ID bigint NOT NULL AUTO_INCREMENT,
 	 PRIMARY KEY (id)
- )TYPE=InnoDB;
+ )ENGINE=InnoDB;
  
 
 
@@ -578,7 +578,7 @@ CREATE TABLE cmGroupPropertiesDigitalAsset (
   groupPropertiesId integer(11) unsigned NOT NULL default '0',
   digitalAssetId integer(11) unsigned NOT NULL default '0',
   PRIMARY KEY  (groupPropertiesDigitalAssetId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmPropertiesCategory;
@@ -615,7 +615,7 @@ CREATE TABLE cmGroup (
   groupName varchar(255) NOT NULL default '',
   description text NOT NULL,
   PRIMARY KEY  (groupName)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS cmGroupContentTypeDefinition;
 
@@ -624,7 +624,7 @@ CREATE TABLE cmGroupContentTypeDefinition (
   groupName text NOT NULL,
   contentTypeDefinitionId int(11) NOT NULL default '0',
   PRIMARY KEY  (groupContentTypeDefinitionId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmGroupProperties;
@@ -636,7 +636,7 @@ CREATE TABLE cmGroupProperties (
   value text NOT NULL,
   languageId int(11) NOT NULL default '0',
   PRIMARY KEY  (groupPropertiesId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmSystemUserGroup;
@@ -645,7 +645,7 @@ CREATE TABLE cmSystemUserGroup (
   userName varchar(150) NOT NULL default '',
   groupName varchar(150) NOT NULL default '',
   PRIMARY KEY  (userName,groupName)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmAccessRightRole;
@@ -655,7 +655,7 @@ CREATE TABLE cmAccessRightRole (
   accessRightId int(11) NOT NULL default '0',
   roleName varchar(150) NOT NULL default '',
   PRIMARY KEY  (accessRightRoleId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS cmAccessRightGroup;
 
@@ -664,7 +664,7 @@ CREATE TABLE cmAccessRightGroup (
   accessRightId int(11) NOT NULL default '0',
   groupName varchar(150) NOT NULL default '',
   PRIMARY KEY  (accessRightGroupId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS cmAccessRightUser;
 
@@ -673,7 +673,7 @@ CREATE TABLE cmAccessRightUser (
   accessRightId int(11) NOT NULL default '0',
   userName varchar(150) NOT NULL default '',
   PRIMARY KEY  (accessRightUserId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS cmWorkflowDefinition;
@@ -683,7 +683,7 @@ CREATE TABLE cmWorkflowDefinition (
   name text NOT NULL,
   value text NOT NULL,
   PRIMARY KEY  (workflowDefinitionId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
  
 DROP TABLE IF EXISTS cmRedirect;
 
@@ -701,7 +701,7 @@ CREATE TABLE cmAccessRightUser (
   accessRightId int(11) NOT NULL default '0',
   userName varchar(150) NOT NULL default '',
   PRIMARY KEY  (accessRightUserId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS cmServerNode;
 
@@ -711,7 +711,7 @@ CREATE TABLE cmServerNode (
   description text NOT NULL,
   dnsName text NOT NULL,
   PRIMARY KEY  (serverNodeId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS cmInfoGlueProperties;
 
@@ -720,7 +720,7 @@ CREATE TABLE cmInfoGlueProperties (
   name text NOT NULL,
   value text NOT NULL,
   PRIMARY KEY  (propertyId)
-) TYPE=InnoDB;
+) ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS cmSubscription;
 

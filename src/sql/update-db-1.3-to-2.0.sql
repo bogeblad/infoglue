@@ -82,7 +82,7 @@ CREATE TABLE cmUserPropertiesDigitalAsset (
   userPropertiesId integer(11) unsigned NOT NULL default '0',
   digitalAssetId integer(11) unsigned NOT NULL default '0',
   PRIMARY KEY  (userPropertiesDigitalAssetId)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 ----------------------------------------------------------------------------------
 -- Add table for RolePropertiesDigitalAsset
@@ -95,7 +95,7 @@ CREATE TABLE cmRolePropertiesDigitalAsset (
   rolePropertiesId integer(11) unsigned NOT NULL default '0',
   digitalAssetId integer(11) unsigned NOT NULL default '0',
   PRIMARY KEY  (rolePropertiesDigitalAssetId)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 ----------------------------------------------------------------------------------
 -- Add table for GroupPropertiesDigitalAsset
@@ -108,7 +108,7 @@ CREATE TABLE cmGroupPropertiesDigitalAsset (
   groupPropertiesId integer(11) unsigned NOT NULL default '0',
   digitalAssetId integer(11) unsigned NOT NULL default '0',
   PRIMARY KEY  (groupPropertiesDigitalAssetId)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 
 ----------------------------------------------------------------------------------
@@ -188,7 +188,7 @@ CREATE TABLE cmGroup (
   groupName varchar(255) NOT NULL default '',
   description text NOT NULL,
   PRIMARY KEY  (groupName)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 DROP TABLE IF EXISTS cmGroupContentTypeDefinition;
 
@@ -197,7 +197,7 @@ CREATE TABLE cmGroupContentTypeDefinition (
   groupName text NOT NULL,
   contentTypeDefinitionId int(11) NOT NULL default '0',
   PRIMARY KEY  (groupContentTypeDefinitionId)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 
 DROP TABLE IF EXISTS cmGroupProperties;
@@ -209,14 +209,14 @@ CREATE TABLE cmGroupProperties (
   value text NOT NULL,
   languageId int(11) NOT NULL default '0',
   PRIMARY KEY  (groupPropertiesId)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 
 CREATE TABLE cmSystemUserGroup (
   userName varchar(200) NOT NULL default '',
   groupName varchar(200) NOT NULL default '',
   PRIMARY KEY  (userName,groupName)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 
 CREATE TABLE COPY_OF_cmAccessRight SELECT * FROM cmAccessRight;
@@ -228,14 +228,14 @@ CREATE TABLE cmAccessRightRole (
   accessRightId int(11) NOT NULL default '0',
   roleName varchar(150) NOT NULL default '',
   PRIMARY KEY  (accessRightRoleId),
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 CREATE TABLE cmAccessRightGroup (
   accessRightGroupId int(11) NOT NULL auto_increment,
   accessRightId int(11) NOT NULL default '0',
   groupName varchar(150) NOT NULL default '',
   PRIMARY KEY  (accessRightGroupId),
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 
 ------------------------------------------------------
@@ -249,4 +249,4 @@ CREATE TABLE cmWorkflowDefinition (
   name text NOT NULL,
   value text NOT NULL,
   PRIMARY KEY  (workflowDefinitionId)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;

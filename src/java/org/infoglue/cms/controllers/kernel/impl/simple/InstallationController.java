@@ -41,6 +41,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -48,6 +49,7 @@ import javax.servlet.http.HttpSession;
 import oracle.sql.BLOB;
 import oracle.sql.CLOB;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -555,11 +557,13 @@ public class InstallationController extends BaseController
 		}
 
 		String applicationServerRoot = CmsPropertyHandler.getContextRootPath();
+		applicationServerRoot = FilenameUtils.separatorsToUnix(applicationServerRoot);
 		if(!applicationServerRoot.endsWith("\\")) 
 		{
 			applicationServerRoot = applicationServerRoot.substring(0, applicationServerRoot.lastIndexOf("/"));
 			applicationServerRoot = applicationServerRoot.substring(0, applicationServerRoot.lastIndexOf("/") + 1);
 		}
+		logger.error("applicationServerRoot:" + applicationServerRoot);
 
 		contents = contents.replaceAll("@useShortTableNames@", ((dbProvider.equalsIgnoreCase("oracle") || dbProvider.equalsIgnoreCase("db2")) ? "true" : "false"));
 		contents = contents.replaceAll("@database.driver.engine@", dbProvider);
@@ -592,7 +596,7 @@ public class InstallationController extends BaseController
 		contents = contents.replaceAll("@slaveServer@", "");
 		contents = contents.replaceAll("@up2dateUrl@", "http://www.infoglue.org/ViewPage.action?siteNodeId=23");
 				
-		contents = contents.replaceAll("@portletBase@", applicationServerRoot);
+		contents = contents.replaceAll("@portletBase@", Matcher.quoteReplacement(applicationServerRoot));
 		contents = contents.replaceAll("@mail.smtp.host@", smtpServer);
 		contents = contents.replaceAll("@mail.smtp.auth@", smtpAuth);
 		contents = contents.replaceAll("@mail.smtp.user@", smtpUser);
@@ -713,7 +717,7 @@ public class InstallationController extends BaseController
 		contentsDeliver = contentsDeliver.replaceAll("@masterServer@", "");
 		contentsDeliver = contentsDeliver.replaceAll("@slaveServer@", "");
 		contentsDeliver = contentsDeliver.replaceAll("@up2dateUrl@", "http://www.infoglue.org/ViewPage.action?siteNodeId=23");
-		contentsDeliver = contentsDeliver.replaceAll("@portletBase@", applicationServerRoot);
+		contentsDeliver = contentsDeliver.replaceAll("@portletBase@", Matcher.quoteReplacement(applicationServerRoot));
 		contentsDeliver = contentsDeliver.replaceAll("@mail.smtp.host@", smtpServer);
 		contentsDeliver = contentsDeliver.replaceAll("@mail.smtp.auth@", smtpAuth);
 		contentsDeliver = contentsDeliver.replaceAll("@mail.smtp.user@", smtpUser);

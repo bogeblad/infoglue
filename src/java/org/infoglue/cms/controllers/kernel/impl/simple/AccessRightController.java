@@ -2818,7 +2818,7 @@ public class AccessRightController extends BaseController
 
 					    if(!group.getIsActive())
 						{
-						    logger.warn("skipping checking for match on group:" + group.getName() + " as it was inactive.");
+							logger.info("skipping checking for match on group:" + group.getName() + " as it was inactive.");
 							continue;
 						}
 
@@ -2945,7 +2945,7 @@ public class AccessRightController extends BaseController
 
 					if(!group.getIsActive())
 					{
-					    logger.warn("skipping checking for match on group:" + group.getName() + " as it was inactive.");
+						logger.info("skipping checking for match on group:" + group.getName() + " as it was inactive.");
 						continue;
 					}
 

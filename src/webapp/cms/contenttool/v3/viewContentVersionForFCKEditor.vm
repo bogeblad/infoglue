@@ -989,7 +989,7 @@
 	    					#set($dropdownName = "${keyAttribute}${velocityCount}categoryId")
 	    					#set($availableCategories = $this.getAvailableCategories($categoryKey.categoryId))
 	    					<div style="margin: 10px 0px 0px 0px; border-bottom: 1px solid #ccc; float: left; width: 100%;">
-	    						<div style="float: left;"><h4>$categoryKey.title ("$keyAttribute") - $categoryKey.description</h4></div>
+	    						<div style="float: left; padding: 20px 0 4px 16px;"><span class="attributeTitle" title="("$keyAttribute")">$categoryKey.title:</span> $categoryKey.description</h4></div>
 								<div style="float: right;">
 									#if($contentVersionId)
 	    								#addCategorySelect($dropdownName $availableCategories "")

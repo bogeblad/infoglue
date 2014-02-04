@@ -28,7 +28,21 @@
 		{
 			$("#work").height((document.body.clientHeight - $("#header").height() - $("#footer").height()) - 1);
 			$("#work > iframe").height((document.body.clientHeight - $("#header").height() - $("#footer").height()) - 1);
+			//console.log("Size:" + ($(window).width() - $("#menucontent").width()));
+			if($(window).width() - $("#menucontent").width() < 350)
+			{
+				$("#igAccountSectionButton").show();
+				$("#igAccountSection").css("position","absolute").css("right", "0px").css("background-color", "white").css("top", "30px").css("border", "1px solid #ccc").css("width", "200px").css("padding", "10px").hide();
+				$("#igAccountSection .igToolbarHeaderButton").css("float", "left").css("clear", "both");
+			}
+			else
+			{
+				$("#igAccountSectionButton").hide();
+				$("#igAccountSection").css("position","relative").css("float","right").css("background-color", "transparent").css("top", "0px").css("border", "0px").css("width", "340px").show();
+				$("#igAccountSection .igToolbarHeaderButton").css("float", "right").css("clear", "");
+			}
 		}
+    
 		
 		$(function() {
 				
@@ -249,7 +263,11 @@
 			</div>
 		#end
 				
-		<div style="float: right; padding-top: 10px; margin-right: 10px; text-align: right;">
+		<div id="igAccountSectionButton" style="position: absolute; top: 10px; right: 10px;">
+			<img src="css/images/v3/menu_img.png" onclick="$('#igAccountSection').slideToggle();"/>
+		</div>
+		
+		<div id="igAccountSection" style="float: right; padding-top: 10px; margin-right: 10px; text-align: right;">
 		
 			<div style="margin-right: 10px; display: inline-block;">
 			$ui.getString("tool.common.loggedInAsLabel"): $infoGluePrincipal.displayName

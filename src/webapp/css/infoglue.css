@@ -24,7 +24,7 @@ body.highGreyBackground {
 	margin: 0px;
 	border-bottom: 1px solid #9caabd;
 	width: 100%; 
-	height: 32px;
+	min-height: 32px;
 	background-image: url("images/v3/toolbarBackground.gif");
 	background-repeat: repeat-x;
 	background-color: white;
@@ -661,9 +661,15 @@ li.page { background:url(images/v3/pageIcon.gif) no-repeat left center; backgrou
 /******************
  Controls input fields
 ******************/
+
 label {
 	display: block;
 	width: 100%;
+}
+.attributeTitle {font-weight: bold;}
+
+#contentTypeAttributesTable label {
+	margin-bottom: 4px;
 }
 select, input {
 	font-family      : arial, sans-serif;
@@ -1060,10 +1066,10 @@ font-size: 12px;
 background-color: #fff;
 }
 .ui-state-default, .ui-widget-content .ui-state-default {
-border:1px solid #D0D1D0;
-color:#555;
-font-weight:bold;
-outline:medium none;
+	border:1px solid #D0D1D0;
+	color:#555;
+	/*font-weight:bold;*/
+	outline:medium none;
 }
 .okButton {
 	background:url("images/v3/check.png") no-repeat scroll 0 0px transparent;

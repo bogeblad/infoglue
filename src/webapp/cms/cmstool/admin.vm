@@ -151,7 +151,7 @@
 	#lightMenuToolbarImpl("" $buttons $rightButtons $rightMenuMarkup) 
 
 	<div style="clear: both;"></div>
-	
+
 	<div id="contextMenuDiv">
     </div>
 

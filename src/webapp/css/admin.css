@@ -70,6 +70,7 @@ html,body {
 #menucontent {
 	float: left;
 	margin-top: 12px;
+	max-width: 90%;
 }
 .middleTabPart {
 	margin-left: 8px;
@@ -176,14 +177,14 @@ html,body {
 #menutoolbar {
 	float: left;
 	width: 100%;
-	height: 115px;
+	max-height: 115px;
 	padding: 0px;
 	background-image: url(images/toolbarBackground.png);
 	background-position: right top;
 	background-repeat: repeat-x;
 }
 #menutoolbar.compact {
-	height: 32px;
+	min-height: 32px;
 	padding: 0px;
 	background-image: none; /*url(images/toolbarBackground.png);*/
 	background-color: #f5f5f5;
@@ -273,7 +274,7 @@ html,body {
 	float: left;
 }
 .mainTool {
-	min-width: 1024px;
+	/*min-width: 1024px;*/
 }
 .mainTool #work {
 	background-image: url("images/v3/toolBackgroundTheme.jpg");
@@ -370,4 +371,16 @@ iframe.inactiveTool {
 	top: 62px;
 	background-image: url("images/v3/loadingAnimation.gif");
 	background-repeat: no-repeat;
+}
+
+@media all and (max-width: 1024px) {
+	.igToolbarButtonOuterSpan span {
+    	background-image: none;
+    	/*width: 10px;*/
+    	padding-left: 4px !important;
+  	}
+  	.igToolbarButton {
+  		margin-right: 0px !important;
+  	}
+  	
 }

@@ -87,17 +87,17 @@
 .ui-state-default, .ui-widget-content .ui-state-default 
 { 
 	border: 1px solid #d0d1d0; 
-	font-weight: bold; 
+	/*font-weight: bold; */
 	outline: none; 
 }
 
 .ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited 
 {
-	color: #555555;
+	color: #000;
 }
 .ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited 
 {
-	color: #555555;
+	color: #000;
 }
 .ui-tabs-nav a
 {
@@ -114,7 +114,7 @@
 }
 .ui-state-active, .ui-widget-content .ui-state-active 
 { 
-	outline: 1px solid #d0d1d0;
+	outline: 0px solid #d0d1d0;
 }
 .topDiv, .cleanTopDiv
 {

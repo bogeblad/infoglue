@@ -3196,7 +3196,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 		#set($attributeDescription = "")
 		#set($attributeDescription = $!attribute.getContentTypeAttribute("description").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
 		#if($attributeDescription != "")
-			#set($attributeDescription = "- $attributeDescription")
+			#set($attributeDescription = " $attributeDescription")
 		#end
 	
 		#set($attributeInitialData = "")
@@ -3305,7 +3305,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 				#if($attribute.inputType == "hidden")
 					<input type="hidden" id="$attribute.name" name="$attribute.name" value="$value"/>
 				#elseif($attribute.inputType == "datefield")
-                    <label for="$attribute.name">$attributeTitle ("$attribute.name") $attributeDescription
+                    <label for="$attribute.name" title="$attribute.name">$attributeTitle $attributeDescription
 					#printErrorV3("ContentVersion.$attribute.name" false)</label>
 					<input $readonly type="text" length="20" class="date" maxlength="20" id="$attribute.name" name="$attribute.name" value="$value"/>&nbsp;<a name="calendar_$attribute.name" id="calendar_$attribute.name"><img src="css/images/calendar.gif" border="0"/></a>
 					<script type="text/javascript">
@@ -3323,7 +3323,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 					-->
 					</script>
 				#elseif($attribute.inputType == "textfield")
-                    <label for="$attribute.name">$attributeTitle ("$attribute.name") $attributeDescription
+                    <label for="$attribute.name" title="$attribute.name"><span class="attributeTitle">$attributeTitle:</span> $attributeDescription
 					#printErrorV3("ContentVersion.$attribute.name" false)</label>
 					<input $readonly type="text" length="50" class="$class" maxlength="" id="$attribute.name" name="$attribute.name" value="$value"/>
 				#elseif($attribute.inputType == "textarea")
@@ -3331,7 +3331,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 					<table cellpadding="0" cellspacing="0" border="0" width="100%">
 					    <tr>
 					    	<td align="left">
-                                <label for="$attribute.name">$attributeTitle ("$attribute.name") $attributeDescription
+                                <label for="$attribute.name" title="$attribute.name"><span class="attributeTitle">$attributeTitle:</span> $attributeDescription
 								#printErrorV3("ContentVersion.$attribute.name" false)</label>
 							</td>
 					    	<td align="right">
@@ -3630,8 +3630,8 @@ $ui.getString("entity.${fieldNameKey}.label")
 		    		#end
 						
 				#elseif($attribute.inputType == "select")
-				<!-- Handles the input type select = dropbox -->
-                    <label for="$attribute.name">$attributeTitle ("$attribute.name") $attributeDescription
+					<!-- Handles the input type select = dropbox -->
+                    <label for="$attribute.name" title="$attribute.name"><span class="attributeTitle">$attributeTitle:</span> $attributeDescription
 					#printErrorV3("ContentVersion.$attribute.name" false)</label>
 					<select $readonly size="1" id="$attribute.name" name="$attribute.name" class="$class">
 						#foreach($option in $attribute.options)
@@ -3639,56 +3639,56 @@ $ui.getString("entity.${fieldNameKey}.label")
 						#end
 		    		</select>
 				#elseif($attribute.inputType == "checkbox")
-				<!-- Handles the input type checkbox -->
-			<label for="$attribute.name">$attributeTitle ("$attribute.name") $attributeDescription
-	    	#printErrorV3("ContentVersion.$attribute.name" false)
-			#if($widget == "transfer")
-
-				<div id="transferListsWidget">
-                	<div class="optionsDiv">
-                		<div class="label"><p>$ui.getString("tool.contenttool.availableOptions")</p></div>
-                		<select id="leftSelect$attribute.name" name="none" multiple="multiple" size="7">
-                		#renderOptions($attribute.options "$this.getAttributeValue($attribute.name)" false)
-                        </select>
-                	</div>
-                    <div class="actionDiv">
-                    	<p style="afloat: left; margin-top: 36px;">
-                   			<a href="javascript:moveAllMarked('${attribute.name}', 'rightSelect$attribute.name', 'leftSelect$attribute.name');" style="float: left; margin-left: 8px; background: url(css/images/backwardBlue.gif) no-repeat center center;">&nbsp;</a>
-                   			<a href="javascript:moveAllMarked('${attribute.name}', 'leftSelect$attribute.name', 'rightSelect$attribute.name');" style="float: right; margin-right: 8px; background: url(css/images/forwardBlue.gif) no-repeat center center;">&nbsp;</a>
-                   		</p>
-                		<p style="afloat: left; margin-top: 5px;">
-                			<a href="javascript:moveAll('${attribute.name}', 'rightSelect$attribute.name', 'leftSelect$attribute.name');" style="float: left; margin-left: 8px; background: url(css/images/rewindBlue.gif) no-repeat center center;">&nbsp;</a>
-                			<a href="javascript:moveAll('${attribute.name}', 'leftSelect$attribute.name', 'rightSelect$attribute.name');" style="float: right; margin-right: 8px; background: url(css/images/fastForwardBlue.gif) no-repeat center center;">&nbsp;</a>
-                		</p>
-                	</div>
-                	<div class="optionsDiv">
-                		<div class="label"><p>$ui.getString("tool.contenttool.selectedOptions")</p></div>
-                		<select name="$attribute.name" class="optionListWidget" id="rightSelect$attribute.name" multiple="multiple" size="7">
-                		#renderOptions($attribute.options "$this.getAttributeValue($attribute.name)" true)
-                        </select>
-                	</div>
-                </div>	
-				<script type="text/javascript">
-					$(document).ready(function(){
-						refreshEvents("${attribute.name}");
-					});
-				</script>
-				
-			#elseif($widget == "3col")
-				<ul id="checkboxListsWidget">
-              		#foreach($option in $attribute.options)
-						<li><input $readonly type="checkbox" id="$attribute.name" name="$attribute.name" value="$option.value" #checkCheckedBySplit("$option.value" "$this.getAttributeValue($attribute.name)")/>$option.getName()</li>
+					<!-- Handles the input type checkbox -->
+					<label for="$attribute.name" title="$attribute.name"><span class="attributeTitle">$attributeTitle:</span> $attributeDescription
+			    	#printErrorV3("ContentVersion.$attribute.name" false)
+					#if($widget == "transfer")
+		
+						<div id="transferListsWidget">
+		                	<div class="optionsDiv">
+		                		<div class="label"><p>$ui.getString("tool.contenttool.availableOptions")</p></div>
+		                		<select id="leftSelect$attribute.name" name="none" multiple="multiple" size="7">
+		                		#renderOptions($attribute.options "$this.getAttributeValue($attribute.name)" false)
+		                        </select>
+		                	</div>
+		                    <div class="actionDiv">
+		                    	<p style="afloat: left; margin-top: 36px;">
+		                   			<a href="javascript:moveAllMarked('${attribute.name}', 'rightSelect$attribute.name', 'leftSelect$attribute.name');" style="float: left; margin-left: 8px; background: url(css/images/backwardBlue.gif) no-repeat center center;">&nbsp;</a>
+		                   			<a href="javascript:moveAllMarked('${attribute.name}', 'leftSelect$attribute.name', 'rightSelect$attribute.name');" style="float: right; margin-right: 8px; background: url(css/images/forwardBlue.gif) no-repeat center center;">&nbsp;</a>
+		                   		</p>
+		                		<p style="afloat: left; margin-top: 5px;">
+		                			<a href="javascript:moveAll('${attribute.name}', 'rightSelect$attribute.name', 'leftSelect$attribute.name');" style="float: left; margin-left: 8px; background: url(css/images/rewindBlue.gif) no-repeat center center;">&nbsp;</a>
+		                			<a href="javascript:moveAll('${attribute.name}', 'leftSelect$attribute.name', 'rightSelect$attribute.name');" style="float: right; margin-right: 8px; background: url(css/images/fastForwardBlue.gif) no-repeat center center;">&nbsp;</a>
+		                		</p>
+		                	</div>
+		                	<div class="optionsDiv">
+		                		<div class="label"><p>$ui.getString("tool.contenttool.selectedOptions")</p></div>
+		                		<select name="$attribute.name" class="optionListWidget" id="rightSelect$attribute.name" multiple="multiple" size="7">
+		                		#renderOptions($attribute.options "$this.getAttributeValue($attribute.name)" true)
+		                        </select>
+		                	</div>
+		                </div>	
+						<script type="text/javascript">
+							$(document).ready(function(){
+								refreshEvents("${attribute.name}");
+							});
+						</script>
+						
+					#elseif($widget == "3col")
+						<ul id="checkboxListsWidget">
+		              		#foreach($option in $attribute.options)
+								<li><input $readonly type="checkbox" id="$attribute.name" name="$attribute.name" value="$option.value" #checkCheckedBySplit("$option.value" "$this.getAttributeValue($attribute.name)")/>$option.getName()</li>
+							#end
+						</ul>
+					#else
+		          		#foreach($option in $attribute.options)
+							<input $readonly type="checkbox" name="$attribute.name" value="$option.value" #checkCheckedBySplit("$option.value" "$this.getAttributeValue($attribute.name)")/>$option.getName()
+						#end
 					#end
-				</ul>
-			#else
-          		#foreach($option in $attribute.options)
-					<input $readonly type="checkbox" name="$attribute.name" value="$option.value" #checkCheckedBySplit("$option.value" "$this.getAttributeValue($attribute.name)")/>$option.getName()
-				#end
-			#end
 
 				#elseif($attribute.inputType == "radiobutton")
 				<!-- Handles the input type radiobutton -->
-					<label for="$attribute.name">$attributeTitle ("$attribute.name") $attributeDescription
+					<label for="$attribute.name" title="$attribute.name"><span class="attributeTitle">$attributeTitle:</span> $attributeDescription
 					#printErrorV3("ContentVersion.$attribute.name" false)</label>
 					<ul class="optionList">
 					#foreach($option in $attribute.options)
@@ -3698,7 +3698,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 				#elseif($attribute.inputType == "customfield")
 				<!-- Handles the input type customfield -->
 					#set($attributeMarkup = $!attribute.getContentTypeAttribute("Markup").getContentTypeAttributeParameterValue().getValue("label"))
-                    <label for="$attribute.name">$attributeTitle ("$attribute.name") $attributeDescription
+                    <label for="$attribute.name" title="$attribute.name"><span class="attributeTitle">$attributeTitle:</span> $attributeDescription
 					#printErrorV3("ContentVersion.$attribute.name" false)</label>
 					#set($processedMarkup = $attributeMarkup.replaceAll("attributeName", "$attribute.name"))
 					#set($processedMarkup = $processedMarkup.replaceAll("attributeValue", "$value"))

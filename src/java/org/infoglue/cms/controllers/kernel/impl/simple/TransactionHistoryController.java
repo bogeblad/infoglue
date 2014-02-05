@@ -101,7 +101,7 @@ public class TransactionHistoryController extends BaseController
 			OQLQuery oql = db.getOQLQuery( "SELECT th FROM org.infoglue.cms.entities.management.impl.simple.TransactionHistoryImpl th WHERE th.transactionObjectName LIKE $1 AND th.transactionObjectId = $2 ORDER BY th.transactionDateTime desc");
 			oql.bind(entClass.getName() + "%");
 			oql.bind(entityId);
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 
 			if (results.hasMore()) 
 			{
@@ -196,7 +196,7 @@ public class TransactionHistoryController extends BaseController
 		    //oql.bind(entityId);
 			
 			int currentRow = 0;
-		    QueryResults results = oql.execute(Database.ReadOnly);
+		    QueryResults results = oql.execute(Database.READONLY);
 			while(results.hasMore() && currentRow < rowLimit) 
 			{
 				TransactionHistory transactionHistory = (TransactionHistory)results.next();

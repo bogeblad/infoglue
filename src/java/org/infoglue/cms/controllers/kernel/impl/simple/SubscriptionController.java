@@ -334,7 +334,7 @@ public class SubscriptionController extends BaseController
 		if(!readOnly)
 			results = oql.execute();
 		else
-			results = oql.execute(Database.ReadOnly);
+			results = oql.execute(Database.READONLY);
 			
 		while (results.hasMore()) 
         {

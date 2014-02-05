@@ -137,7 +137,7 @@ public class FormEntryController extends BaseController
 			oql.bind(formContentId);
 			oql.bind(fieldName);
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 
 			while (results.hasMore()) 
 			{
@@ -280,7 +280,7 @@ public class FormEntryController extends BaseController
 			OQLQuery oql = db.getOQLQuery("CALL SQL SELECT fev.id, fev.name, fev.value, fev.formEntryId FROM cmFormEntryValue fev, cmFormEntry fe WHERE fev.formEntryId = fe.id AND fe.formContentId = $1 order by fev.id AS org.infoglue.cms.entities.management.impl.simple.SmallFormEntryValueImpl");
 			oql.bind(formContentId);
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 
 			while (results.hasMore()) 
 			{
@@ -325,7 +325,7 @@ public class FormEntryController extends BaseController
 			//OQLQuery oql = db.getOQLQuery("CALL SQL SELECT fev.id, fev.name, fev.value, fev.formEntryId FROM cmFormEntryValue fev, cmFormEntry fe WHERE fev.formEntryId = fe.id AND fe.formContentId = $1 order by fev.id AS org.infoglue.cms.entities.management.impl.simple.SmallFormEntryValueImpl");
 			oql.bind(formContentId);
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 
 			while (results.hasMore()) 
 			{
@@ -620,7 +620,7 @@ public class FormEntryController extends BaseController
 			OQLQuery oql = db.getOQLQuery("CALL SQL select (select max(fev2.id) from cmFormEntryValue fev2 where fev2.name = fev.name) as id, fev.name as column1Value, '' as column2Value, '' as column3Value, '' as column4Value, '' as column5Value, '' as column6Value, '' as column7Value from cmFormEntry fe, cmFormEntryValue fev where fev.formEntryId = fe.id AND fe.formcontentid = $1 group by fev.name AS org.infoglue.cms.entities.management.GeneralOQLResult");
 			oql.bind(formContentId);
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			while (results.hasMore()) 
 			{
 				GeneralOQLResult resultBean = (GeneralOQLResult)results.next();
@@ -657,7 +657,7 @@ public class FormEntryController extends BaseController
 			OQLQuery oql = db.getOQLQuery("CALL SQL select fe.id as id, fev.value as column1Value, '' as column2Value, '' as column3Value, '' as column4Value, '' as column5Value, '' as column6Value, '' as column7Value from cmFormEntry fe, cmFormEntryValue fev where fev.formEntryId = fe.id AND fe.formContentId = $1 AND fev.name = $2 AS org.infoglue.cms.entities.management.GeneralOQLResult");
 			oql.bind(formContentId);
 			oql.bind(name);
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			while (results.hasMore()) 
 			{
 				GeneralOQLResult resultBean = (GeneralOQLResult)results.next();

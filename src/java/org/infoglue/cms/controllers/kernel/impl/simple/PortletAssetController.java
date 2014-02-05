@@ -170,7 +170,7 @@ public class PortletAssetController extends DigitalAssetController
         OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.content.impl.simple.DigitalAssetImpl c WHERE c.assetFileName = $1");
         oql.bind(name);
 
-        QueryResults results = oql.execute(Database.ReadOnly);
+        QueryResults results = oql.execute(Database.READONLY);
 
         while (results.hasMore()) 
         {

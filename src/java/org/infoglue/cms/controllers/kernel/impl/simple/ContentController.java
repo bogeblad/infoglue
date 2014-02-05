@@ -134,7 +134,7 @@ public class ContentController extends BaseController
 		oql.bind(minimumId);
 		oql.bind(limit);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		while (results.hasMore()) 
         {
 			Content content = (Content)results.next();
@@ -310,7 +310,7 @@ public class ContentController extends BaseController
 		for(Integer entityId : contentIds)
 			oql.bind(entityId.toString());
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		
 		while (results.hasMore()) 
         {
@@ -1512,7 +1512,7 @@ public class ContentController extends BaseController
 		OQLQuery oql = db.getOQLQuery( "SELECT c FROM org.infoglue.cms.entities.content.impl.simple.SmallContentImpl c ORDER BY c.contentId DESC LIMIT $1");
 		oql.bind(limit);
 
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		while (results.hasMore()) 
 		{
 			Content content = (Content)results.next();
@@ -1590,7 +1590,7 @@ public class ContentController extends BaseController
 	    		OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.content.impl.simple.MediumContentImpl c WHERE c.contentTypeDefinitionId = $1 ORDER BY c.contentId");
 	        	oql.bind(ctdVO.getId());
 	        	
-	        	QueryResults results = oql.execute(Database.ReadOnly);
+	        	QueryResults results = oql.execute(Database.READONLY);
 				
 				while(results.hasMore()) 
 	            {
@@ -1651,7 +1651,7 @@ public class ContentController extends BaseController
 
         	oql.bind(ctdId);
         	
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
         	if(logger.isInfoEnabled())
         		t.printElapsedTime("Query for " + contentTypeDefinitionName);
 			
@@ -1768,7 +1768,7 @@ public class ContentController extends BaseController
 		OQLQuery oql = db.getOQLQuery("CALL SQL " + sb.toString() + "AS org.infoglue.cms.entities.content.impl.simple.SmallContentVersionImpl");
 		logger.warn("Query for component content versions took:" + t.getElapsedTime());
 
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		while (results.hasMore()) 
         {
 			ContentVersion contentVersion = (ContentVersion)results.next();
@@ -1834,7 +1834,7 @@ public class ContentController extends BaseController
 			OQLQuery oql = db.getOQLQuery( "SELECT c FROM org.infoglue.cms.entities.content.impl.simple.SmallContentImpl c WHERE is_undefined(c.parentContentId) AND c.repositoryId = $1");
 			oql.bind(repositoryId);
 			
-        	QueryResults results = oql.execute(Database.ReadOnly);			
+        	QueryResults results = oql.execute(Database.READONLY);			
 			if (results.hasMore()) 
             {
 				Content content = (Content)results.next();
@@ -1950,7 +1950,7 @@ public class ContentController extends BaseController
 		OQLQuery oql = db.getOQLQuery( "SELECT c FROM org.infoglue.cms.entities.content.impl.simple.SmallContentImpl c WHERE is_undefined(c.parentContentId) AND c.repositoryId = $1");
 		oql.bind(repositoryId);
 			
-		QueryResults results = oql.execute(Database.ReadOnly);			
+		QueryResults results = oql.execute(Database.READONLY);			
 		if (results.hasMore()) 
 		{
 			SmallContentImpl contentImpl = (SmallContentImpl)results.next();
@@ -1994,7 +1994,7 @@ public class ContentController extends BaseController
 		OQLQuery oql = db.getOQLQuery( "SELECT c FROM org.infoglue.cms.entities.content.impl.simple.ContentImpl c WHERE is_undefined(c.parentContent) AND c.repository.repositoryId = $1");
 		oql.bind(repositoryId);
 			
-		QueryResults results = oql.execute(Database.ReadOnly);			
+		QueryResults results = oql.execute(Database.READONLY);			
 		if (results.hasMore()) 
 		{
 			content = (Content)results.next();
@@ -2283,7 +2283,7 @@ public class ContentController extends BaseController
         	}
 		}
 
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		while (results.hasMore()) 
 		{
 			Content content = (Content)results.next();
@@ -2354,7 +2354,7 @@ public class ContentController extends BaseController
         	}
 		}
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		while (results.hasMore()) 
 		{
 			Content content = (Content)results.next();
@@ -2690,7 +2690,7 @@ public class ContentController extends BaseController
 		OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.content.impl.simple.MediumContentImpl c WHERE c.repositoryId = $1 ORDER BY c.contentId");
     	oql.bind(repositoryId);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		
 		while(results.hasMore()) 
         {
@@ -2860,7 +2860,7 @@ public class ContentController extends BaseController
     	oql.bind(parentContentId);
     	oql.bind(name);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		
 		if(results.hasMore()) 
         {
@@ -3644,7 +3644,7 @@ public class ContentController extends BaseController
            	oql.bind(futureDate);
            	oql.bind(currentDate);
 
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
     		while(results.hasMore()) 
             {
     			Content content = (ContentImpl)results.next();
@@ -3690,7 +3690,7 @@ public class ContentController extends BaseController
            	oql.bind(currentDate);
            	oql.bind(principal.getName());
 
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
     		while(results.hasMore()) 
             {
     			Content content = (ContentImpl)results.next();

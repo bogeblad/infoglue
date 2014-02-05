@@ -158,7 +158,7 @@ public class PublicationController extends BaseController
             OQLQuery oql = db.getOQLQuery( "SELECT c FROM org.infoglue.cms.entities.publishing.impl.simple.PublicationImpl c WHERE c.repositoryId = $1 order by publicationDateTime desc");
 			oql.bind(repositoryId);
 
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
 
 			while (results.hasMore())
             {
@@ -195,7 +195,7 @@ public class PublicationController extends BaseController
             OQLQuery oql = db.getOQLQuery( "SELECT p FROM org.infoglue.cms.entities.publishing.impl.simple.PublicationImpl p WHERE p.publicationDateTime > $1 order by publicationDateTime desc");
 			oql.bind(startDate);
 
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
 
 			while (results.hasMore())
             {
@@ -275,7 +275,7 @@ public class PublicationController extends BaseController
 			publicationDateTimeCalendar.add(Calendar.MONTH, -2);
 			oql.bind(publicationDateTimeCalendar.getTime());
 
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
 
 			List allEditions = Collections.list(results);
 

@@ -204,7 +204,7 @@ public class ExtendedSearchController extends BaseController
 			    oql.bind(o);
 			}
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			Set matchingResults = createResults(results);
 			
 			results.close();

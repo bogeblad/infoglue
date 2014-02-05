@@ -114,7 +114,7 @@ public class PropertiesCategoryController extends BaseController
         	Map<Integer,CategoryVO> categoriesMap = new HashMap<Integer,CategoryVO>();
     		OQLQuery oql1 = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.management.impl.simple.CategoryImpl c ORDER BY c.categoryId");
 
-    		QueryResults results1 = oql1.execute(Database.ReadOnly);
+    		QueryResults results1 = oql1.execute(Database.READONLY);
     		while (results1.hasMore()) 
     		{
     			Category category = (Category)results1.next();
@@ -129,7 +129,7 @@ public class PropertiesCategoryController extends BaseController
         	
     		OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.management.impl.simple.SmallPropertiesCategoryImpl c ORDER BY c.propertiesCategoryId");
 
-    		QueryResults results = oql.execute(Database.ReadOnly);
+    		QueryResults results = oql.execute(Database.READONLY);
     		while (results.hasMore()) 
     		{
     			PropertiesCategory propertiesCategory = (PropertiesCategory)results.next();

@@ -289,7 +289,7 @@ public class UserPropertiesController extends BaseController
 		QueryResults results = null;
 		if(readOnly)
 		{
-		    results = oql.execute(Database.ReadOnly);
+		    results = oql.execute(Database.READONLY);
 		}
 		else
 		{

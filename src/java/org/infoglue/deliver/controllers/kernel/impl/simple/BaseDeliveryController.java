@@ -72,7 +72,7 @@ public abstract class BaseDeliveryController
 		try
 		{
 			RequestAnalyser.getRequestAnalyser().incApproximateNumberOfDatabaseQueries();
-			object = db.load(arg, id, Database.ReadOnly);
+			object = db.load(arg, id, Database.READONLY);
 		}
 		catch(Exception e)
 		{
@@ -126,7 +126,7 @@ public abstract class BaseDeliveryController
 		try
 		{
 			RequestAnalyser.getRequestAnalyser().incApproximateNumberOfDatabaseQueries();
-			vo = (IBaseEntity)db.load(arg, id, Database.ReadOnly);
+			vo = (IBaseEntity)db.load(arg, id, Database.READONLY);
 		}
 		catch(Exception e)
 		{
@@ -174,7 +174,7 @@ public abstract class BaseDeliveryController
 		{
         	logger.info("BaseHelper::GetAllObjects for " + arg.getName());
 			OQLQuery oql = db.getOQLQuery( "SELECT u FROM " + arg.getName() + " u" );
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			
 			while (results.hasMore()) 
 			{
@@ -212,7 +212,7 @@ public abstract class BaseDeliveryController
         	
 			logger.info("BaseHelper::GetAllObjects for " + arg.getName());
 			OQLQuery oql = db.getOQLQuery( "SELECT u FROM " + arg.getName() + " u ORDER BY u." + orderByField + " " + direction);
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			
 			while (results.hasMore()) 
 			{
@@ -266,7 +266,7 @@ public abstract class BaseDeliveryController
 		List resultList = new ArrayList();
 		
 		OQLQuery oql = createQuery(db, query, params);
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		resultList = Collections.list(results);
 		
 		results.close();

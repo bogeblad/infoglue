@@ -119,7 +119,7 @@ public class RepositoryLanguageController extends BaseController
          	OQLQuery oql = db.getOQLQuery("SELECT rl FROM org.infoglue.cms.entities.management.impl.simple.RepositoryLanguageImpl rl WHERE rl.language = $1 order by rl.sortOrder, rl.language.languageId");
 			oql.bind(languageId);
 			
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
 			
 			while (results.hasMore()) 
             {
@@ -195,7 +195,7 @@ public class RepositoryLanguageController extends BaseController
        	OQLQuery oql = db.getOQLQuery("SELECT rl FROM org.infoglue.cms.entities.management.impl.simple.RepositoryLanguageImpl rl WHERE rl.repository = $1 ORDER BY rl.sortOrder, rl.language.languageId");
 		oql.bind(repositoryId);
 			
-       	QueryResults results = oql.execute(Database.ReadOnly);
+       	QueryResults results = oql.execute(Database.READONLY);
        		
 		while (results.hasMore()) 
         {
@@ -259,7 +259,7 @@ public class RepositoryLanguageController extends BaseController
        	OQLQuery oql = db.getOQLQuery("SELECT l FROM org.infoglue.cms.entities.management.impl.simple.LanguageImpl l WHERE l.repositoryLanguages.repository = $1 ORDER BY l.repositoryLanguages.sortOrder, l.languageId");
 		oql.bind(repositoryId);
 			
-       	QueryResults results = oql.execute(Database.ReadOnly);
+       	QueryResults results = oql.execute(Database.READONLY);
        		
 		while (results.hasMore()) 
         {

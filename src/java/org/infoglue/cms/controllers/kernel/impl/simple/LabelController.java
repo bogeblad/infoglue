@@ -478,7 +478,7 @@ public class LabelController extends BaseController implements StringManager
         oql.bind("text/infoglue-translation");
         oql.bind(name);
 
-        QueryResults results = oql.execute(Database.ReadOnly);
+        QueryResults results = oql.execute(Database.READONLY);
 
         while (results.hasMore()) 
         {

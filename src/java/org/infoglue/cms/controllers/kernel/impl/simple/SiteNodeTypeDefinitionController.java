@@ -134,7 +134,7 @@ public class SiteNodeTypeDefinitionController extends BaseController
 			
 			QueryResults results = null;
 			if(readOnly)
-			    results = oql.execute(Database.ReadOnly);
+			    results = oql.execute(Database.READONLY);
 		    else
 		    {
 		        this.logger.info("Fetching entity in read/write mode" + name);
@@ -283,7 +283,7 @@ public class SiteNodeTypeDefinitionController extends BaseController
         	OQLQuery oql = db.getOQLQuery( "SELECT asb FROM org.infoglue.cms.entities.management.impl.simple.AvailableServiceBindingImpl asb WHERE asb.siteNodeTypeDefinition.siteNodeTypeDefinitionId = $1");
         	oql.bind(siteNodeTypeDefinitionId);
         	
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
 			
 			while (results.hasMore()) 
             {
@@ -330,7 +330,7 @@ public class SiteNodeTypeDefinitionController extends BaseController
     	OQLQuery oql = db.getOQLQuery( "SELECT asb FROM org.infoglue.cms.entities.management.impl.simple.AvailableServiceBindingImpl asb WHERE asb.siteNodeTypeDefinition.siteNodeTypeDefinitionId = $1");
     	oql.bind(siteNodeTypeDefinitionId);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		
 		while (results.hasMore()) 
         {

@@ -1646,7 +1646,7 @@ public class LuceneController extends BaseController implements NotificationList
 			oql.bind(date.getTime());
 			oql.bind(batchSize);
 					
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			
 			if(logger.isInfoEnabled())
 				logger.info("Getting contents took: " + t.getElapsedTime());

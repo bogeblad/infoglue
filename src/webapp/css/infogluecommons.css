@@ -145,3 +145,8 @@ legend {
 	border: 1px solid #781351;
 	padding: 2px 6px
 	}
+
+.loadingSmall {width: 16px;}
+.loadingMedium {width: 32px;}
+.loadingLarge {width: 64px;}
+

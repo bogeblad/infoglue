@@ -554,7 +554,10 @@ public class CacheController extends Thread
 			   !cacheName.equals("contentTypeDefinitionCache")
 			)
 			{
-				logger.warn("Missed cache:" + cacheName + " because of defeat caches");
+				if (logger.isInfoEnabled())
+				{
+					logger.info("Missed cache: " + cacheName + " because of defeat caches. Cache.key: " + key);
+				}
 				return null;
 			}
 		}

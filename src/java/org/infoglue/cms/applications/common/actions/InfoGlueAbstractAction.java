@@ -301,18 +301,21 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	/**
 	 * This method gets the repositoryId used in structure tool and if it'n not available we check a default for all tools.
 	 */
-	
-    public Integer getStructureRepositoryId()
-    {
-    	Integer repositoryId = (Integer)getHttpSession().getAttribute("structureRepositoryId");
-    	try
+
+	public Integer getStructureRepositoryId()
+	{
+		Integer repositoryId = (Integer)getHttpSession().getAttribute("structureRepositoryId");
+		try
 		{
-			RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);
-			repositoryId = repositoryVO.getId();
+			if (repositoryId != null)
+			{
+				RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);
+				repositoryId = repositoryVO.getId();
+			}
 		}
 		catch (Exception e) 
 		{
-			logger.warn("Not a valid repository");
+			logger.warn("Not a valid repository. repositoryId: " + repositoryId);
 			repositoryId = null;
 		}
 
@@ -331,12 +334,15 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
     	Integer repositoryId = (Integer)getHttpSession().getAttribute("contentRepositoryId");
     	try
 		{
-			RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);
-			repositoryId = repositoryVO.getId();
+			if (repositoryId != null)
+			{
+				RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);
+				repositoryId = repositoryVO.getId();
+			}
 		}
 		catch (Exception e) 
 		{
-			logger.warn("Not a valid repository");
+			logger.warn("Not a valid repository. repositoryId: " + repositoryId);
 			repositoryId = null;
 		}
 		
@@ -356,12 +362,15 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		Integer repositoryId = (Integer)this.getHttpSession().getAttribute("repositoryId");
 		try
 		{
-			RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);
-			repositoryId = repositoryVO.getId();
+			if (repositoryId != null)
+			{
+				RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);
+				repositoryId = repositoryVO.getId();
+			}
 		}
 		catch (Exception e) 
 		{
-			logger.warn("Not a valid repository");
+			logger.warn("Not a valid repository. repositoryId: " + repositoryId);
 			repositoryId = null;
 		}
 		

@@ -1383,7 +1383,7 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 
     public String doCacheEntryGroups() throws Exception
     {
-    	System.out.println(this.cacheName);
+    	logger.info("Cache name: " + this.cacheName);
     	if(this.cacheName != null && !this.cacheName.equals(""))
         {
         	this.cache = CacheController.getCaches().get(this.cacheName);

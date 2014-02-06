@@ -2158,8 +2158,11 @@ public class AccessRightController extends BaseController
 		
 		if(returnTrueIfNoAccessRightsDefined && accessRightList == null || accessRightList.size() == 0)
 		{
-			logger.warn("Returned true as there was no access rights defined which means it's not correctly protected.");
-		    CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(true), new String[]{infoGluePrincipal.getName()}, true);
+			if (logger.isInfoEnabled())
+			{
+				logger.info("Returned true as there was no access rights defined which means it's not correctly protected. IP.name: " + interceptionPointName);
+			}
+			CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(true), new String[]{infoGluePrincipal.getName()}, true);
 			return true;
 		}
 		
@@ -2215,7 +2218,7 @@ public class AccessRightController extends BaseController
 
 					if(!role.getIsActive())
 					{
-					    logger.warn("skipping checking for match on role:" + role.getName() + " as it was inactive.");
+						logger.info("skipping checking for match on role: " + role.getName() + " as it was inactive.");
 						continue;
 					}
 
@@ -2268,7 +2271,7 @@ public class AccessRightController extends BaseController
 
 						if(!group.getIsActive())
 						{
-						    logger.warn("skipping checking for match on group:" + group.getName() + " as it was inactive.");
+							logger.info("skipping checking for match on group:" + group.getName() + " as it was inactive.");
 							continue;
 						}
 
@@ -2410,7 +2413,7 @@ public class AccessRightController extends BaseController
 
 				if(!role.getIsActive())
 				{
-				    logger.warn("skipping checking for match on role:" + role.getName() + " as it was inactive.");
+					logger.info("skipping checking for match on role:" + role.getName() + " as it was inactive.");
 					continue;
 				}
 				
@@ -2449,7 +2452,7 @@ public class AccessRightController extends BaseController
 
 					if(!group.getIsActive())
 					{
-					    logger.warn("skipping checking for match on group:" + group.getName() + " as it was inactive.");
+						logger.info("skipping checking for match on group:" + group.getName() + " as it was inactive.");
 						continue;
 					}
 
@@ -2787,7 +2790,7 @@ public class AccessRightController extends BaseController
 
 					if(!role.getIsActive())
 					{
-					    logger.warn("skipping checking for match on role:" + role.getName() + " as it was inactive.");
+						logger.info("skipping checking for match on role:" + role.getName() + " as it was inactive.");
 						continue;
 					}
 
@@ -2906,7 +2909,7 @@ public class AccessRightController extends BaseController
 
 				if(!role.getIsActive())
 				{
-				    logger.warn("skipping checking for match on role:" + role.getName() + " as it was inactive.");
+					logger.info("skipping checking for match on role:" + role.getName() + " as it was inactive.");
 					continue;
 				}
 				

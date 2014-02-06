@@ -869,14 +869,14 @@ public class ViewPageAction extends InfoGlueAbstractAction
     			        Matcher matcher = pattern.matcher(browserBean.getUseragent());
     			        if(!matcher.find())
     			    	{
-    			        	logger.error("Not using if modified logic for:" + browserBean.getUseragent());
+							logger.info("Not using if modified logic for:" + browserBean.getUseragent());
     			        	return false;
     			    	}
     			    	matcher.reset();
     				}
     				else
     				{
-    					System.out.println("We disable the IF_MODIFIED feature if not stated.");
+						logger.info("We disable the IF_MODIFIED feature if not stated.");
     					return false;
     				}
     			}

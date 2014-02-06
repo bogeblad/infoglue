@@ -27,6 +27,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -64,6 +65,7 @@ import org.infoglue.cms.entities.management.AccessRightRoleVO;
 import org.infoglue.cms.entities.management.AccessRightUser;
 import org.infoglue.cms.entities.management.AccessRightUserVO;
 import org.infoglue.cms.entities.management.AccessRightVO;
+import org.infoglue.cms.entities.management.Category;
 import org.infoglue.cms.entities.management.CategoryVO;
 import org.infoglue.cms.entities.management.InterceptionPoint;
 import org.infoglue.cms.entities.publishing.PublicationVO;
@@ -120,7 +122,8 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
         try
         {
 			final DynamicWebserviceSerializer serializer = new DynamicWebserviceSerializer();
-	        Map args = (Map) serializer.deserialize(inputsArray);
+			@SuppressWarnings("unchecked")
+			Map<String, Object> args = (Map<String, Object>) serializer.deserialize(inputsArray);
 	        logger.info("args:" + args);
 	        
 	        Integer contentId = (Integer)args.get("contentId");
@@ -224,17 +227,17 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
      */
     
     public StatusBean createContents(final String principalName, final Object[] inputsArray/*List contents*/) 
-    {    	
+    {
         if(!ServerNodeController.getController().getIsIPAllowed(getRequest()))
         {
             logger.error("A client with IP " + getRequest().getRemoteAddr() + " was denied access to the webservice. Could be a hack attempt or you have just not configured the allowed IP-addresses correct.");
             return new StatusBean(false, "You are not allowed to talk to this service");
         }
 
-    	StatusBean statusBean = new StatusBean(true, "ok");
-    	
-        List newContentIdList = new ArrayList();
-        
+		StatusBean statusBean = new StatusBean(true, "ok");
+
+		List<Integer> newContentIdList = new ArrayList<Integer>();
+
         logger.info("****************************************");
         logger.info("Creating contents through webservice....");
         logger.info("****************************************");
@@ -246,18 +249,19 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
         try
         {
 			final DynamicWebserviceSerializer serializer = new DynamicWebserviceSerializer();
-            List contents = (List) serializer.deserialize(inputsArray);
+            @SuppressWarnings("unchecked")
+			List<Map<String, Object>> contents = (List<Map<String, Object>>) serializer.deserialize(inputsArray);
 	        logger.info("contents:" + contents);
 
             initializePrincipal(principalName);
-	        Iterator contentIterator = contents.iterator();
+	        Iterator<Map<String, Object>> contentIterator = contents.iterator();
 	        while(contentIterator.hasNext())
 	        {
 	            //String value = (String)contentIterator.next();
 	            //logger.info("value:" + value);
-	            
-	            Map content = (Map)contentIterator.next();
-	            
+
+				Map<String, Object> content = contentIterator.next();
+
 	            String name 					= (String)content.get("name");
 	            Integer contentTypeDefinitionId = (Integer)content.get("contentTypeDefinitionId");
 	            Integer repositoryId 			= (Integer)content.get("repositoryId");
@@ -353,164 +357,174 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
 	            ContentVO newContentVO = contentControllerProxy.acCreate(this.principal, contentVO.getParentContentId(), contentVO.getContentTypeDefinitionId(), contentVO.getRepositoryId(), contentVO);
 	            if(newContentVO != null)
 	            	statusBean.getCreatedBeans().add(new CreatedEntityBean(ContentVO.class.getName(), new Long(newContentVO.getId())));
-	            
-	            List contentVersions = (List)content.get("contentVersions");
-	            Iterator contentVersionIterator = contentVersions.iterator();
-	            while(contentVersionIterator.hasNext())
-	            {
-	                Map contentVersion = (Map)contentVersionIterator.next();
-	                
-	                Integer languageId = (Integer)contentVersion.get("languageId");
-	                Integer stateId = (Integer)contentVersion.get("stateId");
-	                Boolean allowHTMLContent = (Boolean)contentVersion.get("allowHTMLContent");
-	                Boolean allowExternalLinks = (Boolean)contentVersion.get("allowExternalLinks");
-	                Boolean allowDollarSigns = (Boolean)contentVersion.get("allowDollarSigns");
-	                Boolean allowAnchorSigns = (Boolean)contentVersion.get("allowAnchorSigns");
 
-	                if(allowHTMLContent == null)
-	                	allowHTMLContent = new Boolean(false);
-	                if(allowExternalLinks == null)
-	                	allowExternalLinks = new Boolean(false);
-	                if(allowDollarSigns == null)
-	                	allowDollarSigns = new Boolean(false);
-	                if(allowAnchorSigns == null)
-	                	allowAnchorSigns = new Boolean(true);
-	                
-	    	        logger.info("languageId:" + languageId);
-	    	        logger.info("stateId:" + stateId);
-	    	        logger.info("allowHTMLContent:" + allowHTMLContent);
-	    	        logger.info("allowExternalLinks:" + allowExternalLinks);
-	    	        logger.info("allowDollarSigns:" + allowDollarSigns);
-	    	        logger.info("allowAnchorSigns:" + allowAnchorSigns);
+				@SuppressWarnings("unchecked")
+				List<Map<String, Object>> contentVersions = (List<Map<String, Object>>)content.get("contentVersions");
+				if (contentVersions == null)
+				{
+					logger.info("Content had no versions. Maybe its a folder. IsBranch: " + isBranch);
+				}
+				else
+				{
+					Iterator<Map<String, Object>> contentVersionIterator = contentVersions.iterator();
+					while(contentVersionIterator.hasNext())
+					{
+						Map<String, Object> contentVersion = contentVersionIterator.next();
 
-	                ContentVersionVO contentVersionVO = new ContentVersionVO();
-	                contentVersionVO.setLanguageId(languageId);
-	                
-	                if(contentVersionVO.getVersionModifier() == null)
-	                    contentVersionVO.setVersionModifier(this.principal.getName());
-	                
-	                Map attributes = (Map)contentVersion.get("contentVersionAttributes");
-	                
-	                DOMBuilder domBuilder = new DOMBuilder();
-	                Document document = domBuilder.createDocument();
-	                
-	                Element rootElement = domBuilder.addElement(document, "root");
-	                domBuilder.addAttribute(rootElement, "xmlns", "x-schema:Schema.xml");
-	                Element attributesRoot = domBuilder.addElement(rootElement, "attributes");
-	                
-	                Iterator attributesIterator = attributes.keySet().iterator();
-	                while(attributesIterator.hasNext())
-	                {
-	                    String attributeName  = (String)attributesIterator.next();
-	                    String attributeValue = (String)attributes.get(attributeName);
-		                
-	                    attributeValue = cleanAttributeValue(attributeValue, allowHTMLContent, allowExternalLinks, allowDollarSigns, allowAnchorSigns);
-	                    
-	                    Element attribute = domBuilder.addElement(attributesRoot, attributeName);
-	                    domBuilder.addCDATAElement(attribute, attributeValue);
-	                }	                
+						Integer languageId = (Integer)contentVersion.get("languageId");
+						Integer stateId = (Integer)contentVersion.get("stateId");
+						Boolean allowHTMLContent = (Boolean)contentVersion.get("allowHTMLContent");
+						Boolean allowExternalLinks = (Boolean)contentVersion.get("allowExternalLinks");
+						Boolean allowDollarSigns = (Boolean)contentVersion.get("allowDollarSigns");
+						Boolean allowAnchorSigns = (Boolean)contentVersion.get("allowAnchorSigns");
 
-	                contentVersionVO.setVersionValue(document.asXML());
-	                
-	    	        ContentVersionVO newContentVersionVO = contentVersionControllerProxy.acCreate(this.principal, newContentVO.getId(), languageId, contentVersionVO);
-	    	        Integer newContentVersionId = newContentVersionVO.getId();
-	            	statusBean.getCreatedBeans().add(new CreatedEntityBean(ContentVersionVO.class.getName(), new Long(newContentVersionId)));
+						if(allowHTMLContent == null)
+							allowHTMLContent = new Boolean(false);
+						if(allowExternalLinks == null)
+							allowExternalLinks = new Boolean(false);
+						if(allowDollarSigns == null)
+							allowDollarSigns = new Boolean(false);
+						if(allowAnchorSigns == null)
+							allowAnchorSigns = new Boolean(true);
 
-	    	        List digitalAssets = (List)contentVersion.get("digitalAssets");
-	    	        
-	    	        logger.info("digitalAssets:" + digitalAssets);
-	    	        if(digitalAssets != null)
-	    	        {
-		    	        Iterator digitalAssetIterator = digitalAssets.iterator();
-		    	        while(digitalAssetIterator.hasNext())
-		    	        {
-		    	            RemoteAttachment remoteAttachment = (RemoteAttachment)digitalAssetIterator.next();
-			    	        logger.info("digitalAssets in ws:" + remoteAttachment);
-			    	        
-			            	DigitalAssetVO newAsset = new DigitalAssetVO();
-							newAsset.setAssetContentType(remoteAttachment.getContentType());
-							newAsset.setAssetKey(remoteAttachment.getName());
-							newAsset.setAssetFileName(remoteAttachment.getFileName());
-							newAsset.setAssetFilePath(remoteAttachment.getFilePath());
-							newAsset.setAssetFileSize(new Integer(new Long(remoteAttachment.getBytes().length).intValue()));
-							//is = new FileInputStream(renamedFile);
-							InputStream is = new ByteArrayInputStream(remoteAttachment.getBytes());
-		
-			    	        DigitalAssetVO newDigitalAssetVO = DigitalAssetController.create(newAsset, is, newContentVersionId, principal);
-			    	        if(newDigitalAssetVO != null)
-			    	        	statusBean.getCreatedBeans().add(new CreatedEntityBean(DigitalAssetVO.class.getName(), new Long(newDigitalAssetVO.getId())));
-			    	    }	 
-	    	        }
-	    	        
-	    	        
-	    	        List contentCategories = (List)contentVersion.get("contentCategories");
-	    	        
-	    	        logger.info("contentCategories:" + contentCategories);
-	    	        if(contentCategories != null)
-	    	        {
-		    	        Iterator contentCategoriesIterator = contentCategories.iterator();
-		    	        while(contentCategoriesIterator.hasNext())
-		    	        {
-		    	        	String contentCategoryString = (String)contentCategoriesIterator.next();
-		    	        	String[] split = contentCategoryString.split("=");
-		    	        	String categoryKey = split[0];
-		    	        	String fullCategoryName = split[1];
-		    	        	logger.info("categoryKey:" + categoryKey);
-		    	        	logger.info("fullCategoryName:" + fullCategoryName);
-		    	        	
-		    	        	CategoryVO categoryVO = CategoryController.getController().findByPath(fullCategoryName);
-		    	        	logger.info("categoryVO:" + categoryVO);
+						logger.info("languageId:" + languageId);
+						logger.info("stateId:" + stateId);
+						logger.info("allowHTMLContent:" + allowHTMLContent);
+						logger.info("allowExternalLinks:" + allowExternalLinks);
+						logger.info("allowDollarSigns:" + allowDollarSigns);
+						logger.info("allowAnchorSigns:" + allowAnchorSigns);
 
-			    	        List categoryVOList = new ArrayList();
-			    	        categoryVOList.add(categoryVO);
-			    	        
-			    	        Database db = beginTransaction();
+						ContentVersionVO contentVersionVO = new ContentVersionVO();
+						contentVersionVO.setLanguageId(languageId);
 
-			    			try
-			    			{
-			    				ContentVersion latestContentVersion = ContentVersionController.getContentVersionController().getContentVersionWithId(newContentVersionVO.getId(), db);
-			    				logger.info("Adding categoryKey:" + categoryKey + " to " + newContentVersionVO.getId() + ":" + categoryVO);
-				    	        //ContentCategoryController.getController().create(categoryVOList, newContentVersionVO, categoryKey);
-				    			final List categories = categoryVOListToCategoryList(categoryVOList, db);
-				    			ContentCategoryController.getController().create(categories, latestContentVersion, categoryKey, db);
-				    			
-				    			commitTransaction(db);
-			    			}
-			    			catch (Exception e)
-			    			{
-			    				logger.warn("Error in contentCategory loop: " + e.getMessage(), e);
-			    				rollbackTransaction(db);
-			    				throw new SystemException(e.getMessage());
-			    			}
-			    		}	 
-	    	        }
-	    	        
-	    	        
-	    	        //Should we also change state on newly created content version?
-	    	        if(stateId != null && !stateId.equals(ContentVersionVO.WORKING_STATE))
-	    	        {
-	    	        	List events = new ArrayList();
-	    	    		ContentStateController.changeState(newContentVersionId, stateId, "Remote update from deliver", false, this.principal, newContentVO.getId(), events);
-	    	        
-	    	    		if(stateId.equals(ContentVersionVO.PUBLISHED_STATE))
-	    	    		{
-	    	    		    PublicationVO publicationVO = new PublicationVO();
-	    	    		    publicationVO.setName("Direct publication by " + this.principal.getName());
-	    	    		    publicationVO.setDescription("Direct publication from deliver");
-	    	    		    publicationVO.setRepositoryId(repositoryId);
-	    	    		    publicationVO = PublicationController.getController().createAndPublish(publicationVO, events, false, this.principal);
-	    	    		}
+						if(contentVersionVO.getVersionModifier() == null)
+							contentVersionVO.setVersionModifier(this.principal.getName());
 
-	    	        }
-	            }
-	            
-	            List accessRights = (List)content.get("accessRights");
+						@SuppressWarnings("unchecked")
+						Map<String, String> attributes = (Map<String, String>)contentVersion.get("contentVersionAttributes");
+
+						DOMBuilder domBuilder = new DOMBuilder();
+						Document document = domBuilder.createDocument();
+
+						Element rootElement = domBuilder.addElement(document, "root");
+						domBuilder.addAttribute(rootElement, "xmlns", "x-schema:Schema.xml");
+						Element attributesRoot = domBuilder.addElement(rootElement, "attributes");
+
+						Iterator<String> attributesIterator = attributes.keySet().iterator();
+						while(attributesIterator.hasNext())
+						{
+							String attributeName  = attributesIterator.next();
+							String attributeValue = attributes.get(attributeName);
+
+							attributeValue = cleanAttributeValue(attributeValue, allowHTMLContent, allowExternalLinks, allowDollarSigns, allowAnchorSigns);
+
+							Element attribute = domBuilder.addElement(attributesRoot, attributeName);
+							domBuilder.addCDATAElement(attribute, attributeValue);
+						}
+
+						contentVersionVO.setVersionValue(document.asXML());
+
+						ContentVersionVO newContentVersionVO = contentVersionControllerProxy.acCreate(this.principal, newContentVO.getId(), languageId, contentVersionVO);
+						Integer newContentVersionId = newContentVersionVO.getId();
+						statusBean.getCreatedBeans().add(new CreatedEntityBean(ContentVersionVO.class.getName(), new Long(newContentVersionId)));
+
+						@SuppressWarnings("unchecked")
+						List<RemoteAttachment> digitalAssets = (List<RemoteAttachment>)contentVersion.get("digitalAssets");
+
+						logger.info("digitalAssets:" + digitalAssets);
+						if(digitalAssets != null)
+						{
+							Iterator<RemoteAttachment> digitalAssetIterator = digitalAssets.iterator();
+							while(digitalAssetIterator.hasNext())
+							{
+								RemoteAttachment remoteAttachment = digitalAssetIterator.next();
+								logger.info("digitalAssets in ws:" + remoteAttachment);
+
+								DigitalAssetVO newAsset = new DigitalAssetVO();
+								newAsset.setAssetContentType(remoteAttachment.getContentType());
+								newAsset.setAssetKey(remoteAttachment.getName());
+								newAsset.setAssetFileName(remoteAttachment.getFileName());
+								newAsset.setAssetFilePath(remoteAttachment.getFilePath());
+								newAsset.setAssetFileSize(new Integer(new Long(remoteAttachment.getBytes().length).intValue()));
+								//is = new FileInputStream(renamedFile);
+								InputStream is = new ByteArrayInputStream(remoteAttachment.getBytes());
+
+								DigitalAssetVO newDigitalAssetVO = DigitalAssetController.create(newAsset, is, newContentVersionId, principal);
+								if(newDigitalAssetVO != null)
+									statusBean.getCreatedBeans().add(new CreatedEntityBean(DigitalAssetVO.class.getName(), new Long(newDigitalAssetVO.getId())));
+							}
+						}
+
+						@SuppressWarnings("unchecked")
+						List<String> contentCategories = (List<String>)contentVersion.get("contentCategories");
+
+						logger.info("contentCategories:" + contentCategories);
+						if(contentCategories != null)
+						{
+							Iterator<String> contentCategoriesIterator = contentCategories.iterator();
+							while(contentCategoriesIterator.hasNext())
+							{
+								String contentCategoryString = contentCategoriesIterator.next();
+								String[] split = contentCategoryString.split("=");
+								String categoryKey = split[0];
+								String fullCategoryName = split[1];
+								logger.info("categoryKey:" + categoryKey);
+								logger.info("fullCategoryName:" + fullCategoryName);
+
+								CategoryVO categoryVO = CategoryController.getController().findByPath(fullCategoryName);
+								logger.info("categoryVO:" + categoryVO);
+
+								List<CategoryVO> categoryVOList = new ArrayList<CategoryVO>();
+								categoryVOList.add(categoryVO);
+
+								Database db = beginTransaction();
+
+								try
+								{
+									ContentVersion latestContentVersion = ContentVersionController.getContentVersionController().getContentVersionWithId(newContentVersionVO.getId(), db);
+									logger.info("Adding categoryKey:" + categoryKey + " to " + newContentVersionVO.getId() + ":" + categoryVO);
+									//ContentCategoryController.getController().create(categoryVOList, newContentVersionVO, categoryKey);
+									final List<Category> categories = categoryVOListToCategoryList(categoryVOList, db);
+									ContentCategoryController.getController().create(categories, latestContentVersion, categoryKey, db);
+
+									commitTransaction(db);
+								}
+								catch (Exception e)
+								{
+									logger.warn("Error in contentCategory loop: " + e.getMessage(), e);
+									rollbackTransaction(db);
+									throw new SystemException(e.getMessage());
+								}
+							}
+						}
+
+						//Should we also change state on newly created content version?
+						if(stateId != null && !stateId.equals(ContentVersionVO.WORKING_STATE))
+						{
+							List<EventVO> events = new ArrayList<EventVO>();
+							ContentStateController.changeState(newContentVersionId, stateId, "Remote update from deliver", false, this.principal, newContentVO.getId(), events);
+
+							if(stateId.equals(ContentVersionVO.PUBLISHED_STATE))
+							{
+								PublicationVO publicationVO = new PublicationVO();
+								publicationVO.setName("Direct publication by " + this.principal.getName());
+								publicationVO.setDescription("Direct publication from deliver");
+								publicationVO.setRepositoryId(repositoryId);
+								publicationVO = PublicationController.getController().createAndPublish(publicationVO, events, false, this.principal);
+							}
+
+						}
+					}
+				}
+
+	            @SuppressWarnings("unchecked")
+				List<Map<String, Object>> accessRights = (List<Map<String, Object>>)content.get("accessRights");
 	            if(accessRights != null)
 	            {
-		            Iterator accessRightsIterator = accessRights.iterator();
+		            Iterator<Map<String, Object>> accessRightsIterator = accessRights.iterator();
 		            while(accessRightsIterator.hasNext())
 		            {
-		                Map accessRightMap = (Map)accessRightsIterator.next();
+		                Map<String, Object> accessRightMap = accessRightsIterator.next();
 		                
 		                String interceptionPointName = (String)accessRightMap.get("interceptionPointName");
 		                String parameters = (String)accessRightMap.get("parameters");
@@ -530,64 +544,73 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
 			    	        
 			    	        AccessRight accessRight = AccessRightController.getController().create(accessRightVO, interceptionPoint, db);
 			    	        
-			    	        List accessRightRoles = (List)accessRightMap.get("accessRightRoles");
-			    	        if(accessRightRoles != null)
+							@SuppressWarnings("unchecked")
+							List<String> accessRightRoles = (List<String>)accessRightMap.get("accessRightRoles");
+							if(accessRightRoles != null)
 				            {
-			    	        	Iterator accessRightRolesIterator = accessRightRoles.iterator();
+								Iterator<String> accessRightRolesIterator = accessRightRoles.iterator();
 					            while(accessRightRolesIterator.hasNext())
 					            {
 					                //Map accessRightRoleMap = (Map)accessRightRolesIterator.next();
 					                
-					                String roleName = (String)accessRightRolesIterator.next();
+					                String roleName = accessRightRolesIterator.next();
 					                
 								    AccessRightRoleVO accessRightRoleVO = new AccessRightRoleVO();
 								    accessRightRoleVO.setRoleName(roleName);
 								    AccessRightRole accessRightRole = AccessRightController.getController().createAccessRightRole(db, accessRightRoleVO, accessRight);
-								    accessRight.getRoles().add(accessRightRole);
+									@SuppressWarnings("unchecked")
+									Collection<AccessRightRole> roles = accessRight.getRoles();
+									roles.add(accessRightRole);
 					            }
 				            }
-			    	        
-			    	        List accessRightGroups = (List)accessRightMap.get("accessRightGroups");
+
+							@SuppressWarnings("unchecked")
+							List<String> accessRightGroups = (List<String>)accessRightMap.get("accessRightGroups");
 			    	        if(accessRightGroups != null)
 				            {
-					            Iterator accessRightGroupsIterator = accessRightGroups.iterator();
+					            Iterator<String> accessRightGroupsIterator = accessRightGroups.iterator();
 					            while(accessRightGroupsIterator.hasNext())
 					            {
-					                String groupName = (String)accessRightGroupsIterator.next();
+					                String groupName = accessRightGroupsIterator.next();
 					                
 								    AccessRightGroupVO accessRightGroupVO = new AccessRightGroupVO();
 								    accessRightGroupVO.setGroupName(groupName);
 								    AccessRightGroup accessRightGroup = AccessRightController.getController().createAccessRightGroup(db, accessRightGroupVO, accessRight);
-								    accessRight.getGroups().add(accessRightGroup);
+									@SuppressWarnings("unchecked")
+									Collection<AccessRightGroup> groups = accessRight.getGroups();
+									groups.add(accessRightGroup);
 					            }
 				            }
 
-			    	        List accessRightUsers = (List)accessRightMap.get("accessRightUsers");
+							@SuppressWarnings("unchecked")
+							List<String> accessRightUsers = (List<String>)accessRightMap.get("accessRightUsers");
 			    	        if(accessRightUsers != null)
 				            {
-					            Iterator accessRightUsersIterator = accessRightUsers.iterator();
+					            Iterator<String> accessRightUsersIterator = accessRightUsers.iterator();
 					            while(accessRightUsersIterator.hasNext())
 					            {
-					                String userName = (String)accessRightUsersIterator.next();
+					                String userName = accessRightUsersIterator.next();
 					                
 								    AccessRightUserVO accessRightUserVO = new AccessRightUserVO();
 								    accessRightUserVO.setUserName(userName);
 								    AccessRightUser accessRightUser = AccessRightController.getController().createAccessRightUser(db, accessRightUserVO, accessRight);
-								    accessRight.getUsers().add(accessRightUser);
+									@SuppressWarnings("unchecked")
+									Collection<AccessRightUser> users = accessRight.getUsers();
+									users.add(accessRightUser);
 					            }
 				            }
 
 							commitTransaction(db);
-			    		} 
-			    		catch (Exception e) 
-			    		{
-			    			logger.warn("An error occurred so we should not complete the transaction:" + e);
-			    			rollbackTransaction(db);
-			    			throw new SystemException(e.getMessage());
-			    		}
+						}
+						catch (Exception ex)
+						{
+							logger.error("An error occurred so we should not complete the transaction. Message: " + ex.getMessage());
+							logger.warn("An error occurred so we should not complete the transaction.", ex);
+							rollbackTransaction(db);
+							throw new SystemException(ex.getMessage());
+						}
 		            }
 	            }
-	            
 	            newContentIdList.add(newContentVO.getId());
 	            
 	        }
@@ -614,16 +637,17 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
 	 * @return
 	 * @throws Exception
 	 */
-	private List categoryVOListToCategoryList(final List categoryVOList, Database db) throws Exception 
+	private List<Category> categoryVOListToCategoryList(final List<CategoryVO> categoryVOList, Database db) throws Exception
 	{
-		final List result = new ArrayList();
-		for(Iterator i=categoryVOList.iterator(); i.hasNext(); ) 
+		final List<Category> result = new ArrayList<Category>();
+		for (Iterator<CategoryVO> i = categoryVOList.iterator(); i.hasNext(); )
 		{
-			CategoryVO categoryVO = (CategoryVO) i.next();
+			CategoryVO categoryVO = i.next();
 			result.add(CategoryController.getController().findById(categoryVO.getCategoryId(), db));
 		}
 		return result;
 	}
+
 	/**
      * Updates a content.
      */
@@ -649,7 +673,8 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
         try
         {
 			final DynamicWebserviceSerializer serializer = new DynamicWebserviceSerializer();
-            Map content = (Map) serializer.deserialize(inputsArray);
+			@SuppressWarnings("unchecked")
+			Map<String, Object> content = (Map<String, Object>) serializer.deserialize(inputsArray);
 	        logger.info("content:" + content);
 
             initializePrincipal(principalName);
@@ -693,7 +718,8 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
             if(expireDateTime != null)
                 contentVO.setExpireDateTime(expireDateTime);
 
-            ContentVO newContentVO = contentControllerProxy.acUpdate(this.principal, contentVO, null);
+            @SuppressWarnings("unused")
+			ContentVO newContentVO = contentControllerProxy.acUpdate(this.principal, contentVO, null);
 	           
 	        logger.info("Done with contents..");
 
@@ -735,11 +761,12 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
         try
         {
 			final DynamicWebserviceSerializer serializer = new DynamicWebserviceSerializer();
-            Map contentVersion = (Map) serializer.deserialize(inputsArray);
-	        logger.info("contentVersion:" + contentVersion);
+			@SuppressWarnings("unchecked")
+			Map<String, Object> contentVersion = (Map<String, Object>) serializer.deserialize(inputsArray);
+			logger.info("contentVersion:" + contentVersion);
 
-            initializePrincipal(principalName);
-            
+			initializePrincipal(principalName);
+
             Integer contentVersionId 		= (Integer)contentVersion.get("contentVersionId");
             Integer contentId 		 		= (Integer)contentVersion.get("contentId");
             Integer languageId 		 		= (Integer)contentVersion.get("languageId");
@@ -794,8 +821,23 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
             else
                 contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, languageId);
                 
-            logger.info("contentVersionVO:" + contentVersionVO);
-
+            if(contentVersionVO != null)
+            {
+				try
+				{
+					logger.info("contentVersionVO:" + contentVersionVO);
+					contentVersionVO = ContentStateController.changeState(contentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "Remote update from deliver", false, this.principal, contentVersionVO.getContentId(), new ArrayList<EventVO>());
+				}
+				catch (Exception e)
+				{
+					logger.error("Error when changing state to working: " + e.getMessage(), e);
+				}
+				if (logger.isInfoEnabled())
+				{
+					logger.info("contentVersionVO (after state change):" + contentVersionVO);
+				}
+			}
+			boolean isNewlyCreatedVersion;
             if(contentVersionVO == null)
             {
             	logger.info("createVersionIfNotExists:" + createVersionIfNotExists);
@@ -807,19 +849,22 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
             		newContentVersionVO.setVersionModifier("" + principalName);
 
     	            contentVersionVO = contentVersionControllerProxy.acCreate(this.principal, contentId, languageId, newContentVersionVO);            		
-    	            logger.info("contentVersionVO:" + contentVersionVO);
+					isNewlyCreatedVersion = true;
+					logger.info("contentVersionVO (newly created):" + contentVersionVO);
             	}
             	else
-            		return new Boolean(false);            	
+					return new Boolean(false);
             }
             else
             {
 	            contentVersionVO.setVersionComment(versionComment);
 	            contentVersionVO.setModifiedDateTime(new Date());
 	            contentVersionVO.setVersionModifier("" + principalName);
+				isNewlyCreatedVersion = false;
             }
-            
-            Map attributes = (Map)contentVersion.get("contentVersionAttributes");
+
+			@SuppressWarnings("unchecked")
+			Map<String, String> attributes = (Map<String, String>)contentVersion.get("contentVersionAttributes");
             
             if(attributes != null && attributes.size() > 0)
             {
@@ -828,7 +873,7 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
             	Element attributesRoot = null;
         		Document document = null;
         		
-            	if(keepExistingAttributes)
+				if (keepExistingAttributes && !isNewlyCreatedVersion)
             	{
             		String existingXML = contentVersionVO.getVersionValue();
             		document = domBuilder.getDocument(existingXML);
@@ -845,82 +890,94 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
             	if(logger.isDebugEnabled())
             		logger.info("attributesRoot:" + attributesRoot);
             	
-	            Iterator attributesIterator = attributes.keySet().iterator();
+	            Iterator<String> attributesIterator = attributes.keySet().iterator();
 	            while(attributesIterator.hasNext())
 	            {
-	                String attributeName  = (String)attributesIterator.next();
-	                String attributeValue = (String)attributes.get(attributeName);
+	                String attributeName  = attributesIterator.next();
+	                String attributeValue = attributes.get(attributeName);
 	                
                     attributeValue = cleanAttributeValue(attributeValue, allowHTMLContent, allowExternalLinks, allowDollarSigns, allowAnchorSigns);
                     
                     if(keepExistingAttributes)
 	                {
                     	Element attribute = attributesRoot.element(attributeName);
-                    	if(attribute != null)
-                    	{
-                    		attribute.clearContent();
-                        	domBuilder.addCDATAElement(attribute, attributeValue);
-                    	}
-    	                else
-    	                {
-                        	attribute = domBuilder.addElement(attributesRoot, attributeName);
-        	                domBuilder.addCDATAElement(attribute, attributeValue);
-    	                }
+						if (attribute == null)
+						{
+							attribute = domBuilder.addElement(attributesRoot, attributeName);
+						}
+						attribute.clearContent();
+						domBuilder.addCDATAElement(attribute, attributeValue);
 	                }
 	                else
 	                {
                     	Element attribute = domBuilder.addElement(attributesRoot, attributeName);
-    	                domBuilder.addCDATAElement(attribute, attributeValue);
+						domBuilder.addCDATAElement(attribute, attributeValue);
 	                }
 	            }	                
 
 	            contentVersionVO.setVersionValue(document.asXML());
             }
-            
+
             ContentVersionControllerProxy.getController().acUpdate(principal, contentId, languageId, contentVersionVO);
-            
+
             //Assets now
-            List digitalAssets = (List)contentVersion.get("digitalAssets");
-	        
-            if(digitalAssets != null)
-            {
-		        logger.info("digitalAssets:" + digitalAssets.size());
-		        
-		        Iterator digitalAssetIterator = digitalAssets.iterator();
-		        while(digitalAssetIterator.hasNext())
-		        {
-		            RemoteAttachment remoteAttachment = (RemoteAttachment)digitalAssetIterator.next();
-	    	        logger.info("digitalAssets in ws:" + remoteAttachment);
-	    	        	    	        
-	            	DigitalAssetVO newAsset = new DigitalAssetVO();
-					newAsset.setAssetContentType(remoteAttachment.getContentType());
-					newAsset.setAssetKey(remoteAttachment.getName());
-					newAsset.setAssetFileName(remoteAttachment.getFileName());
-					newAsset.setAssetFilePath(remoteAttachment.getFilePath());
-					newAsset.setAssetFileSize(new Integer(new Long(remoteAttachment.getBytes().length).intValue()));
+            @SuppressWarnings("unchecked")
+			List<RemoteAttachment> digitalAssets = (List<RemoteAttachment>)contentVersion.get("digitalAssets");
+
+			if(digitalAssets != null)
+			{
+				logger.info("digitalAssets:" + digitalAssets.size());
+				Iterator<RemoteAttachment> digitalAssetIterator = digitalAssets.iterator();
+				while(digitalAssetIterator.hasNext())
+				{
+					RemoteAttachment remoteAttachment = digitalAssetIterator.next();
+					logger.info("digitalAssets in ws:" + remoteAttachment);
+
 					InputStream is = new ByteArrayInputStream(remoteAttachment.getBytes());
-	
-	    	        if(updateExistingAssets)
-	    	        	ContentVersionController.getContentVersionController().createOrUpdateDigitalAsset(newAsset, is, contentVersionVO.getContentVersionId(), principal);
-	    	        else
-	    	        	DigitalAssetController.create(newAsset, is, contentVersionVO.getContentVersionId(), principal);
-	    	    }
-            }
-            			
+
+					DigitalAssetVO existingAssetVO = DigitalAssetController.getLatestDigitalAssetVO(contentVersionVO.getId(), remoteAttachment.getName());
+					if(updateExistingAssets && existingAssetVO != null)
+					{
+						ContentVersionController.getContentVersionController().deleteDigitalAssetRelation(contentVersionVO.getId(), existingAssetVO.getId(), principal);
+
+						DigitalAssetVO digitalAssetVO = new DigitalAssetVO();
+						digitalAssetVO.setAssetContentType(remoteAttachment.getContentType());
+						digitalAssetVO.setAssetKey(remoteAttachment.getName());
+						digitalAssetVO.setAssetFileName(remoteAttachment.getFileName());
+						digitalAssetVO.setAssetFilePath(remoteAttachment.getFilePath());
+						digitalAssetVO.setAssetFileSize(new Integer(new Long(remoteAttachment.getBytes().length).intValue()));
+
+						DigitalAssetController.create(digitalAssetVO, is, contentVersionVO.getContentVersionId(), principal);
+					}
+					else
+					{
+						DigitalAssetVO newAsset = new DigitalAssetVO();
+						newAsset.setAssetContentType(remoteAttachment.getContentType());
+						newAsset.setAssetKey(remoteAttachment.getName());
+						newAsset.setAssetFileName(remoteAttachment.getFileName());
+						newAsset.setAssetFilePath(remoteAttachment.getFilePath());
+						newAsset.setAssetFileSize(new Integer(new Long(remoteAttachment.getBytes().length).intValue()));
+
+						DigitalAssetController.create(newAsset, is, contentVersionVO.getContentVersionId(), principal);
+					}
+				}
+			}
+
 			if(!keepExistingCategories)
 			{
 				ContentCategoryController.getController().deleteByContentVersion(contentVersionVO.getId()); // .deleteByContentVersion(contentVersionVO.getId(), db);
 			}
 
-            List contentCategories = (List)contentVersion.get("contentCategories");
+			@SuppressWarnings("unchecked")
+			List<String> contentCategories = (List<String>)contentVersion.get("contentCategories");
 	        
 	        logger.info("contentCategories:" + contentCategories);
 	        if(contentCategories != null)
 	        {
-    	        Iterator contentCategoriesIterator = contentCategories.iterator();
+				Iterator<String> contentCategoriesIterator = contentCategories.iterator();
     	        while(contentCategoriesIterator.hasNext())
     	        {
-    	        	String contentCategoryString = (String)contentCategoriesIterator.next();
+					String contentCategoryString = contentCategoriesIterator.next();
     	        	String[] split = contentCategoryString.split("=");
     	        	String categoryKey = split[0];
     	        	String fullCategoryName = split[1];
@@ -930,7 +987,7 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
     	        	CategoryVO categoryVO = CategoryController.getController().findByPath(fullCategoryName);
     	        	logger.info("categoryVO:" + categoryVO);
 
-	    	        List categoryVOList = new ArrayList();
+					List<CategoryVO> categoryVOList = new ArrayList<CategoryVO>();
 	    	        categoryVOList.add(categoryVO);
 	    	        
 	    	        Database db = beginTransaction();
@@ -941,7 +998,7 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
 
 	    				logger.info("Adding categoryKey:" + categoryKey + " to " + contentVersionVO.getId() + ":" + categoryVO);
 		    	        //ContentCategoryController.getController().create(categoryVOList, newContentVersionVO, categoryKey);
-		    			final List categories = categoryVOListToCategoryList(categoryVOList, db);		    			
+						final List<Category> categories = (List<Category>)categoryVOListToCategoryList(categoryVOList, db);
 		    			ContentCategoryController.getController().create(categories, latestContentVersion, categoryKey, db);
 		    			
 		    			commitTransaction(db);
@@ -954,12 +1011,11 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
 	    			}
 	    		}	 
 	        }
-	        
-	        
+
 	        //Should we also change state on newly created content version?
 	        if(stateId != null && !stateId.equals(ContentVersionVO.WORKING_STATE))
 	        {
-	        	List events = new ArrayList();
+				List<EventVO> events = new ArrayList<EventVO>();
 	    		ContentStateController.changeState(contentVersionVO.getId(), stateId, "Remote update from deliver", false, this.principal, contentVersionVO.getContentId(), events);
 	        
 	    		if(stateId.equals(ContentVersionVO.PUBLISHED_STATE))
@@ -972,8 +1028,8 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
 	    		    publicationVO = PublicationController.getController().createAndPublish(publicationVO, events, false, this.principal);
 	    		}
 
-	        }
-            
+			}
+
 	        logger.info("Done with contentVersion..");
 
         }
@@ -1016,7 +1072,8 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
         try
         {
 			final DynamicWebserviceSerializer serializer = new DynamicWebserviceSerializer();
-            Map digitalAsset = (Map) serializer.deserialize(inputsArray);
+			@SuppressWarnings("unchecked")
+			Map<String, Object> digitalAsset = (Map<String, Object>) serializer.deserialize(inputsArray);
 	        logger.info("digitalAsset:" + digitalAsset);
 
             initializePrincipal(principalName);
@@ -1074,7 +1131,8 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
         try
         {
 			final DynamicWebserviceSerializer serializer = new DynamicWebserviceSerializer();
-            Map content = (Map) serializer.deserialize(inputsArray);
+			@SuppressWarnings("unchecked")
+			Map<String, Object> content = (Map<String, Object>) serializer.deserialize(inputsArray);
 	        logger.info("content:" + content);
 
             initializePrincipal(principalName);
@@ -1094,13 +1152,14 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
             if(forceDelete.booleanValue())
             {
             	ContentVO currentContentVO = ContentControllerProxy.getContentController().getContentVOWithId(contentId);
-		        List contentVersionsVOList = ContentVersionController.getContentVersionController().getPublishedActiveContentVersionVOList(contentId);
-		        
-		        List events = new ArrayList();
-				Iterator it = contentVersionsVOList.iterator();
+		        @SuppressWarnings("unchecked")
+				List<ContentVersionVO> contentVersionsVOList = ContentVersionController.getContentVersionController().getPublishedActiveContentVersionVOList(contentId);
+
+				List<EventVO> events = new ArrayList<EventVO>();
+				Iterator<ContentVersionVO> it = contentVersionsVOList.iterator();
 				while(it.hasNext())
 				{
-					ContentVersionVO contentVersionVO = (ContentVersionVO)it.next();
+					ContentVersionVO contentVersionVO = it.next();
 					
 					EventVO eventVO = new EventVO();
 					eventVO.setDescription("Unpublished before forced deletion");
@@ -1162,7 +1221,8 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
         try
         {
 			final DynamicWebserviceSerializer serializer = new DynamicWebserviceSerializer();
-            Map digitalAsset = (Map) serializer.deserialize(inputsArray);
+			@SuppressWarnings("unchecked")
+			Map<String, Object> digitalAsset = (Map<String, Object>) serializer.deserialize(inputsArray);
 	        logger.info("digitalAsset:" + digitalAsset);
 
             initializePrincipal(principalName);

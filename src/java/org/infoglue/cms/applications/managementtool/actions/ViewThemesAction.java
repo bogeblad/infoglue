@@ -57,6 +57,11 @@ public class ViewThemesAction extends InfoGlueAbstractAction
 	private List<String> themes = new ArrayList<String>();
 	private String theme = null;
 	
+	//TODO: This solution assumes too much about the app setup. Make a distributed function which points to the database instead.
+	private String  baseCMSPath = CmsPropertyHandler.getContextDiskPath();
+	private String baseWorkingPath = baseCMSPath.replace("infoglueCMS", "infoglueDeliverWorking");
+	private String[] serverList = new String[]{baseCMSPath, baseWorkingPath};
+
 	public String doExecute() throws Exception
     {
 		this.themes = ThemeController.getController().getAvailableThemes();
@@ -79,7 +84,14 @@ public class ViewThemesAction extends InfoGlueAbstractAction
 
 		file.renameTo(newFile);
 		
-		FileHelper.unzipFile(newFile, CmsPropertyHandler.getContextRootPath() + File.separator + "css" + File.separator + "skins");
+		if (hasDeliverWorking()) {
+			for (String path : serverList) {
+			
+				FileHelper.unzipFile(newFile, path + File.separator + "css" + File.separator + "skins");
+			}
+		} else {
+			FileHelper.unzipFile(newFile, CmsPropertyHandler.getContextRootPath() + File.separator + "css" + File.separator + "skins");
+		}
 		
 		// Create Digital Asset for label
 		logger.info("Creating Digital Asset for themes");
@@ -112,7 +124,20 @@ public class ViewThemesAction extends InfoGlueAbstractAction
 		
     	return doExecute();
     }
-
+    
+	private boolean hasDeliverWorking() {
+		List urlList = CmsPropertyHandler.getInternalDeliveryUrls();
+		boolean hasWorking = false;
+		for (Iterator listIt = urlList.iterator(); listIt.hasNext();) {
+			String url = (String) listIt.next();
+			
+			if (url.matches("(.*)infoglueDeliverWorking(.*)")) {
+			
+				hasWorking = true;
+			}
+		}
+		return hasWorking;
+	}
     public String doDelete() throws Exception
     {
 		File file = new File(CmsPropertyHandler.getContextRootPath() + File.separator + "css" + File.separator + "skins" + File.separator + theme);
@@ -130,10 +155,20 @@ public class ViewThemesAction extends InfoGlueAbstractAction
 				ThemeController.delete(oldAsset.getId());
 			}
 		}
-		
-		if(file.exists())
-			FileHelper.deleteDirectory(file);
-
+	
+		if (hasDeliverWorking()) {
+		for (String path : serverList) {
+			File diskFile = new File(path + File.separator + "css" + File.separator + "skins" + File.separator + theme);
+			if(diskFile.exists()) {
+				FileHelper.deleteDirectory(diskFile);
+			}
+		}
+		} else {
+			File diskFile = new File(CmsPropertyHandler.getContextRootPath() + File.separator + "css" + File.separator + "skins" + File.separator + theme);
+			if(diskFile.exists()) {
+				FileHelper.deleteDirectory(diskFile);
+			}
+		}
 		return doExecute();
     }
 

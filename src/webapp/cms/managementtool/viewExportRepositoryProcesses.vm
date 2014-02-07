@@ -128,7 +128,7 @@
 </div>
 
 <p>
-	<a href="javascript:window.close();">Close</a>
+	<a href="javascript:window.close();">$ui.getString("tool.contenttool.close")</a>
 </p>
 
 </div>
@@ -310,7 +310,7 @@
 									}
 									if (process.status === 1)
 									{
-										processEvents.append('<li class="activate">&nbsp;</li>');
+										processEvents.append('<li><img class="loadingSmall" src="css/images/v3/loadingAnimation.gif"/></li>');
 									}
 								}
 							}

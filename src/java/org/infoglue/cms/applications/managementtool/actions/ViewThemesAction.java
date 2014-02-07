@@ -57,6 +57,11 @@ public class ViewThemesAction extends InfoGlueAbstractAction
 	private List<String> themes = new ArrayList<String>();
 	private String theme = null;
 	
+	//TODO: This solution assumes too much about the app setup. Make a distributed function which points to the database instead.
+	private String  baseCMSPath = CmsPropertyHandler.getContextDiskPath();
+	private String baseWorkingPath = baseCMSPath.replace("infoglueCMS", "infoglueDeliverWorking");
+	private String[] serverList = new String[]{baseCMSPath, baseWorkingPath};
+	
 	public String doExecute() throws Exception
     {
 		this.themes = ThemeController.getController().getAvailableThemes();
@@ -79,8 +84,11 @@ public class ViewThemesAction extends InfoGlueAbstractAction
 
 		file.renameTo(newFile);
 		
-		FileHelper.unzipFile(newFile, CmsPropertyHandler.getContextRootPath() + File.separator + "css" + File.separator + "skins");
 		
+		for (String path : serverList) {
+		
+			FileHelper.unzipFile(newFile, path + File.separator + "css" + File.separator + "skins");
+		}
 		// Create Digital Asset for label
 		logger.info("Creating Digital Asset for themes");
 		DigitalAssetVO newAsset = new DigitalAssetVO();
@@ -130,10 +138,12 @@ public class ViewThemesAction extends InfoGlueAbstractAction
 				ThemeController.delete(oldAsset.getId());
 			}
 		}
-		
-		if(file.exists())
-			FileHelper.deleteDirectory(file);
-
+		for (String path : serverList) {
+			File diskFile = new File(path + File.separator + "css" + File.separator + "skins" + File.separator + theme);
+			if(diskFile.exists()) {
+				FileHelper.deleteDirectory(diskFile);
+			}
+		}
 		return doExecute();
     }
 

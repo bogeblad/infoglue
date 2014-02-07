@@ -27,6 +27,11 @@ body.generaltooledit {
 	float: right;
 	padding-top: 2px;
 }
+.noPadding 
+{
+	float: right;
+	padding-top: 0px !important;
+}
 #footertoolbar {
 	position: fixed; 
 	height: 43px;

@@ -292,7 +292,7 @@
 		<div id="menutoolbarLeft" style="width: 100%;">
 		</div>
 		
-		<div id="menuToolbarRight">
+		<div id="menuToolbarRight" class="noPadding">
 			<a class="igToolbarButton igToolbarHeaderButton" href="#" onclick="refreshWorkSurface();" id="reloadButton" title="">
 				<span class="igToolbarButtonOuterSpan igToolbarHeaderButton">
 					<span class="reloadSitenode" title="">$ui.getString("tool.structuretool.toolbarV3.reloadPageTitle")</span>

@@ -15,7 +15,7 @@
 		
 		$("#createDatabase").change(function () {
     		//alert("Val: " + $("#createDatabase").attr("checked"));
-    		if($("#createDatabase").attr("checked") == true)
+       		if($("#createDatabase").attr("checked") == true || $("#createDatabase").attr("checked") == "checked")
           		$("#dbaAccount").show();
           	else
           		$("#dbaAccount").hide();

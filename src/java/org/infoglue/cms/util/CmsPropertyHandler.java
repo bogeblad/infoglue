@@ -845,10 +845,10 @@ public class CmsPropertyHandler
 			}
 			
 			String administratorPassword = getProperty("administratorPassword");
-		    if(administratorPassword != null)
-		    	return administratorPassword.equals(password);
-		    else
-		    	return false;
+			if(administratorPassword != null && !administratorPassword.equals("") && !administratorPassword.equals("@administratorPassword@"))
+				return administratorPassword.equals(password);
+			else
+				return false;
 		}
 		catch (Exception e) 
 		{

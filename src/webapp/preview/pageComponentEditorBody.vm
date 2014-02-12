@@ -189,24 +189,22 @@ function registerOnChange()
 						   	cache: false,
 						   	success: function(msg, textStatus){
 								plainAttribute = msg;
-							 	
-							 	if(enableWYSIWYG == "true")
-							 	{
-							 		if(userPrefferredWYSIWYG  == "ckeditor4" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
-							 		{	
-							 			//alert(e.editor.checkDirty());
-							 			if(!e.editor.checkDirty())
-							 			{
-							 				//alert(msg);
-								 			/*
-								 			e.editor.setData(msg, function() {
+
+								if(enableWYSIWYG == "true")
+								{
+									if(userPrefferredWYSIWYG  == "ckeditor4" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
+									{
+										if(!e.editor.checkDirty())
+										{
+											var bookmarks = e.editor.getSelection().createBookmarks2(true);
+											e.editor.setData(msg, function() {
 												this.checkDirty(); // true
+												e.editor.getSelection().selectBookmarks(bookmarks);
 											});
-											*/
 										}
-							 		}
-							 	}
-						   },
+									}
+								}
+							},
 						   error: function (XMLHttpRequest, textStatus, errorThrown) {
 							   //alert("textStatus:" + textStatus);
 							   alert("ResponseCode:" + XMLHttpRequest.status);

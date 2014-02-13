@@ -527,7 +527,7 @@ public class ViewStructureToolToolBarAction extends InfoGlueAbstractAction
 	/**
 	 * <todo>Move to a ConstraintExceptionHelper class?</todo>
 	 */
-	private String getLocalizedErrorMessage(Locale locale, String errorCode) 
+	protected String getLocalizedErrorMessage(Locale locale, String errorCode)
 	{
 		final StringManager stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.entities", locale);
 		return stringManager.getString(errorCode);

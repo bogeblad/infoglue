@@ -40,6 +40,7 @@ import org.apache.xerces.parsers.DOMParser;
 import org.apache.xpath.XPathAPI;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.applications.databeans.AssetKeyDefinition;
 import org.infoglue.cms.applications.databeans.GenericOptionDefinition;
@@ -2498,6 +2499,50 @@ public class ContentTypeDefinitionController extends BaseController
 
 	//**
 	
+	public String getContentTypeDefinitionAttributeDisplayName(Integer contentTypeDefinitionId, String fieldName, String languageCode) throws SystemException
+	{
+		Database db = null;
+		try
+		{
+			return getContentTypeDefinitionAttributeDisplayName(contentTypeDefinitionId, fieldName, languageCode, db);
+		}
+		catch(Throwable tr)
+		{
+			logger.error("Failed to get display name for content type definition. ContentType.id: " + contentTypeDefinitionId + ". Field name: " + fieldName + ". Message: " + tr.getMessage());
+			logger.warn("Failed to get display name for content type definition. ContentType.id: " + contentTypeDefinitionId + ". Field name: " + fieldName, tr);
+			throw new SystemException("Failed to get display name for content type definition. ContentType.id: " + contentTypeDefinitionId + ". Field name: " + fieldName, tr);
+		}
+		finally
+		{
+			if (db != null)
+			{
+				try
+				{
+					db.rollback();
+					db.close();
+				}
+				catch (PersistenceException ex)
+				{
+					logger.error("Error when closing db after failed to get display name for content type definition. Message: " + ex.getMessage());
+					logger.warn("Error when closing db after failed to get display name for content type definition.", ex);
+				}
+			}
+		}
+	}
+
+	public String getContentTypeDefinitionAttributeDisplayName(Integer contentTypeDefinitionId, String fieldName, String languageCode, Database db) throws SystemException, Bug
+	{
+		ContentTypeDefinitionVO contentTypeDefinitionVO = getContentTypeDefinitionVOWithId(contentTypeDefinitionId, db);
+		List<ContentTypeAttribute> attributes = getContentTypeAttributes(contentTypeDefinitionVO, true, languageCode);
+		for (ContentTypeAttribute attribute : attributes)
+		{
+			if (attribute.getName().equals(fieldName))
+			{
+				return attribute.getContentTypeAttribute("title").getContentTypeAttributeParameterValue().getLocalizedValue("label", languageCode);
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * This is a method that gives the user back an newly initialized ValueObject for this entity that the controller

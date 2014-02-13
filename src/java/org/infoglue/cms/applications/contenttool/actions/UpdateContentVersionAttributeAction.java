@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.contenttool.actions;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,6 +34,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.apache.xerces.parsers.DOMParser;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
@@ -286,13 +290,56 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 			//this.getResponse().setContentType("text/plain");
 			this.getResponse().getWriter().println(attributeValue);
 		}
-		catch (ConstraintException ce) 
+		catch (ConstraintException ce)
 		{
-			logger.warn("Error saving attribute - not allowed by validation: " + ce.getMessage());
-			this.getResponse().setStatus(this.getResponse().SC_NOT_ACCEPTABLE);
-			return ERROR;
+			logger.info("Error saving attribute - not allowed by validation: " + ce.getMessage());
+			this.getResponse().setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+			try
+			{
+				final String errorCode = ce.getErrorCode();
+				String localizedErrorMessage;
+				if(errorCode.length() > 5)
+				{
+					localizedErrorMessage = StringEscapeUtils.unescapeXml(errorCode);
+				}
+				else
+				{
+					localizedErrorMessage = getLocalizedErrorMessage(getLocale(), errorCode);
+					String requiredErrorCode = "300";
+					if (requiredErrorCode.equals(errorCode))
+					{
+						try
+						{
+							String fieldName = ce.getFieldName();
+							fieldName = fieldName.substring(fieldName.lastIndexOf(".") + 1);
+							ContentVO contentVO = ContentController.getContentController().getContentVOWithId(this.contentId);
+							String fieldDisplayName = ContentTypeDefinitionController.getController().getContentTypeDefinitionAttributeDisplayName(contentVO.getContentTypeDefinitionId(), fieldName, getLocale().getLanguage());
+							if (fieldDisplayName == null)
+							{
+								logger.info("Did not find a display name for attribute. " + fieldName);
+							}
+							else
+							{
+								localizedErrorMessage += " (" + fieldDisplayName + ")";
+							}
+						}
+						catch (Exception ex)
+						{
+							logger.warn("Failed to get the display name for required field validation error. ContentId: " + contentId + ". FieldName: " + ce.getFieldName() + ". Message: " + ex.getMessage());
+							logger.info("Failed to get the display name for required field validation error. ContentId: " + contentId + ". FieldName: " + ce.getFieldName(), ex);
+						}
+					}
+				}
+				this.getResponse().setCharacterEncoding("utf-8");
+				this.getResponse().getWriter().println(localizedErrorMessage);
+			}
+			catch (IOException ex)
+			{
+				logger.error("Error when reporting constraint exception for content attribute update. Message: " + ex.getMessage());
+			}
+			return NONE;
 		}
-		catch (Throwable t) 
+		catch (Throwable t)
 		{
 			logger.error("Error saving attribute: " + t.getMessage(), t);
 			this.getResponse().setStatus(this.getResponse().SC_INTERNAL_SERVER_ERROR);

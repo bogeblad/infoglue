@@ -1675,7 +1675,7 @@ public class ContentVersionController extends BaseController
         }
         catch(ConstraintException ce)
         {
-        	logger.warn("Validation error:" + ce, ce);
+			logger.info("Validation error:" + ce, ce);
             rollbackTransaction(db);
             throw ce;
         }
@@ -1807,7 +1807,7 @@ public class ContentVersionController extends BaseController
 		}
 		catch(ConstraintException ce)
 		{
-			logger.warn("Validation error:" + ce, ce);
+			logger.info("Validation error:" + ce, ce);
 			rollbackTransaction(db);
 			throw ce;
 		}

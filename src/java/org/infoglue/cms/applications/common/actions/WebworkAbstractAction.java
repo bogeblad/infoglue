@@ -30,6 +30,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -346,19 +347,20 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 	}
 
 	/**
-     * <todo>Move to a ConstraintExceptionHelper class?</todo>
-     */
-  
-  	private String getLocalizedErrorMessage(Locale locale, String errorCode) 
-  	{
-    	// <todo>fetch packagename from somewhere</todo>
-    	StringManager stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.entities", locale);
+	 * <todo>Move to a ConstraintExceptionHelper class?</todo>
+	 * @throws NullPointerException		If any of the arguments are null
+	 * @throws MissingResourceException	If no key matches the given <em>errorCode</em>
+	 */
+	protected String getLocalizedErrorMessage(Locale locale, String errorCode) throws NullPointerException, MissingResourceException
+	{
+		// <todo>fetch packagename from somewhere</todo>
+		StringManager stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.entities", locale);
 
-	    // check if a specific error message exists - <todo/>	
-  	  	// nah, use the general error message
-    	return stringManager.getString(errorCode);
-  	}
-  
+		// check if a specific error message exists - <todo/>
+		// nah, use the general error message
+		return stringManager.getString(errorCode);
+	}
+
 
   	public String getLocalizedString(Locale locale, String key) 
   	{

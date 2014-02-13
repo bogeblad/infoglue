@@ -1049,6 +1049,13 @@ public class InstallationController extends BaseController
 		try 
 		{
 			OptimizedImportController.importRepositories(file, "false", null, null, processBean);
+			
+			int count = 0;
+			while(processBean.getStatus() != ProcessBean.FINISHED && count < 30)
+			{
+				Thread.sleep(1000);
+				count++;
+			}
 		}
 		catch ( Exception e) 
 		{	

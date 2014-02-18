@@ -1,88 +1,358 @@
-<?xml version="1.0" encoding="UTF-8"?> 
+#define( $headerMarkup )
+	<script type="text/javascript" src="script/jqueryplugins-latest/thickbox/thickbox-compressed.js"></script>
+	<link rel="stylesheet" type="text/css" href="script/jqueryplugins-latest/thickbox/thickbox-ig.css" />
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	<link rel="stylesheet" type="text/css" href="css/admin.css" media="screen" />
+	<!--[if IE]>
+	<link rel="stylesheet" type="text/css" href="css/admin_ie.css" media="screen" />
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />
 
-<html>
-<head>
-	<title>StructureTool</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<script type="text/javascript" src="script/embla/dragProxy.js"></script>
+	<script type="text/javascript" src="script/embla/admin.js"></script>
 	
 	<script type="text/javascript">
-
-	    cookie_name = "structureMenuWidth";
-		var defaultMenuSize = "225,*";
+		var currentSiteNodeId;
+		var currentRepositoryId;
+		var indicator;
+		
+		function setPageContext(siteNodeId, repositoryId)
+		{
+			currentSiteNodeId = siteNodeId;
+			currentRepositoryId = repositoryId;
+		}		
 	
-		function setInitialPosition()
+		/* Proxy functions */
+		function refreshPage(siteNodeId, changeTypeId, addedSiteNodeId)
 		{
-			//alert("Setting initial position...");
-			if(document.cookie)
+			$("#treeIframe").get(0).contentWindow.refreshNode(siteNodeId, changeTypeId, addedSiteNodeId);
+		}		
+	
+		function openUrlInWorkArea(url)
+		{
+			//alert("url:" + url);
+			if (indicator)
 			{
-				index = document.cookie.indexOf(cookie_name);
-				//alert("index:" + index);
-				if (index != -1)
-				{
-					namestart = (document.cookie.indexOf("=", index) + 1);
-					nameend = document.cookie.indexOf(";", index);
-					if (nameend == -1) {nameend = document.cookie.length;}
-					defaultMenuSize = document.cookie.substring(namestart, nameend);
-					//alert("defaultMenuSize" + defaultMenuSize);
-				}
+				indicator.display();
 			}
-
-			//alert("defaultMenuSize" + defaultMenuSize)
-			this.document.getElementById('mainarea').cols=defaultMenuSize;
+			document.getElementById("workIframe").src = url;
+		}
+	
+		function refreshWorkSurface()
+		{
+			//alert("refreshWorkSurface");
+			if (indicator)
+			{
+				indicator.display();
+			}
+			$("#workIframe").get(0).contentDocument.location.reload();
 		}
 
-		function minimizeMenu()
+		function refreshTreeSurface()
 		{
-			var size = "20,*";
-			this.document.getElementById('mainarea').cols=size;
+			$("#treeIframe").get(0).contentDocument.location.reload();
+		}
+				
+		function resize(isLoop)
+		{
+			var windowWidth = $(window).width();
+			var windowHeight = $(window).height();
+			$("#toolsColumn").height(windowHeight - $("#toolsColumn").offset().top);
+			$("#treeIframe").height($("#toolsColumn").height() - $("#toolsColumn").position().top - $("#paletteDiv").height());
+			$("#work").width(windowWidth - ($("#toolsColumn").width() + 6)).height($("#toolsColumn").height());
+			$("#workIframe").width($("#work").width()).height($("#work").height());
 			
-			if(document.cookie != document.cookie)
-				index = document.cookie.indexOf(cookie_name);
-			else
-				index = -1;
-			
-			if (index == -1)
-				document.cookie=cookie_name+"="+size+"; expires=Monday, 04-Apr-2010 05:00:00 GMT";
+			if(!isLoop && $(window).width() > windowWidth)
+				resize(true)
 		}
 		
-		function increaseSize()
+		var isItAnActivationCall = false;
+		function setIsItAnActivationCall(value) {
+			isItAnActivationCall=value;
+			
+			setTimeout("refreshTreeSize();",500);			
+		}
+	
+		function refreshTreeSize()
 		{
-			size = this.document.getElementById('mainarea').cols;
-			//alert("size:" + size);
-			if(size.indexOf("225") > -1)
-				size = "300,*";
-			else if(size.indexOf("300") > -1)
-				size = "350,*";
-			else if(size.indexOf("350") > -1)
-				size = "400,*";
-			else
-				size = "225,*";
+			if($("#treeIframe").get(0).contentWindow.resizeTreeIframe)
+				$("#treeIframe").get(0).contentWindow.resizeTreeIframe($("#treeIframe").height(), $("#treeIframe").width());
+		}
 			
-			this.document.getElementById('mainarea').cols=size;
+		function refreshRepositoryList()
+		{
+			jQuery.getJSON("ViewCommonAjaxServices!repositories.action", function(jsonData) {
+				if(jsonData.repository)
+				{
+					var oldVal = $("#repositorySelect").val();
+					$("#repositorySelect").empty();
+					jQuery.each(jsonData.repository, function(i,item){
+		
+						//alert("jsonData:" + item.id + ":" + item.name);
+						if(item.name != "empty")
+						{
+							if(oldVal == item.id)
+								$("#repositorySelect").append("<option value='" + item.id + "' selected='selected'>" + item.name + "</option>");
+							else
+								$("#repositorySelect").append("<option value='" + item.id + "'>" + item.name + "</option>");
+						}	
+					});
+				}
+			});
 			
-			if(document.cookie != document.cookie)
-				index = document.cookie.indexOf(cookie_name);
-			else
-				index = -1;
-			
-			if (index == -1)
-				document.cookie=cookie_name+"="+size+"; expires=Monday, 04-Apr-2010 05:00:00 GMT";
+			return false;
 		}
 		
-    </script>
-</head>
+		$(document).ready(function() {
+			resize(false);
+   			
+	   		window.onresize = function() {
+	   			resize(false);
+   			}
 
-<frameset rows="40,*" FRAMESPACING="0" FRAMEBORDER="NO" BORDER="0">
-  <frame name="header" marginwidth="0" marginheight="0" scrolling="no" noresize target="menu" src="ViewStructureToolHeader.action?repositoryId=$repositoryId">
-  <frameset id="mainarea" cols="225,*" FRAMESPACING="0" FRAMEBORDER="NO" BORDER="0">
-    <frame name="menu" marginwidth="0" marginheight="0" scrolling="no" target="main" src="">
-	  <frameset rows="57,*" onload="setInitialPosition();" FRAMESPACING="0" FRAMEBORDER="NO" BORDER="0">
-		<frame name="toolbar" marginwidth="0" marginheight="0" scrolling="no" target="none" src="Loading!executeStructure.action">
-		<frame name="main" marginwidth="0" marginheight="0" scrolling="auto" target="none" src="Loading!executeStructure.action">
-	  </frameset>
-  </frameset>
-</frameset>
+			indicator = LoadingIndicator("#loadingIndicator", "#workIframe");
 
+			$("#toolsColumn").resizable({ 
+				handles: 'e',
+				maxWidth: 460,
+				minWidth: 250, 
+				start: function (event, ui) {
+					 $("#menuOverlayDiv").show();
+				},
+				stop: function(event, ui) { 
+					resize(false); 
+					$("#menuOverlayDiv").hide();
+				} 
+			});
+			
+			$("#workIframe").load(function() {
+				//alert("Just loaded:" + $("#workIframe").get(0).contentDocument.location.href);
+				try
+				{
+					if(refreshTopToolBar)
+					{
+						var url = document.getElementById("workIframe").src;
+						try
+						{	
+							url = $("#workIframe").get(0).contentDocument.location.href;
+						}
+						catch(e)
+						{
+							//alert("Error:" + e);
+						}
+						
+						//alert("url:" + url);
+						if(url.indexOf("siteNodeId=") > -1)
+						{
+							var loadedSiteNodeId = getRequestParameter(url, "siteNodeId");
+							//alert("loadedSiteNodeId:" + loadedSiteNodeId + ":" + currentRepositoryId);
+							refreshTopToolBar('tool.structuretool.siteNodeComponentsHeader', 'tool.structuretool.siteNodeComponentsHeader', 'siteNodeId=' + loadedSiteNodeId, -1, -1, -1);
+							//syncWithTree(loadedSiteNodeId, currentRepositoryId, "treeIframe", true);
+							jQuery.get("ViewCommonAjaxServices!siteNodeIdPath.action?siteNodeId=" + loadedSiteNodeId, function(data) {
+								//alert('Path:' + data);
+								syncWithTree(data, currentRepositoryId, "treeIframe", true);
+							});
+							
+							var stateChanged = getRequestParameter(url, "stateChanged");
+							//alert(loadedSiteNodeId + ":" + stateChanged);
+							if(stateChanged == "true")
+							{
+								try
+								{
+									refreshPage(loadedSiteNodeId, 1, loadedSiteNodeId);
+								}
+								catch(e) {alert("e:" + e);}
+							}
+						}
+					}
+				}
+				catch(e)
+				{
+					//alert("Error:" + e);
+				}
+			});
+
+			#set($rootSiteNode = $this.getRepositoryRootSiteNode($repositoryId))
+			#if($siteNodeId)
+				#set($rootSiteNode = $this.getSiteNodeVO($siteNodeId))
+			#end
+
+			#if(!$rootSiteNode)
+				//alert("No sitenode created yet...");
+				jQuery.get("ViewSiteNode!V3.action?siteNodeId=&repositoryId=$repositoryId", function(data) {
+					//alert('Reloaded menu');
+					setTimeout("document.location.reload();", 500);
+					});
+			#else
+				openUrlInWorkArea("ViewSiteNode!V3.action?siteNodeId=$rootSiteNode.id&repositoryId=$repositoryId");
+				//setTimeout(function(){syncWithTree($rootSiteNode.id, $repositoryId, "treeIframe"); alert("1:" + $rootSiteNode.id);}, 2000);
+			#end
+			
+			$("#menuOverlayDiv").mouseout(function () {
+				$("#structureToolDiv").mouseup();
+			});
+		});
+	
+		function changeRepository(selectBox)
+		{
+			window.parent.document.title = "StructureTool - " + $("#" + selectBox.id + " option:selected").text();
+			document.location.href = "ViewStructureTool!V3.action?repositoryId=" + selectBox.value;
+		}	
+
+		function changeRepositoryById(repositoryId)
+		{
+			document.location.href = "ViewStructureTool!V3.action?repositoryId=" + repositoryId;
+		}	
+
+		function changeRepositoryInMenyById(repositoryId, path)
+		{
+			//alert(path);
+			$("#treeIframe").attr("src", "ViewStructureToolMenu!V3.action?repositoryId=" + repositoryId + "&path=" + path);
+			$("#repositorySelect").val(repositoryId);
+			setTimeout(function () {
+				//alert(path);
+				frames['itreeFrame'].syncWithTree(path);
+				}, 1000);
+		}	
+		
+		function toggleFavourites()
+		{
+			if($("#paletteIframe").height() == 0)
+			{
+				//$("#treeIframe").height($("#treeIframe").height() - 120);
+				$("#paletteDiv").height(120 + $("#componentPaletteHeader").height());
+				$("#paletteIframe").height(120);
+				$("#componentPaletteHeader img").attr("src", "css/skins/${theme}/images/v3/downArrows.png");
+			}
+			else
+			{
+				$("#paletteDiv").height($("#componentPaletteHeader").height());
+				$("#paletteIframe").height(0);
+				$("#componentPaletteHeader img").attr("src", "css/skins/${theme}/images/v3/upArrows.png");
+			}
+			resize(false);
+		}
+				
+		var structureToolMenuUrl = "ViewStructureToolMenu!V3.action?repositoryId=";
+		var contentToolMenuUrl	 = "ViewContentToolMenu!V3.action?repositoryId=";
+		
+		var oldWidth = 0;
+		function setOldWidth(anOldWidth)
+		{
+			//alert("OldWidth:" + anOldWidth);
+			oldWidth = anOldWidth;
+		}
+		
+		function getOldWidth()
+		{
+			//alert("oldWidth:" + oldWidth);
+			return oldWidth;
+		}
+		
+		function minimizeToolColumn()
+		{
+			setOldWidth($('#toolsColumn').width()); 
+			$('#toolsColumn > *').hide(); 
+			$('#minimizedBar').show(); 
+			$('#toolsColumn').width(20);
+			resize(false); 
+		}
+
+		function toggleToolColumn()
+		{
+			var currentWidth = $('#toolsColumn').width(); 
+			if (currentWidth < 320)
+			{
+				$('#toolsColumn').width(460);
+			}
+			else
+			{
+				$('#toolsColumn').width(250);
+			}
+			resize(); 
+		}
+
+		function restoreToolColumn()
+		{
+			//$('#work').width($('#work').width() - getOldWidth() - 20);
+			//$('#workIframe').width($('#work').width());
+			$('#toolsColumn > *').show(); 
+			$('#minimizedBar').hide(); 
+			$('#toolsColumn').width(getOldWidth());
+			resize(false); 
+		}
+		
+	</script>
+#end
+ 
+#beginLightCommonToolV3Impl("tool.common.adminTool.header" "" "" false true true $headerMarkup false "")
+
+<div id="structureToolDiv" style="float: left; width: 100%; height: 100%; overflow: hidden;">
+	<div id="menutoolbar" class="$toolbarVariant">
+		<div id="menutoolbarLeft" style="width: 100%;">
+		</div>
+		
+		<div id="menuToolbarRight" class="noPadding">
+			<a class="igToolbarButton igToolbarHeaderButton" href="#" onclick="refreshWorkSurface();" id="reloadButton" title="">
+				<span class="igToolbarButtonOuterSpan igToolbarHeaderButton">
+					<span class="reloadSitenode" title="">$ui.getString("tool.structuretool.toolbarV3.reloadPageTitle")</span>
+				</span>
+			</a>
+		</div>
+		
+	</div>
+	
+	<div style="clear: both"></div>
+	
+	<div id="toolsColumn">
+		<div id="minimizedBar" class="treeStructureMaximize" style="display: none; width: 100%; float: left;">
+	    	<img src="css/skins/${theme}/images/v3/doubleForwardArrows.png" onclick="restoreToolColumn(); return false;" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 8px;" alt="reload"/>
+		</div>
+		
+		<div class="onlyExpanded" id="repositoryChoiceDiv">
+	    	<select id="repositorySelect" onchange="changeRepository(this);">
+	    		#set($treeRepositoryId = $!repositoryId)
+	    		#foreach($repository in $authorizedRepositoryVOList)
+	    			#if(!$treeRepositoryId)
+		    			#set($treeRepositoryId = $repository.id)
+	    			#end
+	    		<option value="$repository.id" #if($repository.id == $repositoryId)selected="selected"#end>$repository.name</option>
+	    		#end
+	    	</select>
+			<div class="treeStructureReload">
+				<img src="css/skins/${theme}/images/v3/reload.png" onclick="refreshRepositoryList(); $('#treeIframe').get(0).contentWindow.reload();" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 6px;" alt="reload"/>
+ 			</div>
+			<div class="treeStructureMinimize">
+ 				<img src="css/skins/${theme}/images/v3/doubleBackArrows.png" onclick="minimizeToolColumn(); return false;" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 8px;" alt="reload"/>
+ 			</div>
+			<div class="treeStructureToggleWidth">
+				<img src="css/skins/${theme}/images/v3/update_img.gif" onclick="toggleToolColumn(); return false;" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 8px;" alt="toggle"/>
+			</div>
+	    </div>
+	
+		<iframe id="treeIframe" name="treeIframe" src="ViewStructureToolMenu!V3.action?repositoryId=$treeRepositoryId" width="100%" height="250" frameborder="0" allowtransparency="true"></iframe>
+	
+		#*
+		<div class="onlyExpanded" id="paletteDiv">
+	    	<div id="componentPaletteHeader">
+	    		<h3>$ui.getString('tool.common.favouriteComponentsHeader')</h3>
+	    		<a href="javascript:toggleFavourites();" style="float: right;"><img src="css/images/v3/downArrows.png" style="margin-top: 3px; margin-right: 2px;" width="16" height="16" border="0" alt="Close area"/></a>
+	        </div>
+			<iframe id="paletteIframe" name="paletteIframe" src="ViewComponentPalette.action" width="100%" height="120" frameborder="0" allowtransparency="true"></iframe>
+	    </div>
+	    *#
+	</div>
+
+	<div id="work" style="float: left;">
+		<iframe id="workIframe" name="workIframe" src="" width="100%" height="100%" frameborder="0" allowtransparency="true"></iframe>
+	</div>
+</div>
+
+<div id="contextMenuDiv"></div>
+
+<div id="menuOverlayDiv"></div>
+
+<div id="loadingIndicator"></div>
+
+</body>
 </html>

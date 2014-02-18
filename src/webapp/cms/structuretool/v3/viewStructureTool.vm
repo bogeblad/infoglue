@@ -313,7 +313,7 @@
 	
 	<div id="toolsColumn">
 		<div id="minimizedBar" class="treeStructureMaximize" style="display: none; width: 100%; float: left;">
-	    	<img src="css/images/v3/doubleForwardArrows.png" onclick="restoreToolColumn(); return false;" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 8px;" alt="reload"/>
+	    	<a href="#" class="maximizeIcon" onclick="restoreToolColumn(); return false;" alt="maximize"></a>
 		</div>
 		
 		<div class="onlyExpanded" id="repositoryChoiceDiv">
@@ -327,13 +327,13 @@
 	    		#end
 	    	</select>
 			<div class="treeStructureReload">
-				<img src="css/images/v3/reload.png" onclick="refreshRepositoryList(); $('#treeIframe').get(0).contentWindow.reload();" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 6px;" alt="reload"/>
+				<a href="#" class="refreshRepositoryIcon" onclick="refreshRepositoryList(); $('#treeIframe').get(0).contentWindow.reload();" alt="reload"></a>
  			</div>
 			<div class="treeStructureMinimize">
- 				<img src="css/images/v3/doubleBackArrows.png" onclick="minimizeToolColumn(); return false;" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 8px;" alt="reload"/>
+ 				<a href="#" class="minimizeIcon" onclick="minimizeToolColumn(); return false;"  alt="reload"></a>
  			</div>
 			<div class="treeStructureToggleWidth">
-				<img src="css/images/v3/update_img.gif" onclick="toggleToolColumn(); return false;" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 8px;" alt="toggle"/>
+				<a href="#" class="toggleIcon" onclick="toggleToolColumn(); return false;" alt="toggle"></a>
 			</div>
 	    </div>
 	

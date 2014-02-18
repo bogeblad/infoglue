@@ -374,6 +374,23 @@ iframe.inactiveTool {
 	background-repeat: no-repeat;
 }
 
+#igAccountSectionButton {
+	background-image: url("images/v3/menu_img.png");
+	background-repeat: no-repeat;
+	height: 30px;
+	width: 30px;
+}
+
+#igAccountSectionButton a {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+#igAccountSectionButton a:hover {
+	background: transparent;
+}
+
 @media all and (max-width: 1024px) {
 	.igToolbarButtonOuterSpan span {
     	background-image: none;

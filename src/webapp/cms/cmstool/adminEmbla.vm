@@ -223,18 +223,6 @@
 					$("#${tool.toolName}Iframe").get(0).contentWindow.refreshRepositoryList();
 			#end
 		}
-		
-		function openHelpUrl(baseUrl, toolbarKey, extraParameters)
-		{
-			#if($this.sendToolbarKeyAsParameter)
-				if(baseUrl.indexOf("?") > -1)
-					window.open(baseUrl + "&toolbarKey=" + window.toolbarKey + "&" + extraParameters);
-				else
-					window.open(baseUrl + "?toolbarKey=" + window.toolbarKey + "&" + extraParameters);
-			#else
-				window.open(baseUrl + "/" + window.toolbarKey + "?" + extraParameters);			
-			#end
-		}
 	</script>
 	
 	<script type="text/javascript" src="script/embla/drag.js"></script>
@@ -276,7 +264,7 @@
 		#end
 				
 		<div id="igAccountSectionButton" style="position: absolute; top: 10px; right: 10px;">
-			<img src="css/images/v3/menu_img.png" onclick="$('#igAccountSection').slideToggle();"/>
+			<a href="#" class="igAccountSection" onclick="$('#igAccountSection').slideToggle();"></a>
 		</div>
 		
 		<div id="igAccountSection" style="float: right; padding-top: 10px; margin-right: 10px; text-align: right;">

@@ -530,6 +530,37 @@ li.page {background:url(images/v3/pageIcon.gif) no-repeat left center; backgroun
 	padding-left:28px;
 }
 
+a.refreshRepositoryIcon,
+a.toggleIcon,
+a.minimizeIcon,
+a.maximizeIcon {
+	display: block; 
+	float: left; 
+	height: 16px; 
+	margin-left: 4px; 
+	width: 16px; 
+}
+
+a.refreshRepositoryIcon {
+	background: url('images/v3/reload.png') no-repeat;
+	margin-top: 6px;
+}
+
+a.toggleIcon {
+	background: url('images/v3/update_img.gif') no-repeat;
+	margin-top: 8px;
+}
+
+a.minimizeIcon {
+	background: url('images/v3/doubleBackArrows.png') no-repeat;
+	margin-top: 8px;
+}
+
+a.maximizeIcon {
+	background: url('images/v3/doubleForwardArrows.png') no-repeat;
+	margin-top: 8px;
+}
+
 /******************
  Controls input fields in content version editor
 ******************/ 

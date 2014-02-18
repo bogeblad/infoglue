@@ -112,5 +112,4 @@ public abstract class ViewCMSAbstractToolAction extends InfoGlueAbstractAction
     	return this.repositoryId;
     }
  
-               
 }

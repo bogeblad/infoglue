@@ -223,6 +223,18 @@
 					$("#${tool.toolName}Iframe").get(0).contentWindow.refreshRepositoryList();
 			#end
 		}
+		
+		function openHelpUrl(baseUrl, toolbarKey, extraParameters)
+		{
+			#if($this.sendToolbarKeyAsParameter)
+				if(baseUrl.indexOf("?") > -1)
+					window.open(baseUrl + "&toolbarKey=" + window.toolbarKey + "&" + extraParameters);
+				else
+					window.open(baseUrl + "?toolbarKey=" + window.toolbarKey + "&" + extraParameters);
+			#else
+				window.open(baseUrl + "/" + window.toolbarKey + "?" + extraParameters);			
+			#end
+		}
 	</script>
 	
 	<script type="text/javascript" src="script/embla/drag.js"></script>
@@ -282,7 +294,7 @@
 			</div>
 			<br/>
 			#if($this.switchInfoButtonLabelToThisHelpUrl != "")
-				<a class='igToolbarButton igToolbarHeaderButton' href="$this.switchInfoButtonLabelToThisHelpUrl" target="_blank" id="versionInfoButton" name="versionInfoButton" title="$ui.getString("header.link.versionInfo") - $infoGlueVersion"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='helpIndex' title="$ui.getString("header.link.versionInfo") - $infoGlueVersion">$infoButtonLabel</span></span></a>
+				<a class='igToolbarButton igToolbarHeaderButton' href="javascript:openHelpUrl('$this.switchInfoButtonLabelToThisHelpUrl', window.toolbarKey, window.helpExtraParameters);" id="versionInfoButton" name="versionInfoButton" title="$ui.getString("header.link.versionInfo") - $infoGlueVersion"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='helpIndex' title="$ui.getString("header.link.versionInfo") - $infoGlueVersion">$infoButtonLabel</span></span></a>
 			#else
 				<a class='igToolbarButton igToolbarHeaderButton' href="#" id="versionInfoButton" name="versionInfoButton" title="$ui.getString("header.link.versionInfo") - $infoGlueVersion"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='versionInfo' title="$ui.getString("header.link.versionInfo") - $infoGlueVersion">$infoButtonLabel</span></span></a>
 				<script type="text/javascript">

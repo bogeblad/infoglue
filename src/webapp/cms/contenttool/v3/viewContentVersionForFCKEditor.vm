@@ -22,7 +22,7 @@
 	<script type="text/javascript" src="${root}/applications/jscalendar/calendar.js"></script>
 	<script type="text/javascript" src="${root}/applications/jscalendar/lang/calendar-en.js"></script>
 	<script type="text/javascript" src="${root}/applications/jscalendar/calendar-setup.js"></script>
-
+	
 	#if($contentTypeDefinitionVO.name == "Meta info")
 		#set($masterContentVersionVO = $this.getMasterContentVersionVO($contentId, $repositoryId))
 		#if($masterContentVersionVO.stateId == 1 || $masterContentVersionVO.stateId == 2 || $masterContentVersionVO.stateId == 3)
@@ -41,7 +41,9 @@
 	
 	<script type="text/javascript">
 	//<![CDATA[	
-
+		
+		top.window.helpExtraParameters = "contentTypeDefinitionId=$contentTypeDefinitionVO.id#$contentTypeDefinitionVO.name";
+		
 		//*******************************************
 		//This method refreshes the caller
 		//*******************************************

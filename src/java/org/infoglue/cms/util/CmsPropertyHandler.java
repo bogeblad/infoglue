@@ -1846,7 +1846,19 @@ public class CmsPropertyHandler
 	{
 	    return getServerNodeProperty("switchInfoButtonLabelToThisHelpUrl", true, "");
 	}
-	
+
+	public static String getContextBasedHelpUrlBase(Locale locale)
+	{
+	    return getServerNodeProperty("contextBasedHelpUrlBase", true, "" + getHelpUrl());
+	}
+
+	public static Boolean getUseContextBasedHelp()
+	{
+		String useContextBasedHelp = getServerNodeProperty("useContextBasedHelp", true, "true");
+		
+		return Boolean.parseBoolean(useContextBasedHelp);
+	}
+
 	public static String getHeaderHTML()
 	{
 	    return getServerNodeDataProperty(null, "headerHTML", true, "");

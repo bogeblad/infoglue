@@ -2,6 +2,9 @@
 ## A macro for the embla compact toolbar
 ##***********************************************************
 #macro(compactEmblaLeftMenuToolbar $buttons)
+	<script type="text/javascript">
+		top.window.toolbarKey = "$toolbarKey";
+	</script>
 	<div id="menutoolbarLeft" style="z-index: 1005; padding-left: 4px; padding-top: 2px;">
 		#foreach($button in $buttons)
 			#set($parentCount = $velocityCount)

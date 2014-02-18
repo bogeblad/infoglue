@@ -395,12 +395,15 @@ public class NodeDeliveryController extends BaseDeliveryController
 	{
 		if(siteNodeId == null || siteNodeId.intValue() < 1)
 			return null;
-		
+
 		if(deliveryContext != null)
 			deliveryContext.addUsedSiteNode(CacheController.getPooledString(3, siteNodeId));
-		
-		SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
 
+		SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
+		
+		if(siteNodeVO.getIsDeleted())
+			return null;
+		
 		return siteNodeVO;
 	}
 

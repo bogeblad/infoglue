@@ -969,7 +969,22 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	{
 		return CmsPropertyHandler.getSwitchInfoButtonLabelToThisHelpUrl(getLocale());
 	}
-	
+
+	public String getSendToolbarKeyAsParameter()
+	{
+		return CmsPropertyHandler.getSendToolbarKeyAsParameter();
+	}
+
+	public String getContextBasedHelpUrlBase()
+	{
+		return CmsPropertyHandler.getContextBasedHelpUrlBase(getLocale());
+	}
+
+	public Boolean getUseContextBasedHelp()
+	{
+		return CmsPropertyHandler.getUseContextBasedHelp();
+	}
+
     public String getColorScheme()
     {
         return colorScheme;

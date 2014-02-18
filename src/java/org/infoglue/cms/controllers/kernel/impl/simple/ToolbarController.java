@@ -3949,9 +3949,9 @@ public class ToolbarController implements ToolbarProvider
 	private List<ToolbarButton> getHelpButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
 	{
 		String sendToolbarKeyAsParameter = CmsPropertyHandler.getSendToolbarKeyAsParameter();
-		String helpPageUrl = CmsPropertyHandler.getHelpUrl() + "/" + toolbarKey;
+		String helpPageUrl = CmsPropertyHandler.getContextBasedHelpUrlBase(locale) + "/" + toolbarKey;
 		if(sendToolbarKeyAsParameter != null && sendToolbarKeyAsParameter.equals("true"))
-			helpPageUrl = CmsPropertyHandler.getHelpUrl() + "?toolbarKey=" + toolbarKey;
+			helpPageUrl = CmsPropertyHandler.getContextBasedHelpUrlBase(locale) + "?toolbarKey=" + toolbarKey;
 		
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		buttons.add(new ToolbarButton("helpButton",

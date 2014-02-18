@@ -348,6 +348,8 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "helpUrl");
 	    populate(ps, "infoButtonLabel");
 	    populate(ps, "switchInfoButtonLabelToThisHelpUrl");
+	    populate(ps, "contextBasedHelpUrlBase");
+	    populate(ps, "useContextBasedHelp");
 	    populateData(ps, "headerHTML");
 	    populateData(ps, "aboutHTML");
 	    populate(ps, "sendToolbarKeyAsParameter");

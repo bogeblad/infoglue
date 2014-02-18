@@ -3801,7 +3801,7 @@ public class ComponentLogic
 				ComponentBinding componentBinding = bindingsIterator.next();
 			    Integer siteNodeId = componentBinding.getEntityId();
 			    SiteNodeVO siteNodeVO = templateController.getSiteNode(siteNodeId);
-				if(siteNodeVO != null)
+				if(siteNodeVO != null && !siteNodeVO.getIsDeleted())
 					siteNodeVOList.add(siteNodeVO);
 			}
 		}
@@ -3822,7 +3822,7 @@ public class ComponentLogic
 				ComponentBinding componentBinding = bindingsIterator.next();
 				Integer siteNodeId = componentBinding.getEntityId();
 				SiteNodeVO siteNode = templateController.getSiteNode(siteNodeId);
-				if(siteNode != null)
+				if(siteNode != null && !siteNode.getIsDeleted())
 				{
 					WebPage webPage = new WebPage();					
 					webPage.setSiteNodeId(siteNodeId);
@@ -3853,7 +3853,7 @@ public class ComponentLogic
 				ComponentBinding componentBinding = bindingsIterator.next();
 				Integer siteNodeId = componentBinding.getEntityId();
 				SiteNodeVO siteNode = templateController.getSiteNode(siteNodeId);
-				if(siteNode != null)
+				if(siteNode != null && !siteNode.getIsDeleted())
 				{
 					webPage.setSiteNodeId(siteNodeId);
 					webPage.setLanguageId(templateController.getLanguageId());

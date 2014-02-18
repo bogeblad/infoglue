@@ -351,6 +351,9 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.sendToolbarKeyAsParameter" "sendToolbarKeyAsParameter" "$this.getPropertyValue('sendToolbarKeyAsParameter')" "$!cmsPH.sendToolbarKeyAsParameter")
 				#editPropertyFieldCSS("ServerNode.property.infoButtonLabel" "infoButtonLabel" "$this.getPropertyValue('infoButtonLabel')" "51" "$!serverNodeId" "$!cmsPH.infoButtonLabel")
 				#editPropertyFieldCSS("ServerNode.property.switchInfoButtonLabelToThisHelpUrl" "switchInfoButtonLabelToThisHelpUrl" "$this.getPropertyValue('switchInfoButtonLabelToThisHelpUrl')" "51" "$!serverNodeId" "$!cmsPH.switchInfoButtonLabelToThisHelpUrl")
+				
+				#yesNoDropDownWithInheritCSS("ServerNode.property.useContextBasedHelp" "useContextBasedHelp" "$this.getPropertyValue('useContextBasedHelp')" "$!cmsPH.useContextBasedHelp")
+				#editPropertyFieldCSS("ServerNode.property.contextBasedHelpUrlBase" "contextBasedHelpUrlBase" "$this.getPropertyValue('contextBasedHelpUrlBase')" "51" "$!serverNodeId" "$!cmsPH.contextBasedHelpUrlBase")
 				#editPropertyTextAreaCSS("ServerNode.property.headerHTML" "headerHTML" "$this.getDataPropertyValue('headerHTML')" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.headerHTML")
 				#editPropertyTextAreaCSS("ServerNode.property.aboutHTML" "aboutHTML" "$this.getDataPropertyValue('aboutHTML')" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.aboutHTML")
 

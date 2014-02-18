@@ -160,7 +160,7 @@ public class InterceptionPointController extends BaseController
 		systemInterceptionPoints.put("Common.CreatePage", new InterceptionPointVO("Common", "Common.CreatePage", "This interception point limits who can create pages (at all)", false));
 		systemInterceptionPoints.put("Common.DeletePage", new InterceptionPointVO("Common", "Common.DeletePage", "This interception point limits who can delete pages (at all)", false));
 		systemInterceptionPoints.put("Common.ApproveDenyPublications", new InterceptionPointVO("Common", "Common.ApproveDenyPublications", "This interception point limits who are allowed to approve / deny publishing requests", false));
-		
+		systemInterceptionPoints.put("Common.ShowHidePage", new InterceptionPointVO("Common", "Common.ShowHidePage", "This interception point limits who are allowed to toggle show/hide of pages", false));
 		systemInterceptionPoints.put("Common.LightContentEditor", new InterceptionPointVO("Common", "Common.LightContentEditor", "Gives a user access to some special content screens", false));
 
 	    systemInterceptionPoints.put("ManagementToolMenu.Repositories", new InterceptionPointVO("ManagementToolMenu", "ManagementToolMenu.Repositories", "Intercepts access to the menu item 'Repositories' in management tool", false));

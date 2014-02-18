@@ -1,25 +1,27 @@
 <ul>
-	#if($this.hasAccessTo("Common.CreatePage", true, false, true))
-    <li><a id="create" href="javascript:void(0);" class="create">$ui.getString("tool.structuretool.toolbarV3.createPageLabel")</a></li>
-    <li><a id="copy" href="javascript:void(0);" class="copy">$ui.getString("tool.structuretool.toolbarV3.copyPageLabel")</a></li>
-    #end
-	#if($this.hasAccessTo("Common.DeletePage", true, false, true))
-    <li><a id="delete" href="javascript:void(0);" class="delete">$ui.getString("tool.structuretool.toolbarV3.deletePageLabel")</a></li>
+	#if($this.hasAccessTo("Common.CreatePage", true, false, false))
+	<li><a id="create" href="javascript:void(0);" class="create">$ui.getString("tool.structuretool.toolbarV3.createPageLabel")</a></li>
+	<li><a id="copy" href="javascript:void(0);" class="copy">$ui.getString("tool.structuretool.toolbarV3.copyPageLabel")</a></li>
 	#end
-    <li><a id="move" href="javascript:void(0);" class="move">$ui.getString("tool.structuretool.toolbarV3.movePageLabel")</a></li>
-    <li><a id="moveUp" href="javascript:void(0);" class="moveUp">$ui.getString("tool.structuretool.toolbarV3.movePageUpLabel")</a></li>
-    <li><a id="moveDown" href="javascript:void(0);" class="moveDown">$ui.getString("tool.structuretool.toolbarV3.movePageDownLabel")</a></li>
-    <li><a id="hidePage" href="javascript:void(0);" class="showHide">$ui.getString("tool.structuretool.toolbarV3.toggleHiddenLabel")</a></li>
-    <li><a id="properties" href="javascript:void(0);" class="properties">$ui.getString("tool.structuretool.toolbarV3.editPageMetaInfoLabel")</a></li>
-    #if($this.hasAccessTo("Common.ManageAccessRights", true, false, true))
-    <li><a id="accessRights" href="javascript:void(0);" class="accessRights">$ui.getString("tool.common.accessRights.accessRightsButtonLabel")</a></li>
-    #end
-    <li><a id="publish" href="javascript:void(0);" class="publish">$ui.getString("tool.structuretool.toolbarV3.publishPageLabel")</a></li>
-    #if($siteNodeVO.childCount > 0)
-    <li><a id="publishTree" href="javascript:void(0);" class="publish">$ui.getString("tool.structuretool.toolbarV3.publishPagesLabel")</a></li>
-    #end
-    <li><a id="unpublishAll" href="javascript:void(0);" class="unpublish">$ui.getString("tool.common.unpublishing.unpublishButtonLabel")</a></li>
-    <li><a id="unpublish" href="javascript:void(0);" class="unpublish">$ui.getString("tool.contenttool.toolbarV3.unpublishContentsLabel")</a></li>
+	#if($this.hasAccessTo("Common.DeletePage", true, false, false))
+	<li><a id="delete" href="javascript:void(0);" class="delete">$ui.getString("tool.structuretool.toolbarV3.deletePageLabel")</a></li>
+	#end
+	<li><a id="move" href="javascript:void(0);" class="move">$ui.getString("tool.structuretool.toolbarV3.movePageLabel")</a></li>
+	<li><a id="moveUp" href="javascript:void(0);" class="moveUp">$ui.getString("tool.structuretool.toolbarV3.movePageUpLabel")</a></li>
+	<li><a id="moveDown" href="javascript:void(0);" class="moveDown">$ui.getString("tool.structuretool.toolbarV3.movePageDownLabel")</a></li>
+	#if($this.hasAccessTo("Common.ShowHidePage", true, false, false))
+	<li><a id="hidePage" href="javascript:void(0);" class="showHide">$ui.getString("tool.structuretool.toolbarV3.toggleHiddenLabel")</a></li>
+	#end
+	<li><a id="properties" href="javascript:void(0);" class="properties">$ui.getString("tool.structuretool.toolbarV3.editPageMetaInfoLabel")</a></li>
+	#if($this.hasAccessTo("Common.ManageAccessRights", true, false, false))
+	<li><a id="accessRights" href="javascript:void(0);" class="accessRights">$ui.getString("tool.common.accessRights.accessRightsButtonLabel")</a></li>
+	#end
+	<li><a id="publish" href="javascript:void(0);" class="publish">$ui.getString("tool.structuretool.toolbarV3.publishPageLabel")</a></li>
+	#if($siteNodeVO.childCount > 0)
+	<li><a id="publishTree" href="javascript:void(0);" class="publish">$ui.getString("tool.structuretool.toolbarV3.publishPagesLabel")</a></li>
+	#end
+	<li><a id="unpublishAll" href="javascript:void(0);" class="unpublish">$ui.getString("tool.common.unpublishing.unpublishButtonLabel")</a></li>
+	<li><a id="unpublish" href="javascript:void(0);" class="unpublish">$ui.getString("tool.contenttool.toolbarV3.unpublishContentsLabel")</a></li>
 </ul>
 
 <script type="text/javascript">

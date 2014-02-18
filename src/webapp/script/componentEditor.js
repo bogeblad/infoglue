@@ -1494,10 +1494,10 @@ function saveAttribute(selectedContentId, selectedLanguageId, selectedAttributeN
 				   alert("You are not logged in properly to the administrative tools - please log in again.");
 				   window.open("" + componentEditorUrl + "ViewCMSTool!loginStandalone.action", "Login", "width=400,height=420");
 			   }
-			   else if(XMLHttpRequest.status == 406)
-			   {
-				   alert("The value must not be empty - update failed");
-			   }
+				else if(XMLHttpRequest.status == 406)
+				{
+					alert(XMLHttpRequest.responseText);
+				}
 			   else
 			   {
 				   alert("Update failed!");
@@ -1542,9 +1542,9 @@ function saveAttribute(selectedContentId, selectedLanguageId, selectedAttributeN
 				   window.open("" + componentEditorUrl + "ViewCMSTool!loginStandalone.action", "Login", "width=400,height=420");
 			   }
 			   else if(XMLHttpRequest.status == 406)
-			   {
-				   alert("The value must not be empty - update failed");
-			   }
+				{
+					alert(XMLHttpRequest.responseText);
+				}
 			   else
 			   {
 				   alert("Update failed!");

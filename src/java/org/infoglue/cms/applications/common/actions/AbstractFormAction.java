@@ -102,7 +102,7 @@ public abstract class AbstractFormAction extends AbstractAction implements Comma
   /**
    * <todo>Move to a ConstraintExceptionHelper class?</todo>
    */
-  private String getLocalizedErrorMessage(Locale locale, String errorCode) {
+  protected String getLocalizedErrorMessage(Locale locale, String errorCode) {
     // <todo>fetch packagename from somewhere</todo>
     final StringManager stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.entities", locale);
 

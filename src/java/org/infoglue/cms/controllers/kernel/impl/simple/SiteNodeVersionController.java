@@ -228,7 +228,6 @@ public class SiteNodeVersionController extends BaseController
 	    	if(i>98)
 	    		break;
 
-    		System.out.print(","+entityId);
     		i++;
     	}
 

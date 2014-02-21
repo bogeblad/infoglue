@@ -46,8 +46,26 @@ public class ToolbarButton
 	private boolean useConfirmation			= false;
 	private String confirmationTitle		= null;
 	private String confirmationText			= null;
+	private String customMarkup				= null;
+	private String customMarkupPlacement	= null;
+	
 	private List<ToolbarButton> subButtons 	= new ArrayList<ToolbarButton>();
 
+	public static ToolbarButton getEOSToolbarButton(String id, String text, String title, String actionURL, String cssClass, String customMarkup)
+	{
+		ToolbarButton button = new ToolbarButton(id, text, title, actionURL, "", "left", cssClass, false, false, "", "", "inlineDiv", null, null, customMarkup, "inside");
+		
+		return button;
+	}
+
+	public static ToolbarButton getEOSToolbarButton(String id, String text, String title, String actionURL, String cssClass, String customMarkup, String customMarkupPlacement)
+	{
+		ToolbarButton button = new ToolbarButton(id, text, title, actionURL, "", "left", cssClass, false, false, "", "", "inlineDiv", null, null, customMarkup, customMarkupPlacement);
+		
+		return button;
+	}
+	
+	
 	public ToolbarButton(String id, String text, String title, String actionURL, String cssClass)
 	{
 		this(id, text, title, actionURL, "", "left", cssClass, false, false, "", "", "inlineDiv", null, null);
@@ -75,6 +93,11 @@ public class ToolbarButton
 
 	public ToolbarButton(String id, String text, String title, String actionURL, String backgroundImageURL, String backgroundImageAlignment, String cssClass, boolean isJavascript, boolean useConfirmation, String confirmationTitle, String confirmationText, String target, Integer inlineDivPrefferredWidth, Integer inlineDivPrefferredHeight)
 	{
+		this(id, text, title, actionURL, backgroundImageURL, backgroundImageAlignment, cssClass, isJavascript, useConfirmation, confirmationTitle, confirmationText, target, inlineDivPrefferredWidth, inlineDivPrefferredHeight, null, null);
+	}
+
+	public ToolbarButton(String id, String text, String title, String actionURL, String backgroundImageURL, String backgroundImageAlignment, String cssClass, boolean isJavascript, boolean useConfirmation, String confirmationTitle, String confirmationText, String target, Integer inlineDivPrefferredWidth, Integer inlineDivPrefferredHeight, String customMarkup, String customMarkupPlacement)
+	{
 		this.id 						= id;
 		this.text 						= text;
 		this.title     					= title;
@@ -89,6 +112,8 @@ public class ToolbarButton
 		this.target 					= target;
 		this.inlineDivPrefferredHeight  = inlineDivPrefferredHeight;
 		this.inlineDivPrefferredWidth	= inlineDivPrefferredWidth;
+		this.customMarkup				= customMarkup;
+		this.customMarkupPlacement		= customMarkupPlacement;
 	}
 
 	public String getId()
@@ -172,5 +197,14 @@ public class ToolbarButton
 			return inlineDivPrefferredHeight;
 	}
 
+	public String getCustomMarkup() 
+	{
+		return this.customMarkup;
+	}
+
+	public String getCustomMarkupPlacement() 
+	{
+		return this.customMarkupPlacement;
+	}
 
 }

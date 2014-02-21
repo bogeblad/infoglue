@@ -565,9 +565,23 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 
 			StringBuffer userDefinedButtonsSB = new StringBuffer();
 			List<ToolbarButton> buttons = AdminToolbarService.getService().getFooterToolbarButtons("tool.deliver.editOnSight.toolbarRight", principal, locale, templateController.getHttpServletRequest(), true);
+			
 			for(ToolbarButton button : buttons)
 			{
-				userDefinedButtonsSB.append("<div class=\"right editOnSightToolbarButton " + button.getCssClass() + "\" title=\"" + button.getTitle() + "\" onclick=\"" + button.getActionURL() + "\"></div>");	
+				if(button.getCustomMarkup() == null)
+				{
+					userDefinedButtonsSB.append("<div id=\"" + button.getId() + "\" class=\"right editOnSightToolbarButton " + button.getCssClass() + "\" title=\"" + button.getTitle() + "\" onclick=\"" + button.getActionURL() + "\"></div>");	
+				}
+				else
+				{
+					if(button.getCustomMarkupPlacement().equals("before"))
+						userDefinedButtonsSB.append("" + button.getCustomMarkup());
+					
+					userDefinedButtonsSB.append("<div id=\"" + button.getId() + "\" class=\"right editOnSightToolbarButton " + button.getCssClass() + "\" title=\"" + button.getTitle() + "\" onclick=\"" + button.getActionURL() + "\">" + (button.getCustomMarkupPlacement().equals("inside") ? button.getCustomMarkup() : "") + "</div>");						
+					
+					if(button.getCustomMarkupPlacement().equals("after"))
+						userDefinedButtonsSB.append("" + button.getCustomMarkup());
+				}
 			}
 			extraBody = extraBody.replaceAll("\\$\\{userDefinedButtons\\}", userDefinedButtonsSB.toString());
 

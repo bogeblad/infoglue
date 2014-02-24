@@ -68,6 +68,31 @@ public class SimpleStringManager implements StringManager
         }
     }
 
+    
+    SimpleStringManager(String bundleName, Locale locale, ClassLoader loader) 
+    { 
+        if(locale == null || locale.getLanguage() == null || locale.getLanguage().equalsIgnoreCase(""))
+        {
+            logger.info("No locale sent in - must be a bug:" + locale);
+            locale = Locale.ENGLISH;
+        }
+        
+        try 
+        { 
+            logger.info("Created a SimpleStringManager for package bundleName" + bundleName + ":" + locale);
+            this.bundle = ResourceBundle.getBundle(bundleName, locale, loader);
+            //ResourceBundle.getBundle(baseName, control)
+        } 
+        catch(MissingResourceException e) 
+        {
+            throw new ConfigurationError("Unable to find resource bundle: " + e.getMessage(), e);
+        } 
+        catch(NullPointerException e) 
+        {
+            throw new Bug("Unable to create resource bundle.", e);
+        }
+    }
+
 
 
   // --- [Public] --------------------------------------------------------------

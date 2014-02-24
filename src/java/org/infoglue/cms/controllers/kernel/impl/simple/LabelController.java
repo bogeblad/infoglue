@@ -608,4 +608,16 @@ public class LabelController extends BaseController implements StringManager
 		return getLocalizedString(this.locale, key, arg1, arg2, arg3);
 	}
 
+	public String getLocalizedString(String packageName, String key, Object[] args) 
+  	{
+    	StringManager stringManager = StringManagerFactory.getPresentationStringManager(packageName, locale);
+    	return stringManager.getString(key, args);    		
+  	}
+
+	public String getLocalizedString(String packageName, String key, Object[] args, ClassLoader classLoader) 
+  	{
+    	StringManager stringManager = StringManagerFactory.getPresentationStringManager(packageName, locale, classLoader);
+    	return stringManager.getString(key, args);    		
+  	}
+
 }

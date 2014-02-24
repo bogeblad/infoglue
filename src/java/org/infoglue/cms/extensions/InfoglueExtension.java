@@ -34,4 +34,5 @@ package org.infoglue.cms.extensions;
 public abstract class InfoglueExtension 
 {
 	public abstract void init();
+
 }

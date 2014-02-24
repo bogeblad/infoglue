@@ -2362,7 +2362,7 @@ public class CmsPropertyHandler
 	    return servers;
 	}
 
-	public static List getToolLocales()
+	public static List<Locale> getToolLocales()
 	{
 		List toolLocales = new ArrayList();
 		

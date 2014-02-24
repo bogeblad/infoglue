@@ -71,6 +71,13 @@ public class StringManagerFactory
   }
 
   /**
+  *
+  */
+ public static synchronized StringManager getPresentationStringManager(String packageName, Locale locale, ClassLoader classLoader) {
+   return getStringManager(packageName, PRESENTATION, locale, classLoader);
+ }
+
+  /**
    *
    */
   public static synchronized StringManager getPresentationStringManager(String packageNames[], Locale locale) 
@@ -105,6 +112,19 @@ public class StringManagerFactory
     }
     return manager;
   }
+
+  private static StringManager getStringManager(String packageName, String suffix, Locale locale, ClassLoader loader) {
+	    logger.info("packageName:" + packageName);
+	    final String name       = getName(packageName, suffix, locale);
+	    final String bundleName = getBundleName(packageName, suffix);
+
+	    StringManager manager = (StringManager) managers.get(name);
+	    if(manager == null) {
+	      manager = new SimpleStringManager(bundleName, locale, loader);
+	      managers.put(name, manager);
+	    }
+	    return manager;
+	  }
 
   /**
    *

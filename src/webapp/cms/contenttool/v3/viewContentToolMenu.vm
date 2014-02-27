@@ -136,11 +136,13 @@
 
 		function resizeTreeIframe(height, width)
 		{
-			//$(treeView()).height(height).width(width);
-			$(treeView()).height(height);
+			//$(treeView()).height(height);
+			$(treeView()).height($(window).height()-20);
 		}
 
 		$(document).ready(function(){
+			$(treeView()).height($(window).height()-20);
+			
 			#if($path && $path != "")
 				syncWithTree("$path", currentRepositoryId);
 			##else

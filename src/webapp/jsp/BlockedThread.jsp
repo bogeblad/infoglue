@@ -112,7 +112,7 @@
 	    <table border="0" width="100%">
 	    <tr><td align="center"><h3>Thread MXBean</h3></td></tr>
 	    <tr><td align="center"><h4>All suspicious Threads</h4></td></tr>
-	<%
+		<%
 	    long threads[] = t.getAllThreadIds();
 	    ThreadInfo[] tinfo = t.getThreadInfo(threads, 15);
 	
@@ -155,6 +155,37 @@
 	        out.print("<br/><a href=\"BlockedThread.jsp?action=kill&threadId=" + threadId + "\">Kill thread</a><br/>");
 	        out.print(stackString);
 	        %>
+	        <div style="padding-top: 10px;">
+	        	Lock thread:<br/>
+	        <%
+	        if(lockOwnerId > 0)
+	        {
+			long lockThreads[] = {lockOwnerId};
+		    ThreadInfo[] locktinfo = t.getThreadInfo(lockThreads, 20);
+		    String lockStackString = "";
+	        for (int iLock=0; iLock<locktinfo.length; iLock++)
+		    {
+				ThreadInfo eLock = locktinfo[iLock];
+		
+		        StackTraceElement[] elLock = eLock.getStackTrace();
+		        
+		        if (elLock != null && elLock.length != 0)
+		        {
+		            for (int n = 0; n < elLock.length; n++)
+		            {
+		            	StackTraceElement frame = elLock[n];
+		            	if (frame == null)
+		            		lockStackString += "&nbsp;&nbsp;&nbsp;&nbsp;null stack frame" + "<br/>";
+		            	else	
+		            		lockStackString += "&nbsp;&nbsp;&nbsp;&nbsp;null stack frame" + frame.toString() + "<br/>";
+					}                    
+		       	}
+		    }
+	        out.print(lockStackString);
+	        }
+	        %>
+	        
+	        </div>
 	        </td></tr>
 	        <%
 	        }

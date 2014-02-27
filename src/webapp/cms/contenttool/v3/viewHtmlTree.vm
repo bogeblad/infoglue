@@ -241,8 +241,6 @@
 			if(!e)
 		        e = window.event;
 
-     		sendSignal = false;
-
 			if(parent && parent.showContextMenu)
 				return parent.showContextMenu("ViewContentToolAjaxServices.action?contentId=" + element, e, aWindow);
 			if(parent.parent && parent.parent.showContextMenu)
@@ -427,19 +425,13 @@
 		*/
 	}
 		
-    var sendSignal = false;
     $(document).click(function () { 
-    	if(sendSignal)
-    	{
-	    	if(parent.closeContextMenu)
-				parent.closeContextMenu();
-			else if(parent.parent.closeContextMenu)
-				parent.parent.closeContextMenu();
-	    	else if(top.closeContextMenu)
-				top.closeContextMenu();
-		}
-		else
-			sendSignal = true;
+    	if(parent.closeContextMenu)
+			parent.closeContextMenu();
+		else if(parent.parent.closeContextMenu)
+			parent.parent.closeContextMenu();
+    	else if(top.closeContextMenu)
+			top.closeContextMenu();
    	});
 	-->	
 	</script>	

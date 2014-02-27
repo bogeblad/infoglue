@@ -228,8 +228,6 @@
 			if(!e)
 		        e = window.event;
      		
-     		sendSignal = false;
-     		
      		if(parent && parent.showContextMenu)
 				return parent.showContextMenu("ViewStructureToolAjaxServices!contextMenu.action?siteNodeId=" + element, e, aWindow);
 			else if(parent.parent && parent.parent.showContextMenu)
@@ -429,20 +427,15 @@
 		});
 	}
 	
-	var sendSignal = false;
-    $(document).click(function () { 
-    	if(sendSignal)
-    	{
-	    	if(parent.closeContextMenu)
-				parent.closeContextMenu();
-			else if(parent.parent.closeContextMenu)
-				parent.parent.closeContextMenu();
-	    	else if(top.closeContextMenu)
-				top.closeContextMenu();
-		}
-		else
-			sendSignal = true;
+    $(document).click(function () {
+    	if(parent.closeContextMenu)
+			parent.closeContextMenu();
+		else if(parent.parent.closeContextMenu)
+			parent.parent.closeContextMenu();
+    	else if(top.closeContextMenu)
+			top.closeContextMenu();
    	});
+   	
 	-->
 	</script>	
 	

@@ -54,7 +54,8 @@ public class MoveContentAction extends InfoGlueAbstractAction
 
     private ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();	
    	private ContentVO contentVO = new ContentVO();
-  
+   	private String contentName = null;
+   	
 	public void setContentId(Integer contentId)
 	{
 		this.contentId = contentId;
@@ -121,6 +122,11 @@ public class MoveContentAction extends InfoGlueAbstractAction
 		return this.hideLeafs;
 	}    
 
+	public String getContentName()
+	{
+		return this.contentName;
+	}    
+
 	public String getUserSessionKey()
 	{
 		return userSessionKey;
@@ -136,6 +142,7 @@ public class MoveContentAction extends InfoGlueAbstractAction
         userSessionKey = "" + System.currentTimeMillis();
 
 		ContentVO contentVO = ContentControllerProxy.getContentController().getContentVOWithId(getContentId());
+		this.contentName = contentVO.getName();
 
         String moveContentInlineOperationDoneHeader = getLocalizedString(getLocale(), "tool.contenttool.moveContentInlineOperationDoneHeader", contentVO.getName());
 		String moveContentInlineOperationBackToCurrentPageLinkText = getLocalizedString(getLocale(), "tool.contenttool.moveContentInlineOperationBackToCurrentContentLinkText");

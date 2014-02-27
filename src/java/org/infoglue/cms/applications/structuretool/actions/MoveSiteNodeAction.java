@@ -53,7 +53,8 @@ public class MoveSiteNodeAction extends InfoGlueAbstractAction
 
     private ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
    	private SiteNodeVO siteNodeVO = new SiteNodeVO();
-
+   	private String siteNodeName = null;
+   	
 	public void setSiteNodeId(Integer siteNodeId)
 	{
 		this.siteNodeId = siteNodeId;
@@ -120,6 +121,11 @@ public class MoveSiteNodeAction extends InfoGlueAbstractAction
 		return this.hideLeafs;
 	}    
 
+	public String getSiteNodeName()
+	{
+		return this.siteNodeName;
+	}    
+
 	public void setBeforeSiteNodeId(Integer beforeSiteNodeId)
 	{
 		if(beforeSiteNodeId != -1)
@@ -141,7 +147,8 @@ public class MoveSiteNodeAction extends InfoGlueAbstractAction
         userSessionKey = "" + System.currentTimeMillis();
 
 		SiteNodeVO siteNodeVO = SiteNodeControllerProxy.getController().getSiteNodeVOWithId(getSiteNodeId());
-
+		this.siteNodeName = siteNodeVO.getName();
+		
         String createSiteNodeInlineOperationDoneHeader = getLocalizedString(getLocale(), "tool.structuretool.moveSiteNodeInlineOperationDoneHeader", siteNodeVO.getName());
 		String createSiteNodeInlineOperationBackToCurrentPageLinkText = getLocalizedString(getLocale(), "tool.structuretool.moveSiteNodeInlineOperationBackToCurrentPageLinkText");
 		String createSiteNodeInlineOperationBackToCurrentPageTitleText = getLocalizedString(getLocale(), "tool.structuretool.moveSiteNodeInlineOperationBackToCurrentPageTitleText");

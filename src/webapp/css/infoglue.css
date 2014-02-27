@@ -666,11 +666,44 @@ label {
 	display: block;
 	width: 100%;
 }
-.attributeTitle {font-weight: bold;}
+.attributeTitle {font-weight: bold; vertical-align: middle;}
 
 #contentTypeAttributesTable label {
 	margin-bottom: 4px;
 }
+
+.fieldHelp {background: url(images/v3/questionMarkBlack.png) no-repeat; width: 16px; height: 16px; vertical-align:middle; background-position:center; display: inline-block;}
+
+.fieldHelp:hover {
+	display: inline-block;
+  	position: relative;
+}
+.fieldHelp:hover:after {
+	background: #333;
+	background: rgba(0,0,0,.8);
+	border-radius: 5px;
+	bottom: 0px;
+	color: #fff;
+	content: attr(title);
+	left: 26px;
+	margin-bottom: -4px;
+	padding: 5px 15px;
+	position: absolute;
+	z-index: 98;
+	width: 220px;
+}
+.fieldHelp:hover:before{
+	border: solid;
+	border-color: transparent #333;
+	border-width: 6px 6px 6px 0px;
+	bottom: 6px;
+	margin-bottom: -4px;
+	content: "";
+	left: 20px;
+	position: absolute;
+	z-index: 99;
+}
+
 select, input {
 	font-family      : arial, sans-serif;
 	font-size        : 12px;

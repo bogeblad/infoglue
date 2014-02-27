@@ -17,7 +17,7 @@
 	
 	<script type="text/javascript" src="${root}/script/listview.js"></script>
 	<script type="text/javascript" src="${root}/script/calendar1.js"></script>
-
+	
 	<link rel="stylesheet" type="text/css" href="applications/jscalendar/skins/aqua/theme.css" />
 	<script type="text/javascript" src="${root}/applications/jscalendar/calendar.js"></script>
 	<script type="text/javascript" src="${root}/applications/jscalendar/lang/calendar-en.js"></script>
@@ -826,7 +826,7 @@
 		}
 	//]]>
 	 </script>
-	    					
+	    			
 #end
 
 ###########################################

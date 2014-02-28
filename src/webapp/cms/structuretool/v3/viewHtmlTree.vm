@@ -424,6 +424,8 @@
 		  	//alert("Moved: " + data);
 		  	parent.refreshNode(oldParentSiteNodeId, 4, null);
 		  	parent.refreshNode(newParentSiteNodeId, 4, null);
+		  	if(parent.parent.refreshWorkSurface)
+		  		parent.parent.refreshWorkSurface("structure");
 		});
 	}
 	

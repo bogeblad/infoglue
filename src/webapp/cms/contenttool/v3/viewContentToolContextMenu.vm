@@ -12,8 +12,10 @@
     <li><a id="delete" href="javascript:void(0);" class="delete">$ui.getString("tool.contenttool.toolbarV3.deleteContentLabel")</a></li>
     #end
     <li><a id="move" href="javascript:void(0);" class="moveContent">$ui.getString("tool.contenttool.toolbarV3.moveContentLabel")</a></li>
-    #if($this.hasAccessTo("ToolTabsAndButtons.ContentToolbarContentPropertiesButton", true, false, true))
-    <li><a id="properties" href="javascript:void(0);" class="properties">$ui.getString("tool.contenttool.toolbarV3.editContentMetaInfoLabel")</a></li>
+    #if($contentVO.isBranch)
+	    #if($this.hasAccessTo("ToolTabsAndButtons.ContentToolbarContentPropertiesButton", true, false, true))
+	    <li><a id="properties" href="javascript:void(0);" class="properties">$ui.getString("tool.contenttool.toolbarV3.editContentMetaInfoLabel")</a></li>
+	    #end
     #end
     <li><a id="publish" href="javascript:void(0);" class="publish">$ui.getString("tool.contenttool.toolbarV3.publishContentLabel")</a></li>
     #*

@@ -771,7 +771,7 @@ public class ToolbarController implements ToolbarProvider
 
 		if(contentVO.getIsBranch())
 		{
-			if(hasAccessTo(principal, "ToolTabsAndButtons.ContentToolbarContentPropertiesButton", true))
+			if(hasAccessTo(principal, "ToolTabsAndButtons.ContentToolbarContentPropertiesButton", true, false, true))
 			{
 				buttons.add(new ToolbarButton("",
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.editContentMetaInfoLabel"), 
@@ -1122,12 +1122,15 @@ public class ToolbarController implements ToolbarProvider
 
 		if(contentVO.getIsBranch())
 		{
-			buttons.add(new ToolbarButton("",
-				  getLocalizedString(locale, "tool.contenttool.toolbarV3.editContentMetaInfoLabel"), 
-				  getLocalizedString(locale, "tool.contenttool.toolbarV3.editContentMetaInfoTitle"),
-				  "ViewContentProperties!V3.action?contentId=" + contentId + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
-				  "",
-				  "properties"));
+			if(hasAccessTo(principal, "ToolTabsAndButtons.ContentToolbarMetadataButton", true))
+			{
+				buttons.add(new ToolbarButton("",
+					  getLocalizedString(locale, "tool.contenttool.toolbarV3.editContentMetaInfoLabel"), 
+					  getLocalizedString(locale, "tool.contenttool.toolbarV3.editContentMetaInfoTitle"),
+					  "ViewContentProperties!V3.action?contentId=" + contentId + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
+					  "",
+					  "properties"));
+			}
 		}
 		
 		ToolbarButton publishButton = new ToolbarButton("",

@@ -1023,12 +1023,12 @@
 	<action name="org.infoglue.cms.applications.contenttool.actions.UpdateContentVersionAction" alias="UpdateContentVersion">
 		<view name="input">/cms/contenttool/v3/viewContentVersionForFCKEditor.vm</view>
 		<view name="inputStandalone">/cms/contenttool/v3/viewContentVersionStandaloneForFCKEditor.vm</view>
-		<view name="success">ExtendedRedirect.action?url=ViewContentVersion.action#contentId#languageId#currentEditorId#concurrentModification#oldModifiedDateTime#stateChanged</view>
-		<view name="successV3">ExtendedRedirect.action?url=ViewContentVersion!V3.action#contentVersionId#contentId#languageId#attributeName#currentEditorId#concurrentModification#oldModifiedDateTime#closeOnLoad#publishOnLoad#stateChanged</view>
+		<view name="success">ExtendedRedirect.action?url=ViewContentVersion.action#contentId#languageId#currentEditorId#concurrentModification#oldModifiedDateTime#stateChanged#anchor</view>
+		<view name="successV3">ExtendedRedirect.action?url=ViewContentVersion!V3.action#contentVersionId#contentId#languageId#attributeName#currentEditorId#concurrentModification#oldModifiedDateTime#closeOnLoad#publishOnLoad#stateChanged#anchor</view>
 		<view name="successXMLV3">ExtendedRedirect.action?url=ViewContentVersion!asXMLV3.action?#contentVersionId#contentId#repositoryId</view>
 		<!--<view name="success">ViewContentVersion.action</view>-->
 		<view name="background">ViewContentVersion!background.action</view>
-		<view name="standalone">ExtendedRedirect.action?url=ViewContentVersion!standalone.action#contentVersionId#contentId#languageId#attributeName#currentEditorId#concurrentModification#oldModifiedDateTime#closeOnLoad#publishOnLoad#saveAndExitURL</view>
+		<view name="standalone">ExtendedRedirect.action?url=ViewContentVersion!standalone.action#contentVersionId#contentId#languageId#attributeName#currentEditorId#concurrentModification#oldModifiedDateTime#closeOnLoad#publishOnLoad#saveAndExitURL#anchor</view>
 		<!--<view name="standalone">ViewContentVersion!standalone.action</view>-->
 		<view name="saveAndExit">ViewContent.action?stay=true</view>
 		<view name="saveAndExitStandalone">ViewContent!standalone.action</view>
@@ -1216,6 +1216,7 @@
 	<action name="org.infoglue.cms.applications.structuretool.actions.ViewSiteNodeAction" alias="ViewSiteNode">
 		<view name="success">/cms/structuretool/viewSiteNode.vm</view>
 		<view name="successV3">/cms/structuretool/v3/viewSiteNode.vm</view>
+		<view name="successInlineV3">/cms/structuretool/v3/viewSiteNodeInline.vm</view>
 		<view name="inputSiteNodeTypeDefinition">ViewSiteNode!chooseSiteNodeTypeDefinition.action</view>
 		<view name="chooseSiteNodeTypeDefinition">/cms/structuretool/v3/chooseSiteNodeTypeDefinition.vm</view>
 		<view name="successRefreshAndRedirect">/cms/structuretool/refreshTreeAndRedirect.vm</view>
@@ -1228,7 +1229,7 @@
 	<action name="org.infoglue.cms.applications.structuretool.actions.UpdateSiteNodeAction" alias="UpdateSiteNode">
 		<view name="input">/cms/structuretool/viewSiteNode.vm</view>
 		<view name="success">ViewSiteNode.action?stay=true</view>
-		<view name="successV3">ViewSiteNode!V3.action?stay=true</view>
+		<view name="successV3">ViewSiteNode!V3.action?stay=true&amp;inline=${inline}&amp;advanced=${advanced}</view>
 		<view name="saveAndExit">ViewListSiteNode.action</view>
 		<view name="saveAndExitV3">ViewSiteNode!V3.action</view>
 		<view name="saveAndExitV3Inline">ViewInlineOperationMessages.action?automaticClose=true&amp;actionUrl=${actionUrl}&amp;target=structure&amp;targetTitle=${targetTitle}&amp;userSessionKey=${userSessionKey}</view>

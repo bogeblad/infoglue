@@ -100,7 +100,9 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	private SiteNodeVersionVO siteNodeVersionVO;
 	
    	private String stay = null;
-   	private String dest = "";
+   	private String inline = "false";
+   	private String advanced = "false";
+	private String dest = "";
    	
    	private VisualFormatter formatter = new VisualFormatter();
 
@@ -476,7 +478,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	    			}
 	    			else
 	    				result = "success";
-		            
+
 	    			//if(this.repositoryId == null)
 		            //    this.repositoryId = contentVO.getRepositoryId();
 		            
@@ -487,7 +489,10 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 		        {
 		            this.initializeSiteNodeCover(getSiteNodeId(), db);
 		            
-	            	result = "success";
+		            if(this.inline.equals("true"))
+		            	result = "successInline";
+		            else
+		            	result = "success";
 		        }
 			}
 			else
@@ -614,7 +619,12 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 		        	if(this.siteNodeVO.getSiteNodeTypeDefinitionId() == null)
 		        		result = "inputSiteNodeTypeDefinition";
 		        	else
-		        		result = "successV3";
+		        	{
+			            if(this.inline.equals("true"))
+			            	result = "successInlineV3";
+			            else
+			            	result = "successV3";
+		        	}
 		        }
 			}
 			else
@@ -889,6 +899,16 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	public void setIsProtected(Integer isProtected)
 	{
 		this.siteNodeVersionVO.setIsProtected(isProtected);
+	}
+
+	public Boolean getIsHidden()
+	{
+		return this.siteNodeVersionVO.getIsHidden();
+	}
+
+	public void setIsHidden(Boolean isHidden)
+	{
+		this.siteNodeVersionVO.setIsHidden(isHidden);
 	}
 
 	public void setStateId(Integer stateId)
@@ -1182,4 +1202,27 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
     {
         return referencingBeanList;
     }
+    
+	public String getInline() 
+	{
+		return inline;
+	}
+
+	public void setInline(String inline) 
+	{
+		this.inline = inline;
+	}
+
+	public String getAdvanced() 
+	{
+		return advanced;
+	}
+
+	public void setAdvanced(String advanced) 
+	{
+		this.advanced = advanced;
+	}
+	
+
+
 }

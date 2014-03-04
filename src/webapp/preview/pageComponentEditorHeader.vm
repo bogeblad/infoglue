@@ -108,9 +108,8 @@ ${skinDeliveryCSS}
    			url = url.replace(/\&amp;/g,'&');
    		
 		var windowHeight = getWindowHeight();
-   		//alert("windowHeight:" + windowHeight);
-   		if(windowHeight < height)
-   			height = windowHeight - 60;
+   		if((windowHeight-60) < height)
+   			height = windowHeight - 80;
 
 		var windowWidth = getWindowWidth();
    		//alert("windowWidth:" + windowWidth);

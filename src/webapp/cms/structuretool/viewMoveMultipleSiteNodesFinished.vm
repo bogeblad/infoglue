@@ -3,13 +3,15 @@
 	<!-- 
 		$(document).ready(function() {
 			#if($errorsOccurred)
-				alert("$ui.getString("tool.contenttool.moveMultiplePages.failureText")");
+				//alert("$ui.getString("tool.contenttool.moveMultiplePages.failureText")");
+				parent.refreshTreeSurface();
 			#else
-				alert("$ui.getString("tool.contenttool.siteNodeMoved.confirmation", $siteNodeVO.name)");
+				//alert("$ui.getString("tool.contenttool.siteNodeMoved.confirmation", $siteNodeVO.name)");
+				parent.refreshTreeSurface();
+				setTimeout(function(){
+					if(close) close(); if(parent && parent.document.location.href != document.location.href && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.document.location.href != document.location.href && parent.closeDialog) parent.closeDialog(); else { window.close();}
+					}, 3000);
 			#end
-	
-			parent.refreshTreeSurface();
-			if(close) close(); if(parent && parent.document.location.href != document.location.href && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.document.location.href != document.location.href && parent.closeDialog) parent.closeDialog(); else { window.close();}
 		});
 	-->
 	</script>
@@ -17,7 +19,6 @@
 
 #beginLightCommonToolV3Impl("tool.structuretool.moveMultipleSiteNode.finished" "" "" false true $!disableCloseButton $headerMarkup false "")
 	
-#*
 	#lightMenuToolbar("" $buttons $rightButtons) 
 
 	<div style="clear: both;"></div>
@@ -33,7 +34,6 @@
 	#end
 	
 	#lightFooterToolbar($footerButtons)
-*#
 
 #endLightCommonToolV3()
 

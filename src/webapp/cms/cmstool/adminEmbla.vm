@@ -16,7 +16,8 @@
 		/* Proxy functions */
 		function refreshContent(contentId, changeTypeId, addedContentId)
 		{
-			$("#ContentToolIframe").get(0).contentWindow.refreshContent(contentId, changeTypeId, addedContentId);
+			if(typeof $("#ContentToolIframe").get(0).contentWindow.refreshContent === 'function')
+				$("#ContentToolIframe").get(0).contentWindow.refreshContent(contentId, changeTypeId, addedContentId);
 		}		
 
 		function refreshPage(siteNodeId, changeTypeId, addedSiteNodeId)

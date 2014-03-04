@@ -125,29 +125,31 @@ public class UpdateSiteNodeUCCImpl extends BaseUCCController implements UpdateSi
             if(siteNodeTypeDefinitionId != null)
 	            siteNode.setSiteNodeTypeDefinition((SiteNodeTypeDefinitionImpl)SiteNodeTypeDefinitionController.getController().getSiteNodeTypeDefinitionWithId(siteNodeTypeDefinitionId, db));
 
-            
-			SiteNodeVersionVO latestSiteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, siteNodeVO.getSiteNodeId());
-			
-			latestSiteNodeVersionVO.setContentType(updatedSiteNodeVersionVO.getContentType());
-			latestSiteNodeVersionVO.setPageCacheKey(updatedSiteNodeVersionVO.getPageCacheKey());
-			latestSiteNodeVersionVO.setPageCacheTimeout(updatedSiteNodeVersionVO.getPageCacheTimeout());
-			latestSiteNodeVersionVO.setDisableEditOnSight(updatedSiteNodeVersionVO.getDisableEditOnSight());
-			latestSiteNodeVersionVO.setDisableLanguages(updatedSiteNodeVersionVO.getDisableLanguages());
-			latestSiteNodeVersionVO.setDisablePageCache(updatedSiteNodeVersionVO.getDisablePageCache());
+            if(updatedSiteNodeVersionVO != null)
+            {
+				SiteNodeVersionVO latestSiteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, siteNodeVO.getSiteNodeId());
+				
+				latestSiteNodeVersionVO.setContentType(updatedSiteNodeVersionVO.getContentType());
+				latestSiteNodeVersionVO.setPageCacheKey(updatedSiteNodeVersionVO.getPageCacheKey());
+				latestSiteNodeVersionVO.setPageCacheTimeout(updatedSiteNodeVersionVO.getPageCacheTimeout());
+				latestSiteNodeVersionVO.setDisableEditOnSight(updatedSiteNodeVersionVO.getDisableEditOnSight());
+				latestSiteNodeVersionVO.setDisableLanguages(updatedSiteNodeVersionVO.getDisableLanguages());
+				latestSiteNodeVersionVO.setDisablePageCache(updatedSiteNodeVersionVO.getDisablePageCache());
+	
+				Integer protectecSiteNodeVersionId = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getProtectedSiteNodeVersionId(latestSiteNodeVersionVO.getId(), db);
+				if(protectecSiteNodeVersionId == null || AccessRightController.getController().getIsPrincipalAuthorized(infoGluePrincipal, "SiteNodeVersion.ChangeAccessRights", "" + protectecSiteNodeVersionId))
+				{
+					latestSiteNodeVersionVO.setIsProtected(updatedSiteNodeVersionVO.getIsProtected());
+					latestSiteNodeVersionVO.setVersionModifier(infoGluePrincipal.getName());
+				}
 
-			Integer protectecSiteNodeVersionId = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getProtectedSiteNodeVersionId(latestSiteNodeVersionVO.getId(), db);
-			if(protectecSiteNodeVersionId == null || AccessRightController.getController().getIsPrincipalAuthorized(infoGluePrincipal, "SiteNodeVersion.ChangeAccessRights", "" + protectecSiteNodeVersionId))
-			{
-				latestSiteNodeVersionVO.setIsProtected(updatedSiteNodeVersionVO.getIsProtected());
-				latestSiteNodeVersionVO.setVersionModifier(infoGluePrincipal.getName());
-			}
-			
-			latestSiteNodeVersionVO.setIsHidden(updatedSiteNodeVersionVO.getIsHidden());
-			latestSiteNodeVersionVO.setDisableForceIdentityCheck(updatedSiteNodeVersionVO.getDisableForceIdentityCheck());
-			latestSiteNodeVersionVO.setForceProtocolChange(updatedSiteNodeVersionVO.getForceProtocolChange());
-			latestSiteNodeVersionVO.setModifiedDateTime(DateHelper.getSecondPreciseDate());
-
-			SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().acUpdate(infoGluePrincipal, latestSiteNodeVersionVO, db);
+				latestSiteNodeVersionVO.setIsHidden(updatedSiteNodeVersionVO.getIsHidden());
+				latestSiteNodeVersionVO.setDisableForceIdentityCheck(updatedSiteNodeVersionVO.getDisableForceIdentityCheck());
+				latestSiteNodeVersionVO.setForceProtocolChange(updatedSiteNodeVersionVO.getForceProtocolChange());
+				latestSiteNodeVersionVO.setModifiedDateTime(DateHelper.getSecondPreciseDate());
+	
+				SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().acUpdate(infoGluePrincipal, latestSiteNodeVersionVO, db);
+            }
 
 			//If any of the validations or setMethods reported an error, we throw them up now before create.
             ceb.throwIfNotEmpty();

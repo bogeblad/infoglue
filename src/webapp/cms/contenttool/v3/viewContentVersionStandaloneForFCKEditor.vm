@@ -470,9 +470,16 @@
 			var contentReferencesSrcUrl 			= "ViewContentReferences.action?contentId=$!contentId&inline=true";
 			var contentAccessRightsSrcUrl 			= "ViewAccessRights!V3.action?interceptionPointCategory=Content&extraParameters=$!contentId&showInline=true";
 			var contentVersionAccessRightsSrcUrl 	= "ViewAccessRights!V3.action?interceptionPointCategory=ContentVersion&extraParameters=$!contentVersionId&showInline=true";
+			var pageDetailsSrcUrl 					= "ViewSiteNode!V3.action?siteNodeId=$siteNodeId&stay=true&inline=true";
+			var pageDetailsAdvancedSrcUrl 			= "ViewSiteNode!V3.action?siteNodeId=$siteNodeId&stay=true&inline=true&advanced=true";
+			var pageHistorySrcUrl 					= "ViewSiteNodeHistory.action?siteNodeId=$!siteNodeId&inline=true";
+			var pageReferencesSrcUrl 				= "ViewSiteNodeReferences.action?siteNodeId=$!siteNodeId&inline=true";
+			var pageAccessRightsSrcUrl 				= "ViewAccessRights!V3.action?interceptionPointCategory=SiteNodeVersion&extraParameters=$!siteNodeVersionId&showInline=true";
 			//alert("index:" + index);
 			
 			$("input.compare").hide();
+			$("input.reset").hide();
+			$("input.preview").hide();
 			$("input.attachAsset").hide();
 			if(tabHref.indexOf("contentVersionAssetsDiv") > -1)
 			{
@@ -500,6 +507,29 @@
 			{
 				$("#contentVersionAccessRightsFrame").attr("src", contentVersionAccessRightsSrcUrl);
 			}
+			else if(tabHref.indexOf("pageDetailsDiv") > -1) 
+			{
+				document.editForm.anchor.value = "pageDetailsBlock";
+				if($("#pageDetailsFrame").attr("src") == "")
+					$("#pageDetailsFrame").attr("src", pageDetailsSrcUrl);
+			}
+			else if(tabHref.indexOf("pageDetailsAdvancedDiv") > -1) 
+			{
+				document.editForm.anchor.value = "pageDetailsAdvancedBlock";
+				if($("#pageDetailsAdvancedFrame").attr("src") == "")
+					$("#pageDetailsAdvancedFrame").attr("src", pageDetailsAdvancedSrcUrl);
+			}
+			else if(tabHref.indexOf("pageHistoryDiv") > -1) 
+			{
+				$("#pageHistoryFrame").attr("src", pageHistorySrcUrl);
+				$("input.compare").show();
+				$("input.reset").show();
+				$("input.preview").show();
+			}
+			else if(tabHref.indexOf("pageReferencesDiv") > -1) 
+			{
+				$("#pageReferencesFrame").attr("src", pageReferencesSrcUrl);
+			}
 			else
 			{
 				$("#footertoolbar").show();
@@ -510,8 +540,9 @@
 		$(document).ready(function(){
 		
 			$("input.compare").hide();
+			$("input.reset").hide();
+			$("input.preview").hide();
 			$("input.attachAsset").hide();
-			
 			#if($anchor)
 				#if($!anchor == "contentVersionBlock")
 					$("#tabsContainer").tabs({ selected: 0, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
@@ -524,6 +555,12 @@
 					#end
 					$("#tabsContainer").tabs({ selected: $selectedIndex, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
 					loadFrame("contentVersionAssetsDiv");
+				#elseif($!anchor == "pageDetailsBlock")
+					$("#tabsContainer").tabs({ selected: 3, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					loadFrame("pageDetailsDiv");
+				#elseif($!anchor == "pageDetailsAdvancedBlock")
+					$("#tabsContainer").tabs({ selected: 4, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					loadFrame("pageDetailsAdvancedDiv");
 				#else
 					$("#tabsContainer").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
 					##alert("Anchor: $anchor");
@@ -585,14 +622,46 @@
 			catch(e) {console.log("e:" + e);}	
 		});
 
+
+	    /*
+	     * This method acts as a proxy to the frame that has the view in the tabbed world we live in.
+	 	 */	
+
+	    function reactivate()
+	    {
+	    	#if($isMetainfoContent)
+		    	if($("#pageHistoryFrame").get(0).contentWindow.reactivate)
+		    		$("#pageHistoryFrame").get(0).contentWindow.reactivate();
+		    #end
+	    }
+
+
+	    /*
+	     * This method acts as a proxy to the frame that has the view in the tabbed world we live in.
+	 	 */	
+
+	    function previewPage(url)
+	    {
+	    	#if($isMetainfoContent)
+		    	if($("#pageHistoryFrame").get(0).contentWindow.previewPage)
+		    		$("#pageHistoryFrame").get(0).contentWindow.previewPage(url);
+		    #end
+	    }
+
+
 	    /*
 	     * This method acts as a proxy to the frame that has the view in the tabbed world we live in.
 	 	 */	
 
 	    function compare()
 	    {
-	    	if($("#contentHistoryFrame").get(0).contentWindow.compare)
-	    		$("#contentHistoryFrame").get(0).contentWindow.compare();
+	    	#if($isMetainfoContent)
+		    	if($("#pageHistoryFrame").get(0).contentWindow.compare)
+		    		$("#pageHistoryFrame").get(0).contentWindow.compare();
+		    #else
+		    	if($("#contentHistoryFrame").get(0).contentWindow.compare)
+		    		$("#contentHistoryFrame").get(0).contentWindow.compare();
+		    #end
 	    }
 
 		/*
@@ -601,24 +670,36 @@
 		 	
 		function save()
 		{
-			if($("#contentCoverFrame").get(0).contentWindow.save)
+			if($("#contentCoverFrame").size() > 0 && $("#contentCoverFrame").get(0).contentWindow.save)
 				$("#contentCoverFrame").get(0).contentWindow.save();
 			if($("#contentAccessRightsFrame").size() > 0 && $("#contentAccessRightsFrame").get(0).contentWindow.save)
 				$("#contentAccessRightsFrame").get(0).contentWindow.save();
 			if($("#contentVersionAccessRightsFrame").size() > 0 && $("#contentVersionAccessRightsFrame").get(0).contentWindow.save)
 				$("#contentVersionAccessRightsFrame").get(0).contentWindow.save();
+
+			if($("#pageDetailsFrame").size() > 0 && $("#pageDetailsFrame").get(0).contentWindow.save)
+				$("#pageDetailsFrame").get(0).contentWindow.save();
+			
+			if($("#pageDetailsAdvancedFrame").size() > 0 && $("#pageDetailsAdvancedFrame").get(0).contentWindow.save)
+				$("#pageDetailsAdvancedFrame").get(0).contentWindow.save();
 			
 			setTimeout(function(){validateAndSubmitContentForm();}, 500);
 		}
 		
 		function saveAndExit(url)
 		{
-			if($("#contentCoverFrame").get(0).contentWindow.save)
+			if($("#contentCoverFrame").size() > 0 && $("#contentCoverFrame").get(0).contentWindow.save)
 				$("#contentCoverFrame").get(0).contentWindow.save();
 			if($("#contentAccessRightsFrame").size() > 0 && $("#contentAccessRightsFrame").get(0).contentWindow.save)
 				$("#contentAccessRightsFrame").get(0).contentWindow.save();
 			if($("#contentVersionAccessRightsFrame").size() > 0 && $("#contentVersionAccessRightsFrame").get(0).contentWindow.save)
 				$("#contentVersionAccessRightsFrame").get(0).contentWindow.save();
+
+			if($("#pageDetailsFrame").size() > 0 && $("#pageDetailsFrame").get(0).contentWindow.save)
+				$("#pageDetailsFrame").get(0).contentWindow.save();
+			
+			if($("#pageDetailsAdvancedFrame").size() > 0 && $("#pageDetailsAdvancedFrame").get(0).contentWindow.save)
+				$("#pageDetailsAdvancedFrame").get(0).contentWindow.save();
 
 			document.editForm.closeOnLoad.value = "true";
 			setTimeout(function(){validateAndSubmitContentFormThenClose();}, 500);	
@@ -805,9 +886,10 @@
 		#if($parentContentId)
 		try
 		{
-			parent.parent.parent.refreshContent($!parentContentId, 1, $!parentContentId);
+			if(typeof parent.parent.parent.refreshContent === 'function')
+				parent.parent.parent.refreshContent($!parentContentId, 1, $!parentContentId);
 		}
-		catch(e) {typeof console !== 'undefined' && console.log("e:" + e);}
+		catch(e) {typeof console !== 'undefined' && console.log("AA e:" + e);}
 		#end
 		
 	//]]>
@@ -860,10 +942,14 @@
 	
 	<div>
 		<div style="float: left;">
-	<h3>#if($translate)$ui.getString('tool.contenttool.translationViewLabel') #else $ui.getString('tool.contenttool.editingViewLabel') #end $ui.getString('tool.contenttool.contentLabel') "$contentVO.name" - $currentLanguageVO.name</h3>
-	#if($contentVersionVO)
-	   	<p>$ui.getString("tool.contenttool.versionLastUpdatedByLabel") $contentVersionVO.versionModifier ($formatter.formatDate($contentVersionVO.modifiedDateTime, "yyyy-MM-dd HH:mm") - $contentVersionVO.versionComment)</p>
-   	#end
+		#if($isMetainfoContent)
+			<h3>$ui.getString("tool.structuretool.pageProperties.header", $siteNodeName)</h3>
+		#else
+			<h3>#if($translate)$ui.getString('tool.contenttool.translationViewLabel') #else $ui.getString('tool.contenttool.editingViewLabel') #end $ui.getString('tool.contenttool.contentLabel') "$contentVO.name" - $currentLanguageVO.name</h3>
+			#if($contentVersionVO)
+			   	<p>$ui.getString("tool.contenttool.versionLastUpdatedByLabel") $contentVersionVO.versionModifier ($formatter.formatDate($contentVersionVO.modifiedDateTime, "yyyy-MM-dd HH:mm") - $contentVersionVO.versionComment)</p>
+		   	#end
+		#end
 		</div>
 	</div>
 
@@ -871,7 +957,7 @@
 	
 	<div id="tabsContainer" class="cleanTopDiv" style="#if($translate == false)width: 100%;#else width: 550px; #end float:left;">
 	<ul>
-		<li><a href="#contentVersionDiv"><span>$ui.getString('tool.contenttool.textContentTab')</span></a></li>
+		<li><a href="#contentVersionDiv"><span>#if($isMetainfoContent == false)$ui.getString('tool.contenttool.textContentTab')#else Meta data#end</span></a></li>
 
 		#if($this.hasAccessTo($categoriesInterceptionPoint, true, false))
 			<li><a href="#contentVersionCategoriesDiv"><span>$ui.getString('tool.contenttool.categoriesTab')</span></a></li>
@@ -898,12 +984,23 @@
 				<li><a href="#contentVersionAccessRightsDiv"><span>$ui.getString('tool.contenttool.contentVersionAccessRightsTab')</span></a></li>
 			#end
 		#end
+        
+        #if($isMetainfoContent == true)
+        <li><a href="#pageDetailsDiv"><span>$ui.getString("tool.structuretool.toolbarV3.pageDetailLabel")</span></a></li>
+        #if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false, false))
+	        <li><a href="#pageDetailsAdvancedDiv"><span>$ui.getString("tool.common.advanced.label")</span></a></li>	        
+        #end
+        <li><a href="#pageHistoryDiv"><span>$ui.getString('tool.contenttool.contentHistoryTab')</span></a></li>
+        <li><a href="#pageReferencesDiv"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a></li>
+        <li><a href="#pageSimpleComponentModeDiv"><span>Dev</span></a></li>
+		#end
     </ul>
 	
 	<div id="contentVersionDiv" class="inlineTabDiv">
 		
 		<form method="post" name="editForm" id="editForm" action="UpdateContentVersion!standalone.action" style="float:left; width: 95%">
 			#if($isMetainfoContent && $!siteNodeId)
+			<input type="hidden" name="anchor" value=""/>
 			<input type="hidden" name="siteNodeId" value="$!siteNodeId"/>
 			#end				
 			<input type="hidden" name="contentId" value="$!contentId"/>
@@ -1083,6 +1180,26 @@
 			#end
 		#end
 
+        #if($isMetainfoContent == true)
+			<div id="pageDetailsDiv" class="inlineTabDiv">
+				<iframe id="pageDetailsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+			</div>
+			<div id="pageDetailsAdvancedDiv" class="inlineTabDiv">
+				<iframe id="pageDetailsAdvancedFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+			</div>
+			<div id="pageHistoryDiv" class="inlineTabDiv">
+				<iframe id="pageHistoryFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+			</div>
+			
+			<div id="pageReferencesDiv" class="inlineTabDiv">
+				<iframe id="pageReferencesFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+			</div>
+			
+			<div id="pageSimpleComponentModeDiv" class="inlineTabDiv">
+				<iframe id="pageReferencesFrame" src="$componentRendererUrl/ViewPage!renderDecoratedPage.action?siteNodeId=$siteNodeId&languageId=1&contentId=-1&showSimple=true" border="0" width="100%" height="500px" frameborder="0"></iframe>
+			</div>
+		#end		
+		
 	</div><!-- End first tabs collection -->
 
 	#if($translate)

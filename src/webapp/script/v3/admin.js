@@ -61,7 +61,7 @@ function openInlineDiv(url, height, width, modal, iframe, title)
 {
 	var windowHeight = getWindowHeight();
 	//alert("windowHeight:" + windowHeight);
-	if(windowHeight < height)
+	if((windowHeight-60) < height)
 		height = windowHeight - 60;
 
 	var windowWidth = getWindowWidth();

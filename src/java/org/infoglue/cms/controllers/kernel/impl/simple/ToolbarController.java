@@ -1430,6 +1430,7 @@ public class ToolbarController implements ToolbarProvider
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
+		String siteNodeIdString = request.getParameter("siteNodeId");
 		String contentVersionIdString = request.getParameter("contentVersionId");
 		if(contentVersionIdString == null || contentVersionIdString.equals(""))
 			contentVersionIdString = (String)request.getAttribute("contentVersionId");
@@ -1437,7 +1438,12 @@ public class ToolbarController implements ToolbarProvider
 		String saveAndExitURL = (String)request.getAttribute("saveAndExitURL");
 		
 		buttons.add(getCompareButton(toolbarKey, principal, locale, request, disableCloseButton));
-
+		if(siteNodeIdString != null && !siteNodeIdString.equals(""))
+		{
+			buttons.add(getPreviewButton(toolbarKey, principal, locale, request, disableCloseButton));
+			buttons.add(getReactivateButton(toolbarKey, principal, locale, request, disableCloseButton));
+		}
+		
 		if(contentVersionIdString != null && !contentVersionIdString.equals(""))
 		{
 			buttons.add(new ToolbarButton("uploadAsset", 
@@ -1914,15 +1920,15 @@ public class ToolbarController implements ToolbarProvider
 			"",
 			"properties");
 
-		ToolbarButton pageDetailButton = StructureToolbarController.getPageDetailButtons(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale, principal);
-		pageMetaDataButton.getSubButtons().add(pageDetailButton);
+		//ToolbarButton pageDetailButton = StructureToolbarController.getPageDetailButtons(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale, principal);
+		//pageMetaDataButton.getSubButtons().add(pageDetailButton);
 		buttons.add(pageMetaDataButton);
-		
+		/*
 		if(siteNodeVO != null && hasAccessTo(principal, "ToolTabsAndButtons.PageSimpleModeButton", true))
 		{
 			ToolbarButton pageDetailSimpleButton = StructureToolbarController.getPageDetailSimpleButtons(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale, principal);
 			pageMetaDataButton.getSubButtons().add(pageDetailSimpleButton);
-		}
+		}*/
 		
 		buttons.add(StructureToolbarController.getPreviewButtons(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), null, locale));
 
@@ -2110,6 +2116,9 @@ public class ToolbarController implements ToolbarProvider
 	private ToolbarButton getPreviewButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
 	{
 		String siteNodeId = request.getParameter("siteNodeId");
+		if(siteNodeId == null || siteNodeId.equals(""))
+			return null;
+		
 		SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(siteNodeId));
 
 		return StructureToolbarController.getPreviewButton(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale);

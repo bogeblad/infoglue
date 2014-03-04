@@ -116,6 +116,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	
 	//This is used for showing navigationdata
 	private Integer siteNodeId;
+	private String siteNodeName = null;
 
 	private Integer oldContentId 	= null;
 	private String assetKey 		= null;
@@ -389,6 +390,17 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 					logger.debug("This content is a meta info! Content.id: " + contentId + ". The content type is: <" + contentTypeDefinitionVO.getName() + "> and the system metadata content type is <" + CmsPropertyHandler.getMetaDataContentTypeDefinitionName() + ">");
 				}
 				this.isMetainfoContent = true;
+				
+				try
+				{
+					SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(this.getContentId());
+					this.siteNodeName = siteNodeVO.getName();
+					this.siteNodeId = siteNodeVO.getId();
+				}
+				catch (Exception e) 
+				{
+					logger.error("Error getting site node for meta-info: " + e.getMessage());
+				}
 			}
 		}
 
@@ -1719,6 +1731,11 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 		this.siteNodeId = siteNodeId;
 	}
 
+	public String getSiteNodeName()
+	{
+		return this.siteNodeName;
+	}
+
     public void setRepositoryId(Integer repositoryId)
     {
         this.repositoryId = repositoryId;
@@ -1938,6 +1955,8 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
 	public String getAnchor()
 	{
+		if(anchor == null)
+			return "";
 		return anchor;
 	}
 

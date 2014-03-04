@@ -6,6 +6,7 @@
 	<script type="text/javascript" src="script/jqueryplugins-latest/ui/js/jquery-ui.min.js"></script>
 	
 	<link rel="stylesheet" type="text/css" href="css/admin.css" media="screen" />
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/admin.css" media="screen" />
 	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />
 	#foreach($extension in $extensions)
 	<link rel="stylesheet" type="text/css" href="extensions/$extension/css/main.css" />	

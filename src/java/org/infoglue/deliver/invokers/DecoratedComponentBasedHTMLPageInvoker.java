@@ -568,19 +568,26 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			
 			for(ToolbarButton button : buttons)
 			{
-				if(button.getCustomMarkup() == null)
+				try
 				{
-					userDefinedButtonsSB.append("<div id=\"" + button.getId() + "\" class=\"right editOnSightToolbarButton " + button.getCssClass() + "\" title=\"" + button.getTitle() + "\" onclick=\"" + button.getActionURL() + "\"></div>");	
+					if(button.getCustomMarkup() == null)
+					{
+						userDefinedButtonsSB.append("<div id=\"" + button.getId() + "\" class=\"right editOnSightToolbarButton " + button.getCssClass() + "\" title=\"" + button.getTitle() + "\" onclick=\"" + button.getActionURL() + "\"></div>");	
+					}
+					else
+					{
+						if(button.getCustomMarkupPlacement().equals("before"))
+							userDefinedButtonsSB.append("" + button.getCustomMarkup());
+						
+						userDefinedButtonsSB.append("<div id=\"" + button.getId() + "\" class=\"right editOnSightToolbarButton " + button.getCssClass() + "\" title=\"" + button.getTitle() + "\" onclick=\"" + button.getActionURL() + "\">" + (button.getCustomMarkupPlacement().equals("inside") ? button.getCustomMarkup() : "") + "</div>");						
+						
+						if(button.getCustomMarkupPlacement().equals("after"))
+							userDefinedButtonsSB.append("" + button.getCustomMarkup());
+					}
 				}
-				else
+				catch (Exception e) 
 				{
-					if(button.getCustomMarkupPlacement().equals("before"))
-						userDefinedButtonsSB.append("" + button.getCustomMarkup());
-					
-					userDefinedButtonsSB.append("<div id=\"" + button.getId() + "\" class=\"right editOnSightToolbarButton " + button.getCssClass() + "\" title=\"" + button.getTitle() + "\" onclick=\"" + button.getActionURL() + "\">" + (button.getCustomMarkupPlacement().equals("inside") ? button.getCustomMarkup() : "") + "</div>");						
-					
-					if(button.getCustomMarkupPlacement().equals("after"))
-						userDefinedButtonsSB.append("" + button.getCustomMarkup());
+					logger.warn("Problem adding custome EOS button: " + e.getMessage(), e);
 				}
 			}
 			extraBody = extraBody.replaceAll("\\$\\{userDefinedButtons\\}", userDefinedButtonsSB.toString());

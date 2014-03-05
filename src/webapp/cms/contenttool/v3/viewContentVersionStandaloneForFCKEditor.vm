@@ -992,7 +992,9 @@
         #end
         <li><a href="#pageHistoryDiv"><span>$ui.getString('tool.contenttool.contentHistoryTab')</span></a></li>
         <li><a href="#pageReferencesDiv"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a></li>
-        <li><a href="#pageSimpleComponentModeDiv"><span>Dev</span></a></li>
+	        #if($this.hasAccessTo("ToolTabsAndButtons.PageSimpleModeButton", true, false))
+	        	<li><a href="#pageSimpleComponentModeDiv"><span>Dev</span></a></li>
+	        #end
 		#end
     </ul>
 	
@@ -1184,9 +1186,11 @@
 			<div id="pageDetailsDiv" class="inlineTabDiv">
 				<iframe id="pageDetailsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
 			</div>
-			<div id="pageDetailsAdvancedDiv" class="inlineTabDiv">
-				<iframe id="pageDetailsAdvancedFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
-			</div>
+	        #if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false, false))
+				<div id="pageDetailsAdvancedDiv" class="inlineTabDiv">
+					<iframe id="pageDetailsAdvancedFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+				</div>
+			#end
 			<div id="pageHistoryDiv" class="inlineTabDiv">
 				<iframe id="pageHistoryFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
 			</div>
@@ -1195,9 +1199,11 @@
 				<iframe id="pageReferencesFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
 			</div>
 			
+	        #if($this.hasAccessTo("ToolTabsAndButtons.PageSimpleModeButton", true, false))
 			<div id="pageSimpleComponentModeDiv" class="inlineTabDiv">
 				<iframe id="pageReferencesFrame" src="$componentRendererUrl/ViewPage!renderDecoratedPage.action?siteNodeId=$siteNodeId&languageId=1&contentId=-1&showSimple=true" border="0" width="100%" height="500px" frameborder="0"></iframe>
 			</div>
+			#end
 		#end		
 		
 	</div><!-- End first tabs collection -->

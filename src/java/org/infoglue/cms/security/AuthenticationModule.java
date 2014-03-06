@@ -194,7 +194,7 @@ public abstract class AuthenticationModule
 	    if (allowXForwardedIPCheck) 
 	    {
 	    	String ipRemoteCandidate = request.getHeader("X-Forwarded-For");
-	    	if(ipRemoteCandidate != null && ipRemoteCandidate.equals(""))
+	    	if(ipRemoteCandidate != null && !ipRemoteCandidate.equals(""))
 	    		ipRemote = ipRemoteCandidate;
 	    }
 	    

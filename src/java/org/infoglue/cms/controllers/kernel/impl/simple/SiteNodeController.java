@@ -3981,7 +3981,7 @@ public class SiteNodeController extends BaseController
     					
     					List events = new ArrayList();
     					SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestSiteNodeVersionVO(db, orderedSiteNodeVO.getId());
-    					System.out.println(orderedSiteNodeVO.getName() + " - siteNodeVersionVO.getSortOrder():" + siteNodeVersionVO.getSortOrder());
+    					logger.info(orderedSiteNodeVO.getName() + " - siteNodeVersionVO.getSortOrder():" + siteNodeVersionVO.getSortOrder());
     					if(siteNodeVersionVO.getSortOrder() < highestSortOrder)
     					{
     						siteNodeVersionVO = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), SiteNodeVersionVO.WORKING_STATE, "Changed sortOrder", false, infoGluePrincipal, siteNodeVersionVO.getSiteNodeId(), events);

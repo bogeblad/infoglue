@@ -193,7 +193,9 @@ public abstract class AuthenticationModule
 	    
 	    if (allowXForwardedIPCheck) 
 	    {
-	    	ipRemote = request.getHeader("X-Forwarded-For");
+	    	String ipRemoteCandidate = request.getHeader("X-Forwarded-For");
+	    	if(ipRemoteCandidate != null && ipRemoteCandidate.equals(""))
+	    		ipRemote = ipRemoteCandidate;
 	    }
 	    
 	    logger.info("ipAddressesToFallbackToBasicAuth: " + ipAddressesToFallbackToBasicAuth + "\nRequest: "+ipRequest+", Remote: "+ipRemote);

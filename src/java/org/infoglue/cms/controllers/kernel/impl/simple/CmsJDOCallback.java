@@ -311,6 +311,8 @@ public class CmsJDOCallback implements CallbackInterceptor
 
 					CacheController.clearCacheForGroup("contentVersionCache", "content_" + contentVersion.getOwningContent().getId());
 					CacheController.clearCacheForGroup("contentVersionCache", "contentVersion_" + contentVersion.getId());
+
+					CacheController.clearCacheForGroup("contentAttributeCache", "content_" + contentVersion.getContentId());
 				}
 				catch (Exception e) 
 				{
@@ -336,14 +338,16 @@ public class CmsJDOCallback implements CallbackInterceptor
 						ComponentController.getController().reIndexComponentContentsDelayed(contentVersion.getContentId());
 					}
 
-					CacheController.clearCacheForGroup("registryCache", "" + ("org.infoglue.cms.entities.content.ContentVersion_" + getObjectIdentity(object)).hashCode());						
+					CacheController.clearCacheForGroup("registryCache", "" + ("org.infoglue.cms.entities.content.ContentVersion_" + getObjectIdentity(object)).hashCode());
 
 					CacheController.clearCacheForGroup("childContentCache", "content_" + contentVO.getId());
 					if(contentVO.getParentContentId() != null)
-						CacheController.clearCacheForGroup("childContentCache", "content_" + contentVO.getParentContentId());					
+						CacheController.clearCacheForGroup("childContentCache", "content_" + contentVO.getParentContentId());
 
 					CacheController.clearCacheForGroup("contentVersionCache", "content_" + contentVersion.getContentId());
 					CacheController.clearCacheForGroup("contentVersionCache", "contentVersion_" + contentVersion.getId());
+
+					CacheController.clearCacheForGroup("contentAttributeCache", "content_" + contentVersion.getContentId());
 				}
 				catch (Exception e) 
 				{

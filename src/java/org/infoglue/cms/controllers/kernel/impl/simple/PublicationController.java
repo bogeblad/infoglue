@@ -64,6 +64,7 @@ import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.entities.structure.impl.simple.MediumSiteNodeVersionImpl;
 import org.infoglue.cms.entities.workflow.Event;
 import org.infoglue.cms.entities.workflow.EventVO;
+import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.io.FileHelper;
@@ -545,6 +546,139 @@ public class PublicationController extends BaseController
 		}
 	}
 
+	private static Map<String, String> getNiceURIsForCurrentPublishedVersion(SiteNodeVO siteNodeVO, Database db) throws SystemException, Exception, Bug
+	{
+		Map<String, String> currentNiceUris = new HashMap<String, String>();
+		String niceUriAttributeName = CmsPropertyHandler.getNiceURIAttributeName();
+		List<LanguageVO> languageVOs = LanguageController.getController().getAvailableLanguageVOListForRepository(siteNodeVO.getRepositoryId(), db);
+		for (LanguageVO languageVO : languageVOs)
+		{
+			ContentVersionVO currentPublishedMetainfoVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNodeVO.getMetaInfoContentId(), languageVO.getLanguageId(), ContentVersionVO.PUBLISHED_STATE, db);
+			if (currentPublishedMetainfoVersion != null)
+			{
+				String attributeValue = ContentVersionController.getContentVersionController().getAttributeValue(currentPublishedMetainfoVersion, niceUriAttributeName, false);
+				if (logger.isTraceEnabled())
+				{
+					logger.trace("SiteNode has published meta info version for language: " + languageVO.getLanguageId() + ". SiteNode.id: " + siteNodeVO.getSiteNodeId() + ". Value: " + attributeValue);
+				}
+				currentNiceUris.put("" + languageVO.getLanguageId(), attributeValue);
+			}
+		}
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("SiteNode's current NiceURIs: " + currentNiceUris + ". SiteNode.id: " + siteNodeVO.getSiteNodeId());
+		}
+		return currentNiceUris;
+	}
+
+	/**
+	 * Format of the returned Map:
+	 * <pre>
+	 * SiteNodeId: {
+	 * 	LanguageId: {
+	 * 		'NiceURIAttributes' (OBS: static string): niceUriAttribute,
+	 * 		'PageURLs' (OBS: static string): niceUriURL
+	 * 	}
+	 * }
+	 * </pre>
+	 */
+	private Map<Integer, Map<String, Map<String, String>>> getPageUrlsForSiteNodes(Map<Integer,SiteNodeVO> newSiteNodeMap, InfoGluePrincipal infoGluePrincipal)
+	{
+		Map<Integer, Map<String, Map<String, String>>> result = new HashMap<Integer, Map<String,Map<String, String>>>();
+		Database db = null;
+		try
+		{
+			db = beginTransaction();
+			for (SiteNodeVO siteNodeVO : newSiteNodeMap.values())
+			{
+				Map<String, Map<String, String>> siteNodeObject = new HashMap<String, Map<String, String>>();
+				Map<String, String> niceUriAttributes = getNiceURIsForCurrentPublishedVersion(siteNodeVO, db);
+				Map<String, String> pageUrls = RedirectController.getController().getNiceURIMapBeforeMove(db, siteNodeVO.getRepositoryId(), siteNodeVO.getSiteNodeId(), infoGluePrincipal);
+
+				List<LanguageVO> languageVOs = LanguageController.getController().getAvailableLanguageVOListForRepository(siteNodeVO.getRepositoryId(), db);
+				for (LanguageVO languageVO : languageVOs)
+				{
+					Map<String, String> languageObject = new HashMap<String, String>();
+					languageObject.put("NiceURIAttributes", niceUriAttributes.get("" + languageVO.getLanguageId()));
+					languageObject.put("PageURLs", pageUrls.get("" + languageVO.getLanguageId()));
+					siteNodeObject.put("" + languageVO.getLanguageId(), languageObject);
+				}
+
+				result.put(siteNodeVO.getSiteNodeId(), siteNodeObject);
+			}
+			if (logger.isDebugEnabled())
+			{
+				logger.debug("NiceURIs from publications (NiceUri system redirect function). result: " + result);
+			}
+		}
+		catch (Exception ex)
+		{
+			logger.error("Error when gettings page URLs for system redirect creation (NiceURI changes). Message: " + ex.getMessage());
+			logger.warn("Error when gettings page URLs for system redirect creation (NiceURI changes).", ex);
+		}
+		finally
+		{
+			try
+			{
+				rollbackTransaction(db);
+			}
+			catch (Exception ex) { /* According to rollbackTransaction source this exception cannot occur. */ }
+		}
+		return result;
+	}
+
+	private void createSystemRedirectsForNiceUriChanges(Map<Integer, Map<String, Map<String, String>>> allCurrentNiceUris, Map<Integer, Map<String, Map<String, String>>> allNewNiceUris, InfoGluePrincipal infoGluePrincipal)
+	{
+		for (Map.Entry<Integer, Map<String, Map<String, String>>> siteNodeEntry : allCurrentNiceUris.entrySet())
+		{
+			Integer siteNodeId = siteNodeEntry.getKey();
+			Map<String, Map<String, String>> newNiceUris = allNewNiceUris.get(siteNodeId);
+			if (logger.isDebugEnabled())
+			{
+				logger.debug("Looking for NiceUri changes for SiteNode.id: " + siteNodeId);
+			}
+			if (newNiceUris == null)
+			{
+				logger.warn("There was no new NiceUri mapping. Will not create a system redirect. How can this happen? Debug.key: " + siteNodeEntry.getKey() + ". Debug.value: " + siteNodeEntry.getValue());
+			}
+			else
+			{
+					for (Map.Entry<String, Map<String, String>> languageEntry : siteNodeEntry.getValue().entrySet())
+					{
+						try
+						{
+							String languageId = languageEntry.getKey();
+							Map<String, String> currentValues = languageEntry.getValue();
+							Map<String, String> newValues = newNiceUris.get(languageEntry.getKey());
+							String currentNiceUriAttribute = currentValues.get("NiceURIAttributes");
+							String newNiceUriAttribute = newValues.get("NiceURIAttributes");
+							if (currentNiceUriAttribute != null && !currentNiceUriAttribute.equals(newNiceUriAttribute))
+							{
+								try
+								{
+									logger.info("Found new NiceURI for SiteNode: " + siteNodeEntry.getKey());
+									String currentPageUrl = currentValues.get("PageURLs");
+									SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
+									Map<String, String> pageUrls = new HashMap<String, String>();
+									pageUrls.put("" + languageId, currentPageUrl);
+									RedirectController.getController().createSystemRedirect(pageUrls, siteNodeVO.getRepositoryId(), siteNodeId, infoGluePrincipal);
+								}
+								catch (Exception ex)
+								{
+									logger.error("Failed to create system redirect for NiceURI change. SiteNode.id: " + siteNodeId + ". Message: " + ex.getMessage());
+									logger.warn("Failed to create system redirect for NiceURI change. SiteNode.id: " + siteNodeId, ex);
+								}
+							}
+						}
+						catch (NullPointerException nex)
+						{
+							logger.warn("Some value was missing in the NiceUri redirect handling. Will not create a redirect for this entity. Debug.key: " + languageEntry.getKey() + ". Debug.value: " + languageEntry.getValue());
+						}
+					}
+			}
+		}
+	}
+
 	/**
 	 * This method creates a new publication with the concerned events carried out.
 	 */
@@ -633,29 +767,27 @@ public class PublicationController extends BaseController
         return publicationVO;
     }
 
-
 	/**
 	 * This method creates a new publication with the concerned events carried out.
 	 */
 	public PublicationVO createAndPublish(PublicationVO publicationVO, List<EventVO> events, Map<Integer,SiteNodeVO> newSiteNodeMap, Map<Integer,ContentVO> newContentMap, boolean overrideVersionModifyer, InfoGluePrincipal infoGluePrincipal) throws SystemException
-    {
-    	Database db = CastorDatabaseService.getDatabase();
+	{
+		Map<Integer, Map<String, Map<String, String>>> allPageUrlsBeforePublication = getPageUrlsForSiteNodes(newSiteNodeMap, infoGluePrincipal);
 
+		Database db = CastorDatabaseService.getDatabase();
 		try
 		{
-	        beginTransaction(db);
-
-	        publicationVO = createAndPublish(publicationVO, events, newSiteNodeMap, newContentMap, overrideVersionModifyer, infoGluePrincipal, db);
-
+			beginTransaction(db);
+			publicationVO = createAndPublish(publicationVO, events, newSiteNodeMap, newContentMap, overrideVersionModifyer, infoGluePrincipal, db);
 			commitRegistryAwareTransaction(db);
 
-	        // Notify the interceptors!!!
-	        try
+			// Notify the interceptors!!!
+			try
 			{
-	            Map hashMap = new HashMap();
-	        	hashMap.put("publicationId", publicationVO.getId());
-	        	
-	    		intercept(hashMap, "Publication.Written", infoGluePrincipal, true, true);
+				Map hashMap = new HashMap();
+				hashMap.put("publicationId", publicationVO.getId());
+
+				intercept(hashMap, "Publication.Written", infoGluePrincipal, true, true);
 			}
 			catch (Exception e)
 			{
@@ -665,11 +797,14 @@ public class PublicationController extends BaseController
 		catch(Exception e)
 		{
 			logger.error("An error occurred when we tried to commit the publication: " + e.getMessage(), e);
-	    	rollbackTransaction(db);
+			rollbackTransaction(db);
 		}
 
-        return publicationVO;
-    }
+		Map<Integer, Map<String, Map<String, String>>> allPageUrlsAfterPublication = getPageUrlsForSiteNodes(newSiteNodeMap, infoGluePrincipal);
+		createSystemRedirectsForNiceUriChanges(allPageUrlsBeforePublication, allPageUrlsAfterPublication, infoGluePrincipal);
+
+		return publicationVO;
+	}
 
 	public PublicationVO createAndPublish(PublicationVO publicationVO, List<EventVO> events, Map<Integer,SiteNodeVO> newSiteNodeMap, Map<Integer,ContentVO> newContentMap, boolean overrideVersionModifyer, InfoGluePrincipal infoGluePrincipal, Database db) throws SystemException, Exception
     {
@@ -943,10 +1078,10 @@ public class PublicationController extends BaseController
 			*/
 			else if(oldSiteNodeVersion != null && oldSiteNodeVersion.getSiteNodeId() != null)
 			{
-			    List events = new ArrayList();
-				//Integer siteNodeId = oldSiteNodeVersion.getOwningSiteNode().getSiteNodeId();
+				List<EventVO> events = new ArrayList<EventVO>();
+
 				SiteNodeVersionVO newSiteNodeVersionVO = SiteNodeStateController.getController().changeState(entityId, siteNodeVO, SiteNodeVersionVO.PUBLISHED_STATE, "Published", overrideVersionModifyer, infoGluePrincipal, db, oldSiteNodeVersion.getSiteNodeId(), events);
-	    		siteNodeVersion = SiteNodeVersionController.getController().getMediumSiteNodeVersionWithId(newSiteNodeVersionVO.getId(), db);
+				siteNodeVersion = SiteNodeVersionController.getController().getMediumSiteNodeVersionWithId(newSiteNodeVersionVO.getId(), db);
 			}
 
 			if(siteNodeVersion != null)

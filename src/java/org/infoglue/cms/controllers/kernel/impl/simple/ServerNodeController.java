@@ -266,6 +266,8 @@ public class ServerNodeController extends BaseController
 	    {
 	    	ipRequest = request.getRemoteAddr();
 	        ipRemote = request.getHeader("X-Forwarded-For");
+	        if (ipRemote == null) 
+	        	return false;
 	        logger.info("Request: "+ipRequest+", Remote: "+ipRemote+", Ip:"+ip);
 	        if (ip.equals(ipRequest))
 	        {

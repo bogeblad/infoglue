@@ -320,6 +320,16 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 		if(latestVersion.getStateId().intValue() == SiteNodeVersionVO.PUBLISH_STATE)
 		{
 			String text = getLocalizedString(getLocale(), "deliver.editOnSight.toolbarStateWorking.text", new Integer[]{siteNodeVersionVOList.size(), contentVersionVOList.size()});
+			if(siteNodeVersionVOList.size() > 0)
+			{
+				if(contentVersionVOList.size() == 0)
+					text = getLocalizedString(getLocale(), "deliver.editOnSight.toolbarStatePageInWorking.text");
+				else if(siteNodeVersionVOList.size() == 0)
+					text = getLocalizedString(getLocale(), "deliver.editOnSight.toolbarStateContentsWorking.text", new Integer[]{contentVersionVOList.size()});
+				else
+					text = getLocalizedString(getLocale(), "deliver.editOnSight.toolbarStatePageAndContentsWorking.text", new Integer[]{contentVersionVOList.size()});
+			}			
+			
 			if(siteNodeVersionVOList.size() > 0 || contentVersionVOList.size() > 0)
 				this.getResponse().getWriter().print("" + text + " " + getLocalizedString(getLocale(), "deliver.editOnSight.pendingPageApproval.title"));			
 			else
@@ -328,6 +338,13 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 		else if(siteNodeVersionVOList.size() > 0 || contentVersionVOList.size() > 0)
 		{
 			String text = getLocalizedString(getLocale(), "deliver.editOnSight.toolbarStateWorking.text", new Integer[]{siteNodeVersionVOList.size(), contentVersionVOList.size()});
+			if(contentVersionVOList.size() == 0)
+				text = getLocalizedString(getLocale(), "deliver.editOnSight.toolbarStatePageInWorking.text");
+			else if(siteNodeVersionVOList.size() == 0)
+				text = getLocalizedString(getLocale(), "deliver.editOnSight.toolbarStateContentsWorking.text", new Integer[]{contentVersionVOList.size()});
+			else
+				text = getLocalizedString(getLocale(), "deliver.editOnSight.toolbarStatePageAndContentsWorking.text", new Integer[]{contentVersionVOList.size()});
+
 			this.getResponse().getWriter().print("" + text);
 		}
 		else

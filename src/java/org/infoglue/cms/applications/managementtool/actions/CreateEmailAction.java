@@ -38,6 +38,8 @@ import org.infoglue.cms.util.mail.MailServiceFactory;
 public class CreateEmailAction extends InfoGlueAbstractAction
 {
 	private static final long serialVersionUID = 1L;
+
+	private Boolean enableUsers = false;
 	
 	private List users = null;
 	private List roles = null;
@@ -330,6 +332,16 @@ public class CreateEmailAction extends InfoGlueAbstractAction
     	
     	return "inputCreateEmailV3";
     }
+
+	public Boolean getEnableUsers()
+	{
+		return this.enableUsers;
+	}
+
+	public void setEnableUsers(Boolean enableUsers)
+	{
+		this.enableUsers = enableUsers;
+	}
 
 	public List getGroups() 
 	{

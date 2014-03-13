@@ -957,7 +957,7 @@
 	
 	<div id="tabsContainer" class="cleanTopDiv" style="#if($translate == false)width: 100%;#else width: 550px; #end float:left;">
 	<ul>
-		<li><a href="#contentVersionDiv"><span>#if($isMetainfoContent == false)$ui.getString('tool.contenttool.textContentTab')#else Meta data#end</span></a></li>
+		<li><a href="#contentVersionDiv"><span>#if($isMetainfoContent == false)$ui.getString('tool.contenttool.textContentTab')#else Metadata#end</span></a></li>
 
 		#if($this.hasAccessTo($categoriesInterceptionPoint, true, false))
 			<li><a href="#contentVersionCategoriesDiv"><span>$ui.getString('tool.contenttool.categoriesTab')</span></a></li>

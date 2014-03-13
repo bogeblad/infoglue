@@ -47,7 +47,7 @@
 	${userDefinedButtons}
 	<div class="right">${deliver.editOnSight.toolbarInlineEditing.title}: <input type="checkbox" id="inlineEditing" value="true" checked="checked" onclick="toggleInline(event);"/></div>
 	<div class="right languageContext" style="display:none;"><span title="${currentLanguageName}" onclick="$('#languageSelector').toggle();">${currentLanguageCode}</span><div id="languageSelector" style="display: none; position: fixed; padding: 6px 0 0 10px; bottom: 42px; margin-left: -11px; width: 28px; color: black; background-color: white; box-shadow: rgba(0, 0, 0, 0.2) 0px -3px 3px;"><ul style="list-style: none;">${languageList}</ul></div></div>
-	<div id="igStatusDiv" class="right loadingState">${deliver.editOnSight.toolbarState.title}: <span id="igStatus">-</span></div>
+	<div id="igStatusDiv" class="right loadingState"><span id="igStatus">-</span></div>
 </div>
 
 <form id="validatorW3CForm" method="post" action="http://validator.w3.org/check" target="_blank">

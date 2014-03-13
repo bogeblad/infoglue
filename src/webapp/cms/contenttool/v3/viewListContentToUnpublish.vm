@@ -1,4 +1,4 @@
-#beginLightCommonToolV3("tool.common.unpublishing.unpublishContentsHeader" "$!contentId" "" false true $!disableCloseButton)
+#beginLightCommonToolV3("tool.common.unpublishing.unpublishContentsHeaderAllVersions" "$!contentId" "" false true $!disableCloseButton)
 
 <link rel="stylesheet" type="text/css" href="css/cms.css" />
 

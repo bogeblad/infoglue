@@ -378,6 +378,8 @@ public class ToolbarController implements ToolbarProvider
 
 			if(toolbarKey.equalsIgnoreCase("tool.common.unpublishing.unpublishContentsHeader"))
 				return getUnPublishContentsFooterButtons(toolbarKey, principal, locale, request, disableCloseButton);
+			if(toolbarKey.equalsIgnoreCase("tool.common.unpublishing.unpublishContentsHeaderAllVersions"))
+				return getUnPublishContentsFooterButtons(toolbarKey, principal, locale, request, disableCloseButton);
 
 			if(toolbarKey.equalsIgnoreCase("tool.managementtool.mysettings.header"))
 				return getMySettingsFooterButtons(toolbarKey, principal, locale, request, disableCloseButton);
@@ -2343,12 +2345,20 @@ public class ToolbarController implements ToolbarProvider
 
 		if(primaryKeyAsInteger != null)
 			siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(primaryKeyAsInteger);
-			
+		
+		String key1 = "tool.common.unpublishing.unpublishButtonLabel";
+		String key2 = "tool.common.unpublishing.submitToUnpublishButtonLabel";
+		if(request.getParameter("unpublishAll") != null && request.getParameter("unpublishAll").equals("true"))
+		{
+			key1 = "tool.common.unpublishing.unpublishContentsAllVersionsButtonLabel";
+			key2 = "tool.common.unpublishing.submitToUnpublishAllVersionsButtonLabel";
+		}
+		
 		if(siteNodeVO != null && hasAccessTo(principal, "Common.PublishButton", true) && hasAccessTo(principal, "Repository.Read", "" + siteNodeVO.getRepositoryId()))
 		{
 			buttons.add(new ToolbarButton("",
-					  getLocalizedString(locale, "tool.common.unpublishing.unpublishButtonLabel"), 
-					  getLocalizedString(locale, "tool.common.unpublishing.unpublishButtonLabel"),
+					  getLocalizedString(locale, key1), 
+					  getLocalizedString(locale, key1),
 					  "submitToPublish('true');",
 					  "css/images/v3/unpublishPageIcon.gif",
 					  "left",
@@ -2359,8 +2369,8 @@ public class ToolbarController implements ToolbarProvider
 		if(siteNodeVO != null && hasAccessTo(principal, "Common.SubmitToPublishButton", true, false, false))
 		{
 			buttons.add(new ToolbarButton("",
-					  getLocalizedString(locale, "tool.common.unpublishing.submitToUnpublishButtonLabel"), 
-					  getLocalizedString(locale, "tool.common.unpublishing.submitToUnpublishButtonLabel"),
+					  getLocalizedString(locale, key2), 
+					  getLocalizedString(locale, key2),
 					  "submitToPublish('false');",
 					  "css/images/v3/unpublishPageIcon.gif",
 					  "left",
@@ -2452,11 +2462,19 @@ public class ToolbarController implements ToolbarProvider
 		if(primaryKeyAsInteger != null)
 			contentVO = ContentController.getContentController().getContentVOWithId(primaryKeyAsInteger);
 			
+		String key1 = "tool.common.unpublishing.unpublishContentsAllVersionsButtonLabel";
+		String key2 = "tool.common.unpublishing.submitToUnpublishAllVersionsButtonLabel";
+		if(toolbarKey.equals("tool.common.unpublishing.unpublishContentsHeader"))
+		{
+			key1 = "tool.common.unpublishing.unpublishButtonLabel";
+			key2 = "tool.common.unpublishing.submitToUnpublishButtonLabel";
+		}
+		
 		if(contentVO != null && hasAccessTo(principal, "Common.PublishButton", true) && hasAccessTo(principal, "Repository.Read", "" + contentVO.getRepositoryId()))
 		{
 			buttons.add(new ToolbarButton("",
-					  getLocalizedString(locale, "tool.common.unpublishing.unpublishButtonLabel"), 
-					  getLocalizedString(locale, "tool.common.unpublishing.unpublishButtonLabel"),
+					  getLocalizedString(locale, key1), 
+					  getLocalizedString(locale, key1),
 					  "submitToPublish('true');",
 					  "css/images/v3/publishPageIcon.gif",
 					  "left",
@@ -2467,8 +2485,8 @@ public class ToolbarController implements ToolbarProvider
 		if(contentVO != null && hasAccessTo(principal, "Common.SubmitToPublishButton", true, false, false))
 		{
 			buttons.add(new ToolbarButton("",
-					  getLocalizedString(locale, "tool.common.unpublishing.submitToUnpublishButtonLabel"), 
-					  getLocalizedString(locale, "tool.common.unpublishing.submitToUnpublishButtonLabel"),
+					  getLocalizedString(locale, key2), 
+					  getLocalizedString(locale, key2),
 					  "submitToPublish('false');",
 					  "css/images/v3/publishPageIcon.gif",
 					  "left",
@@ -2487,6 +2505,7 @@ public class ToolbarController implements ToolbarProvider
 		
 		return buttons;
 	}
+
 
 	private List<ToolbarButton> getGlobalSubscriptionsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{

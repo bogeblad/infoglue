@@ -211,7 +211,9 @@ WebFXTreeAbstractNode.prototype.add = function (node, bNoIdent) {
 	while (root.parentNode) { root = root.parentNode; }
 	if (root.rendered) {
 		if (this.childNodes.length >= 2) {
-			document.getElementById(this.childNodes[this.childNodes.length -2].id + '-plus').src = ((this.childNodes[this.childNodes.length -2].folder)?((this.childNodes[this.childNodes.length -2].open)?webFXTreeConfig.tMinusIcon:webFXTreeConfig.tPlusIcon):webFXTreeConfig.tIcon);
+			//--document.getElementById(this.childNodes[this.childNodes.length -2].id + '-plus').src = ((this.childNodes[this.childNodes.length -2].folder)?((this.childNodes[this.childNodes.length -2].open)?webFXTreeConfig.tMinusIcon:webFXTreeConfig.tPlusIcon):webFXTreeConfig.tIcon);
+			$("#" + this.childNodes[this.childNodes.length -2].id + "-plus").removeClass("lContractable").removeClass("lExpandable").addClass("" + ((this.childNodes[this.childNodes.length -2].folder)?((this.childNodes[this.childNodes.length -2].open)?"lContractable":"lExpandable"):""));
+
 			if (this.childNodes[this.childNodes.length -2].folder) {
 				this.childNodes[this.childNodes.length -2].plusIcon = webFXTreeConfig.tPlusIcon;
 				this.childNodes[this.childNodes.length -2].minusIcon = webFXTreeConfig.tMinusIcon;
@@ -263,9 +265,6 @@ WebFXTreeAbstractNode.prototype.add = function (node, bNoIdent) {
 		
 		},  helper: 'clone' });
 		
-		//$("#" + node.id + " a").draggable({ helper: 'clone' });
-		//$("#" + node.id + " img").draggable({ helper: 'clone' });
-		//$("#" + node.id + " a").text($("#" + node.id + " a").text() + ":" + node.myType)
 		if(webFXTreeConfig.allowDropOnLeafs || node.folder || node.myType == "Folder")
 		{
 			$("#" + node.id + "").addClass("moveIntoTarget").droppable({
@@ -323,7 +322,7 @@ WebFXTreeAbstractNode.prototype.focus = function() {
 	//alert("Focusing on" + this.id + ":" + (webFXTreeHandler.selected ? webFXTreeHandler.selected.id : ""));
 	if ((webFXTreeHandler.selected) && (webFXTreeHandler.selected != this)) { webFXTreeHandler.selected.deSelect(); }
 	webFXTreeHandler.selected = this;
-	if ((this.openIcon) && (webFXTreeHandler.behavior != 'classic')) { document.getElementById(this.id + '-icon').src = this.openIcon; }
+	//--if ((this.openIcon) && (webFXTreeHandler.behavior != 'classic')) { document.getElementById(this.id + '-icon').src = this.openIcon; }
 	$("#" + this.id + "-anchor").addClass("selected");
 	//document.getElementById(this.id + '-anchor').className = 'selected';
 	document.getElementById(this.id + '-anchor').focus();
@@ -332,14 +331,14 @@ WebFXTreeAbstractNode.prototype.focus = function() {
 
 WebFXTreeAbstractNode.prototype.blur = function() {
 	//alert("Blur");
-	if ((this.openIcon) && (webFXTreeHandler.behavior != 'classic')) { document.getElementById(this.id + '-icon').src = this.icon; }
+	//--if ((this.openIcon) && (webFXTreeHandler.behavior != 'classic')) { document.getElementById(this.id + '-icon').src = this.icon; }
 	document.getElementById(this.id + '-anchor').className = 'selected-inactive';
 }
 
 var ig_expanded_nodes = null;
 
 WebFXTreeAbstractNode.prototype.doExpand = function() {
-	if (webFXTreeHandler.behavior == 'classic') { document.getElementById(this.id + '-icon').src = this.openIcon; }
+	//--if (webFXTreeHandler.behavior == 'classic') { document.getElementById(this.id + '-icon').src = this.openIcon; }
 	if (this.childNodes.length) {  document.getElementById(this.id + '-cont').style.display = 'block'; }
 	this.open = true;
 	if (webFXTreeConfig.usePersistence)
@@ -376,7 +375,7 @@ WebFXTreeAbstractNode.prototype.doExpand = function() {
 }
 
 WebFXTreeAbstractNode.prototype.doCollapse = function() {
-	if (webFXTreeHandler.behavior == 'classic') { document.getElementById(this.id + '-icon').src = this.icon; }
+	//--if (webFXTreeHandler.behavior == 'classic') { document.getElementById(this.id + '-icon').src = this.icon; }
 	if (this.childNodes.length) { document.getElementById(this.id + '-cont').style.display = 'none'; }
 	this.open = false;
 	if (webFXTreeConfig.usePersistence)
@@ -472,17 +471,22 @@ WebFXTreeAbstractNode.prototype.indent = function(lvl, del, last, level, nodesLe
 	if (del) {
 		if ((level >= this._level) && (document.getElementById(this.id + '-plus'))) {
 			if (this.folder) {
-				document.getElementById(this.id + '-plus').src = (this.open)?webFXTreeConfig.lMinusIcon:webFXTreeConfig.lPlusIcon;
-				this.plusIcon = webFXTreeConfig.lPlusIcon;
-				this.minusIcon = webFXTreeConfig.lMinusIcon;
+				//document.getElementById(this.id + '-plus').src = (this.open)?webFXTreeConfig.lMinusIcon:webFXTreeConfig.lPlusIcon;
+				//$("#" + this.id + "-plus").addClass("" + (this.open)?"lContractable":"lExpandable");
+				
+				//this.plusIcon = webFXTreeConfig.lPlusIcon;
+				//this.minusIcon = webFXTreeConfig.lMinusIcon;
 			}
-			else if (nodesLeft) { document.getElementById(this.id + '-plus').src = webFXTreeConfig.lIcon; }
+			else if (nodesLeft) { 
+				//document.getElementById(this.id + '-plus').src = webFXTreeConfig.lIcon; 
+				//$("#" + this.id + "-plus").addClass("lExpandable");
+			}
 			return 1;
 	}	}
 	var foo = document.getElementById(this.id + '-indent-' + lvl);
 	if (foo) {
-		if ((foo._last) || ((del) && (last))) { foo.src =  webFXTreeConfig.blankIcon; }
-		else { foo.src =  webFXTreeConfig.iIcon; }
+		//if ((foo._last) || ((del) && (last))) { foo.src =  webFXTreeConfig.blankIcon; }
+		//else { foo.src =  webFXTreeConfig.iIcon; }
 	}
 	return 0;
 }
@@ -568,8 +572,9 @@ WebFXTree.prototype.toString = function() {
 	var str = "";
 	if(webFXTreeConfig.showRoot)	
 	{
-		str += "<div id=\"" + this.id + "\" ondblclick=\"webFXTreeHandler.toggle(this);\" class=\"webfx-tree-item\" onkeydown=\"return webFXTreeHandler.keydown(this, event)\">";
-		str += "<img id=\"" + this.id + "-icon\" class=\"webfx-tree-icon\" src=\"" + ((webFXTreeHandler.behavior == 'classic' && this.open)?this.openIcon:this.icon) + "\" onclick=\"onTreeItemSelect('" + this.id + "'); onTreeItemClick(this,'"+ this.myId + "','-1','" + this.text + "');\"><a href=\"" + this.action + "\" id=\"" + this.id + "-anchor\" entityId=\"" + this.myId + "\" parentEntityId=\"-1\" onclick=\"webFXTreeHandler.focus(this); onTreeItemSelect('" + this.id + "');\" onfocus=\"webFXTreeHandler.focus(this);\" onblur=\"/*webFXTreeHandler.blur(this);*/\" oncontextmenu=\"return showContextMenu(" + this.myId + ", event, window);\" style=\"-moz-user-select: none; -webkit-user-select: none;\">" + this.text + "</a></div>";
+		var iconClassRoot = "root";
+		str += "<div id=\"" + this.id + "\" ondblclick=\"webFXTreeHandler.toggle(this);\" class=\"webfx-tree-item " + iconClassRoot + "\" onkeydown=\"return webFXTreeHandler.keydown(this, event)\">";
+		str += "<img id=\"" + this.id + "-icon\" class=\"webfx-tree-icon\" src=\"css/images/trans.gif\" width=\"16\" onclick=\"onTreeItemSelect('" + this.id + "'); onTreeItemClick(this,'"+ this.myId + "','-1','" + this.text + "');\"><a href=\"" + this.action + "\" id=\"" + this.id + "-anchor\" entityId=\"" + this.myId + "\" parentEntityId=\"-1\" onclick=\"webFXTreeHandler.focus(this); onTreeItemSelect('" + this.id + "');\" onfocus=\"webFXTreeHandler.focus(this);\" onblur=\"/*webFXTreeHandler.blur(this);*/\" oncontextmenu=\"return showContextMenu(" + this.myId + ", event, window);\" style=\"-moz-user-select: none; -webkit-user-select: none;\">" + this.text + "</a></div>";
 	}
 	str += "<div id=\"" + this.id + "-cont\" class=\"webfx-tree-container\" style=\"display: " + ((this.open)?'block':'none') + ";\">";
 	for (var i = 0; i < this.childNodes.length; i++) {
@@ -584,11 +589,13 @@ WebFXTree.prototype.toString = function() {
  * WebFXTreeItem class
  */
 
-function WebFXTreeItem(sText, sAction, eParent, sIcon, sOpenIcon, isProtected, stateId) {
+function WebFXTreeItem(sText, sAction, eParent, sIcon, sOpenIcon, isProtected, stateId, isHidden, contentTypeDefinitionId) {
 	this.base = WebFXTreeAbstractNode;
 	this.base(sText, sAction);
 	this.isProtected = isProtected;
 	this.stateId = stateId;
+	this.isHidden = isHidden;
+	this.contentTypeDefinitionId = contentTypeDefinitionId;
 	
 	/* Defaults to close */
 	if (webFXTreeConfig.usePersistence)
@@ -623,13 +630,14 @@ WebFXTreeItem.prototype.remove = function() {
 		prevSibling.open = false;
 		iconSrc = document.getElementById(prevSibling.id + '-plus').src;
 		iconSrc = iconSrc.replace('minus', '').replace('plus', '');
-		document.getElementById(prevSibling.id + '-plus').src = iconSrc;
+		//--document.getElementById(prevSibling.id + '-plus').src = iconSrc;
+		
 		// document.getElementById(prevSibling.id + '-icon').src = webFXTreeConfig.fileIcon;
 	}
 	if (document.getElementById(prevSibling.id + '-plus')) {
 		if (parentNode == prevSibling.parentNode) {
 			iconSrc = iconSrc.replace('minus', '').replace('plus', '');
-			document.getElementById(prevSibling.id + '-plus').src = iconSrc;
+			//--document.getElementById(prevSibling.id + '-plus').src = iconSrc;
 }	}	}
 
 WebFXTreeItem.prototype._remove = function() {
@@ -654,13 +662,15 @@ WebFXTreeItem.prototype._remove = function() {
 
 WebFXTreeItem.prototype.expand = function() {
 	this.doExpand();
-	document.getElementById(this.id + '-plus').src = this.minusIcon;
+	//--document.getElementById(this.id + '-plus').src = this.minusIcon;
+	$("#" + this.id + "-plus").removeClass("lContractable").removeClass("lExpandable").addClass("lContractable");
 }
 
 WebFXTreeItem.prototype.collapse = function(b) {
 	if (!b) { this.focus(); }
 	this.doCollapse();
-	document.getElementById(this.id + '-plus').src = this.plusIcon;
+	//--document.getElementById(this.id + '-plus').src = this.plusIcon;
+	$("#" + this.id + "-plus").removeClass("lContractable").removeClass("lExpandable").addClass("lExpandable");
 }
 
 WebFXTreeItem.prototype.getFirst = function() {
@@ -742,7 +752,8 @@ WebFXTreeItem.prototype.toString = function (nItem, nItemCount) {
 	var i = 0;
 	while (foo.parentNode) {
 		foo = foo.parentNode;
-		indent = "<img id=\"" + this.id + "-indent-" + i + "\" src=\"" + ((foo._last)?webFXTreeConfig.blankIcon:webFXTreeConfig.iIcon) + "\">" + indent;
+		//indent = "<img id=\"" + this.id + "-indent-" + i + "\" src=\"" + ((foo._last)?webFXTreeConfig.blankIcon:webFXTreeConfig.iIcon) + "\">" + indent;
+		indent = "<img id=\"" + this.id + "-indent-" + i + "\" class=\"indent\" src=\"css/images/trans.gif\" width=\"16\">" + indent;
 		i++;
 	}
 	this._level = i;
@@ -785,11 +796,34 @@ WebFXTreeItem.prototype.toString = function (nItem, nItemCount) {
 		classInfo = "publishedTreeItem";		
 	}
 		
+	var iconClass = "ctd" + this.contentTypeDefinitionId;
+	
+	//TBD
+	//iconClass = iconClass + " article";
+	if(this.isHidden == 'true')
+	{
+		iconClass = iconClass + " hidden";
+	}
+	if(this.isProtected == 'true')
+	{
+		iconClass = iconClass + " protected";
+	}
+	console.log("this.folder", this.folder);
+	if(this.folder == '1')
+	{
+		iconClass = iconClass + " folder";
+	}
+	
+	var expandIconClass = "expandable";
+	expandIconClass = ((this.folder)?((this.open)?((this.parentNode._last)?"lContractable":"tContractable"):((this.parentNode._last)?"lExpandable":"tExpandable")):((this.parentNode._last)?"lIcon":"tIcon"));
+	
 	var label = this.text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-	var str = "<div id=\"" + this.id + "\" ondblclick=\"webFXTreeHandler.toggle(this);\" class=\"webfx-tree-item\" onkeydown=\"return webFXTreeHandler.keydown(this, event)\">";
+	var str = "<div id=\"" + this.id + "\" ondblclick=\"webFXTreeHandler.toggle(this);\" class=\"webfx-tree-item " + iconClass + "\" onkeydown=\"return webFXTreeHandler.keydown(this, event)\">";
 	str += indent;
-	str += "<img id=\"" + this.id + "-plus\" src=\"" + ((this.folder)?((this.open)?((this.parentNode._last)?webFXTreeConfig.lMinusIcon:webFXTreeConfig.tMinusIcon):((this.parentNode._last)?webFXTreeConfig.lPlusIcon:webFXTreeConfig.tPlusIcon)):((this.parentNode._last)?webFXTreeConfig.lIcon:webFXTreeConfig.tIcon)) + "\" onclick=\"webFXTreeHandler.toggle(this);\">"
-	str += "<img id=\"" + this.id + "-icon\" class=\"webfx-tree-icon\" src=\"" + ((webFXTreeHandler.behavior == 'classic' && this.open)?this.openIcon:this.icon) + "\" onclick=\"webFXTreeHandler.focus(document.getElementById('" + this.id + "-anchor')); onTreeItemSelect('" + this.id + "');" + this.action + "\"><a isContainer=\"" + isContainer + "\" entityId=\"" + this.myId + "\" parentEntityId=\"" + this.parentNode.myId + "\" href=\"javascript:void(" + this.myId + ");\" id=\"" + this.id + "-anchor\" oncontextmenu=\"return showContextMenu(" + this.myId + ", event, window);\" onclick=\"webFXTreeHandler.focus(this); onTreeItemSelect('" + this.id + "');" + this.action + "\" ondblclick=\"if(window.onTreeItemDblClick)onTreeItemDblClick('" + this.myId + "', '" + label + "');\" onfocus=\"webFXTreeHandler.focus(this);\" class=\"" + classInfo + "\" style=\"" + styleInfo + " -moz-user-select: none; -webkit-user-select: none;\">" + label + stateInfo + "</a></div>";
+	//str += "<img id=\"" + this.id + "-plus\" class=\"webfx-tree-expand\" src=\"" + ((this.folder)?((this.open)?((this.parentNode._last)?webFXTreeConfig.lMinusIcon:webFXTreeConfig.tMinusIcon):((this.parentNode._last)?webFXTreeConfig.lPlusIcon:webFXTreeConfig.tPlusIcon)):((this.parentNode._last)?webFXTreeConfig.lIcon:webFXTreeConfig.tIcon)) + "\" onclick=\"webFXTreeHandler.toggle(this);\">"
+	str += "<img id=\"" + this.id + "-plus\" class=\"webfx-tree-expand " + expandIconClass + "\" src=\"css/images/trans.gif\" width=\"16\" onclick=\"webFXTreeHandler.toggle(this);\">"
+	//str += "<img id=\"" + this.id + "-icon\" class=\"webfx-tree-icon\" src=\"" + ((webFXTreeHandler.behavior == 'classic' && this.open)?this.openIcon:this.icon) + "\" onclick=\"webFXTreeHandler.focus(document.getElementById('" + this.id + "-anchor')); onTreeItemSelect('" + this.id + "');" + this.action + "\"><a isContainer=\"" + isContainer + "\" entityId=\"" + this.myId + "\" parentEntityId=\"" + this.parentNode.myId + "\" href=\"javascript:void(" + this.myId + ");\" id=\"" + this.id + "-anchor\" oncontextmenu=\"return showContextMenu(" + this.myId + ", event, window);\" onclick=\"webFXTreeHandler.focus(this); onTreeItemSelect('" + this.id + "');" + this.action + "\" ondblclick=\"if(window.onTreeItemDblClick)onTreeItemDblClick('" + this.myId + "', '" + label + "');\" onfocus=\"webFXTreeHandler.focus(this);\" class=\"" + classInfo + "\" style=\"" + styleInfo + " -moz-user-select: none; -webkit-user-select: none;\">" + label + stateInfo + "</a></div>";
+	str += "<img id=\"" + this.id + "-icon\" class=\"webfx-tree-icon\" src=\"css/images/trans.gif\" onclick=\"webFXTreeHandler.focus(document.getElementById('" + this.id + "-anchor')); onTreeItemSelect('" + this.id + "');" + this.action + "\"><a isContainer=\"" + isContainer + "\" entityId=\"" + this.myId + "\" parentEntityId=\"" + this.parentNode.myId + "\" href=\"javascript:void(" + this.myId + ");\" id=\"" + this.id + "-anchor\" oncontextmenu=\"return showContextMenu(" + this.myId + ", event, window);\" onclick=\"webFXTreeHandler.focus(this); onTreeItemSelect('" + this.id + "');" + this.action + "\" ondblclick=\"if(window.onTreeItemDblClick)onTreeItemDblClick('" + this.myId + "', '" + label + "');\" onfocus=\"webFXTreeHandler.focus(this);\" class=\"" + classInfo + "\" style=\"" + styleInfo + " -moz-user-select: none; -webkit-user-select: none;\">" + label + stateInfo + "</a></div>";
 	str += "<div id=\"" + this.id + "-cont\" class=\"webfx-tree-container\" style=\"display: " + ((this.open)?'block':'none') + ";\">";
 	for (var i = 0; i < this.childNodes.length; i++) {
 		str += this.childNodes[i].toString(i,this.childNodes.length);

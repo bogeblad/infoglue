@@ -127,9 +127,11 @@
 
 	<link type="text/css" rel="stylesheet" href="script/xloadtree/xtree.css" />
 	<link rel="stylesheet" type="text/css" href="css/menu.css" />
-	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/menu.css" />
 </head>
 <body class="generaltooledit" onload="if(parent.notifyIsLoaded)parent.notifyIsLoaded();if(parent.notifyExp)parent.notifyExp('${exp}');loaded();">
+
+	<div id="treeDiv" class="contentTree">
 
 	<!-- NEW DYNAMIC VERSION -->
 	<script type="text/javascript">
@@ -214,6 +216,8 @@
 	}
 	-->
 	</script>	
+
+	</div>
 
 </body>
 </html>

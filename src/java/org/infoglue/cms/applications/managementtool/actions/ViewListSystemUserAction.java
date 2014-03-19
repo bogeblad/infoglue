@@ -36,6 +36,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.GroupControllerProxy;
+import org.infoglue.cms.controllers.kernel.impl.simple.LuceneUsersController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RoleControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.exception.ConstraintException;
@@ -156,7 +157,8 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 			}
 			else
 			{
-				this.infogluePrincipals = UserControllerProxy.getController().getFilteredUsers(start, new Integer(iDisplayLengthString), sortProperty, sortDirection, null, false);
+				//this.infogluePrincipals = UserControllerProxy.getController().getFilteredUsers(start, new Integer(iDisplayLengthString), sortProperty, sortDirection, null, false);
+				this.infogluePrincipals = LuceneUsersController.getController().getFilteredUsers(start, new Integer(iDisplayLengthString), sortProperty, sortDirection, null, false);
 				Integer totalRecords = UserControllerProxy.getController().getUserCount(this.sSearch);
 				this.iTotalRecords = totalRecords;
 				this.iTotalDisplayRecords = totalRecords;
@@ -184,7 +186,8 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 			}
 			else
 			{
-				this.infogluePrincipals = UserControllerProxy.getController().getFilteredUsers(new Integer(iDisplayStartString), new Integer(iDisplayLengthString), sortProperty, sortDirection, this.sSearch, false);
+				this.infogluePrincipals = LuceneUsersController.getController().getFilteredUsers(new Integer(iDisplayStartString), new Integer(iDisplayLengthString), sortProperty, sortDirection, this.sSearch, false);
+				//this.infogluePrincipals = UserControllerProxy.getController().getFilteredUsers(new Integer(iDisplayStartString), new Integer(iDisplayLengthString), sortProperty, sortDirection, this.sSearch, false);
 	
 				this.iTotalRecords = UserControllerProxy.getController().getUserCount(this.sSearch);
 				this.iTotalDisplayRecords = UserControllerProxy.getController().getUserCount(this.sSearch);

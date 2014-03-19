@@ -100,10 +100,10 @@ WebFXLoadTree.prototype.expand = function() {
  * WebFXLoadTreeItem class
  */
 
-function WebFXLoadTreeItem(sText, sXmlSrc, sAction, eParent, sIcon, sOpenIcon, hasChildren, isProtected, stateId) {
+function WebFXLoadTreeItem(sText, sXmlSrc, sAction, eParent, sIcon, sOpenIcon, hasChildren, isProtected, stateId, isHidden, contentTypeDefinitionId) {
 	// call super
 	this.WebFXTreeItem = WebFXTreeItem;
-	this.WebFXTreeItem(sText, sAction, eParent, sIcon, sOpenIcon, isProtected, stateId);
+	this.WebFXTreeItem(sText, sAction, eParent, sIcon, sOpenIcon, isProtected, stateId, isHidden, contentTypeDefinitionId);
 
 	// setup default property values
 	this.src = sXmlSrc;
@@ -301,9 +301,9 @@ function _xmlTreeToJsTree(oNode) {
 	// create jsNode
 	var jsNode;
 	if (src != null && src != "")
-		jsNode = new WebFXLoadTreeItem(text, src, action, parent, icon, openIcon, hasChildren, isProtected, stateId);
+		jsNode = new WebFXLoadTreeItem(text, src, action, parent, icon, openIcon, hasChildren, isProtected, stateId, isHidden, contentTypeDefinitionId);
 	else
-		jsNode = new WebFXTreeItem(text, action, parent, icon, openIcon, isProtected, stateId);
+		jsNode = new WebFXTreeItem(text, action, parent, icon, openIcon, isProtected, stateId, isHidden, contentTypeDefinitionId);
 		
 
 	jsNode.myType = type;

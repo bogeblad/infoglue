@@ -46,6 +46,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.controllers.kernel.impl.simple.EventController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
+import org.infoglue.cms.controllers.kernel.impl.simple.LuceneUsersController;
 import org.infoglue.cms.controllers.kernel.impl.simple.PublicationController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RegistryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
@@ -60,6 +61,7 @@ import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.entities.workflow.EventVO;
+import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.util.HttpHelper;
 
@@ -188,6 +190,38 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 		this.getResponse().setContentType("text/plain");
 		this.getResponse().getWriter().print("" + categories.size());
 		
+		return NONE;
+    }
+
+	public String doUserSearch() throws Exception
+    {
+		//System.out.println(getRequest().getParameter("q"));
+		//System.out.println(getRequest().getParameter("fieldToMatchExact"));
+		List<InfoGluePrincipal> users = LuceneUsersController.getController().getFilteredUsers(0, 100, "userName", "asc", getRequest().getParameter("q"), false);
+
+		String query = getRequest().getParameter("q");
+		String fieldToMatchExact = getRequest().getParameter("fieldExactMatch");
+		this.getResponse().setContentType("text/json");
+		this.getResponse().getWriter().print("{ \"users\": [");
+
+		int i=0;
+		for(InfoGluePrincipal user : users)
+		{
+			if(fieldToMatchExact != null && !fieldToMatchExact.equals(""))
+			{
+				if(fieldToMatchExact.equals("email") && !user.getEmail().equalsIgnoreCase(query))
+					continue;
+				else if(fieldToMatchExact.equals("userName") && !user.getName().equalsIgnoreCase(query))
+					continue;
+			}
+			if(i > 0)
+				this.getResponse().getWriter().print(",");
+			this.getResponse().getWriter().print("{\"firstName\": \"" + user.getFirstName() + " " + user.getLastName() + "\"}");
+			i++;
+		}
+
+		this.getResponse().getWriter().print("] }");
+						
 		return NONE;
     }
 

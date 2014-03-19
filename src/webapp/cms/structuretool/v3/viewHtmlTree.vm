@@ -191,10 +191,14 @@
 					_startLoadXmlTree(node.src, node);
 				}
 				
-				if (webFXTreeHandler.behavior == 'classic') { document.getElementById(node.id + '-icon').src = node.openIcon; }
+				if (webFXTreeHandler.behavior == 'classic') { 
+					//--document.getElementById(node.id + '-icon').src = node.openIcon; 
+				}
 				if (node.childNodes.length) {  document.getElementById(node.id + '-cont').style.display = 'block'; }
 				node.open = true;
-				document.getElementById(node.id + '-plus').src = node.minusIcon;
+				//document.getElementById(node.id + '-plus').src = node.minusIcon;
+				$("#" + node.id + '-plus').removeClass("lContractable").removeClass("lExpandable").addClass("lContractable");
+				
 				node.deSelect();
 				document.getElementById(node.id + '-anchor').blur();
 			 	//node.expand();
@@ -301,7 +305,7 @@
 
 	<link type="text/css" rel="stylesheet" href="script/xloadtree/xtree.css" />
 	<link rel="stylesheet" type="text/css" href="css/menu.css" />
-	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/menu.css" />
 	
 	<style type="text/css">
 		.webfx-tree-slot { height: 6px; border: 0; position: absolute; width: 100%; margin-top: -3px; z-index: 100000000;}
@@ -313,7 +317,7 @@
 </head>
 <body class="generaltooledit" onload="onloadFn()" style="margin:0px">
 	
-	<div id="treeDiv">
+	<div id="treeDiv" class="structureTree">
 	
 	<!-- NEW DYNAMIC VERSION -->
 	<script type="text/javascript">

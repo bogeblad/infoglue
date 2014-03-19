@@ -14,3 +14,52 @@
 .webfx-tree-item a.publishedTreeItem {
 	font-style: none;
 }
+
+/* GENERAL TREE PROPERTIES */
+.webfx-tree-item {
+	height: 20px;
+}
+.lExpandable {
+	background: url('images/v3/plus-empty.png') center center no-repeat;
+}
+.lContractable {
+	background: url('images/v3/minus-empty.png') center center no-repeat;
+}
+.hidden .webfx-tree-icon {
+	opacity:0.3;
+}
+
+/* STANDARD CONTENT TREE ICONS */
+.contentTree .root .webfx-tree-icon {
+	background: url('../script/xloadtree/images/xp/folder.png') no-repeat;
+}
+.contentTree .folder .webfx-tree-icon {
+	background: url('../script/xloadtree/images/xp/folder.png') no-repeat;
+}
+.contentTree .webfx-tree-icon {
+	background: url('../script/xloadtree/images/xp/file.png') no-repeat;
+}
+.contentTree .protected .webfx-tree-icon {
+	background: url('images/protectedFile.png') no-repeat;
+}
+
+/* STANDARD STRUCTURE TREE ICONS */
+.structureTree .root .webfx-tree-icon {
+	background: url('../script/xloadtree/images/xp/page.png') no-repeat;
+	}
+.structureTree .webfx-tree-icon {
+	background: url('../script/xloadtree/images/xp/page.png') no-repeat;
+	}
+.structureTree .protected .webfx-tree-icon {
+	background: url('../script/xloadtree/images/xp/pageProtected.png') no-repeat;
+}
+/* HOW TO OVERRIDE CONTENTTYPES */
+/*
+.contentTree .ctd3 .webfx-tree-icon {
+	background: url('https://cdn2.iconfinder.com/data/icons/pittogrammi/142/32-16.png') no-repeat;
+	}
+.contentTree .ctd3 .protected .webfx-tree-icon {
+	background: url(https://cdn2.iconfinder.com/data/icons/pittogrammi/142/32-16.png) 7px 7px no-repeat, url(https://cdn1.iconfinder.com/data/icons/all_google_icons_symbols_by_carlosjj-du/16/docs.png) center center no-repeat;
+	background-size: 8px 8px, 16px 16px;
+}
+*/

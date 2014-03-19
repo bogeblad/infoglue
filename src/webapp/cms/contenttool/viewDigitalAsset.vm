@@ -1,5 +1,6 @@
 #define($headerMarkup)
 	
+	<link rel="stylesheet" type="text/css" href="css/assets.css">
 	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
 	 
 	#if($useFckUploadMessages)
@@ -105,8 +106,13 @@
 					{	
 						$(".save").show();
 						$(".saveAndExit").show();
-						$(".cancel").show();
-						$("#footertoolbar div input.close").hide();
+						#if($uploadedFilesCounter > 0)
+							$(".cancel").hide();
+							$("#footertoolbar div input.close").show();
+						#else
+							$(".cancel").show();
+							$("#footertoolbar div input.close").hide();
+						#end
 					}
 				}
 			});
@@ -444,10 +450,11 @@
 			<input type="hidden" name="entityId" value="$!entityId">
 			<input type="hidden" name="contentVersionId" value="$!contentVersionId">
 			<input type="hidden" name="uploadedFilesCounter" value="$!uploadedFilesCounter">
+			<input type="hidden" name="uploadedFilesIds" value="$!uploadedFilesIds">
 			<input type="hidden" name="closeOnLoad" value="false">
 			<table class="fileUploadTable">
 				<tr>
-					<td class="biglabel" colspan="2">
+					<td class="biglabel">
 						<strong>#if($uploadedFilesCounter == 0)
 							$ui.getString("tool.contenttool.fileUpload.fileUploadHeader")
 						#else
@@ -468,6 +475,7 @@
 					<td>
 						<input type="FILE" name="file1" id="file1" onchange="setAssetKey();">
 					</td>
+					#*
 					<td class="fileUploadThumbnail" rowspan="4" align="center">
 						#if($uploadedFilesCounter != 0)
 							#set($digitalAssetUrl = "$digitalAssetUrl")
@@ -480,6 +488,7 @@
 							</a>
 						#end
 					</td>
+						*#
 				</tr>
 				<tr>
 					<td>
@@ -520,6 +529,30 @@
 				</tr>
 				</form>	
 			</table>
+
+			#if($uploadedFilesCounter != 0)
+			<div style="margin-left: 8px; overflow: auto; height: 200px; width: 90%; border: 1px solid #ccc;">
+				#set($digitalAssetIds = $uploadedFilesIdsAsArray)
+				#foreach($digitalAssetId in $digitalAssetIds)
+					#set($digitalAssetUrl = "$this.getDigitalAssetUrl($digitalAssetId)")
+					<div class="imgBox">
+						<p class="assetKeyP">
+						#if($this.getDigitalAssetKey($digitalAssetId).length() > 15)
+							$this.getDigitalAssetKey($digitalAssetId).substring(0, 12)...
+						#else
+							$this.getDigitalAssetKey($digitalAssetId)
+						#end
+						</p>
+						<div class="imgBoxTop" style="background:url(css/images/v3/imgbox_bg.gif) repeat;">
+							<div id="imgBoxTopInner" class="imgBoxTopInner">
+								<img src="$this.getAssetThumbnailUrl($digitalAssetId)"/>
+							</div>
+						</div>
+					</div>
+				#end
+			</div>
+			#end
+			
 		</div>
 	
 		<div id="bulkUpload" style="padding: 10px;">

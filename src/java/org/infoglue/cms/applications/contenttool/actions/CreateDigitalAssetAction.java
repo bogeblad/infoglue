@@ -78,6 +78,7 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 	private Integer contentVersionId = null;
 	private String digitalAssetKey   = "";
 	private Integer uploadedFilesCounter = new Integer(0);
+	private String uploadedFilesIds = "";
 	private ContentVersionVO contentVersionVO;
 	private ContentTypeDefinitionVO contentTypeDefinitionVO;
 	private String reasonKey;
@@ -117,6 +118,20 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
         return digitalAssetKey;
     }
 
+    public String getDigitalAssetKey(String digitalAssetId)
+    {
+    	try
+    	{
+    		return DigitalAssetController.getController().getDigitalAssetVOWithId(new Integer(digitalAssetId)).getAssetKey();
+    	}
+    	catch (Exception e) 
+    	{
+    		logger.warn("Problem getting asset key for [" + digitalAssetId + "]: " + e.getMessage(), e);
+		}
+    	
+    	return "Error getting key";
+    }
+
 	public void setUploadedFilesCounter(Integer uploadedFilesCounter)
 	{
 		this.uploadedFilesCounter = uploadedFilesCounter;
@@ -126,7 +141,25 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 	{
 		return this.uploadedFilesCounter;
 	}
-	   
+
+	public void setUploadedFilesIds(String uploadedFilesIds)
+	{
+		this.uploadedFilesIds = uploadedFilesIds;
+	}
+
+	public String getUploadedFilesIds()
+	{
+		if(this.uploadedFilesIds.equals(""))
+			return "" + this.digitalAssetVO.getId();
+		else
+			return this.uploadedFilesIds + "," + this.digitalAssetVO.getId();
+	}
+
+	public String[] getUploadedFilesIdsAsArray()
+	{
+		return getUploadedFilesIds().split(",");
+	}
+
 	public List getDefinedAssetKeys()
 	{
 		return ContentTypeDefinitionController.getController().getDefinedAssetKeys(this.contentTypeDefinitionVO, true);
@@ -740,6 +773,41 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
     }
     
 
+	/**
+	 * This method fetches the blob from the database and saves it on the disk.
+	 * Then it returnes a url for it
+	 */
+	
+	public String getDigitalAssetUrl(String digitalAssetId) throws Exception
+	{
+		String imageHref = null;
+		try
+		{
+       		imageHref = DigitalAssetController.getDigitalAssetUrl(new Integer(digitalAssetId));
+		}
+		catch(Exception e)
+		{
+			logger.warn("We could not get the url of the digitalAsset: " + e.getMessage(), e);
+		}
+		
+		return imageHref;
+	}
+	
+    public String getAssetThumbnailUrl(String digitalAssetId)
+    {
+        String imageHref = null;
+		try
+		{
+       		imageHref = DigitalAssetController.getDigitalAssetThumbnailUrl(new Integer(digitalAssetId));
+		}
+		catch(Exception e)
+		{
+		    logger.warn("We could not get the url of the thumbnail: " + e.getMessage(), e);
+		}
+		
+		return imageHref;
+    }
+    
     public String getEntity()
     {
         return entity;

@@ -315,7 +315,7 @@
 	</style>
 
 </head>
-<body class="generaltooledit" onload="onloadFn()" style="margin:0px">
+<body oncontextmenu="return false;" class="generaltooledit" onload="onloadFn()" style="margin:0px">
 	
 	<div id="treeDiv" class="structureTree">
 	

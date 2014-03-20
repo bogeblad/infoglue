@@ -83,6 +83,7 @@ function refreshTopToolBar(title, toolbarKey, arguments, unrefreshedContentId, c
 	jQuery.get(newUrl, function(data){
       	//alert("Data Loaded: " + data);
 		$("#menutoolbarLeft").replaceWith(data);
+		$("#menutoolbarLeft").css("max-width", "" + ($(window).width() - $("#menuToolbarRight").width() - 20) + "px");
     });
     
 	/*
@@ -138,24 +139,33 @@ function showContextMenu(ajaxUrl, e, aWindow)
 	
 	var clientX = getEventPositionX(e) + 16;
 	var clientY = getEventPositionY(e) - yOffset + 80;
-	
-	var rightedge = document.body.clientWidth - clientX;
-	var bottomedge = getWindowHeight() - clientY;
+	console.log("clientY:" + clientY);
 
+	var rightedge = document.body.clientWidth - clientX;
+	var bottomedge = $(window).height() - clientY;
+	//console.log("bottomedge:" + bottomedge);
+	//console.log("clientY:" + clientY);
+	
 	var menuDiv = document.getElementById("contextMenuDiv");
 	
 	if (rightedge < menuDiv.offsetWidth)
 		clientX = (clientX - menuDiv.offsetWidth);
 	
-	if (bottomedge < menuDiv.offsetHeight && (clientY - menuDiv.offsetHeight > 0))
-		clientY = (clientY - menuDiv.offsetHeight);
-		
 	menuDiv.style.left 	= clientX + "px";
 	menuDiv.style.top 	= clientY + "px";
-	
+
 	jQuery.get(ajaxUrl,
 	  	function(data){
 			$("#contextMenuDiv").html(data);
+			
+			//console.log("clientY 2:" + clientY);
+			var $window = $(window),
+		    $flyoutMenu = $('#contextMenuDiv'),
+		    $viewportBottom = $window.scrollTop() + $window.height(), // value #1
+		    $flyoutMenuBottom = clientY + $flyoutMenu.height(); // value #2
+			if ($flyoutMenuBottom > $viewportBottom) {
+			    $flyoutMenu.css("top", "" + (clientY - $flyoutMenu.height()) + "px");
+			}
     	});
 	$("#contextMenuDiv").show();
 

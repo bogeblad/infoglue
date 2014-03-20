@@ -798,8 +798,6 @@ WebFXTreeItem.prototype.toString = function (nItem, nItemCount) {
 		
 	var iconClass = "ctd" + this.contentTypeDefinitionId;
 	
-	//TBD
-	//iconClass = iconClass + " article";
 	if(this.isHidden == 'true')
 	{
 		iconClass = iconClass + " hidden";
@@ -808,7 +806,6 @@ WebFXTreeItem.prototype.toString = function (nItem, nItemCount) {
 	{
 		iconClass = iconClass + " protected";
 	}
-	console.log("this.folder", this.folder);
 	if(this.folder == '1')
 	{
 		iconClass = iconClass + " folder";

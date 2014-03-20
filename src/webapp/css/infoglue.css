@@ -682,15 +682,16 @@ label {
 	background: #333;
 	background: rgba(0,0,0,.8);
 	border-radius: 5px;
-	bottom: 0px;
+	top: 0px;
 	color: #fff;
 	content: attr(title);
 	left: 26px;
-	margin-bottom: -4px;
+	margin-top: -4px;
 	padding: 5px 15px;
 	position: absolute;
 	z-index: 98;
-	width: 220px;
+	min-width: 500px;
+	max-width: 700px;
 }
 .fieldHelp:hover:before{
 	border: solid;

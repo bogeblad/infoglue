@@ -195,7 +195,7 @@ html,body {
 #menutoolbarLeft {
 	padding: 0px;
 	margin: 0px;
-	width: 90%;
+	float: left;
 }
 #menutoolbarLeft img.divider {
 	float:left;

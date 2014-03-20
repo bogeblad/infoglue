@@ -30,17 +30,20 @@
 		{
 			$("#work").height((document.body.clientHeight - $("#header").height() - $("#footer").height()) - 1);
 			$("#work > iframe").height((document.body.clientHeight - $("#header").height() - $("#footer").height()) - 1);
-			//console.log("Size:" + ($(window).width() - $("#menucontent").width()));
-			if($(window).width() - $("#menucontent").width() < 350)
+			var checkForWidth = 390;
+			if($(document).height() > $(window).height())
+				checkForWidth = checkForWidth - 16;
+
+			if($(window).width() - $("#menucontent").width() < checkForWidth)
 			{
 				$("#igAccountSectionButton").show();
-				$("#igAccountSection").css("position","absolute").css("right", "0px").css("background-color", "white").css("top", "30px").css("border", "1px solid #ccc").css("width", "200px").css("padding", "10px").hide();
-				$("#igAccountSection .igToolbarHeaderButton").css("float", "left").css("clear", "both");
+				$("#igAccountSection").css("position","absolute").css("right", "0px").css("background-color", "white").css("top", "30px").css("border", "1px solid #ccc").css("width", "200px").css("padding-top", "10px").hide();
+				$("#igAccountSection .igToolbarHeaderButton").css("float", "right").css("clear", "both");
 			}
 			else
 			{
 				$("#igAccountSectionButton").hide();
-				$("#igAccountSection").css("position","relative").css("float","right").css("background-color", "transparent").css("top", "0px").css("border", "0px").css("width", "340px").show();
+				$("#igAccountSection").css("position","relative").css("float","right").css("background-color", "transparent").css("top", "0px").css("border", "0px").width(340).show();
 				$("#igAccountSection .igToolbarHeaderButton").css("float", "right").css("clear", "");
 			}
 		}
@@ -280,7 +283,7 @@
 			<a href="#" class="igAccountSection" onclick="$('#igAccountSection').slideToggle();"></a>
 		</div>
 		
-		<div id="igAccountSection" style="float: right; padding-top: 10px; margin-right: 10px; text-align: right;">
+		<div id="igAccountSection" style="float: right; padding-top: 10px; padding-bottom: 0; margin-right: 10px; text-align: right;">
 		
 			<div style="margin-right: 10px; display: inline-block;">
 			$ui.getString("tool.common.loggedInAsLabel"): $infoGluePrincipal.displayName

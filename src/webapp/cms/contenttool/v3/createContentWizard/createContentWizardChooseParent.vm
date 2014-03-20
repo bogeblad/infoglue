@@ -44,6 +44,13 @@
 			}
 	    }
 	    
+	   	function skipAndCancel()
+		{
+			document.inputForm.target = "_parent";
+			document.inputForm.action = "CreateContentWizardFinish!cancel.action";
+			document.inputForm.submit();
+		}	
+	    
 	    function next()
 		{
 			var parentContentId = document.inputForm.parentContentId.value;

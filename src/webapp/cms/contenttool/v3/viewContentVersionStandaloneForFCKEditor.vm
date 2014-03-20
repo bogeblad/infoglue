@@ -158,6 +158,13 @@
 			*/
 		}
 	
+		function skipAndCancel()
+		{
+			document.editForm.target = "_parent";
+			document.editForm.action = "CreateContentWizardFinish!cancel.action";
+			document.editForm.submit();
+		}	
+	
 		//*******************************************
 		//This method submits the content to publishing dialog
 		//*******************************************

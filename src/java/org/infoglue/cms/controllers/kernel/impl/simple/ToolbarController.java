@@ -326,13 +326,13 @@ public class ToolbarController implements ToolbarProvider
 				return getContentVersionWizardFooterButtons(toolbarKey, principal, locale, request, disableCloseButton);
 			
 			if(toolbarKey.equalsIgnoreCase("tool.contenttool.createContentWizardChooseLocation.title"))
-				return getNextCreateContentFolderOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
+				return getNextCreateContentFolderOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton, "skipAndCancel();");
 			
 			if(toolbarKey.equalsIgnoreCase("tool.contenttool.createContentWizardInputContent.title"))
-				return getCommonNextCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
+				return getCommonNextCancelButton(toolbarKey, principal, locale, request, disableCloseButton, "skipAndCancel();");
 			
 			if(toolbarKey.equalsIgnoreCase("tool.contenttool.createContentWizardUploadDigitalAsset.title"))
-				return getCommonNextCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
+				return getCommonNextCancelButton(toolbarKey, principal, locale, request, disableCloseButton, "skipAndCancel();");
 			
 			if(toolbarKey.equalsIgnoreCase("tool.contenttool.contentPropertiesHeader"))
 				return getCommonFooterSaveOrSaveAndExitOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton, "ViewContentProperties!saveAndExitV3.action");
@@ -1487,7 +1487,10 @@ public class ToolbarController implements ToolbarProvider
 				  					  "css/images/v3/publishIcon.gif"));
 		*/
 	
-		buttons.add(getCommonFooterCancelButton(toolbarKey, principal, locale, request, disableCloseButton));
+		if(request.getParameter("refreshAddress") != null && request.getParameter("refreshAddress").contains("ViewSiteNodePageComponents"))
+			buttons.add(getDialogCancelButton(toolbarKey, principal, locale, request, disableCloseButton, "skipAndCancel();"));
+		else
+			buttons.add(getCommonFooterCancelButton(toolbarKey, principal, locale, request, disableCloseButton));
 		
 		return buttons;
 	}
@@ -4153,6 +4156,11 @@ public class ToolbarController implements ToolbarProvider
 
 	private List<ToolbarButton> getNextCreateContentFolderOrCancelButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
+		return getNextCreateContentFolderOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton, "if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();");
+	}
+	
+	private List<ToolbarButton> getNextCreateContentFolderOrCancelButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton, String cancelJavascript)
+	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
 		buttons.add(new ToolbarButton("",
@@ -4176,7 +4184,7 @@ public class ToolbarController implements ToolbarProvider
 		buttons.add(new ToolbarButton("",
 				  getLocalizedString(locale, "tool.common.cancelButton.label"), 
 				  getLocalizedString(locale, "tool.common.cancelButton.label"),
-				  "if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();",
+				  cancelJavascript,
 				  "css/images/v3/cancelIcon.gif",
 				  "left",
 				  "cancel",
@@ -4186,6 +4194,11 @@ public class ToolbarController implements ToolbarProvider
 	}
 
 	private List<ToolbarButton> getCommonNextCancelButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
+	{
+		return getCommonNextCancelButton(toolbarKey, principal, locale, request, disableCloseButton, "if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();");
+	}
+	
+	private List<ToolbarButton> getCommonNextCancelButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton, String closeJavascript)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -4201,7 +4214,7 @@ public class ToolbarController implements ToolbarProvider
 		buttons.add(new ToolbarButton("",
 				  getLocalizedString(locale, "tool.common.cancelButton.label"), 
 				  getLocalizedString(locale, "tool.common.cancelButton.label"),
-				  "if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();",
+				  closeJavascript,
 				  "css/images/v3/cancelIcon.gif",
 				  "left",
 				  "cancel",

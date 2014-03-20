@@ -164,7 +164,7 @@ public class LuceneUsersController extends BaseController implements Notificatio
 		        {
 		            public void run() 
 		            {
-		    			System.out.println("Reindex...");
+		    			logger.info("Reindex...");
 		    			try
 		    			{
 		    				reIndex();
@@ -182,7 +182,7 @@ public class LuceneUsersController extends BaseController implements Notificatio
 				
 			}
 		}
-		System.out.println("" + idx);
+		logger.info("" + idx);
 	}
 	
 	/**
@@ -247,7 +247,7 @@ public class LuceneUsersController extends BaseController implements Notificatio
 		{
 			List<Document> docs;
 			
-			System.out.println("sortProperty:" + sortProperty + ":" + direction);
+			logger.info("sortProperty:" + sortProperty + ":" + direction);
 			if(searchString == null || searchString.equals(""))
 				docs = queryDocuments(offset, limit, sortProperty, direction);
 			else
@@ -266,7 +266,7 @@ public class LuceneUsersController extends BaseController implements Notificatio
 			logger.warn("Error getting filtered users:" + e.getMessage(), e);
 		}
 		
-		System.out.println("Users took:" + t.getElapsedTime());
+		logger.info("Users took:" + t.getElapsedTime());
 		return users;		
 	}
 	
@@ -365,8 +365,8 @@ public class LuceneUsersController extends BaseController implements Notificatio
 		if(direction != null && direction.equalsIgnoreCase("desc"))
 			reverse = true;
 				
-		System.out.println("sortProperty:" + sortProperty);
-		System.out.println("reverse:" + reverse);
+		logger.info("sortProperty:" + sortProperty);
+		logger.info("reverse:" + reverse);
 		SortField sf = new SortField(sortProperty, SortField.STRING, reverse);
 
 		Query query = new MatchAllDocsQuery();

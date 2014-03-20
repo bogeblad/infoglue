@@ -76,6 +76,8 @@
 			$("#work").width(windowWidth - ($("#toolsColumn").width() + 6)).height($("#toolsColumn").height());
 			$("#workIframe").width($("#work").width()).height($("#work").height());
 			
+			$("#menutoolbarLeft").css("max-width", "" + (windowWidth - $("#menuToolbarRight").width() - 20) + "px");
+			
 			if(!isLoop && $(window).width() > windowWidth)
 				resize(true)
 		}

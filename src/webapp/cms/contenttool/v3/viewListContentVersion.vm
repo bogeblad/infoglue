@@ -71,7 +71,21 @@
 					if(xrecipientFilter)
 					{
 						#if($defaultPublicationEventFilter == "emailBased")
-							listForm.recipientFilter.value = xrecipientFilter.value;
+							jQuery.getJSON("ViewCommonAjaxServices!userSearch.action", { "q": "" + xrecipientFilter.value, "fieldToMatchExact": "email" }, function(data) { 
+							
+								console.log(data.users.length); 
+								
+								if(data.users.length == 0)
+									alert("$ui.getString("tool.common.noUserWithEmailFound.warning")");
+								else
+								{
+									listForm.recipientFilter.value = xrecipientFilter.value;
+									listForm.attemptDirectPublishing.value = attemptDirectPublishing;
+									listForm.submit();
+								}
+							});
+							return false;									
+														
 						#else
 							#if($infoGluePrincipal.groups.size() > 1)
 								listForm.recipientFilter.value = xrecipientFilter.options[xrecipientFilter.selectedIndex].value;

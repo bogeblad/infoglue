@@ -850,6 +850,42 @@ public class PublicationController extends BaseController
 			logger.error("An error occurred when we tried to replicate the data:" + e.getMessage(), e);
 		}
 
+		try
+		{
+		    for(EventVO event : events)
+		    {
+	    		List<Event> repoEvents = EventController.getPublicationEventVOListForRepository(event.getRepositoryId(), db);
+			    for(Event repoEvent : repoEvents)
+			    {
+			    	if(!event.getId().equals(repoEvent.getId()) && event.getEntityClass().equals(repoEvent.getEntityClass()))
+		   			{
+				    	if(event.getEntityClass().equals(ContentVersion.class.getName()))
+				    	{
+				    		ContentVersionVO eventCVVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(event.getEntityId(), db);
+				    		ContentVersionVO repoEventCVVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(repoEvent.getEntityId(), db);
+				    		if(eventCVVO.getContentId().equals(repoEventCVVO.getContentId()) && eventCVVO.getLanguageId().equals(repoEventCVVO.getLanguageId()))
+				    		{
+				    			EventController.delete(repoEvent, db);
+				    		}
+				    	}
+				    	else if(event.getEntityClass().equals(SiteNodeVersion.class.getName()))
+				    	{
+				    		SiteNodeVersionVO eventSNVVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(event.getEntityId(), db);
+				    		SiteNodeVersionVO repoEventSNVVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(repoEvent.getEntityId(), db);
+				    		if(eventSNVVO.getSiteNodeId().equals(repoEventSNVVO.getSiteNodeId()))
+				    		{
+				    			EventController.delete(repoEvent, db);
+				    		}
+				    	}
+				    }
+			    }
+		    }
+		}
+		catch (Exception e) 
+		{
+			logger.error("Error: " + e.getMessage(), e);
+		}
+		
         // Notify the listeners!!!
         try
 		{

@@ -237,6 +237,34 @@ public class EventController extends BaseController
 	 * Returns a list of events with either publish or unpublish-state currently available for the repository stated.
 	 */
 	
+	public static List<Event> getPublicationEventVOListForRepository(Integer repositoryId, Database db) throws Exception
+	{
+		List<Event> events = new ArrayList<Event>();
+		
+        OQLQuery oql = db.getOQLQuery( "SELECT e FROM org.infoglue.cms.entities.workflow.impl.simple.EventImpl e WHERE (e.typeId = $1 OR e.typeId = $2) AND e.repositoryId = $3 ORDER BY e.eventId desc");
+    	oql.bind(EventVO.PUBLISH);
+    	oql.bind(EventVO.UNPUBLISH_LATEST);
+    	oql.bind(repositoryId);
+    	
+    	//logger.info("Fetching entity in read/write mode" + repositoryId);
+    	QueryResults results = oql.execute();
+    	
+		while (results.hasMore()) 
+        {
+        	Event event = (Event)results.next();
+           	events.add(event);
+        }
+            
+		results.close();
+		oql.close();
+
+        return events;	
+	}
+	
+	/**
+	 * Returns a list of events with either publish or unpublish-state currently available for the repository stated.
+	 */
+	
 	public static Map<Integer,List<EventVO>> getPublicationRepositoryEvents() throws SystemException, Bug
 	{
 		Map<Integer,List<EventVO>> repoEvents = new HashMap<Integer,List<EventVO>>();
@@ -511,7 +539,7 @@ public class EventController extends BaseController
 
         return events;	
 	}
-
+	
 	/**
 	 * Returns a list of events with either publish or unpublish-state currently available for the repository stated.
 	 */

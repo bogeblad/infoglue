@@ -144,35 +144,6 @@ public class ChangeMultiContentStatePublishAction extends InfoGlueAbstractAction
 		    publicationVO.setRepositoryId(repositoryId);
 		    publicationVO = PublicationController.getController().createAndPublish(publicationVO, events, newsiteNodeMap, newContentMap, overrideVersionModifyer, this.getInfoGluePrincipal());
 		    //publicationVO = PublicationController.getController().createAndPublish(publicationVO, events, this.overrideVersionModifyer, this.getInfoGluePrincipal());
-		    
-		    for(EventVO event : events)
-		    {
-	    		List<EventVO> repoEvents = EventController.getPublicationEventVOListForRepository(event.getRepositoryId());
-			    for(EventVO repoEvent : repoEvents)
-			    {
-			    	if(!event.getId().equals(repoEvent.getId()) && event.getEntityClass().equals(repoEvent.getEntityClass()))
-		   			{
-				    	if(event.getEntityClass().equals(ContentVersion.class.getName()))
-				    	{
-				    		ContentVersionVO eventCVVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(event.getEntityId());
-				    		ContentVersionVO repoEventCVVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(repoEvent.getEntityId());
-				    		if(eventCVVO.getContentId().equals(repoEventCVVO.getContentId()) && eventCVVO.getLanguageId().equals(repoEventCVVO.getLanguageId()))
-				    		{
-				    			EventController.delete(repoEvent);
-				    		}
-				    	}
-				    	else if(event.getEntityClass().equals(SiteNodeVersion.class.getName()))
-				    	{
-				    		SiteNodeVersionVO eventSNVVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(event.getEntityId());
-				    		SiteNodeVersionVO repoEventSNVVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(repoEvent.getEntityId());
-				    		if(eventSNVVO.getSiteNodeId().equals(repoEventSNVVO.getSiteNodeId()))
-				    		{
-				    			EventController.delete(repoEvent);
-				    		}
-				    	}
-				    }
-			    }
-		    }
 		}
 		
 		if(returnAddress != null && !returnAddress.equals(""))

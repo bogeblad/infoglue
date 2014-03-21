@@ -58,6 +58,10 @@
 			  	}
 			  } 
 		});
+		
+		#if(!$this.hasAccessTo("ToolTabsAndButtons.MySettingsSubcriptionsTab", true, false) || !$this.hasAccessTo("ToolTabsAndButtons.MySettingsChangePasswordTab", true, false))
+			$("#tabsContainer ul").hide();
+		#end
 
 		#if($settingsSaved)
 			$("#reloadDialog").dialog({
@@ -89,14 +93,16 @@
 
 	<div style="clear: both;"></div>
 	
-	<h3 style="text-indent: 16px;">$ui.getString("tool.managementtool.mysettings.header") 
+	<h3>$ui.getString("tool.managementtool.mysettings.header") 
 		#if($errorMessage && $errorMessage != "")
 			<span style="color:red">$errorMessage</span><br/>
 		#end
 	</h3>
+	#*
 	<p style="text-indent: 16px;">
 		$ui.getString("tool.managementtool.mysettings.introduction")
 	</p>
+	*#
 
 <form name="editForm" method="POST" action="UpdateMySettings.action">
 	<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
@@ -111,7 +117,7 @@
 	        <li><a href="#passwordTab"><span>$ui.getString("tool.managementtool.mysettings.changePasswordTabLabel")</span></a></li>
 			#end
 	    </ul>
-
+		
 		<div id="generalSettingsTab" class="recipientTab inlineTabDiv">
 
 				<fieldset style="width: 90%; border: 0px solid red; margin: 0px; padding-left: 10px;">

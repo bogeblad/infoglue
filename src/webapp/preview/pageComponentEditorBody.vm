@@ -457,7 +457,7 @@ function updatePageStatus()
 				else
 				{
 					$('#igStatusDiv').attr("class", "right published");
-					$('#igStatus').html("Published");
+					$('#igStatus').html(window.publishedLabel);
 					$('#igApproveButton').hide();
 					$('#igDenyButton').hide();
 					$('#igPublishButton').hide();

@@ -312,6 +312,8 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			    	principal = newPrincipal;
 		    }
 		    
+		    Locale locale = templateController.getLocaleAvailableInTool(principal);
+
 		    boolean hasAccessToAccessRights 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ChangeSlotAccess", "");
 			boolean hasAccessToAddComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.AddComponent", "" + component.getContentId() + "_" + component.getSlotName());
 			boolean hasAccessToDeleteComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.DeleteComponent", "" + component.getContentId() + "_" + component.getSlotName());
@@ -371,6 +373,8 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			extraHeader = extraHeader.replaceAll("\\$\\{userPrefferredWYSIWYG\\}", "" + CmsPropertyHandler.getPrefferedWYSIWYG());
 			extraHeader = extraHeader.replaceAll("\\$\\{WYSIWYGEditorJS\\}", WYSIWYGEditorFile);
 
+			extraHeader = extraHeader.replaceAll("\\$\\{publishedLabel\\}", getLocalizedString(locale, "tool.contenttool.state.published"));
+
 			if(CmsPropertyHandler.getPersonalDisableEditOnSightToolbar(principal.getName()))
 			{				
 				extraHeader = extraHeader.replaceAll("\\$\\{editOnSightFooterToolbarIsActive\\}", "false");
@@ -417,8 +421,6 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 
 		    String changeUrl = componentEditorUrl + "ViewSiteNodePageComponents!listComponentsForChange.action?siteNodeId=" + templateController.getSiteNodeId() + "&amp;languageId=" + templateController.getLanguageId() + "&amp;contentId=" + templateController.getContentId() + "&amp;componentId=" + component.getId() + "&amp;slotId=base&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple();
 		    extraBody = extraBody + "<script type=\"text/javascript\">$(function() { initializeComponentEventHandler('base0_" + component.getId() + "Comp', '" + component.getId() + "', '', '" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponent.action?siteNodeId=" + templateController.getSiteNodeId() + "&amp;languageId=" + templateController.getLanguageId() + "&amp;contentId=" + templateController.getContentId() + "&amp;componentId=" + component.getId() + "&amp;slotId=base&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "','" + changeUrl + "'); }); </script>";
-
-		    Locale locale = templateController.getLocaleAvailableInTool(principal);
 		    
 			String submitToPublishHTML 				= getLocalizedString(locale, "deliver.editOnSight.submitToPublish");
 		    String addComponentHTML 				= getLocalizedString(locale, "deliver.editOnSight.addComponentHTML");
@@ -532,7 +534,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 					languagesSB.append("<li style=\"margin-bottom: 6px;\"><a style=\"color: black;\" href=\"" + templateController.getCurrentPageUrl().replaceAll("languageId=" + templateController.getLanguageId(), "languageId=" + language.getId()) + "\">" + language.getLanguageCode().toUpperCase() + "</a></li>");
 			}
 			extraBody = extraBody.replaceAll("\\$\\{languageList\\}", languagesSB.toString());
-			
+
 		    extraBody = extraBody.replaceAll("\\$addComponentJavascript", "window.hasAccessToAddComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToAddComponent + ";");
 		    extraBody = extraBody.replaceAll("\\$deleteComponentJavascript", "window.hasAccessToDeleteComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToDeleteComponent + ";");
 		    extraBody = extraBody.replaceAll("\\$changeComponentJavascript", "window.hasAccessToChangeComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToChangeComponent + ";");

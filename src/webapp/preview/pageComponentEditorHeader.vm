@@ -18,6 +18,8 @@
 	var approveEntityId = "${approveEntityId}";
 	var publishingEventId = "${publishingEventId}";
 			
+	window.publishedLabel = "${publishedLabel}";
+	
 	var componentHandlers = new Object();
 			
 	${limitedUserWarning}
@@ -243,6 +245,11 @@ ${skinDeliveryCSS}
           	$("#tempDraggable").remove();
         });
         
+        $("#pageComponents").bind("contextmenu",function(e){
+        	e.preventDefault();
+        	return false;
+        });
+      
         if(${editOnSightFooterToolbarIsActive})
         {
         	if(typeof(CKEDITOR) != 'undefined')

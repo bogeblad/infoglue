@@ -796,7 +796,9 @@ WebFXTreeItem.prototype.toString = function (nItem, nItemCount) {
 		classInfo = "publishedTreeItem";		
 	}
 		
-	var iconClass = "ctd" + this.contentTypeDefinitionId;
+	var iconClass = "";
+	if(""+this.contentTypeDefinitionId != 'null')
+		iconClass = "ctd" + this.contentTypeDefinitionId;
 	
 	if(this.isHidden == 'true')
 	{

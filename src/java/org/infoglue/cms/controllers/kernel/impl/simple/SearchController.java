@@ -715,19 +715,26 @@ public class SearchController extends BaseController
 				String digitalAssetIdString = document.get("digitalAssetId");
 				if(digitalAssetIdString != null)
 				{
-					DigitalAssetVO digitalAssetVO = DigitalAssetController.getController().getSmallDigitalAssetVOWithId(Integer.parseInt(digitalAssetIdString), db);
-					if(logger.isInfoEnabled())
-						logger.info("document:" + document);
-					digitalAssetVO.setContentPath(document.get("path"));
-					if(document.get("contentId") != null && !document.get("contentId").equals(""))
-						digitalAssetVO.setContentId(new Integer(document.get("contentId")));
-					
-					String assetUrl = getDigitalAssetUrl(digitalAssetVO, db);
-					String assetThumbnailUrl = getDigitalAssetThumbnailUrl(digitalAssetVO.getId(), 100, 60, "ffffff", "center", "middle", 100, 60, 75, db);
-					digitalAssetVO.setAssetUrl(assetUrl);
-					digitalAssetVO.setAssetThumbnailUrl(assetThumbnailUrl);
-					
-					matchingAssets.add(digitalAssetVO);
+					try
+					{
+						DigitalAssetVO digitalAssetVO = DigitalAssetController.getController().getSmallDigitalAssetVOWithId(Integer.parseInt(digitalAssetIdString), db);
+						if(logger.isInfoEnabled())
+							logger.info("document:" + document);
+						digitalAssetVO.setContentPath(document.get("path"));
+						if(document.get("contentId") != null && !document.get("contentId").equals(""))
+							digitalAssetVO.setContentId(new Integer(document.get("contentId")));
+						
+						String assetUrl = getDigitalAssetUrl(digitalAssetVO, db);
+						String assetThumbnailUrl = getDigitalAssetThumbnailUrl(digitalAssetVO.getId(), 100, 60, "ffffff", "center", "middle", 100, 60, 75, db);
+						digitalAssetVO.setAssetUrl(assetUrl);
+						digitalAssetVO.setAssetThumbnailUrl(assetThumbnailUrl);
+						
+						matchingAssets.add(digitalAssetVO);
+					}
+					catch (Exception e) 
+					{
+						logger.warn("Problem getting asset with id: " + digitalAssetIdString + ": " + e.getLocalizedMessage(), e);
+					}
 				}
 			}
 		

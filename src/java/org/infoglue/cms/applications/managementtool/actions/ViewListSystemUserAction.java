@@ -24,30 +24,24 @@
 package org.infoglue.cms.applications.managementtool.actions;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.servlet.ServletOutputStream;
-
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.GroupControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.LuceneUsersController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RoleControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
-import org.infoglue.cms.exception.ConstraintException;
-import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGlueGroup;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.security.InfoGlueRole;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
 import org.infoglue.deliver.util.Timer;
-import org.jfree.util.Log;
 
 
 /**
@@ -61,6 +55,8 @@ import org.jfree.util.Log;
 public class ViewListSystemUserAction extends InfoGlueAbstractAction 
 {
 	private static final long serialVersionUID = 1L;
+
+    private final static Logger logger = Logger.getLogger(ViewListSystemUserAction.class.getName());
 
 	private List infogluePrincipals;
 	
@@ -81,6 +77,8 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 	private int iTotalDisplayRecords = 0;
 	private String sSearch = null;
 	private String format = "normal";
+	private Boolean searchGroups = false;
+	private Boolean searchRoles = false;
 	
 	private String roleName;
 	private String groupName;
@@ -159,7 +157,10 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 			{
 				//this.infogluePrincipals = UserControllerProxy.getController().getFilteredUsers(start, new Integer(iDisplayLengthString), sortProperty, sortDirection, null, false);
 				this.infogluePrincipals = LuceneUsersController.getController().getFilteredUsers(start, new Integer(iDisplayLengthString), sortProperty, sortDirection, null, false);
-				Integer totalRecords = UserControllerProxy.getController().getUserCount(this.sSearch);
+				
+				Integer totalRecords = LuceneUsersController.getController().getUserCount(this.sSearch);
+				//Integer totalRecords = UserControllerProxy.getController().getUserCount(this.sSearch);
+				
 				this.iTotalRecords = totalRecords;
 				this.iTotalDisplayRecords = totalRecords;
 			}
@@ -188,58 +189,66 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 			{
 				this.infogluePrincipals = LuceneUsersController.getController().getFilteredUsers(new Integer(iDisplayStartString), new Integer(iDisplayLengthString), sortProperty, sortDirection, this.sSearch, false);
 				//this.infogluePrincipals = UserControllerProxy.getController().getFilteredUsers(new Integer(iDisplayStartString), new Integer(iDisplayLengthString), sortProperty, sortDirection, this.sSearch, false);
+
+				//this.iTotalRecords = UserControllerProxy.getController().getUserCount(this.sSearch);
+				//this.iTotalDisplayRecords = UserControllerProxy.getController().getUserCount(this.sSearch);
+
+				this.iTotalRecords = LuceneUsersController.getController().getUserCount(this.sSearch);
+				this.iTotalDisplayRecords = LuceneUsersController.getController().getUserCount(this.sSearch);
 	
-				this.iTotalRecords = UserControllerProxy.getController().getUserCount(this.sSearch);
-				this.iTotalDisplayRecords = UserControllerProxy.getController().getUserCount(this.sSearch);
-	
-				try
+				if(this.searchRoles)
 				{
-					InfoGlueRole infoGlueRole = RoleControllerProxy.getController().getRole(this.sSearch);
-					List rolePrincipals	= infoGlueRole.getAutorizationModule().getRoleUsers(this.sSearch);
-	
-					this.iTotalRecords = rolePrincipals.size();
-					this.iTotalDisplayRecords = rolePrincipals.size();
-	
-					if(rolePrincipals.size() > end)
-						rolePrincipals = rolePrincipals.subList(start, end);
-					else
-						rolePrincipals = rolePrincipals.subList(start, rolePrincipals.size());
-					
-					List newInfogluePrincipals = new ArrayList();
-					newInfogluePrincipals.addAll(this.infogluePrincipals);
-					newInfogluePrincipals.removeAll(rolePrincipals);
-					newInfogluePrincipals.addAll(rolePrincipals);
+					try
+					{
+						InfoGlueRole infoGlueRole = RoleControllerProxy.getController().getRole(this.sSearch);
+						List rolePrincipals	= infoGlueRole.getAutorizationModule().getRoleUsers(this.sSearch);
+						this.iTotalRecords = rolePrincipals.size();
+						this.iTotalDisplayRecords = rolePrincipals.size();
 		
-					this.infogluePrincipals = newInfogluePrincipals;
-				}
-				catch (Exception e) 
-				{
-					Log.warn("Could not find a role by that name:" + e.getMessage());
+						if(rolePrincipals.size() > end)
+							rolePrincipals = rolePrincipals.subList(start, end);
+						else
+							rolePrincipals = rolePrincipals.subList(start, rolePrincipals.size());
+						
+						List newInfogluePrincipals = new ArrayList();
+						newInfogluePrincipals.addAll(this.infogluePrincipals);
+						newInfogluePrincipals.removeAll(rolePrincipals);
+						newInfogluePrincipals.addAll(rolePrincipals);
+			
+						this.infogluePrincipals = newInfogluePrincipals;
+					}
+					catch (Exception e) 
+					{
+						logger.info("Could not find a role by that name:" + e.getMessage());
+					}
 				}
 				
-				try
+				if(this.searchGroups)
 				{
-					InfoGlueGroup infoGlueGroup = GroupControllerProxy.getController().getGroup(this.sSearch);
-					List groupPrincipals	= infoGlueGroup.getAutorizationModule().getGroupUsers(this.sSearch);
+					try
+					{
+						InfoGlueGroup infoGlueGroup = GroupControllerProxy.getController().getGroup(this.sSearch);
+						List groupPrincipals	= infoGlueGroup.getAutorizationModule().getGroupUsers(this.sSearch);
 	
-					this.iTotalRecords = groupPrincipals.size();
-					this.iTotalDisplayRecords = groupPrincipals.size();
-	
-					if(groupPrincipals.size() > end)
-						groupPrincipals = groupPrincipals.subList(start, end);
-					else
-						groupPrincipals = groupPrincipals.subList(start, groupPrincipals.size());
-	
-					List newInfogluePrincipals = new ArrayList();
-					newInfogluePrincipals.addAll(this.infogluePrincipals);
-					newInfogluePrincipals.removeAll(groupPrincipals);
-					newInfogluePrincipals.addAll(groupPrincipals);
+						this.iTotalRecords = groupPrincipals.size();
+						this.iTotalDisplayRecords = groupPrincipals.size();
 		
-					this.infogluePrincipals = newInfogluePrincipals;
-				}
-				catch (Exception e) 
-				{
-					Log.warn("Could not find a group by that name:" + e.getMessage());
+						if(groupPrincipals.size() > end)
+							groupPrincipals = groupPrincipals.subList(start, end);
+						else
+							groupPrincipals = groupPrincipals.subList(start, groupPrincipals.size());
+		
+						List newInfogluePrincipals = new ArrayList();
+						newInfogluePrincipals.addAll(this.infogluePrincipals);
+						newInfogluePrincipals.removeAll(groupPrincipals);
+						newInfogluePrincipals.addAll(groupPrincipals);
+			
+						this.infogluePrincipals = newInfogluePrincipals;
+					}
+					catch (Exception e) 
+					{
+						logger.info("Could not find a group by that name:" + e.getMessage());
+					}
 				}
 			}			
 		}
@@ -710,5 +719,33 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 		}
 		
 		return sb.toString();
+	}
+
+	/**
+	 * @return the searchGroups
+	 */
+	public Boolean getSearchGroups() {
+		return searchGroups;
+	}
+
+	/**
+	 * @param searchGroups the searchGroups to set
+	 */
+	public void setSearchGroups(Boolean searchGroups) {
+		this.searchGroups = searchGroups;
+	}
+
+	/**
+	 * @return the searchRoles
+	 */
+	public Boolean getSearchRoles() {
+		return searchRoles;
+	}
+
+	/**
+	 * @param searchRoles the searchRoles to set
+	 */
+	public void setSearchRoles(Boolean searchRoles) {
+		this.searchRoles = searchRoles;
 	}
 }

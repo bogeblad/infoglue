@@ -23,6 +23,7 @@
 package org.infoglue.cms.jobs;
 
 import org.apache.log4j.Logger;
+import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.util.ChangeNotificationController;
 import org.infoglue.cms.util.NotificationMessage;
 import org.quartz.Job;
@@ -52,6 +53,7 @@ public class RefreshJob implements Job
 			NotificationMessage notificationMessage = new NotificationMessage("NightlyRefreshJob.execute():", "ServerNodeProperties", "administrator", NotificationMessage.SYSTEM, "0", "ServerNodeProperties");
 		    ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
         	ChangeNotificationController.getInstance().notifyListeners();
+        	UserControllerProxy.getController().getAllUsers();
 	        //RemoteCacheUpdater.clearSystemNotificationMessages();
 		}
 		catch(Exception e)

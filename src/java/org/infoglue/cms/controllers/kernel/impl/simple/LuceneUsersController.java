@@ -240,6 +240,7 @@ public class LuceneUsersController extends BaseController implements Notificatio
 		}
 
 		validateIndex();
+		t.printElapsedTime("Validate index took", 50);
 		
 		List<InfoGluePrincipal> users = new ArrayList<InfoGluePrincipal>();
 		
@@ -278,6 +279,8 @@ public class LuceneUsersController extends BaseController implements Notificatio
 	{
 		List<Document> docs = null;
 		
+		validateIndex();
+
 		if(searchString == null || searchString.equals(""))
 			docs = queryDocuments(0, 1000000, "userName", "asc");
 		else
@@ -439,7 +442,7 @@ public class LuceneUsersController extends BaseController implements Notificatio
 		{
 			ScoreDoc scoreDoc = topDocs.scoreDocs[i];
 			Document doc = searcher.doc(scoreDoc.doc);
-			System.out.println("doc:" + doc);
+			//System.out.println("doc:" + doc);
 			docs.add(doc);
 		}
 

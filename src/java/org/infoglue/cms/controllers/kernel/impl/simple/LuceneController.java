@@ -1988,11 +1988,14 @@ public class LuceneController extends BaseController implements NotificationList
 		doc.add(new Field("isSiteNode", "true", Field.Store.YES, Field.Index.NOT_ANALYZED));
 		
 		SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, siteNodeVO.getId());
-		doc.add(new NumericField("modificationDateTime", Field.Store.YES, true).setLongValue(siteNodeVersionVO.getModifiedDateTime().getTime()));
-		doc.add(new Field("siteNodeVersionId", "" + siteNodeVersionVO.getId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
-		doc.add(new Field("stateId", "" + siteNodeVersionVO.getStateId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+		if(siteNodeVersionVO != null)
+		{
+			doc.add(new NumericField("modificationDateTime", Field.Store.YES, true).setLongValue(siteNodeVersionVO.getModifiedDateTime().getTime()));
+			doc.add(new Field("siteNodeVersionId", "" + siteNodeVersionVO.getId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+			doc.add(new Field("stateId", "" + siteNodeVersionVO.getStateId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 		
-		doc.add(new Field("path", "" + getSiteNodePath(siteNodeVO.getId(), db), Field.Store.YES, Field.Index.NOT_ANALYZED));
+			doc.add(new Field("path", "" + getSiteNodePath(siteNodeVO.getId(), db), Field.Store.YES, Field.Index.NOT_ANALYZED));
+		}
 		
 		// Add the uid as a field, so that index can be incrementally
 		// maintained.

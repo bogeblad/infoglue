@@ -46,9 +46,11 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
+import org.infoglue.cms.controllers.kernel.impl.simple.LuceneUsersController;
 import org.infoglue.cms.controllers.kernel.impl.simple.PublicationController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
+import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
@@ -799,7 +801,14 @@ public class SelectiveLivePublicationThread extends PublicationThread
 								CacheController.clearCache("pageCacheParentSiteNodeCache");
 								CacheController.clearCache("pageCacheLatestSiteNodeVersions");
 								CacheController.clearCache("pageCacheSiteNodeTypeDefinition");
-								
+								try
+								{
+									LuceneUsersController.getController().getUserCount(null);
+								}
+								catch (Exception e) 
+								{
+									logger.error("Problem recaching users:" + e.getMessage());
+								}
 							}
 							else if(className.equalsIgnoreCase("PortletRegistry"))
 						    {

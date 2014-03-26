@@ -1336,6 +1336,7 @@ function saveAttributes(selectedContentId, selectedLanguageId)
 		//alert("Key:" + key);
 		if(key.indexOf("attribute" + selectedContentId) > -1 && key.indexOf("_type") == -1 && 
 																key.indexOf("_enableWYSIWYG") == -1 && 
+																key.indexOf("_originalValue") == -1 && 
 																key.indexOf("_WYSIWYGToolbar") == -1 &&
 																key.indexOf("_WYSIWYGExtraConfig") == -1)
 		{
@@ -1370,6 +1371,7 @@ function cancelSaveAttributes(selectedContentId, selectedLanguageId)
 		//alert("Key:" + key);
 		if(key.indexOf("attribute" + selectedContentId) > -1 && key.indexOf("_type") == -1 && 
 																key.indexOf("_enableWYSIWYG") == -1 && 
+																key.indexOf("_originalValue") == -1 && 
 																key.indexOf("_WYSIWYGToolbar") == -1 &&
 																key.indexOf("_WYSIWYGExtraConfig") == -1)
 		{

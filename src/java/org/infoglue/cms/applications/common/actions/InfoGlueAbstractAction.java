@@ -24,6 +24,7 @@
 package org.infoglue.cms.applications.common.actions;
 
 import java.awt.Color;
+import java.io.File;
 import java.math.BigInteger;
 import java.security.Principal;
 import java.security.SecureRandom;
@@ -1111,6 +1112,23 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		return theme;
 	}
 
+	public String getThemeFileWithFallback(String filePath)
+	{
+		String themeFilePath = "css" + filePath;
+		
+		String theme = getTheme();
+		if(theme != null)
+		{
+			File skinsFile = new File(CmsPropertyHandler.getContextRootPath() + File.separator + "css" + File.separator + "skins" + File.separator + theme + File.separator + filePath);
+			if(skinsFile != null && skinsFile.exists() && !theme.equalsIgnoreCase("Default"))
+				return "css" + File.separator + "skins" + File.separator + theme + File.separator + filePath;
+			else
+				return themeFilePath;
+		}
+		else
+			return themeFilePath;
+	}
+	
 	public String getToolbarVariant()
 	{
 		String toolbarVariant = CmsPropertyHandler.getToolbarVariant(getUserName());

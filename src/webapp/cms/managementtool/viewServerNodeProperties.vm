@@ -363,6 +363,7 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.editOnSight" "editOnSight" "$this.getPropertyValue('editOnSight')" "$!cmsPH.editOnSight")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.disableEditOnSightToolbar" "disableEditOnSightToolbar" "$this.getPropertyValue('disableEditOnSightToolbar')" "$!cmsPH.disableEditOnSightToolbar")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.showInlinePropertiesIcon" "showInlinePropertiesIcon" "$this.getPropertyValue('showInlinePropertiesIcon')" "$!cmsPH.showInlinePropertiesIcon")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.useDoubleClickOnTextToInlineEdit" "useDoubleClickOnTextToInlineEdit" "$this.getPropertyValue('useDoubleClickOnTextToInlineEdit')" "$!cmsPH.useDoubleClickOnTextToInlineEdit")
 				
 				#yesNoDropDownWithInheritCSS("ServerNode.property.useSimpleComponentDialog" "useSimpleComponentDialog" "$this.getPropertyValue('useSimpleComponentDialog')" "$!cmsPH.useSimpleComponentDialog")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.hideAccessRightsIfNotAllowedToManage" "hideAccessRightsIfNotAllowedToManage" "$this.getPropertyValue('hideAccessRightsIfNotAllowedToManage')" "$!cmsPH.hideAccessRightsIfNotAllowedToManage")

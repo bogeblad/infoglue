@@ -144,9 +144,10 @@ public class EditOnSiteBasicTemplateController extends BasicTemplateController
             
             if(className != null && className.equalsIgnoreCase("textfield"))
     		{	
-                decoratedAttributeValue.append("<div " + (isInlineEditingOn ? "contenteditable=\"true\"" : "")  + " style=\"display:inline;\" class=\"" + className + " attribute" + contentId + "\" id=\"attribute" + contentId + attributeName + "\" oncontextmenu=\"" + setContentItemParametersJavascript + "\">" + attributeValue + "</div>");
+                decoratedAttributeValue.append("<div " + (isInlineEditingOn ? "contenteditable=\"true\"" : "")  + " style=\"display:inline;\" class=\"" + className + " attribute" + contentId + "\" id=\"attribute" + contentId + attributeName + "\" ondblclick=\"toggleInlineDoubleClick('attribute" + contentId + attributeName + "');\" oncontextmenu=\"" + setContentItemParametersJavascript + "\">" + attributeValue + "</div>");
                 
                 decoratedAttributeValue.append("<script type=\"text/javascript\">");
+                decoratedAttributeValue.append("	editOnSightAttributeNames[\"attribute" + contentId + attributeName + "_originalValue\"]= $(\"#attribute" + contentId + attributeName + "\").html();");
                 if(!CmsPropertyHandler.getPersonalDisableEditOnSightToolbar(getPrincipal().getName()) && CmsPropertyHandler.getWysiwygEditor().equalsIgnoreCase("ckeditor4"))
                 {
                 	decoratedAttributeValue.append( "CKEDITOR.inline('attribute" + contentId + attributeName + "', {" +
@@ -164,13 +165,15 @@ public class EditOnSiteBasicTemplateController extends BasicTemplateController
     							            		"editOnSightAttributeNames[\"attribute" + contentId + attributeName + "_enableWYSIWYG\"]=\"" + enableWYSIWYG + "\";" +
     							            		"editOnSightAttributeNames[\"attribute" + contentId + attributeName + "_WYSIWYGToolbar\"]=\"" + WYSIWYGToolbar + "\";" +
     							            		"editOnSightAttributeNames[\"attribute" + contentId + attributeName + "_WYSIWYGExtraConfig\"]=\"" + WYSIWYGExtraConfig + "\";" +
-   							            		"</script>");
+    	   							          	"</script>");
     		}
     		else if(className != null && className.equalsIgnoreCase("textarea"))
     		{
-                decoratedAttributeValue.append("<" + tag + " " + (isInlineEditingOn ? "contenteditable=\"" + enableWYSIWYG + "\"" : "") + " style=\"display:inline;\" class=\"" + className + " attribute" + contentId + "\" id=\"attribute" + contentId + attributeName + "\" oncontextmenu=\"" + setContentItemParametersJavascript + "\">" + attributeValue + "</" + tag + ">");
+                decoratedAttributeValue.append("<" + tag + " " + (isInlineEditingOn ? "contenteditable=\"" + enableWYSIWYG + "\"" : "") + " style=\"display:inline;\" class=\"" + className + " attribute" + contentId + "\" id=\"attribute" + contentId + attributeName + "\" ondblclick=\"toggleInlineDoubleClick('attribute" + contentId + attributeName + "');\" oncontextmenu=\"" + setContentItemParametersJavascript + "\">" + attributeValue + "</" + tag + ">");
                 
                 decoratedAttributeValue.append("<script type=\"text/javascript\">");
+                decoratedAttributeValue.append("	editOnSightAttributeNames[\"attribute" + contentId + attributeName + "_originalValue\"]= $(\"#attribute" + contentId + attributeName + "\").html();");
+					
                 if(!CmsPropertyHandler.getPersonalDisableEditOnSightToolbar(getPrincipal().getName()) && CmsPropertyHandler.getWysiwygEditor().equalsIgnoreCase("ckeditor4"))
                 {
                 	decoratedAttributeValue.append(	"CKEDITOR.inline( 'attribute" + contentId + attributeName + "', {" +
@@ -188,11 +191,11 @@ public class EditOnSiteBasicTemplateController extends BasicTemplateController
 								            		"editOnSightAttributeNames[\"attribute" + contentId + attributeName + "_enableWYSIWYG\"]=\"" + enableWYSIWYG + "\";" +
 								            		"editOnSightAttributeNames[\"attribute" + contentId + attributeName + "_WYSIWYGToolbar\"]=\"" + WYSIWYGToolbar + "\";" +
 								            		"editOnSightAttributeNames[\"attribute" + contentId + attributeName + "_WYSIWYGExtraConfig\"]=\"" + WYSIWYGExtraConfig + "\";" +
-								            	"</script>");
+								       	    "</script>");
     		}
     		else
     		{
-                decoratedAttributeValue.append("<" + tag + " " + (isInlineEditingOn ? "contenteditable=\"false\"" : "") + " style=\"display:inline;\" class=\"" + className + " attribute" + contentId + "\" id=\"attribute" + contentId + attributeName + "\" oncontextmenu=\"" + setContentItemParametersJavascript + "\">" + attributeValue + "</" + tag + ">");
+                decoratedAttributeValue.append("<" + tag + " " + (isInlineEditingOn ? "contenteditable=\"false\"" : "") + " style=\"display:inline;\" class=\"" + className + " attribute" + contentId + "\" id=\"attribute" + contentId + attributeName + "\" ondblclick=\"toggleInlineDoubleClick('attribute" + contentId + attributeName + "');\" oncontextmenu=\"" + setContentItemParametersJavascript + "\">" + attributeValue + "</" + tag + ">");
     		}
             
             /*

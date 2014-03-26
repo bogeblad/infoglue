@@ -554,6 +554,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		    extraBody = extraBody.replaceAll("\\$ShowLanguageMenuJavascript", "window.hasAccessToShowLanguageMenu = " + showLanguageMenu + ";");
 		    extraBody = extraBody.replaceAll("\\$ShowApproveButtonsJavascript", "window.useApprovalFlow = " + useApprovalFlow + ";");
 		    extraBody = extraBody.replaceAll("\\$autoShowApprovalButtonsJavascript", "window.autoShowApprovalButtons = " + autoShowApprovalButtons + ";");
+		    extraBody = extraBody.replaceAll("\\$useDoubleClickOnTextToInlineEdit", "" + CmsPropertyHandler.getUseDoubleClickOnTextToInlineEdit());
 		    
 		    extraBody = extraBody.replaceAll("\\$showHomeButtonJavascript", "window.showHomeButton = " + showHomeButton + ";");
 		    extraBody = extraBody.replaceAll("\\$showMySettingsButtonJavascript", "window.showMySettingsButton = " + showMySettingsButton + ";");

@@ -1790,7 +1790,7 @@ public class LuceneController extends BaseController implements NotificationList
 
 			try
 			{
-				DigitalAssetVO asset = DigitalAssetController.getDigitalAssetVOWithId((Integer)notificationMessage.getObjectId(), db2);
+				DigitalAssetVO asset = DigitalAssetController.getSmallDigitalAssetVOWithId((Integer)notificationMessage.getObjectId(), db2);
 				//MediumDigitalAssetImpl asset = (MediumDigitalAssetImpl)DigitalAssetController.getMediumDigitalAssetWithIdReadOnly((Integer)notificationMessage.getObjectId(), db2);
 				//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getMediumDigitalAssetWithIdReadOnly", t.getElapsedTime());
 				//Collection contentVersions = asset.getContentVersions();

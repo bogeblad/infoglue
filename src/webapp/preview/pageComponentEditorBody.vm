@@ -33,7 +33,7 @@
 <div id="pageToolbar" class="editOnSightFooterToolbar buttonPane">
 	<div class="left" style="margin-left: 8px; margin-bottom: 6px;">
 		<input id="igSaveButton" type="button" style="display:none;" class="save" value="${tool.common.saveButton.label}" onclick="saveAllEditing();"/>
-		##<input id="igCancelButton" type="button" style="display:none;" class="cancel" value="${tool.common.cancelButton.label}" onclick="hideDiv('component" + componentId + "Properties');"/>
+		<input id="igCancelButton" type="button" style="display:none;" class="cancel" value="${tool.common.cancelButton.label}" onclick="cancelAllEditing();"/>
 		<input id="igApproveButton" type="button" style="display:none;" class="approvePublication" value="${tool.contenttool.approve.label}" onclick="approvePublication();"/>
 		<input id="igDenyButton" type="button" style="display:none;" class="denyPublication" value="${tool.contenttool.deny.label}" onclick="denyPublication();"/>
 		<input id="igPublishButton" type="button" style="display:none;" class="publish" value="${tool.common.publishing.publishButtonLabel}" onclick="submitToPublish($siteNodeId, contentId, languageId, repositoryId, componentEditorUrl + '/ViewInlineOperationMessages.action');"/>
@@ -154,6 +154,7 @@ function registerOnChange()
 			//alert("key:" + key);
 			if(key.indexOf("_type") == -1 && 
 			   key.indexOf("_enableWYSIWYG") == -1 && 
+			   key.indexOf("_originalValue") == -1 && 
 			   key.indexOf("_WYSIWYGToolbar") == -1 &&
 			   key.indexOf("_WYSIWYGExtraConfig") == -1 &&
 			   key.indexOf("_contentId") == -1 &&
@@ -166,6 +167,9 @@ function registerOnChange()
 					//alert("regii:" + key);
 					CKEDITOR.instances[key].on('change', function(e) {
 					    $("#igSaveButton").show();
+					    $("#igCancelButton").show();
+					    $("#igPublishButton").attr("disabled", "disabled").css("opacity",0.5);
+					    $("#igPreviewButton").attr("disabled", "disabled").css("opacity",0.5);
 				        window.saveButtonLabel = $("#igSaveButton").attr("value");
 				        window.isPageDirty = true;
 					});
@@ -189,7 +193,8 @@ function registerOnChange()
 						   	cache: false,
 						   	success: function(msg, textStatus){
 								plainAttribute = msg;
-
+								editOnSightAttributeNames[e.editor.element.getId() + "_originalValue"] = plainAttribute;
+								
 								if(enableWYSIWYG == "true")
 								{
 									if(userPrefferredWYSIWYG  == "ckeditor4" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
@@ -244,7 +249,7 @@ function hasDirtyEditors()
 }
 
 function initWYSIWYGInstance(key)
-{
+{	
 	var WYSIWYGToolbar = editOnSightAttributeNames[key + "_WYSIWYGToolbar"];
 	var WYSIWYGExtraConfig = editOnSightAttributeNames[key + "_WYSIWYGExtraConfig"];
 	var ckTextContentId = editOnSightAttributeNames[key + "_contentId"];
@@ -266,80 +271,107 @@ function initWYSIWYGInstance(key)
 	{
 		config = {};
 	}
+
 	config["toolbar"] = WYSIWYGToolbar;
 	config["customConfig"] = cmsBaseUrl + "/WYSIWYGProperties.action?" + configParameters;
 	config["language"] = ckTextLanguageId;
 	CKEDITOR.inline( key, config );
 }
 
-function toggleInline(event)
+function toggleInlineDoubleClick(id, event)
 {
-	if(typeof(CKEDITOR) == 'undefined')
-	{
+	var editor = CKEDITOR.instances[id]; 
+	if(typeof(editor) != 'undefined')
 		return;
-	}
 
-	if (!inlineOff && hasDirtyEditors())
-	{
-		alert("${tool.structuretool.toolbarV3.disableEditmodeNotAllowed}");
-		event.preventDefault();
-	}
-	else
-	{
-		var turnOn = false;
-		if(inlineOff)
-			turnOn = true;
-		for (key in editOnSightAttributeNames)
+	toggleInline(event, id);
+
+	document.getElementById(id).focus(); 
+	setTimeout(function(){
+		var editor = CKEDITOR.instances[id]; 
+		if(typeof(editor) != 'undefined')
 		{
-			//alert("key:" + key);
-			if(key.indexOf("_type") == -1 && 
-			   key.indexOf("_enableWYSIWYG") == -1 && 
-			   key.indexOf("_WYSIWYGToolbar") == -1 &&
-			   key.indexOf("_WYSIWYGExtraConfig") == -1 &&
-			   key.indexOf("_contentId") == -1 &&
-			   key.indexOf("_languageId") == -1)
-			{
-				//alert("key:" + key);
-				//alert("key:" + CKEDITOR.instances[key]);
-				if(CKEDITOR.instances[key])
-				{
-					if(!turnOn)
-					{
-						//console.log("regii:" + key);
-						//console.log(CKEDITOR.instances[key]);
-						CKEDITOR.instances[key].destroy();
-						$("#" + key).attr("contenteditable", "false");
-					}
-				}
-				else
-				{
-					//alert("ON again:" + editOnSightAttributeNames[key + "_type"]);
-					$("#" + key).attr("contenteditable", "true");
-					if(editOnSightAttributeNames[key + "_type"] == "textfield")
-					{
-		        		CKEDITOR.inline( key , {
-						    removePlugins: 'toolbar',
-						    /*customConfig: '" + CmsPropertyHandler.getComponentEditorUrl() + "WYSIWYGProperties.action?" + parameterString + "'," + */
-							autoParagraph: false,	
-							/*WYSIWYGExtraConfig +*/
-							});
-					}
-					else
-					{
-						initWYSIWYGInstance(key);
-					}
-				}
-			}
+			editor.setData(editor.getData().replace(/[\u200B-\u200D\uFEFF]/g, ''));
 		}
-		if(turnOn)
+	},100);
+	 
+	$('#inlineEditing').attr('checked', true);
+}
+
+function toggleInline(event, id)
+{
+	try
+	{
+		if(typeof(CKEDITOR) == 'undefined')
 		{
-			inlineOff = false;
-			registerOnChange();
+			return;
+		}
+	
+		if (!inlineOff && hasDirtyEditors())
+		{
+			alert("${tool.structuretool.toolbarV3.disableEditmodeNotAllowed}");
+			event.preventDefault();
 		}
 		else
 		{
-			inlineOff = true;
+			var turnOn = false;
+			if(inlineOff)
+				turnOn = true;
+			for (key in editOnSightAttributeNames)
+			{
+				//alert("key:" + key);
+				if(key.indexOf("_type") == -1 && 
+				   key.indexOf("_originalValue") == -1 && 
+				   key.indexOf("_enableWYSIWYG") == -1 && 
+				   key.indexOf("_WYSIWYGToolbar") == -1 &&
+				   key.indexOf("_WYSIWYGExtraConfig") == -1 &&
+				   key.indexOf("_contentId") == -1 &&
+				   key.indexOf("_languageId") == -1)
+				{
+					//alert("key:" + key);
+					//alert("key:" + CKEDITOR.instances[key]);
+					if(CKEDITOR.instances[key])
+					{
+						if(!turnOn)
+						{
+							CKEDITOR.instances[key].destroy();
+							$("#" + key).attr("contenteditable", "false");
+						}
+					}
+					else
+					{
+						//editOnSightAttributeNames[key + "_originalValue"] = "" + $("#" + key).html();
+						$("#" + key).attr("contenteditable", "true");
+						if(editOnSightAttributeNames[key + "_type"] == "textfield")
+						{
+			        		CKEDITOR.inline( key , {
+							    removePlugins: 'toolbar',
+							    /*customConfig: '" + CmsPropertyHandler.getComponentEditorUrl() + "WYSIWYGProperties.action?" + parameterString + "'," + */
+								autoParagraph: false,	
+								/*WYSIWYGExtraConfig +*/
+								});
+						}
+						else
+						{
+							initWYSIWYGInstance(key);
+						}
+					}
+				}
+			}
+			if(turnOn)
+			{
+				inlineOff = false;
+				registerOnChange();
+			}
+			else
+			{
+				inlineOff = true;
+			}
 		}
+	}
+	catch(err)
+	{
+		console.log(err);
 	}
 }
 
@@ -352,6 +384,7 @@ function saveAllEditing()
 		//alert("Key:" + key);
 		if(key.indexOf("_type") == -1 && 
 		   key.indexOf("_enableWYSIWYG") == -1 && 
+		   key.indexOf("_originalValue") == -1 &&
 		   key.indexOf("_WYSIWYGToolbar") == -1 &&
 		   key.indexOf("_WYSIWYGExtraConfig") == -1)
 		{
@@ -383,6 +416,55 @@ function saveAllEditing()
 		//alert("Key:" + key);
 		if(key.indexOf("_type") == -1 && 
 		   key.indexOf("_enableWYSIWYG") == -1 && 
+		   key.indexOf("_originalValue") == -1 &&
+		   key.indexOf("_WYSIWYGToolbar") == -1 &&
+		   key.indexOf("_WYSIWYGExtraConfig") == -1)
+		{
+			var attributeName = editOnSightAttributeNames[key];
+			var attributeType = editOnSightAttributeNames[key + "_type"];
+			var attributeContentId = editOnSightAttributeNames[key + "_contentId"];
+			var attributeLanguageId = editOnSightAttributeNames[key + "_languageId"];
+			
+			if(CKEDITOR.instances[key])
+			{
+				if(CKEDITOR.instances[key].checkDirty())
+				{
+					noDirty = false;
+				}
+
+				editOnSightAttributeNames[key + "_originalValue"] = CKEDITOR.instances[key].getData();
+				CKEDITOR.instances[key].resetDirty();
+			}
+		}
+	}
+	
+	
+	if(noDirty)
+	{
+		window.isPageDirty = false;
+		var labelValue = window.saveButtonLabel;
+		setTimeout(function(){ $("#igSaveButton").attr("value","Saved!!"); }, 1000);
+		//$("#igSaveButton").hide();
+		setTimeout(function(){ $("#igSaveButton").fadeOut(1000); $("#igCancelButton").hide();}, 2000);
+		setTimeout(function(){ $("#igSaveButton").attr("value", window.saveButtonLabel);}, 3000);
+		$("#igPublishButton").removeAttr("disabled").css("opacity",1.0);
+	    $("#igPreviewButton").removeAttr("disabled").css("opacity",1.0);
+	}
+			
+	if(allSavedItems == 0)
+		alert("No changes had been made and so nothing was saved");
+}
+
+
+function cancelAllEditing()
+{
+	var allSavedItems = 0;
+	for (key in editOnSightAttributeNames)
+	{
+		//alert("Key:" + key);
+		if(key.indexOf("_type") == -1 && 
+		   key.indexOf("_enableWYSIWYG") == -1 && 
+		   key.indexOf("_originalValue") == -1 &&
 		   key.indexOf("_WYSIWYGToolbar") == -1 &&
 		   key.indexOf("_WYSIWYGExtraConfig") == -1)
 		{
@@ -391,29 +473,26 @@ function saveAllEditing()
 			var attributeContentId = editOnSightAttributeNames[key + "_contentId"];
 			var attributeLanguageId = editOnSightAttributeNames[key + "_languageId"];
 
+			//console.log(CKEDITOR.instances);
+			//console.log(key);
+			//console.log(CKEDITOR.instances[key]);
 			if(CKEDITOR.instances[key])
 			{
-				//alert(CKEDITOR.instances[key].checkDirty());
 				if(CKEDITOR.instances[key].checkDirty())
 				{
-					noDirty = false;
+					CKEDITOR.instances[key].setData(editOnSightAttributeNames[key + "_originalValue"]);
+					CKEDITOR.instances[key].resetDirty();
 				}
 			}
 		}
 	}
-	
-	if(noDirty)
-	{
-		window.isPageDirty = false;
-		var labelValue = window.saveButtonLabel;
-		setTimeout(function(){ $("#igSaveButton").attr("value","Saved!!"); }, 1000);
-		//$("#igSaveButton").hide();
-		setTimeout(function(){ $("#igSaveButton").fadeOut(1000);}, 2000);
-		setTimeout(function(){ $("#igSaveButton").attr("value", window.saveButtonLabel);}, 3000);
-	}
-			
-	if(allSavedItems == 0)
-		alert("No changes had been made and so nothing was saved");
+
+	$("#igSaveButton").hide();
+	$("#igCancelButton").hide();
+	$("#igPublishButton").removeAttr("disabled").css("opacity",1.0);
+    $("#igPreviewButton").removeAttr("disabled").css("opacity",1.0);
+
+	window.isPageDirty = false;
 }
 
 function updatePageStatus()
@@ -452,7 +531,6 @@ function updatePageStatus()
 						if(window.self === window.top)
 							$('#igPublishButton').show();
 					}
-					$('#igCancelButton').show();
 				}
 				else
 				{
@@ -590,4 +668,9 @@ $showMySettingsButtonJavascript
 
 $ShowApproveButtonsJavascript
 $autoShowApprovalButtonsJavascript
+
+if($useDoubleClickOnTextToInlineEdit)
+{
+	setTimeout(function(){toggleInline(); $("#inlineEditing").attr("checked", false); }, 500);
+}
 </script>

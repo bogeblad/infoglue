@@ -247,9 +247,10 @@
 	#foreach($extension in $extensions)
 	<script type="text/javascript" src="extensions/$extension/js/main.js"></script>	
 	#end	
-	
-	<link rel="icon" href="css/images/icons/ig-16.png" type="image/png" />
-	<link rel="SHORTCUT ICON" href="css/images/icons/ig-16.png" />
+
+	<link rel="icon" href="$this.getThemeFileWithFallback("/images/icons/ig-16.png")" type="image/png" />
+	<link rel="SHORTCUT ICON" href="$this.getThemeFileWithFallback("/images/icons/ig-16.png")" />
+
 	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
 	<meta http-equiv="Cache-Control" content="no-cache" />
 	<meta http-equiv="Pragma" content="no-cache" />

@@ -2062,6 +2062,11 @@ public class CmsPropertyHandler
 	    return getServerNodeProperty("showInlinePropertiesIcon", true, "true");
 	}
 
+	public static String getUseDoubleClickOnTextToInlineEdit()
+	{
+	    return getServerNodeProperty("useDoubleClickOnTextToInlineEdit", true, "true");
+	}
+
 	public static String getPreferredRepositoryId(String userName)
 	{
 	    return getPropertySet().getString("principal_" + userName + "_defaultRepositoryId");

@@ -295,6 +295,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "editOnSight");
 	    populate(ps, "disableEditOnSightToolbar");
 	    populate(ps, "showInlinePropertiesIcon");
+	    populate(ps, "useDoubleClickOnTextToInlineEdit");
 	    populate(ps, "previewDeliveryUrl");
 	    populate(ps, "stagingDeliveryUrl");
 	    populateData(ps, "internalDeliveryUrls");

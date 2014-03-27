@@ -270,6 +270,9 @@ public class ContentStateController extends BaseController
 				}
 				else
 				{
+					oldContentVersion = ContentVersionController.getContentVersionController().getMediumContentVersionWithId(oldContentVersionId, db);
+					oldContentVersion.setVersionComment(versionComment);
+
 					EventVO eventVO = new EventVO();
 					eventVO.setDescription(versionComment);
 					eventVO.setEntityClass(ContentVersion.class.getName());

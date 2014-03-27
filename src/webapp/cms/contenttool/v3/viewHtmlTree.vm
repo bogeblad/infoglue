@@ -346,6 +346,11 @@
 	webFXTreeConfig.showRoot		= true;
 	webFXTreeConfig.loadingText		= "Loading content ...";
 	
+	var contentTypeNamesMapping = new Array();
+	#foreach($contentTypeDefinitionVO in $this.getContentTypeDefinitions())
+		contentTypeNamesMapping["$contentTypeDefinitionVO.id"] = "$contentTypeDefinitionVO.name.replaceAll(" ","").toLowerCase()";
+	#end
+	
 	#set($par = "")
 	#if($parent && $parent != "")
 		#set($par = "&parent=${parent}")

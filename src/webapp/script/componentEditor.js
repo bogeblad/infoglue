@@ -1474,6 +1474,7 @@ function saveAttribute(selectedContentId, selectedLanguageId, selectedAttributeN
 		     			}
 		     			//$("#attribute" + selectedContentId + selectedAttributeName).html(msg);
 		     			//alert("update status...");
+		     			CKEDITOR.instances["attribute" + selectedContentId + selectedAttributeName].resetDirty();
 		     		}
 		     		else
 		     		{
@@ -1499,12 +1500,13 @@ function saveAttribute(selectedContentId, selectedLanguageId, selectedAttributeN
 				else if(XMLHttpRequest.status == 406)
 				{
 					alert(XMLHttpRequest.responseText);
+					window.igInlineSaveErrorOccurred = true;
 				}
 			   else
 			   {
 				   alert("Update failed!");
 			   }
-    			updatePageStatus();
+			   updatePageStatus();
 		   }
 		 });
 	}
@@ -1536,6 +1538,7 @@ function saveAttribute(selectedContentId, selectedLanguageId, selectedAttributeN
 				//alert( "Data Saved: " + msg + ":" + $("#spanInput" + key).parent().size());
 				$("#spanInput" + key).parent().html(msg);
 			    completeEditInlineSave(selectedContentId, selectedAttributeName);
+     			CKEDITOR.instances["attribute" + selectedContentId + selectedAttributeName].resetDirty();
 		   	},
 		   error: function (XMLHttpRequest, textStatus, errorThrown) {
 			   if(XMLHttpRequest.status == 403)
@@ -1545,6 +1548,7 @@ function saveAttribute(selectedContentId, selectedLanguageId, selectedAttributeN
 			   }
 			   else if(XMLHttpRequest.status == 406)
 				{
+					window.igInlineSaveErrorOccurred = true;
 					alert(XMLHttpRequest.responseText);
 				}
 			   else

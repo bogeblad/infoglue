@@ -256,7 +256,10 @@ ${skinDeliveryCSS}
 	        	CKEDITOR.disableAutoInline = true;
 	        updatePageStatus();	
 	        hideFooterButtons();	
-	        setTimeout(function(){registerOnChange();}, 1000);
+			if(!useDoubleClickOnTextToInlineEdit)
+			{
+		        setTimeout(function(){registerOnChange();}, 1000);
+		    }
         }	
 	});
 -->

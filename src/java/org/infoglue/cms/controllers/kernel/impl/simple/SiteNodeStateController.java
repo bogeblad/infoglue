@@ -286,6 +286,8 @@ public class SiteNodeStateController extends BaseController
 				}
 				else
 				{
+					oldMediumSiteNodeVersionImpl.setVersionComment(versionComment);
+
 					//Creating the event that will notify the editor...
 					EventVO eventVO = new EventVO();
 					eventVO.setDescription(oldMediumSiteNodeVersionImpl.getVersionComment());

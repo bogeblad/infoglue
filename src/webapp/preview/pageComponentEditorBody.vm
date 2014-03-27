@@ -56,6 +56,10 @@
 
 <script type="text/javascript">
 
+window.loadDataOnWYSIWYGActivation = new Array();
+window.igInlineEditSaveFallBackValues = new Array();
+window.igInlineSaveErrorOccurred = false;
+
 window.isPageDirty = false;
 window.onbeforeunload = function() {
 	if(window.isPageDirty)
@@ -164,6 +168,9 @@ function registerOnChange()
 				//alert("key:" + CKEDITOR.instances[key]);
 				if(CKEDITOR.instances[key])
 				{
+					if(!useDoubleClickOnTextToInlineEdit && !window.loadDataOnWYSIWYGActivation[key])
+						window.loadDataOnWYSIWYGActivation[key] = true;
+				
 					//alert("regii:" + key);
 					CKEDITOR.instances[key].on('change', function(e) {
 					    $("#igSaveButton").show();
@@ -175,60 +182,76 @@ function registerOnChange()
 					});
 	
 					CKEDITOR.instances[key].on('focus', function(e) {
-						//alert("on focus:" + key);
-						//alert("on focus:" + e.editor.element.getId());
-						var attributeName = editOnSightAttributeNames[e.editor.element.getId()];
-						//alert("att name:" + attributeName);
-						var attributeType = editOnSightAttributeNames[e.editor.element.getId() + "_type"];
-						var attributeContentId = editOnSightAttributeNames[e.editor.element.getId() + "_contentId"];
-						var attributeLanguageId = editOnSightAttributeNames[e.editor.element.getId() + "_languageId"];
-					 	var enableWYSIWYG = editOnSightAttributeNames[e.editor.element.getId() + "_enableWYSIWYG"];
-								
-						var data = "contentId=" + attributeContentId + "&languageId=" + attributeLanguageId + "&attributeName=" + attributeName;
-								
-						$.ajax({
-						   	type: "GET",
-						   	url: "" + componentEditorUrl + "UpdateContentVersionAttribute!getAttributeValue.action",
-						   	data: data,
-						   	cache: false,
-						   	success: function(msg, textStatus){
-								plainAttribute = msg;
-								editOnSightAttributeNames[e.editor.element.getId() + "_originalValue"] = plainAttribute;
-								
-								if(enableWYSIWYG == "true")
-								{
-									if(userPrefferredWYSIWYG  == "ckeditor4" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
+						console.log("on focus:" + e.editor.element.getId());
+						//console.log("AAA:" + CKEDITOR.instances[e.editor.element.getId()].checkDirty());
+						//console.log("window.loadDataOnWYSIWYGActivation[e.editor.element.getId()]:" + window.loadDataOnWYSIWYGActivation[e.editor.element.getId()]);
+						
+						console.log("e.editor.element.getId():" + e.editor.element.getId() + "/" + window.loadDataOnWYSIWYGActivation[e.editor.element.getId()], window.loadDataOnWYSIWYGActivation);
+						if(window.loadDataOnWYSIWYGActivation[e.editor.element.getId()])
+						{
+							console.log("YEP");
+							//alert("on focus:" + e.editor.element.getId());
+							var attributeName = editOnSightAttributeNames[e.editor.element.getId()];
+							//alert("att name:" + attributeName);
+							var attributeType = editOnSightAttributeNames[e.editor.element.getId() + "_type"];
+							var attributeContentId = editOnSightAttributeNames[e.editor.element.getId() + "_contentId"];
+							var attributeLanguageId = editOnSightAttributeNames[e.editor.element.getId() + "_languageId"];
+						 	var enableWYSIWYG = editOnSightAttributeNames[e.editor.element.getId() + "_enableWYSIWYG"];
+									
+							var data = "contentId=" + attributeContentId + "&languageId=" + attributeLanguageId + "&attributeName=" + attributeName;
+									
+							$.ajax({
+							   	type: "GET",
+							   	url: "" + componentEditorUrl + "UpdateContentVersionAttribute!getAttributeValue.action",
+							   	data: data,
+							   	cache: false,
+							   	success: function(msg, textStatus){
+									plainAttribute = msg;
+							   		//console.log("loaded: ...." + (plainAttribute == CKEDITOR.instances[e.editor.element.getId()].getData()));
+							   		//console.log(plainAttribute);
+							   		//console.log(CKEDITOR.instances[e.editor.element.getId()].getData());
+							   		
+									window.loadDataOnWYSIWYGActivation[e.editor.element.getId()] = false;
+							   		
+									editOnSightAttributeNames[e.editor.element.getId() + "_originalValue"] = plainAttribute;
+									
+									if(enableWYSIWYG == "true")
 									{
-										if(!e.editor.checkDirty())
+										if(userPrefferredWYSIWYG  == "ckeditor4" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
 										{
-											var bookmarks = e.editor.getSelection().createBookmarks2(true);
-											e.editor.setData(msg, function() {
-												this.checkDirty(); // true
-												e.editor.getSelection().selectBookmarks(bookmarks);
-											});
+											//console.log(e.editor.checkDirty());
+											//if(!e.editor.checkDirty())
+											//{
+												var bookmarks = e.editor.getSelection().createBookmarks2(true);
+												e.editor.setData(msg, function() {
+													this.checkDirty(); // true
+													e.editor.getSelection().selectBookmarks(bookmarks);
+													this.resetDirty();
+												});
+											//}
 										}
 									}
-								}
-							},
-						   error: function (XMLHttpRequest, textStatus, errorThrown) {
-							   //alert("textStatus:" + textStatus);
-							   alert("ResponseCode:" + XMLHttpRequest.status);
-							   //alert("errorThrown:" + errorThrown);
-							   if(XMLHttpRequest.status == 403)
-							   {
-								   alert("You are not logged in properly to the administrative tools - please log in again.");
-								   window.open("" + componentEditorUrl + "ViewCMSTool!loginStandalone.action", "Login", "width=400,height=420");
-							   }
-							   else
-							   {
-								   alert("You are not allowed to edit this text!");
-							   }
-						   }
-						});
+								},
+							   error: function (XMLHttpRequest, textStatus, errorThrown) {
+							   		//alert("textStatus:" + textStatus);
+								   	alert("ResponseCode:" + XMLHttpRequest.status);
+								   	//alert("errorThrown:" + errorThrown);
+								   	if(XMLHttpRequest.status == 403)
+								   	{
+									   alert("You are not logged in properly to the administrative tools - please log in again.");
+									   window.open("" + componentEditorUrl + "ViewCMSTool!loginStandalone.action", "Login", "width=400,height=420");
+								   	}
+								   	else
+								   	{
+									   alert("You are not allowed to edit this text!");
+								   	}
+							   	}
+							});
+						}
 					});
 				}
 			}
-		}
+		}		
 	}
 }
 
@@ -282,24 +305,29 @@ function toggleInlineDoubleClick(id, event)
 {
 	var editor = CKEDITOR.instances[id]; 
 	if(typeof(editor) != 'undefined')
+	{
+		//console.log("allready there");
 		return;
+	}
 
 	toggleInline(event, id);
-
+	
 	document.getElementById(id).focus(); 
+
 	setTimeout(function(){
 		var editor = CKEDITOR.instances[id]; 
 		if(typeof(editor) != 'undefined')
 		{
 			editor.setData(editor.getData().replace(/[\u200B-\u200D\uFEFF]/g, ''));
 		}
-	},100);
-	 
+	},200);
+
 	$('#inlineEditing').attr('checked', true);
 }
 
 function toggleInline(event, id)
 {
+	//console.log("toggleInline........");
 	try
 	{
 		if(typeof(CKEDITOR) == 'undefined')
@@ -307,7 +335,7 @@ function toggleInline(event, id)
 			return;
 		}
 	
-		if (!inlineOff && hasDirtyEditors())
+		if (!useDoubleClickOnTextToInlineEdit && !inlineOff && hasDirtyEditors())
 		{
 			alert("${tool.structuretool.toolbarV3.disableEditmodeNotAllowed}");
 			event.preventDefault();
@@ -328,10 +356,16 @@ function toggleInline(event, id)
 				   key.indexOf("_contentId") == -1 &&
 				   key.indexOf("_languageId") == -1)
 				{
+					//console.log("key:" + key);
+					//console.log("id:" + id);
+										
 					//alert("key:" + key);
 					//alert("key:" + CKEDITOR.instances[key]);
 					if(CKEDITOR.instances[key])
 					{
+						//console.log("Destroy...:" + !turnOn + " for " + key);
+						window.loadDataOnWYSIWYGActivation[key] = true;
+						
 						if(!turnOn)
 						{
 							CKEDITOR.instances[key].destroy();
@@ -340,11 +374,14 @@ function toggleInline(event, id)
 					}
 					else
 					{
+						//console.log("id:" + id);
+						//console.log("Activating wysiwug for " + key);
+						window.loadDataOnWYSIWYGActivation[key] = true;
 						//editOnSightAttributeNames[key + "_originalValue"] = "" + $("#" + key).html();
 						$("#" + key).attr("contenteditable", "true");
 						if(editOnSightAttributeNames[key + "_type"] == "textfield")
 						{
-			        		CKEDITOR.inline( key , {
+				        	CKEDITOR.inline( key , {
 							    removePlugins: 'toolbar',
 							    /*customConfig: '" + CmsPropertyHandler.getComponentEditorUrl() + "WYSIWYGProperties.action?" + parameterString + "'," + */
 								autoParagraph: false,	
@@ -355,9 +392,12 @@ function toggleInline(event, id)
 						{
 							initWYSIWYGInstance(key);
 						}
+							
+						CKEDITOR.instances[key].resetDirty();
 					}
 				}
 			}
+
 			if(turnOn)
 			{
 				inlineOff = false;
@@ -377,6 +417,8 @@ function toggleInline(event, id)
 
 function saveAllEditing()
 {
+	window.igInlineSaveErrorOccurred = false;
+	
 	$("#igSaveButton").attr("value","Saving...");
 	var allSavedItems = 0;
 	for (key in editOnSightAttributeNames)
@@ -399,10 +441,14 @@ function saveAllEditing()
 			if(CKEDITOR.instances[key])
 			{
 				//alert(CKEDITOR.instances[key].checkDirty());
-				if(CKEDITOR.instances[key].checkDirty())
+				//console.log("Checking: " + window.loadDataOnWYSIWYGActivation[key]);
+				if(CKEDITOR.instances[key].checkDirty() && !window.loadDataOnWYSIWYGActivation[key])
 				{
+					igInlineEditSaveFallBackValues[key + "_originalValue"] = editOnSightAttributeNames[key + "_originalValue"];
+					
 					CKEDITOR.instances[key].resetDirty();
 					//alert(CKEDITOR.instances[key].getData());
+					console.log("Saving: " + key);
 					saveAttribute(attributeContentId, attributeLanguageId, attributeName, attributeType, key);
 					allSavedItems++;
 				}
@@ -429,27 +475,69 @@ function saveAllEditing()
 			{
 				if(CKEDITOR.instances[key].checkDirty())
 				{
+					console.log("CKEDITOR.instances " + key + " was dirty");
 					noDirty = false;
 				}
 
 				editOnSightAttributeNames[key + "_originalValue"] = CKEDITOR.instances[key].getData();
 				CKEDITOR.instances[key].resetDirty();
+				
+				if(useDoubleClickOnTextToInlineEdit)
+				{
+					CKEDITOR.instances[key].destroy();
+					$("#" + key).attr("contenteditable", "false");
+					inlineOff = true;	    
+				}
 			}
 		}
 	}
 	
-	
-	if(noDirty)
-	{
-		window.isPageDirty = false;
-		var labelValue = window.saveButtonLabel;
-		setTimeout(function(){ $("#igSaveButton").attr("value","Saved!!"); }, 1000);
-		//$("#igSaveButton").hide();
-		setTimeout(function(){ $("#igSaveButton").fadeOut(1000); $("#igCancelButton").hide();}, 2000);
-		setTimeout(function(){ $("#igSaveButton").attr("value", window.saveButtonLabel);}, 3000);
-		$("#igPublishButton").removeAttr("disabled").css("opacity",1.0);
-	    $("#igPreviewButton").removeAttr("disabled").css("opacity",1.0);
-	}
+	setTimeout(function(){
+		console.log("window.igInlineSaveErrorOccurred: " + window.igInlineSaveErrorOccurred);
+		if(window.igInlineSaveErrorOccurred)
+		{
+			for (key in editOnSightAttributeNames)
+			{
+				if(key.indexOf("_type") == -1 && 
+				   key.indexOf("_contentId") == -1 && 
+				   key.indexOf("_languageId") == -1 && 
+				   key.indexOf("_enableWYSIWYG") == -1 && 
+				   key.indexOf("_originalValue") == -1 &&
+				   key.indexOf("_WYSIWYGToolbar") == -1 &&
+				   key.indexOf("_WYSIWYGExtraConfig") == -1)
+				{
+					console.log("igInlineEditSaveFallBackValues:", igInlineEditSaveFallBackValues[key + "_originalValue"]);
+					if(igInlineEditSaveFallBackValues[key + "_originalValue"])
+					{
+						editOnSightAttributeNames[key + "_originalValue"] = igInlineEditSaveFallBackValues[key + "_originalValue"];
+						console.log("key:" + key);
+						console.log("igInlineEditSaveFallBackValues:", igInlineEditSaveFallBackValues);
+						console.log("Now:", editOnSightAttributeNames[key + "_originalValue"]);
+						CKEDITOR.instances[key].resetDirty();
+					}
+					else
+						CKEDITOR.instances[key].resetDirty();
+				}
+			}
+			
+			$("#igSaveButton").attr("value","Save");
+		}
+		else if(noDirty)
+		{
+			window.isPageDirty = false;
+			var labelValue = window.saveButtonLabel;
+			setTimeout(function(){ $("#igSaveButton").attr("value","Saved!!"); }, 1000);
+			//$("#igSaveButton").hide();
+			setTimeout(function(){ $("#igSaveButton").fadeOut(1000); $("#igCancelButton").hide();}, 2000);
+			setTimeout(function(){ $("#igSaveButton").attr("value", window.saveButtonLabel);}, 3000);
+			$("#igPublishButton").removeAttr("disabled").css("opacity",1.0);
+		    $("#igPreviewButton").removeAttr("disabled").css("opacity",1.0);	    
+		}
+		else
+		{
+			alert("Dirty...");
+		}
+	}, 200);
 			
 	if(allSavedItems == 0)
 		alert("No changes had been made and so nothing was saved");
@@ -478,10 +566,17 @@ function cancelAllEditing()
 			//console.log(CKEDITOR.instances[key]);
 			if(CKEDITOR.instances[key])
 			{
-				if(CKEDITOR.instances[key].checkDirty())
+				if(CKEDITOR.instances[key].checkDirty() || window.igInlineSaveErrorOccurred)
 				{
 					CKEDITOR.instances[key].setData(editOnSightAttributeNames[key + "_originalValue"]);
 					CKEDITOR.instances[key].resetDirty();
+				}
+				
+				if(useDoubleClickOnTextToInlineEdit)
+				{
+					CKEDITOR.instances[key].destroy();
+					$("#" + key).attr("contenteditable", "false");
+					inlineOff = true;
 				}
 			}
 		}
@@ -669,8 +764,9 @@ $showMySettingsButtonJavascript
 $ShowApproveButtonsJavascript
 $autoShowApprovalButtonsJavascript
 
-if($useDoubleClickOnTextToInlineEdit)
+var useDoubleClickOnTextToInlineEdit = $useDoubleClickOnTextToInlineEdit;
+if(useDoubleClickOnTextToInlineEdit)
 {
-	setTimeout(function(){toggleInline(); $("#inlineEditing").attr("checked", false); }, 500);
+	setTimeout(function(){toggleInline(null, -1); $("#inlineEditing").attr("checked", false).parent().hide(); }, 500);
 }
 </script>

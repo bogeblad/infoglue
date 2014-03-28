@@ -42,6 +42,7 @@ import org.infoglue.cms.applications.structuretool.actions.ViewListSiteNodeVersi
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentCategoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.controllers.kernel.impl.simple.EventController;
@@ -55,6 +56,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
+import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.publishing.PublicationVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
@@ -153,6 +155,14 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
     {
 		List<Integer> uniqueList = new ArrayList<Integer>();
 		List<ReferenceBean> refList = RegistryController.getController().getReferencingObjectsForContent(new Integer(getRequest().getParameter("contentId")), 100, true, true);
+		if(getRequest().getParameter("isMetaInfoContent") != null && getRequest().getParameter("isMetaInfoContent").equals("true"))
+		{
+			SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(new Integer(getRequest().getParameter("contentId")));
+			if(siteNodeVO != null)
+			{
+				refList = RegistryController.getController().getReferencingObjectsForSiteNode(siteNodeVO.getId(), 100, true, true);
+			}
+		}
 		for(ReferenceBean bean : refList)
 		{
 			if(bean.getReferencingCompletingObject() instanceof ContentVO)

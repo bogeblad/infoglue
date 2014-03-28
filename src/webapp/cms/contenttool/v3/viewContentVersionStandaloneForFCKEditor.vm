@@ -599,12 +599,16 @@
 			
 			try
 			{
-				#if($isMetainfoContent == false)
-				jQuery.get("ViewCommonAjaxServices!referenceCount.action?contentId=$contentId", function(data) {
+				jQuery.get("ViewCommonAjaxServices!referenceCount.action?contentId=$contentId&isMetaInfoContent=$isMetainfoContent", function(data) {
 					if(data != "0")
-						$('a[href="#contentReferencesDiv"] > span').append("(" + data + ")");
+					{
+						#if($isMetainfoContent == false)
+							$('a[href="#contentReferencesDiv"] > span').append("(" + data + ")");
+						#else
+							$('a[href="#pageReferencesDiv"] > span').append("(" + data + ")");
+						#end
+					}
 				});
-				#end
 
 				#if($contentVersionId)
 

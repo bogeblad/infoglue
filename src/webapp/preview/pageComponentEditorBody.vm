@@ -182,14 +182,14 @@ function registerOnChange()
 					});
 	
 					CKEDITOR.instances[key].on('focus', function(e) {
-						console.log("on focus:" + e.editor.element.getId());
+						//console.log("on focus:" + e.editor.element.getId());
 						//console.log("AAA:" + CKEDITOR.instances[e.editor.element.getId()].checkDirty());
 						//console.log("window.loadDataOnWYSIWYGActivation[e.editor.element.getId()]:" + window.loadDataOnWYSIWYGActivation[e.editor.element.getId()]);
 						
-						console.log("e.editor.element.getId():" + e.editor.element.getId() + "/" + window.loadDataOnWYSIWYGActivation[e.editor.element.getId()], window.loadDataOnWYSIWYGActivation);
+						//console.log("e.editor.element.getId():" + e.editor.element.getId() + "/" + window.loadDataOnWYSIWYGActivation[e.editor.element.getId()], window.loadDataOnWYSIWYGActivation);
 						if(window.loadDataOnWYSIWYGActivation[e.editor.element.getId()])
 						{
-							console.log("YEP");
+							//console.log("YEP");
 							//alert("on focus:" + e.editor.element.getId());
 							var attributeName = editOnSightAttributeNames[e.editor.element.getId()];
 							//alert("att name:" + attributeName);
@@ -448,7 +448,7 @@ function saveAllEditing()
 					
 					CKEDITOR.instances[key].resetDirty();
 					//alert(CKEDITOR.instances[key].getData());
-					console.log("Saving: " + key);
+					//console.log("Saving: " + key);
 					saveAttribute(attributeContentId, attributeLanguageId, attributeName, attributeType, key);
 					allSavedItems++;
 				}
@@ -475,25 +475,18 @@ function saveAllEditing()
 			{
 				if(CKEDITOR.instances[key].checkDirty())
 				{
-					console.log("CKEDITOR.instances " + key + " was dirty");
+					//console.log("CKEDITOR.instances " + key + " was dirty");
 					noDirty = false;
 				}
 
 				editOnSightAttributeNames[key + "_originalValue"] = CKEDITOR.instances[key].getData();
-				CKEDITOR.instances[key].resetDirty();
-				
-				if(useDoubleClickOnTextToInlineEdit)
-				{
-					CKEDITOR.instances[key].destroy();
-					$("#" + key).attr("contenteditable", "false");
-					inlineOff = true;	    
-				}
+				CKEDITOR.instances[key].resetDirty();				
 			}
 		}
 	}
 	
 	setTimeout(function(){
-		console.log("window.igInlineSaveErrorOccurred: " + window.igInlineSaveErrorOccurred);
+		//console.log("window.igInlineSaveErrorOccurred: " + window.igInlineSaveErrorOccurred);
 		if(window.igInlineSaveErrorOccurred)
 		{
 			for (key in editOnSightAttributeNames)
@@ -506,17 +499,23 @@ function saveAllEditing()
 				   key.indexOf("_WYSIWYGToolbar") == -1 &&
 				   key.indexOf("_WYSIWYGExtraConfig") == -1)
 				{
-					console.log("igInlineEditSaveFallBackValues:", igInlineEditSaveFallBackValues[key + "_originalValue"]);
+					//console.log("igInlineEditSaveFallBackValues:", igInlineEditSaveFallBackValues[key + "_originalValue"]);
 					if(igInlineEditSaveFallBackValues[key + "_originalValue"])
 					{
 						editOnSightAttributeNames[key + "_originalValue"] = igInlineEditSaveFallBackValues[key + "_originalValue"];
-						console.log("key:" + key);
-						console.log("igInlineEditSaveFallBackValues:", igInlineEditSaveFallBackValues);
-						console.log("Now:", editOnSightAttributeNames[key + "_originalValue"]);
-						CKEDITOR.instances[key].resetDirty();
+						//console.log("key:" + key);
+						//console.log("igInlineEditSaveFallBackValues:", igInlineEditSaveFallBackValues);
+						//console.log("Now:", editOnSightAttributeNames[key + "_originalValue"]);
+						//console.log("Key: " + key, CKEDITOR.instances);
+						if(CKEDITOR.instances[key])
+							CKEDITOR.instances[key].resetDirty();
 					}
 					else
-						CKEDITOR.instances[key].resetDirty();
+					{
+						//console.log("Key: " + key, CKEDITOR.instances);
+						if(CKEDITOR.instances[key])
+							CKEDITOR.instances[key].resetDirty();
+					}
 				}
 			}
 			
@@ -524,6 +523,17 @@ function saveAllEditing()
 		}
 		else if(noDirty)
 		{
+			if(useDoubleClickOnTextToInlineEdit)
+			{
+				for (editorKey in CKEDITOR.instances)
+				{
+					CKEDITOR.instances[editorKey].destroy();
+					//console.log("editor", editorKey);
+					$("#" + editorKey).attr("contenteditable", "false");
+				}
+				inlineOff = true;	    
+			}
+			
 			window.isPageDirty = false;
 			var labelValue = window.saveButtonLabel;
 			setTimeout(function(){ $("#igSaveButton").attr("value","Saved!!"); }, 1000);
@@ -535,7 +545,7 @@ function saveAllEditing()
 		}
 		else
 		{
-			alert("Dirty...");
+			console.log("Dirty...");
 		}
 	}, 200);
 			

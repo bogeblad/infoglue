@@ -1475,6 +1475,14 @@ function saveAttribute(selectedContentId, selectedLanguageId, selectedAttributeN
 		     			//$("#attribute" + selectedContentId + selectedAttributeName).html(msg);
 		     			//alert("update status...");
 		     			CKEDITOR.instances["attribute" + selectedContentId + selectedAttributeName].resetDirty();
+		     			
+		     			//console.log("useDoubleClickOnTextToInlineEdit", useDoubleClickOnTextToInlineEdit);
+		     			if(useDoubleClickOnTextToInlineEdit)
+						{
+							CKEDITOR.instances[key].destroy();
+							$("#" + key).attr("contenteditable", "false");
+							inlineOff = true;	    
+						}
 		     		}
 		     		else
 		     		{

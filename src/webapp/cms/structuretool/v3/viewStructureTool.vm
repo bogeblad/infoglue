@@ -106,6 +106,7 @@
 		}
 		
 		$(document).ready(function() {
+
 			resize(false);
    			
 	   		window.onresize = function() {
@@ -143,11 +144,11 @@
 							//alert("Error:" + e);
 						}
 						
-						//alert("url:" + url);
+						//console.log("url:" + url);
 						if(url.indexOf("siteNodeId=") > -1)
 						{
 							var loadedSiteNodeId = getRequestParameter(url, "siteNodeId");
-							//alert("loadedSiteNodeId:" + loadedSiteNodeId + ":" + currentRepositoryId);
+							//console.log("loadedSiteNodeId:" + loadedSiteNodeId + ":" + currentRepositoryId);
 							refreshTopToolBar('tool.structuretool.siteNodeComponentsHeader', 'tool.structuretool.siteNodeComponentsHeader', 'siteNodeId=' + loadedSiteNodeId, -1, -1, -1);
 							//syncWithTree(loadedSiteNodeId, currentRepositoryId, "treeIframe", true);
 							jQuery.get("ViewCommonAjaxServices!siteNodeIdPath.action?siteNodeId=" + loadedSiteNodeId, function(data) {

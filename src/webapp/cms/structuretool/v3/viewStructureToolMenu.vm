@@ -129,7 +129,7 @@
 		}
 		
 		$(document).ready(function(){
-			console.log("height:", $(window).height());
+			//console.log("height:", $(window).height());
 			$(treeView()).height($(window).height()-20);
 			
 			//alert("$!path / $!fullPath");

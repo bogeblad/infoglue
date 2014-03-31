@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -128,6 +129,19 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 	 */
 	public String doSaveAndReturnValue()
     {
+		/*
+		try
+		{
+			Random rand = new Random();
+		    int randomNum = rand.nextInt((10 - 1) + 1) + 1;
+			System.out.println("Sleep...");
+			Thread.sleep(randomNum*1000);
+		} 
+		catch (Exception e)
+		{
+		}
+		*/
+		
 		int index = 0;
 		while(active && index < 100)
 		{

@@ -128,104 +128,82 @@
 		
 	<div class="inlineTabDiv">	
 		
-	<table width="95%" border="0">
-	<tr>
-		<td>
-			<table width="90%" border="0" cellpadding="0" cellspacing="0">
-			#if($this.hasAccessTo("Common.SubmitToPublishButton", true, false, false))
-				#if($allowPublicationEventFilter == "true")
-					#if($defaultPublicationEventFilter == "emailBased")
-						<tr>
-							<td colspan="3">
-								$ui.getString("tool.common.recipientEmail.label")<br>
-								<input type="text" name="xrecipientFilter" id="xrecipientFilter" class="longtextfield" style="float: left;"/><a class="showUsers" href="javascript:showUsers();" style="display: block; float:left; height: 20px; width: 20px; background: url(css/images/spyglassIcon.gif) no-repeat 0px 0px; margin-left: 4px;">&nbsp;</a>
-							</td>
-						</tr>		
+		#if($this.hasAccessTo("Common.SubmitToPublishButton", true, false, false))
+			#if($allowPublicationEventFilter == "true")
+				#if($defaultPublicationEventFilter == "emailBased")
+					<p>
+						$ui.getString("tool.common.recipientEmail.label")<br>
+						<input type="text" name="xrecipientFilter" id="xrecipientFilter" class="longtextfield"/><a class="showUsers" href="javascript:showUsers();" style="display: inline-block; height: 20px; width: 20px; background: url(css/images/spyglassIcon.gif) no-repeat 0px 0px; margin-left: 4px;">&nbsp;</a>
+					</p>
+				#else
+					#if($infoGluePrincipal.groups.size() > 1)
+						<p>
+							$ui.getString("tool.common.recipientFilter.label")<br>
+							<select name="xrecipientFilter" id="xrecipientFilter">
+								<option value="">$ui.getString("entity.ServerNode.property.nonePublishersFilter.label")</option>
+								<!--<option value="all">$ui.getString("entity.ServerNode.property.allPublishersFilter.label")</option>-->
+								<option value="groupBased" selected="1">$ui.getString("entity.ServerNode.property.groupBasePublishersFilter.label")</option>
+								#if($infoGluePrincipal.groups.size() > 1)
+									#foreach($group in $infoGluePrincipal.groups)
+										<option value="groupNameBased_$group.name">$ui.getString("entity.ServerNode.property.groupNameBasedPublisherFilter.label") $group.name</option>
+									#end
+								#end
+							</select>
+						</p>		
 					#else
-						#if($infoGluePrincipal.groups.size() > 1)
-							<tr>
-								<td colspan="3">
-									$ui.getString("tool.common.recipientFilter.label")<br>
-									<select name="xrecipientFilter" id="xrecipientFilter">
-										<option value="">$ui.getString("entity.ServerNode.property.nonePublishersFilter.label")</option>
-										<!--<option value="all">$ui.getString("entity.ServerNode.property.allPublishersFilter.label")</option>-->
-										<option value="groupBased" selected="1">$ui.getString("entity.ServerNode.property.groupBasePublishersFilter.label")</option>
-										#if($infoGluePrincipal.groups.size() > 1)
-											#foreach($group in $infoGluePrincipal.groups)
-												<option value="groupNameBased_$group.name">$ui.getString("entity.ServerNode.property.groupNameBasedPublisherFilter.label") $group.name</option>
-											#end
-										#end
-									</select>
-								</td>
-							</tr>		
-						#else
-							<input type="hidden" name="xrecipientFilter" id="xrecipientFilter" value="groupBased"/>		
-						#end	
-					#end
+						<input type="hidden" name="xrecipientFilter" id="xrecipientFilter" value="groupBased"/>		
+					#end	
 				#end
 			#end
-			
-			#if($this.skipVersionComment == false)
-				<tr>
-					<td colspan="3" class="biglabel">$ui.getString("tool.contenttool.stateChangeComment")</td>
-				</tr>		
-				<tr>
-					<td colspan="3">#editTextArea("ContentVersion.versionComment" "xversionComment" $!versionComment "10" "10" "tinytextarea")</td>
-				</tr>
-			#else
-				<input type="hidden" name="xversionComment" id="xversionComment" value=""/>		
-			#end			
-			<tr>
-				<td colspan="3">#yesNoCheckBox("ContentVersion.overrideVersionModifyer" "xoverrideVersionModifyer" "true" $ui.getString('tool.common.yes'))<br/><br/></td>
-			</tr>	
-			</table>
-		</td>
-		<td align="right" valign="top">
-			<br>
-		</td>
-	</tr>
-	<tr>
-		<td colspan="2">
-			$ui.getString("tool.common.unpublishing.markContentsText")
-		</td>
-	</tr>
-	<tr>
-		<td colspan="2">
-
-		#set($versions = $contentVersions)
-		
-		#set($lvBorder = 0) 
-		#set($lvConstraint = -1) 
-		#set($nameHeader = $ui.getString("tool.common.publishing.nameLabel"))
-		#set($languageHeader = $ui.getString("tool.common.publishing.languageLabel"))
-		#set($changedHeader = $ui.getString("tool.common.publishing.changedLabel"))
-		#set($modifyerHeader = $ui.getString("tool.common.publishing.modifyerLabel"))
-		#lvHeadV3(["$nameHeader", "$modifyerHeader"] "Publish items" "" "" "", true)
-
-		#hiddenField("contentId" $contentId)
-		#hiddenField("versionComment" $!versionComment)
-		#hiddenField("overrideVersionModifyer" $!overrideVersionModifyer)
-		#hiddenField("recipientFilter" $!recipientFilter)
-		#hiddenField("attemptDirectPublishing" $!attemptDirectPublishing)
-		#hiddenField("repositoryId" $!repositoryId)
-		#hiddenField("returnAddress" $!returnAddress)
-		#hiddenField("userSessionKey" $!userSessionKey)
-		#hiddenField("disableCloseButton" $!disableCloseButton)		
-
-		#set($lvChkBoxName = "sel")
-
-		#set($cnt = 0)
-		#foreach($cv in $versions)
-			#set( $row = ["<img src='css/images/v3/contentIcon.gif'> $this.getContentPath($cv.contentId).replaceAll(' ', '&nbsp;') ($cv.id) - $cv.languageName", "$cv.versionModifier"] )
-			#set($cnt = $cnt + 1)
-			#lvAddRowV3($row $cnt $cv.id false)
 		#end
-
-		#lvEnd()
+			
+		#if($this.skipVersionComment == false)
+			<p>#editTextArea("ContentVersion.versionComment" "xversionComment" $!versionComment "10" "10" "tinytextarea")</p>
+		#else
+			<input type="hidden" name="xversionComment" id="xversionComment" value=""/>		
+		#end			
+		<p>#yesNoCheckBox("ContentVersion.overrideVersionModifyer" "xoverrideVersionModifyer" "true" $ui.getString('tool.common.yes'))</p>
+		<p>
+			$ui.getString("tool.common.unpublishing.markContentsText")
+		</p>
+		<table width="95%" border="0">
+		<tr>
+			<td colspan="2">
 	
-		</td>
-	</tr>
-	</table>
+			#set($versions = $contentVersions)
+			
+			#set($lvBorder = 0) 
+			#set($lvConstraint = -1) 
+			#set($nameHeader = $ui.getString("tool.common.publishing.nameLabel"))
+			#set($languageHeader = $ui.getString("tool.common.publishing.languageLabel"))
+			#set($changedHeader = $ui.getString("tool.common.publishing.changedLabel"))
+			#set($modifyerHeader = $ui.getString("tool.common.publishing.modifyerLabel"))
+			#lvHeadV3(["$nameHeader", "$modifyerHeader"] "Publish items" "" "" "", true)
+	
+			#hiddenField("contentId" $contentId)
+			#hiddenField("versionComment" $!versionComment)
+			#hiddenField("overrideVersionModifyer" $!overrideVersionModifyer)
+			#hiddenField("recipientFilter" $!recipientFilter)
+			#hiddenField("attemptDirectPublishing" $!attemptDirectPublishing)
+			#hiddenField("repositoryId" $!repositoryId)
+			#hiddenField("returnAddress" $!returnAddress)
+			#hiddenField("userSessionKey" $!userSessionKey)
+			#hiddenField("disableCloseButton" $!disableCloseButton)		
+	
+			#set($lvChkBoxName = "sel")
+	
+			#set($cnt = 0)
+			#foreach($cv in $versions)
+				#set( $row = ["<img src='css/images/v3/contentIcon.gif'> $this.getContentPath($cv.contentId).replaceAll(' ', '&nbsp;') ($cv.id) - $cv.languageName", "$cv.versionModifier"] )
+				#set($cnt = $cnt + 1)
+				#lvAddRowV3($row $cnt $cv.id false)
+			#end
+	
+			#lvEnd()
+		
+			</td>
+		</tr>
+		</table>
 
 	</div>
 		

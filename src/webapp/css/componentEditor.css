@@ -1117,6 +1117,10 @@ body {
 	font-size: 8px;
 }
 
+.cke_editable.cke_editable_inline.validationError {
+	outline: red auto 5px;
+}
+
 .blockedDropzone {
 	background-color: #c0c0c0;
 }

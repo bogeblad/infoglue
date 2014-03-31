@@ -464,8 +464,11 @@ function getWindowWidth()
 
 function getActiveMenuDiv() 
 {
-	//alert("activeMenuId:" + activeMenuId);
-	return document.getElementById(activeMenuId);
+	if(typeof(activeMenuId) != "undefined" && activeMenuId != "")
+	{
+		//alert("activeMenuId:" + activeMenuId);
+		return document.getElementById(activeMenuId);
+	}
 }
 
 var busy = false;
@@ -1474,14 +1477,18 @@ function saveAttribute(selectedContentId, selectedLanguageId, selectedAttributeN
 		     			}
 		     			//$("#attribute" + selectedContentId + selectedAttributeName).html(msg);
 		     			//alert("update status...");
-		     			CKEDITOR.instances["attribute" + selectedContentId + selectedAttributeName].resetDirty();
+		     			if(CKEDITOR.instances["attribute" + selectedContentId + selectedAttributeName])
+		     				CKEDITOR.instances["attribute" + selectedContentId + selectedAttributeName].resetDirty();
 		     			
 		     			//console.log("useDoubleClickOnTextToInlineEdit", useDoubleClickOnTextToInlineEdit);
 		     			if(useDoubleClickOnTextToInlineEdit)
 						{
-							CKEDITOR.instances[key].destroy();
-							$("#" + key).attr("contenteditable", "false");
-							inlineOff = true;	    
+		     				if(CKEDITOR.instances[key])
+		     				{
+								CKEDITOR.instances[key].destroy();
+								$("#" + key).attr("contenteditable", "false");
+								inlineOff = true;	    
+		     				}
 						}
 		     		}
 		     		else
@@ -1495,8 +1502,12 @@ function saveAttribute(selectedContentId, selectedLanguageId, selectedAttributeN
 		     	{
 		     		$("#inputattribute" + selectedContentId + selectedAttributeName).replaceWith(msg);
 		     	}
-
+		     	
+		     	window.igInlineSaveStatus["attribute" + selectedContentId + selectedAttributeName] = true;
+		     	delete window.igSaveAttributesInProgress["attribute" + selectedContentId + selectedAttributeName];
+		     	
      			completeEditInlineSave(selectedContentId, selectedAttributeName);
+     			completeSaveProcedure();
      			updatePageStatus();
 		   },
 		   error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -1509,12 +1520,17 @@ function saveAttribute(selectedContentId, selectedLanguageId, selectedAttributeN
 				{
 					alert(XMLHttpRequest.responseText);
 					window.igInlineSaveErrorOccurred = true;
+					window.igInlineSaveErrorKeys["attribute" + selectedContentId + selectedAttributeName] = XMLHttpRequest.responseText;
 				}
 			   else
 			   {
 				   alert("Update failed!");
 			   }
-			   updatePageStatus();
+			   
+			   delete window.igSaveAttributesInProgress["attribute" + selectedContentId + selectedAttributeName];
+			   window.igInlineSaveStatus["attribute" + selectedContentId + selectedAttributeName] = true;
+			   completeSaveProcedure();
+		       updatePageStatus();
 		   }
 		 });
 	}
@@ -1543,11 +1559,15 @@ function saveAttribute(selectedContentId, selectedLanguageId, selectedAttributeN
 		   	url: "" + componentEditorUrl + "UpdateContentVersionAttribute!saveAndReturnValue.action",
 		   	data: data,
 		   	success: function(msg){
-				//alert( "Data Saved: " + msg + ":" + $("#spanInput" + key).parent().size());
+				console.log( "Data Saved: " + msg + ":" + $("#spanInput" + key).parent().size());
 				$("#spanInput" + key).parent().html(msg);
 			    completeEditInlineSave(selectedContentId, selectedAttributeName);
      			CKEDITOR.instances["attribute" + selectedContentId + selectedAttributeName].resetDirty();
-		   	},
+
+     			window.igInlineSaveStatus["attribute" + selectedContentId + selectedAttributeName] = true;
+     			delete window.igSaveAttributesInProgress["attribute" + selectedContentId + selectedAttributeName];
+     			completeSaveProcedure();
+     	   },
 		   error: function (XMLHttpRequest, textStatus, errorThrown) {
 			   if(XMLHttpRequest.status == 403)
 			   {
@@ -1556,13 +1576,17 @@ function saveAttribute(selectedContentId, selectedLanguageId, selectedAttributeN
 			   }
 			   else if(XMLHttpRequest.status == 406)
 				{
-					window.igInlineSaveErrorOccurred = true;
 					alert(XMLHttpRequest.responseText);
+					window.igInlineSaveErrorOccurred = true;
+					window.igInlineSaveErrorKeys["attribute" + selectedContentId + selectedAttributeName] = XMLHttpRequest.responseText;
 				}
 			   else
 			   {
 				   alert("Update failed!");
 			   }
+			   delete window.igSaveAttributesInProgress["attribute" + selectedContentId + selectedAttributeName];
+			   window.igInlineSaveStatus["attribute" + selectedContentId + selectedAttributeName] = true;
+			   completeSaveProcedure();
 		   }
 		});
 	}

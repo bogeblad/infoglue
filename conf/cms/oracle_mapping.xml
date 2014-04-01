@@ -2091,6 +2091,31 @@
 		</field>
   	</class>
 
+  	<!--  Mapping for SmallFormEntry  -->
+  	<class name="org.infoglue.cms.entities.management.impl.simple.SmallFormEntryImpl" identity="formEntryId" key-generator="SEQUENCE">
+    	<description>FormEntry</description>
+    	<cache-type type="none"/>
+	    <map-to table="cmFormEntry"/>
+	    <field name="formEntryId" type="java.lang.Integer">
+	      	<sql name="id" type="integer" dirty="check" />
+	    </field>
+	    <field name="originAddress" type="java.lang.String">
+	      	<sql name="originAddress" type="varchar" dirty="check" />
+	    </field>
+	    <field name="formName" type="java.lang.String">
+	      	<sql name="formName" type="varchar" dirty="check" />
+	    </field>
+	    <field name="formContentId" type="java.lang.Integer">
+		    <sql name="formContentId" type="integer" dirty="check" />
+	    </field>
+	    <field name="userIP" type="java.lang.String">
+	      	<sql name="userIP" type="varchar" dirty="check" />
+	    </field>
+	    <field name="userAgent" type="java.lang.String">
+	      	<sql name="userAgent" type="varchar" dirty="check" />
+	    </field>
+  	</class>
+  	
 	<!--  Mapping for FormEntryValue  -->
   	<class name="org.infoglue.cms.entities.management.impl.simple.FormEntryValueImpl" identity="formEntryValueId" key-generator="SEQUENCE">
     	<description>FormEntryValue</description>
@@ -2110,6 +2135,25 @@
 		</field>
   	</class>
 
+	<!--  Mapping for SmallFormEntryValue  -->
+  	<class name="org.infoglue.cms.entities.management.impl.simple.SmallFormEntryValueImpl" identity="formEntryValueId" key-generator="SEQUENCE">
+    	<description>FormEntryValue</description>
+    	<cache-type type="none"/>
+	    <map-to table="cmFormEntryValue"/>
+	    <field name="formEntryValueId" type="java.lang.Integer">
+	      	<sql name="id" type="integer" dirty="check" />
+	    </field>
+	    <field name="name" type="java.lang.String">
+	      	<sql name="name" type="varchar" dirty="check" />
+	    </field>
+	    <field name="value" type="java.lang.String">
+	      	<sql name="value" type="varchar" dirty="check" />
+	    </field>
+		<field name="formEntryId" type="java.lang.Integer">
+		  <sql name="formEntryId"/>
+		</field>
+  	</class>
+  	
   	<class name="org.infoglue.cms.entities.management.impl.simple.FormEntryAssetImpl" identity="formEntryAssetId" key-generator="SEQUENCE">
 	    <description>FormEntryAsset</description>
 	    <cache-type type="none"/>

@@ -174,20 +174,60 @@ Component Properties Classes
 }
 #componentPropertiesForm fieldset div select
 {
-	background: white;
+	background-color: white;
 	border: 1px solid #cccccc;
 	width: 140px;
 	float: left;
 	font-family: Tahoma, Arial, Helvetica, sans-serif;
 	font-size: 11px;
 }
+
+#componentPropertiesForm fieldset .buttonRow
+{
+	padding-top: 5px;
+	border: 0px solid black;
+}
+
+#componentPropertiesForm .buttonRow input[type="button"]:hover, .componentPropertiesForm .buttonRow input[type="button"]:hover, .componentPropertiesForm .buttonRow input[type="button"]:hover
+{ 
+	background-color: #d0e5f5;
+}
+
+/*#componentPropertiesForm .buttonRow input { background:no-repeat left center; background-position: 10px 0px; background-size: 16px 16px; }*/
+
+#componentPropertiesForm fieldset .buttonRow input
+{
+	width: auto;
+	border: 1px solid #ccc;
+	height: 30px;
+	font-family: Arial,sans-serif;
+	font-size: 13px;
+	font-weight: bold;
+	color: #555555;
+	padding: 4px 10px 4px 30px;
+	background-position: 8px 3px;
+	line-height: 1.4em;
+	margin: 8px 4px 0px 0px;
+}
+
+.save { background:url(images/v3/saveInlineIcon.gif) no-repeat left center; background-position: 0px 0px;}
+.saveAndExit {background:url(images/v3/saveAndExitInlineIcon.gif) no-repeat left center; background-position: 0px 0px;}
+.cancel {background:url(images/v3/cancel.png) no-repeat left center; background-position: 0px 3px;}
+.closeDialog {background:url(images/v3/closeWindowIcon.gif) no-repeat left center; background-position: 0px 4px;}
+.close {background:url(images/v3/closeWindowIcon.gif) no-repeat left center; background-position: 0px 4px;}
+.publish { background:url(images/v3/publishPageIcon.gif) no-repeat left center; background-position: 0px 0px;}
+.preview { background:url(images/v3/previewIcon.png) no-repeat left center; background-position: 0px 0px;}
+.denyPublication { background:url(images/v3/denyPublicationIcon.png) no-repeat left center; background-position: 0px 0px;}
+.approvePublication { background:url(images/v3/check.png) no-repeat left center; background-position: 0px 0px;}
+
+
 #componentPropertiesForm fieldset div input
 {
-	background: white;
+	background-color: white;
 	border: 1px solid #cccccc;
 	width: 330px;
-	font-family: Tahoma, Arial, Helvetica, sans-serif;
-	font-size: 11px;
+	font-family: Arial,sans-serif;
+	font-size: 13px;
 }
 #componentPropertiesForm fieldset div textarea
 {
@@ -199,12 +239,6 @@ Component Properties Classes
 	font-family: Tahoma, Arial, Helvetica, sans-serif;
 	font-size: 11px;
 }
-#componentPropertiesForm fieldset .buttonRow
-{
-	padding-top: 5px;
-	border: 0px solid black;
-}
-
 
 /* 
 Component palette classes
@@ -381,10 +415,50 @@ Edit on sight classes
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 11px;
 	border: 1px dotted #333;
-	padding: 4px;
+	/*padding: 4px;*/
 	line-height: 22px;
 }
+.igAddComponent {
+	outline: 1px dashed #ccc;
+	background-color: #ffff9d;
+	font-size: 11px;
+	font-family: arial;
+	text-align: center;
+	display: inline-block;
+	width: 100%;
+	position: relative;
+	height: 20px;
+	padding-top: 2px;
+}
 
+.addComponentButton {
+	display: none;
+    width: 16px;
+	height: 16px;
+	background: url('images/v3/addPlus.png') no-repeat 2px 2px; 
+	background-size:16px 16px; 
+	padding: 4px 0px 2px 20px; 
+	text-decoration: underline;
+	color: blue;
+	cursor: pointer;
+}
+.addComponentText {
+	clear: both;
+}
+.slotId {
+	display: none;
+}
+.slotDisplayName {
+	margin-bottom: 4px;
+	display: none;
+}
+.rightClickToAddText {
+	display: none;
+}
+
+.ui-state-disabled, .ui-widget-content .ui-state-disabled, .ui-widget-header .ui-state-disabled {
+    opacity: 1 !important;
+}
 /*
 Properties classes
 */

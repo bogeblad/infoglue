@@ -2097,6 +2097,31 @@
 		</field>
   	</class>
 
+	<!--  Mapping for FormEntry  -->
+  	<class name="org.infoglue.cms.entities.management.impl.simple.SmallFormEntryImpl" identity="formEntryId" key-generator="IDENTITY">
+    	<description>FormEntry</description>
+    	<cache-type type="none"/>
+	    <map-to table="cmFormEntry"/>
+	    <field name="formEntryId" type="java.lang.Integer">
+	      	<sql name="id" type="integer" dirty="check" />
+	    </field>
+	    <field name="originAddress" type="java.lang.String">
+	      	<sql name="originAddress" type="varchar" dirty="check" />
+	    </field>
+	    <field name="formName" type="java.lang.String">
+	      	<sql name="formName" type="varchar" dirty="check" />
+	    </field>
+	    <field name="formContentId" type="java.lang.Integer">
+		    <sql name="formContentId" type="integer" dirty="check" />
+	    </field>
+	    <field name="userIP" type="java.lang.String">
+	      	<sql name="userIP" type="varchar" dirty="check" />
+	    </field>
+	    <field name="userAgent" type="java.lang.String">
+	      	<sql name="userAgent" type="varchar" dirty="check" />
+	    </field>
+  	</class>
+  	
 	<!--  Mapping for FormEntryValue  -->
   	<class name="org.infoglue.cms.entities.management.impl.simple.FormEntryValueImpl" identity="formEntryValueId" key-generator="IDENTITY">
     	<description>FormEntryValue</description>

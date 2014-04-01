@@ -650,7 +650,7 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 				if(addComponentLinkHTML == null || addComponentLinkHTML.equals(""))
 				{
 					Locale locale = templateController.getLocaleAvailableInTool(templateController.getPrincipal());
-					addComponentLinkHTML = getLocalizedString(locale, "deliver.editOnSight.slotInstructionHTML");
+					addComponentLinkHTML = getLocalizedString(locale, "deliver.editOnSight.slotInstructionHTML", slotBean.getId(), slotBean.getDisplayName());
 				}
 				
 				int allowedNumberOfComponentsInt = -1;
@@ -748,7 +748,7 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 					else
 					{
 						Locale locale = templateController.getLocaleAvailableInTool(principal);
-						clickToAddHTML = getLocalizedString(locale, "deliver.editOnSight.slotInstructionHTML");
+						clickToAddHTML = getLocalizedString(locale, "deliver.editOnSight.slotInstructionHTML", slotBean.getId(), slotBean.getDisplayName());
 						//logger.info("Fack:" + clickToAddHTML + locale);
 					}
 				}
@@ -1974,6 +1974,20 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
     	StringManager stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.applications", locale);
 
     	return stringManager.getString(key);
+  	}
+
+	public String getLocalizedString(Locale locale, String key, String value) 
+  	{
+    	StringManager stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.applications", locale);
+
+    	return stringManager.getString(key, value);
+  	}
+
+	public String getLocalizedString(Locale locale, String key, String value, String value2) 
+  	{
+    	StringManager stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.applications", locale);
+
+    	return stringManager.getString(key, value, value2);
   	}
 
 }

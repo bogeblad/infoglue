@@ -814,9 +814,9 @@ public class PageEditorHelper extends BaseDeliveryController
 		}
 		
 		sb.append("		<div class=\"buttonRow\">");
-		sb.append("			<input type=\"image\" style=\"width: 50px; height: 25px; border: 0px;\" src=\"" + componentEditorUrl + "" + getLocalizedString(locale, "images.contenttool.buttons.save") + "\" width=\"50\" height=\"25\" border=\"0\"/>");
-		sb.append("			<a href=\"javascript:submitFormAndExit('componentPropertiesForm');\"><img src=\"" + componentEditorUrl + "" + getLocalizedString(locale, "images.contenttool.buttons.saveAndExit") + "\" width=\"80\" height=\"25\" border=\"0\"></a>");
-		sb.append("			<a href=\"javascript:closeDiv('" + targetDiv + "');\"><img src=\"" + componentEditorUrl + "" + getLocalizedString(locale, "images.contenttool.buttons.close") + "\" width=\"50\" height=\"25\" border=\"0\"/></a>");
+		sb.append("			<input type=\"submit\" class=\"save\" value=\"" + getLocalizedString(locale, "tool.common.saveButton.label") + "\"/>");
+		sb.append("			<input type=\"button\" class=\"saveAndExit\" value=\"" + getLocalizedString(locale, "tool.common.saveAndExitButton.label") + "\" onclick=\"submitFormAndExit('componentPropertiesForm');\"/>");
+		sb.append("			<input type=\"button\" class=\"closeDialog\" value=\"" + getLocalizedString(locale, "tool.common.closeWindowButton.label") + "\" onclick=\"hideDiv('componentPropertiesDiv');\"/>");		
 		sb.append("		</div>");
 		sb.append("		</fieldset>");
 		sb.append("		<input type=\"hidden\" name=\"hideComponentPropertiesOnLoad\" value=\"false\">");

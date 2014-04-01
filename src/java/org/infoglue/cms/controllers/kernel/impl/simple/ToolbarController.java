@@ -1487,7 +1487,7 @@ public class ToolbarController implements ToolbarProvider
 				  					  "css/images/v3/publishIcon.gif"));
 		*/
 	
-		if(request.getParameter("refreshAddress") != null && request.getParameter("refreshAddress").contains("ViewSiteNodePageComponents"))
+		if((request.getParameter("refreshAddress") != null && request.getParameter("refreshAddress").contains("ViewSiteNodePageComponents") || request.getRequestURI().contains("CreateContentWizardInputContent")))
 			buttons.add(getDialogCancelButton(toolbarKey, principal, locale, request, disableCloseButton, "skipAndCancel();"));
 		else
 			buttons.add(getCommonFooterCancelButton(toolbarKey, principal, locale, request, disableCloseButton));

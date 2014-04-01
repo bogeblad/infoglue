@@ -24,10 +24,19 @@
 package org.infoglue.deliver.taglib.common;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
 import java.util.Random;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.PBEParameterSpec;
 import javax.servlet.jsp.JspException;
 
+import org.apache.axis.encoding.Base64;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
@@ -49,6 +58,17 @@ public class GapchaTag extends TextRenderTag
 	private String textVariableName = "CAPTHCA_TEXT";
 	private int numberOfCharacters = 5;
 	private static int requestsNO = 0;
+	/** If set this value will be interpreted as a variable name to store the Captcha instance ticket.
+	 * If this value is set the tag will not store the Captcha ticket in the sessions. That means that
+	 * the tag caller has to handle the ticket and pass it with the form submit. */
+	private String ticket;
+
+	private static final String DEFAULT_PASSWORD = "TOPSECRETPASSWORDTHATNOONEKNOWS";
+	private String password ;
+	private static final byte[] SALT = {
+		(byte) 0xde, (byte) 0x73, (byte) 0x10, (byte) 0xa2,
+		(byte) 0xde, (byte) 0x73, (byte) 0x10, (byte) 0xa2,
+	};
 	
 	public GapchaTag() 
 	{
@@ -65,10 +85,28 @@ public class GapchaTag extends TextRenderTag
 		
 		// create the random string
 		char[] randomCharacters = createRandomCharacters();
+		if (ticket == null)
+		{
+			logger.info("Generating Gaptcha with session stored verification");
+			String sessionVariableName = textVariableName + "_" + System.currentTimeMillis();
+			pageContext.getSession().setAttribute( sessionVariableName, new String(randomCharacters) );
+			pageContext.setAttribute(textVariableName, sessionVariableName);
+		}
+		else
+		{
+			try
+			{
+				logger.info("Generating Gaptcha with encoded ticket");
+				pageContext.setAttribute(ticket, encodeTicket(new String(randomCharacters)));
+			}
+			catch (Exception ex)
+			{
+				logger.error("Error generating encrypted ticket for Gapcha. Message: " + ex.getMessage());
+				logger.warn("Error generating encrypted ticket for Gapcha.", ex);
+				throw new JspException("Error generating captcha");
+			}
+		}
 		// set the random string in the session
-		String sessionVariableName = textVariableName + "_" + System.currentTimeMillis();
-		pageContext.getSession().setAttribute( sessionVariableName, new String(randomCharacters) );
-		pageContext.setAttribute(textVariableName, sessionVariableName);
 		// without spacing it is really hard to read the text
 		String randomText = spaceCharacters(randomCharacters);
 		try 
@@ -86,6 +124,32 @@ public class GapchaTag extends TextRenderTag
 		return EVAL_PAGE;
 	}
 	
+	private String encodeTicket(String characters) throws GeneralSecurityException, UnsupportedEncodingException
+	{
+		if (password == null)
+		{
+			password = DEFAULT_PASSWORD;
+		}
+		SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
+		SecretKey key = keyFactory.generateSecret(new PBEKeySpec(password.toCharArray()));
+		Cipher pbeCipher = Cipher.getInstance("PBEWithMD5AndDES");
+		pbeCipher.init(Cipher.ENCRYPT_MODE, key, new PBEParameterSpec(SALT, 20));
+		return Base64.encode(pbeCipher.doFinal(characters.getBytes("UTF-8")));
+	}
+	
+	/* default */ static String decodeTicket(String ticket, String password) throws GeneralSecurityException, IOException
+	{
+		if (password == null)
+		{
+			password = DEFAULT_PASSWORD;
+		}
+		SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
+		SecretKey key = keyFactory.generateSecret(new PBEKeySpec(password.toCharArray()));
+		Cipher pbeCipher = Cipher.getInstance("PBEWithMD5AndDES");
+		pbeCipher.init(Cipher.DECRYPT_MODE, key, new PBEParameterSpec(SALT, 20));
+		return new String(pbeCipher.doFinal(Base64.decode(ticket)), "UTF-8");
+	}
+
 	public static void cleanOldFiles()
 	{
 		int i = 0;
@@ -145,7 +209,6 @@ public class GapchaTag extends TextRenderTag
 	private char[] createRandomCharacters()
 	{
 		Random r = new Random();
-		StringBuffer sb = new StringBuffer();
 		char[] buf = new char[numberOfCharacters];
 		for (int i = 0; i < buf.length; i++) 
 		{
@@ -199,4 +262,54 @@ public class GapchaTag extends TextRenderTag
 	{
 		this.allowedCharacters = evaluateString("gapcha", "allowedCharacters", allowedCharacters);
 	}
+	
+	public void setTwirlAngle(Object twirlAspect) throws JspException
+	{
+		this.setAttribute("twirlAspect", (Float)twirlAspect);
+	}
+
+	public void setMarbleXScale(Object marbleXScale) throws JspException
+	{
+		this.setAttribute("marbleXScale", (Float)marbleXScale);
+	}
+
+	public void setMarbleYScale(Object marbleYScale) throws JspException
+	{
+		this.setAttribute("marbleYScale", (Float)marbleYScale);
+	}
+
+	public void setMarbleTurbulence(Object marbleTurbulence) throws JspException
+	{
+		this.setAttribute("marbleTurbulence", (Float)marbleTurbulence);
+	}
+
+	public void setMarbleAmount(Object marbleAmount) throws JspException
+	{
+		this.setAttribute("marbleAmount", (Float)marbleAmount);
+	}
+
+	public void setTicket(String ticket)
+	{
+		this.ticket = ticket;
+	}
+
+	public void setPassword(String password) throws JspException
+	{
+		this.password = evaluateString("gapcha", "password", password);
+	}
+
+	public static void main(String[] args) throws UnsupportedEncodingException, GeneralSecurityException, IOException
+	{
+		System.out.println("Begin");
+		GapchaTag tag = new GapchaTag();
+		String enc1 = tag.encodeTicket("apa");
+		System.out.println("Test 1: apa = " + GapchaTag.decodeTicket(enc1, null) + " || " + enc1);
+		String enc2 = tag.encodeTicket("bepa123");
+		System.out.println("Test 2: bepa123 = " + GapchaTag.decodeTicket(enc2, null) + " || " + enc2);
+		
+		System.out.println("Test 3: ? = " + GapchaTag.decodeTicket("Bfck1bYW8r4=", null));
+		
+		System.out.println("End");
+	}
+
 }

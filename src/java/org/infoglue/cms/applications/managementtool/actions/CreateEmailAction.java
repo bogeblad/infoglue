@@ -255,7 +255,7 @@ public class CreateEmailAction extends InfoGlueAbstractAction
     public String doInputCreateEmailV3() throws Exception
     {
     	extraText 	= getRequest().getParameter("extraText");
-    	//userNames 	= getRequest().getParameterValues("userName");
+    	userNames 	= getRequest().getParameterValues("userName");
     	roleNames 	= getRequest().getParameterValues("roleName");
     	groupNames 	= getRequest().getParameterValues("groupName");
     	

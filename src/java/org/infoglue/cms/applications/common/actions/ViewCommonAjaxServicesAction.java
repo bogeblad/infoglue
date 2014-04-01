@@ -210,7 +210,7 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 		List<InfoGluePrincipal> users = LuceneUsersController.getController().getFilteredUsers(0, 100, "userName", "asc", getRequest().getParameter("q"), false);
 
 		String query = getRequest().getParameter("q");
-		String fieldToMatchExact = getRequest().getParameter("fieldExactMatch");
+		String fieldToMatchExact = getRequest().getParameter("fieldToMatchExact");
 		this.getResponse().setContentType("text/json");
 		this.getResponse().getWriter().print("{ \"users\": [");
 
@@ -220,7 +220,10 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 			if(fieldToMatchExact != null && !fieldToMatchExact.equals(""))
 			{
 				if(fieldToMatchExact.equals("email") && !user.getEmail().equalsIgnoreCase(query))
-					continue;
+				{
+					if(!user.getName().equalsIgnoreCase(query))
+						continue;
+				}
 				else if(fieldToMatchExact.equals("userName") && !user.getName().equalsIgnoreCase(query))
 					continue;
 			}

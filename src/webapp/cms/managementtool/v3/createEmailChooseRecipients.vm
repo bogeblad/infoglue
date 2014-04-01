@@ -17,157 +17,44 @@
 <script type="text/javascript">
 	<!--
 		$(document).ready(function(){
-		$("#tabsContainer").tabs({ show:function() { resizeInlineTabDivs();} });
+			$("#tabsContainer").tabs({ show:function() { resizeInlineTabDivs();} });
 		});
-		
-		var xmlHttp;
+				
 
-		try
-		{
-			// Firefox, Opera 8.0+, Safari
-			xmlHttp=new XMLHttpRequest();
-		}
-		catch (e)
-		{
-			// Internet Explorer
-			try
-			{
-				xmlHttp=new ActiveXObject("Msxml2.XMLHTTP");
-			}
-			catch (e)
-			{
-				try
-				{
-					xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
-				}
-				catch (e)
-				{
-					alert("Your browser does not support AJAX!");			
-				}
-			}
-		}
-		
-		function performAjaxSearch()
-		{
-			var query = document.editForm.elements["query"].value;
-			var queryUrl = "ViewListSystemUser!userListSearch.action?searchString=" + query;
-			makeAjaxCall(queryUrl, "searchResultDiv");			
-		}
-		
-		function makeAjaxCall(aAjaxUrl, aTargetDiv)
-		{
-			xmlHttp.open("POST", aAjaxUrl, true);
-			xmlHttp.onreadystatechange 	= function()
-			{
-				handleAjaxResponse(aTargetDiv);
-			}
-			xmlHttp.send(null);
-		}
-		
-		function handleAjaxResponse(aTargetDiv)
-		{		
-			if(xmlHttp.readyState == 4)
-			{		
-				if (aTargetDiv != "")
-				{			
-					document.getElementById(aTargetDiv).innerHTML = xmlHttp.responseText;								
-				}			
-			}
-		}
-		
-		function addAll()
-		{
-			selectAll("searchResult");
-			addSelected();
-			unselectAll("searchResult");
-		}
-
-		function removeAll()
-		{
-			selectAll("userName");
-			removeSelected();
-		}
-
-		function addSelected()
-		{
-			var searchResultSize 	= document.editForm.elements["searchResult"].options.length;
-			var userNameSize		= 0;
-			var selectedUser		= null;
-			var alreadyInList 		= false;
-			var userId				= "";
-			var userName 			= "";
-
-			for (x = 0; x < searchResultSize; x ++)
-			{
-				if (document.editForm.elements["searchResult"].options[x].selected == true)
-				{
-					selectedUser	= document.editForm.elements["searchResult"].options[x].value;
-					alreadyInList 	= false;
-
-					for (i = 0; i < userNameSize; i ++)
-					{
-						if (document.editForm.elements["userName"].options[i].value == selectedUser)
-						{
-							alreadyInList = true;
-							break;
-						}
-					}
-
-					if (!alreadyInList)
-					{
-						userNameSize	= document.editForm.elements["userName"].options.length;
-						userId 			= document.editForm.elements["searchResult"].options[x].value;
-						userName 		= document.editForm.elements["searchResult"].options[x].text;
-						document.editForm.elements["userName"].options[userNameSize] = new Option(userName,userId);
-					}
-				}
-			}
-
-		}
-
-		function removeSelected()
-		{
-			var userNameSize 	= document.editForm.elements["userName"].options.length;
-
-			for (x = 0; x < userNameSize; x ++)
-			{
-				if (document.editForm.elements["userName"].options[x].selected == true)
-				{
-					document.editForm.elements["userName"].options[x] = null;
-					x --;
-					userNameSize --
-				}
-			}
-		}
-
-		function selectAll(aElementName)
-		{
-			if(document.editForm.elements[aElementName])
-			{
-				var size = document.editForm.elements[aElementName].options.length;
-	
-				for (i = 0; i < size; i ++)
-				{
-					document.editForm.elements[aElementName].options[i].selected = true;
-				}
-			}
-		}
-		
-		function unselectAll(aElementName)
-		{
-			var size = document.editForm.elements[aElementName].options.length;
-
-			for (i = 0; i < size; i ++)
-			{
-				document.editForm.elements[aElementName].options[i].selected = false;
-			}
-		}
-		
 		function submitForm()
 		{
-			selectAll('userName'); 
 			document.editForm.submit();
 		}
+		
+		function showUsers()
+		{
+			openPopup('ViewListSystemUser!userListForPopupV3.action', 'Users', 'width=400,height=600,resizable=yes,scrollbars=yes');
+		}
+		
+		function selectUser(userName)
+		{
+			$("#userList").append("<li id='" + userName + "'><input type='hidden' name='userName' value='" + userName + "'/>" + userName + " <a href=\"javascript:deleteUser('" + userName + "');\" class=\"deleteCross\" style=\"display: inline-block; width: 20px; height: 20px; text-decoration: none;\">&nbsp;</a></li>");
+		}
+		
+		function deleteUser(userName)
+		{
+			$("#" + userName).remove();
+		}
+		
+		function selectUserFromField(userName)
+		{
+			jQuery.getJSON("ViewCommonAjaxServices!userSearch.action", { "q": "" + $("#userNameField").val(), "fieldToMatchExact": "email" }, function(data) { 
+				console.log(data.users.length);
+				if(data.users.length == 0)
+					alert("$ui.getString("tool.common.noUserWithEmailFound.warning")");
+				else
+				{
+					selectUser($("#userNameField").val());
+				}
+			});
+		}
+		
+		
 	-->
 </script>
 
@@ -197,46 +84,31 @@
 			
 			<div id="tabsContainer" class="flora">      
 				<ul>
-			        <!--<li><a href="#usersTab"><span>$ui.getString("tool.managementtool.createEmailChooseRecipients.usersTabLabel")</span></a></li>-->
+			        ##if($enableUsers)
+			        <li><a href="#usersTab"><span>$ui.getString("tool.managementtool.createEmailChooseRecipients.usersTabLabel")</span></a></li>
+			        ##end
+			        #if($this.hasAccessTo("ToolTabsAndButtons.MessageCenterRolesAndGroups", true, false))
 			        <li><a href="#rolesTab"><span>$ui.getString("tool.managementtool.createEmailChooseRecipients.rolesTabLabel")</span></a></li>
 			        <li><a href="#groupsTab"><span>$ui.getString("tool.managementtool.createEmailChooseRecipients.groupsTabLabel")</span></a></li>
+			    	#end
 			    </ul>
-				<!--
+				
+				##if($enableUsers)
 				<div id="usersTab" class="recipientTab inlineTabDiv">	
-					<table>
-						<tr>
-							<td colspan="3">
-								<span style="font-weight: bold;">$ui.getString("tool.managementtool.createEmailChooseRecipients.filterLabel")</span><br/>
-								<input type="text" name="query" onkeyup="performAjaxSearch();" onchange="performAjaxSearch();"/>
-								<input type="button" value="Clear" onclick="document.editForm.elements['query'].value = ''; performAjaxSearch();"/>
-							</td>
-						</tr>
-						<tr>
-							<td valign="top">
-								<span style="font-weight: bold;">$ui.getString("tool.managementtool.createEmailChooseRecipients.availableUsersLabel")</span><br/>					
-								<div id="searchResultDiv" style="margin: 0px; float: left;">			
-									<select name="searchResult" size="10" class="userSelectBox" multiple="true">
-										#foreach ($userVO in $users)
-											<option value="$userVO.name">$userVO.firstName $userVO.lastName</option>
-										#end
-									</select>			
-								</div>	
-							</td>
-							<td>
-								<input type="button" class="moveButton" onclick="addAll()" value=">>"/><br/>
-								<input type="button" class="moveButton" onclick="addSelected()" value=">"/><br/>
-								<input type="button" class="moveButton" onclick="removeSelected()" value="<"/><br/>
-								<input type="button" class="moveButton" onclick="removeAll()" value="<<"/><br/>
-							</td>
-							<td valign="top">	
-								<span style="font-weight: bold;">$ui.getString("tool.managementtool.createEmailChooseRecipients.selectedUsersLabel")</span><br/>							
-								<select name="userName" size="10" class="userSelectBox" multiple="true">
-								</select>	
-							</td>
-						</tr>
-					</table>				
+					
+					<div>
+					<h3>$ui.getString("tool.managementtool.createEmailChooseRecipients.enterUserNameOrMailOrSearchUserLabel")</h3>
+					<p>
+					<input type="text" id="userNameField" name="userName"/> 
+					<a href="javascript:selectUserFromField();">Add</a><a class="showUsers" href="javascript:showUsers(0);" style="display: inline-block; height: 20px; width: 20px; background: url(css/images/spyglassIcon.gif) no-repeat 0px 0px; margin-left: 4px;">&nbsp;</a>
+					</p>
+					</div>
+					
+					<h4>$ui.getString("tool.managementtool.createEmailChooseRecipients.selectedUsersLabel")</h4>
+					<ul id="userList">
+					</ul>
 				</div>
-				-->
+				##end
 				
 				<div id="rolesTab" class="recipientTab inlineTabDiv" style="padding: 10px"> 				
 					#foreach ($roleVO in $roles)

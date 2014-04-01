@@ -471,7 +471,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			
 			String returnAddress = "" + componentEditorUrl + "ViewInlineOperationMessages.action";
 
-	    	String notifyUrl 			= componentEditorUrl + "CreateEmail!inputChooseRecipientsV3.action?originalUrl=" + URLEncoder.encode(templateController.getOriginalFullURL().replaceFirst("cmsUserName=.*?", ""), "utf-8") + "&amp;returnAddress=" + URLEncoder.encode(returnAddress, "utf-8") + "&amp;extraTextProperty=tool.managementtool.createEmailNotificationPageExtraText.text"; 
+	    	String notifyUrl 			= componentEditorUrl + "CreateEmail!inputChooseRecipientsV3.action?enableUsers=true&originalUrl=" + URLEncoder.encode(templateController.getOriginalFullURL().replaceFirst("cmsUserName=.*?", ""), "utf-8") + "&amp;returnAddress=" + URLEncoder.encode(returnAddress, "utf-8") + "&amp;extraTextProperty=tool.managementtool.createEmailNotificationPageExtraText.text"; 
 	    	String pageSubscriptionUrl 	= componentEditorUrl + "Subscriptions!input.action?interceptionPointCategory=SiteNodeVersion&amp;entityName=" + SiteNode.class.getName() + "&amp;entityId=" + templateController.getSiteNodeId() + "&amp;returnAddress=" + URLEncoder.encode(returnAddress, "utf-8");
 
 			extraBody = extraBody.replaceAll("\\$siteNodeId", "" + templateController.getSiteNodeId());
@@ -1250,7 +1250,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		{
 			ComponentProperty componentProperty = (ComponentProperty)componentPropertiesIterator.next();
 		
-			boolean hasAccessToProperty = AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentPropertyEditor.EditProperty", "" + componentContentId + "_" + componentProperty.getName(), false);
+			boolean hasAccessToProperty = AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentPropertyEditor.EditProperty", "" + componentContentId + "_" + componentProperty.getName(), true);
 			boolean isFirstAdvancedProperty = false;
 			if(componentProperty.getName().equalsIgnoreCase("CacheResult"))
 			{
@@ -2203,7 +2203,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
     	String createSiteNodeUrl 				= componentEditorUrl + "CreateSiteNode!inputV3.action?isBranch=true&repositoryId=" + repositoryId + "&amp;parentSiteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;returnAddress=" + URLEncoder.encode(returnAddress, "utf-8") + "&amp;originalAddress=" + URLEncoder.encode(templateController.getCurrentPageUrl(), "utf-8");
     	String mySettingsUrl 					= componentEditorUrl + "ViewMySettings.action"; 
 
-    	String notifyUrl 						= componentEditorUrl + "CreateEmail!inputChooseRecipientsV3.action?originalUrl=" + URLEncoder.encode(templateController.getOriginalFullURL().replaceFirst("cmsUserName=.*?", ""), "utf-8") + "&amp;returnAddress=" + URLEncoder.encode(returnAddress, "utf-8") + "&amp;extraTextProperty=tool.managementtool.createEmailNotificationPageExtraText.text"; 
+    	String notifyUrl 						= componentEditorUrl + "CreateEmail!inputChooseRecipientsV3.action?enableUsers=true&originalUrl=" + URLEncoder.encode(templateController.getOriginalFullURL().replaceFirst("cmsUserName=.*?", ""), "utf-8") + "&amp;returnAddress=" + URLEncoder.encode(returnAddress, "utf-8") + "&amp;extraTextProperty=tool.managementtool.createEmailNotificationPageExtraText.text"; 
     	String pageSubscriptionUrl 				= componentEditorUrl + "Subscriptions!input.action?interceptionPointCategory=SiteNodeVersion&amp;entityName=" + SiteNode.class.getName() + "&amp;entityId=" + siteNodeId + "&amp;returnAddress=" + URLEncoder.encode(returnAddress, "utf-8");
 
 	    sb.append("<div id=\"editInlineDiv" + component.getId() + "\" class=\"igmenuitems linkEditArticle\"><a href='#'>" + editInlineHTML + "</a></div>");

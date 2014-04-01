@@ -2078,7 +2078,6 @@ public class AccessRightController extends BaseController
 		//Boolean cachedIsPrincipalAuthorized = (Boolean)CacheController.getCachedObject("authorizationCache", key);
 	    //logger.info("personalAuthorizationCache:" + CacheController.getCacheSize("personalAuthorizationCache"));
 		Boolean cachedIsPrincipalAuthorized = (Boolean)CacheController.getCachedObjectFromAdvancedCache("personalAuthorizationCache", key);
-
 		if(cachedIsPrincipalAuthorized != null)
 		{
 			if(enableDebug)
@@ -2130,7 +2129,7 @@ public class AccessRightController extends BaseController
 				
 				if(hasAccess == null)
 				{
-					if(returnTrueIfNoAccessRightsDefined && interceptionPointName.indexOf("ContentVersion.") > -1)
+					if(returnTrueIfNoAccessRightsDefined /*&& (interceptionPointName.indexOf("ContentVersion.") > -1 || )*/)
 						logger.info("Double checking on access as it's a content version and those are often not protected:" + acKey);
 					else
 					{
@@ -2152,11 +2151,29 @@ public class AccessRightController extends BaseController
 		
 		logger.info("Reading the hard way:" + interceptionPointVO.getId() + ":" + extraParameters);
 		
-		List accessRightList = this.getAccessRightListOnlyReadOnly(interceptionPointVO.getId(), extraParameters, db);
+		List<AccessRight> accessRightList = this.getAccessRightListOnlyReadOnly(interceptionPointVO.getId(), extraParameters, db);
 		if(logger.isInfoEnabled())
 			logger.info("accessRightList:" + accessRightList.size());
 		
-		if(returnTrueIfNoAccessRightsDefined && accessRightList == null || accessRightList.size() == 0)
+		boolean accessRightEmpty = true;
+		if(accessRightList != null)
+		{
+			for(AccessRight ar : accessRightList)
+			{
+				if((ar.getGroups() != null && 
+					ar.getGroups().size() > 0) ||
+					(ar.getRoles() != null && 
+					ar.getRoles().size() > 0) ||
+					(ar.getUsers() != null && 
+					ar.getUsers().size() > 0))
+				{
+					accessRightEmpty = false;
+					break;
+				}
+			}
+		}
+		
+		if(returnTrueIfNoAccessRightsDefined && accessRightEmpty)
 		{
 			if (logger.isInfoEnabled())
 			{

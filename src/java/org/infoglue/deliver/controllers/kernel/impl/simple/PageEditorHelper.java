@@ -210,7 +210,7 @@ public class PageEditorHelper extends BaseDeliveryController
 		{
 			ComponentProperty componentProperty = (ComponentProperty)componentPropertiesIterator.next();
 			
-			boolean hasAccessToProperty = AccessRightController.getController().getIsPrincipalAuthorized(db, principal, "ComponentPropertyEditor.EditProperty", "" + componentContentId + "_" + componentProperty.getName());
+			boolean hasAccessToProperty = AccessRightController.getController().getIsPrincipalAuthorized(db, principal, "ComponentPropertyEditor.EditProperty", "" + componentContentId + "_" + componentProperty.getName(), true);
 			boolean isFirstAdvancedProperty = false;
 			
 			if(componentProperty.getName().equalsIgnoreCase("CacheResult"))
@@ -1060,7 +1060,7 @@ public class PageEditorHelper extends BaseDeliveryController
 	    	String createSiteNodeUrl 	= componentEditorUrl + "CreateSiteNode!inputV3.action?isBranch=true&repositoryId=" + repositoryId + "&parentSiteNodeId=" + siteNodeId + "&languageId=" + languageId + "&returnAddress=" + URLEncoder.encode(returnAddress, "utf-8") + "&originalAddress=" + URLEncoder.encode(originalFullURL, "utf-8");
 	    	String mySettingsUrl 		= componentEditorUrl + "ViewMySettings.action"; 
 	    	
-	    	String notifyUrl 			= componentEditorUrl + "CreateEmail!inputChooseRecipientsV3.action?originalUrl=" + URLEncoder.encode(originalFullURL.replaceFirst("cmsUserName=.*?", ""), "utf-8") + "&amp;returnAddress=" + URLEncoder.encode(returnAddress, "utf-8") + "&amp;extraTextProperty=tool.managementtool.createEmailNotificationPageExtraText.text"; 
+	    	String notifyUrl 			= componentEditorUrl + "CreateEmail!inputChooseRecipientsV3.action?enableUsers=true&originalUrl=" + URLEncoder.encode(originalFullURL.replaceFirst("cmsUserName=.*?", ""), "utf-8") + "&amp;returnAddress=" + URLEncoder.encode(returnAddress, "utf-8") + "&amp;extraTextProperty=tool.managementtool.createEmailNotificationPageExtraText.text"; 
 	    	String pageSubscriptionUrl 	= componentEditorUrl + "Subscriptions!input.action?interceptionPointCategory=SiteNodeVersion&amp;entityName=" + SiteNode.class.getName() + "&amp;entityId=" + siteNodeId + "&amp;returnAddress=" + URLEncoder.encode(returnAddress, "utf-8");
 
 		    if(treeItem != true)

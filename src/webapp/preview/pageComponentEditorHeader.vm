@@ -29,7 +29,7 @@
 	{ 
 		if(parent.setPageContext)
 			parent.setPageContext("${siteNodeId}", "${repositoryId}");
-
+/*
 		var agt=navigator.userAgent.toLowerCase();
    	    if(agt.indexOf("safari")!=-1)
    	    {
@@ -49,8 +49,9 @@
 					parent.frames["toolbar"].refreshStructureToolBar('${componentEditorUrl}', 'tool.structuretool.siteNodeComponentsHeader', 'tool.structuretool.siteNodeComponentsHeader', 'siteNodeId=${siteNodeId}&repositoryId=${repositoryId}&isBranch=true', '${repositoryId}', '${siteNodeId}', '${path}'); 
 			}
 		}
+*/
 	} 
-	catch(e) {/*alert("e:" + e);*/}
+	catch(e) {console.log("e:" + e);}
 
 	setTimeout("keepSession()", 60000);
 -->	

@@ -651,10 +651,13 @@ public class OptimizedImportController extends BaseController implements Runnabl
 			{
 				if(siteNode.getValueObject().getParentSiteNodeId() != null)
 				{
-					logger.info("Looking for parent siteNode on:" + siteNode.getName() + ":" + siteNode.getValueObject().getParentSiteNodeId());
+					logger.error("Looking for parent siteNode on:" + siteNode.getName() + ":" + siteNode.getValueObject().getParentSiteNodeId());
 					SiteNode parentSiteNode = siteNodeMap.get(siteNode.getValueObject().getParentSiteNodeId());
-					parentSiteNode.getChildSiteNodes().add(siteNode);
-					siteNode.setParentSiteNode((SiteNodeImpl)parentSiteNode);
+					if(parentSiteNode != null)
+					{
+						parentSiteNode.getChildSiteNodes().add(siteNode);
+						siteNode.setParentSiteNode((SiteNodeImpl)parentSiteNode);
+					}
 				}
 				
 				logger.info("Looking for repo:" + siteNode.getValueObject().getRepositoryId());

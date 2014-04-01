@@ -2228,12 +2228,15 @@ function viewSource()
 		}
 		  
 		this.onContextMenu = function(evt, ele) // onContextMenu is a method of myObject4
-		{
-			//alert('emptySlotEventHandler.oncontextmenu()\nthis.objName = ' + this.objName + '\nele = ' + xName(ele));
-		    showEmptySlotMenu(slotId, evt, ele.id, insertUrl, slotContentIdVar);
-		    // cancel event bubbling
-		    if (evt && evt.stopPropagation) {evt.stopPropagation();}
-		    else if (window.event) {window.event.cancelBubble = true;}
+		{	
+			if(!window.editorIsActive)
+			{
+				//alert('emptySlotEventHandler.oncontextmenu()\nthis.objName = ' + this.objName + '\nele = ' + xName(ele));
+			    showEmptySlotMenu(slotId, evt, ele.id, insertUrl, slotContentIdVar);
+			    // cancel event bubbling
+			    if (evt && evt.stopPropagation) {evt.stopPropagation();}
+			    else if (window.event) {window.event.cancelBubble = true;}
+			}
 		}
 	}
 		
@@ -2301,12 +2304,15 @@ function viewSource()
 		  
 		this.onContextMenu = function(evt, ele) // onContextMenu is a method of myObject4
 		{
-			//alert('componentEventHandler.oncontextmenu()\nthis.objName = ' + this.objName + '\nele = ' + xName(ele));
-		    //$(ele).css("backgroundColor","red");
-			showComponentMenu(evt, ele.id, this.objId, insertUrl, deleteUrl, changeUrl);
-		    // cancel event bubbling
-		    if (evt && evt.stopPropagation) {evt.stopPropagation();}
-		    else if (window.event) {window.event.cancelBubble = true;}
+			if(!window.editorIsActive)
+			{
+				//alert('componentEventHandler.oncontextmenu()\nthis.objName = ' + this.objName + '\nele = ' + xName(ele));
+			    //$(ele).css("backgroundColor","red");
+				showComponentMenu(evt, ele.id, this.objId, insertUrl, deleteUrl, changeUrl);
+			    // cancel event bubbling
+			    if (evt && evt.stopPropagation) {evt.stopPropagation();}
+			    else if (window.event) {window.event.cancelBubble = true;}
+			}
 		}
 	}
 	

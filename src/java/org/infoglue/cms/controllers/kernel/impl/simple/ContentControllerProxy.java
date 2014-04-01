@@ -303,7 +303,7 @@ public class ContentControllerProxy extends ContentController
 		boolean doesContentExist = ContentController.getContentController().getDoesContentExist(contentVO.getId());
 		if(!doesContentExist)
 		{
-			System.out.println("The content: " + contentVO.getName() + " was allready deleted. MetaInfo?");
+			logger.warn("The content: " + contentVO.getName() + " was allready deleted. MetaInfo?");
 			return;
 		}
 		

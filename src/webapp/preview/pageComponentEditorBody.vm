@@ -56,6 +56,7 @@
 
 <script type="text/javascript">
 
+window.editorIsActive = false;
 window.loadDataOnWYSIWYGActivation = new Array();
 window.igInlineEditSaveFallBackValues = new Array();
 window.igInlineSaveStatus = new Array();
@@ -320,7 +321,11 @@ function initWYSIWYGInstance(key, isTextField)
 				        window.saveButtonLabel = $("#igSaveButton").attr("value");
 				        window.isPageDirty = true;
 		},
+        blur: function(e) {
+					    window.editorIsActive = false;
+		},
 		focus: function(e) {
+				    window.editorIsActive = true;
 					if(window.loadDataOnWYSIWYGActivation[e.editor.element.getId()])
 					{
 						//console.log("YEP");

@@ -144,7 +144,7 @@ public class PageEditorHelper extends BaseDeliveryController
 		List languages = LanguageDeliveryController.getLanguageDeliveryController().getLanguagesForSiteNode(db, siteNodeId, principal);
 
 		sb.append("<div id=\"componentProperties\" oncontextmenu=\"if (event && event.stopPropagation) {event.stopPropagation();}else if (window.event) {window.event.cancelBubble = true;}return false;\">");
-		sb.append("	<div id=\"componentPropertiesHandle\"><div id=\"leftComponentPropertiesHandle\">Properties - " + componentName + " - " + slotName + "</div><div id=\"rightComponentPropertiesHandle\"><a href=\"javascript:closeDiv('componentProperties');\" class=\"white\"><img src=\"" + componentEditorUrl + "/css/images/closeIcon.gif\" border=\"0\"/></a></div></div>");
+		sb.append("	<div id=\"componentPropertiesHandle\"><div id=\"leftComponentPropertiesHandle\">Properties - " + componentName + " - " + slotName + "</div><div id=\"rightComponentPropertiesHandle\" onclick=\"closeDiv('componentProperties');\" class=\"rightPaletteHandleCompProps closeDialog\">&nbsp;</div></div>");
 		sb.append("	<div id=\"componentPropertiesBody\">");
 		
 		sb.append("	<form id=\"componentPropertiesForm\" name=\"component" + componentId + "PropertiesForm\" action=\"" + componentEditorUrl + "ViewSiteNodePageComponents!updateComponentProperties.action\" method=\"post\">");
@@ -812,13 +812,13 @@ public class PageEditorHelper extends BaseDeliveryController
 		{
 			sb.append("		<div class=\"buttonRow\" style=\"margin-bottom: 10px; padding-left: 2px; color: darkred;\">" + getLocalizedString(locale, "deliver.editOnSight.protectedPropertiesExists") + "</div>");
 		}
+		sb.append("		</fieldset>");
 		
-		sb.append("		<div class=\"buttonRow\">");
+		sb.append("		<div class=\"buttonRow componentPropertiesFooter\">");
 		sb.append("			<input type=\"submit\" class=\"save\" value=\"" + getLocalizedString(locale, "tool.common.saveButton.label") + "\"/>");
 		sb.append("			<input type=\"button\" class=\"saveAndExit\" value=\"" + getLocalizedString(locale, "tool.common.saveAndExitButton.label") + "\" onclick=\"submitFormAndExit('componentPropertiesForm');\"/>");
 		sb.append("			<input type=\"button\" class=\"closeDialog\" value=\"" + getLocalizedString(locale, "tool.common.closeWindowButton.label") + "\" onclick=\"hideDiv('componentPropertiesDiv');\"/>");		
 		sb.append("		</div>");
-		sb.append("		</fieldset>");
 		sb.append("		<input type=\"hidden\" name=\"hideComponentPropertiesOnLoad\" value=\"false\">");
 		sb.append("		<input type=\"hidden\" name=\"repositoryId\" value=\"" + repositoryId + "\"/>");
 		sb.append("		<input type=\"hidden\" name=\"siteNodeId\" value=\"" + siteNodeId + "\"/>");

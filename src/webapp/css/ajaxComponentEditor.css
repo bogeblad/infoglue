@@ -61,25 +61,28 @@ Component Properties Classes
 
 #componentPropertiesHandle 
 {
-	margin: 2px;
-	padding: 2px;
-	color: white;
-	font-family: Tahoma, Arial, Helvetica, sans-serif;
-	font-size: 11px;
-	background-image: url('images/handleBackground.gif');
-	border-bottom: 1px solid #CCCCCC;
+	font-weight:bold;
+	font-size: 12pt;
+	height:32px;
 	float: left;
-	width: 610px;
+	margin:0;
+	width:100%;
+	padding: 0px;
+	background-color:white;
+	background-image:url("images/v3/toolbarBackground.gif");
+	background-repeat:repeat-x;
+	border:0px;
+	border-bottom:1px solid #9CAABD;
 }
-
 #leftComponentPropertiesHandle 
 {
-	width: 550px; 
+	width: 80%;
 	float: left;
-	color: white;
-	text-align: left;
-	line-height: 14px;
-	padding-left: 5px;
+	color: #333;
+	height: 25px;
+	padding: 14px 0px 0px 6px;
+	font-family: Arial, sans-serif;
+	font-size: 12px;
 }
 #rightComponentPropertiesHandle 
 {
@@ -87,12 +90,15 @@ Component Properties Classes
 	text-align: right;
 	line-height: 14px;	
 	float: right;
-	width: 50px;
+	width: 20px;
+	height: 20px;
+	margin-top: 4px;
+	margin-right: 4px;
 }
 
 #componentPropertiesForm fieldset
 {
-	border: 1px solid #cccccc;
+	/*border: 1px solid #cccccc;*/
 	float: left;
 	margin: 4px;
 	padding: 4px;
@@ -107,6 +113,7 @@ Component Properties Classes
 
 #componentPropertiesForm fieldset legend
 {
+	display: none;
 	float: left;
 	color: #000000;
 	background: #c6d3e7;
@@ -120,8 +127,8 @@ Component Properties Classes
 .propertyRow
 {
 	margin: 0px;
-	padding-top: 6px;
-	padding-bottom: 6px;
+	padding-top: 2px;
+	padding-bottom: 2px;
 	float: left;
 	font-family: Tahoma, Arial, Helvetica, sans-serif;
 	font-size: 11px;
@@ -132,7 +139,7 @@ Component Properties Classes
 {
 	width: 180px;
 	float: left;
-	background-color: #eeeeee;
+	/*background-color: #eeeeee;*/
 	padding: 2px;
 }
 .propertyRowRight
@@ -182,10 +189,21 @@ Component Properties Classes
 	font-size: 11px;
 }
 
-#componentPropertiesForm fieldset .buttonRow
+.componentPropertiesFooter {
+    background-color: white;
+    background-image: url("images/v3/footerBackground.gif");
+    background-repeat: repeat-x;
+    border-top: 0 solid #9CAABD;
+    float: left;
+    height: 43px;
+    margin: 0;
+    width: 100%;
+}
+#componentPropertiesForm .buttonRow
 {
-	padding-top: 5px;
+	padding-left: 6px;
 	border: 0px solid black;
+	margin-top: 6px;
 }
 
 #componentPropertiesForm .buttonRow input[type="button"]:hover, .componentPropertiesForm .buttonRow input[type="button"]:hover, .componentPropertiesForm .buttonRow input[type="button"]:hover
@@ -195,7 +213,7 @@ Component Properties Classes
 
 /*#componentPropertiesForm .buttonRow input { background:no-repeat left center; background-position: 10px 0px; background-size: 16px 16px; }*/
 
-#componentPropertiesForm fieldset .buttonRow input
+#componentPropertiesForm .buttonRow input
 {
 	width: auto;
 	border: 1px solid #ccc;

@@ -739,9 +739,10 @@ public class RepositoryController extends BaseController
 	
 	/**
 	 * Returns a repository list marked for deletion.
+	 * @param infoGluePrincipal 
 	 */
 	
-	public List<RepositoryVO> getRepositoryVOListMarkedForDeletion() throws SystemException, Bug
+	public List<RepositoryVO> getRepositoryVOListMarkedForDeletion(InfoGluePrincipal infoGluePrincipal) throws SystemException, Bug
 	{
 		Database db = CastorDatabaseService.getDatabase();
 		
@@ -757,10 +758,15 @@ public class RepositoryController extends BaseController
 			QueryResults results = oql.execute(Database.READONLY);
 			while (results.hasMore()) 
             {
-                Repository repository = (Repository)results.next();
-                repositoryVOListMarkedForDeletion.add(repository.getValueObject());
-            }
-            
+				Repository repository = (Repository)results.next();
+				Integer repositoryId = repository.getRepositoryId();
+
+				if(AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Read", repositoryId.toString()) && AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Write", repositoryId.toString()))
+				{
+					repositoryVOListMarkedForDeletion.add(repository.getValueObject());
+				}
+			}
+			
 			results.close();
 			oql.close();
 

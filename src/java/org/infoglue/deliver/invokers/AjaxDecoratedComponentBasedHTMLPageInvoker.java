@@ -364,6 +364,12 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 
 			extraHeader = extraHeader.replaceAll("\\$\\{publishedLabel\\}", getLocalizedString(locale, "tool.contenttool.state.published"));
 
+			String theme = CmsPropertyHandler.getTheme(principal.getName());
+			if(!theme.equalsIgnoreCase("Default"))
+				extraHeader = extraHeader.replaceAll("\\$\\{skinDeliveryCSS\\}", "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + this.getRequest().getContextPath() + "/css/skins/" + theme + "/componentEditor.css\" />");
+			else
+				extraHeader = extraHeader.replaceAll("\\$\\{skinDeliveryCSS\\}", "");
+
 			this.getTemplateController().getDeliveryContext().setUseFullUrl(oldUseFullUrl);
 
 		    extraBody = extraBody + "<script type=\"text/javascript\">initializeComponentEventHandler('base0_" + component.getId() + "Comp', '" + component.getId() + "', 'base', " + templateController.getSiteNode().getRepositoryId() + ", " + templateController.getSiteNodeId() + ", " + templateController.getLanguageId() + ", " + templateController.getContentId() + ", " + component.getId() + ", " + component.getContentId() + ", '" + URLEncoder.encode(templateController.getOriginalFullURL(), "UTF-8") + "');</script>";

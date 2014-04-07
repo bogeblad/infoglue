@@ -1650,10 +1650,11 @@ function showComponentPropertiesInDiv(targetDivId, parameterString, skipFloat, e
 	hideIGMenu();
 	try
 	{
-	//alert("skipFloat:" + skipFloat + " - targetDivId:" + targetDivId);
+	//console.log("skipFloat:" + skipFloat + " - targetDivId:" + targetDivId);
 	//alert("parameterString:" + parameterString);
 
 	targetDiv = document.getElementById(targetDivId);
+	console.log("targetDiv:" + targetDiv);
 
 	if(skipFloat && targetDiv)
 	{
@@ -1668,7 +1669,6 @@ function showComponentPropertiesInDiv(targetDivId, parameterString, skipFloat, e
 						if(!toolbarName || toolbarName == "")
 							toolbarName = "Basic";
 			 			var editor = CKEDITOR.replace( $(this).attr("id"), {
-			 																'skin': 'office2003',
 			 																'toolbar': [
 			 																           ['Bold','Italic','-','NumberedList','BulletedList','-','Link','Unlink','-','Image','Format']
 			 																           ]
@@ -1726,7 +1726,6 @@ function showComponentPropertiesInDiv(targetDivId, parameterString, skipFloat, e
 						if(!toolbarName || toolbarName == "")
 							toolbarName = "Basic";
 			 			var editor = CKEDITOR.replace( $(this).attr("id"), {
-			 																'skin': 'office2003',
 			 																'toolbar': [
 			 																           ['Bold','Italic','-','NumberedList','BulletedList','-','Link','Unlink','-','Image','Format']
 			 																           ]
@@ -1767,6 +1766,7 @@ function showComponentPropertiesInDiv(targetDivId, parameterString, skipFloat, e
 
 	if(targetDiv)
 	{		
+		$(targetDiv).css("visibility", "visible");
 		targetDiv.style.display = "block";
 		menuDiv = targetDiv;
 	}

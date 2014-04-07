@@ -78,6 +78,8 @@ CREATE  TABLE cmPageDeliveryMetaDataEntity (
   PRIMARY KEY (pageDeliveryMetaDataEntityId) )
 ENGINE = MyISAM;
 
+alter table cmFormEntry add column `userName` varchar(255) DEFAULT NULL;
+
 create index pageDeliveryMetaDataIDX on cmPageDeliveryMetaData(siteNodeId, languageId, contentId);
 
 ALTER TABLE cmPropertiesCategory DROP INDEX propCategoryAttrNameIndex;

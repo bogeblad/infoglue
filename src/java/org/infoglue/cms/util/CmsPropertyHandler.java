@@ -2003,6 +2003,7 @@ public class CmsPropertyHandler
 	public static String getTheme(String userName)
 	{
 		String theme = getPropertySet().getString("principal_" + userName + "_theme");
+		
 		return (theme == null ? getDefaultSystemTheme() : theme);
 	}
 
@@ -2010,7 +2011,12 @@ public class CmsPropertyHandler
 	{
 		String theme = getServerNodeProperty("defaultSystemTheme", true, "Default");
 
-		return (theme == null ? "Default" : theme);
+		return (theme == null || !themeExists(theme) ? "Default" : theme);
+	}
+
+	public static boolean themeExists(String theme)
+	{
+		return ThemeController.getController().getAvailableThemes().contains(theme);
 	}
 
 	public List getAvailableThemes()

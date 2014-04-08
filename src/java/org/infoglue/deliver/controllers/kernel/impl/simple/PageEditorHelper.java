@@ -48,6 +48,7 @@ import org.infoglue.cms.applications.databeans.ReferenceBean;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.ComponentController;
+import org.infoglue.cms.controllers.kernel.impl.simple.ComponentPropertyDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
@@ -130,7 +131,7 @@ public class PageEditorHelper extends BaseDeliveryController
 	    
 		String componentEditorUrl = CmsPropertyHandler.getComponentEditorUrl();
 
-		Document document = getComponentPropertiesDOM4JDocument(siteNodeId, languageId, componentContentId, db, principal); 
+		Document document = getComponentPropertiesDOM4JDocument(siteNodeId, languageId, componentContentId, db, principal);
 
         ContentVO contentVO = ContentController.getContentController().getContentVOWithId(componentContentId, db);
 
@@ -143,7 +144,7 @@ public class PageEditorHelper extends BaseDeliveryController
 
 		List languages = LanguageDeliveryController.getLanguageDeliveryController().getLanguagesForSiteNode(db, siteNodeId, principal);
 
-		sb.append("<div id=\"componentProperties\" oncontextmenu=\"if (event && event.stopPropagation) {event.stopPropagation();}else if (window.event) {window.event.cancelBubble = true;}return false;\">");
+		sb.append("<div id=\"componentProperties\" data-repositoryid=\"" + repositoryId + "\" data-languageid=\"" + languageId + "\" data-languagecode=\"" + locale.getLanguage() + "\" oncontextmenu=\"if (event && event.stopPropagation) {event.stopPropagation();}else if (window.event) {window.event.cancelBubble = true;}return false;\">");
 		sb.append("	<div id=\"componentPropertiesHandle\"><div id=\"leftComponentPropertiesHandle\">Properties - " + componentName + " - " + slotName + "</div><div id=\"rightComponentPropertiesHandle\" onclick=\"closeDiv('componentProperties');\" class=\"rightPaletteHandleCompProps closeDialog\">&nbsp;</div></div>");
 		sb.append("	<div id=\"componentPropertiesBody\">");
 		
@@ -582,10 +583,15 @@ public class PageEditorHelper extends BaseDeliveryController
 					if(hasAccessToProperty)
 					{
 						sb.append("	<input type=\"hidden\" name=\"" + propertyIndex + "_propertyName\" value=\"" + componentProperty.getName() + "\"/>");
+
 						if(componentProperty.getIsWYSIWYGEnabled())
+						{
 							sb.append("	<textarea toolbarName=\"" + componentProperty.getWYSIWYGToolbar() + "\" class=\"propertytextarea wysiwygeditor\" id=\"" + componentProperty.getName() + "\" name=\"" + componentProperty.getName() + "\" onkeydown=\"setDirty();\">" + (componentProperty.getValue() == null ? "" : componentProperty.getValue()) + "</textarea>");
+						}
 						else
+						{
 							sb.append("	<textarea class=\"propertytextarea\" id=\"" + componentProperty.getName() + "\" name=\"" + componentProperty.getName() + "\" onkeydown=\"setDirty();\">" + (componentProperty.getValue() == null ? "" : componentProperty.getValue()) + "</textarea>");
+						}
 					}
 					else
 						sb.append("	" + componentProperty.getValue() + "");

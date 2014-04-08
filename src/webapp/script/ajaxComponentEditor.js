@@ -1661,18 +1661,19 @@ function showComponentPropertiesInDiv(targetDivId, parameterString, skipFloat, e
 		{	
 			try
 			{
+				var theRoot = document.getElementById("componentProperties");
+				var repositoryId = theRoot.getAttribute("data-repositoryid");
+				var languageId = theRoot.getAttribute("data-languageid") || 1;
+				var languageCode = theRoot.getAttribute("data-languagecode") || "sv";
 				$(targetDiv).find(".wysiwygeditor").each(function(){
 			 		if(userPrefferredWYSIWYG  == "ckeditor4" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
 			 		{
 						var toolbarName = $(this).attr("toolbarName");
 						if(!toolbarName || toolbarName == "")
 							toolbarName = "Basic";
-			 			var editor = CKEDITOR.replace( $(this).attr("id"), {
-			 																'skin': 'office2003',
-			 																'toolbar': [
-			 																           ['Bold','Italic','-','NumberedList','BulletedList','-','Link','Unlink','-','Image','Format']
-			 																           ]
-			 															});
+						var configString = "{'customConfig': '" + componentEditorUrl + "WYSIWYGProperties.action?repositoryId=" + repositoryId + "&contentId=-1&languageId=" + languageId + "&contentVersionId=-1','language': '" + languageCode + "', 'toolbar': '" + toolbarName + "', 'width':'" + $(this).width() + "px', 'height':'200px'}";
+						var configObject = eval('(' + configString + ')');
+						var editor = CKEDITOR.replace( $(this).attr("id").replace(/ /, "_"), configObject);
 			 		}
 			 		else
 			 		{
@@ -1689,7 +1690,7 @@ function showComponentPropertiesInDiv(targetDivId, parameterString, skipFloat, e
 						oFCKeditor.ReplaceTextarea() ;
 			 		}
 				});
-				
+
 				var theRoot   = document.getElementById("componentProperties");
 				if(theRoot)
 				{
@@ -1719,21 +1720,23 @@ function showComponentPropertiesInDiv(targetDivId, parameterString, skipFloat, e
 		{	
 			try
 			{
+				var theRoot = document.getElementById("componentProperties");
+				var repositoryId = theRoot.getAttribute("data-repositoryid");
+				var languageId = theRoot.getAttribute("data-languageid") || 1;
+				var languageCode = theRoot.getAttribute("data-languagecode") || "sv";
 				$(targetDiv).find(".wysiwygeditor").each(function(){
-			 		if(userPrefferredWYSIWYG  == "ckeditor4" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
-			 		{
+					if(userPrefferredWYSIWYG  == "ckeditor4" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
+					{
 						var toolbarName = $(this).attr("toolbarName");
 						if(!toolbarName || toolbarName == "")
 							toolbarName = "Basic";
-			 			var editor = CKEDITOR.replace( $(this).attr("id"), {
-			 																'skin': 'office2003',
-			 																'toolbar': [
-			 																           ['Bold','Italic','-','NumberedList','BulletedList','-','Link','Unlink','-','Image','Format']
-			 																           ]
-			 															});
-			 		}
-			 		else
-			 		{
+						var configString = "{'customConfig': '" + componentEditorUrl + "WYSIWYGProperties.action?repositoryId=" + repositoryId + "&languageId=" + languageId + "&contentVersionId=-1','language': '" + languageCode + "', 'toolbar': '" + toolbarName + "', 'width':'" + $(this).width() + "px', 'height':'200px'}";
+						var configObject = eval('(' + configString + ')');
+						$(this).attr('id', $(this).attr("id").replace(/ /g, "_"));
+						var editor = CKEDITOR.replace( $(this).attr("id"), configObject);
+					}
+					else
+					{
 						var fck = new FCKeditor("myFCKeditor");
 						var id = $(this).attr("id");
 						var toolbarName = $(this).attr("toolbarName");
@@ -1745,13 +1748,11 @@ function showComponentPropertiesInDiv(targetDivId, parameterString, skipFloat, e
 						oFCKeditor.Config["CustomConfigurationsPath"] = "" + componentEditorUrl + "WYSIWYGProperties.action?" + parameterString;
 						oFCKeditor.ToolbarSet = toolbarName;
 						oFCKeditor.ReplaceTextarea() ;
-			 		}
+					}
 				});
 
-				
 				var theHandle = document.getElementById("componentPropertiesHandle");
-				var theRoot   = document.getElementById("componentProperties");
-				
+
 				$(theRoot).css('top', $(window).height() / 2 + $(window).scrollTop() - ($(theRoot).height() / 2));
 				$(theRoot).css('left', $(window).width() / 2 - $(theRoot).width() / 2); 
 						                        
@@ -1760,7 +1761,11 @@ function showComponentPropertiesInDiv(targetDivId, parameterString, skipFloat, e
 			}
 			catch(err)
 			{
-				alert("Error 4:" + err);
+				alert("Error 4:" + err + " parameterString " + parameterString);
+				if (typeof console !== "undefined")
+				{
+					console.error("Error in component properties view", err);
+				}
 			}
 		});		
 	}	

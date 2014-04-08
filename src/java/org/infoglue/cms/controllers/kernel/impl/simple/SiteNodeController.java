@@ -3701,9 +3701,10 @@ public class SiteNodeController extends BaseController
     
 	/**
 	 * Returns a repository list marked for deletion.
+	 * @param infoGluePrincipal 
 	 */
 	
-	public List<SiteNodeVO> getSiteNodeVOListMarkedForDeletion(Integer repositoryId) throws SystemException, Bug
+	public List<SiteNodeVO> getSiteNodeVOListMarkedForDeletion(Integer repositoryId, InfoGluePrincipal infoGluePrincipal) throws SystemException, Bug
 	{
 		Database db = CastorDatabaseService.getDatabase();
 		
@@ -3726,8 +3727,15 @@ public class SiteNodeController extends BaseController
 			while(results.hasMore()) 
             {
 				SiteNode siteNode = (SiteNode)results.next();
-				siteNode.getValueObject().getExtraProperties().put("repositoryMarkedForDeletion", siteNode.getRepository().getIsDeleted());
-                siteNodeVOListMarkedForDeletion.add(siteNode.getValueObject());
+				Integer siteNodeRepositoryId = siteNode.getRepository().getRepositoryId();
+				Integer siteNodeId = siteNode.getSiteNodeId();
+
+				if((AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Read", siteNodeRepositoryId.toString()) && AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Write", siteNodeRepositoryId.toString()))
+					&& (AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "SiteNodeVersion.Read", siteNodeId.toString()) && AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "SiteNodeVersion.Write", siteNodeId.toString())))
+				{
+					siteNode.getValueObject().getExtraProperties().put("repositoryMarkedForDeletion", siteNode.getRepository().getIsDeleted());
+					siteNodeVOListMarkedForDeletion.add(siteNode.getValueObject());
+				}
             }
             
 			results.close();

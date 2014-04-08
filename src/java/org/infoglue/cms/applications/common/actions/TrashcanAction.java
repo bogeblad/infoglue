@@ -64,9 +64,9 @@ public class TrashcanAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws Exception
     {
-		this.repositoriesMarkedForDeletion = RepositoryController.getController().getRepositoryVOListMarkedForDeletion();
-		this.contentsMarkedForDeletion = ContentController.getContentController().getContentVOListMarkedForDeletion(repositoryFilter);
-		this.siteNodesMarkedForDeletion = SiteNodeController.getController().getSiteNodeVOListMarkedForDeletion(repositoryFilter);
+		this.repositoriesMarkedForDeletion = RepositoryController.getController().getRepositoryVOListMarkedForDeletion(getInfoGluePrincipal());
+		this.contentsMarkedForDeletion = ContentController.getContentController().getContentVOListMarkedForDeletion(repositoryFilter, getInfoGluePrincipal());
+		this.siteNodesMarkedForDeletion = SiteNodeController.getController().getSiteNodeVOListMarkedForDeletion(repositoryFilter, getInfoGluePrincipal());
 		
 		return Action.SUCCESS;
     }
@@ -130,9 +130,9 @@ public class TrashcanAction extends InfoGlueAbstractAction
     {
 		validateSecurityCode();
 
-		this.repositoriesMarkedForDeletion = RepositoryController.getController().getRepositoryVOListMarkedForDeletion();
-		this.contentsMarkedForDeletion = ContentController.getContentController().getContentVOListMarkedForDeletion(this.repositoryFilter);
-		this.siteNodesMarkedForDeletion = SiteNodeController.getController().getSiteNodeVOListMarkedForDeletion(this.repositoryFilter);
+		this.repositoriesMarkedForDeletion = RepositoryController.getController().getRepositoryVOListMarkedForDeletion(getInfoGluePrincipal());
+		this.contentsMarkedForDeletion = ContentController.getContentController().getContentVOListMarkedForDeletion(this.repositoryFilter, getInfoGluePrincipal());
+		this.siteNodesMarkedForDeletion = SiteNodeController.getController().getSiteNodeVOListMarkedForDeletion(this.repositoryFilter, getInfoGluePrincipal());
 
 		Iterator<SiteNodeVO> siteNodesMarkedForDeletionIterator = siteNodesMarkedForDeletion.iterator();
 		while(siteNodesMarkedForDeletionIterator.hasNext())

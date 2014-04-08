@@ -3529,7 +3529,7 @@ public class ContentController extends BaseController
         }
     }  
 
-	public List<ContentVO> getContentVOListMarkedForDeletion(Integer repositoryId) throws SystemException, Bug
+	public List<ContentVO> getContentVOListMarkedForDeletion(Integer repositoryId, InfoGluePrincipal infoGluePrincipal) throws SystemException, Bug
 	{
 		Database db = CastorDatabaseService.getDatabase();
 		
@@ -3552,9 +3552,16 @@ public class ContentController extends BaseController
 			while(results.hasMore()) 
             {
 				Content content = (Content)results.next();
-				content.getValueObject().getExtraProperties().put("repositoryMarkedForDeletion", content.getRepository().getIsDeleted());
-				contentVOListMarkedForDeletion.add(content.getValueObject());
-            }
+				Integer contentRepositoryId = content.getRepositoryId();
+				Integer contentId = content.getContentId();
+
+				if((AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Read", contentRepositoryId.toString()) && AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Write", contentRepositoryId.toString()))
+					&& (AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Content.Read", contentId.toString()) && AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Content.Write", contentId.toString())))
+				{
+					content.getValueObject().getExtraProperties().put("repositoryMarkedForDeletion", content.getRepository().getIsDeleted());
+					contentVOListMarkedForDeletion.add(content.getValueObject());
+				}
+			}
             
 			results.close();
 			oql.close();

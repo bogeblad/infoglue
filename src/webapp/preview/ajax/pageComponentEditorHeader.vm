@@ -147,8 +147,10 @@
 			$(window)[0].scrollTo(0, $activeElement.offset().top - 300);
 		}
 		var activatedComponentId = ${activatedComponentId};
-
-        if(activatedComponentId > 0)
+		var componentContentId = ${componentContentId};
+		//console.log("activatedComponentId", activatedComponentId);
+		//console.log("componentContentId", componentContentId);
+        if(activatedComponentId > 0 && componentContentId > 0)
         {
             //var alternateComponentPropertiesDivSize = $("#alternateComponentPropertiesDiv").size();
 			//if(alternateComponentPropertiesDivSize == 1)

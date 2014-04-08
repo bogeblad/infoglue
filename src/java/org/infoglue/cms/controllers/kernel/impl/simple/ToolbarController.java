@@ -1503,30 +1503,7 @@ public class ToolbarController implements ToolbarProvider
 		String contentIdString = request.getParameter("contentId");
 		if(contentIdString == null || contentIdString.equals(""))
 			contentIdString = (String)request.getAttribute("contentId");
-		
-		if(contentIdString == null || contentIdString.equals(""))
-		{
-			logger.error("No contentId was sent in to getContentVersionButtons so we cannot continue. Check why. Original url: " + request.getRequestURI() + "?" + request.getQueryString());
-			return buttons;
-		}
-		
-		Integer contentId = new Integer(contentIdString);
-		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId);
-		
-		String contentVersionIdString = request.getParameter("contentVersionId");
-		Integer contentVersionId = null;
-		if(contentVersionIdString == null)
-		{
-			LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(contentVO.getRepositoryId());
-			ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, masterLanguageVO.getId());
-			if(contentVersionVO != null)
-				contentVersionId = contentVersionVO.getId();
-		}
-		else
-		{
-			contentVersionId = new Integer(contentVersionIdString);
-		}
-		
+
 		buttons.add(new ToolbarButton("useSelectedAsset", 
 				  getLocalizedString(locale, "tool.contenttool.assetDialog.chooseAttachment"), 
 				  getLocalizedString(locale, "tool.contenttool.assetDialog.chooseAttachment"), 
@@ -1540,23 +1517,59 @@ public class ToolbarController implements ToolbarProvider
 				  "", 
 				  ""));
 
-		buttons.add(new ToolbarButton("uploadAsset", 
-				  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
-				  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
-				  "uploadAsset()", //"ViewDigitalAsset.action?contentVersionId=" + contentVersionId
-				  "",
-				  "",
-				  "attachAsset",
-				  true,
-				  false,
-				  "",
-				  "",
-				  "inlineDiv",
-				  500,
-				  550));
+		if(contentIdString != null && !contentIdString.equals(""))
+		{
+			try
+			{
+				/*
+				 * ContentId and ContentVersionId are retrieved to check that the values are valid.
+				 * They are not actually used here.
+				 */
+				Integer contentId = new Integer(contentIdString);
+				ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId);
+				String contentVersionIdString = request.getParameter("contentVersionId");
+				Integer contentVersionId = null;
+				if(contentVersionIdString == null)
+				{
+					LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(contentVO.getRepositoryId());
+					ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, masterLanguageVO.getId());
+					if(contentVersionVO != null)
+						contentVersionId = contentVersionVO.getId();
+				}
+				else
+				{
+					contentVersionId = new Integer(contentVersionIdString);
+				}
+				if (logger.isDebugEnabled())
+				{
+					logger.debug("ContentVersionAssetsFooterButtons. contentId: " + contentId + ". contentVersionId: " + contentVersionId);
+				}
+				buttons.add(new ToolbarButton("uploadAsset", 
+						  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
+						  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
+						  "uploadAsset()", //"ViewDigitalAsset.action?contentVersionId=" + contentVersionId
+						  "",
+						  "",
+						  "attachAsset",
+						  true,
+						  false,
+						  "",
+						  "",
+						  "inlineDiv",
+						  500,
+						  550));
+			}
+			catch (NumberFormatException nex)
+			{
+				logger.error("Got non-number contentId/contentVersionId to getContentVersionAssetsFooterButtons. Will not add upload button. contentId: " + contentIdString + ". contentVersionId: " + request.getParameter("contentVersionId") + ". Original url: " + request.getRequestURI());
+			}
+			catch (Exception ex)
+			{
+				logger.error("No contentId was sent in to getContentVersionAssetsFooterButtons so we will not add the upload button. Check why. Original url: " + request.getRequestURI() + "?" + request.getQueryString());
+			}
+		}
 
 		buttons.add(getCommonFooterCancelButton(toolbarKey, principal, locale, request, disableCloseButton));
-		
 		return buttons;
 	}
 
@@ -1750,30 +1763,6 @@ public class ToolbarController implements ToolbarProvider
 		String contentIdString = request.getParameter("contentId");
 		if(contentIdString == null || contentIdString.equals(""))
 			contentIdString = (String)request.getAttribute("contentId");
-		
-		if(contentIdString == null || contentIdString.equals(""))
-		{
-			logger.error("No contentId was sent in to getContentVersionButtons so we cannot continue. Check why. Original url: " + request.getRequestURI() + "?" + request.getQueryString());
-			return buttons;
-		}
-		
-		Integer contentId = new Integer(contentIdString);
-		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId);
-		
-		String contentVersionIdString = request.getParameter("contentVersionId");
-		Integer contentVersionId = null;
-		if(contentVersionIdString == null)
-		{
-			LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(contentVO.getRepositoryId());
-			ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, masterLanguageVO.getId());
-			if(contentVersionVO != null)
-				contentVersionId = contentVersionVO.getId();
-		}
-		else
-		{
-			contentVersionId = new Integer(contentVersionIdString);
-		}
-		
 
 		buttons.add(new ToolbarButton("useSelectedPage", 
 				  getLocalizedString(locale, "tool.contenttool.linkDialog.choosePage"), 
@@ -1800,22 +1789,58 @@ public class ToolbarController implements ToolbarProvider
 				  "", 
 				  "", 
 				  ""));
-
-		buttons.add(new ToolbarButton("uploadAsset", 
-				  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
-				  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
-				  "uploadAsset();",
-				  "",
-				  "", 
-				  "attachAsset",
-				  true,
-				  false,
-				  "",
-				  "",
-				  ""));
+		
+		if(contentIdString != null && !contentIdString.equals(""))
+		{
+			try
+			{
+				/*
+				 * ContentId and ContentVersionId are retrieved to check that the values are valid.
+				 * They are not actually used here.
+				 */
+				Integer contentId = new Integer(contentIdString);
+				ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId);
+				String contentVersionIdString = request.getParameter("contentVersionId");
+				Integer contentVersionId = null;
+				if(contentVersionIdString == null)
+				{
+					LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(contentVO.getRepositoryId());
+					ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, masterLanguageVO.getId());
+					if(contentVersionVO != null)
+						contentVersionId = contentVersionVO.getId();
+				}
+				else
+				{
+					contentVersionId = new Integer(contentVersionIdString);
+				}
+				if (logger.isDebugEnabled())
+				{
+					logger.debug("ContentVersionAssetsFooterButtons. contentId: " + contentId + ". contentVersionId: " + contentVersionId);
+				}
+				buttons.add(new ToolbarButton("uploadAsset", 
+						  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
+						  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
+						  "uploadAsset();",
+						  "",
+						  "", 
+						  "attachAsset",
+						  true,
+						  false,
+						  "",
+						  "",
+						  ""));
+			}
+			catch (NumberFormatException nex)
+			{
+				logger.error("Got non-number contentId/contentVersionId to getLinkDialogFooterButtons. Will not add upload button. contentId: " + contentIdString + ". contentVersionId: " + request.getParameter("contentVersionId") + ". Original url: " + request.getRequestURI());
+			}
+			catch (Exception ex)
+			{
+				logger.error("No contentId was sent in to getLinkDialogFooterButtons so we will not add the upload button. Check why. Original url: " + request.getRequestURI() + "?" + request.getQueryString());
+			}
+		}
 
 		buttons.add(getCommonFooterCancelButton(toolbarKey, principal, locale, request, disableCloseButton, "onCancel();", true));
-
 		return buttons;
 	}
 	

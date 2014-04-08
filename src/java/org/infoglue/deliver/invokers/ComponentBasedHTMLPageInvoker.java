@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
@@ -191,6 +192,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 			    	//logger.info("componentXML: " + componentXML);
 			    	logger.info("contentId" + contentId);
 			    	logger.info("pagePartString" + pagePartString);
+					pagePartString = Matcher.quoteReplacement(pagePartString);
 			    	String newComponentXML = componentXML.replaceAll("<component contentId=\"" + contentId + ".*?</component>", "" + pagePartString);
 			    	//logger.info("newComponentXML: " + newComponentXML);
 			    	resultComponentXML = newComponentXML;
@@ -1710,11 +1712,11 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 				}
 				
 				if(offset > 0)
-				{	
+				{
 					decoratedComponent.append(componentString.substring(offset + 10));
 				}
 				else
-				{	
+				{
 					decoratedComponent.append(componentString.substring(offset));
 				}
 

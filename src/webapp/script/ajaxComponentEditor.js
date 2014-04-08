@@ -1654,7 +1654,7 @@ function showComponentPropertiesInDiv(targetDivId, parameterString, skipFloat, e
 	//alert("parameterString:" + parameterString);
 
 	targetDiv = document.getElementById(targetDivId);
-	console.log("targetDiv:" + targetDiv);
+	//console.log("targetDiv:" + targetDiv);
 
 	if(skipFloat && targetDiv)
 	{

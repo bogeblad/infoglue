@@ -597,6 +597,16 @@ public class RepositoryController extends BaseController
 	
 	public List getAuthorizedRepositoryVOList(InfoGluePrincipal infoGluePrincipal, boolean isBindingDialog, boolean allowIfWriteAccess) throws ConstraintException, SystemException, Bug
 	{    	
+		return getAuthorizedRepositoryVOList(infoGluePrincipal, isBindingDialog, allowIfWriteAccess, false);
+	}
+	
+	/**
+	 * This method can be used by actions and use-case-controllers that only need to have simple access to the
+	 * functionality. They don't get the transaction-safety but probably just wants to show the info.
+	 */	
+	
+	public List getAuthorizedRepositoryVOList(InfoGluePrincipal infoGluePrincipal, boolean isBindingDialog, boolean allowIfWriteAccess, boolean showDeletedItems) throws ConstraintException, SystemException, Bug
+	{    	
 		List accessableRepositories = new ArrayList();
 		//Timer t = new Timer();
     	
@@ -613,7 +623,7 @@ public class RepositoryController extends BaseController
 			while(i.hasNext())
 			{
 				RepositoryVO repositoryVO = (RepositoryVO)i.next();
-				if(getIsAccessApproved(db, repositoryVO.getRepositoryId(), infoGluePrincipal, isBindingDialog, allowIfWriteAccess))
+				if(getIsAccessApproved(db, repositoryVO.getRepositoryId(), infoGluePrincipal, isBindingDialog, allowIfWriteAccess) && (showDeletedItems || !repositoryVO.getIsDeleted()))
 				{
 					//t.printElapsedTime("getIsAccessApproved took");
 					accessableRepositories.add(repositoryVO);

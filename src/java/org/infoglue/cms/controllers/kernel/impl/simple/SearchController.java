@@ -24,7 +24,6 @@
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import java.awt.Color;
-import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -38,18 +37,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.NIOFSDirectory;
-import org.apache.lucene.util.Version;
 import org.apache.xerces.parsers.DOMParser;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
@@ -1163,7 +1155,7 @@ public class SearchController extends BaseController
 						catch (Exception e) 
 						{
 							logger.error("ContentVersion with id:" + contentVersionId + " was not valid - skipping but how did the index become corrupt?");
-							deleteVersionFromIndex(contentVersionId);
+							LuceneController.getController().deleteVersionFromIndex(contentVersionId);
 						}						
 					}
 					else
@@ -1514,32 +1506,6 @@ public class SearchController extends BaseController
    	}
    	
    	
-	private void deleteVersionFromIndex(String contentVersionId)
-	{
-		IndexWriter writer = null;
-	    try 
-	    {
-			String index = CmsPropertyHandler.getContextRootPath() + File.separator + "lucene" + File.separator + "index";
-
-	    	File INDEX_DIR = new File(index);
-
-			Directory directory = new NIOFSDirectory(INDEX_DIR);
-			
-	    	StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_34);
-			IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_34, analyzer);
-
-	    	writer = new IndexWriter(directory, config);
-	    	logger.info("Indexing to directory '" + INDEX_DIR + "'...");
-	    	logger.info("Deleting contentVersionId:" + contentVersionId);
-		    writer.deleteDocuments(new Term("contentVersionId", "" + contentVersionId));
-	    	writer.close();	    	
-	    } 
-	    catch (Exception e) 
-	    {
-	    	logger.error("Error deleting index:" + e.getMessage(), e);
-	    }
-	}
-
 	public static org.apache.lucene.document.Document getDocument(String text) throws IOException, InterruptedException
 	{
 		org.apache.lucene.document.Document doc = new org.apache.lucene.document.Document();

@@ -40,6 +40,7 @@ import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.Session;
 import org.infoglue.cms.applications.databeans.LinkBean;
 import org.infoglue.cms.controllers.kernel.impl.simple.LabelController;
+import org.infoglue.cms.controllers.kernel.impl.simple.LuceneController;
 import org.infoglue.cms.exception.AccessConstraintException;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConfigurationError;
@@ -493,8 +494,12 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
     	
     	try
         {
-        	ChangeNotificationController.getInstance().notifyListeners();
-        }
+    		if(!this.getRequest().getRequestURI().contains("UpdateCache!test"))
+    		{
+        		//System.out.println("URL:" + this.getRequest().getRequestURI());
+    			ChangeNotificationController.getInstance().notifyListeners();
+    		}
+    	}
         catch(Exception e)
         {
         	e.printStackTrace();

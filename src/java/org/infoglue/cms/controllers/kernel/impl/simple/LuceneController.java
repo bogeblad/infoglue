@@ -67,6 +67,7 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.NIOFSDirectory;
+import org.apache.lucene.store.SingleInstanceLockFactory;
 import org.apache.lucene.util.Version;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.extractor.WordExtractor;
@@ -110,6 +111,11 @@ import org.pdfbox.util.PDFTextStripper;
 
 public class LuceneController extends BaseController implements NotificationListener
 {
+	private static Directory directory = null;
+	private static IndexWriter writer = null;
+	private static IndexReader indexReader = null;
+	private static int reopened = 0;
+	
     private final static Logger logger = Logger.getLogger(LuceneController.class.getName());
     private static int indexedDocumentsSinceLastOptimize = 0;
     private Integer lastCommitedContentVersionId = -1;
@@ -148,11 +154,16 @@ public class LuceneController extends BaseController implements NotificationList
 	
 	private Directory getDirectory() throws Exception
 	{
+		if(LuceneController.directory != null)
+			return directory;
+		
 		String index = CmsPropertyHandler.getContextDiskPath() + File.separator + "lucene" + File.separator + "index";
+
 		index = index.replaceAll("//", "/");
 		//System.out.println("index:" + index);
     	File INDEX_DIR = new File(index);
-		Directory directory = new NIOFSDirectory(INDEX_DIR);
+		directory = new NIOFSDirectory(INDEX_DIR);
+		directory.setLockFactory(new SingleInstanceLockFactory());
 		boolean indexExists = IndexReader.indexExists(directory);
 		if(!indexExists)
 		{
@@ -166,17 +177,21 @@ public class LuceneController extends BaseController implements NotificationList
 	{
 		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_34, getStandardAnalyzer());
 		IndexWriter indexWriter = new IndexWriter(directory, config);
-		indexWriter.deleteDocuments(new Term("initializer", "true"));
+    	indexWriter.deleteDocuments(new Term("initializer", "true"));
 		indexWriter.close(true);
 	}
 	
 	private IndexWriter getIndexWriter() throws Exception
 	{
+		//Singleton returns
+		if(writer != null)
+			return writer;
+
+		Timer t = new Timer();
 		Directory directory = getDirectory();
     	StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_34);
 		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_34, analyzer);
 
-		
 		if(getIsIndexedLocked(true))
 		{
 			logger.warn("Directory is locked - leaving the messages in the qeuedMessages list...");
@@ -184,13 +199,11 @@ public class LuceneController extends BaseController implements NotificationList
 		}
 		else
 		{
-			IndexWriter indexWriter = new IndexWriter(directory, config);
-			return indexWriter;
+			writer = new IndexWriter(directory, config);
+	    	return writer;
 		}
 	}
 
-	private static int reopened = 0;
-	private static IndexReader indexReader = null;
 	private IndexReader getIndexReader() throws Exception
 	{
 		if(indexReader == null)
@@ -471,7 +484,8 @@ public class LuceneController extends BaseController implements NotificationList
 		
 		//writer.updateDocument(term, doc);
 		//writer.addDocument(doc);
-		writer.close(true);
+		//writer.close(true);
+		writer.commit();
 	}
 
 	private void registerIndexAllProcessDone() throws Exception
@@ -483,7 +497,7 @@ public class LuceneController extends BaseController implements NotificationList
 		TermQuery query = new TermQuery(term);
 		
 		writer.deleteDocuments(query);		
-		writer.close(true);
+		writer.commit();
 	}
 
 	public void clearIndex() throws Exception
@@ -496,7 +510,9 @@ public class LuceneController extends BaseController implements NotificationList
 				logger.info("NumDocs:" + getIndexReader().numDocs());
 				IndexWriter writer = getIndexWriter();
 				writer.deleteAll();
-				writer.close(true);
+				//writer.close(true);
+				writer.commit();
+
 				logger.info("NumDocs after delete:" + getIndexReader().numDocs());
 			}
 			catch (Exception e) 
@@ -794,7 +810,9 @@ public class LuceneController extends BaseController implements NotificationList
 		    	}
 			}
 			
-			writer.close(true);
+			//writer.close(true);
+			writer.commit();
+
 		}
 		catch (Exception e) 
 		{
@@ -1148,7 +1166,8 @@ public class LuceneController extends BaseController implements NotificationList
 				}
 				finally
 				{
-					writer.close(true);
+					writer.commit();
+					//writer.close(true);
 				}
 				
 				logger.info("OOOOOOOOOOOOOO:" + getLastCommitedContentVersionId());
@@ -1480,7 +1499,7 @@ public class LuceneController extends BaseController implements NotificationList
 		}
 		finally
 		{
-			try{setLastCommitedContentVersionId(writer, newLastContentVersionId); writer.close(true);}catch (Exception e) {e.printStackTrace();}
+			try{setLastCommitedContentVersionId(writer, newLastContentVersionId); 		writer.commit(); /*writer.close(true);*/}catch (Exception e) {e.printStackTrace();}
 		}
 		
 		commitTransaction(db);
@@ -1586,7 +1605,7 @@ public class LuceneController extends BaseController implements NotificationList
 		}
 		finally
 		{
-			try{setLastCommitedContentVersionId(writer, newLastContentVersionId); writer.close(true);}catch (Exception e) {e.printStackTrace();}
+			try{setLastCommitedContentVersionId(writer, newLastContentVersionId); 		writer.commit(); /*writer.close(true);*/}catch (Exception e) {e.printStackTrace();}
 		}
 		
 		commitTransaction(db);
@@ -1741,11 +1760,8 @@ public class LuceneController extends BaseController implements NotificationList
 		    	indexedDocumentsSinceLastOptimize++;
 		    	if(indexedDocumentsSinceLastOptimize > 1000)
 		    	{
-		    		//logger.info("Optimizing...");
-		    		//writer.optimize();
 		    		indexedDocumentsSinceLastOptimize = 0;
 		    	}
-		    	//writer.close();	    	
 		    }
 	    }
 		catch (Exception e) 
@@ -2396,6 +2412,21 @@ public class LuceneController extends BaseController implements NotificationList
 		return text;
 	}
 	
+	public void deleteVersionFromIndex(String contentVersionId)
+	{
+		try
+		{
+			IndexWriter writer = getIndexWriter();
+	    	logger.info("Deleting contentVersionId:" + contentVersionId);
+		    writer.deleteDocuments(new Term("contentVersionId", "" + contentVersionId));
+	    	writer.commit();	    	
+	    } 
+	    catch (Exception e) 
+	    {
+	    	logger.error("Error deleteVersionFromIndex:" + e.getMessage(), e);
+	    }
+	}
+
 	
 	public String getContentPath(Integer contentId, Database db) throws Exception
 	{

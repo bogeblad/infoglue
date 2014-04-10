@@ -79,6 +79,7 @@ CREATE  TABLE cmPageDeliveryMetaDataEntity (
 ENGINE = MyISAM;
 
 alter table cmFormEntry add column `userName` varchar(255) DEFAULT NULL;
+alter table cmFormEntry add column `registrationDateTime` datetime DEFAULT NULL;
 
 create index pageDeliveryMetaDataIDX on cmPageDeliveryMetaData(siteNodeId, languageId, contentId);
 

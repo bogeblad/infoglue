@@ -1711,7 +1711,7 @@ public class CmsPropertyHandler
 
 	public static String getInfoGlueVersion()
 	{
-	    return getServerNodeProperty("infoGlueVersion", true, "3.1.2.0 GA");
+	    return getServerNodeProperty("infoGlueVersion", true, "3.1.3.0 RC1");
 	}
 
 	public static String getInfoGlueDBVersion()
@@ -1721,7 +1721,7 @@ public class CmsPropertyHandler
 
 	public static String getInfoGlueVersionReleaseDate()
 	{
-	    return getServerNodeProperty("infoGlueVersionReleaseDate", true, "2013-09-01");
+	    return getServerNodeProperty("infoGlueVersionReleaseDate", true, "2014-04-09");
 	}
 
 	public static String getLogDatabaseMessages()

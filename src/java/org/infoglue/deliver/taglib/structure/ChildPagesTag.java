@@ -60,7 +60,7 @@ public class ChildPagesTag extends ComponentLogicTag
 	    }
         else if(this.propertyName != null)
         {
-            setResultAttribute(getComponentLogic().getChildPages(propertyName, useInheritance, this.escapeHTML, this.hideUnauthorizedPages, useRepositoryInheritance, useStructureInheritance, this.levelsToPopulate, this.nameFilter));
+            setResultAttribute(getComponentLogic().getChildPages(propertyName, useInheritance, this.escapeHTML, this.hideUnauthorizedPages, useRepositoryInheritance, useStructureInheritance, this.levelsToPopulate, this.nameFilter, this.includeHidden));
 		    //if(logger.isInfoEnabled())
 		    	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ChildPages 2 tag", t.getElapsedTime());
         }

@@ -6428,11 +6428,19 @@ public class BasicTemplateController implements TemplateController
 		return availableLanguages;
 	}
 
+	/**
+     * The method returns a WebPage-object for the given page etc.
+     */
+
+    public WebPage getPage(Integer siteNodeId, Integer languageId, Integer contentId, boolean escapeHTML, boolean hideUnauthorizedPages)
+    {
+    	return getPage(siteNodeId, languageId, contentId, escapeHTML, hideUnauthorizedPages, true);
+    }
 	
 	/**
      * The method returns a WebPage-object for the given page etc.
      */
-    public WebPage getPage(Integer siteNodeId, Integer languageId, Integer contentId, boolean escapeHTML, boolean hideUnauthorizedPages)
+    public WebPage getPage(Integer siteNodeId, Integer languageId, Integer contentId, boolean escapeHTML, boolean hideUnauthorizedPages, boolean excludeHiddenPages)
     {
     	if(siteNodeId == null || siteNodeId.intValue() < 1)
     		return null;
@@ -6442,7 +6450,7 @@ public class BasicTemplateController implements TemplateController
     	try
     	{
 	    	SiteNodeVO siteNodeVO = getSiteNode(siteNodeId);
-	    	page = getPage(siteNodeVO, escapeHTML, hideUnauthorizedPages);
+	    	page = getPage(siteNodeVO, escapeHTML, hideUnauthorizedPages, excludeHiddenPages);
     	}
     	catch (Exception e) 
     	{
@@ -6546,7 +6554,7 @@ public class BasicTemplateController implements TemplateController
 	 */
 	private WebPage getPage(SiteNodeVO siteNodeVO, boolean escapeHTML, boolean hideUnauthorizedPages) throws Exception
 	{
-		return getPage(siteNodeVO, escapeHTML, hideUnauthorizedPages, false);
+		return getPage(siteNodeVO, escapeHTML, hideUnauthorizedPages, true);
 	}
 	
 	/**
@@ -6739,7 +6747,7 @@ public class BasicTemplateController implements TemplateController
 				List childNodeVOList = this.nodeDeliveryController.getChildSiteNodes(getDatabase(), siteNodeId, levelsToPopulate, showHidden, nameFilter);
 				//if(logger.isInfoEnabled())
 					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildPages.getChildSiteNodes(micro)", t.getElapsedTimeNanos() / 1000);
-					childPages = getPages(childNodeVOList, escapeHTML, hideUnauthorizedPages);
+					childPages = getPages(childNodeVOList, escapeHTML, hideUnauthorizedPages, showHidden);
 				//if(logger.isInfoEnabled())
 					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildPages.getPages(micro)", t.getElapsedTimeNanos() / 1000);
 					

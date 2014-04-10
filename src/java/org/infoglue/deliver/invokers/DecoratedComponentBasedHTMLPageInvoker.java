@@ -1719,7 +1719,15 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 					sb.append("			<td class=\"igpropertylabel igpropertyDivider\" valign=\"top\" align=\"left\" colspan=\"2\">" + componentProperty.getDisplayName() + "");
 					
 					String separator = System.getProperty("line.separator");
-					String propertyValue = componentProperty.getValue().replaceAll("igbr", separator);
+					String propertyValue = componentProperty.getValue();
+					
+					if(separator == null || propertyValue == null)
+					{	
+						propertyValue = "Undefined";
+						logger.warn("Problem with component:" + componentName + ", propertyName: " + componentProperty.getName() + ", value:" + propertyValue);
+					}
+					else
+						propertyValue = propertyValue.replaceAll("igbr", separator);
 					
 					if(hasAccessToProperty)
 					{	

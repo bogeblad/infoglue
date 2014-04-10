@@ -1264,6 +1264,11 @@ public interface TemplateController
     public abstract WebPage getPage(Integer siteNodeId, Integer languageId, Integer contentId, boolean escapeHTML, boolean hideUnauthorizedPages);
 
 	/**
+     * The method returns a WebPage-object for the given page etc.
+     */
+    public abstract WebPage getPage(Integer siteNodeId, Integer languageId, Integer contentId, boolean escapeHTML, boolean hideUnauthorizedPages, boolean excludeHiddenPages);
+
+	/**
      * The method returns a list of WebPage-objects that is the children of the current 
      * siteNode. The method is great for navigation-purposes on a structured site. 
      */

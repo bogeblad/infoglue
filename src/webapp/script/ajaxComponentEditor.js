@@ -1696,8 +1696,11 @@ function showComponentPropertiesInDiv(targetDivId, parameterString, skipFloat, e
 				if(theRoot)
 				{
 					var theHandle = document.getElementById("componentPropertiesHandle");
-	
-					$(theRoot).css('top', $(window).height() / 2 + $(window).scrollTop() - ($(theRoot).height() / 2));
+					var windowHeight = $(window).height();
+					if($(window).height() > 1000)
+						windowHeight = 1000;
+					
+					$(theRoot).css('top', windowHeight / 2 + $(window).scrollTop() - ($(theRoot).height() / 2));
 					$(theRoot).css('left', $(window).width() / 2 - $(theRoot).width() / 2); 
 							                        
 					$(theHandle).css("cursor", "move");
@@ -1754,8 +1757,11 @@ function showComponentPropertiesInDiv(targetDivId, parameterString, skipFloat, e
 
 				var theHandle = document.getElementById("componentPropertiesHandle");
 				//var theRoot   = document.getElementById("componentProperties");
-
-				$(theRoot).css('top', $(window).height() / 2 + $(window).scrollTop() - ($(theRoot).height() / 2));
+				console.log($(window).height() / 2 + $(window).scrollTop() - ($(theRoot).height() / 2));
+				var windowHeight = $(window).height();
+				if($(window).height() > 1000)
+					windowHeight = 1000;
+				$(theRoot).css('top', windowHeight / 2 + $(window).scrollTop() - ($(theRoot).height() / 2));
 				$(theRoot).css('left', $(window).width() / 2 - $(theRoot).width() / 2); 
 						                        
 				$(theHandle).css("cursor", "move");

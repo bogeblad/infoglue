@@ -1200,10 +1200,15 @@ public class ComponentLogic
 
 	public List getChildPages(String propertyName, boolean useInheritance, boolean escapeHTML, boolean hideUnauthorizedPages, boolean useRepositoryInheritance, boolean useStructureInheritance, Integer levelsToPopulate)
 	{
-		return getChildPages(propertyName, useInheritance, escapeHTML, hideUnauthorizedPages, useRepositoryInheritance, useStructureInheritance, levelsToPopulate, null);
+		return getChildPages(propertyName, useInheritance, escapeHTML, hideUnauthorizedPages, useRepositoryInheritance, useStructureInheritance, levelsToPopulate, null, false);
 	}
-	
-	public List getChildPages(String propertyName, boolean useInheritance, boolean escapeHTML, boolean hideUnauthorizedPages, boolean useRepositoryInheritance, boolean useStructureInheritance, Integer levelsToPopulate, String nameFilter)
+
+	public List getChildPages(String propertyName, boolean useInheritance, boolean escapeHTML, boolean hideUnauthorizedPages, boolean useRepositoryInheritance, boolean useStructureInheritance, Integer levelsToPopulate, boolean includeHidden)
+	{
+		return getChildPages(propertyName, useInheritance, escapeHTML, hideUnauthorizedPages, useRepositoryInheritance, useStructureInheritance, levelsToPopulate, null, includeHidden);
+	}
+
+	public List getChildPages(String propertyName, boolean useInheritance, boolean escapeHTML, boolean hideUnauthorizedPages, boolean useRepositoryInheritance, boolean useStructureInheritance, Integer levelsToPopulate, String nameFilter, boolean includeHidden)
 	{
 	    List childPages = new ArrayList();
 	    
@@ -1216,7 +1221,7 @@ public class ComponentLogic
 			{
 				Integer siteNodeId = bindingsIterator.next().getEntityId();
 				logger.info("propertyName:" + propertyName);
-				childPages.addAll(getChildPages(siteNodeId, levelsToPopulate, nameFilter));
+				childPages.addAll(getChildPages(siteNodeId, levelsToPopulate, nameFilter, hideUnauthorizedPages, includeHidden));
 			}
 		}
 
@@ -1240,13 +1245,20 @@ public class ComponentLogic
 
 	public List getChildPages(Integer siteNodeId, Integer levelsToPopulate)
 	{
-		return getChildPages(siteNodeId, levelsToPopulate, null);
+		return getChildPages(siteNodeId, levelsToPopulate, null, true, false);
 	}
-	
+	/*
 	public List getChildPages(Integer siteNodeId, Integer levelsToPopulate, String nameFilter)
 	{
-		List pages = templateController.getChildPages(siteNodeId, levelsToPopulate);
-	
+		getChildPages(siteNodeId, levelsToPopulate, null);
+	}
+	*/
+
+	public List getChildPages(Integer siteNodeId, Integer levelsToPopulate, String nameFilter, boolean hideUnauthorizedPages, boolean includeHidden)
+	{
+		//List pages = templateController.getChildPages(siteNodeId, levelsToPopulate);
+		List pages = templateController.getChildPages(siteNodeId, false, hideUnauthorizedPages, levelsToPopulate, nameFilter, includeHidden);
+		
 		return pages;
 	}
 

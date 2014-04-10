@@ -136,7 +136,9 @@ function showContextMenu(ajaxUrl, e, aWindow)
 
 	var xOffset = (aWindow.parent.pageXOffset !== undefined) ? aWindow.parent.pageXOffset : (aWindow.parent.document.documentElement || aWindow.parent.document.body.parentNode || aWindow.parent.document.body).scrollLeft;
 	var yOffset = (aWindow.parent.pageYOffset !== undefined) ? aWindow.parent.pageYOffset : (aWindow.parent.document.documentElement || aWindow.parent.document.body.parentNode || aWindow.parent.document.body).scrollTop;
-	
+	if(yOffset == 0 && aWindow.pageYOffset > 0)
+		yOffset = aWindow.pageYOffset;
+		
 	var clientX = getEventPositionX(e) + 16;
 	var clientY = getEventPositionY(e) - yOffset + 80;
 	console.log("clientY:" + clientY);

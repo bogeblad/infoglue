@@ -740,7 +740,7 @@ WebFXTreeItem.prototype.keydown = function(key) {
 }
 
 WebFXTreeItem.prototype.toString = function (nItem, nItemCount) {
-
+	
 	var isContainer = "na";
 	/*if(this.myType != null)
 		isContainer = (this.myType.indexOf("Folder") > -1)?"true":"false";
@@ -810,11 +810,11 @@ WebFXTreeItem.prototype.toString = function (nItem, nItemCount) {
 	{
 		iconClass = iconClass + " protected";
 	}
-	if(this.folder == '1')
+	if(this.folder == '1' || (this.myType != null && this.myType.indexOf("Folder") > -1))
 	{
 		iconClass = iconClass + " folder";
 	}
-	
+		
 	var expandIconClass = "expandable";
 	expandIconClass = ((this.folder)?((this.open)?((this.parentNode._last)?"lContractable":"tContractable"):((this.parentNode._last)?"lExpandable":"tExpandable")):((this.parentNode._last)?"lIcon":"tIcon"));
 	

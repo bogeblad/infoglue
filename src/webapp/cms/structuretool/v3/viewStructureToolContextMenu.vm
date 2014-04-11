@@ -20,7 +20,7 @@
 	#if($siteNodeVO.childCount > 0)
 	<li><a id="publishTree" href="javascript:void(0);" class="publish">$ui.getString("tool.structuretool.toolbarV3.publishPagesLabel")</a></li>
 	#end
-	<li><a id="unpublishAll" href="javascript:void(0);" class="unpublish">$ui.getString("tool.common.unpublishing.unpublishButtonLabel")</a></li>
+	<li><a id="unpublishAll" href="javascript:void(0);" class="unpublish">$ui.getString("tool.common.unpublishing.unpublishPageButtonLabel")</a></li>
 	<li><a id="unpublish" href="javascript:void(0);" class="unpublish">$ui.getString("tool.contenttool.toolbarV3.unpublishContentsLabel")</a></li>
 </ul>
 

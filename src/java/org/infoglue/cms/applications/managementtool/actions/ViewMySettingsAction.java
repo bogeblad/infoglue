@@ -30,6 +30,7 @@ import java.util.Map;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ThemeController;
+import org.infoglue.cms.util.CmsPropertyHandler;
 
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.module.propertyset.PropertySetManager;
@@ -73,9 +74,11 @@ public class ViewMySettingsAction extends InfoGlueAbstractAction
 	    this.defaultToolName 		= ps.getString("principal_" + this.getInfoGluePrincipal().getName() + "_defaultToolName");
 	    this.defaultRepositoryId 	= ps.getString("principal_" + this.getInfoGluePrincipal().getName() + "_defaultRepositoryId");
 	    this.defaultGUI 			= ps.getString("principal_" + this.getInfoGluePrincipal().getName() + "_defaultGUI");
-	    this.theme 					= ps.getString("principal_" + this.getInfoGluePrincipal().getName() + "_theme");
+	    //this.theme 					= ps.getString("principal_" + this.getInfoGluePrincipal().getName() + "_theme");
+	    this.theme 					= CmsPropertyHandler.getTheme(this.getInfoGluePrincipal().getName());
 	    this.toolbarVariant			= ps.getString("principal_" + this.getInfoGluePrincipal().getName() + "_toolbarVariant");
 
+	    
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 		this.themes = ThemeController.getController().getAvailableThemes();
 		

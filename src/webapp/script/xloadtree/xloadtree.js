@@ -101,6 +101,7 @@ WebFXLoadTree.prototype.expand = function() {
  */
 
 function WebFXLoadTreeItem(sText, sXmlSrc, sAction, eParent, sIcon, sOpenIcon, hasChildren, isProtected, stateId, isHidden, contentTypeDefinitionId) {
+	
 	// call super
 	this.WebFXTreeItem = WebFXTreeItem;
 	this.WebFXTreeItem(sText, sAction, eParent, sIcon, sOpenIcon, isProtected, stateId, isHidden, contentTypeDefinitionId);

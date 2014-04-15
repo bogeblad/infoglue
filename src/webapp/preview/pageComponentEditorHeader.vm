@@ -227,7 +227,17 @@ ${skinDeliveryCSS}
 				$("#tempDraggable").css("top", (e.pageY + 5) + "px").css("left", (e.pageX + 5) + "px");
 			}
 		});
+				
 		$(document).mouseup(function(e){
+					
+			if($(e.target).closest("div[ondblclick]").length == 0)
+			{
+				if(window.isPageDirty)
+					saveAllEditing();
+				else
+					cancelAllEditing();
+			}
+				
 			if(isDragActive)
 			{
 				isDragActive = false;

@@ -47,7 +47,16 @@
 				$("#igAccountSection .igToolbarHeaderButton").css("float", "right").css("clear", "");
 			}
 		}
-    
+    	var stopClose = false;
+		function closeAccountSection()
+		{
+			setTimeout(function(){
+				if(!stopClose)
+					$('#igAccountSection').slideUp();
+				else
+					stopClose = false;
+				}, 2000);
+		}
 		
 		$(function() {
 				
@@ -68,7 +77,16 @@
 					#end
 				#end
 			#end
-
+			
+			setTimeout(function(){
+				var initialToolIframe = document.getElementById("" + activeToolName + "Iframe");
+				if(initialToolIframe.contentWindow.document.location.href.indexOf("loading.html") > -1)
+				{
+					initialToolIframe.contentWindow.document.location.href = initialToolIframe.src;
+				}
+				
+			}, 1000);
+			
 			$(document).mouseover(function(e) {
 		    	$("#debug").text("mouseover: " + isDragActive + ":"/* + getDragHTML()*/);
 				if(isDragActive && !isLocalDragActive && getDragHTML() != "")
@@ -116,6 +134,15 @@
 		    	else if($(this).val() == "$ui.getString("tool.common.searchDialog.searchFieldDefaultText")")
 		     		$(this).css("color", "#ccc");
 			});
+		
+			
+			$("#igAccountSection, #igAccountSectionButton").hover(
+				function() {
+			    	stopClose = true;
+			  	}, function() {
+			    	closeAccountSection();
+			  	}
+			);
 		
 			initMessageSystem();
 			
@@ -282,7 +309,7 @@
 		#end
 				
 		<div id="igAccountSectionButton" style="position: absolute; top: 10px; right: 10px;">
-			<a href="#" class="igAccountSection" onclick="$('#igAccountSection').slideToggle();"></a>
+			<a href="#" class="igAccountSection" onclick="$('#igAccountSection').slideToggle();closeAccountSection();"></a>
 		</div>
 		
 		<div id="igAccountSection" style="float: right; padding-top: 10px; padding-bottom: 0; margin-right: 10px; text-align: right;">
@@ -311,16 +338,18 @@
 				-->
 				</script>
 			#end
-
-			<a class='igToolbarButton igToolbarHeaderButton' href="#" id="trashcanButton" name="trashcanButton" title="$ui.getString("header.link.trashcan")"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='trashcan' title="$ui.getString("header.link.trashcan")">$ui.getString("header.link.trashcan")</span></span></a>
-			<script type="text/javascript">
-			<!--
-				$("#trashcanButton").click(function(){
-					openInlineDiv("Trashcan.action", 600, 800, true, true, "Trashcan");
-	        	});
-			-->
-			</script>
 	
+			#if($this.hasAccessTo("TrashcanTool.Read", true, false))
+				<a class='igToolbarButton igToolbarHeaderButton' href="#" id="trashcanButton" name="trashcanButton" title="$ui.getString("header.link.trashcan")"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='trashcan' title="$ui.getString("header.link.trashcan")">$ui.getString("header.link.trashcan")</span></span></a>
+				<script type="text/javascript">
+				<!--
+					$("#trashcanButton").click(function(){
+						openInlineDiv("Trashcan.action", 600, 800, true, true, "Trashcan");
+		        	});
+				-->
+				</script>
+			#end
+			
 			<a class='igToolbarButton igToolbarHeaderButton' href="#" id="mySettingsButton" name="mySettingsButton" title="$ui.getString("tool.managementtool.mysettings.header")"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='mySettings' title="$ui.getString("tool.managementtool.mysettings.header")">$ui.getString("tool.managementtool.mysettings.header")</span></span></a>
 			<script type="text/javascript">
 			<!--

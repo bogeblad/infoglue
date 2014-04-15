@@ -81,6 +81,7 @@ import org.infoglue.cms.services.InterceptionService;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
 import org.infoglue.deliver.controllers.kernel.impl.simple.ExtranetController;
+import org.infoglue.deliver.controllers.kernel.impl.simple.RepositoryDeliveryController;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.HttpHelper;
 import org.infoglue.deliver.util.LiveInstanceMonitor;
@@ -1612,6 +1613,17 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	public String getRepositoryName() throws Exception
 	{
 		return RepositoryController.getController().getRepositoryVOWithId(getRepositoryIdImpl()).getName();
+	}
+	
+	/**
+	 * This method gets a property from the extra properties in the repository currently active
+	 */
+	
+	public String getRepositoryExtraProperty(Integer repositoryId, String propertyName)
+	{
+		String propertyValue = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(repositoryId, propertyName);
+		
+	    return propertyValue;
 	}
 	
 	public void logMessage(String message)

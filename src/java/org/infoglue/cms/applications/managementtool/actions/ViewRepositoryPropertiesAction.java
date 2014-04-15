@@ -32,6 +32,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionCont
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
+import org.infoglue.deliver.util.CacheController;
 
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.module.propertyset.PropertySetManager;
@@ -123,6 +124,7 @@ public class ViewRepositoryPropertiesAction extends InfoGluePropertiesAbstractAc
 	    RepositoryVO repositoryVO = RepositoryController.getController().getFirstRepositoryVO();
 	    repositoryVO.setDescription(repositoryVO.getDescription() + ".");
 	    RepositoryController.getController().update(repositoryVO);
+	    CacheController.clearCache("parentRepository");
 	    
     	return "save";
     }

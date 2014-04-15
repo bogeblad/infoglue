@@ -341,7 +341,7 @@ iframe.inactiveTool {
 	-ms-transition: margin-top 1s;
 	-o-transition: margin-top 1s;
 	transition: margin-top 1s;
-	width: 250px;
+	width: 350px;
 }
 #popupAlertMessageDiv p {
 	margin: 0px;

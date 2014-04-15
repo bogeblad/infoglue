@@ -76,7 +76,9 @@
 								console.log(data.users.length); 
 								
 								if(data.users.length == 0 && attemptDirectPublishing == 'false')
+								{
 									alert("$ui.getString("tool.common.noUserWithEmailFound.warning")");
+								}
 								else
 								{
 									listForm.recipientFilter.value = xrecipientFilter.value;
@@ -147,7 +149,8 @@
 	<div class="inlineTabDiv">	
 	
 		#if($this.hasAccessTo("Common.SubmitToPublishButton", true, false, false))
-			#if($allowPublicationEventFilter == "true")
+			#set($repoPublicationFilter = "$this.getRepositoryExtraProperty($!repositoryId, 'publicationEventFilter')")
+			#if($allowPublicationEventFilter == "true" && $repoPublicationFilter != "groupBased")
 				#if($defaultPublicationEventFilter == "emailBased")
 					<p>
 						$ui.getString("tool.common.recipientEmail.label")<br>

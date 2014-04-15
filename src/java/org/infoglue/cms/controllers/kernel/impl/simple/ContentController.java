@@ -3446,7 +3446,7 @@ public class ContentController extends BaseController
 	
     private static void markForDeletionRecursive(Content content, Iterator parentIterator, Database db, boolean skipRelationCheck, boolean skipServiceBindings, boolean forceDelete, InfoGluePrincipal infogluePrincipal, Map<ContentVO, List<ReferenceBean>> contactPersons, boolean notifyResponsibleOnReferenceChange) throws ConstraintException, SystemException, Exception
     {
-        if(!skipRelationCheck)
+        if(!skipRelationCheck && !content.getIsDeleted())
         {
 	        List referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(content.getId(), -1, true, false, db);
 			if(referenceBeanList != null && referenceBeanList.size() > 0 && !forceDelete)

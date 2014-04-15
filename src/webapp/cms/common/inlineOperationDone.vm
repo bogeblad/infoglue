@@ -144,7 +144,9 @@
 	$scripts
 	<script type="text/javascript">
 		#if("$!confirmationMessage" != "")
-			alert("$!confirmationMessage");
+			//alert("$!confirmationMessage");
+			if(top.displayNotification)
+				top.displayNotification("$!confirmationMessage", true, "");
 		#end
 		
 		#if($this.skipResultDialogIfPossible)

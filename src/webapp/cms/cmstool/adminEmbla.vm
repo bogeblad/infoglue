@@ -50,12 +50,15 @@
     	var stopClose = false;
 		function closeAccountSection()
 		{
-			setTimeout(function(){
-				if(!stopClose)
-					$('#igAccountSection').slideUp();
-				else
-					stopClose = false;
-				}, 2000);
+			if($('#igAccountSectionButton').is(':visible'))
+			{
+				setTimeout(function(){
+					if(!stopClose)
+						$('#igAccountSection').slideUp();
+					else
+						stopClose = false;
+					}, 2000);
+			}
 		}
 		
 		$(function() {

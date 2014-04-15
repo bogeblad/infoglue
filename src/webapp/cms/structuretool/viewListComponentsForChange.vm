@@ -106,7 +106,7 @@
 
 			#set($extraParameter = '"iDisplayLength": 20')
 			#if($useSimpleComponentDialog)
-			#set($extraParameter = '"aoColumns": [ {"bVisible": false}, { "sWidth": "30px" }, null, { "sWidth": "10px" }], "iDisplayLength": 20')
+			#set($extraParameter = '"aoColumns": [ {"bVisible": false}, { "sWidth": "30px", "bSearchable": false }, null, { "sWidth": "10px" }], "iDisplayLength": 20')
 			#end
 			#initDataTableImpl("dataTable" $extraParameter)
 

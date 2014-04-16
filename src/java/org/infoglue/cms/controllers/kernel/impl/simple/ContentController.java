@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
+import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -1223,6 +1224,8 @@ public class ContentController extends BaseController
 
 		Map<Integer,Integer> replaceMap = new HashMap<Integer,Integer>();
 		
+		List<Integer> selfContentVersionIDList = new ArrayList<Integer>();
+		
 		Iterator<MediumContentVersionImpl> versionIterator = asset.getContentVersions().iterator();
 		while(versionIterator.hasNext())
 		{
@@ -1232,6 +1235,7 @@ public class ContentController extends BaseController
 				if(version.getContentVersionId().equals(cvVO.getId()))
 				{
 					logger.info("Removing from:" + cvVO.getId());
+					selfContentVersionIDList.add(version.getContentVersionId());
 					versionIterator.remove();
 					replaceMap.put(version.getContentId(), contentId);
 					break;
@@ -1250,99 +1254,119 @@ public class ContentController extends BaseController
    				List<ReferenceBean> referenceBeans = RegistryController.getController().getReferencingObjectsForContentAsset(oldContentId, asset.getAssetKey(), 100, true, true, false);
 
    				logger.info("referenceBeans:" + referenceBeans.size());
+   				for(Integer cvID : selfContentVersionIDList)
+   				{
+   					ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(cvID, db);
+   					
+   					ReferenceBean bean = new ReferenceBean();
+   					ReferenceVersionBean versionBean = new ReferenceVersionBean();
+   					versionBean.setReferencingObject(cvVO);
+   					//bean.setReferencingCompletingObject(versionBean);
+   					bean.getVersions().add(versionBean);
+   					referenceBeans.add(bean);
+   				}
+   				
+   				logger.info("referenceBeans:" + referenceBeans.size());
    				for(ReferenceBean referenceBean : referenceBeans)
    				{
    					logger.info("ReferenceBean:" + referenceBean.getName() + ":" + referenceBean.getReferencingCompletingObject());
-
+   	   				
    					for(ReferenceVersionBean referenceVersionBean : referenceBean.getVersions())
    					{
    						Object o = referenceVersionBean.getReferencingObject();
    						logger.info("o:" + o.getClass().getName());
-   						if(o instanceof ContentVersionVO)
+   						try
    						{
-   							ContentVersionVO cv = (ContentVersionVO)o;
-   							logger.info("Replacing in:" + cv.getId());
-   	   						String newVersionValue = cv.getVersionValue(); //.replaceAll("\"" + oldContentId + "\"", "\"" + newContentId + "\"");
-   							
-   							Pattern p = Pattern.compile("<binding.*?>");
-   						    Matcher m = p.matcher(newVersionValue);
-   						    while (m.find()) 
+	   						if(o instanceof ContentVersionVO)
 	   						{
-   						    	logger.info("Found a " + m.group() + ".");
-	   							String binding = m.group();
-	   							if(binding.contains("\"" + oldContentId + "\"") && binding.contains("\"" + asset.getAssetKey() + "\""))
-	   							{
-	   								binding = binding.replaceFirst("\"" + oldContentId + "\"", "\"" + newContentId + "\"");
-
-	   								logger.info("Replacing:" + m.group() + ":" + binding);
-		   							newVersionValue = StringUtils.replace(newVersionValue, m.group(), binding);
-		   							//newVersionValue = newVersionValue.replaceAll(m.group(), binding);
-		   							logger.info("newVersionValue: " + newVersionValue);
-	   							}
+	   							ContentVersionVO cv = (ContentVersionVO)o;
+	   							logger.info("Replacing in:" + cv.getId());
+	   	   						String newVersionValue = cv.getVersionValue(); //.replaceAll("\"" + oldContentId + "\"", "\"" + newContentId + "\"");
+	   							
+	   							Pattern p = Pattern.compile("<binding.*?>");
+	   						    Matcher m = p.matcher(newVersionValue);
+	   						    while (m.find()) 
+		   						{
+	   						    	logger.info("Found a " + m.group() + ".");
+		   							String binding = m.group();
+		   							if(binding.contains("\"" + oldContentId + "\"") && binding.contains("\"" + asset.getAssetKey() + "\""))
+		   							{
+		   								binding = binding.replaceFirst("\"" + oldContentId + "\"", "\"" + newContentId + "\"");
+	
+		   								logger.info("Replacing:" + m.group() + ":" + binding);
+			   							newVersionValue = StringUtils.replace(newVersionValue, m.group(), binding);
+			   							//newVersionValue = newVersionValue.replaceAll(m.group(), binding);
+			   							logger.info("newVersionValue: " + newVersionValue);
+		   							}
+		   						}
+	   							
+	   						    Pattern pInlineAssets = Pattern.compile("getInlineAssetUrl\\(.*?\\)");
+							    Matcher mInlineAssets = pInlineAssets.matcher(newVersionValue);
+							    while (mInlineAssets.find()) 
+		   						{
+							    	logger.info("Found a " + mInlineAssets.group() + ".");
+		   							String assetCall = mInlineAssets.group();
+		   							if(assetCall.contains(oldContentId + ",") && (assetCall.contains("\"" + asset.getAssetKey() + "\"") || URLDecoder.decode(assetCall, "utf-8").contains("\"" + asset.getAssetKey() + "\"")))
+		   							{
+		   								logger.info("Replacing:" + mInlineAssets.group() + ":" + assetCall);
+	
+			   							assetCall = assetCall.replaceFirst("" + oldContentId + ",", "" + newContentId + ",");
+			   							newVersionValue = StringUtils.replace(newVersionValue, mInlineAssets.group(), assetCall);
+			   							//newVersionValue = newVersionValue.replaceAll(mInlineAssets.group(), assetCall);
+			   							logger.info("newVersionValue: " + newVersionValue);
+		   							}
+		   						}
+							    
+	   							//newVersionValue = newVersionValue.replaceAll("getInlineAssetUrl\\(" + oldContentId + ",", "getInlineAssetUrl(" + newContentId + ",");
+	   							ContentVersion cvReal = ContentVersionController.getContentVersionController().getMediumContentVersionWithId(cv.getId(), db);
+	   							cvReal.setVersionValue(newVersionValue);
+	   							cvReal.setVersionComment("Asset moved...");
+	   							cvReal.setVersionModifier(principal.getName());
+	   							cvReal.setModifiedDateTime(new Date());
+	
+	   							RegistryController.getController().updateContentVersion(cvReal.getValueObject(), null, db);
 	   						}
-   							
-   						    Pattern pInlineAssets = Pattern.compile("getInlineAssetUrl\\(.*?\\)");
-						    Matcher mInlineAssets = pInlineAssets.matcher(newVersionValue);
-						    while (mInlineAssets.find()) 
+	   						else if(o instanceof SiteNodeVersionVO)
 	   						{
-						    	logger.info("Found a " + mInlineAssets.group() + ".");
-	   							String assetCall = mInlineAssets.group();
-	   							if(assetCall.contains(oldContentId + ",") && assetCall.contains("\"" + asset.getAssetKey() + "\""))
-	   							{
-	   								logger.info("Replacing:" + mInlineAssets.group() + ":" + assetCall);
-
-		   							assetCall = assetCall.replaceFirst("" + oldContentId + ",", "" + newContentId + ",");
-		   							newVersionValue = StringUtils.replace(newVersionValue, mInlineAssets.group(), assetCall);
-		   							//newVersionValue = newVersionValue.replaceAll(mInlineAssets.group(), assetCall);
-		   							logger.info("newVersionValue: " + newVersionValue);
-	   							}
-	   						}
-						    
-   							//newVersionValue = newVersionValue.replaceAll("getInlineAssetUrl\\(" + oldContentId + ",", "getInlineAssetUrl(" + newContentId + ",");
-   							ContentVersion cvReal = ContentVersionController.getContentVersionController().getMediumContentVersionWithId(cv.getId(), db);
-   							cvReal.setVersionValue(newVersionValue);
-   							cvReal.setVersionComment("Asset moved...");
-   							cvReal.setVersionModifier(principal.getName());
-   							cvReal.setModifiedDateTime(new Date());
-
-   							RegistryController.getController().updateContentVersion(cvReal.getValueObject(), null, db);
-   						}
-   						else if(o instanceof SiteNodeVersionVO)
-   						{
-   							SiteNodeVersionVO snvo = (SiteNodeVersionVO)o;
+	   							SiteNodeVersionVO snvo = (SiteNodeVersionVO)o;
    							logger.info("Replacing in sn:" + snvo.getId());
-   							
-   			                SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(snvo.getSiteNodeId(), db);
-   				    		LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId(), db);
-   				    		ContentVersionVO cv = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNodeVO.getMetaInfoContentId(), masterLanguageVO.getId(), db);
+	   							
+	   			                SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(snvo.getSiteNodeId(), db);
+	   				    		LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId(), db);
+	   				    		ContentVersionVO cv = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNodeVO.getMetaInfoContentId(), masterLanguageVO.getId(), db);
    				    		logger.info("Replacing in:" + cv.getVersionValue());
-   							
-   							String newVersionValue = cv.getVersionValue(); //.replaceAll("\"" + oldContentId + "\"", "\"" + newContentId + "\"");
-   							
-   							Pattern p = Pattern.compile("<binding.*?>");
-   						    Matcher m = p.matcher(newVersionValue);
-   						    while (m.find()) 
-	   						{
-   						    	logger.info("Found a " + m.group() + ".");
-	   							String binding = m.group();
-	   							if(binding.contains("\"" + oldContentId + "\"") && binding.contains("\"" + asset.getAssetKey() + "\""))
-	   							{
-	   								binding = binding.replaceFirst("\"" + oldContentId + "\"", "\"" + newContentId + "\"");
-
-	   								logger.info("Replacing:" + m.group() + ":" + binding);
-		   							newVersionValue = StringUtils.replace(newVersionValue, m.group(), binding);
-		   							logger.info("newVersionValue: " + newVersionValue);
-	   							}
+	   							
+	   							String newVersionValue = cv.getVersionValue(); //.replaceAll("\"" + oldContentId + "\"", "\"" + newContentId + "\"");
+	   							
+	   							Pattern p = Pattern.compile("<binding.*?>");
+	   						    Matcher m = p.matcher(newVersionValue);
+	   						    while (m.find()) 
+		   						{
+	   						    	logger.info("Found a " + m.group() + ".");
+		   							String binding = m.group();
+		   							if(binding.contains("\"" + oldContentId + "\"") && binding.contains("\"" + asset.getAssetKey() + "\""))
+		   							{
+		   								binding = binding.replaceFirst("\"" + oldContentId + "\"", "\"" + newContentId + "\"");
+	
+		   								logger.info("Replacing:" + m.group() + ":" + binding);
+			   							newVersionValue = StringUtils.replace(newVersionValue, m.group(), binding);
+			   							logger.info("newVersionValue: " + newVersionValue);
+		   							}
+		   						}
+	   							
+	   							ContentVersion cvReal = ContentVersionController.getContentVersionController().getMediumContentVersionWithId(cv.getId(), db);
+	   							cvReal.setVersionValue(newVersionValue);
+	   							cvReal.setVersionComment("Asset moved...");
+	   							cvReal.setVersionModifier(principal.getName());
+	   							cvReal.setModifiedDateTime(new Date());
+	   							
+	   							RegistryController.getController().updateContentVersion(cvReal.getValueObject(), snvo, db);
 	   						}
-   							
-   							ContentVersion cvReal = ContentVersionController.getContentVersionController().getMediumContentVersionWithId(cv.getId(), db);
-   							cvReal.setVersionValue(newVersionValue);
-   							cvReal.setVersionComment("Asset moved...");
-   							cvReal.setVersionModifier(principal.getName());
-   							cvReal.setModifiedDateTime(new Date());
-   							
-   							RegistryController.getController().updateContentVersion(cvReal.getValueObject(), snvo, db);
    						}
+   						catch (Throwable e) 
+   						{
+   							e.printStackTrace();
+						}
    					}
    				}
 			}

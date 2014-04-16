@@ -1752,6 +1752,9 @@ public class RegistryController extends BaseController
                 try
                 {
 	                SiteNodeVersionVO siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
+	                if(!siteNodeVersion.getIsActive())
+	                	add = false;
+	                
 	                SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersion.getSiteNodeId(), db);
 		    		logger.info("siteNodeVersion:" + siteNodeVersion.getSiteNodeVersionId());
 		    		logger.info("siteNode:" + siteNodeVO.getId());
@@ -2395,7 +2398,7 @@ public class RegistryController extends BaseController
         }
         else if (logger.isDebugEnabled())
         {
-        	logger.debug("Already had ReferenceBean for key: " + key);
+        	logger.info("Already had ReferenceBean for key: " + key);
         }
 
         ReferenceVersionBean referenceVersionBean = new ReferenceVersionBean();
@@ -2404,7 +2407,7 @@ public class RegistryController extends BaseController
         {
             try
             {
-				logger.debug("RegistryVO references Content");
+            	logger.info("RegistryVO references Content");
 				ContentVersionVO contentVersion = null;
 				try
 				{
@@ -2421,7 +2424,7 @@ public class RegistryController extends BaseController
 					if (!contentVersion.getIsActive())
 					{
 						add = false;
-						logger.debug("ContentVersion was not active. Will not add to reference list. ContentVersion.id: " + contentVersion.getContentVersionId());
+						logger.info("ContentVersion was not active. Will not add to reference list. ContentVersion.id: " + contentVersion.getContentVersionId());
 					}
 					else
 					{
@@ -2429,7 +2432,7 @@ public class RegistryController extends BaseController
 						if (contentVO.getIsDeleted())
 						{
 							add = false;
-							logger.debug("Content is deleted. Will not add to reference list. Content.id: " + contentVO.getContentId());
+							logger.info("Content is deleted. Will not add to reference list. Content.id: " + contentVO.getContentId());
 						}
 						else
 						{
@@ -2445,7 +2448,7 @@ public class RegistryController extends BaseController
 
 								if (logger.isDebugEnabled())
 								{
-									logger.debug("Latest version in working state for content.id: " + contentVersion.getContentId() + ". latestContentVersion.id: " + (latestContentVersion == null ? "null" : latestContentVersion.getContentVersionId()));
+									logger.info("Latest version in working state for content.id: " + contentVersion.getContentId() + ". latestContentVersion.id: " + (latestContentVersion == null ? "null" : latestContentVersion.getContentVersionId()));
 								}
 
 								if (latestContentVersion != null && latestContentVersion.getContentVersionId().intValue() != contentVersion.getContentVersionId().intValue())
@@ -2499,6 +2502,7 @@ public class RegistryController extends BaseController
 				}
 				if (siteNodeVersion != null)
 				{
+					logger.info("siteNodeVersion:" + siteNodeVersion);
 					if (!siteNodeVersion.getIsActive())
 					{
 						add = false;

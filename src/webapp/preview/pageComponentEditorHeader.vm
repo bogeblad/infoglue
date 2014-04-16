@@ -61,7 +61,6 @@
 <link rel="stylesheet" type="text/css" href="${contextName}/css/componentEditor.css" />
 ${skinDeliveryCSS}
 
-<link type="text/css" href="script/jqueryplugins-latest/ui/css/jquery-ui.css" rel="stylesheet" />	
 <script type="text/javascript" src="script/jquery-latest/jquery.min.js"></script>
 <script type="text/javascript" src="script/jqueryplugins-latest/ui/js/jquery-ui.min.js"></script>
 

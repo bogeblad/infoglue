@@ -2039,6 +2039,22 @@ public class CmsPropertyHandler
 		return list;
 	}
 
+	public static String getThemeFile(String theme, String filePath)
+	{
+		String themeFilePath = "css" + filePath;
+		
+		if(theme != null)
+		{
+			File skinsFile = new File(CmsPropertyHandler.getContextRootPath() + File.separator + "css" + File.separator + "skins" + File.separator + theme + File.separator + filePath);
+			if(skinsFile != null && skinsFile.exists())
+				return "css" + File.separator + "skins" + File.separator + theme + File.separator + filePath;
+			else
+				return null;
+		}
+		else
+			return themeFilePath;
+	}
+
 	public static String getDisableEditOnSightToolbar()
 	{
 		String disableEditOnSightToolbar = getServerNodeProperty("disableEditOnSightToolbar", true, "false");

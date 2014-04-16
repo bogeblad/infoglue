@@ -407,12 +407,24 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 				extraHeader = extraHeader.replaceAll("\\$\\{approveEntityId\\}", "");
 				extraHeader = extraHeader.replaceAll("\\$\\{publishingEventId\\}", "");
 			}
-				
+
+			StringBuffer skinCSS = new StringBuffer();
+
 			String theme = CmsPropertyHandler.getTheme(principal.getName());
 			if(!theme.equalsIgnoreCase("Default"))
-				extraHeader = extraHeader.replaceAll("\\$\\{skinDeliveryCSS\\}", "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + this.getRequest().getContextPath() + "/css/skins/" + theme + "/componentEditor.css\" />");
+			{
+				skinCSS.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + this.getRequest().getContextPath() + "/css/skins/" + theme + "/componentEditor.css\" />");
+				String themeFileJQueryUI = CmsPropertyHandler.getThemeFile(theme, "jquery-ui.css");
+				if(themeFileJQueryUI != null)
+					skinCSS.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + this.getRequest().getContextPath() + "/css/skins/" + theme + "/jquery-ui.css\" />");
+				else
+					skinCSS.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"script/jqueryplugins-latest/ui/css/jquery-ui.css\" />");
+			}
 			else
-				extraHeader = extraHeader.replaceAll("\\$\\{skinDeliveryCSS\\}", "");
+			{
+				skinCSS.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"script/jqueryplugins-latest/ui/css/jquery-ui.css\" />");
+			}
+			extraHeader = extraHeader.replaceAll("\\$\\{skinDeliveryCSS\\}", skinCSS.toString());
 			
 			String sortBaseUrl = componentEditorUrl + "ViewSiteNodePageComponents!moveComponent.action?siteNodeId=" + templateController.getSiteNodeId() + "&languageId=" + templateController.getLanguageId() + "&contentId=" + templateController.getContentId() + "&showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "";
 			extraHeader = extraHeader.replaceAll("\\$\\{sortBaseUrl\\}", sortBaseUrl);

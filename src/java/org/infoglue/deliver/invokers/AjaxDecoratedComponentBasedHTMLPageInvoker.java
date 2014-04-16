@@ -365,12 +365,24 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 
 			extraHeader = extraHeader.replaceAll("\\$\\{publishedLabel\\}", getLocalizedString(locale, "tool.contenttool.state.published"));
 
+			StringBuffer skinCSS = new StringBuffer();
+
 			String theme = CmsPropertyHandler.getTheme(principal.getName());
 			if(!theme.equalsIgnoreCase("Default"))
-				extraHeader = extraHeader.replaceAll("\\$\\{skinDeliveryCSS\\}", "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + this.getRequest().getContextPath() + "/css/skins/" + theme + "/componentEditor.css\" />");
+			{
+				skinCSS.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + this.getRequest().getContextPath() + "/css/skins/" + theme + "/componentEditor.css\" />");
+				String themeFileJQueryUI = CmsPropertyHandler.getThemeFile(theme, "jquery-ui.css");
+				if(themeFileJQueryUI != null)
+					skinCSS.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + this.getRequest().getContextPath() + "/css/skins/" + theme + "/jquery-ui.css\" />");
+				else
+					skinCSS.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"script/jqueryplugins-latest/ui/css/jquery-ui.css\" />");
+			}
 			else
-				extraHeader = extraHeader.replaceAll("\\$\\{skinDeliveryCSS\\}", "");
-
+			{
+				skinCSS.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"script/jqueryplugins-latest/ui/css/jquery-ui.css\" />");
+			}
+			extraHeader = extraHeader.replaceAll("\\$\\{skinDeliveryCSS\\}", skinCSS.toString());
+			
 			this.getTemplateController().getDeliveryContext().setUseFullUrl(oldUseFullUrl);
 
 		    extraBody = extraBody + "<script type=\"text/javascript\">initializeComponentEventHandler('base0_" + component.getId() + "Comp', '" + component.getId() + "', 'base', " + templateController.getSiteNode().getRepositoryId() + ", " + templateController.getSiteNodeId() + ", " + templateController.getLanguageId() + ", " + templateController.getContentId() + ", " + component.getId() + ", " + component.getContentId() + ", '" + URLEncoder.encode(templateController.getOriginalFullURL(), "UTF-8") + "');</script>";

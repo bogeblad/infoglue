@@ -1621,7 +1621,7 @@ public class RegistryController extends BaseController
         return referenceBeanList;
     }
 
-	public Set<SiteNodeVO> getReferencingSiteNodesForContent(Integer contentId, int maxRows, Database db) throws SystemException, Exception
+	public Set<SiteNodeVO> getReferencingSiteNodesForContent(Integer contentId, int maxRows, Database db, Boolean onlyVersionsPreventingDelete) throws SystemException, Exception
     {
 		Timer t = new Timer();
         Set<SiteNodeVO> referenceBeanList = new HashSet<SiteNodeVO>();
@@ -1642,8 +1642,28 @@ public class RegistryController extends BaseController
             try
             {
                 SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(registryVO.getReferencingEntityCompletingId()), db);
-                //t.printElapsedTime("siteNodeVersion 1");
-	    		referenceBeanList.add(siteNodeVO);
+                SiteNodeVersionVO siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
+                
+                if(!onlyVersionsPreventingDelete)
+                	referenceBeanList.add(siteNodeVO);
+                else
+                {
+	                if(siteNodeVersion.getIsActive())
+	                {
+	                	if(siteNodeVersion.getStateId().equals(SiteNodeVersionVO.PUBLISHED_STATE))
+	                	{
+	                		referenceBeanList.add(siteNodeVO);
+	                	}
+	                	else
+	                	{
+	                		SiteNodeVersionVO latestSiteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, siteNodeVersion.getSiteNodeId(), SiteNodeVersionVO.WORKING_STATE);
+	                		if(latestSiteNodeVersion != null && latestSiteNodeVersion.getSiteNodeVersionId() == siteNodeVersion.getSiteNodeVersionId())
+	                		{
+		    					referenceBeanList.add(siteNodeVO);
+		    				}
+	                	}
+	    			}
+                }
             }
             catch(Exception e)
             {

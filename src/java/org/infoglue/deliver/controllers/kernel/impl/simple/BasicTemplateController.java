@@ -3563,7 +3563,7 @@ public class BasicTemplateController implements TemplateController
 			referencingPages = new ArrayList<SiteNodeVO>();
 			try
 			{
-				Set<SiteNodeVO> referencingSiteNodeVOList = RegistryController.getController().getReferencingSiteNodesForContent(contentId, maxRows, this.getDatabase());
+				Set<SiteNodeVO> referencingSiteNodeVOList = RegistryController.getController().getReferencingSiteNodesForContent(contentId, maxRows, this.getDatabase(), true);
 				//List referencingObjects = RegistryController.getController().getReferencingObjectsForContent(contentId, maxRows, this.getDatabase());
 				//t.printElapsedTime("referencingObjects took");
 				
@@ -3584,6 +3584,51 @@ public class BasicTemplateController implements TemplateController
 		
 		return referencingPages;
 	}
+	
+	/**
+	 * This method gets a List of pages referencing the given content.
+	 */
+
+	public List<SiteNodeVO> getReferencingPages(Integer contentId, int maxRows, Boolean excludeCurrentPage, Boolean onlyVersionsPreventingDelete)
+	{
+		String cacheKey = "content_" + contentId + "_" + maxRows + "_" + excludeCurrentPage + "_" + onlyVersionsPreventingDelete;
+		
+		if(logger.isInfoEnabled())
+			logger.info("cacheKey:" + cacheKey);
+		
+		List<SiteNodeVO> referencingPages = (List<SiteNodeVO>)CacheController.getCachedObject("referencingPagesCache", cacheKey);
+		if(referencingPages != null)
+		{
+			if(logger.isInfoEnabled())
+				logger.info("There was an cached referencingPages:" + referencingPages.size());
+		}
+		else
+		{
+			referencingPages = new ArrayList<SiteNodeVO>();
+			try
+			{
+				Set<SiteNodeVO> referencingSiteNodeVOList = RegistryController.getController().getReferencingSiteNodesForContent(contentId, maxRows, this.getDatabase(), onlyVersionsPreventingDelete);
+				//List referencingObjects = RegistryController.getController().getReferencingObjectsForContent(contentId, maxRows, this.getDatabase());
+				//t.printElapsedTime("referencingObjects took");
+				
+				for(SiteNodeVO siteNode : referencingSiteNodeVOList)
+				{
+					if(!excludeCurrentPage || !(siteNode).getId().equals(getSiteNodeId()))
+						referencingPages.add(siteNode);
+				}
+				
+				if(referencingPages != null)
+					CacheController.cacheObject("referencingPagesCache", cacheKey, referencingPages);
+			}
+			catch(Exception e)
+			{
+				logger.error("An error occurred trying to get referencing pages for the contentId " + this.contentId + ":" + e.getMessage(), e);
+			}
+		}
+		
+		return referencingPages;
+	}
+	
 
 	/**
 	 * This method deliveres a String with the URL to the base path of the directory resulting from 

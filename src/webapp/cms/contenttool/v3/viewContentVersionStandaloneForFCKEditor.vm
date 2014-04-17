@@ -82,7 +82,14 @@
 
 	<script type="text/javascript">
 		#if($saveAndExitURL && $saveAndExitURL != "")
-			if(parent)parent.document.location.href = "$saveAndExitURL";
+			if(parent && parent.document.location.href.indexOf("ViewStructureTool") == -1)
+			{
+				parent.document.location.href = "$saveAndExitURL";
+			}
+			else
+			{
+				document.location.href = "$saveAndExitURL";
+			}
 		#elseif($closeOnLoad)
 			refreshCaller();
 		#elseif($publishOnLoad)

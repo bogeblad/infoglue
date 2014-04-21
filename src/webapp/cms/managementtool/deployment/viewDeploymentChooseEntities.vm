@@ -138,7 +138,19 @@
 	{
 		background-color : #E3ECF8;
 	}
-	
+	.next
+	{
+		padding: 5px;
+		text-indent: 20px;
+		font-size: 13px;
+		font-family: Arial,sans-serif;
+		color: #555555;
+		border: 1px solid #D0D1D0;
+		font-weight: bold;
+		outline: medium none;
+		background-position: 8px 3px;
+		line-height: 1.4em;
+	}
 -->
 </style>
 
@@ -292,7 +304,7 @@
 				#set($indexMissingTypes = $indexMissingTypes + 1)
 			#end
 			<br/>
-			<input type="image" src="$ui.getString("images.contenttool.buttons.next")" width="50" height="25">
+			<input type="submit" class="next" value="$ui.getString("tool.common.nextButton.label")" width="50" height="25"/>
 		</form>
 		<script type="text/javascript">
 			if(activateTabId == "undefined")
@@ -343,7 +355,7 @@
 					<tr><td colspan="3">No missing categories</td></tr>
 				#end
 				<tr><td colspan="3">&nbsp;</td></tr>
-				<tr><td colspan="3"><input type="image" src="$ui.getString("images.contenttool.buttons.next")" width="50" height="25"></td></tr>
+				<tr><td colspan="3"><input type="submit" class="next" value="$ui.getString("tool.common.nextButton.label")" width="50" height="25"/></td></tr>
 			  </table>
 			</form>
 			<script type="text/javascript">
@@ -451,7 +463,7 @@
 					<tr><td colspan="3">No missing workflows</td></tr>
 				#end
 				<tr><td colspan="3">&nbsp;</td></tr>
-				<tr><td colspan="3"><input type="image" src="$ui.getString("images.contenttool.buttons.next")" width="50" height="25"></td></tr>
+				<tr><td colspan="3"><input type="submit" class="next" value="$ui.getString("tool.common.nextButton.label")" width="50" height="25"/></td></tr>
 			  </table>
 			</form>
 			<script type="text/javascript">
@@ -587,7 +599,10 @@
 					<tr><td colspan="3">No missing contents</td></tr>
 				#end
 				<tr><td colspan="3">&nbsp;</td></tr>
-				<tr><td colspan="3"><input type="image" src="$ui.getString("images.contenttool.buttons.next")" width="50" height="25"></td></tr>
+				<tr>
+				<td colspan="3">
+					<input type="submit" class="next" value="$ui.getString("tool.common.nextButton.label")" width="50" height="25"/>					
+				</td></tr>
 				</table>
 			</form>
 			<script type="text/javascript">

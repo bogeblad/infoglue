@@ -637,16 +637,57 @@ public class ComponentController extends BaseController
 			        }
 				}
 				
+				List<List<ContentVO>> unionList = new ArrayList<List<ContentVO>>();
 				if(allowedComponentGroups != null && allowedComponentGroups.length > 0)
 				{
 			        for(int i=0; i<allowedComponentGroups.length; i++)
 			        {
 			        	String allowedComponentGroup = allowedComponentGroups[i];
-			        	logger.info("Adding all mathcing:" + allowedComponentGroup);
-			        	List<ContentVO> contents = templatesAndPagePartMap.get(allowedComponentGroup);
-						if(contents != null)
-							results.addAll(contents);
+			        	logger.info("allowedComponentGroup:" + allowedComponentGroup);
+			        	
+			        	if(allowedComponentGroup.trim().startsWith("&"))
+			        	{
+			        		String actualAllowedComponentGroup = allowedComponentGroup.substring(1);
+			        		logger.info("actualAllowedComponentGroup:" + actualAllowedComponentGroup);
+		        			List<ContentVO> contentsToIncludeIfInBoth = templatesAndPagePartMap.get(actualAllowedComponentGroup);
+		        			unionList.add(contentsToIncludeIfInBoth);
+			        	}
+			        	else
+			        	{
+			        		logger.info("Adding all matching:" + allowedComponentGroup);
+				        	List<ContentVO> contents = templatesAndPagePartMap.get(allowedComponentGroup);
+							if(contents != null)
+								results.addAll(contents);
+			        	}
 			        }
+				}
+				
+				if(unionList != null && unionList.size() > 0)
+				{
+					Iterator<ContentVO> resultsIterator = results.iterator();
+					while(resultsIterator.hasNext())
+					{
+						ContentVO originalListContent = resultsIterator.next();
+						boolean isInAllUnions = true; 
+						for(List<ContentVO> contentList : unionList)
+						{
+							if(contentList != null)
+							{
+								boolean isInUnions = false; 
+								for(ContentVO unionContent : contentList)
+								{
+									if(unionContent.getName().equalsIgnoreCase(originalListContent.getName()))
+										isInUnions = true; 
+								}
+								
+								if(!isInUnions)
+									isInAllUnions = false;
+							}
+						}
+						
+						if(!isInAllUnions)
+							resultsIterator.remove();
+					}
 				}
 			}
 			

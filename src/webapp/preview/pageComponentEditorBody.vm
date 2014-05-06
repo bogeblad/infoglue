@@ -314,82 +314,82 @@ function initWYSIWYGInstance(key, isTextField)
 	
 	config["on"] = {
         change: function(e) {
-					    $("#igSaveButton").show();
-					    $("#igCancelButton").show();
-					    $("#igPublishButton").attr("disabled", "disabled").css("opacity",0.5);
-					    $("#igPreviewButton").attr("disabled", "disabled").css("opacity",0.5);
-				        window.saveButtonLabel = $("#igSaveButton").attr("value");
-				        window.isPageDirty = true;
+		    $("#igSaveButton").show();
+		    $("#igCancelButton").show();
+		    $("#igPublishButton").attr("disabled", "disabled").css("opacity",0.5);
+		    $("#igPreviewButton").attr("disabled", "disabled").css("opacity",0.5);
+	        window.saveButtonLabel = $("#igSaveButton").attr("value");
+	        window.isPageDirty = true;
 		},
         blur: function(e) {
-					    window.editorIsActive = false;
+			window.editorIsActive = false;
 		},
 		focus: function(e) {
-				    window.editorIsActive = true;
-					if(window.loadDataOnWYSIWYGActivation[e.editor.element.getId()])
-					{
-						//console.log("YEP");
-						//alert("on focus:" + e.editor.element.getId());
-						var attributeName = editOnSightAttributeNames[e.editor.element.getId()];
-						//alert("att name:" + attributeName);
-						var attributeType = editOnSightAttributeNames[e.editor.element.getId() + "_type"];
-						var attributeContentId = editOnSightAttributeNames[e.editor.element.getId() + "_contentId"];
-						var attributeLanguageId = editOnSightAttributeNames[e.editor.element.getId() + "_languageId"];
-					 	var enableWYSIWYG = editOnSightAttributeNames[e.editor.element.getId() + "_enableWYSIWYG"];
-								
-						var data = "contentId=" + attributeContentId + "&languageId=" + attributeLanguageId + "&attributeName=" + attributeName;
-								
-						$.ajax({
-						   	type: "GET",
-						   	url: "" + componentEditorUrl + "UpdateContentVersionAttribute!getAttributeValue.action",
-						   	data: data,
-						   	cache: false,
-						   	success: function(msg, textStatus){
-								plainAttribute = msg;
-						   		//console.log("loaded: ...." + (plainAttribute == CKEDITOR.instances[e.editor.element.getId()].getData()));
-						   		//console.log(plainAttribute);
-						   		//console.log(CKEDITOR.instances[e.editor.element.getId()].getData());
-						   		
-								window.loadDataOnWYSIWYGActivation[e.editor.element.getId()] = false;
-						   		
-								editOnSightAttributeNames[e.editor.element.getId() + "_originalValue"] = plainAttribute;
-								
-								if(enableWYSIWYG == "true")
-								{
-									if(userPrefferredWYSIWYG  == "ckeditor4" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
-									{
-										//console.log(e.editor.checkDirty());
-										//if(!e.editor.checkDirty())
-										//{
-											var bookmarks = e.editor.getSelection().createBookmarks2(true);
-											e.editor.setData(msg, function() {
-												this.checkDirty(); // true
-												e.editor.getSelection().selectBookmarks(bookmarks);
-												this.resetDirty();
-											});
-										//}
-									}
-								}
-							},
-						   error: function (XMLHttpRequest, textStatus, errorThrown) {
-						   		//alert("textStatus:" + textStatus);
-							   	alert("ResponseCode:" + XMLHttpRequest.status);
-							   	//alert("errorThrown:" + errorThrown);
-							   	if(XMLHttpRequest.status == 403)
-							   	{
-								   alert("You are not logged in properly to the administrative tools - please log in again.");
-								   window.open("" + componentEditorUrl + "ViewCMSTool!loginStandalone.action", "Login", "width=400,height=420");
-							   	}
-							   	else
-							   	{
-								   alert("You are not allowed to edit this text!");
-							   	}
-						   	}
-						});
-					}
-				}
+		    window.editorIsActive = true;
+			if(window.loadDataOnWYSIWYGActivation[e.editor.element.getId()])
+			{
+				//console.log("YEP");
+				//alert("on focus:" + e.editor.element.getId());
+				var attributeName = editOnSightAttributeNames[e.editor.element.getId()];
+				//alert("att name:" + attributeName);
+				var attributeType = editOnSightAttributeNames[e.editor.element.getId() + "_type"];
+				var attributeContentId = editOnSightAttributeNames[e.editor.element.getId() + "_contentId"];
+				var attributeLanguageId = editOnSightAttributeNames[e.editor.element.getId() + "_languageId"];
+			 	var enableWYSIWYG = editOnSightAttributeNames[e.editor.element.getId() + "_enableWYSIWYG"];
+						
+				var data = "contentId=" + attributeContentId + "&languageId=" + attributeLanguageId + "&attributeName=" + attributeName;
+						
+				$.ajax({
+				   	type: "GET",
+				   	url: "" + componentEditorUrl + "UpdateContentVersionAttribute!getAttributeValue.action",
+				   	data: data,
+				   	cache: false,
+				   	success: function(msg, textStatus){
+						plainAttribute = msg;
+				   		//console.log("loaded: ...." + (plainAttribute == CKEDITOR.instances[e.editor.element.getId()].getData()));
+				   		//console.log(plainAttribute);
+				   		//console.log(CKEDITOR.instances[e.editor.element.getId()].getData());
+				   		
+						window.loadDataOnWYSIWYGActivation[e.editor.element.getId()] = false;
+				   		
+						editOnSightAttributeNames[e.editor.element.getId() + "_originalValue"] = plainAttribute;
+						
+						if(enableWYSIWYG == "true")
+						{
+							if(userPrefferredWYSIWYG  == "ckeditor4" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
+							{
+								//console.log(e.editor.checkDirty());
+								//if(!e.editor.checkDirty())
+								//{
+									var bookmarks = e.editor.getSelection().createBookmarks2(true);
+									e.editor.setData(msg, function() {
+										this.checkDirty(); // true
+										e.editor.getSelection().selectBookmarks(bookmarks);
+										this.resetDirty();
+									});
+								//}
+							}
+						}
+					},
+				   error: function (XMLHttpRequest, textStatus, errorThrown) {
+				   		//alert("textStatus:" + textStatus);
+					   	alert("ResponseCode:" + XMLHttpRequest.status);
+					   	//alert("errorThrown:" + errorThrown);
+					   	if(XMLHttpRequest.status == 403)
+					   	{
+						   alert("You are not logged in properly to the administrative tools - please log in again.");
+						   window.open("" + componentEditorUrl + "ViewCMSTool!loginStandalone.action", "Login", "width=400,height=420");
+					   	}
+					   	else
+					   	{
+						   alert("You are not allowed to edit this text!");
+					   	}
+				   	}
+				});
 			}
-
+		}
+	}
+	
 	CKEDITOR.inline( key, config );
 }
 
@@ -448,46 +448,55 @@ function toggleInline(event, id)
 				   key.indexOf("_contentId") == -1 &&
 				   key.indexOf("_languageId") == -1)
 				{
-					//console.log("key:" + key);
-					//console.log("id:" + id);
-										
-					//alert("key:" + key);
-					//alert("key:" + CKEDITOR.instances[key]);
-					if(CKEDITOR.instances[key])
+					try
 					{
-						if (!useDoubleClickOnTextToInlineEdit)
+					
+						//console.log("key:" + key);
+						//console.log("id:" + id);
+											
+						//alert("key:" + key);
+						//alert("key:" + CKEDITOR.instances[key]);
+						if(CKEDITOR.instances[key])
 						{
-							//console.log("Destroy...:" + !turnOn + " for " + key);
-							window.loadDataOnWYSIWYGActivation[key] = true;
-							
-							if (!turnOn)
+							if (!useDoubleClickOnTextToInlineEdit)
 							{
-								CKEDITOR.instances[key].destroy();
-								$("#" + key).attr("contenteditable", "false");
+								//console.log("Destroy...:" + !turnOn + " for " + key);
+								window.loadDataOnWYSIWYGActivation[key] = true;
+								
+								if (!turnOn)
+								{
+									CKEDITOR.instances[key].destroy();
+									$("#" + key).attr("contenteditable", "false");
+								}
+							}
+							else
+							{
+								console.log("Not destroying it: " + key);
 							}
 						}
 						else
 						{
-							console.log("Not destroying it: " + key);
+							//console.log("id:" + id);
+							//console.log("Activating wysiwug for " + key);
+							window.loadDataOnWYSIWYGActivation[key] = true;
+							//editOnSightAttributeNames[key + "_originalValue"] = "" + $("#" + key).html();
+							$("#" + key).attr("contenteditable", "true");
+							if(editOnSightAttributeNames[key + "_type"] == "textfield")
+							{
+								initWYSIWYGInstance(key, true);
+							}
+							else
+							{
+								initWYSIWYGInstance(key, false);
+							}
+								
+							CKEDITOR.instances[key].resetDirty();
 						}
+						
 					}
-					else
+					catch(err)
 					{
-						//console.log("id:" + id);
-						//console.log("Activating wysiwug for " + key);
-						window.loadDataOnWYSIWYGActivation[key] = true;
-						//editOnSightAttributeNames[key + "_originalValue"] = "" + $("#" + key).html();
-						$("#" + key).attr("contenteditable", "true");
-						if(editOnSightAttributeNames[key + "_type"] == "textfield")
-						{
-							initWYSIWYGInstance(key, true);
-						}
-						else
-						{
-							initWYSIWYGInstance(key, false);
-						}
-							
-						CKEDITOR.instances[key].resetDirty();
+						console.log(err);
 					}
 				}
 			}

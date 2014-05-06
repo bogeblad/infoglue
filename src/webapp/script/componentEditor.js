@@ -1,3 +1,5 @@
+if (!window.console) console = {log: function() {}};
+
 var isDragged 			= false;
 var ns 					= (navigator.appName.indexOf("Netscape") != -1);
 var d 					= document;
@@ -1559,7 +1561,7 @@ function saveAttribute(selectedContentId, selectedLanguageId, selectedAttributeN
 		   	url: "" + componentEditorUrl + "UpdateContentVersionAttribute!saveAndReturnValue.action",
 		   	data: data,
 		   	success: function(msg){
-				console.log( "Data Saved: " + msg + ":" + $("#spanInput" + key).parent().size());
+				//console.log( "Data Saved: " + msg + ":" + $("#spanInput" + key).parent().size());
 				$("#spanInput" + key).parent().html(msg);
 			    completeEditInlineSave(selectedContentId, selectedAttributeName);
      			CKEDITOR.instances["attribute" + selectedContentId + selectedAttributeName].resetDirty();

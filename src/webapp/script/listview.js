@@ -1,4 +1,5 @@
 // listview.js
+if (!window.console) console = {log: function() {}};
 
 //-------------------------------------
 // These methods are used for the lists

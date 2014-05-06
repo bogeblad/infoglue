@@ -1,3 +1,5 @@
+if (!window.console) console = {log: function() {}};
+
 var isDragged = false;
 
 var ns = (navigator.appName.indexOf("Netscape") != -1);

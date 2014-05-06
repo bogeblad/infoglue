@@ -1,4 +1,5 @@
 try { document.execCommand('BackgroundImageCache', false, true); } catch(e) {}
+if (!window.console) console = {log: function() {}};
 
 function openInlineDiv(url, height, width, modal, iframe, title) 
 {

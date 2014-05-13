@@ -487,6 +487,7 @@
 			var contentVersionAccessRightsSrcUrl 	= "ViewAccessRights!V3.action?interceptionPointCategory=ContentVersion&extraParameters=$!contentVersionId&showInline=true";
 			var pageDetailsSrcUrl 					= "ViewSiteNode!V3.action?siteNodeId=$siteNodeId&stay=true&inline=true";
 			var pageDetailsAdvancedSrcUrl 			= "ViewSiteNode!V3.action?siteNodeId=$siteNodeId&stay=true&inline=true&advanced=true";
+			var pageLanguagesSrcUrl 				= "ViewSiteNode!V3.action?siteNodeId=$siteNodeId&stay=true&inline=true&showPageLanguages=true";
 			var pageHistorySrcUrl 					= "ViewSiteNodeHistory.action?siteNodeId=$!siteNodeId&inline=true";
 			var pageReferencesSrcUrl 				= "ViewSiteNodeReferences.action?siteNodeId=$!siteNodeId&inline=true";
 			var pageAccessRightsSrcUrl 				= "ViewAccessRights!V3.action?interceptionPointCategory=SiteNodeVersion&extraParameters=$!siteNodeVersionId&showInline=true";
@@ -527,6 +528,12 @@
 				document.editForm.anchor.value = "pageDetailsBlock";
 				if($("#pageDetailsFrame").attr("src") == "")
 					$("#pageDetailsFrame").attr("src", pageDetailsSrcUrl);
+			}
+			else if(tabHref.indexOf("pageLanguagesDiv") > -1) 
+			{
+				document.editForm.anchor.value = "pageLanguagesBlock";
+				if($("#pageLanguagesFrame").attr("src") == "")
+					$("#pageLanguagesFrame").attr("src", pageLanguagesSrcUrl);
 			}
 			else if(tabHref.indexOf("pageDetailsAdvancedDiv") > -1) 
 			{
@@ -576,6 +583,13 @@
 				#elseif($!anchor == "pageDetailsAdvancedBlock")
 					$("#tabsContainer").tabs({ selected: 4, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
 					loadFrame("pageDetailsAdvancedDiv");
+				#elseif($!anchor == "pageLanguagesBlock")
+					#set( $selectedIndex = 4 )
+					#if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false, false))
+						#set( $selectedIndex = 5 )
+					#end
+					$("#tabsContainer").tabs({ selected: $selectedIndex, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					loadFrame("pageLanguagesDiv");
 				#else
 					$("#tabsContainer").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
 					##alert("Anchor: $anchor");
@@ -702,6 +716,9 @@
 			if($("#pageDetailsAdvancedFrame").size() > 0 && $("#pageDetailsAdvancedFrame").get(0).contentWindow.save)
 				$("#pageDetailsAdvancedFrame").get(0).contentWindow.save();
 			
+			if($("#pageLanguagesFrame").size() > 0 && $("#pageLanguagesFrame").get(0).contentWindow.save)
+				$("#pageLanguagesFrame").get(0).contentWindow.save();
+			
 			setTimeout(function(){validateAndSubmitContentForm();}, 500);
 		}
 		
@@ -719,6 +736,9 @@
 			
 			if($("#pageDetailsAdvancedFrame").size() > 0 && $("#pageDetailsAdvancedFrame").get(0).contentWindow.save)
 				$("#pageDetailsAdvancedFrame").get(0).contentWindow.save();
+
+			if($("#pageLanguagesFrame").size() > 0 && $("#pageLanguagesFrame").get(0).contentWindow.save)
+				$("#pageLanguagesFrame").get(0).contentWindow.save();
 
 			document.editForm.closeOnLoad.value = "true";
 			setTimeout(function(){validateAndSubmitContentFormThenClose();}, 500);	
@@ -1009,6 +1029,9 @@
         #if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false, false))
 	        <li><a href="#pageDetailsAdvancedDiv"><span>$ui.getString("tool.common.advanced.label")</span></a></li>	        
         #end
+        #if($this.hasAccessTo("ToolTabsAndButtons.PageLanguagesTab", true, false, false))
+	        <li><a href="#pageLanguagesDiv"><span>$ui.getString("tool.common.languages.label")</span></a></li>	        
+        #end
         <li><a href="#pageHistoryDiv"><span>$ui.getString('tool.contenttool.contentHistoryTab')</span></a></li>
         <li><a href="#pageReferencesDiv"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a></li>
 	        #if($this.hasAccessTo("ToolTabsAndButtons.PageSimpleModeButton", true, false))
@@ -1205,6 +1228,11 @@
 			<div id="pageDetailsDiv" class="inlineTabDiv">
 				<iframe id="pageDetailsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
 			</div>
+	        #if($this.hasAccessTo("ToolTabsAndButtons.PageLanguagesTab", true, false, false))
+				<div id="pageLanguagesDiv" class="inlineTabDiv">
+					<iframe id="pageLanguagesFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+				</div>
+			#end
 	        #if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false, false))
 				<div id="pageDetailsAdvancedDiv" class="inlineTabDiv">
 					<iframe id="pageDetailsAdvancedFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>

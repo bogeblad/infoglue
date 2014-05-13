@@ -103,6 +103,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
    	private String stay = null;
    	private String inline = "false";
    	private String advanced = "false";
+   	private String showPageLanguages = "false";
 	private String dest = "";
    	
    	private VisualFormatter formatter = new VisualFormatter();
@@ -1222,6 +1223,16 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	public void setAdvanced(String advanced) 
 	{
 		this.advanced = advanced;
+	}
+
+	public String getShowPageLanguages() 
+	{
+		return showPageLanguages;
+	}
+
+	public void setShowPageLanguages(String showPageLanguages) 
+	{
+		this.showPageLanguages = showPageLanguages;
 	}
 
 	public Integer getLanguageId() 

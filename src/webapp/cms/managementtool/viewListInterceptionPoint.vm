@@ -9,7 +9,7 @@
 	<!-- 		
 		$(document).ready(function(){
 			
-			#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null, null, null, null ]')
+			#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null, null, null, null ], "aaSorting": [[ 1, "asc" ]]')
 			#initDataTableImpl("dataTable" $extraParameter)
 			#initDeleteLink()
 		});

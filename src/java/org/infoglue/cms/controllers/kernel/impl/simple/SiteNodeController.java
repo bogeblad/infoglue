@@ -1535,10 +1535,6 @@ public class SiteNodeController extends BaseController
 		if(CmsPropertyHandler.getAllowLocalizedSortAndVisibilityProperties())
 			Collections.sort(childrenVOList, new ReflectionComparator("sortOrder"));
 
-		for(SiteNodeVO child : childrenVOList)
-		{
-			System.out.println(child.getName() + ": " + child.getSortOrder());
-		}
 		CacheController.cacheObjectInAdvancedCache("childSiteNodesCache", key, childrenVOList, new String[]{CacheController.getPooledString(3, parentSiteNodeId)}, true);
         
 		return childrenVOList;
@@ -4049,8 +4045,7 @@ public class SiteNodeController extends BaseController
     					
     					List events = new ArrayList();
     					SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestSiteNodeVersionVO(db, orderedSiteNodeVO.getId());
-    					System.out.println(orderedSiteNodeVO.getName() + " - siteNodeVersionVO.getSortOrder():" + siteNodeVersionVO.getSortOrder());
-						Integer localizedSortOrder = 100;
+    					Integer localizedSortOrder = 100;
     					if(CmsPropertyHandler.getAllowLocalizedSortAndVisibilityProperties())
 						{
     						ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(orderedSiteNodeVO.getMetaInfoContentId(), sortLanguageId, db);	

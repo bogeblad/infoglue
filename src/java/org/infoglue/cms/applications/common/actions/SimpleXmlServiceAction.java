@@ -326,7 +326,7 @@ public abstract class SimpleXmlServiceAction extends InfoGlueAbstractAction
     	        RepositoryVO r = (RepositoryVO) i.next();
     			BaseEntityVO entityVO = getRootEntityVO(r.getId(), this.getInfoGluePrincipal());
     	        
-    	        String src= action + "?repositoryId=" + r.getId() + urlArgSeparator + "sortLanguageId=" + sortLanguageId + urlArgSeparator + "parent=" + entityVO.getId();
+    	        String src= action + "?repositoryId=" + r.getId() + urlArgSeparator + (sortLanguageId != null ? "sortLanguageId=" + sortLanguageId : "") + urlArgSeparator + "parent=" + entityVO.getId();
 				if(createAction && src.length() >0) src += urlArgSeparator + "createAction=true";
 				if(action.length()>0 && src.length() >0) src += urlArgSeparator + "action=" + action;
 				String allowedContentTypeIdsUrlEncodedString = getAllowedContentTypeIdsAsUrlEncodedString();
@@ -357,7 +357,7 @@ public abstract class SimpleXmlServiceAction extends InfoGlueAbstractAction
     		BaseNode node = sup.getRootNode();
 			String text = node.getTitle();
 	        String type = TYPE_FOLDER;
-			String src = action + "?repositoryId=" + repositoryId + urlArgSeparator + "sortLanguageId=" + sortLanguageId + urlArgSeparator + "parent=" + node.getId();
+			String src = action + "?repositoryId=" + repositoryId + urlArgSeparator + (sortLanguageId != null ? "sortLanguageId=" + sortLanguageId : "") + urlArgSeparator + "parent=" + node.getId();
 			if(createAction && src.length() >0) src += urlArgSeparator + "createAction=true";
 			if(action.length()>0 && src.length() >0) src += urlArgSeparator + "action=" + action;
 			String allowedContentTypeIdsUrlEncodedString = getAllowedContentTypeIdsAsUrlEncodedString();
@@ -409,7 +409,7 @@ public abstract class SimpleXmlServiceAction extends InfoGlueAbstractAction
 				}
 				
 				// String src = theNode.hasChildren() ? action + "?repositoryId=" + repositoryId + urlArgSeparator + "parent=" + theNode.getId(): "";
-				String src = action + "?repositoryId=" + repositoryId + urlArgSeparator + "sortLanguageId=" + sortLanguageId + urlArgSeparator + "parent=" + theNode.getId();
+				String src = action + "?repositoryId=" + repositoryId + urlArgSeparator + (sortLanguageId != null ? "sortLanguageId=" + sortLanguageId : "") + urlArgSeparator + "parent=" + theNode.getId();
 				if(createAction && src.length() >0) src += urlArgSeparator + "createAction=true";
 				if(createAction && src.length() >0) src += urlArgSeparator + "showLeafs=" + showLeafs;
 				if(action.length()>0 && src.length() >0) src += urlArgSeparator + "action=" + action;

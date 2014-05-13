@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.controllers.usecases.structuretool.UpdateSiteNodeUCC;
 import org.infoglue.cms.controllers.usecases.structuretool.UpdateSiteNodeUCCFactory;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
@@ -74,6 +75,7 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
     private String userSessionKey = null;
    	private String inline = "false";
    	private String advanced = "false";
+   	private String showPageLanguages = "false";
 
 	private ConstraintExceptionBuffer ceb;
 	
@@ -96,90 +98,108 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 			
 			super.initialize(getSiteNodeId());
 			SiteNodeVO oldSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(getSiteNodeId());
-
-			System.out.println(this.advanced);
-			if(this.advanced != null && this.advanced.equals("true"))
-			{
-				this.siteNodeVO = oldSiteNodeVO;
-			}
-			else
-			{
-				this.siteNodeVO.setCreatorName(this.getInfoGluePrincipal().getName());
-				this.siteNodeVO.setMetaInfoContentId(oldSiteNodeVO.getMetaInfoContentId());
-				ceb = this.siteNodeVO.validate();
-			}	
 			
-			ceb.throwIfNotEmpty();
-
-			SiteNodeVersionVO siteNodeVersionVO = null;
-			if(this.advanced != null && this.advanced.equals("true"))
+			synchronized (oldSiteNodeVO) 
 			{
-				siteNodeVersionVO = new SiteNodeVersionVO();
-				siteNodeVersionVO.setContentType(this.getContentType());
-				siteNodeVersionVO.setPageCacheKey(this.getPageCacheKey());
-				siteNodeVersionVO.setPageCacheTimeout(this.getPageCacheTimeout());
-				siteNodeVersionVO.setDisableEditOnSight(this.getDisableEditOnSight());
-				siteNodeVersionVO.setDisableLanguages(this.disableLanguages);
-				siteNodeVersionVO.setDisablePageCache(this.getDisablePageCache());
-				siteNodeVersionVO.setDisableForceIdentityCheck(this.disableForceIdentityCheck);
-				siteNodeVersionVO.setForceProtocolChange(this.forceProtocolChange);
-				siteNodeVersionVO.setIsProtected(this.getIsProtected());
-				siteNodeVersionVO.setIsHidden(this.getIsHidden());
-				siteNodeVersionVO.setVersionModifier(this.getInfoGluePrincipal().getName());
-			}
-			
-			UpdateSiteNodeUCC updateSiteNodeUCC = UpdateSiteNodeUCCFactory.newUpdateSiteNodeUCC();
-			updateSiteNodeUCC.updateSiteNode(this.getInfoGluePrincipal(), this.siteNodeVO, this.siteNodeTypeDefinitionId, siteNodeVersionVO);		
-
-			if(this.advanced != null && this.advanced.equals("true"))
-			{
-		    	Map args = new HashMap();
-			    args.put("globalKey", "infoglue");
-			    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
+				if((this.advanced != null && this.advanced.equals("true")) || (this.showPageLanguages != null && this.showPageLanguages.equals("true")))
+				{
+					this.siteNodeVO = oldSiteNodeVO;
+				}
+				else
+				{
+					this.siteNodeVO.setCreatorName(this.getInfoGluePrincipal().getName());
+					this.siteNodeVO.setMetaInfoContentId(oldSiteNodeVO.getMetaInfoContentId());
+					ceb = this.siteNodeVO.validate();
+				}	
+				
+				ceb.throwIfNotEmpty();
 	
-		    	String oldDisabledLanguages = "" + ps.getString("siteNode_" + getSiteNodeId() + "_disabledLanguages");
-		    	String oldEnabledLanguages = "" + ps.getString("siteNode_" + getSiteNodeId() + "_enabledLanguages");
-		    	boolean changed = false;
-		    	
-		    	String[] values = getRequest().getParameterValues("disabledLanguageId");
-		    	String valueString = "";
-		    	if(values != null)
-		    	{
-		    		for(int i=0; i<values.length; i++)
+				SiteNodeVersionVO siteNodeVersionVO = null;
+				if(this.advanced != null && this.advanced.equals("true"))
+				{
+					siteNodeVersionVO = new SiteNodeVersionVO();
+					siteNodeVersionVO.setContentType(this.getContentType());
+					siteNodeVersionVO.setPageCacheKey(this.getPageCacheKey());
+					siteNodeVersionVO.setPageCacheTimeout(this.getPageCacheTimeout());
+					siteNodeVersionVO.setDisableEditOnSight(this.getDisableEditOnSight());
+					//siteNodeVersionVO.setDisableLanguages(this.disableLanguages);
+					siteNodeVersionVO.setDisablePageCache(this.getDisablePageCache());
+					siteNodeVersionVO.setDisableForceIdentityCheck(this.disableForceIdentityCheck);
+					siteNodeVersionVO.setForceProtocolChange(this.forceProtocolChange);
+					siteNodeVersionVO.setIsProtected(this.getIsProtected());
+					siteNodeVersionVO.setIsHidden(this.getIsHidden());
+					siteNodeVersionVO.setVersionModifier(this.getInfoGluePrincipal().getName());
+				}
+				else if(this.showPageLanguages != null && this.showPageLanguages.equals("true"))
+				{
+					SiteNodeVersionVO currentSiteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(getSiteNodeId());
+					
+					siteNodeVersionVO = new SiteNodeVersionVO();
+					siteNodeVersionVO.setContentType(currentSiteNodeVersionVO.getContentType());
+					siteNodeVersionVO.setPageCacheKey(currentSiteNodeVersionVO.getPageCacheKey());
+					siteNodeVersionVO.setPageCacheTimeout(currentSiteNodeVersionVO.getPageCacheTimeout());
+					siteNodeVersionVO.setDisableEditOnSight(currentSiteNodeVersionVO.getDisableEditOnSight());
+					siteNodeVersionVO.setDisableLanguages(this.disableLanguages);
+					siteNodeVersionVO.setDisablePageCache(currentSiteNodeVersionVO.getDisablePageCache());
+					siteNodeVersionVO.setDisableForceIdentityCheck(currentSiteNodeVersionVO.getDisableForceIdentityCheck());
+					siteNodeVersionVO.setForceProtocolChange(currentSiteNodeVersionVO.getForceProtocolChange());
+					siteNodeVersionVO.setIsProtected(currentSiteNodeVersionVO.getIsProtected());
+					siteNodeVersionVO.setIsHidden(currentSiteNodeVersionVO.getIsHidden());
+					siteNodeVersionVO.setVersionModifier(this.getInfoGluePrincipal().getName());
+				}
+				
+				UpdateSiteNodeUCC updateSiteNodeUCC = UpdateSiteNodeUCCFactory.newUpdateSiteNodeUCC();
+				updateSiteNodeUCC.updateSiteNode(this.getInfoGluePrincipal(), this.siteNodeVO, this.siteNodeTypeDefinitionId, siteNodeVersionVO);		
+	
+				if(this.showPageLanguages != null && this.showPageLanguages.equals("true"))
+				{
+			    	Map args = new HashMap();
+				    args.put("globalKey", "infoglue");
+				    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
+		
+			    	String oldDisabledLanguages = "" + ps.getString("siteNode_" + getSiteNodeId() + "_disabledLanguages");
+			    	String oldEnabledLanguages = "" + ps.getString("siteNode_" + getSiteNodeId() + "_enabledLanguages");
+			    	boolean changed = false;
+			    	
+			    	String[] values = getRequest().getParameterValues("disabledLanguageId");
+			    	String valueString = "";
+			    	if(values != null)
 			    	{
-			    	    if(i > 0)
-			    	        valueString = valueString + ",";
-			    	    valueString = valueString + values[i];  
+			    		for(int i=0; i<values.length; i++)
+				    	{
+				    	    if(i > 0)
+				    	        valueString = valueString + ",";
+				    	    valueString = valueString + values[i];  
+				    	}
 			    	}
-		    	}
-		    	ps.setString("siteNode_" + getSiteNodeId() + "_disabledLanguages", valueString);
-		    	if(!valueString.equals(oldDisabledLanguages))
-		    		changed = true;
-		    	
-		    	values = getRequest().getParameterValues("enabledLanguageId");
-		    	valueString = "";
-		    	if(values != null)
-		    	{
-		    		for(int i=0; i<values.length; i++)
+			    	ps.setString("siteNode_" + getSiteNodeId() + "_disabledLanguages", valueString);
+			    	if(!valueString.equals(oldDisabledLanguages))
+			    		changed = true;
+			    	
+			    	values = getRequest().getParameterValues("enabledLanguageId");
+			    	valueString = "";
+			    	if(values != null)
 			    	{
-			    	    if(i > 0)
-			    	        valueString = valueString + ",";
-			    	    valueString = valueString + values[i];  
+			    		for(int i=0; i<values.length; i++)
+				    	{
+				    	    if(i > 0)
+				    	        valueString = valueString + ",";
+				    	    valueString = valueString + values[i];  
+				    	}
 			    	}
-		    	}
-		    	ps.setString("siteNode_" + getSiteNodeId() + "_enabledLanguages", valueString);
-		    	if(!valueString.equals(oldEnabledLanguages))
-		    		changed = true;
-
-		    	if(changed)
-		    	{
-					NotificationMessage notificationMessage = new NotificationMessage("UpdateSiteNodeAction", "ServerNodeProperties", this.getInfoGluePrincipal().getName(), NotificationMessage.SYSTEM, "0", "ServerNodeProperties");
-					ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
-					//RemoteCacheUpdater.getSystemNotificationMessages().add(notificationMessage);
-		    	}
+			    	ps.setString("siteNode_" + getSiteNodeId() + "_enabledLanguages", valueString);
+			    	if(!valueString.equals(oldEnabledLanguages))
+			    		changed = true;
+	
+			    	if(changed)
+			    	{
+						NotificationMessage notificationMessage = new NotificationMessage("UpdateSiteNodeAction", "ServerNodeProperties", this.getInfoGluePrincipal().getName(), NotificationMessage.SYSTEM, "0", "ServerNodeProperties");
+						ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
+						//RemoteCacheUpdater.getSystemNotificationMessages().add(notificationMessage);
+			    	}
+				}
+		    	
 			}
-	    	
-	    	
 	    	//}
 		//catch(Exception e)
 		//{
@@ -228,7 +248,7 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
     	
     	return "successChooseSiteNodeTypeDefinition";
     }
-
+    
 	public void setSiteNodeId(Integer siteNodeId)
 	{
 		this.siteNodeVO.setSiteNodeId(siteNodeId);	
@@ -427,5 +447,15 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 	public void setAdvanced(String advanced) 
 	{
 		this.advanced = advanced;
+	}
+	
+	public String getShowPageLanguages() 
+	{
+		return showPageLanguages;
+	}
+
+	public void setShowPageLanguages(String showPageLanguages) 
+	{
+		this.showPageLanguages = showPageLanguages;
 	}
 }

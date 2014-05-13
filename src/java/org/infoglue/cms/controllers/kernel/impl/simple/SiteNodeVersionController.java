@@ -2018,7 +2018,7 @@ public class SiteNodeVersionController extends BaseController
 			List<MediumContentVersionImpl> contentVersionList = ContentVersionController.getContentVersionController().getMediumContentVersionList(siteNodeVO.getMetaInfoContentId(), masterLanguageVO.getId(), db);
 			for(MediumContentVersionImpl cv : contentVersionList)
 			{
-				System.out.println("" + Math.abs(cv.getModifiedDateTime().getTime() - siteNodeVersionVO.getModifiedDateTime().getTime()));
+				//System.out.println("" + Math.abs(cv.getModifiedDateTime().getTime() - siteNodeVersionVO.getModifiedDateTime().getTime()));
 				if(Math.abs(cv.getModifiedDateTime().getTime() - siteNodeVersionVO.getModifiedDateTime().getTime()) < 1000)
 				{
 					cv.setIsActive(false);

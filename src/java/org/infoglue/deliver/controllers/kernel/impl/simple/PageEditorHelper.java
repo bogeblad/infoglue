@@ -1978,7 +1978,7 @@ public class PageEditorHelper extends BaseDeliveryController
 			if(displayNameIndex > -1)
 			{    
 			    String displayName = slot.substring(displayNameIndex + 13, slot.indexOf("\"", displayNameIndex + 13));
-			    System.out.println("displayName:" + displayName);
+			    //System.out.println("displayName:" + displayName);
 			    slotBean.setDisplayName(displayName);
 			}
 

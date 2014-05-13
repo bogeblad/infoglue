@@ -118,6 +118,12 @@
 			if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();
 	}
 	
+	function submitLanguageLimitations(select)
+	{
+		console.log($(select).val());
+		document.editForm.submit();
+	}
+	
 	$(document).ready(function(){
 		$("input.compare").hide();
 		$("input.reset").hide();
@@ -162,47 +168,15 @@
 
 	<div style="clear: both;"></div>
 	
-	<h3>$ui.getString("tool.structuretool.siteNodeDetailsHeader") "$name" (#if($stateId == 0)$ui.getString("tool.contenttool.state.working")#elseif($stateId == 2)$ui.getString("tool.contenttool.state.publish")#elseif($stateId == 3)$ui.getString("tool.contenttool.state.published")#end)</h3>
-
+	#if($showPageLanguages == "true")
+	#else
+		<h3>$ui.getString("tool.structuretool.siteNodeDetailsHeader") "$name" (#if($stateId == 0)$ui.getString("tool.contenttool.state.working")#elseif($stateId == 2)$ui.getString("tool.contenttool.state.publish")#elseif($stateId == 3)$ui.getString("tool.contenttool.state.published")#end)</h3>
+	#end
+	
 	<form method="POST" name="editForm" action="UpdateSiteNode!V3.action">
 	
-		#if($advanced == "false")	
-						
-			#if($publicationMessage != "")
-				<p><font color='red'>$publicationMessage</font></p>
-			#end
-			<p>					
-				#editTextFieldCSS("SiteNode.name" "name" $!name "30" true false false "normaltextfield")
-			</p>
-
-				#if($enableDateTimeDirectEditing == "true")
-					#set($dateReadonly = "")
-				#else
-					#set($dateReadonly = "readonly")
-				#end
-			<p><b>$ui.getString("tool.common.publicationSpan.label")</b></p>
-			<p>					
-				#editDateFieldCSS("entity.SiteNode.publishDateTime.label" "publishDateTime" $!publishDateTime "30" "date"  "ViewCalendar.action?date=$!publishDateTimeAsLong&formPath=document.editForm.publishDateTime" "$dateReadonly")<br/>
-			</p>
-			<p>
-				#editDateFieldCSS("entity.SiteNode.expireDateTime.label" "expireDateTime" $!expireDateTime "30" "date"  "ViewCalendar.action?date=$!expireDateTimeAsLong&formPath=document.editForm.expireDateTime" "$dateReadonly")<br/>
-			</p>
-			#if(!$isSiteNodeTypeDefinitionAssigned)
-			<p>	
-				<label for="siteNodeTypeDefinitionId">SiteNode type</label>
-				<select class="siteNodetypes" name="siteNodeTypeDefinitionId">
-					<option value="">Choose page type</option>
-				#foreach ($siteNodeTypeDefinitionVO in $siteNodeTypeDefinitions)
-					<option value="$siteNodeTypeDefinitionVO.getSiteNodeTypeDefinitionId()">$siteNodeTypeDefinitionVO.getName()</option>
-				#end
-				</select>
-			</p>
-			#end
-		
-			<p>$ui.getString("tool.contenttool.versionLastUpdatedByLabel") $siteNodeVersionVO.versionModifier</p>
-							
-		#else
-			
+		#if($advanced == "true")	
+					
 			#if($isSiteNodeTypeDefinitionAssigned)
 			<p>The siteNode is of type $siteNodeTypeDefinition.name</p>
 			#end
@@ -282,7 +256,7 @@
 			<p>	
 				#editTextFieldCSS("SiteNode.pageCacheTimeout" "pageCacheTimeout" $!pageCacheTimeout "30" true false false "date")
 			</p>
-	
+	#*
 			<p>	
 				<label for="disableLanguages">$ui.getString("entity.SiteNode.disableLanguages.label")</label>
 				<select name="disableLanguages" style="width: 115px;">
@@ -306,6 +280,69 @@
 				#end
 				</p>
 			#end
+	*#
+						
+		#elseif($showPageLanguages == "true")
+			
+			<p>	
+				<label for="disableLanguages">$ui.getString("entity.SiteNode.disableLanguages.label")</label>
+				<select name="disableLanguages" style="width: 115px;" onchange="submitLanguageLimitations(this);">
+					<option value="0" #if($!disableLanguages == 0) selected="1" #end> $ui.getString("tool.common.no")</option>	
+					<option value="1" #if($!disableLanguages == 1) selected="1" #end> $ui.getString("tool.common.yes")</option>	
+					<option value="2" #if($!disableLanguages == 2) selected="1" #end> $ui.getString("tool.common.inherit")</option>	
+				</select>
+			</p>
+			#if($disableLanguages == 1)
+				<h4>$ui.getString("tool.structuretool.disableLanguages.header")</h4>
+				<p>
+				#foreach ($language in $availableLanguages)
+					<input type="checkbox" name="disabledLanguageId" value="$language.id" #if($disabledLanguages.contains($language))checked="1"#end>$language.name
+				#end
+				</p>
+				
+				<h4>$ui.getString("tool.structuretool.enableLanguages.header")</h4>
+				<p>
+				#foreach ($language in $availableLanguages)
+					<input type="checkbox" name="enabledLanguageId" value="$language.id" #if($enabledLanguages.contains($language))checked="1"#end>$language.name
+				#end
+				</p>
+			#end
+    	
+							
+		#else
+			
+			#if($publicationMessage != "")
+				<p><font color='red'>$publicationMessage</font></p>
+			#end
+			<p>					
+				#editTextFieldCSS("SiteNode.name" "name" $!name "30" true false false "normaltextfield")
+			</p>
+
+				#if($enableDateTimeDirectEditing == "true")
+					#set($dateReadonly = "")
+				#else
+					#set($dateReadonly = "readonly")
+				#end
+			<p><b>$ui.getString("tool.common.publicationSpan.label")</b></p>
+			<p>					
+				#editDateFieldCSS("entity.SiteNode.publishDateTime.label" "publishDateTime" $!publishDateTime "30" "date"  "ViewCalendar.action?date=$!publishDateTimeAsLong&formPath=document.editForm.publishDateTime" "$dateReadonly")<br/>
+			</p>
+			<p>
+				#editDateFieldCSS("entity.SiteNode.expireDateTime.label" "expireDateTime" $!expireDateTime "30" "date"  "ViewCalendar.action?date=$!expireDateTimeAsLong&formPath=document.editForm.expireDateTime" "$dateReadonly")<br/>
+			</p>
+			#if(!$isSiteNodeTypeDefinitionAssigned)
+			<p>	
+				<label for="siteNodeTypeDefinitionId">SiteNode type</label>
+				<select class="siteNodetypes" name="siteNodeTypeDefinitionId">
+					<option value="">Choose page type</option>
+				#foreach ($siteNodeTypeDefinitionVO in $siteNodeTypeDefinitions)
+					<option value="$siteNodeTypeDefinitionVO.getSiteNodeTypeDefinitionId()">$siteNodeTypeDefinitionVO.getName()</option>
+				#end
+				</select>
+			</p>
+			#end
+		
+			<p>$ui.getString("tool.contenttool.versionLastUpdatedByLabel") $siteNodeVersionVO.versionModifier</p>
 
     	#end
 		
@@ -319,6 +356,7 @@
 		<input type="hidden" name="disableCloseButton" value="$!disableCloseButton"/>
 		<input type="hidden" name="inline" value="$!inline">
 		<input type="hidden" name="advanced" value="$!advanced">
+		<input type="hidden" name="showPageLanguages" value="$!showPageLanguages">
 	
 	</form>
 

@@ -1229,7 +1229,7 @@
 	<action name="org.infoglue.cms.applications.structuretool.actions.UpdateSiteNodeAction" alias="UpdateSiteNode">
 		<view name="input">/cms/structuretool/viewSiteNode.vm</view>
 		<view name="success">ViewSiteNode.action?stay=true</view>
-		<view name="successV3">ViewSiteNode!V3.action?stay=true&amp;inline=${inline}&amp;advanced=${advanced}</view>
+		<view name="successV3">ViewSiteNode!V3.action?stay=true&amp;inline=${inline}&amp;advanced=${advanced}&amp;showPageLanguages=${showPageLanguages}</view>
 		<view name="saveAndExit">ViewListSiteNode.action</view>
 		<view name="saveAndExitV3">ViewSiteNode!V3.action</view>
 		<view name="saveAndExitV3Inline">ViewInlineOperationMessages.action?automaticClose=true&amp;actionUrl=${actionUrl}&amp;target=structure&amp;targetTitle=${targetTitle}&amp;userSessionKey=${userSessionKey}</view>

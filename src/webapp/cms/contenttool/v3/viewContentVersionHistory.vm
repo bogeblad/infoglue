@@ -104,7 +104,7 @@
 		}
 
 		$(document).ready(function(){
-			#set($extraParameter = '"aaSorting": [[ 1, "desc" ]]')
+			#set($extraParameter = '"aaSorting": [[ 5, "desc" ]]')
 			#initDataTableImpl("dataTable" $extraParameter)
 		});
 	-->

@@ -128,7 +128,7 @@
 	
 		$(document).ready(function(){
 
-			#set($extraParameter = '"aaSorting": [[ 1, "desc" ]]')
+			#set($extraParameter = '"aaSorting": [[ 4, "desc" ]]')
 			#initDataTableImpl("siteNodeVersions" $extraParameter)
 			#initDeleteLink()
 			

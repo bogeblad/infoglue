@@ -69,7 +69,7 @@ function refreshTopToolBar(title, toolbarKey, arguments, unrefreshedContentId, c
 	else if(toolbarKey.indexOf("tool.structuretool") > -1)
 	{
 		var deliveryLanguageId = top.getDeliverLanguageId();
-		if(deliveryLanguageId)
+		if(deliveryLanguageId && deliveryLanguageId != -1)
 			newUrl = newUrl + "&languageId=" + deliveryLanguageId;
 		currentUrls["structure"] = newUrl;
 	}

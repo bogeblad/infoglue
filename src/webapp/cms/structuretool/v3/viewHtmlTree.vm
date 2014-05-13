@@ -232,12 +232,17 @@
 			if(!e)
 		        e = window.event;
      		
-     		if(parent && parent.showContextMenu)
-				return parent.showContextMenu("ViewStructureToolAjaxServices!contextMenu.action?siteNodeId=" + element + "&sortLanguageId=$!{sortLanguageId}", e, aWindow);
+     		#set($hash = '"')
+     		#set($sortArg = "")
+     		#if($!sortLanguageId && $sortLanguageId != -1)
+     			#set($sortArg = "+$hash&sortLanguageId=$sortLanguageId$hash")
+     		#end
+     		if(parent && parent.showContextMenu)	
+				return parent.showContextMenu("ViewStructureToolAjaxServices!contextMenu.action?siteNodeId=" + element $sortArg, e, aWindow);
 			else if(parent.parent && parent.parent.showContextMenu)
-				return parent.parent.showContextMenu("ViewStructureToolAjaxServices!contextMenu.action?siteNodeId=" + element + "&sortLanguageId=$!{sortLanguageId}", e, aWindow);
+				return parent.parent.showContextMenu("ViewStructureToolAjaxServices!contextMenu.action?siteNodeId=" + element $sortArg, e, aWindow);
 			else if(top.showContextMenu)
-				return top.showContextMenu("ViewStructureToolAjaxServices!contextMenu.action?siteNodeId=" + element + "&sortLanguageId=$!{sortLanguageId}", e, aWindow);
+				return top.showContextMenu("ViewStructureToolAjaxServices!contextMenu.action?siteNodeId=" + element $sortArg, e, aWindow);
 			else
 			{
     			var clientX = getEventPositionX(e);
@@ -358,7 +363,12 @@
 		#set($par = "&parent=$rootNode.Id")
 	#end 
 	
-	var tree = new WebFXLoadTree("$rootNode.Title", "SimpleStructureXml.action?action=SimpleStructureXml.action&createAction=true&repositoryId=$!{repositoryId}&sortLanguageId=$!{sortLanguageId}$par", "javascript:htmlTreeItemClick('$rootNode.Id','${repositoryId}','$formatter.escapeExtendedHTML($rootNode.Title)');");
+ 	#set($sortArg = "")
+	#if($sortLanguageId && $sortLanguageId != -1)
+		#set($sortArg = "&sortLanguageId=$!{sortLanguageId}")
+	#end
+
+	var tree = new WebFXLoadTree("$rootNode.Title", "SimpleStructureXml.action?action=SimpleStructureXml.action&createAction=true&repositoryId=$!{repositoryId}${sortArg}$par", "javascript:htmlTreeItemClick('$rootNode.Id','${repositoryId}','$formatter.escapeExtendedHTML($rootNode.Title)');");
 	tree.myId = "$rootNode.Id";	
 	document.write(tree);
 
@@ -424,7 +434,7 @@
 		if(typeof(beforeNodeId )=="undefined")
 			beforeNodeId = "-1";
 			
-		jQuery.get("MoveSiteNode!ajax.action", { siteNodeId:"" + siteNodeId, newParentSiteNodeId:"" + newParentSiteNodeId, beforeSiteNodeId:"" + beforeNodeId, sortLanguageId:$!{sortLanguageId} }, function(data){
+		jQuery.get("MoveSiteNode!ajax.action", { siteNodeId:"" + siteNodeId, newParentSiteNodeId:"" + newParentSiteNodeId, beforeSiteNodeId:"" + beforeNodeId #if($sortLanguageId), sortLanguageId:$!sortLanguageId #end }, function(data){
 		  	//alert("Moved: " + data);
 		  	parent.refreshNode(oldParentSiteNodeId, 4, null);
 		  	parent.refreshNode(newParentSiteNodeId, 4, null);

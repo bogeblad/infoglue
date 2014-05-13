@@ -155,7 +155,7 @@
 			window.languageId = top.getDeliverLanguageId();
 			if(languageId)
 			{
-				$("#itreeFrame").attr("src", "ViewStructureHtmlTree!V3.action?repositoryId=${repositoryId}&sortLanguageId=" + languageId);
+				$("#itreeFrame").attr("src", "ViewStructureHtmlTree!V3.action?repositoryId=${repositoryId}" + (languageId != -1 ? "&sortLanguageId=" + languageId : ""));
 			}
 			else
 			{

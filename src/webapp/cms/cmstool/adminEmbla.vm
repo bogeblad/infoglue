@@ -253,7 +253,12 @@
 
 		function getDeliverLanguageId()
 		{
-			return $("#StructureToolIframe")[0].contentWindow.frames["workIframe"].languageId;
+			var location = $("#StructureToolIframe")[0].contentWindow.frames["workIframe"].document.location.href;
+			var languageId = $("#StructureToolIframe")[0].contentWindow.frames["workIframe"].languageId;
+			if(location.indexOf("ViewPage!renderDecoratedPage") > -1 && !languageId)
+				return -1;
+			else
+				return languageId;
 		}
 				
 		function refreshRepositoryList()

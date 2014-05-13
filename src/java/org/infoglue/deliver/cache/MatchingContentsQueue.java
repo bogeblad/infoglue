@@ -228,7 +228,7 @@ public class MatchingContentsQueue implements Runnable
 							InfoGluePrincipal user = UserControllerProxy.getController(dbWrapperCached.getDatabase()).getUser(bean.getUserName());
 							BasicTemplateController tc = new BasicTemplateController(dbWrapperCached, user);
 							DeliveryContext deliveryContext = DeliveryContext.getDeliveryContext(false);
-							tc.setDeliveryControllers(NodeDeliveryController.getNodeDeliveryController(null, null, null), null, null);	
+							tc.setDeliveryControllers(NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null), null, null);	
 							tc.setDeliveryContext(deliveryContext);
 	
 							cachedMatchingContents = tc.getMatchingContents(bean.getContentTypeDefinitionNames(), 
@@ -371,7 +371,7 @@ public class MatchingContentsQueue implements Runnable
 								InfoGluePrincipal user = UserControllerProxy.getController(dbWrapper.getDatabase()).getUser(bean.getUserName());
 								BasicTemplateController tc = new BasicTemplateController(dbWrapper, user);
 								DeliveryContext deliveryContext = DeliveryContext.getDeliveryContext(false);
-								tc.setDeliveryControllers(NodeDeliveryController.getNodeDeliveryController(null, null, null), null, null);	
+								tc.setDeliveryControllers(NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null), null, null);	
 								tc.setDeliveryContext(deliveryContext);
 								
 								List matchingContents = tc.getMatchingContents(bean.getContentTypeDefinitionNames(), 

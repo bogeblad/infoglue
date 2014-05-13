@@ -2066,11 +2066,11 @@ public class NodeDeliveryController extends BaseDeliveryController
         {
             if (i < 0) 
             {
-                siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNodeId(db, infogluePrincipal, repositoryVO.getId(), null, attributeName, null, languageId, deliveryContext);
+                siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null).getSiteNodeId(db, infogluePrincipal, repositoryVO.getId(), null, attributeName, null, languageId, deliveryContext);
             } 
             else 
             {
-                siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNodeId(db, infogluePrincipal, repositoryVO.getId(), path[i], attributeName, siteNodeId, languageId, deliveryContext);
+                siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null).getSiteNodeId(db, infogluePrincipal, repositoryVO.getId(), path[i], attributeName, siteNodeId, languageId, deliveryContext);
             }
             
             if (siteNodeId != null)
@@ -2287,13 +2287,13 @@ public class NodeDeliveryController extends BaseDeliveryController
             {
   	    		if(logger.isInfoEnabled())
 	    	        logger.info("Getting root node");
-                siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNodeId(db, infogluePrincipal, repositoryVO.getId(), null, attributeName, null, languageId, deliveryContext);
+                siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null).getSiteNodeId(db, infogluePrincipal, repositoryVO.getId(), null, attributeName, null, languageId, deliveryContext);
             } 
             else 
             {
   	    		if(logger.isInfoEnabled())
 	    	        logger.info("Getting normal");
-                siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNodeId(db, infogluePrincipal, repositoryVO.getId(), path[i], attributeName, siteNodeId, languageId, deliveryContext);
+                siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null).getSiteNodeId(db, infogluePrincipal, repositoryVO.getId(), path[i], attributeName, siteNodeId, languageId, deliveryContext);
             }
 
             if (siteNodeId != null)
@@ -2319,7 +2319,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 			SiteNodeVO sitenodeVO = getNodeDeliveryController(deliveryContext).getSiteNodeVO(db, new Integer(siteNodeIdString));
 	        for (int i = 0; i < path.length; i++) 
 	        {
-	        	siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNodeId(db, infogluePrincipal, sitenodeVO.getRepositoryId(), path[i], attributeName, parentSiteNodeId, languageId, deliveryContext);
+	        	siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null).getSiteNodeId(db, infogluePrincipal, sitenodeVO.getRepositoryId(), path[i], attributeName, parentSiteNodeId, languageId, deliveryContext);
     			if(siteNodeId != null)
     				parentSiteNodeId = siteNodeId;
 	        }
@@ -2350,7 +2350,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 		SiteNodeVO sitenodeVO = getNodeDeliveryController(deliveryContext).getSiteNodeVO(db, new Integer(siteNodeIdString));
 		for (int i = 0; i < path.length; i++) 
         {
-        	siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNodeId(db, infogluePrincipal, sitenodeVO.getRepositoryId(), path[i], attributeName, parentSiteNodeId, languageId, deliveryContext);
+        	siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null).getSiteNodeId(db, infogluePrincipal, sitenodeVO.getRepositoryId(), path[i], attributeName, parentSiteNodeId, languageId, deliveryContext);
 			if(siteNodeId != null)
 				parentSiteNodeId = siteNodeId;
         }
@@ -2958,7 +2958,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 		        	SiteNode siteNode = (SiteNode)results.next();
 		        	if(isValidSiteNode(siteNode, db))
 		        	{
-		        		if(CmsPropertyHandler.getAllowLocalizedSortAndVisibilityProperties())
+		        		if(CmsPropertyHandler.getAllowLocalizedSortAndVisibilityProperties() && languageId != null)
 		        		{
 							String localizedIsHidden = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, siteNode.getMetaInfoContentId(), languageId, "HideInNavigation", siteNode.getId(), true, deliveryContext, UserControllerProxy.getController().getUser(CmsPropertyHandler.getAnonymousUser()), false, true);
 							String localizedSortOrder = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, siteNode.getMetaInfoContentId(), languageId, "SortOrder", siteNode.getId(), true, deliveryContext, UserControllerProxy.getController().getUser(CmsPropertyHandler.getAnonymousUser()), false, true);

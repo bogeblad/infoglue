@@ -1833,7 +1833,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 			    	filePath += File.separator + folderName;
 			}
 
-			SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNodeVO(db, siteNodeId);
+			SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null).getSiteNodeVO(db, siteNodeId);
 			String dnsName = CmsPropertyHandler.getWebServerAddress();
 			if(siteNodeVO != null)
 			{
@@ -1842,7 +1842,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 					dnsName = repositoryVO.getDnsName();
 			}
 			/*
-			SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNode(db, siteNodeId);
+			SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null).getSiteNode(db, siteNodeId);
 			String dnsName = CmsPropertyHandler.getWebServerAddress();
 			if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
 				dnsName = siteNode.getRepository().getDnsName();
@@ -2282,7 +2282,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 			    	filePath += File.separator + folderName;
 			}
 			
-			SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNodeVO(db, siteNodeId);
+			SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null).getSiteNodeVO(db, siteNodeId);
 			String dnsName = CmsPropertyHandler.getWebServerAddress();
 			if(siteNodeVO != null)
 			{
@@ -2291,7 +2291,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 					dnsName = repositoryVO.getDnsName();
 			}
 			/*
-			SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNode(db, siteNodeId);
+			SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null).getSiteNode(db, siteNodeId);
 			String dnsName = CmsPropertyHandler.getWebServerAddress();
 			if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
 				dnsName = siteNode.getRepository().getDnsName();
@@ -2374,7 +2374,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 				//DigitalAssetDeliveryController.getDigitalAssetDeliveryController().dumpDigitalAsset(digitalAsset, fileName, filePath);
 				//DigitalAssetDeliveryController.getDigitalAssetDeliveryController().dumpDigitalAssetThumbnail(digitalAsset, fileName, thumbnailFileName, filePath, width, height);
 				
-				SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNodeVO(db, siteNodeId);
+				SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null).getSiteNodeVO(db, siteNodeId);
 				String dnsName = CmsPropertyHandler.getWebServerAddress();
 				if(siteNodeVO != null)
 				{
@@ -2649,7 +2649,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 				filePath = CmsPropertyHandler.getProperty("digitalAssetPath." + i);
 			}
 
-			SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNodeVO(db, siteNodeId);
+			SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null).getSiteNodeVO(db, siteNodeId);
 			String dnsName = CmsPropertyHandler.getWebServerAddress();
 			if(siteNodeVO != null)
 			{
@@ -2658,7 +2658,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 					dnsName = repositoryVO.getDnsName();
 			}
 			/*
-			SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNode(db, siteNodeId);
+			SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null).getSiteNode(db, siteNodeId);
 			String dnsName = CmsPropertyHandler.getWebServerAddress();
 			if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
 				dnsName = siteNode.getRepository().getDnsName();

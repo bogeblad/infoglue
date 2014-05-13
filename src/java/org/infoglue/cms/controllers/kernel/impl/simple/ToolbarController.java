@@ -1873,6 +1873,7 @@ public class ToolbarController implements ToolbarProvider
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
 		String siteNodeId = request.getParameter("siteNodeId");
+		String languageId = request.getParameter("languageId");
 		SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(siteNodeId));
 		
 		SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(new Integer(siteNodeId));
@@ -1946,7 +1947,7 @@ public class ToolbarController implements ToolbarProvider
 		ToolbarButton pageMetaDataButton = new ToolbarButton("",
 			getLocalizedString(locale, "tool.structuretool.toolbarV3.editPageMetaInfoLabel"), 
 			getLocalizedString(locale, "tool.structuretool.toolbarV3.editPageMetaInfoTitle"),
-			"ViewAndCreateContentForServiceBinding.action?siteNodeId=" + siteNodeId + "&repositoryId=" + siteNodeVO.getRepositoryId() + "&siteNodeVersionId=" + siteNodeVersionVO.getId() + "&hideLeafs=true&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
+			"ViewAndCreateContentForServiceBinding.action?siteNodeId=" + siteNodeId + ((languageId != null && !languageId.equals("")) ? "&languageId=" + languageId : "") + "&repositoryId=" + siteNodeVO.getRepositoryId() + "&siteNodeVersionId=" + siteNodeVersionVO.getId() + "&hideLeafs=true&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
 			"",
 			"properties");
 

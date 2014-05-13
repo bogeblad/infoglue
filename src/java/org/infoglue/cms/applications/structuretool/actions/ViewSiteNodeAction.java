@@ -87,6 +87,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	private Integer unrefreshedSiteNodeId 	= new Integer(0);
 	private Integer changeTypeId 			= new Integer(0);
 	private Integer repositoryId 			= null;
+	private Integer languageId 				= null;
 	private SiteNodeTypeDefinitionVO siteNodeTypeDefinitionVO;
 	private List availableServiceBindings 	= null;
 	private List serviceBindings 			= null;
@@ -471,7 +472,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	    			//if(isMetaInfoInWorkingState)
 	    			if(true)
 	    		    {
-	    			    String url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + getSiteNodeId() + "&languageId=" + masterLanguageVO.getId() + "&contentId=-1&cmsUserName=" + formatter.encodeURI(this.getInfoGluePrincipal().getName());
+	    			    String url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + getSiteNodeId() + "&languageId=" + (this.languageId != null ? this.languageId : masterLanguageVO.getId()) + "&contentId=-1&cmsUserName=" + formatter.encodeURI(this.getInfoGluePrincipal().getName());
 	    			    url = this.getResponse().encodeURL(url);
 	    				this.getResponse().sendRedirect(url);
 	    				result = NONE;
@@ -598,7 +599,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	    			//if(isMetaInfoInWorkingState)
 	    			if(true)
 	    		    {
-	    			    String url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + getSiteNodeId() + "&languageId=" + masterLanguageVO.getId() + "&contentId=-1&cmsUserName=" + formatter.encodeURI(this.getInfoGluePrincipal().getName());
+	    			    String url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + getSiteNodeId() + "&languageId=" + (this.languageId != null ? this.languageId : masterLanguageVO.getId()) + "&contentId=-1&cmsUserName=" + formatter.encodeURI(this.getInfoGluePrincipal().getName());
 	    			    url = this.getResponse().encodeURL(url);
 	    				this.getResponse().sendRedirect(url);
 	    				result = NONE;
@@ -1221,6 +1222,16 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	public void setAdvanced(String advanced) 
 	{
 		this.advanced = advanced;
+	}
+
+	public Integer getLanguageId() 
+	{
+		return languageId;
+	}
+
+	public void setLanguageId(Integer languageId) 
+	{
+		this.languageId = languageId;
 	}
 	
 

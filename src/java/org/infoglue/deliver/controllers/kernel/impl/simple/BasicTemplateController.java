@@ -6694,7 +6694,7 @@ public class BasicTemplateController implements TemplateController
 					}
 					else
 					{
-						System.out.println("IT CAN REALLY HAPPEN.....");
+						logger.warn("IT CAN REALLY HAPPEN.....");
 						webPage.setMetaInfoContentId(this.nodeDeliveryController.getMetaInfoContentId(getDatabase(), this.getPrincipal(), siteNodeVO.getSiteNodeId(), META_INFO_BINDING_NAME, USE_INHERITANCE, this.deliveryContext));
 					}
 					
@@ -6792,7 +6792,7 @@ public class BasicTemplateController implements TemplateController
 				List childNodeVOList = this.nodeDeliveryController.getChildSiteNodes(getDatabase(), siteNodeId, levelsToPopulate, showHidden, nameFilter);
 				//if(logger.isInfoEnabled())
 					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildPages.getChildSiteNodes(micro)", t.getElapsedTimeNanos() / 1000);
-					childPages = getPages(childNodeVOList, escapeHTML, hideUnauthorizedPages, showHidden);
+				childPages = getPages(childNodeVOList, escapeHTML, hideUnauthorizedPages, showHidden);
 				//if(logger.isInfoEnabled())
 					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildPages.getPages(micro)", t.getElapsedTimeNanos() / 1000);
 					
@@ -6812,7 +6812,6 @@ public class BasicTemplateController implements TemplateController
 			//System.out.println("Found cached childPages:" + childPages.size());
 			for(WebPage page : childPages)
 				this.getDeliveryContext().addUsedSiteNode(CacheController.getPooledString(3, page.getSiteNodeId()));
-
 		}
 		
 		return childPages;
@@ -7736,7 +7735,7 @@ public class BasicTemplateController implements TemplateController
 					if(principal.getName().equals(CmsPropertyHandler.getAnonymousUser()))
 						hasUserPageAccess = AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), false);
 					else
-					hasUserPageAccess = AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString());
+						hasUserPageAccess = AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString());
 					if(!hasUserPageAccess && getIsDecorated() && getDeliveryContext().getConsiderEditorInDecoratedMode())
 				    {
 					    String cmsUserName = (String)getHttpServletRequest().getSession().getAttribute("cmsUserName");

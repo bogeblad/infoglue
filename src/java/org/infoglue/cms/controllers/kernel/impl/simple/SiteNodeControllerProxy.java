@@ -234,16 +234,16 @@ public class SiteNodeControllerProxy extends SiteNodeController
 	 * This method moves a content after first checking that the user has rights to edit it.
 	 */
 
-	public void acMoveSiteNode(InfoGluePrincipal infogluePrincipal, SiteNodeVO siteNodeVO, Integer newParentSiteNodeId) throws ConstraintException, SystemException, Bug, Exception
+	public void acMoveSiteNode(InfoGluePrincipal infogluePrincipal, SiteNodeVO siteNodeVO, Integer newParentSiteNodeId, Integer sortLanguageId) throws ConstraintException, SystemException, Bug, Exception
 	{
-		acMoveSiteNode(infogluePrincipal, siteNodeVO, newParentSiteNodeId, null);
+		acMoveSiteNode(infogluePrincipal, siteNodeVO, newParentSiteNodeId, null, sortLanguageId);
 	}
 	
 	/**
 	 * This method moves a content after first checking that the user has rights to edit it.
 	 */
 
-	public void acMoveSiteNode(InfoGluePrincipal infogluePrincipal, SiteNodeVO siteNodeVO, Integer newParentSiteNodeId, Integer beforeSiteNodeId) throws ConstraintException, SystemException, Bug, Exception
+	public void acMoveSiteNode(InfoGluePrincipal infogluePrincipal, SiteNodeVO siteNodeVO, Integer newParentSiteNodeId, Integer beforeSiteNodeId, Integer sortLanguageId) throws ConstraintException, SystemException, Bug, Exception
 	{
 		Map hashMap = new HashMap();
 		hashMap.put("siteNodeId", siteNodeVO.getId());
@@ -266,27 +266,27 @@ public class SiteNodeControllerProxy extends SiteNodeController
 		}
 	
 		if(beforeSiteNodeId != null)
-			changeSiteNodeSortOrder(siteNodeVO.getId(), beforeSiteNodeId, null, infogluePrincipal);
+			changeSiteNodeSortOrder(siteNodeVO.getId(), beforeSiteNodeId, null, infogluePrincipal, sortLanguageId);
 	}   
 	
-	public void acChangeSiteNodeSortOrder(InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer beforeSiteNodeId, String direction) throws Exception
+	public void acChangeSiteNodeSortOrder(InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer beforeSiteNodeId, String direction, Integer sortLanguageId) throws Exception
 	{
 		Map hashMap = new HashMap();
 		hashMap.put("siteNodeId", siteNodeId);
     	
 		intercept(hashMap, "SiteNodeVersion.MoveSiteNode", infoGluePrincipal);
 		
-		changeSiteNodeSortOrder(siteNodeId, beforeSiteNodeId, direction, infoGluePrincipal);
+		changeSiteNodeSortOrder(siteNodeId, beforeSiteNodeId, direction, infoGluePrincipal, sortLanguageId);
 	}   
 	
-	public void acToggleHidden(InfoGluePrincipal infoGluePrincipal, Integer siteNodeId) throws Exception
+	public void acToggleHidden(InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer sortLanguageId) throws Exception
 	{
 		Map hashMap = new HashMap();
 		hashMap.put("siteNodeId", siteNodeId);
     	
 		intercept(hashMap, "SiteNodeVersion.MoveSiteNode", infoGluePrincipal);
 		
-		toggleSiteNodeHidden(siteNodeId, infoGluePrincipal);
+		toggleSiteNodeHidden(siteNodeId, infoGluePrincipal, sortLanguageId);
 	}   
 
 	/**

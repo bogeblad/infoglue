@@ -2477,7 +2477,7 @@ public class CacheController extends Thread
 					{
 						clear = true;
 					}
-					if(cacheName.equalsIgnoreCase("childSiteNodesCache") && entity.indexOf("SiteNode") > 0)
+					if(cacheName.equalsIgnoreCase("childSiteNodesCache") && (entity.indexOf("SiteNode") > 0 || entity.indexOf("ContentVersion") > 0))
 					{
 						clear = true;
 						selectiveCacheUpdate = true;
@@ -2992,7 +2992,7 @@ public class CacheController extends Thread
 										}
 							    		//t.printElapsedTime("assetUrlCacheWithGroups");
 						    		}
-							    	else if(cacheName.equals("childPagesCache"))
+							    	else if(cacheName.equals("childPagesCache") || cacheName.equals("childSiteNodesCache"))
 						    		{
 							    		//System.out.println("childPagesCache:" + entity + "=" + entityId);
 							    		//t.printElapsedTime("childPagesCache start");

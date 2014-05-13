@@ -51,8 +51,9 @@ public class MoveSiteNodeAction extends InfoGlueAbstractAction
    	private String userSessionKey;
     private String originalAddress;
     private String returnAddress;
+    private Integer sortLanguageId;
 
-    private ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
+	private ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
    	private SiteNodeVO siteNodeVO = new SiteNodeVO();
    	private String siteNodeName = null;
    	
@@ -164,7 +165,7 @@ public class MoveSiteNodeAction extends InfoGlueAbstractAction
     {
         ceb.throwIfNotEmpty();
     	
-		SiteNodeControllerProxy.getSiteNodeControllerProxy().acMoveSiteNode(this.getInfoGluePrincipal(), this.siteNodeVO, this.newParentSiteNodeId);
+		SiteNodeControllerProxy.getSiteNodeControllerProxy().acMoveSiteNode(this.getInfoGluePrincipal(), this.siteNodeVO, this.newParentSiteNodeId, this.sortLanguageId);
 	    
 		this.returnAddress = "ViewSiteNode.action?siteNodeId=" + this.siteNodeVO.getId() + "&repositoryId=" + this.repositoryId;
 		
@@ -182,7 +183,7 @@ public class MoveSiteNodeAction extends InfoGlueAbstractAction
     		this.parentSiteNodeId = siteNodeVO.getParentSiteNodeId();
     		logger.info("parentSiteNodeId:" + parentSiteNodeId);
             
-    		SiteNodeControllerProxy.getSiteNodeControllerProxy().acMoveSiteNode(this.getInfoGluePrincipal(), siteNodeVO, this.newParentSiteNodeId);
+    		SiteNodeControllerProxy.getSiteNodeControllerProxy().acMoveSiteNode(this.getInfoGluePrincipal(), siteNodeVO, this.newParentSiteNodeId, this.sortLanguageId);
 
             setActionExtraData(userSessionKey, "refreshToolbarAndMenu", "" + true);
             setActionExtraData(userSessionKey, "repositoryId", "" + this.repositoryId);
@@ -230,8 +231,8 @@ public class MoveSiteNodeAction extends InfoGlueAbstractAction
 
     		this.parentSiteNodeId = siteNodeVO.getParentSiteNodeId();
     		logger.info("parentSiteNodeId:" + parentSiteNodeId);
-            
-    		SiteNodeControllerProxy.getSiteNodeControllerProxy().acMoveSiteNode(this.getInfoGluePrincipal(), siteNodeVO, this.newParentSiteNodeId, this.beforeSiteNodeId);
+
+    		SiteNodeControllerProxy.getSiteNodeControllerProxy().acMoveSiteNode(this.getInfoGluePrincipal(), siteNodeVO, this.newParentSiteNodeId, this.beforeSiteNodeId, this.sortLanguageId);
         }
         catch(ConstraintException ce)
         {
@@ -275,6 +276,16 @@ public class MoveSiteNodeAction extends InfoGlueAbstractAction
 	public void setOriginalAddress(String originalAddress)
 	{
 		this.originalAddress = originalAddress;
+	}
+
+	public Integer getSortLanguageId() 
+	{
+		return sortLanguageId;
+	}
+	
+	public void setSortLanguageId(Integer sortLanguageId) 
+	{
+		this.sortLanguageId = sortLanguageId;
 	}
 
 }

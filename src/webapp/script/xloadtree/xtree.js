@@ -589,13 +589,14 @@ WebFXTree.prototype.toString = function() {
  * WebFXTreeItem class
  */
 
-function WebFXTreeItem(sText, sAction, eParent, sIcon, sOpenIcon, isProtected, stateId, isHidden, contentTypeDefinitionId) {
+function WebFXTreeItem(sText, sAction, eParent, sIcon, sOpenIcon, isProtected, stateId, isHidden, contentTypeDefinitionId, isLocalized) {
 	this.base = WebFXTreeAbstractNode;
 	this.base(sText, sAction);
 	this.isProtected = isProtected;
 	this.stateId = stateId;
 	this.isHidden = isHidden;
 	this.contentTypeDefinitionId = contentTypeDefinitionId;
+	this.isLocalized = isLocalized;
 	
 	/* Defaults to close */
 	if (webFXTreeConfig.usePersistence)
@@ -777,24 +778,33 @@ WebFXTreeItem.prototype.toString = function (nItem, nItemCount) {
 		classInfo = "workingTreeItem";
 		stateInfo = " (working)";
 		if(languageCode == "sv")
-			stateInfo = " (arbetskopia)";
+			stateInfo = " (arbetskopia";
 	}
 	else if(this.stateId == "1"){ 
 		classInfo = "finishedTreeItem";
 		stateInfo = " (finished)";
 		if(languageCode == "sv")
-			stateInfo = " (slutf�rd)";
+			stateInfo = " (slutf�rd";
 	}
 	else if(this.stateId == "2"){ 
 		classInfo = "publishTreeItem";
 		stateInfo = " (publish)";
 		if(languageCode == "sv")
-			stateInfo = " (publicerbar)";
+			stateInfo = " (publicerbar";
 	}
 	else
 	{
 		classInfo = "publishedTreeItem";		
 	}
+	
+	if(stateInfo != "")
+	{
+		if(languageCode != "sv")
+			stateInfo = stateInfo + (this.isLocalized == 'false' ? " - not translated)" : ")")
+		else if(languageCode == "sv")
+			stateInfo = stateInfo + (this.isLocalized == 'false' ? " - ej &ouml;versatt)" : ")")
+	}
+		
 		
 	var iconClass = "";
 	if(""+this.contentTypeDefinitionId != 'null')

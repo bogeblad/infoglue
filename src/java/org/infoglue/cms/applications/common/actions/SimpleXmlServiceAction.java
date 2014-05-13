@@ -93,6 +93,7 @@ public abstract class SimpleXmlServiceAction extends InfoGlueAbstractAction
     protected boolean useTemplate = false;
     protected VisualFormatter formatter = new VisualFormatter();
 	protected String[] allowedContentTypeIds = null;
+	private Integer sortLanguageId;
 	
 	/*
 	 * 
@@ -325,7 +326,7 @@ public abstract class SimpleXmlServiceAction extends InfoGlueAbstractAction
     	        RepositoryVO r = (RepositoryVO) i.next();
     			BaseEntityVO entityVO = getRootEntityVO(r.getId(), this.getInfoGluePrincipal());
     	        
-    	        String src= action + "?repositoryId=" + r.getId() + urlArgSeparator + "parent=" + entityVO.getId();
+    	        String src= action + "?repositoryId=" + r.getId() + urlArgSeparator + "sortLanguageId=" + sortLanguageId + urlArgSeparator + "parent=" + entityVO.getId();
 				if(createAction && src.length() >0) src += urlArgSeparator + "createAction=true";
 				if(action.length()>0 && src.length() >0) src += urlArgSeparator + "action=" + action;
 				String allowedContentTypeIdsUrlEncodedString = getAllowedContentTypeIdsAsUrlEncodedString();
@@ -356,7 +357,7 @@ public abstract class SimpleXmlServiceAction extends InfoGlueAbstractAction
     		BaseNode node = sup.getRootNode();
 			String text = node.getTitle();
 	        String type = TYPE_FOLDER;
-			String src = action + "?repositoryId=" + repositoryId + urlArgSeparator + "parent=" + node.getId();
+			String src = action + "?repositoryId=" + repositoryId + urlArgSeparator + "sortLanguageId=" + sortLanguageId + urlArgSeparator + "parent=" + node.getId();
 			if(createAction && src.length() >0) src += urlArgSeparator + "createAction=true";
 			if(action.length()>0 && src.length() >0) src += urlArgSeparator + "action=" + action;
 			String allowedContentTypeIdsUrlEncodedString = getAllowedContentTypeIdsAsUrlEncodedString();
@@ -372,6 +373,7 @@ public abstract class SimpleXmlServiceAction extends InfoGlueAbstractAction
 	        	.addAttribute("repositoryId", "" + repositoryId)
 	        	.addAttribute("text", encode(text))
 	        	.addAttribute("src", src)
+	        	.addAttribute("isLocalized", (String)node.getParameters().get("isLocalized"))
    	        	.addAttribute("isHidden", (String)node.getParameters().get("isHidden"))
    	        	.addAttribute("hasChildren", "true")
 	        	.addAttribute("type", type);
@@ -407,7 +409,7 @@ public abstract class SimpleXmlServiceAction extends InfoGlueAbstractAction
 				}
 				
 				// String src = theNode.hasChildren() ? action + "?repositoryId=" + repositoryId + urlArgSeparator + "parent=" + theNode.getId(): "";
-				String src = action + "?repositoryId=" + repositoryId + urlArgSeparator + "parent=" + theNode.getId();
+				String src = action + "?repositoryId=" + repositoryId + urlArgSeparator + "sortLanguageId=" + sortLanguageId + urlArgSeparator + "parent=" + theNode.getId();
 				if(createAction && src.length() >0) src += urlArgSeparator + "createAction=true";
 				if(createAction && src.length() >0) src += urlArgSeparator + "showLeafs=" + showLeafs;
 				if(action.length()>0 && src.length() >0) src += urlArgSeparator + "action=" + action;
@@ -421,6 +423,7 @@ public abstract class SimpleXmlServiceAction extends InfoGlueAbstractAction
 		        	.addAttribute("repositoryId", "" + repositoryId)
 		        	.addAttribute("text", encode(theNode.getTitle()))
 		        	.addAttribute("src", src)
+		        	.addAttribute("isLocalized", (String)theNode.getParameters().get("isLocalized"))
 		        	.addAttribute("isHidden", (String)theNode.getParameters().get("isHidden"))
 		        	.addAttribute("type", TYPE_FOLDER)
 		        	.addAttribute("hasChildren", "" + theNode.hasChildren());
@@ -578,4 +581,16 @@ public abstract class SimpleXmlServiceAction extends InfoGlueAbstractAction
         
         return sb.toString();
     }
+	
+	public Integer getSortLanguageId() 
+	{
+		return sortLanguageId;
+	}
+
+	public void setSortLanguageId(Integer sortLanguageId) 
+	{
+		this.sortLanguageId = sortLanguageId;
+	}
+
+
 }

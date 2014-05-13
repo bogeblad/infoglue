@@ -45,10 +45,13 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.managementtool.actions.deployment.DeploymentServerBean;
 import org.infoglue.cms.applications.managementtool.actions.deployment.VersionControlServerBean;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.InstallationController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LabelController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ServerNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ThemeController;
+import org.infoglue.cms.entities.management.ContentTypeAttribute;
+import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.ServerNodeVO;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.HttpHelper;
@@ -1021,6 +1024,37 @@ public class CmsPropertyHandler
 	public static String getContentTreeSort()
 	{
 		return getServerNodeProperty("content.tree.sort", true, "name");
+	}
+
+	private static Boolean allowLocalizedSortAndVisibilityProperties = null;
+	public static Boolean getAllowLocalizedSortAndVisibilityProperties()
+	{
+		if(allowLocalizedSortAndVisibilityProperties == null)
+		{
+			try
+			{
+				allowLocalizedSortAndVisibilityProperties = false;
+				ContentTypeDefinitionVO metaInfoCTDVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Meta info");
+				if(metaInfoCTDVO != null)
+				{
+					List<ContentTypeAttribute> attributes =  ContentTypeDefinitionController.getController().getContentTypeAttributes(metaInfoCTDVO.getSchemaValue());
+					for(ContentTypeAttribute attribute : attributes)
+					{
+						if(attribute.getName().equalsIgnoreCase("SortOrder") || attribute.getName().equalsIgnoreCase("HideInNavigation"))
+						{
+							allowLocalizedSortAndVisibilityProperties = true;
+							break;
+						}
+					}
+				}
+			}
+			catch (Exception e) 
+			{
+				logger.warn("Problem reading meta info fields: " + e.getMessage(), e);
+			}
+		}
+		
+		return allowLocalizedSortAndVisibilityProperties;
 	}
 
 	public static String getStructureTreeSort()

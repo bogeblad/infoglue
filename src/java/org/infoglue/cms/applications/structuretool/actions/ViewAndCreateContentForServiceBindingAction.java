@@ -206,9 +206,15 @@ public class ViewAndCreateContentForServiceBindingAction extends InfoGlueAbstrac
 
         try
         {
-            LanguageVO masterLanguage = LanguageController.getController().getMasterLanguage(this.repositoryId, db);
-    		this.languageId = masterLanguage.getLanguageId();
-
+        	boolean skipInitialLanguage = false;
+        	if(this.languageId == null)
+        	{
+	            LanguageVO masterLanguage = LanguageController.getController().getMasterLanguage(this.repositoryId, db);
+	    		this.languageId = masterLanguage.getLanguageId();
+        	}
+        	else
+        		skipInitialLanguage = true;
+        	
     		ContentTypeDefinition contentTypeDefinition = ContentTypeDefinitionController.getController().getContentTypeDefinitionWithName("Meta info", db);
     		this.metaInfoContentTypeDefinitionId = contentTypeDefinition.getId();
     		
@@ -292,7 +298,8 @@ public class ViewAndCreateContentForServiceBindingAction extends InfoGlueAbstrac
             }
             */
             
-            this.languageId = getInitialLanguageVO(this.contentVO.getId(), db).getId();
+            if(!skipInitialLanguage)
+            	this.languageId = getInitialLanguageVO(this.contentVO.getId(), db).getId();
             
     		commitTransaction(db);
         }
@@ -352,4 +359,10 @@ public class ViewAndCreateContentForServiceBindingAction extends InfoGlueAbstrac
 	{
 		this.changeStateToWorking = changeStateToWorking;
 	}
+	
+	public void setLanguageId(Integer languageId)
+	{
+		this.languageId = languageId;
+	}
+	
 }

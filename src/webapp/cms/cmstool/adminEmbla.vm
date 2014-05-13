@@ -250,6 +250,11 @@
 			var toolUrl = $("#" + toolName + "Link").attr("href");
 			activateTool(toolName, toolName, toolUrl, url);
 		}
+
+		function getDeliverLanguageId()
+		{
+			return $("#StructureToolIframe")[0].contentWindow.frames["workIframe"].languageId;
+		}
 				
 		function refreshRepositoryList()
 		{

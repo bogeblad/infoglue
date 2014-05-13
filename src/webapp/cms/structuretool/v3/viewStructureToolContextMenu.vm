@@ -43,7 +43,7 @@
 
 	//Event listener for properties option
 	$("#contextMenuDiv #properties").click(function () { 
-    	openInlineDiv("ViewAndCreateContentForServiceBinding.action?siteNodeId=$siteNodeId&repositoryId=$repositoryId&changeStateToWorking=true", 700, 850, true, true, "New page"); 
+    	openInlineDiv("ViewAndCreateContentForServiceBinding.action?siteNodeId=$siteNodeId&repositoryId=$repositoryId&changeStateToWorking=true&languageId=$sortLanguageId", 700, 850, true, true, "New page"); 
 		});
 
 	//Event listener for properties option
@@ -113,7 +113,7 @@
 
 	//Event listener for moveUp option
 	$("#contextMenuDiv #moveUp").click(function () {
-		jQuery.get("ChangeSiteNodeSortOrder.action", { siteNodeId:"$siteNodeId", direction:"up"}, function(data){
+		jQuery.get("ChangeSiteNodeSortOrder.action", { siteNodeId:"$siteNodeId", direction:"up", sortLanguageId:"$sortLanguageId"}, function(data){
 		  	$('#treeIframe').get(0).contentWindow.refreshNode($siteNodeVO.parentSiteNodeId, 4, null);
 		  	refreshWorkSurface("structure");
 		});
@@ -121,7 +121,7 @@
 
 	//Event listener for moveDown option
 	$("#contextMenuDiv #moveDown").click(function () {
-		jQuery.get("ChangeSiteNodeSortOrder.action", { siteNodeId:"$siteNodeId", direction:"down"}, function(data){
+		jQuery.get("ChangeSiteNodeSortOrder.action", { siteNodeId:"$siteNodeId", direction:"down", sortLanguageId:"$sortLanguageId"}, function(data){
 		  	//alert("Moved: " + data);
 		  	$('#treeIframe').get(0).contentWindow.refreshNode($siteNodeVO.parentSiteNodeId, 4, null);
 			refreshWorkSurface("structure");
@@ -130,7 +130,8 @@
 
 	//Event listener for hidePage option
 	$("#contextMenuDiv #hidePage").click(function () {
-		jQuery.get("ChangeSiteNodeSortOrder!toggleHidden.action", { siteNodeId:"$siteNodeId"}, function(data){
+		//alert("$sortLanguageId");
+		jQuery.get("ChangeSiteNodeSortOrder!toggleHidden.action", { siteNodeId:"$siteNodeId", sortLanguageId:"$sortLanguageId"}, function(data){
 		  	//alert("Hidden: " + data);
 		  	$('#treeIframe').get(0).contentWindow.refreshNode($siteNodeVO.parentSiteNodeId, 2, null);
 		  	//refreshWorkArea("structure");

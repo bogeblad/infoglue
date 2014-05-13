@@ -25,7 +25,7 @@ public class SimpleStructureXmlAction extends SimpleXmlServiceAction {
 	 */
 	public INodeSupplier getNodeSupplier() throws SystemException {
 	    if(this.repositoryId != null && this.repositoryId.intValue() > -1) 
-	        return new SiteNodeNodeSupplier(getRepositoryId(), this.getInfoGluePrincipal());
+	        return new SiteNodeNodeSupplier(getRepositoryId(), this.getInfoGluePrincipal(), this.getSortLanguageId());
 	    else 
 	        return null;
 	}

@@ -110,7 +110,7 @@
 		</tr>
 		<tr>
 			<td>
-				<a href="javascript:document.inputForm.submit();"><img src="$ui.getString("images.contenttool.buttons.next")" border="0"></a>
+				<a href="javascript:document.inputForm.submit();">$ui.getString("tool.common.nextButton.label")</a>
 				<a href="javascript:skipAndCancel();"><img border="0" src="$ui.getString("images.contenttool.buttons.cancel")" width="50" height="25"></a>
 			</td>
 		</tr>		

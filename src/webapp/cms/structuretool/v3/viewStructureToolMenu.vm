@@ -37,7 +37,7 @@
 		
 		function syncWithTree(path, repositoryId, onlyTree)
 		{
-			##console.log("Path:" + path + ":" + onlyTree);
+			//console.log("Path:" + path + ":" + onlyTree);
 			var timeout = 500;
 			if(repositoryId && currentRepositoryId != repositoryId)
 			{
@@ -52,6 +52,12 @@
 			window.setTimeout(function () {
 				frames['itreeFrame'].syncWithTree(path);
 				}, timeout);
+				
+			var deliverLanguageId = top.getDeliverLanguageId();
+			if(window.languageId != deliverLanguageId)
+			{
+				loadTreeSrc();
+			}
 		}
 		
 		function treeView()
@@ -61,7 +67,7 @@
 
 		function htmlTreeItemClick(itemId, repoId, path)
 		{
-			openUrlInWorkArea("ViewSiteNode!V3.action?siteNodeId=" + itemId + "&repositoryId=" + repoId, path);
+			openUrlInWorkArea("ViewSiteNode!V3.action?siteNodeId=" + itemId + "&repositoryId=" + repoId + "&languageId=" + window.languageId, path);
 		}
 		
 		function openUrlInWorkArea(url, titel)
@@ -85,6 +91,7 @@
 
 	    function markSelected(nodeId)
 		{
+			//console.log("markSelected...");
 			setTimeout("1000");
 				frames['itreeFrame'].markSelected(parseInt(nodeId));
 		}
@@ -139,7 +146,22 @@
  			##else
 			##	openUrlInWorkArea("ViewStructureToolStartPage!V3.action?repositoryId=$repositoryId", '');
 			#end
+			
+			setTimeout(function(){loadTreeSrc()}, 100);
 		});
+
+		function loadTreeSrc()
+		{
+			window.languageId = top.getDeliverLanguageId();
+			if(languageId)
+			{
+				$("#itreeFrame").attr("src", "ViewStructureHtmlTree!V3.action?repositoryId=${repositoryId}&sortLanguageId=" + languageId);
+			}
+			else
+			{
+				setTimeout(function(){loadTreeSrc()}, 1000);
+			}		
+		}
  		
 	-->
 	</script>
@@ -149,7 +171,7 @@
 <body class="generaltooledit">
 
     <div id="treeDivContainer" class="onlyExpanded">
-		<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!V3.action?repositoryId=${repositoryId}" width="220" height="150" allowtransparency="true"></iframe>
+		<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="" width="220" height="150" allowtransparency="true"></iframe>
     </div>
 	
 </body>

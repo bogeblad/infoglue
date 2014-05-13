@@ -69,7 +69,7 @@ function WebFXLoadTree(sText, sXmlSrc, sAction, sBehavior, sIcon, sOpenIcon) {
 	
 	// setup default property values
 	this.src = sXmlSrc;
-	//alert("sXmlSrc:" + sXmlSrc);
+	//alert("sXmlSrc tree:" + sXmlSrc);
 	this.loading = false;
 	this.loaded = false;
 	this.errorText = "";
@@ -100,15 +100,15 @@ WebFXLoadTree.prototype.expand = function() {
  * WebFXLoadTreeItem class
  */
 
-function WebFXLoadTreeItem(sText, sXmlSrc, sAction, eParent, sIcon, sOpenIcon, hasChildren, isProtected, stateId, isHidden, contentTypeDefinitionId) {
+function WebFXLoadTreeItem(sText, sXmlSrc, sAction, eParent, sIcon, sOpenIcon, hasChildren, isProtected, stateId, isHidden, contentTypeDefinitionId, isLocalized) {
 	
 	// call super
 	this.WebFXTreeItem = WebFXTreeItem;
-	this.WebFXTreeItem(sText, sAction, eParent, sIcon, sOpenIcon, isProtected, stateId, isHidden, contentTypeDefinitionId);
+	this.WebFXTreeItem(sText, sAction, eParent, sIcon, sOpenIcon, isProtected, stateId, isHidden, contentTypeDefinitionId, isLocalized);
 
 	// setup default property values
 	this.src = sXmlSrc;
-	//alert("sXmlSrc:" + sXmlSrc);
+	//alert("sXmlSrc tree item:" + sXmlSrc);
 	this.loading = false;
 	this.loaded = false;
 	this.errorText = "";
@@ -198,6 +198,7 @@ function _xmlTreeToJsTree(oNode) {
 	var openIcon = oNode.getAttribute("openIcon");
 	var src = oNode.getAttribute("src");
 	var isHidden = oNode.getAttribute("isHidden");
+	var isLocalized = oNode.getAttribute("isLocalized");
 	var contentTypeDefinitionId = oNode.getAttribute("contentTypeDefinitionId");
 	//alert("isHidden:" + isHidden);
 	//alert("src:" + src + ":" + hidden);
@@ -302,9 +303,9 @@ function _xmlTreeToJsTree(oNode) {
 	// create jsNode
 	var jsNode;
 	if (src != null && src != "")
-		jsNode = new WebFXLoadTreeItem(text, src, action, parent, icon, openIcon, hasChildren, isProtected, stateId, isHidden, contentTypeDefinitionId);
+		jsNode = new WebFXLoadTreeItem(text, src, action, parent, icon, openIcon, hasChildren, isProtected, stateId, isHidden, contentTypeDefinitionId, isLocalized);
 	else
-		jsNode = new WebFXTreeItem(text, action, parent, icon, openIcon, isProtected, stateId, isHidden, contentTypeDefinitionId);
+		jsNode = new WebFXTreeItem(text, action, parent, icon, openIcon, isProtected, stateId, isHidden, contentTypeDefinitionId, isLocalized);
 		
 
 	jsNode.myType = type;
@@ -334,7 +335,7 @@ function _xmlFileLoaded(oXmlDoc, jsParentNode) {
 
 	// check that the load of the xml file went well
 	if( oXmlDoc == null || oXmlDoc.documentElement == null) {
-		alert("" + oXmlDoc.xml);
+		//alert("" + oXmlDoc.xml);
 		jsParentNode.errorText = parseTemplateString(webFXTreeConfig.loadErrorTextTemplate,
 							jsParentNode.src);
 	}

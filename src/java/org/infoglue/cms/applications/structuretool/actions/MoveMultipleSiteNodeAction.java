@@ -66,6 +66,8 @@ public class MoveMultipleSiteNodeAction extends InfoGlueAbstractAction
     private ConstraintExceptionBuffer ceb;
    	private SiteNodeVO siteNodeVO;
    	
+    private Integer deliverLanguageId;
+
   
   	public MoveMultipleSiteNodeAction()
 	{
@@ -128,7 +130,7 @@ public class MoveMultipleSiteNodeAction extends InfoGlueAbstractAction
 				    SiteNodeVO siteNodeVO = (SiteNodeVO)i.next();
 				    try
 					{											
-				        SiteNodeControllerProxy.getSiteNodeControllerProxy().acMoveSiteNode(this.getInfoGluePrincipal(), siteNodeVO, this.newParentSiteNodeId);
+				        SiteNodeControllerProxy.getSiteNodeControllerProxy().acMoveSiteNode(this.getInfoGluePrincipal(), siteNodeVO, this.newParentSiteNodeId, this.deliverLanguageId);
 					}
 					catch(Exception e)
 					{
@@ -274,4 +276,15 @@ public class MoveMultipleSiteNodeAction extends InfoGlueAbstractAction
     {
         return siteNodeVO;
     }
+    
+	public Integer getDeliverLanguageId() 
+	{
+		return deliverLanguageId;
+	}
+	
+	public void setDeliverLanguageId(Integer deliverLanguageId) 
+	{
+		this.deliverLanguageId = deliverLanguageId;
+	}
+
 }

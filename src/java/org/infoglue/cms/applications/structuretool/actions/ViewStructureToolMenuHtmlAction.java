@@ -44,7 +44,8 @@ public class ViewStructureToolMenuHtmlAction extends TreeViewAbstractAction
 	private Integer select = -1;
 	private String treeMode = "classic";
 	private BaseNode rootNode = null; 
-	
+    private Integer sortLanguageId;
+
 	public String doBindingView() throws Exception
 	{
 		super.doExecute();
@@ -69,7 +70,7 @@ public class ViewStructureToolMenuHtmlAction extends TreeViewAbstractAction
 
 		String treeMode = CmsPropertyHandler.getTreeMode(); 
 		if(treeMode != null) setTreeMode(treeMode);
-		SiteNodeNodeSupplier sup = new SiteNodeNodeSupplier(getRepositoryId(), this.getInfoGluePrincipal());
+		SiteNodeNodeSupplier sup = new SiteNodeNodeSupplier(getRepositoryId(), this.getInfoGluePrincipal(), sortLanguageId);
 		rootNode = sup.getRootNode();
 	    return sup;
 	}
@@ -121,5 +122,21 @@ public class ViewStructureToolMenuHtmlAction extends TreeViewAbstractAction
 	}
 	public void setRootNode(BaseNode rootNode) {
 		this.rootNode = rootNode;
+	}
+	
+    /**
+	 * @return the deliverLanguageId
+	 */
+	public Integer getSortLanguageId() 
+	{
+		return sortLanguageId;
+	}
+
+	/**
+	 * @param deliverLanguageId the deliverLanguageId to set
+	 */
+	public void setSortLanguageId(Integer sortLanguageId)
+	{
+		this.sortLanguageId = sortLanguageId;
 	}
 }

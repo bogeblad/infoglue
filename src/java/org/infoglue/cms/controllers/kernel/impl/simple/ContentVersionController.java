@@ -1646,7 +1646,7 @@ public class ContentVersionController extends BaseController
 
     public ContentVersionVO update(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, Database db) throws Exception
     {
-		return update(contentId, languageId, contentVersionVO, null, false, db);
+		return update(contentId, languageId, contentVersionVO, null, false, db, false);
     }
 
     public ContentVersionVO update(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO) throws ConstraintException, SystemException
@@ -1670,7 +1670,7 @@ public class ContentVersionController extends BaseController
 
         try
         {
-        	updatedContentVersionVO = update(contentId, languageId, contentVersionVO, principal, skipValidate, db);
+        	updatedContentVersionVO = update(contentId, languageId, contentVersionVO, principal, skipValidate, db, false);
 	    	commitRegistryAwareTransaction(db);
         }
         catch(ConstraintException ce)
@@ -1690,7 +1690,7 @@ public class ContentVersionController extends BaseController
     	return updatedContentVersionVO; //(ContentVersionVO) updateEntity(ContentVersionImpl.class, realContentVersionVO);
     }
 
-    public ContentVersionVO update(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, InfoGluePrincipal principal, boolean skipValidate, Database db) throws Exception
+    public ContentVersionVO update(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, InfoGluePrincipal principal, boolean skipValidate, Database db, boolean skipSiteNodeVersionUpdate) throws Exception
     {
     	ContentVersionVO updatedContentVersionVO;
 
@@ -1757,7 +1757,7 @@ public class ContentVersionController extends BaseController
     	}
 
         SiteNodeVersionVO latestSiteNodeVersionVO = null;
-	    if(principal != null && contentTypeDefinitionVO.getName().equalsIgnoreCase("Meta info"))
+	    if(principal != null && contentTypeDefinitionVO.getName().equalsIgnoreCase("Meta info") && !skipSiteNodeVersionUpdate)
 	    {
     	    SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(db, contentId);
 	    	//SiteNode siteNode = SiteNodeController.getController().getSiteNodeWithMetaInfoContentId(db, contentId);
@@ -2555,7 +2555,7 @@ public class ContentVersionController extends BaseController
 	 
 	public void updateAttributeValue(Integer contentVersionId, String attributeName, String attributeValue, InfoGluePrincipal infogluePrincipal) throws SystemException, Bug
 	{
-		updateAttributeValue(contentVersionId, attributeName, attributeValue, infogluePrincipal, true);
+		updateAttributeValue(contentVersionId, attributeName, attributeValue, infogluePrincipal, false);
 	}
 
 	/**
@@ -2565,7 +2565,17 @@ public class ContentVersionController extends BaseController
 
 	public void updateAttributeValue(Integer contentVersionId, String attributeName, String attributeValue, InfoGluePrincipal infogluePrincipal, Database db) throws SystemException, Bug
 	{
-		updateAttributeValue(contentVersionId, attributeName, attributeValue, infogluePrincipal, true, db);
+		updateAttributeValue(contentVersionId, attributeName, attributeValue, infogluePrincipal, true, db, false);
+	}
+
+	/**
+	 * This method fetches a value from the xml that is the contentVersions Value. If the 
+	 * contentVersioVO is null the contentVersion has not been created yet and no values are present.
+	 */
+
+	public void updateAttributeValue(Integer contentVersionId, String attributeName, String attributeValue, InfoGluePrincipal infogluePrincipal, Database db, boolean skipSiteNodeVersionUpdate) throws SystemException, Bug
+	{
+		updateAttributeValue(contentVersionId, attributeName, attributeValue, infogluePrincipal, true, db, skipSiteNodeVersionUpdate);
 	}
 
 	/**
@@ -2580,7 +2590,7 @@ public class ContentVersionController extends BaseController
 		{
 			beginTransaction(db);
 
-			updateAttributeValue(contentVersionId, attributeName, attributeValue, infogluePrincipal, skipValidate, db);
+			updateAttributeValue(contentVersionId, attributeName, attributeValue, infogluePrincipal, skipValidate, db, false);
 
 			commitRegistryAwareTransaction(db);
 		    //commitTransaction(db);
@@ -2593,7 +2603,7 @@ public class ContentVersionController extends BaseController
 		}
 	}
 
-	public void updateAttributeValue(Integer contentVersionId, String attributeName, String attributeValue, InfoGluePrincipal infogluePrincipal, boolean skipValidate, Database db) throws SystemException, Bug
+	public void updateAttributeValue(Integer contentVersionId, String attributeName, String attributeValue, InfoGluePrincipal infogluePrincipal, boolean skipValidate, Database db, boolean skipSiteNodeVersionUpdate) throws SystemException, Bug
 	{
 		ContentVersionVO contentVersionVO = getContentVersionVOWithId(contentVersionId);
 
@@ -2646,7 +2656,7 @@ public class ContentVersionController extends BaseController
 				logger.info("sb:" + sb);
 				contentVersionVO.setVersionValue(sb.toString());
 				contentVersionVO.setVersionModifier(infogluePrincipal.getName());
-				update(contentVersionVO.getContentId(), contentVersionVO.getLanguageId(), contentVersionVO, infogluePrincipal, skipValidate, db);
+				update(contentVersionVO.getContentId(), contentVersionVO.getLanguageId(), contentVersionVO, infogluePrincipal, skipValidate, db, skipSiteNodeVersionUpdate);
 			}
 			catch(Exception e)
 			{

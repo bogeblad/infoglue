@@ -46,8 +46,8 @@ public class ViewStructureToolMenuAction extends InfoGlueAbstractAction
     private Integer repositoryId;
     private String tree;
     private String path;
-    
-    public void setRepositoryId(Integer repositoryId)
+
+	public void setRepositoryId(Integer repositoryId)
     {
     	if(repositoryId != null)
 		{
@@ -124,4 +124,8 @@ public class ViewStructureToolMenuAction extends InfoGlueAbstractAction
 	{
 		this.path = path;
 	}
+	
+    
+
+	
 }

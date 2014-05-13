@@ -26,6 +26,7 @@ package org.infoglue.deliver.controllers.kernel.impl.simple;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -49,6 +50,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointControll
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionControllerProxy;
+import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.management.AvailableServiceBinding;
 import org.infoglue.cms.entities.management.AvailableServiceBindingVO;
@@ -74,6 +76,7 @@ import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.services.BaseService;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
+import org.infoglue.cms.util.sorters.ReflectionComparator;
 import org.infoglue.deliver.applications.databeans.DeliveryContext;
 import org.infoglue.deliver.applications.filters.FilterConstants;
 import org.infoglue.deliver.applications.filters.URIMapperCache;
@@ -82,7 +85,6 @@ import org.infoglue.deliver.controllers.kernel.URLComposer;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.HttpHelper;
 import org.infoglue.deliver.util.NullObject;
-import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Timer;
 
 
@@ -2857,8 +2859,11 @@ public class NodeDeliveryController extends BaseDeliveryController
 		{
 			return null;
 		}
-    	
-    	List<SiteNodeVO> siteNodeVOList = (List<SiteNodeVO>)CacheController.getCachedObjectFromAdvancedCache("childPagesCache", "" + siteNodeId + "_" + showHidden + (nameFilter == null ? "" : "_" + nameFilter)); //populatedSiteNodeVOList.get(siteNodeId);
+    	String keyTop = "" + siteNodeId + "_" + showHidden + (nameFilter == null ? "" : "_" + nameFilter) + "_" + languageId;
+    	if(!CmsPropertyHandler.getAllowLocalizedSortAndVisibilityProperties())
+    		keyTop = "" + siteNodeId + "_" + showHidden + (nameFilter == null ? "" : "_" + nameFilter);
+    		
+    	List<SiteNodeVO> siteNodeVOList = (List<SiteNodeVO>)CacheController.getCachedObjectFromAdvancedCache("childPagesCache", keyTop); //populatedSiteNodeVOList.get(siteNodeId);
     	if(siteNodeVOList != null)
     	{
     		//System.out.println("Returning cached");
@@ -2866,8 +2871,11 @@ public class NodeDeliveryController extends BaseDeliveryController
     	}
     	else
     	{
-	        String key = "" + siteNodeId + "_" + showHidden + (nameFilter == null ? "" : "_" + nameFilter);
-	        logger.info("key in getChildSiteNodes:" + key);
+	        String key = "" + siteNodeId + "_" + showHidden + (nameFilter == null ? "" : "_" + nameFilter) + "_" + languageId;
+	    	if(!CmsPropertyHandler.getAllowLocalizedSortAndVisibilityProperties())
+	    		key = "" + siteNodeId + "_" + showHidden + (nameFilter == null ? "" : "_" + nameFilter);
+	    	
+	    	logger.info("key in getChildSiteNodes:" + key);
 			siteNodeVOList = (List)CacheController.getCachedObjectFromAdvancedCache("childSiteNodesCache", key);
 	
 			if(siteNodeVOList == null)
@@ -2948,8 +2956,26 @@ public class NodeDeliveryController extends BaseDeliveryController
 				while (results.hasMore()) 
 		        {
 		        	SiteNode siteNode = (SiteNode)results.next();
-					if(isValidSiteNode(siteNode, db))
+		        	if(isValidSiteNode(siteNode, db))
 		        	{
+		        		if(CmsPropertyHandler.getAllowLocalizedSortAndVisibilityProperties())
+		        		{
+							String localizedIsHidden = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, siteNode.getMetaInfoContentId(), languageId, "HideInNavigation", siteNode.getId(), true, deliveryContext, UserControllerProxy.getController().getUser(CmsPropertyHandler.getAnonymousUser()), false, true);
+							String localizedSortOrder = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, siteNode.getMetaInfoContentId(), languageId, "SortOrder", siteNode.getId(), true, deliveryContext, UserControllerProxy.getController().getUser(CmsPropertyHandler.getAnonymousUser()), false, true);
+							if(localizedIsHidden != null && !localizedIsHidden.equals(""))
+							{
+								if(localizedIsHidden.equals("true"))
+									siteNode.getValueObject().setLocalizedIsHidden(true);
+								else
+									siteNode.getValueObject().setLocalizedIsHidden(false);
+							}
+							
+							if(localizedSortOrder != null && !localizedSortOrder.equals(""))
+							{
+								siteNode.getValueObject().setLocalizedSortOrder(new Integer(localizedSortOrder));
+							}
+		        		}
+						
 						if(siteNode.getValueObject().getIsHidden() == null || (siteNode.getValueObject().getIsHidden().booleanValue() == false || showHidden))
 							siteNodeVOList.add(siteNode.getValueObject());
 					}
@@ -2959,6 +2985,9 @@ public class NodeDeliveryController extends BaseDeliveryController
 				results.close();
 				oql.close();
 		        
+				if(CmsPropertyHandler.getAllowLocalizedSortAndVisibilityProperties())
+					Collections.sort(siteNodeVOList, new ReflectionComparator("sortOrder"));
+				
 				CacheController.cacheObjectInAdvancedCache("childSiteNodesCache", key, siteNodeVOList, new String[] {CacheController.getPooledString(3, siteNodeId)}, true);
 			}
     	}

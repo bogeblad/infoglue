@@ -31,10 +31,12 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.controllers.usecases.structuretool.ViewSiteNodeTreeUCC;
 import org.infoglue.cms.controllers.usecases.structuretool.ViewSiteNodeTreeUCCFactory;
+import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
@@ -62,12 +64,13 @@ public class SiteNodeNodeSupplier extends BaseNodeSupplier
 	private ViewSiteNodeTreeUCC ucc;
 	private ArrayList cacheLeafs;
 	private InfoGluePrincipal infogluePrincipal = null;
-
+	private Integer sortLanguageId;
 	
-	public SiteNodeNodeSupplier(Integer repositoryId, InfoGluePrincipal infoGluePrincipal) throws SystemException
+	public SiteNodeNodeSupplier(Integer repositoryId, InfoGluePrincipal infoGluePrincipal, Integer sortLanguageId) throws SystemException
 	{
 	    this.infogluePrincipal = infoGluePrincipal;
-
+	    this.sortLanguageId = sortLanguageId;
+	    
 		SiteNodeVO vo =null;
 		ucc = ViewSiteNodeTreeUCCFactory.newViewSiteNodeTreeUCC();	
 		try
@@ -174,8 +177,8 @@ public class SiteNodeNodeSupplier extends BaseNodeSupplier
 
         try
         {
-        	List<SiteNodeVO> childrenVOList = SiteNodeController.getController().getChildSiteNodeVOList(parentNode, false, db);
-
+        	List<SiteNodeVO> childrenVOList = SiteNodeController.getController().getChildSiteNodeVOList(parentNode, false, db, this.sortLanguageId);
+        	
         	/*
 			Iterator childrenVOListIterator = childrenVOList.iterator();
 			while(childrenVOListIterator.hasNext())
@@ -267,6 +270,12 @@ public class SiteNodeNodeSupplier extends BaseNodeSupplier
 					BaseNode node =  new SiteNodeNodeImpl();
 					node.setId(vo.getId());
 					node.setTitle(vo.getName());
+					
+					ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(vo.getMetaInfoContentId(), this.sortLanguageId, db);
+					if(cvVO != null)
+						node.getParameters().put("isLocalized", "true");
+					else
+						node.getParameters().put("isLocalized", "false");
 					
 					if(vo.getIsHidden() != null)
 						node.getParameters().put("isHidden", "" + vo.getIsHidden());

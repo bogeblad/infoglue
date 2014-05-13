@@ -35,10 +35,11 @@ public class ChangeSiteNodeSortOrderAction extends InfoGlueAbstractAction
     private Integer siteNodeId;
     private Integer beforeSiteNodeId; //If used overrides direction
     private String direction;
+    private Integer sortLanguageId;
 
     public String doExecute() throws Exception
     {		
-		SiteNodeControllerProxy.getSiteNodeControllerProxy().acChangeSiteNodeSortOrder(this.getInfoGluePrincipal(), siteNodeId, beforeSiteNodeId, direction);
+		SiteNodeControllerProxy.getSiteNodeControllerProxy().acChangeSiteNodeSortOrder(this.getInfoGluePrincipal(), siteNodeId, beforeSiteNodeId, direction, this.sortLanguageId);
 
 		return "success";
     }
@@ -47,7 +48,7 @@ public class ChangeSiteNodeSortOrderAction extends InfoGlueAbstractAction
     {		
     	try
     	{
-    		SiteNodeControllerProxy.getSiteNodeControllerProxy().acToggleHidden(this.getInfoGluePrincipal(), siteNodeId);
+    		SiteNodeControllerProxy.getSiteNodeControllerProxy().acToggleHidden(this.getInfoGluePrincipal(), siteNodeId, this.sortLanguageId);
     	}
     	catch (Exception e) 
     	{
@@ -70,6 +71,16 @@ public class ChangeSiteNodeSortOrderAction extends InfoGlueAbstractAction
 	public void setBeforeSiteNodeId(Integer beforeSiteNodeId)
 	{
 		this.beforeSiteNodeId = beforeSiteNodeId;
+	}
+
+	public Integer getSortLanguageId() 
+	{
+		return sortLanguageId;
+	}
+	
+	public void setSortLanguageId(Integer sortLanguageId) 
+	{
+		this.sortLanguageId = sortLanguageId;
 	}
 
 }

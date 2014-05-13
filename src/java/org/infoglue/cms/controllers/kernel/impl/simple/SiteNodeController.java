@@ -106,6 +106,7 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.XMLHelper;
 import org.infoglue.cms.util.mail.MailServiceFactory;
+import org.infoglue.cms.util.sorters.ReflectionComparator;
 import org.infoglue.deliver.controllers.kernel.impl.simple.LanguageDeliveryController;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.RequestAnalyser;
@@ -1410,15 +1411,27 @@ public class SiteNodeController extends BaseController
 		return childrenVOList;
 	} 
 	
-    
+	
+	/**
+	 * This method returns a list of the children a siteNode has.
+	 */
+   	/*
+	public List<SiteNodeVO> getChildSiteNodeVOList(Integer parentSiteNodeId, boolean showDeletedItems, Database db) throws Exception
+	{
+		return getChildSiteNodeVOList(parentSiteNodeId, showDeletedItems, db, null);
+	}
+*/    
 	/**
 	 * This method returns a list of the children a siteNode has.
 	 */
    	
-	public List<SiteNodeVO> getChildSiteNodeVOList(Integer parentSiteNodeId, boolean showDeletedItems, Database db) throws Exception
+	public List<SiteNodeVO> getChildSiteNodeVOList(Integer parentSiteNodeId, boolean showDeletedItems, Database db, Integer sortLanguageId) throws Exception
 	{
-   		String key = "" + parentSiteNodeId + "_" + showDeletedItems;
-		if(logger.isInfoEnabled())
+   		String key = "" + parentSiteNodeId + "_" + showDeletedItems + "_" + sortLanguageId;
+   		if(!CmsPropertyHandler.getAllowLocalizedSortAndVisibilityProperties())
+   			key = "" + parentSiteNodeId + "_" + showDeletedItems;
+   		
+   		if(logger.isInfoEnabled())
 			logger.info("key:" + key);
 		
 		List<SiteNodeVO> childrenVOList = (List<SiteNodeVO>)CacheController.getCachedObjectFromAdvancedCache("childSiteNodesCache", key);
@@ -1477,13 +1490,55 @@ public class SiteNodeController extends BaseController
 		while (results.hasMore()) 
 		{
 			SiteNode siteNode = (SiteNode)results.next();
-			//logger.info("Name:" + siteNode.getName() + ":" + siteNode.getValueObject().getStateId() + ":" + siteNode.getValueObject().getIsProtected() + ":" + siteNode.getValueObject().getIsProtected());
+
+			if(CmsPropertyHandler.getAllowLocalizedSortAndVisibilityProperties())
+			{	
+				//logger.info("Name:" + siteNode.getName() + ":" + siteNode.getValueObject().getStateId() + ":" + siteNode.getValueObject().getIsProtected() + ":" + siteNode.getValueObject().getIsProtected());
+				ContentVersionVO latestVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNode.getMetaInfoContentId(), sortLanguageId, db);
+				if(latestVersionVO == null)
+				{
+					//LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNode.getValueObject().getRepositoryId(), db);
+					//latestVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNode.getMetaInfoContentId(), masterLanguageVO.getLanguageId(), db);
+				}
+				if(latestVersionVO != null)
+				{
+					String localizedIsHidden = ContentVersionController.getContentVersionController().getAttributeValue(latestVersionVO, "HideInNavigation", false);
+					String localizedSortOrder = ContentVersionController.getContentVersionController().getAttributeValue(latestVersionVO, "SortOrder", false);
+		
+					//System.out.println("localizedIsHidden:" + localizedIsHidden);
+					//System.out.println("localizedSortOrder:" + localizedSortOrder);
+					if(localizedIsHidden != null && !localizedIsHidden.equals(""))
+					{
+						if(localizedIsHidden.equals("true"))
+							siteNode.getValueObject().setLocalizedIsHidden(true);
+						else
+							siteNode.getValueObject().setLocalizedIsHidden(false);
+					}
+					
+					if(localizedSortOrder != null && !localizedSortOrder.equals(""))
+					{
+						siteNode.getValueObject().setLocalizedSortOrder(new Integer(localizedSortOrder));
+					}
+					else
+						siteNode.getValueObject().setLocalizedSortOrder(new Integer(100));
+				}
+				else
+					siteNode.getValueObject().setLocalizedSortOrder(new Integer(100));
+			}
+			
 			childrenVOList.add(siteNode.getValueObject());
 		}
 		
 		results.close();
 		oql.close();
         
+		if(CmsPropertyHandler.getAllowLocalizedSortAndVisibilityProperties())
+			Collections.sort(childrenVOList, new ReflectionComparator("sortOrder"));
+
+		for(SiteNodeVO child : childrenVOList)
+		{
+			System.out.println(child.getName() + ": " + child.getSortOrder());
+		}
 		CacheController.cacheObjectInAdvancedCache("childSiteNodesCache", key, childrenVOList, new String[]{CacheController.getPooledString(3, parentSiteNodeId)}, true);
         
 		return childrenVOList;
@@ -3200,7 +3255,7 @@ public class SiteNodeController extends BaseController
         	newCV.getValueObject().setVersionValue(versionValue);
         }
         
-        for(SiteNodeVO childNode : (Collection<SiteNodeVO>)getChildSiteNodeVOList(siteNode.getId(), false, db))
+        for(SiteNodeVO childNode : (Collection<SiteNodeVO>)getChildSiteNodeVOList(siteNode.getId(), false, db, null))
         {
         	copySiteNodeRecursive(childNode, newSiteNode, principal, siteNodesIdsMapping, contentIdsMapping, contentIdsToCopy, newCreatedContentVersions, newNameSuffix, db, processBean);
         }
@@ -3880,7 +3935,7 @@ public class SiteNodeController extends BaseController
         return siteNodeVOList;
 	}
 
-    public void changeSiteNodeSortOrder(Integer siteNodeId, Integer beforeSiteNodeId, String direction, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
+    public void changeSiteNodeSortOrder(Integer siteNodeId, Integer beforeSiteNodeId, String direction, InfoGluePrincipal infoGluePrincipal, Integer sortLanguageId) throws ConstraintException, SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
 
@@ -3890,7 +3945,7 @@ public class SiteNodeController extends BaseController
         {
         	SiteNodeVO siteNodeVO = getSiteNodeVOWithId(siteNodeId, db);
 			//Fixes a nice ordered list
-			List<SiteNodeVO> childrenVOList = SiteNodeController.getController().getChildSiteNodeVOList(siteNodeVO.getParentSiteNodeId(), false, db);
+			List<SiteNodeVO> childrenVOList = SiteNodeController.getController().getChildSiteNodeVOList(siteNodeVO.getParentSiteNodeId(), false, db, sortLanguageId);
 			Iterator<SiteNodeVO> childrenVOListIterator = childrenVOList.iterator();
 			int index = 0;
 			while(childrenVOListIterator.hasNext())
@@ -3907,7 +3962,14 @@ public class SiteNodeController extends BaseController
 					//if(currentSortOrder != 100)
 					//{
 					logger.info("Setting sort order to:" + index + " on " + latestChildSiteNodeVersion.getId());
-						latestChildSiteNodeVersion.setSortOrder(index);
+					latestChildSiteNodeVersion.setSortOrder(index);
+					
+					if(CmsPropertyHandler.getAllowLocalizedSortAndVisibilityProperties())
+					{
+						ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(childSiteNodeVO.getMetaInfoContentId(), sortLanguageId, db);	
+						if(cvVO != null)
+							ContentVersionController.getContentVersionController().updateAttributeValue(cvVO.getContentVersionId(), "SortOrder", "" + index, infoGluePrincipal, db, true);
+					}
 					//}
 				}
 				index++;
@@ -3958,7 +4020,7 @@ public class SiteNodeController extends BaseController
             		List<SiteNodeVO> newChildSiteNodeList = new ArrayList<SiteNodeVO>();
                 	
             		int insertPosition = 0;
-            		List<SiteNodeVO> childrenVOList = SiteNodeController.getController().getChildSiteNodeVOList(siteNodeVO.getParentSiteNodeId(), false, db);
+            		List<SiteNodeVO> childrenVOList = SiteNodeController.getController().getChildSiteNodeVOList(siteNodeVO.getParentSiteNodeId(), false, db, sortLanguageId);
     				Iterator<SiteNodeVO> childrenVOListIterator = childrenVOList.iterator();
     				while(childrenVOListIterator.hasNext())
     				{
@@ -3974,8 +4036,6 @@ public class SiteNodeController extends BaseController
     					}
     				}
 
-    				logger.info("newChildSiteNodeList:" + newChildSiteNodeList.size());
-    				logger.info("insertPosition:" + insertPosition);
     				newChildSiteNodeList.add(insertPosition, siteNodeVO);
     				
     				Iterator<SiteNodeVO> newChildSiteNodeListIterator = newChildSiteNodeList.iterator();
@@ -3989,20 +4049,52 @@ public class SiteNodeController extends BaseController
     					
     					List events = new ArrayList();
     					SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestSiteNodeVersionVO(db, orderedSiteNodeVO.getId());
-    					logger.info(orderedSiteNodeVO.getName() + " - siteNodeVersionVO.getSortOrder():" + siteNodeVersionVO.getSortOrder());
-    					if(siteNodeVersionVO.getSortOrder() < highestSortOrder)
-    					{
+    					System.out.println(orderedSiteNodeVO.getName() + " - siteNodeVersionVO.getSortOrder():" + siteNodeVersionVO.getSortOrder());
+						Integer localizedSortOrder = 100;
+    					if(CmsPropertyHandler.getAllowLocalizedSortAndVisibilityProperties())
+						{
+    						ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(orderedSiteNodeVO.getMetaInfoContentId(), sortLanguageId, db);	
+    						if(cvVO != null)
+    						{
+    							String localizedSortOrderString = ContentVersionController.getContentVersionController().getAttributeValue(cvVO.getId(), "SortOrder", false);
+    							if(localizedSortOrderString != null && !localizedSortOrderString.equals(""))
+    								localizedSortOrder = new Integer(localizedSortOrderString);
+    						}
+    					}
+    					
+    					//if(siteNodeVersionVO.getSortOrder() < highestSortOrder || localizedSortOrder < highestSortOrder)
+    					if(siteNodeVersionVO.getSortOrder() < highestSortOrder || localizedSortOrder < highestSortOrder || i != localizedSortOrder)
+    	    			{
     						siteNodeVersionVO = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), SiteNodeVersionVO.WORKING_STATE, "Changed sortOrder", false, infoGluePrincipal, siteNodeVersionVO.getSiteNodeId(), events);
     						siteNodeVersionVO.setSortOrder(i);
+    						
+    						if(CmsPropertyHandler.getAllowLocalizedSortAndVisibilityProperties())
+    						{
+	    						ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(orderedSiteNodeVO.getMetaInfoContentId(), sortLanguageId, db);	
+	    						if(cvVO != null)
+	    							ContentVersionController.getContentVersionController().updateAttributeValue(cvVO.getContentVersionId(), "SortOrder", "" + i, infoGluePrincipal, db, true);
+    						}
+    						
     						SiteNodeVersionController.getController().update(siteNodeVersionVO);
     					}
     					else
     						logger.info("No action - sort order was ok");
-    					
-    					highestSortOrder = siteNodeVersionVO.getSortOrder();
-    					if(highestSortOrder > i)
-    						i = highestSortOrder;
-    					
+    					/*
+    					if(CmsPropertyHandler.getAllowLocalizedSortAndVisibilityProperties())
+						{
+	    					if(localizedSortOrder < 100 && localizedSortOrder > highestSortOrder)
+	    						highestSortOrder = localizedSortOrder;
+	    				
+	    					if(highestSortOrder > i)
+	    						i = highestSortOrder;
+    					}
+    					else
+    					{
+    						highestSortOrder = siteNodeVersionVO.getSortOrder();
+        					if(highestSortOrder > i)
+	    						i = highestSortOrder;
+    					}
+    					*/
     					i++;
     				}
             	}
@@ -4024,7 +4116,7 @@ public class SiteNodeController extends BaseController
 				}
 				
             	logger.info("OldSortOrder:" + oldSortOrder);
-				List<SiteNodeVO> childrenVOList = SiteNodeController.getController().getChildSiteNodeVOList(siteNodeVO.getParentSiteNodeId(), false, db);
+				List<SiteNodeVO> childrenVOList = SiteNodeController.getController().getChildSiteNodeVOList(siteNodeVO.getParentSiteNodeId(), false, db, sortLanguageId);
 				Iterator<SiteNodeVO> childrenVOListIterator = childrenVOList.iterator();
 				while(childrenVOListIterator.hasNext())
 				{
@@ -4039,12 +4131,26 @@ public class SiteNodeController extends BaseController
 						latestChildSiteNodeVersion = SiteNodeVersionController.getController().updateStateId(latestChildSiteNodeVersion, SiteNodeVersionVO.WORKING_STATE, "Changed sortOrder", infoGluePrincipal, db);
 						latestChildSiteNodeVersion.setSortOrder(newSortOrder);
 						//logger.info("Changed sort order on:" + latestChildSiteNodeVersion.getId() + " into " + newSortOrder);
+
+						if(CmsPropertyHandler.getAllowLocalizedSortAndVisibilityProperties())
+						{
+							ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(childSiteNodeVO.getMetaInfoContentId(), sortLanguageId, db);	
+							if(cvVO != null)
+								ContentVersionController.getContentVersionController().updateAttributeValue(cvVO.getContentVersionId(), "SortOrder", "" + newSortOrder, infoGluePrincipal, db, true);
+						}
 					}
 					else if(currentSortOrder.equals(newSortOrder))
 					{
 						latestChildSiteNodeVersion = SiteNodeVersionController.getController().updateStateId(latestChildSiteNodeVersion, SiteNodeVersionVO.WORKING_STATE, "Changed sortOrder", infoGluePrincipal, db);
 						latestChildSiteNodeVersion.setSortOrder(oldSortOrder);
 						//logger.info("Changed sort order on:" + latestChildSiteNodeVersion.getId() + " into " + oldSortOrder);
+
+						if(CmsPropertyHandler.getAllowLocalizedSortAndVisibilityProperties())
+						{
+							ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(childSiteNodeVO.getMetaInfoContentId(), sortLanguageId, db);	
+							if(cvVO != null)
+								ContentVersionController.getContentVersionController().updateAttributeValue(cvVO.getContentVersionId(), "SortOrder", "" + oldSortOrder, infoGluePrincipal, db, true);
+						}
 					}
 				}
             }
@@ -4077,18 +4183,44 @@ public class SiteNodeController extends BaseController
 	 * This method moves a siteNode after first making a couple of controls that the move is valid.
 	 */
 	
-    public void toggleSiteNodeHidden(Integer siteNodeId, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
+    public void toggleSiteNodeHidden(Integer siteNodeId, InfoGluePrincipal infoGluePrincipal, Integer sortLanguageId) throws ConstraintException, SystemException
     {
-	    Database db = CastorDatabaseService.getDatabase();
-
+    	Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
+
+    	if(CmsPropertyHandler.getAllowLocalizedSortAndVisibilityProperties())
+		{
+	        beginTransaction(db);
+	
+	        try
+	        {
+				SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
+				ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNodeVO.getMetaInfoContentId(), sortLanguageId, db);	
+				if(cvVO != null)
+				{
+					String hideInNavigation = ContentVersionController.getContentVersionController().getAttributeValue(cvVO, "HideInNavigation", false);
+					if(hideInNavigation == null || hideInNavigation.equals("") || hideInNavigation.equalsIgnoreCase("false"))
+						ContentVersionController.getContentVersionController().updateAttributeValue(cvVO.getContentVersionId(), "HideInNavigation", "" + true, infoGluePrincipal, db);
+					else
+						ContentVersionController.getContentVersionController().updateAttributeValue(cvVO.getContentVersionId(), "HideInNavigation", "" + false, infoGluePrincipal, db);
+				}
+	            
+	            commitTransaction(db);
+	        }
+	        catch(Exception e)
+	        {
+	            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+	            rollbackTransaction(db);
+	            throw new SystemException(e.getMessage());
+	        }
+		}
+        
+        db = CastorDatabaseService.getDatabase();
 
         beginTransaction(db);
 
         try
         {
-        	//logger.info("siteNodeId:" + siteNodeId);
-            
             SiteNodeVersion latestSiteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersion(db, siteNodeId);
             //logger.info("latestSiteNodeVersion:" + latestSiteNodeVersion);
             if(latestSiteNodeVersion != null)

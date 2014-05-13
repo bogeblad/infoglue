@@ -67,7 +67,10 @@ public class SiteNodeVO implements BaseEntityVO
 
   	//Used if an application wants to add more properties to this item... used for performance reasons.
   	private Map extraProperties = new Hashtable();
-  	
+
+  	private Integer localizedSortOrder 	= null;
+  	private Boolean localizedIsHidden 	= null;
+
   	private static SimpleTimeZone stmz = new SimpleTimeZone(-8 * 60 * 60 * 1000, "GMT");
 
 
@@ -200,7 +203,7 @@ public class SiteNodeVO implements BaseEntityVO
 
     public Boolean getIsHidden()
     {
-    	return this.isHidden;
+		return (this.localizedIsHidden != null ? this.localizedIsHidden : this.isHidden);
 	}
     
     public void setIsHidden(Boolean isHidden)
@@ -266,7 +269,7 @@ public class SiteNodeVO implements BaseEntityVO
 
 	public Integer getSortOrder()
 	{
-		return sortOrder;
+		return (this.localizedSortOrder != null ? this.localizedSortOrder : this.sortOrder);
 	}
 
 	public void setSortOrder(Integer sortOrder)
@@ -357,7 +360,28 @@ public class SiteNodeVO implements BaseEntityVO
 		//	addAttributes(languageId, attributes);
 		this.attributes = attributes;
 	}
-/*
+
+	public Boolean getLocalizedIsHidden()
+	{
+		return this.localizedIsHidden;
+	}
+
+	public Integer getLocalizedSortOrder()
+	{
+		return this.localizedSortOrder;
+	}
+
+	public void setLocalizedIsHidden(Boolean localizedIsHidden)
+	{
+		this.localizedIsHidden = localizedIsHidden;
+	}
+
+	public void setLocalizedSortOrder(Integer localizedSortOrder)
+	{
+		this.localizedSortOrder = localizedSortOrder;
+	}
+
+	/*
 	public void addAttributes(Integer languageId, String attributes)
 	{
 		//this.extraProperties.put("attributes_" + languageId, attributes);

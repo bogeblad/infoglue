@@ -63,6 +63,7 @@ public class ViewStructureToolAjaxServicesAction extends InfoGlueAbstractAction
 		
 	//All id's that are used
 	private Integer repositoryId = null;
+	private Integer sortLanguageId = null;
 	private Integer siteNodeId = null;
 	private Integer siteNodeVersionId = null;
 	private Integer lastPublishedSiteNodeVersionId = null;
@@ -567,4 +568,15 @@ public class ViewStructureToolAjaxServicesAction extends InfoGlueAbstractAction
 	{
 		return siteNodeVO;
 	}
+	
+	public Integer getSortLanguageId() 
+	{
+		return sortLanguageId;
+	}
+
+	public void setSortLanguageId(Integer sortLanguageId) 
+	{
+		this.sortLanguageId = sortLanguageId;
+	}
+
 }

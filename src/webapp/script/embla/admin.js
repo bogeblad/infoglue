@@ -67,7 +67,12 @@ function refreshTopToolBar(title, toolbarKey, arguments, unrefreshedContentId, c
 	if(toolbarKey.indexOf("tool.contenttool") > -1)
 		currentUrls["content"] = newUrl;
 	else if(toolbarKey.indexOf("tool.structuretool") > -1)
+	{
+		var deliveryLanguageId = top.getDeliverLanguageId();
+		if(deliveryLanguageId)
+			newUrl = newUrl + "&languageId=" + deliveryLanguageId;
 		currentUrls["structure"] = newUrl;
+	}
 	else if(toolbarKey.indexOf("tool.managementtool") > -1)
 		currentUrls["management"] = newUrl;
 	else if(toolbarKey.indexOf("tool.publishingtool") > -1)
@@ -142,7 +147,7 @@ function showContextMenu(ajaxUrl, e, aWindow)
 		
 	var clientX = getEventPositionX(e) + 16;
 	var clientY = getEventPositionY(e) - yOffset + 80;
-	console.log("clientY:" + clientY);
+	//console.log("clientY:" + clientY);
 
 	var rightedge = document.body.clientWidth - clientX;
 	var bottomedge = $(window).height() - clientY;

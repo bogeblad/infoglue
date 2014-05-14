@@ -18,8 +18,14 @@
 .webfx-tree-item a span.stateText {
 	display:none;
 }
-.webfx-tree-item a span.translationInfo {
-	display:none;
+.webfx-tree-item a span.translationInfo::before
+{ 
+	content:" - ";
+}
+.webfx-tree-item a span.translationInfo
+{ 
+	/*display:none;*/
+	color: #ccc;
 }
 
 /* GENERAL TREE PROPERTIES */

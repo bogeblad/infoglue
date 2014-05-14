@@ -26,8 +26,6 @@ package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import java.io.File;
 import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -48,8 +46,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.ObjectNotFoundException;
@@ -1507,7 +1503,7 @@ public class SiteNodeController extends BaseController
 		
 					//System.out.println("localizedIsHidden:" + localizedIsHidden);
 					//System.out.println("localizedSortOrder:" + localizedSortOrder);
-					if(localizedIsHidden != null && !localizedIsHidden.equals(""))
+					if(localizedIsHidden != null/* && !localizedIsHidden.equals("")*/)
 					{
 						if(localizedIsHidden.equals("true"))
 							siteNode.getValueObject().setLocalizedIsHidden(true);
@@ -4194,6 +4190,7 @@ public class SiteNodeController extends BaseController
 				if(cvVO != null)
 				{
 					String hideInNavigation = ContentVersionController.getContentVersionController().getAttributeValue(cvVO, "HideInNavigation", false);
+					//System.out.println("hideInNavigation:" + hideInNavigation + " on " + sortLanguageId + "/" + cvVO.getContentVersionId());
 					if(hideInNavigation == null || hideInNavigation.equals("") || hideInNavigation.equalsIgnoreCase("false"))
 						ContentVersionController.getContentVersionController().updateAttributeValue(cvVO.getContentVersionId(), "HideInNavigation", "" + true, infoGluePrincipal, db);
 					else

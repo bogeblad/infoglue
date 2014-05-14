@@ -32,11 +32,13 @@ import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
+import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.controllers.usecases.structuretool.ViewSiteNodeTreeUCC;
 import org.infoglue.cms.controllers.usecases.structuretool.ViewSiteNodeTreeUCCFactory;
 import org.infoglue.cms.entities.content.ContentVersionVO;
+import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
@@ -259,7 +261,9 @@ public class SiteNodeNodeSupplier extends BaseNodeSupplier
 			while(i.hasNext())
 			{
 				SiteNodeVO vo = i.next();
-				
+
+				LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(vo.getRepositoryId(), db);
+
 				boolean hasUserPageAccess = true;
 				String useAccessRightsOnStructureTreeString = CmsPropertyHandler.getUseAccessRightsOnStructureTree();
 				if(useAccessRightsOnStructureTreeString != null && useAccessRightsOnStructureTreeString.equalsIgnoreCase("true"))
@@ -273,9 +277,24 @@ public class SiteNodeNodeSupplier extends BaseNodeSupplier
 					
 					ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(vo.getMetaInfoContentId(), this.sortLanguageId, db);
 					if(cvVO != null)
+					{
 						node.getParameters().put("isLocalized", "true");
+						String navigationTitle = ContentVersionController.getContentVersionController().getAttributeValue(cvVO, "NavigationTitle", true);
+						node.setLocalizedTitle(navigationTitle);
+					}
 					else
+					{
 						node.getParameters().put("isLocalized", "false");
+						if(this.sortLanguageId != null && masterLanguageVO.getId().intValue() != this.sortLanguageId.intValue())
+						{
+							ContentVersionVO masterCVVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(vo.getMetaInfoContentId(), masterLanguageVO.getId(), db);
+							if(masterCVVO != null)
+							{
+								String navigationTitle = ContentVersionController.getContentVersionController().getAttributeValue(masterCVVO, "NavigationTitle", true);
+								node.setLocalizedTitle(navigationTitle);
+							}
+						}
+					}
 					
 					if(vo.getIsHidden() != null)
 						node.getParameters().put("isHidden", "" + vo.getIsHidden());

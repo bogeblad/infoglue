@@ -96,8 +96,6 @@ public class ViewQuickDeploymentSynchronizeContentsAction extends InfoGlueAbstra
 	    	logger.info("remoteContentVOList:" + remoteContentVOList.size());
 			String localFullPath = ContentController.getContentController().getContentPath(localComponentContent.getId(), true, true);
 			String localFullPath2 = ContentController.getContentController().getContentPath(localComponentContent.getId(), true, true).replaceFirst("/", " - /");
-			System.out.println("localFullPath:" + localFullPath);
-			System.out.println("localFullPath2:" + localFullPath2);
 			
 	    	boolean match = false;
 	    	Iterator remoteContentVOListIterator = remoteContentVOList.iterator();
@@ -107,10 +105,8 @@ public class ViewQuickDeploymentSynchronizeContentsAction extends InfoGlueAbstra
 	    		logger.info("remoteContentVO:" + remoteContentVO.getName() + " - " + remoteContentVO.getFullPath());
 	    		//logger.info("Versions:" + remoteContentVO.getContentVersion());
 	    		
-	    		System.out.println("remoteFullPath:" + remoteContentVO.getFullPath());
     			if(localFullPath.equals(remoteContentVO.getFullPath()) || localFullPath2.equals(remoteContentVO.getFullPath()))
     			{
-    				System.out.println("---------------------------------------------------MATCH");
     				match = true;
     				
 		    		DeploymentCompareBean bean = new DeploymentCompareBean();

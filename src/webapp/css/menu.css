@@ -15,6 +15,13 @@
 	font-style: none;
 }
 
+.webfx-tree-item a span.stateText {
+	display:none;
+}
+.webfx-tree-item a span.translationInfo {
+	display:none;
+}
+
 /* GENERAL TREE PROPERTIES */
 .webfx-tree-item {
 	height: 20px;

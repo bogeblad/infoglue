@@ -2256,7 +2256,6 @@ public class NodeDeliveryController extends BaseDeliveryController
 		   	logger.info("new path:" + path.length);
 	        logger.info("numberOfPaths = "+numberOfPaths);
     	}
-    	System.out.println("AAAAAA:" + numberOfPaths);
         
         String enableNiceURIForLanguage = CmsPropertyHandler.getEnableNiceURIForLanguage();
     	if((enableNiceURIForLanguage == null || !enableNiceURIForLanguage.equals("false")) && path.length > 0 && path[0].length() == 2)
@@ -2294,15 +2293,13 @@ public class NodeDeliveryController extends BaseDeliveryController
   	    		if(logger.isInfoEnabled())
 	    	        logger.info("Getting root node");
                 siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null, deliveryContext).getSiteNodeId(db, infogluePrincipal, repositoryVO.getId(), null, attributeName, null, languageId, deliveryContext);
-  	        	System.out.println("Root siteNodeId: " + siteNodeId);
-            } 
+  	        } 
             else 
             {
   	    		if(logger.isInfoEnabled())
 	    	        logger.info("Getting normal");
-  	        	System.out.println("Path: " + path[i]);
+
                 siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null, deliveryContext).getSiteNodeId(db, infogluePrincipal, repositoryVO.getId(), path[i], attributeName, siteNodeId, languageId, deliveryContext);
-  	        	System.out.println("siteNodeId: " + siteNodeId);
             }
 
             if (siteNodeId != null)
@@ -2971,7 +2968,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 		        		{
 							String localizedIsHidden = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, siteNode.getMetaInfoContentId(), languageId, "HideInNavigation", siteNode.getId(), true, deliveryContext, UserControllerProxy.getController().getUser(CmsPropertyHandler.getAnonymousUser()), false, true);
 							String localizedSortOrder = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, siteNode.getMetaInfoContentId(), languageId, "SortOrder", siteNode.getId(), true, deliveryContext, UserControllerProxy.getController().getUser(CmsPropertyHandler.getAnonymousUser()), false, true);
-							if(localizedIsHidden != null && !localizedIsHidden.equals(""))
+							if(localizedIsHidden != null/* && !localizedIsHidden.equals("")*/)
 							{
 								if(localizedIsHidden.equals("true"))
 									siteNode.getValueObject().setLocalizedIsHidden(true);

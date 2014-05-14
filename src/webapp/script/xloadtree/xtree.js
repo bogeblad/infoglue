@@ -776,34 +776,34 @@ WebFXTreeItem.prototype.toString = function (nItem, nItemCount) {
 	
 	if(this.stateId == "0") {
 		classInfo = "workingTreeItem";
-		stateInfo = " (working)";
+		stateInfo = "<span class=\"stateText\">working</span>";
 		if(languageCode == "sv")
-			stateInfo = " (arbetskopia";
+			stateInfo = "<span class=\"stateText\">arbetskopia</span>";
 	}
 	else if(this.stateId == "1"){ 
 		classInfo = "finishedTreeItem";
-		stateInfo = " (finished)";
+		stateInfo = "<span class=\"stateText\">finished</span>";
 		if(languageCode == "sv")
-			stateInfo = " (slutf�rd";
+			stateInfo = "<span class=\"stateText\">slutf�rd</span>";
 	}
 	else if(this.stateId == "2"){ 
 		classInfo = "publishTreeItem";
-		stateInfo = " (publish)";
+		stateInfo = "<span class=\"stateText\">publish</span>";
 		if(languageCode == "sv")
-			stateInfo = " (publicerbar";
+			stateInfo = "<span class=\"stateText\">publicerbar</span>";
 	}
 	else
 	{
 		classInfo = "publishedTreeItem";		
 	}
+		
+	if(languageCode != "sv")
+		stateInfo = stateInfo + (this.isLocalized == 'false' ? "<span class=\"translationInfo\">not translated</span>" : "");
+	else if(languageCode == "sv")
+		stateInfo = stateInfo + (this.isLocalized == 'false' ? "<span class=\"translationInfo\">ej &ouml;versatt</span>" : "");
 	
 	if(stateInfo != "")
-	{
-		if(languageCode != "sv")
-			stateInfo = stateInfo + (this.isLocalized == 'false' ? " - not translated)" : ")")
-		else if(languageCode == "sv")
-			stateInfo = stateInfo + (this.isLocalized == 'false' ? " - ej &ouml;versatt)" : ")")
-	}
+		stateInfo = " " + stateInfo + "";
 		
 		
 	var iconClass = "";

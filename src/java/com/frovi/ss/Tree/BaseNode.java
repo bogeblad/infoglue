@@ -39,6 +39,7 @@ public abstract class BaseNode extends Object
 {
 	
 	private String title;
+	private String localizedTitle;
 	private Integer id;
 
 	// Gaphical stuff
@@ -69,7 +70,7 @@ public abstract class BaseNode extends Object
 	 */
 	public String getTitle()
 	{
-		return title;
+		return (this.localizedTitle == null || this.localizedTitle.equals("") ? title : this.localizedTitle);
 	}
 
 	/**
@@ -250,5 +251,15 @@ public abstract class BaseNode extends Object
 	public Map getParameters() 
 	{
 		return parameters;
+	}
+
+	public String getLocalizedTitle() 
+	{
+		return localizedTitle;
+	}
+
+	public void setLocalizedTitle(String localizedTitle) 
+	{
+		this.localizedTitle = localizedTitle;
 	}
 }

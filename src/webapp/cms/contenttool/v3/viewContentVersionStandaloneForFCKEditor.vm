@@ -1025,7 +1025,11 @@
 		#end
         
         #if($isMetainfoContent == true)
-        <li><a href="#pageDetailsDiv"><span>$ui.getString("tool.structuretool.toolbarV3.pageDetailLabel")</span></a></li>
+        #if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false, false))
+        	<li><a href="#pageDetailsDiv"><span>$ui.getString("tool.structuretool.toolbarV3.pageDetailLabel")</span></a></li>
+        #else
+	    	<li><a href="#pageDetailsDiv"><span>$ui.getString("tool.structuretool.toolbarV3.pageDetailWithoutNameLabel")</span></a></li>
+		#end
         #if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false, false))
 	        <li><a href="#pageDetailsAdvancedDiv"><span>$ui.getString("tool.common.advanced.label")</span></a></li>	        
         #end

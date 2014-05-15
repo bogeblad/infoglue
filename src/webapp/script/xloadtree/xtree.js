@@ -589,7 +589,7 @@ WebFXTree.prototype.toString = function() {
  * WebFXTreeItem class
  */
 
-function WebFXTreeItem(sText, sAction, eParent, sIcon, sOpenIcon, isProtected, stateId, isHidden, contentTypeDefinitionId, isLocalized) {
+function WebFXTreeItem(sText, sAction, eParent, sIcon, sOpenIcon, isProtected, stateId, isHidden, contentTypeDefinitionId, isLocalized, isLanguageAvailable) {
 	this.base = WebFXTreeAbstractNode;
 	this.base(sText, sAction);
 	this.isProtected = isProtected;
@@ -597,6 +597,7 @@ function WebFXTreeItem(sText, sAction, eParent, sIcon, sOpenIcon, isProtected, s
 	this.isHidden = isHidden;
 	this.contentTypeDefinitionId = contentTypeDefinitionId;
 	this.isLocalized = isLocalized;
+	this.isLanguageAvailable = isLanguageAvailable;
 	
 	/* Defaults to close */
 	if (webFXTreeConfig.usePersistence)
@@ -778,7 +779,7 @@ WebFXTreeItem.prototype.toString = function (nItem, nItemCount) {
 		classInfo = "workingTreeItem";
 		stateInfo = "<span class=\"stateText\">working</span>";
 		if(languageCode == "sv")
-			stateInfo = "<span class=\"stateText\">arbetskopia</span>";
+			stateInfo = "<span class=\"stateText\">arbetsl&auml;ge</span>";
 	}
 	else if(this.stateId == "1"){ 
 		classInfo = "finishedTreeItem";
@@ -798,9 +799,19 @@ WebFXTreeItem.prototype.toString = function (nItem, nItemCount) {
 	}
 		
 	if(languageCode != "sv")
-		stateInfo = stateInfo + (this.isLocalized == 'false' ? "<span class=\"translationInfo\">not translated</span>" : "");
+	{
+		if(this.isLanguageAvailable == 'false')
+			stateInfo = stateInfo + (this.isLanguageAvailable == 'false' ? "<span class=\"translationInfo\">language disabled</span>" : "");
+		else
+			stateInfo = stateInfo + (this.isLocalized == 'false' ? "<span class=\"translationInfo\">not translated</span>" : "");
+	}
 	else if(languageCode == "sv")
-		stateInfo = stateInfo + (this.isLocalized == 'false' ? "<span class=\"translationInfo\">ej &ouml;versatt</span>" : "");
+	{
+		if(this.isLanguageAvailable == 'false')
+			stateInfo = stateInfo + (this.isLanguageAvailable == 'false' ? "<span class=\"translationInfo\">spr&aring;ket avst&auml;ngt</span>" : "");
+		else
+			stateInfo = stateInfo + (this.isLocalized == 'false' ? "<span class=\"translationInfo\">ej &ouml;versatt</span>" : "");
+	}
 	
 	if(stateInfo != "")
 		stateInfo = " " + stateInfo + "";

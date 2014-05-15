@@ -275,6 +275,9 @@ public class SiteNodeNodeSupplier extends BaseNodeSupplier
 					node.setId(vo.getId());
 					node.setTitle(vo.getName());
 					
+					Boolean isLanguageAvailable = SiteNodeController.getController().getIsLanguageAvailable(vo.getId(), this.sortLanguageId, db, this.infogluePrincipal);
+					node.getParameters().put("isLanguageAvailable", "" + isLanguageAvailable);
+					
 					ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(vo.getMetaInfoContentId(), this.sortLanguageId, db);
 					if(cvVO != null)
 					{

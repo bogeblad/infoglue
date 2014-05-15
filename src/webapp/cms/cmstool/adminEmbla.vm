@@ -14,6 +14,9 @@
 
 	<script type="text/javascript">
 	<!--	
+		window.hasButtonHover = false;
+		window.hasDropDownHover = false;
+		
 		/* Proxy functions */
 		function refreshContent(contentId, changeTypeId, addedContentId)
 		{
@@ -53,12 +56,24 @@
 			if($('#igAccountSectionButton').is(':visible'))
 			{
 				setTimeout(function(){
-					if(!stopClose)
+					if(!window.hasButtonHover && !window.hasDropDownHover && !stopClose)
 						$('#igAccountSection').slideUp();
-					else
-						stopClose = false;
-					}, 2000);
+				}, 100);				
 			}
+		}
+
+		function openCloseAccountOnClick()
+		{
+			if($('#igAccountSectionButton').is(':visible'))
+			{
+				$('#igAccountSection').slideToggle();
+				
+				setTimeout(function(){
+					if($('#igAccountSection').is(':visible'))
+						stopClose = false;
+				}, 1000);
+			}
+			
 		}
 		
 		$(function() {
@@ -138,15 +153,23 @@
 		     		$(this).css("color", "#ccc");
 			});
 		
-			
-			$("#igAccountSection, #igAccountSectionButton").hover(
+			$("#igAccountSection").hover(
 				function() {
-			    	stopClose = true;
+					window.hasDropDownHover = true;
 			  	}, function() {
+					window.hasDropDownHover = false;
 			    	closeAccountSection();
 			  	}
 			);
 		
+			$("#igAccountSectionButton").hover(
+				function() {
+					window.hasButtonHover = true;
+			  	}, function() {
+			  		window.hasButtonHover = false;
+			    	closeAccountSection();
+			  	}
+			);
 			initMessageSystem();
 			
 			#if($infoGluePrincipal.isAdministrator)
@@ -322,7 +345,7 @@
 		#end
 				
 		<div id="igAccountSectionButton" style="position: absolute; top: 10px; right: 10px;">
-			<a href="#" class="igAccountSection" onclick="$('#igAccountSection').slideToggle();closeAccountSection();"></a>
+			<a href="#" class="igAccountSection" onmouseover="$('#igAccountSection').slideDown();" onclick="openCloseAccountOnClick();"></a>
 		</div>
 		
 		<div id="igAccountSection" style="float: right; padding-top: 10px; padding-bottom: 0; margin-right: 10px; text-align: right;">

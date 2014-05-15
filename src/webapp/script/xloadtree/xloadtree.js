@@ -100,11 +100,11 @@ WebFXLoadTree.prototype.expand = function() {
  * WebFXLoadTreeItem class
  */
 
-function WebFXLoadTreeItem(sText, sXmlSrc, sAction, eParent, sIcon, sOpenIcon, hasChildren, isProtected, stateId, isHidden, contentTypeDefinitionId, isLocalized) {
+function WebFXLoadTreeItem(sText, sXmlSrc, sAction, eParent, sIcon, sOpenIcon, hasChildren, isProtected, stateId, isHidden, contentTypeDefinitionId, isLocalized, isLanguageAvailable) {
 	
 	// call super
 	this.WebFXTreeItem = WebFXTreeItem;
-	this.WebFXTreeItem(sText, sAction, eParent, sIcon, sOpenIcon, isProtected, stateId, isHidden, contentTypeDefinitionId, isLocalized);
+	this.WebFXTreeItem(sText, sAction, eParent, sIcon, sOpenIcon, isProtected, stateId, isHidden, contentTypeDefinitionId, isLocalized, isLanguageAvailable);
 
 	// setup default property values
 	this.src = sXmlSrc;
@@ -199,6 +199,7 @@ function _xmlTreeToJsTree(oNode) {
 	var src = oNode.getAttribute("src");
 	var isHidden = oNode.getAttribute("isHidden");
 	var isLocalized = oNode.getAttribute("isLocalized");
+	var isLanguageAvailable = oNode.getAttribute("isLanguageAvailable");
 	var contentTypeDefinitionId = oNode.getAttribute("contentTypeDefinitionId");
 	//alert("isHidden:" + isHidden);
 	//alert("src:" + src + ":" + hidden);
@@ -303,9 +304,9 @@ function _xmlTreeToJsTree(oNode) {
 	// create jsNode
 	var jsNode;
 	if (src != null && src != "")
-		jsNode = new WebFXLoadTreeItem(text, src, action, parent, icon, openIcon, hasChildren, isProtected, stateId, isHidden, contentTypeDefinitionId, isLocalized);
+		jsNode = new WebFXLoadTreeItem(text, src, action, parent, icon, openIcon, hasChildren, isProtected, stateId, isHidden, contentTypeDefinitionId, isLocalized, isLanguageAvailable);
 	else
-		jsNode = new WebFXTreeItem(text, action, parent, icon, openIcon, isProtected, stateId, isHidden, contentTypeDefinitionId, isLocalized);
+		jsNode = new WebFXTreeItem(text, action, parent, icon, openIcon, isProtected, stateId, isHidden, contentTypeDefinitionId, isLocalized, isLanguageAvailable);
 		
 
 	jsNode.myType = type;

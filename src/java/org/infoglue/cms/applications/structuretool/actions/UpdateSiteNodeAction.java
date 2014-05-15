@@ -197,6 +197,10 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 						ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
 						//RemoteCacheUpdater.getSystemNotificationMessages().add(notificationMessage);
 			    	}
+			    	
+			        CacheController.clearCache("childSiteNodesCache");
+			        CacheController.clearCache("propertySetCache");
+			        CacheController.clearCache("siteNodeLanguageCache");
 				}
 		    	
 			}

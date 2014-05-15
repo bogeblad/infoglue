@@ -4483,4 +4483,32 @@ public class SiteNodeController extends BaseController
         
         return exists;
 	}
+	
+	/**
+	 * This method returns a list of all languages available on the current site/repository.
+	 */
+	
+	public Boolean getIsLanguageAvailable(Integer siteNodeId, Integer languageId, Database db, InfoGluePrincipal principal)
+	{
+		Boolean isLanguageAvailable = false;
+		
+		try
+		{
+			List<LanguageVO> availableLanguages = LanguageDeliveryController.getLanguageDeliveryController().getLanguagesForSiteNode(db, siteNodeId, principal);
+			for(LanguageVO language : availableLanguages)
+			{
+				if(language.getId().equals(languageId))
+				{
+					isLanguageAvailable = true;
+					break;
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			logger.error("An error occurred trying to get all available languages:" + e.getMessage(), e);
+		}
+				
+		return isLanguageAvailable;
+	}
 }

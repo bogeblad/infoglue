@@ -314,9 +314,14 @@
 			#if($publicationMessage != "")
 				<p><font color='red'>$publicationMessage</font></p>
 			#end
+			
+			#if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false, false))
 			<p>					
 				#editTextFieldCSS("SiteNode.name" "name" $!name "30" true false false "normaltextfield")
 			</p>
+			#else
+				<input type="hidden" name="name" value="$!name">
+			#end
 
 				#if($enableDateTimeDirectEditing == "true")
 					#set($dateReadonly = "")

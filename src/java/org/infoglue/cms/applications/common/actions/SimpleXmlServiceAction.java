@@ -374,6 +374,7 @@ public abstract class SimpleXmlServiceAction extends InfoGlueAbstractAction
 	        	.addAttribute("text", encode(text))
 	        	.addAttribute("src", src)
 	        	.addAttribute("isLocalized", (String)node.getParameters().get("isLocalized"))
+	        	.addAttribute("isLanguageAvailable", (String)node.getParameters().get("isLanguageAvailable"))
    	        	.addAttribute("isHidden", (String)node.getParameters().get("isHidden"))
    	        	.addAttribute("hasChildren", "true")
 	        	.addAttribute("type", type);
@@ -424,6 +425,7 @@ public abstract class SimpleXmlServiceAction extends InfoGlueAbstractAction
 		        	.addAttribute("text", encode(theNode.getTitle()))
 		        	.addAttribute("src", src)
 		        	.addAttribute("isLocalized", (String)theNode.getParameters().get("isLocalized"))
+		        	.addAttribute("isLanguageAvailable", (String)theNode.getParameters().get("isLanguageAvailable"))
 		        	.addAttribute("isHidden", (String)theNode.getParameters().get("isHidden"))
 		        	.addAttribute("type", TYPE_FOLDER)
 		        	.addAttribute("hasChildren", "" + theNode.hasChildren());

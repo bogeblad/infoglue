@@ -305,7 +305,7 @@ public class TransactionHistoryController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+            logger.info("An error occurred so we should not complete the transaction:" + e, e);
 			rollbackTransaction(db);
 			return null;
         }

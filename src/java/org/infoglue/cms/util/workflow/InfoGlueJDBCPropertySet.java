@@ -433,6 +433,11 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
         	logger.error("Problem getting keys due to an SQL exception:" + e.getCause().getMessage(), e);
             throw new PropertyException(e.getMessage());
         }
+        catch (PropertyException pe) 
+        {
+        	//logger.error("Problem getting keys due to unavailable connection:" + e.getCause().getMessage());
+            throw new PropertyException(pe.getMessage());
+        }
         catch (Throwable tr) 
         {
         	logger.error("Problem getting keys:" + tr.getMessage(), tr);
@@ -1181,7 +1186,7 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
         	lastErrorCheck = System.currentTimeMillis();
         	
         	int reason = InstallationController.getController().getBrokenDatabaseReason();
-        	if(reason == InstallationController.DATABASE_PARAMETERS_MISSING || reason == InstallationController.DATABASE_SERVER_DOWN || reason == InstallationController.DATABASE_SERVER_MISSING_DATABASE)
+        	if(reason == InstallationController.DATABASE_PARAMETERS_MISSING || reason == InstallationController.DATABASE_SERVER_DOWN || reason == InstallationController.DATABASE_SERVER_MISSING_DATABASE || reason == InstallationController.DATABASE_SERVER_MISSING_DATABASE_TABLES)
         	{
         		wasDatabaseFaulty = true;
         	}

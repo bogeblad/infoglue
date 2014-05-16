@@ -141,15 +141,17 @@ public class InfoGlueAuthenticationFilter implements Filter
         String filterURIs = filterConfig.getInitParameter(FILTER_URIS_PARAMETER);
         uriMatcher = URIMatcher.compilePatterns(splitString(filterURIs, ","), false);
         
+        String anonymousUser = "";
         try
         {
-			boolean anonymousExists = UserControllerProxy.getController().userExists(CmsPropertyHandler.getAnonymousUser());
+        	anonymousUser = CmsPropertyHandler.getAnonymousUser();
+			boolean anonymousExists = UserControllerProxy.getController().userExists(anonymousUser);
 			if(!anonymousExists)
-				logger.error("The anonymous user '" + CmsPropertyHandler.getAnonymousUser() + "' was not found. Add it immediately.");
+				logger.error("The anonymous user '" + anonymousUser + "' was not found. Add it immediately.");
         }
         catch (Exception e) 
         {
-        	logger.error("Error checking if the anonymous user '" + CmsPropertyHandler.getAnonymousUser() + "' was not found. Message:" + e.getMessage());
+        	logger.error("Error checking if the anonymous user '" + anonymousUser + "' was not found. Message:" + e.getMessage());
 		}
 	}
     

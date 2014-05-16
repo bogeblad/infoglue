@@ -2315,13 +2315,20 @@ public class LuceneController extends BaseController implements NotificationList
 			//String url = DigitalAssetController.getController().getDigitalAssetUrl(digitalAssetVO, db);
 			//if(logger.isInfoEnabled())
 			//	logger.info("url if we should index file:" + url);
-			String filePath = DigitalAssetController.getController().getDigitalAssetFilePath(digitalAssetVO, db);
-			if(logger.isInfoEnabled())
-				logger.info("filePath if we should index file:" + filePath);
-			File file = new File(filePath);
-			String text = extractTextToIndex(digitalAssetVO, file);
-	
-			doc.add(new Field("contents", new StringReader(text)));
+    		try
+    		{
+				String filePath = DigitalAssetController.getController().getDigitalAssetFilePath(digitalAssetVO, db);
+				if(logger.isInfoEnabled())
+					logger.info("filePath if we should index file:" + filePath);
+				File file = new File(filePath);
+				String text = extractTextToIndex(digitalAssetVO, file);
+		
+				doc.add(new Field("contents", new StringReader(text)));
+    		}
+    		catch(Exception e)
+    		{
+    			logger.warn("Problem getting asset:" + digitalAssetVO.getId() + ": " + e.getMessage());
+    		}
 	    }
     	
 		return doc;

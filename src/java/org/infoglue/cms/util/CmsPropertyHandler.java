@@ -58,6 +58,7 @@ import org.infoglue.deliver.util.HttpHelper;
 import org.infoglue.deliver.util.NullObject;
 import org.infoglue.deliver.util.Timer;
 
+import com.opensymphony.module.propertyset.PropertyException;
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.module.propertyset.PropertySetManager;
 
@@ -434,105 +435,113 @@ public class CmsPropertyHandler
 	
 	public static String getServerNodeProperty(String prefix, String key, boolean inherit, String defaultValue, boolean skipCaches)
 	{
-		String value = null;
-	    Object valueObject = null;
-	    
-	    StringBuffer sb = new StringBuffer();
-	    sb.append(prefix).append("_").append(key).append("_").append(inherit);
-	    
-	    String cacheKey = sb.toString(); //"" + prefix + "_" + key + "_" + inherit;
-        String cacheName = "serverNodePropertiesCache";
-        
-		if(logger.isInfoEnabled())
-			logger.info("cacheKey:" + cacheKey);
-		
-		if(!skipCaches)
-			valueObject = CacheController.getCachedObject(cacheName, cacheKey);
-		
-		if(valueObject != null)
+		try
 		{
-			if(valueObject instanceof NullObject)
-				return null;
-			else	
-				return ((String)valueObject).trim();
-		}
-	    
-		Timer timer = new Timer();
+			String value = null;
+		    Object valueObject = null;
+		    
+		    StringBuffer sb = new StringBuffer();
+		    sb.append(prefix).append("_").append(key).append("_").append(inherit);
+		    
+		    String cacheKey = sb.toString(); //"" + prefix + "_" + key + "_" + inherit;
+	        String cacheName = "serverNodePropertiesCache";
+	        
+			if(logger.isInfoEnabled())
+				logger.info("cacheKey:" + cacheKey);
+			
+			if(!skipCaches)
+				valueObject = CacheController.getCachedObject(cacheName, cacheKey);
+			
+			if(valueObject != null)
+			{
+				if(valueObject instanceof NullObject)
+					return null;
+				else	
+					return ((String)valueObject).trim();
+			}
+		    
+			Timer timer = new Timer();
+			
+			if(logger.isInfoEnabled())
+				logger.info("Getting jdbc-property:" + cacheKey);
+			
+			if(propertySet != null)
+			{
+				if(localSettingsServerNodeId != null)
+			    {
+			    	if(prefix != null)
+			    	{
+				        value = propertySet.getString("serverNode_" + localSettingsServerNodeId + "_" + prefix + "_" + key);
+				        if(value == null || value.equals("") || value.equalsIgnoreCase("inherit") && inherit)
+				        {
+				            value = propertySet.getString("serverNode_" + globalSettingsServerNodeId + "_" + prefix + "_" + key);
+					        if(value == null || value.equals("") || value.equalsIgnoreCase("inherit") && inherit)
+					        {
+					            value = propertySet.getString("serverNode_" + globalSettingsServerNodeId + "_" + key);
+						    }
 		
-		if(logger.isInfoEnabled())
-			logger.info("Getting jdbc-property:" + cacheKey);
-		
-		if(propertySet != null)
-		{
-			if(localSettingsServerNodeId != null)
-		    {
-		    	if(prefix != null)
-		    	{
-			        value = propertySet.getString("serverNode_" + localSettingsServerNodeId + "_" + prefix + "_" + key);
-			        if(value == null || value.equals("") || value.equalsIgnoreCase("inherit") && inherit)
-			        {
-			            value = propertySet.getString("serverNode_" + globalSettingsServerNodeId + "_" + prefix + "_" + key);
+				        }
+			    	}
+			    	else
+			    	{
+				        value = propertySet.getString("serverNode_" + localSettingsServerNodeId + "_" + key);
 				        if(value == null || value.equals("") || value.equalsIgnoreCase("inherit") && inherit)
 				        {
 				            value = propertySet.getString("serverNode_" + globalSettingsServerNodeId + "_" + key);
-					    }
-	
-			        }
-		    	}
-		    	else
-		    	{
-			        value = propertySet.getString("serverNode_" + localSettingsServerNodeId + "_" + key);
-			        if(value == null || value.equals("") || value.equalsIgnoreCase("inherit") && inherit)
-			        {
-			            value = propertySet.getString("serverNode_" + globalSettingsServerNodeId + "_" + key);
-				    }	    		
-		    	}
-		    }
-			else
-			{
-				if(prefix != null)
-		    	{
-					value = propertySet.getString("serverNode_" + globalSettingsServerNodeId + "_" + prefix + "_" + key);
-					if(value == null || value.equals("") || value.equalsIgnoreCase("inherit") && inherit)
-			        {
-			            value = propertySet.getString("serverNode_" + globalSettingsServerNodeId + "_" + key);
-				    }	    		
-		    	}
+					    }	    		
+			    	}
+			    }
 				else
 				{
-					value = propertySet.getString("serverNode_" + globalSettingsServerNodeId + "_" + key);
-				}
-		    }
+					if(prefix != null)
+			    	{
+						value = propertySet.getString("serverNode_" + globalSettingsServerNodeId + "_" + prefix + "_" + key);
+						if(value == null || value.equals("") || value.equalsIgnoreCase("inherit") && inherit)
+				        {
+				            value = propertySet.getString("serverNode_" + globalSettingsServerNodeId + "_" + key);
+					    }	    		
+			    	}
+					else
+					{
+						value = propertySet.getString("serverNode_" + globalSettingsServerNodeId + "_" + key);
+					}
+			    }
+				
+				if(value == null || value.equals("") || value.equalsIgnoreCase("inherit") && inherit)
+			    {
+					value = propertySet.getString(key);
+			    }
+			}
 			
-			if(value == null || value.equals("") || value.equalsIgnoreCase("inherit") && inherit)
+		    if(value == null || value.equals("") || value.equalsIgnoreCase("inherit") && inherit)
 		    {
-				value = propertySet.getString(key);
+		        value = getProperty(key);
 		    }
-		}
-		
-	    if(value == null || value.equals("") || value.equalsIgnoreCase("inherit") && inherit)
-	    {
-	        value = getProperty(key);
-	    }
-
-	    if((value == null || value.indexOf(key) > -1) && defaultValue != null)
-	    	value = defaultValue;
-	    
-	    if(value != null)
-	    	value = value.trim();
-	    
-	    if(!skipCaches)
-	    {
+	
+		    if((value == null || value.indexOf(key) > -1) && defaultValue != null)
+		    	value = defaultValue;
+		    
 		    if(value != null)
-		    	CacheController.cacheObject(cacheName, cacheKey, value);
-		    else
-		    	CacheController.cacheObject(cacheName, cacheKey, new NullObject());
-	    }
-
-	    if(logger.isInfoEnabled())
-			logger.info("Getting property " + cacheKey + " took:" + timer.getElapsedTime());
-	    
-	    return value;
+		    	value = value.trim();
+		    
+		    if(!skipCaches)
+		    {
+			    if(value != null)
+			    	CacheController.cacheObject(cacheName, cacheKey, value);
+			    else
+			    	CacheController.cacheObject(cacheName, cacheKey, new NullObject());
+		    }
+	
+		    if(logger.isInfoEnabled())
+				logger.info("Getting property " + cacheKey + " took:" + timer.getElapsedTime());
+		    
+		    return value;
+		}
+		catch(Exception e)
+		{
+			logger.error("Problem getting property: " + e.getMessage()/*, e*/);
+			return defaultValue;
+		}
 	}
 
 
@@ -551,75 +560,84 @@ public class CmsPropertyHandler
 	
 	public static String getServerNodeDataProperty(String prefix, String key, boolean inherit, String defaultValue, boolean skipCache)
 	{
-	    String value = null;
-	    
-        String cacheKey = "" + prefix + "_" + key + "_" + inherit;
-        String cacheName = "serverNodePropertiesCache";
-        
-        if(logger.isInfoEnabled())
-    		logger.info("cacheKey:" + cacheKey);
-		
-        if(!skipCache)
-        {
-	        value = (String)CacheController.getCachedObject(cacheName, cacheKey);
-			if(value != null)
-			{
-				return value;
-			}
-        }
-        
-		Timer timer = new Timer();
-
-		if(logger.isInfoEnabled())
-			logger.info("Getting jdbc-property:" + cacheKey);
-	    
-		if(localSettingsServerNodeId != null)
-	    {
-	    	if(prefix != null)
-	    	{
-		        value = getDataPropertyValue("serverNode_" + localSettingsServerNodeId + "_" + prefix + "_" + key);
-		        if(value == null || value.equals("") || value.equalsIgnoreCase("inherit") && inherit)
-		        {
-		            value = getDataPropertyValue("serverNode_" + globalSettingsServerNodeId + "_" + prefix + "_" + key);
+		try
+		{
+		    String value = null;
+		    
+	        String cacheKey = "" + prefix + "_" + key + "_" + inherit;
+	        String cacheName = "serverNodePropertiesCache";
+	        
+	        if(logger.isInfoEnabled())
+	    		logger.info("cacheKey:" + cacheKey);
+			
+	        if(!skipCache)
+	        {
+		        value = (String)CacheController.getCachedObject(cacheName, cacheKey);
+				if(value != null)
+				{
+					return value;
+				}
+	        }
+	        
+			Timer timer = new Timer();
+	
+			if(logger.isInfoEnabled())
+				logger.info("Getting jdbc-property:" + cacheKey);
+		    
+			if(localSettingsServerNodeId != null)
+		    {
+		    	if(prefix != null)
+		    	{
+			        value = getDataPropertyValue("serverNode_" + localSettingsServerNodeId + "_" + prefix + "_" + key);
+			        if(value == null || value.equals("") || value.equalsIgnoreCase("inherit") && inherit)
+			        {
+			            value = getDataPropertyValue("serverNode_" + globalSettingsServerNodeId + "_" + prefix + "_" + key);
+				        if(value == null || value.equals("") || value.equalsIgnoreCase("inherit") && inherit)
+				        {
+				            value = getDataPropertyValue("serverNode_" + globalSettingsServerNodeId + "_" + key);
+				        }
+	
+			        }
+		    	}
+		    	else
+		    	{
+			        value = getDataPropertyValue("serverNode_" + localSettingsServerNodeId + "_" + key);
 			        if(value == null || value.equals("") || value.equalsIgnoreCase("inherit") && inherit)
 			        {
 			            value = getDataPropertyValue("serverNode_" + globalSettingsServerNodeId + "_" + key);
-			        }
-
-		        }
-	    	}
-	    	else
-	    	{
-		        value = getDataPropertyValue("serverNode_" + localSettingsServerNodeId + "_" + key);
-		        if(value == null || value.equals("") || value.equalsIgnoreCase("inherit") && inherit)
-		        {
-		            value = getDataPropertyValue("serverNode_" + globalSettingsServerNodeId + "_" + key);
-		        }	    		
-	    	}
-	    }
-		else
-		{
-			if(prefix != null)
-	    	{
-				value = getDataPropertyValue("serverNode_" + globalSettingsServerNodeId + "_" + prefix + "_" + key);
-	    	}
+			        }	    		
+		    	}
+		    }
 			else
 			{
-				value = getDataPropertyValue("serverNode_" + globalSettingsServerNodeId + "_" + key);
-			}
-	    }
-		
-	    if(value == null && defaultValue != null)
-	    	value = defaultValue;
+				if(prefix != null)
+		    	{
+					value = getDataPropertyValue("serverNode_" + globalSettingsServerNodeId + "_" + prefix + "_" + key);
+		    	}
+				else
+				{
+					value = getDataPropertyValue("serverNode_" + globalSettingsServerNodeId + "_" + key);
+				}
+		    }
+			
+		    if(value == null && defaultValue != null)
+		    	value = defaultValue;
+		    
+		    //H�r skall smartare l�sning in sen f�r att l�sa fallback.
+		    if(!skipCache)
+		    	CacheController.cacheObject(cacheName, cacheKey, value);
+		    
+		    if(logger.isInfoEnabled())
+				logger.info("Getting property " + cacheKey + " took:" + timer.getElapsedTime());
+		    
+		    return value;
 	    
-	    //H�r skall smartare l�sning in sen f�r att l�sa fallback.
-	    if(!skipCache)
-	    	CacheController.cacheObject(cacheName, cacheKey, value);
-	    
-	    if(logger.isInfoEnabled())
-			logger.info("Getting property " + cacheKey + " took:" + timer.getElapsedTime());
-	    
-	    return value;
+		}
+		catch(Exception e)
+		{
+			logger.error("Problem getting property: " + e.getMessage()/*, e*/);
+			return defaultValue;
+		}
 	}
 	
 	public static String getDataPropertyValue(String fullKey)
@@ -631,6 +649,10 @@ public class CmsPropertyHandler
 			byte[] valueBytes = getPropertySet().getData(fullKey);
 	    
 			result = (valueBytes != null ? new String(valueBytes, "utf-8") : "");
+		}
+		catch(PropertyException pe)
+		{
+			logger.error("Error getting DataPropertyValue for " + fullKey + ":" + pe.getMessage());
 		}
 		catch(Exception e)
 		{

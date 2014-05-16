@@ -63,7 +63,7 @@
 			<input type="checkbox" name="addExampleRepositories" value="true" #if($!addExampleRepositories == "true")checked="checked" #end/>
 		</span>
 		
-		#if($this.getJDBCEngine() == "mysql" || $this.getJDBCEngine() == "mssqlserver")
+		##if($this.getJDBCEngine() == "mysql" || $this.getJDBCEngine() == "mssqlserver")
 		<span id="dbaAccount">
 		    <label for="dbUser">$ui.getString("tool.common.install.database.dbUser")</label>
 			<input type="text" name="dbUser" value="$!dbUser"/>
@@ -71,7 +71,7 @@
 		    <label for="dbPassword">$ui.getString("tool.common.install.database.dbPassword")</label>
 			<input type="password" name="dbPassword" value=""/>
 		</span>
-		#end
+		##end
 	</p>
 	<div style="height: 200px; overflow: auto; margin-left: 16px; margin-bottom: 40px; border: 1px solid #ccc;">
 		<pre>$!script</pre>

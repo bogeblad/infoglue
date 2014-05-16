@@ -801,7 +801,7 @@ public class InstallationController extends BaseController
 		String jdbcURL = getJDBCParamFromCastorXML("//param[@name='url']");
 		String igUser = getJDBCParamFromCastorXML("//param[@name='username']");
 		String igPassword = getJDBCParamFromCastorXML("//param[@name='password']");
-
+		
 		String dbName = getDBName(jdbcURL, dbProvider);
 		String dbServer = getDBServer(jdbcURL, dbProvider);
 		String dbPort = getDBPort(jdbcURL, dbProvider);
@@ -827,7 +827,10 @@ public class InstallationController extends BaseController
 	
 	private String getDBInstance(String jdbcURL, String dbProvider) 
 	{
-		return null;
+		if(dbProvider.equals("oracle"))
+			return jdbcURL.substring(jdbcURL.lastIndexOf("/") + 1);
+		else
+			return null;
 		/*
 		String dbPort = "";
 		//jdbc:mysql://localhost:3307/infoglue333?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8
@@ -849,7 +852,11 @@ public class InstallationController extends BaseController
 			dbPort = jdbcURL.substring(jdbcURL.indexOf(":", 12) + 1, jdbcURL.indexOf("/", 13));
 		if(dbProvider.equals("mssqlserver"))
 			dbPort = jdbcURL.substring(jdbcURL.indexOf(":", 12) + 1, jdbcURL.indexOf("/", 13));
-
+		if(dbProvider.equals("oracle"))
+		{
+			String left = jdbcURL.replaceFirst("jdbc:oracle:thin:","");
+			dbPort = left.substring(left.indexOf(":") + 1, left.indexOf("/", left.indexOf(":") + 1));
+		}
 		logger.info("dbPort:" + dbPort);
 		return dbPort;
 	}
@@ -862,6 +869,8 @@ public class InstallationController extends BaseController
 			dbServer = jdbcURL.substring(jdbcURL.indexOf("://") + 3, jdbcURL.indexOf(":", 12));
 		if(dbProvider.equals("mssqlserver"))
 			dbServer = jdbcURL.substring(jdbcURL.indexOf("://") + 3, jdbcURL.indexOf(":", 12));
+		if(dbProvider.equals("oracle"))
+			dbServer = jdbcURL.substring(jdbcURL.indexOf("//") + 2, jdbcURL.indexOf(":", 17));
 
 		logger.info("dbServer:" + dbServer);
 		return dbServer;
@@ -879,6 +888,8 @@ public class InstallationController extends BaseController
 			dbName = jdbcURL.substring(jdbcURL.lastIndexOf("/") + 1, endIndex);
 		if(dbProvider.equals("mssqlserver"))
 			dbName = jdbcURL.substring(jdbcURL.lastIndexOf("/") + 1, endIndex);
+		if(dbProvider.equals("oracle"))
+			dbName = jdbcURL.substring(jdbcURL.lastIndexOf("/") + 1);
 
 		logger.info("dbName:" + dbName);
 		return dbName;
@@ -1097,7 +1108,7 @@ public class InstallationController extends BaseController
 		else if(dbProvider.equalsIgnoreCase("oracle"))
 		{
 			String oracleJdbcIGURL = getJDBCURL(dbProvider, dbName, dbServer, dbPort, dbInstance);
-
+			
 			validateConnection(jdbcDriverName, oracleJdbcIGURL, igUser, igPassword);
 			
 			createTables(jdbcDriverName, oracleJdbcIGURL, dbProvider, igUser, igPassword, dbName, igUser, igPassword);

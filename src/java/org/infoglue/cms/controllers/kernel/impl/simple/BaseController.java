@@ -55,6 +55,7 @@ import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.security.interceptors.InfoGlueInterceptor;
 import org.infoglue.cms.services.InterceptionService;
+import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.StringManager;
 import org.infoglue.cms.util.StringManagerFactory;
@@ -1419,6 +1420,17 @@ public abstract class BaseController
 	public Locale getUserPrefferedLocale(String userName)
 	{
 		Locale locale = Locale.ENGLISH;
+		try
+		{
+			List toolLocales = CmsPropertyHandler.getToolLocales();
+			if(toolLocales != null && toolLocales.size() > 0)
+				locale = (Locale)toolLocales.get(0);
+		}
+		catch (Exception e) 
+		{
+			logger.warn("Problem getting default tool locale: " + e.getMessage(), e);
+		}
+		System.out.println("Locale i baseController:" + locale);
 		
 		if(userName != null)
 		{

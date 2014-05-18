@@ -1430,7 +1430,6 @@ public abstract class BaseController
 		{
 			logger.warn("Problem getting default tool locale: " + e.getMessage(), e);
 		}
-		System.out.println("Locale i baseController:" + locale);
 		
 		if(userName != null)
 		{

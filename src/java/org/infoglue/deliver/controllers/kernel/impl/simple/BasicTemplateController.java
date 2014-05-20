@@ -6772,7 +6772,7 @@ public class BasicTemplateController implements TemplateController
 	{
 		return getChildPages(siteNodeId, escapeHTML, hideUnauthorizedPages, levelsToPopulate, nameFilter, false);
 	}
-	
+
 	/**
 	 * The method returns a list of WebPage-objects that is the children of the given 
 	 * siteNode. The method is great for navigation-purposes on a structured site. 
@@ -6780,7 +6780,17 @@ public class BasicTemplateController implements TemplateController
 	
 	public List getChildPages(Integer siteNodeId, boolean escapeHTML, boolean hideUnauthorizedPages, Integer levelsToPopulate, String nameFilter, boolean showHidden)
 	{
-        String key = "" + siteNodeId + "_" + escapeHTML + "_" + hideUnauthorizedPages + "_" + levelsToPopulate + "_" + showHidden + "_" + nameFilter + "_" + this.getLanguageId();
+		return getChildPages(siteNodeId, escapeHTML, hideUnauthorizedPages, levelsToPopulate, nameFilter, showHidden, false);
+	}
+	
+	/**
+	 * The method returns a list of WebPage-objects that is the children of the given 
+	 * siteNode. The method is great for navigation-purposes on a structured site. 
+	 */
+	
+	public List getChildPages(Integer siteNodeId, boolean escapeHTML, boolean hideUnauthorizedPages, Integer levelsToPopulate, String nameFilter, boolean showHidden, boolean showLanguageDisabled)
+	{
+        String key = "" + siteNodeId + "_" + escapeHTML + "_" + hideUnauthorizedPages + "_" + levelsToPopulate + "_" + showHidden + "_" + showLanguageDisabled + "_" + nameFilter + "_" + this.getLanguageId();
 		logger.info("key in getChildSiteNodes:" + key);
 		List<WebPage> childPages = (List<WebPage>)CacheController.getCachedObjectFromAdvancedCache("childPagesCache", key);
 		logger.info("childPages:" + childPages);
@@ -6789,7 +6799,7 @@ public class BasicTemplateController implements TemplateController
 			try
 			{
 				Timer t = new Timer();
-				List childNodeVOList = this.nodeDeliveryController.getChildSiteNodes(getDatabase(), siteNodeId, levelsToPopulate, showHidden, nameFilter);
+				List childNodeVOList = this.nodeDeliveryController.getChildSiteNodes(getDatabase(), siteNodeId, levelsToPopulate, showHidden, nameFilter, showLanguageDisabled);
 				//if(logger.isInfoEnabled())
 					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildPages.getChildSiteNodes(micro)", t.getElapsedTimeNanos() / 1000);
 				childPages = getPages(childNodeVOList, escapeHTML, hideUnauthorizedPages, showHidden);

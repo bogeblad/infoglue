@@ -3411,7 +3411,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 						<script type="text/javascript">
 							function updateAttribute${attribute.name}(data, paths)
 							{
-								//alert("Updating ${attribute.name} with:" + data);
+								//alert("Updating ${attribute.name} with:" + data + "/" + paths);
 								$("#${attribute.name}Hidden").val(data);
 								
 								$("#${attribute.name}RelationTable").empty();
@@ -3473,7 +3473,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 						<script type="text/javascript">
 							function updateAttribute${attribute.name}(data, paths)
 							{
-								//alert("Updating ${attribute.name} with:" + data);
+								//alert("Updating ${attribute.name} with:" + data + "/" + paths);
 								$("#${attribute.name}Hidden").val(data);
 								
 								$("#${attribute.name}RelationTable").empty();

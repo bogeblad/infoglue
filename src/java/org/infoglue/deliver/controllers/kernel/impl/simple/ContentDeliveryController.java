@@ -3212,7 +3212,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		    //SmallestContentVersionVO contentVersion = getSmallestContentVersionVO(content.getId(), languageId, getOperatingMode(deliveryContext), deliveryContext, db);
 			//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("isValidContentPart4", t.getElapsedTimeNanos() / 1000);
 		    
-			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getContentVersionVO in isValid", t.getElapsedTimeNanos() / 1000);
+			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getContentVersionVO in isValid(micro)", t.getElapsedTimeNanos() / 1000);
 
 		    //RequestAnalyser.getRequestAnalyser().registerComponentStatistics("isValidContentPart4.1", t.getElapsedTimeNanos() / 1000000);
 

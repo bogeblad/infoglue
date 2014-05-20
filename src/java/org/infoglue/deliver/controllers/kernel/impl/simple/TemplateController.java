@@ -1303,6 +1303,12 @@ public interface TemplateController
      * siteNode. The method is great for navigation-purposes on a structured site. 
      */
     public abstract List getChildPages(Integer siteNodeId, boolean escapeHTML, boolean hideUnauthorizedPages, Integer levelsToPopulate, String nameFilter, boolean showHidden);
+
+    /**
+     * The method returns a list of WebPage-objects that is the children of the given 
+     * siteNode. The method is great for navigation-purposes on a structured site. 
+     */
+    public abstract List getChildPages(Integer siteNodeId, boolean escapeHTML, boolean hideUnauthorizedPages, Integer levelsToPopulate, String nameFilter, boolean showHidden, boolean showLanguageDisabled);
     
     /**
      * The method returns a list of WebPage-objects that is the children of the given 

@@ -288,6 +288,11 @@
 	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
         <attribute>
+    	    <name>includeEvenIfLanguageDisabled</name>
+        	<required>false</required>
+	        <rtexprvalue>true</rtexprvalue>
+    	</attribute>
+        <attribute>
     	    <name>populateNavigationTitle</name>
         	<required>false</required>
 	        <rtexprvalue>true</rtexprvalue>

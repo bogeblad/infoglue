@@ -46,6 +46,7 @@ public class ChildPagesTag extends ComponentLogicTag
 	private boolean escapeHTML = false;
 	private boolean hideUnauthorizedPages = false;
 	private boolean includeHidden = false;
+	private boolean includeEvenIfLanguageDisabled = false;
 	private Integer levelsToPopulate = 0;
 	private String nameFilter = null;
 		
@@ -55,12 +56,12 @@ public class ChildPagesTag extends ComponentLogicTag
 		
 	    if(this.siteNodeId != null)
 	    {
-	        setResultAttribute(this.getController().getChildPages(this.siteNodeId, this.escapeHTML, this.hideUnauthorizedPages, this.levelsToPopulate, this.nameFilter, this.includeHidden));
+	        setResultAttribute(this.getController().getChildPages(this.siteNodeId, this.escapeHTML, this.hideUnauthorizedPages, this.levelsToPopulate, this.nameFilter, this.includeHidden, this.includeEvenIfLanguageDisabled));
 	    	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ChildPages 1 tag", t.getElapsedTime());	    	
 	    }
         else if(this.propertyName != null)
         {
-            setResultAttribute(getComponentLogic().getChildPages(propertyName, useInheritance, this.escapeHTML, this.hideUnauthorizedPages, useRepositoryInheritance, useStructureInheritance, this.levelsToPopulate, this.nameFilter, this.includeHidden));
+            setResultAttribute(getComponentLogic().getChildPages(propertyName, useInheritance, this.escapeHTML, this.hideUnauthorizedPages, useRepositoryInheritance, useStructureInheritance, this.levelsToPopulate, this.nameFilter, this.includeHidden, this.includeEvenIfLanguageDisabled));
 		    //if(logger.isInfoEnabled())
 		    	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ChildPages 2 tag", t.getElapsedTime());
         }
@@ -75,6 +76,7 @@ public class ChildPagesTag extends ComponentLogicTag
 	    this.escapeHTML = false;
 	    this.hideUnauthorizedPages = false;
 	    this.includeHidden = false;
+		this.includeEvenIfLanguageDisabled = false;
 	    this.levelsToPopulate = 0;
 	    this.nameFilter = null;
 	    
@@ -119,6 +121,11 @@ public class ChildPagesTag extends ComponentLogicTag
 	public void setIncludeHidden(boolean includeHidden) 
 	{
 		this.includeHidden = includeHidden;
+	}
+
+	public void setIncludeEvenIfLanguageDisabled(boolean includeEvenIfLanguageDisabled) 
+	{
+		this.includeEvenIfLanguageDisabled = includeEvenIfLanguageDisabled;
 	}
 
     public void setLevelsToPopulate(String levelsToPopulate) throws JspException

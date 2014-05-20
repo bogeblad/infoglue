@@ -1210,6 +1210,11 @@ public class ComponentLogic
 
 	public List getChildPages(String propertyName, boolean useInheritance, boolean escapeHTML, boolean hideUnauthorizedPages, boolean useRepositoryInheritance, boolean useStructureInheritance, Integer levelsToPopulate, String nameFilter, boolean includeHidden)
 	{
+		return getChildPages(propertyName, useInheritance, escapeHTML, hideUnauthorizedPages, useRepositoryInheritance, useStructureInheritance, levelsToPopulate, nameFilter, includeHidden, false);
+	}
+	
+	public List getChildPages(String propertyName, boolean useInheritance, boolean escapeHTML, boolean hideUnauthorizedPages, boolean useRepositoryInheritance, boolean useStructureInheritance, Integer levelsToPopulate, String nameFilter, boolean includeHidden, boolean includeEvenIfLanguageDisabled)
+	{
 	    List childPages = new ArrayList();
 	    
 	    Map property = getInheritedComponentProperty(this.infoGlueComponent, propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
@@ -1221,7 +1226,7 @@ public class ComponentLogic
 			{
 				Integer siteNodeId = bindingsIterator.next().getEntityId();
 				logger.info("propertyName:" + propertyName);
-				childPages.addAll(getChildPages(siteNodeId, levelsToPopulate, nameFilter, hideUnauthorizedPages, includeHidden));
+				childPages.addAll(getChildPages(siteNodeId, levelsToPopulate, nameFilter, hideUnauthorizedPages, includeHidden, includeEvenIfLanguageDisabled));
 			}
 		}
 
@@ -1256,8 +1261,13 @@ public class ComponentLogic
 
 	public List getChildPages(Integer siteNodeId, Integer levelsToPopulate, String nameFilter, boolean hideUnauthorizedPages, boolean includeHidden)
 	{
+		return getChildPages(siteNodeId, levelsToPopulate, nameFilter, hideUnauthorizedPages, includeHidden, false);
+	}
+
+	public List getChildPages(Integer siteNodeId, Integer levelsToPopulate, String nameFilter, boolean hideUnauthorizedPages, boolean includeHidden, boolean includeEvenIfLanguageDisabled)
+	{
 		//List pages = templateController.getChildPages(siteNodeId, levelsToPopulate);
-		List pages = templateController.getChildPages(siteNodeId, false, hideUnauthorizedPages, levelsToPopulate, nameFilter, includeHidden);
+		List pages = templateController.getChildPages(siteNodeId, false, hideUnauthorizedPages, levelsToPopulate, nameFilter, includeHidden, includeEvenIfLanguageDisabled);
 		
 		return pages;
 	}

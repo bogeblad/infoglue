@@ -1831,7 +1831,7 @@ public class NodeDeliveryController extends BaseDeliveryController
         {
         	try
         	{
-        		siteNodes = this.getChildSiteNodes(db, parentSiteNodeId, 0, true, null);
+        		siteNodes = this.getChildSiteNodes(db, parentSiteNodeId, 0, true, null, false);
         		//NEW!!! siteNodes = this.getChildSiteNodes(db, parentSiteNodeId, 1);
         	}
         	catch (Exception e) 
@@ -2490,12 +2490,17 @@ public class NodeDeliveryController extends BaseDeliveryController
 
 	public List getChildSiteNodes(Database db, Integer siteNodeId, Integer levelsToPopulate) throws SystemException, Exception
 	{
-		return getChildSiteNodes(db, siteNodeId, levelsToPopulate, false, null);
+		return getChildSiteNodes(db, siteNodeId, levelsToPopulate, false, null, false);
 	}
-	
+
 	public List getChildSiteNodes(Database db, Integer siteNodeId, Integer levelsToPopulate, boolean showHidden, String nameFilter) throws SystemException, Exception
 	{
-		return getChildSiteNodesOneLevel(db, siteNodeId, showHidden, nameFilter);
+		return getChildSiteNodes(db, siteNodeId, levelsToPopulate, showHidden, nameFilter, false);
+	}
+
+	public List getChildSiteNodes(Database db, Integer siteNodeId, Integer levelsToPopulate, boolean showHidden, String nameFilter, Boolean showLanguageDisabled) throws SystemException, Exception
+	{
+		return getChildSiteNodesOneLevel(db, siteNodeId, showHidden, nameFilter, showLanguageDisabled);
 		/*
 		//System.out.println("Query on siteNodeId:" + siteNodeId + "/" + levelsToPopulate);
 		if(levelsToPopulate > 0)
@@ -2857,7 +2862,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	 * This method returns the list of siteNodeVO which is children to this one.
 	 */
 	
-	public List getChildSiteNodesOneLevel(Database db, Integer siteNodeId, boolean showHidden, String nameFilter) throws SystemException, Exception
+	public List getChildSiteNodesOneLevel(Database db, Integer siteNodeId, boolean showHidden, String nameFilter, Boolean showLanguageDisabled) throws SystemException, Exception
 	{
 		logger.info("getChildSiteNodes:" + siteNodeId);
 
@@ -2865,9 +2870,9 @@ public class NodeDeliveryController extends BaseDeliveryController
 		{
 			return null;
 		}
-    	String keyTop = "" + siteNodeId + "_" + showHidden + (nameFilter == null ? "" : "_" + nameFilter) + "_" + languageId;
+    	String keyTop = "" + siteNodeId + "_" + showHidden + "_" + showLanguageDisabled + (nameFilter == null ? "" : "_" + nameFilter) + "_" + languageId;
     	if(!CmsPropertyHandler.getAllowLocalizedSortAndVisibilityProperties())
-    		keyTop = "" + siteNodeId + "_" + showHidden + (nameFilter == null ? "" : "_" + nameFilter);
+    		keyTop = "" + siteNodeId + "_" + showHidden + "_" + showLanguageDisabled + (nameFilter == null ? "" : "_" + nameFilter);
     		
     	List<SiteNodeVO> siteNodeVOList = (List<SiteNodeVO>)CacheController.getCachedObjectFromAdvancedCache("childPagesCache", keyTop); //populatedSiteNodeVOList.get(siteNodeId);
     	if(siteNodeVOList != null)
@@ -2877,9 +2882,9 @@ public class NodeDeliveryController extends BaseDeliveryController
     	}
     	else
     	{
-	        String key = "" + siteNodeId + "_" + showHidden + (nameFilter == null ? "" : "_" + nameFilter) + "_" + languageId;
+	        String key = "" + siteNodeId + "_" + showHidden + "_" + showLanguageDisabled + (nameFilter == null ? "" : "_" + nameFilter) + "_" + languageId;
 	    	if(!CmsPropertyHandler.getAllowLocalizedSortAndVisibilityProperties())
-	    		key = "" + siteNodeId + "_" + showHidden + (nameFilter == null ? "" : "_" + nameFilter);
+	    		key = "" + siteNodeId + "_" + showHidden + "_" + showLanguageDisabled + (nameFilter == null ? "" : "_" + nameFilter);
 	    	
 	    	logger.info("key in getChildSiteNodes:" + key);
 			siteNodeVOList = (List)CacheController.getCachedObjectFromAdvancedCache("childSiteNodesCache", key);
@@ -2962,25 +2967,39 @@ public class NodeDeliveryController extends BaseDeliveryController
 				while (results.hasMore()) 
 		        {
 		        	SiteNode siteNode = (SiteNode)results.next();
+		        	t.getElapsedTime();
+		        	
 		        	if(isValidSiteNode(siteNode, db))
 		        	{
 		        		if(CmsPropertyHandler.getAllowLocalizedSortAndVisibilityProperties() && languageId != null && deliveryContext != null)
 		        		{
-							String localizedIsHidden = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, siteNode.getMetaInfoContentId(), languageId, "HideInNavigation", siteNode.getId(), true, deliveryContext, UserControllerProxy.getController().getUser(CmsPropertyHandler.getAnonymousUser()), false, true);
-							String localizedSortOrder = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, siteNode.getMetaInfoContentId(), languageId, "SortOrder", siteNode.getId(), true, deliveryContext, UserControllerProxy.getController().getUser(CmsPropertyHandler.getAnonymousUser()), false, true);
-							if(localizedIsHidden != null/* && !localizedIsHidden.equals("")*/)
+				        	Boolean isLanguageAvailable = true;
+		        			if(!showLanguageDisabled)
+		        				isLanguageAvailable = SiteNodeController.getController().getIsLanguageAvailable(siteNode.getId(), languageId, db, UserControllerProxy.getController().getUser(CmsPropertyHandler.getAnonymousUser()));
+
+		        			if(!isLanguageAvailable)
 							{
-								if(localizedIsHidden.equals("true"))
-									siteNode.getValueObject().setLocalizedIsHidden(true);
-								else
-									siteNode.getValueObject().setLocalizedIsHidden(false);
+								continue;
 							}
-							
-							if(localizedSortOrder != null && !localizedSortOrder.equals(""))
+							else
 							{
-								siteNode.getValueObject().setLocalizedSortOrder(new Integer(localizedSortOrder));
+								String localizedIsHidden = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, siteNode.getMetaInfoContentId(), languageId, "HideInNavigation", siteNode.getId(), true, deliveryContext, UserControllerProxy.getController().getUser(CmsPropertyHandler.getAnonymousUser()), false, true);
+								String localizedSortOrder = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, siteNode.getMetaInfoContentId(), languageId, "SortOrder", siteNode.getId(), true, deliveryContext, UserControllerProxy.getController().getUser(CmsPropertyHandler.getAnonymousUser()), false, true);
+
+					        	if(localizedIsHidden != null/* && !localizedIsHidden.equals("")*/)
+								{
+									if(localizedIsHidden.equals("true"))
+										siteNode.getValueObject().setLocalizedIsHidden(true);
+									else
+										siteNode.getValueObject().setLocalizedIsHidden(false);
+								}
+								
+								if(localizedSortOrder != null && !localizedSortOrder.equals(""))
+								{
+									siteNode.getValueObject().setLocalizedSortOrder(new Integer(localizedSortOrder));
+								}
 							}
-		        		}
+						}
 						
 						if(siteNode.getValueObject().getIsHidden() == null || (siteNode.getValueObject().getIsHidden().booleanValue() == false || showHidden))
 							siteNodeVOList.add(siteNode.getValueObject());

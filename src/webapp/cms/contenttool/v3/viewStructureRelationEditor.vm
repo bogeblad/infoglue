@@ -26,7 +26,7 @@
 		{
 			var repositoryId = selectBox.value;
 		   	qualifyerXML = createXML();
-		    var url = "$updateAction?updateAction=$updateAction&repositoryId=" + repositoryId + "&entityName=$entityName&entityId=$entityId&attributeName=$attributeName&qualifyerXML=" + escape(qualifyerXML);
+		    var url = "$updateAction?updateAction=$updateAction&repositoryId=" + repositoryId + "&entityName=$entityName&entityId=$entityId&callbackMethod=$callbackMethod&attributeName=$attributeName&qualifyerXML=" + escape(qualifyerXML);
 			document.location.href = url;
 		}
 		 	    				

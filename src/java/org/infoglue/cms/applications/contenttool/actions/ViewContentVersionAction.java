@@ -174,24 +174,36 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 			if(entity.equalsIgnoreCase("Content"))
 			{
 				ContentVO contentVO = ContentController.getContentController().getContentVOWithId(new Integer(entityId));
-				sb.insert(0, contentVO.getName() + "/");
-				while(contentVO.getParentContentId() != null)
+				if(contentVO != null)
 				{
-					contentVO = ContentController.getContentController().getContentVOWithId(contentVO.getParentContentId());
 					sb.insert(0, contentVO.getName() + "/");
+					while(contentVO.getParentContentId() != null)
+					{
+						contentVO = ContentController.getContentController().getContentVOWithId(contentVO.getParentContentId());
+						sb.insert(0, contentVO.getName() + "/");
+					}
 				}
+				else
+					logger.warn("A content has a content relation to a removed content. entityId: " + entityId);
 			}
 			else if(entity.equalsIgnoreCase("SiteNode"))
 			{
 				SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(entityId));
-				sb.insert(0, siteNodeVO.getName() + "/");
-				while(siteNodeVO.getParentSiteNodeId() != null)
+				if(siteNodeVO != null)
 				{
-					siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVO.getParentSiteNodeId());
 					sb.insert(0, siteNodeVO.getName() + "/");
+					while(siteNodeVO.getParentSiteNodeId() != null)
+					{
+						siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVO.getParentSiteNodeId());
+						sb.insert(0, siteNodeVO.getName() + "/");
+					}
 				}
+				else
+					logger.warn("A content has a structure relation to a removed page. entityId: " + entityId);
 			}
-			sb.deleteCharAt(sb.length() -1);
+			
+			if(sb.length() > 0)
+				sb.deleteCharAt(sb.length() -1);
 		}
 		catch(Exception e)
 		{

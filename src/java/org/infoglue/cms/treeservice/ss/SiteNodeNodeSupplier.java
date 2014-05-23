@@ -25,11 +25,15 @@ package org.infoglue.cms.treeservice.ss;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
+import org.infoglue.cms.applications.databeans.ProcessBean;
+import org.infoglue.cms.applications.structuretool.actions.ViewListSiteNodeVersionAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
@@ -47,6 +51,7 @@ import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
+import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Timer;
 
 import com.frovi.ss.Tree.BaseNode;
@@ -303,8 +308,28 @@ public class SiteNodeNodeSupplier extends BaseNodeSupplier
 						node.getParameters().put("isHidden", "" + vo.getIsHidden());
 
 					if(vo.getStateId() != null)
-						node.getParameters().put("stateId", "" + vo.getStateId());
-
+					{
+						if(vo.getStateId() != SiteNodeVersionVO.PUBLISHED_STATE)
+						{
+							Timer t = new Timer();
+							Set<SiteNodeVersionVO> siteNodeVersionVOList = new HashSet<SiteNodeVersionVO>();
+							Set<ContentVersionVO> contentVersionVOList = new HashSet<ContentVersionVO>();
+							
+							ProcessBean processBean = ProcessBean.createProcessBean(ViewListSiteNodeVersionAction.class.getName(), "" + infogluePrincipal.getName());
+							SiteNodeVersionController.getController().getSiteNodeAndAffectedItemsRecursive(vo.getId(), SiteNodeVersionVO.WORKING_STATE, siteNodeVersionVOList, contentVersionVOList, false, false, infogluePrincipal, processBean, masterLanguageVO.getLocale(), -1);
+							if(siteNodeVersionVOList.size() > 0 || contentVersionVOList.size() > 0)
+								node.getParameters().put("stateId", "0");
+							else
+								node.getParameters().put("stateId", "" + vo.getStateId());
+							
+							RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getSiteNodeAndAffectedItemsRecursive", t.getElapsedTime());
+						}
+						else
+						{
+							node.getParameters().put("stateId", "" + vo.getStateId());
+						}
+					}
+					
 					if(vo.getIsProtected() != null && vo.getIsProtected().intValue() == SiteNodeVersionVO.YES.intValue())
 						node.getParameters().put("isProtected", "true");
 

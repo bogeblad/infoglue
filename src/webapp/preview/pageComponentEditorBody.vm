@@ -633,7 +633,7 @@ function saveAllEditing()
 					igInlineEditSaveFallBackValues[key + "_originalValue"] = editOnSightAttributeNames[key + "_originalValue"];
 					
 					window.igSaveAttributesInProgress[key] = true;
-					console.log("window.igSaveAttributesInProgress start", window.igSaveAttributesInProgress);
+					//console.log("window.igSaveAttributesInProgress start", window.igSaveAttributesInProgress);
 					saveAttribute(attributeContentId, attributeLanguageId, attributeName, attributeType, key);
 					allSavedItems++;
 				}
@@ -772,8 +772,10 @@ function updatePageStatus()
 			   }
 		   }
 		});
+
+		parent.refreshPage($siteNodeId, 1, $siteNodeId);
 	}
-	catch(e) {console.log("e:" + e);}
+	catch(e) {console.log("e:" + e);}	
 }
 
 function approvePublication()

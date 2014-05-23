@@ -87,7 +87,8 @@
 	    
 	    function refreshNode(nodeId, changeTypeId, addedNodeId)
 		{
-			frames['itreeFrame'].refreshTreeNode(parseInt(nodeId), parseInt(changeTypeId), parseInt(addedNodeId));
+			if(frames['itreeFrame'].refreshTreeNode)
+				frames['itreeFrame'].refreshTreeNode(parseInt(nodeId), parseInt(changeTypeId), parseInt(addedNodeId));
 		}
 
 	    function markSelected(nodeId)

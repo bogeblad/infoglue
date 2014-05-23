@@ -541,12 +541,7 @@ public class ComponentLogic
 	public String getParsedContentAttribute(String propertyName, Integer languageId, String attributeName, boolean disableEditOnSight, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance, boolean escapeVelocityCode)
 	{
 		String attributeValue = "";
-		
-		if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
-		{
-			templateController.getDeliveryContext().setDebugMode(true);
-		}
-		
+				
 		Map property = getInheritedComponentProperty(this.infoGlueComponent, propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
 		templateController.getDeliveryContext().addDebugInformation("DEBUG property:" + property);
 		Integer contentId = getContentId(property);

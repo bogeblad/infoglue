@@ -28,6 +28,8 @@ import java.util.List;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryLanguageController;
+import org.infoglue.cms.controllers.usecases.structuretool.ViewSiteNodeTreeUCC;
+import org.infoglue.cms.controllers.usecases.structuretool.ViewSiteNodeTreeUCCFactory;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 
@@ -61,6 +63,13 @@ public class ViewRepositoryAction extends InfoGlueAbstractAction
         repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);
         
         this.languageVOList = RepositoryLanguageController.getController().getLanguageVOListForRepositoryId(repositoryId);
+
+    	if(this.repositoryVO != null)
+    	{
+	    	ViewSiteNodeTreeUCC ucc = ViewSiteNodeTreeUCCFactory.newViewSiteNodeTreeUCC();	
+	    	ucc.getRootSiteNode(this.repositoryVO.getId(), getInfoGluePrincipal());
+    	}
+
     } 
 
     /**

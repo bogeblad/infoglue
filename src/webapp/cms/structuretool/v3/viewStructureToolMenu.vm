@@ -50,7 +50,8 @@
 			}
 			
 			window.setTimeout(function () {
-				frames['itreeFrame'].syncWithTree(path);
+				if(frames['itreeFrame'].syncWithTree)
+					frames['itreeFrame'].syncWithTree(path);
 				}, timeout);
 				
 			var deliverLanguageId = top.getDeliverLanguageId();
@@ -146,7 +147,7 @@
  			##else
 			##	openUrlInWorkArea("ViewStructureToolStartPage!V3.action?repositoryId=$repositoryId", '');
 			#end
-			
+
 			setTimeout(function(){loadTreeSrc()}, 100);
 		});
 

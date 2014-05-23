@@ -214,16 +214,13 @@ public class RepositoryDeliveryController extends BaseDeliveryController
 	        }
             else if(CmsPropertyHandler.getOperatingMode().equals("3"))
             {
-	            if(livePath != null)
-	            	livePath = URLEncoder.encode(livePath, niceURIEncoding);
-
 	            String livePathAlternative1 = livePath;
 	            if(livePathAlternative1 != null)
 	            	livePathAlternative1 = URLEncoder.encode(livePathAlternative1, niceURIEncoding);
 	            String livePathAlternative2 = livePath;
 	            if(livePathAlternative2 != null)
 	            	livePathAlternative2 = URLEncoder.encode(livePathAlternative2, (niceURIEncoding.indexOf("8859") > -1 ? "utf-8" : "iso-8859-1")).replaceAll("\\+", "%20");
-
+	            
 	            if(livePath != null && url.indexOf(livePath) == -1 && url.indexOf(livePathAlternative1) == -1 && url.indexOf(livePathAlternative2) == -1)
 	            {
 	            	logger.info("This repo had a live path but the url did not include any sign of it - let's skip it");

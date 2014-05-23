@@ -31,6 +31,8 @@ import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryLanguageController;
+import org.infoglue.cms.controllers.usecases.structuretool.ViewSiteNodeTreeUCC;
+import org.infoglue.cms.controllers.usecases.structuretool.ViewSiteNodeTreeUCCFactory;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -151,7 +153,13 @@ public class CreateRepositoryAction extends InfoGlueAbstractAction
     	}
 
     	addRoleAccessRightsToRepository();
-
+    	
+    	if(this.repositoryVO != null)
+    	{
+	    	ViewSiteNodeTreeUCC ucc = ViewSiteNodeTreeUCCFactory.newViewSiteNodeTreeUCC();	
+	    	ucc.getRootSiteNode(this.repositoryVO.getId(), getInfoGluePrincipal());
+    	}
+    	
 	    ViewMessageCenterAction.addSystemMessage(this.getInfoGluePrincipal().getName(), ViewMessageCenterAction.SYSTEM_MESSAGE_TYPE, "refreshRepositoryList();");
 
         return "success";
@@ -176,6 +184,12 @@ public class CreateRepositoryAction extends InfoGlueAbstractAction
     	}
 
     	addRoleAccessRightsToRepository();
+
+    	if(this.repositoryVO != null)
+    	{
+	    	ViewSiteNodeTreeUCC ucc = ViewSiteNodeTreeUCCFactory.newViewSiteNodeTreeUCC();	
+	    	ucc.getRootSiteNode(this.repositoryVO.getId(), getInfoGluePrincipal());
+    	}
 
 	    ViewMessageCenterAction.addSystemMessage(this.getInfoGluePrincipal().getName(), ViewMessageCenterAction.SYSTEM_MESSAGE_TYPE, "refreshRepositoryList();");
 

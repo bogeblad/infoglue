@@ -2153,7 +2153,6 @@ public class BasicTemplateController implements TemplateController
 			if(contentId != null)
 			{
 				String unparsedAttributeValue = ContentDeliveryController.getContentDeliveryController().getContentAttribute(getDatabase(), contentId, languageId, attributeName, this.siteNodeId, USE_LANGUAGE_FALLBACK, this.deliveryContext, this.infoGluePrincipal, false);
-				logger.info("Found unparsedAttributeValue:" + unparsedAttributeValue);
 				
 				templateLogicContext.put("inlineContentId", contentId);
 				
@@ -6633,6 +6632,21 @@ public class BasicTemplateController implements TemplateController
 			}
 		}
 		
+		try
+		{
+			if((page == null || page.getUrl() == null || page.getUrl().equals("") || page.getNavigationTitle() == null || page.getNavigationTitle().equals("")) && siteNodeVO != null && (siteNodeVO.getId().intValue() == 76270 || siteNodeVO.getId().intValue() == 76570 || siteNodeVO.getId().intValue() == 76306 || siteNodeVO.getId().intValue() == 75850 || siteNodeVO.getId().intValue() == 77320))
+			{	
+					logger.warn("hideUnauthorizedPages: " + hideUnauthorizedPages);
+					logger.warn("showHidden: " + showHidden);
+					logger.warn("siteNodeVO.getIsHidden(): " + siteNodeVO.getIsHidden());
+					logger.warn("getHasUserPageAccess on " + siteNodeVO.getId() + ":" + getHasUserPageAccess(siteNodeVO.getId()));
+			}
+		}
+		catch (Exception e) 
+		{
+			logger.warn("An error occurred when looking up the page:" + e.getMessage());
+		}
+
 		return page;
 	}
 

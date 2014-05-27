@@ -61,7 +61,12 @@ public class AssignPropertyBindingTag extends ComponentLogicTag
     	
     	produceResult(this.getController().getAssignPropertyBindingTag(propertyName, createNew, html, showInPublishedMode, showDecorated, extraParameters, hideComponentPropertiesOnLoad, keepExisting));
         
-        showDecoratedString = null;
+    	showInPublishedMode = false;
+    	showDecoratedString = null;
+    	showDecorated = true;
+    	extraParameters = null;
+    	hideComponentPropertiesOnLoad = true;
+        keepExisting = false;
         
         return EVAL_PAGE;
     }

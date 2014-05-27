@@ -47,6 +47,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeTypeDefinitionController;
+import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.management.ContentTypeAttribute;
@@ -190,7 +191,34 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 		SiteNodeVO parentSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(this.parentSiteNodeId);
 		LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(parentSiteNodeVO.getRepositoryId());
 
-		List components = PageTemplateController.getController().getPageTemplates(this.getInfoGluePrincipal(), masterLanguageVO.getId());
+		List<ContentVO> components = PageTemplateController.getController().getPageTemplates(this.getInfoGluePrincipal(), masterLanguageVO.getId());
+		
+		String allowedPageTemplateGroupNames = getRepositoryExtraProperty(parentSiteNodeVO.getRepositoryId(), "allowedPageTemplateGroupNames");
+		logger.info("allowedPageTemplateGroupNames:" + allowedPageTemplateGroupNames);
+		if(allowedPageTemplateGroupNames != null && !allowedPageTemplateGroupNames.equals(""))
+		{
+			List allowedComponents = new ArrayList<ContentVO>();
+			outer:for(ContentVO content : components)
+			{
+				String groupNames = ContentController.getContentController().getContentAttribute(content.getId(), masterLanguageVO.getId(), "GroupName");
+				logger.info("groupNames:" + groupNames);
+				String[] groupNameArray = groupNames.split(",");
+				for(String groupName : groupNameArray)
+				{
+					String[] allowedGroupNameArray = allowedPageTemplateGroupNames.split(",");
+					for(String allowedGroupName : allowedGroupNameArray)
+					{
+						logger.info(groupName + "=" + allowedGroupName);
+						if(groupName.equalsIgnoreCase(allowedGroupName))
+						{
+							allowedComponents.add(content);
+							continue outer;
+						}
+					}
+				}
+			}
+			components = allowedComponents;
+		}
 		
 		Collections.sort(components, new ReflectionComparator(sortProperty));
 		

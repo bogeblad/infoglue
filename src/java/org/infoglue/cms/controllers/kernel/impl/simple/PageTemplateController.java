@@ -50,10 +50,10 @@ public class PageTemplateController extends BaseController
 	 * This method returns the contents that are of contentTypeDefinition "PageTemplate"
 	 */
 	
-	public List getPageTemplates(InfoGluePrincipal infoGluePrincipal, Integer languageId) throws Exception
+	public List<ContentVO> getPageTemplates(InfoGluePrincipal infoGluePrincipal, Integer languageId) throws Exception
 	{
-	    List pageTemplates = getPageTemplates(infoGluePrincipal);
-	    Iterator i = pageTemplates.iterator();
+	    List<ContentVO> pageTemplates = getPageTemplates(infoGluePrincipal);
+	    Iterator<ContentVO> i = pageTemplates.iterator();
 	    while(i.hasNext())
 	    {
 	        ContentVO contentVO = (ContentVO)i.next();

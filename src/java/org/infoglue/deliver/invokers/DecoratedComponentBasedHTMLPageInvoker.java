@@ -82,6 +82,7 @@ import org.infoglue.deliver.controllers.kernel.impl.simple.DecoratedComponentLog
 import org.infoglue.deliver.controllers.kernel.impl.simple.LanguageDeliveryController;
 import org.infoglue.deliver.controllers.kernel.impl.simple.NodeDeliveryController;
 import org.infoglue.deliver.controllers.kernel.impl.simple.PageEditorHelper;
+import org.infoglue.deliver.controllers.kernel.impl.simple.RepositoryDeliveryController;
 import org.infoglue.deliver.controllers.kernel.impl.simple.TemplateController;
 import org.infoglue.deliver.integration.dataproviders.PropertyOptionsDataProvider;
 import org.infoglue.deliver.util.CacheController;
@@ -223,39 +224,67 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 	  * This method prints out the first template dialog.
 	  */
 
-	 private String showInitialBindingDialog(Integer siteNodeId, Integer languageId, Integer contentId)
-	 {
-		 String componentEditorUrl = CmsPropertyHandler.getComponentEditorUrl();
-		 //String url = "javascript:window.open('" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + (contentId == null ? "-1" : contentId) + "&specifyBaseTemplate=true&showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "', 'BaseTemplate', 'width=600,height=700,left=50,top=50,toolbar=no,status=no,scrollbars=yes,location=no,menubar=no,directories=no,resizable=yes');";
-		 String url = "" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + (contentId == null ? "-1" : contentId) + "&specifyBaseTemplate=true&showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "";
-		 url = "javascript:openInlineDiv('" + url + "', 600, 800, true, true, 'BaseTemplate');";
-		 
-		 String pageTemplateHTML = " or choose a page template below.<br><br>";
-		 
-	     boolean foundPageTemplate = false;
+	private String showInitialBindingDialog(Integer siteNodeId, Integer languageId, Integer contentId)
+	{
+		String componentEditorUrl = CmsPropertyHandler.getComponentEditorUrl();
+		//String url = "javascript:window.open('" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + (contentId == null ? "-1" : contentId) + "&specifyBaseTemplate=true&showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "', 'BaseTemplate', 'width=600,height=700,left=50,top=50,toolbar=no,status=no,scrollbars=yes,location=no,menubar=no,directories=no,resizable=yes');";
+		String url = "" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + (contentId == null ? "-1" : contentId) + "&specifyBaseTemplate=true&showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "";
+		url = "javascript:openInlineDiv('" + url + "', 600, 800, true, true, 'BaseTemplate');";
+		
+		String pageTemplateHTML = " or choose a page template below.<br><br>";
+		
+		boolean foundPageTemplate = false;
+		
+		try
+		{
+			SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
+			LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId());
+			
+			InfoGluePrincipal principal = this.getTemplateController().getPrincipal();
+			String cmsUserName = (String)this.getTemplateController().getHttpServletRequest().getSession().getAttribute("cmsUserName");
+			if(cmsUserName != null)
+				principal = this.getTemplateController().getPrincipal(cmsUserName);
+		    	
+			List<ContentVO> sortedPageTemplates = PageTemplateController.getController().getPageTemplates(principal, masterLanguageVO.getId());
+			
+			String allowedPageTemplateGroupNames = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(siteNodeVO.getRepositoryId(), "allowedPageTemplateGroupNames");
+			logger.info("allowedPageTemplateGroupNames:" + allowedPageTemplateGroupNames);
+			if(allowedPageTemplateGroupNames != null && !allowedPageTemplateGroupNames.equals(""))
+			{
+				List<ContentVO> allowedComponents = new ArrayList<ContentVO>();
+				outer:for(ContentVO content : sortedPageTemplates)
+				{
+					String groupNames = ContentController.getContentController().getContentAttribute(content.getId(), masterLanguageVO.getId(), "GroupName");
+					logger.info("groupNames:" + groupNames);
+					String[] groupNameArray = groupNames.split(",");
+					for(String groupName : groupNameArray)
+					{
+						String[] allowedGroupNameArray = allowedPageTemplateGroupNames.split(",");
+						for(String allowedGroupName : allowedGroupNameArray)
+						{
+							logger.info(groupName + "=" + allowedGroupName);
+							if(groupName.equalsIgnoreCase(allowedGroupName))
+							{
+								allowedComponents.add(content);
+								continue outer;
+							}
+						}
+					}
+				}
+				sortedPageTemplates = allowedComponents;
+			}
 
-	     try
-		 {
-	    	 SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
-	    	 LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId());
-	    	 
-	    	 InfoGluePrincipal principal = this.getTemplateController().getPrincipal();
-	    	 String cmsUserName = (String)this.getTemplateController().getHttpServletRequest().getSession().getAttribute("cmsUserName");
-	    	 if(cmsUserName != null)
-	    		 principal = this.getTemplateController().getPrincipal(cmsUserName);
-		    
-		     List sortedPageTemplates = PageTemplateController.getController().getPageTemplates(principal, masterLanguageVO.getId());
-			 Iterator sortedPageTemplatesIterator = sortedPageTemplates.iterator();
-			 int index = 0;
-			 pageTemplateHTML += "<table border=\"0\" width=\"80%\" cellspacing=\"0\"><tr>";
+			Iterator sortedPageTemplatesIterator = sortedPageTemplates.iterator();
+			int index = 0;
+			pageTemplateHTML += "<table border=\"0\" width=\"80%\" cellspacing=\"0\"><tr>";
 			 
-		     while(sortedPageTemplatesIterator.hasNext())
-			 {
-			     ContentVO contentVO = (ContentVO)sortedPageTemplatesIterator.next();
-			     ContentVersionVO contentVersionVO = this.getTemplateController().getContentVersion(contentVO.getId(), LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForSiteNode(getDatabase(), siteNodeId).getId(), false);
-			     if(contentVersionVO != null)
-			     {
-				     String imageUrl = this.getTemplateController().getAssetUrl(contentVO.getId(), "thumbnail");
+			while(sortedPageTemplatesIterator.hasNext())
+			{
+				ContentVO contentVO = (ContentVO)sortedPageTemplatesIterator.next();
+				ContentVersionVO contentVersionVO = this.getTemplateController().getContentVersion(contentVO.getId(), LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForSiteNode(getDatabase(), siteNodeId).getId(), false);
+				if(contentVersionVO != null)
+				{
+					String imageUrl = this.getTemplateController().getAssetUrl(contentVO.getId(), "thumbnail");
 				     if(imageUrl == null || imageUrl.equals(""))
 				         imageUrl = this.getRequest().getContextPath() + "/css/images/undefinedPageTemplate.jpg";
 				 
@@ -284,7 +313,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		 this.getTemplateController().getDeliveryContext().setContentType("text/html");
 		 this.getTemplateController().getDeliveryContext().setDisablePageCache(true);
 		 return "<html><head><script type='text/javascript' src='script/jquery-latest/jquery.min.js'></script><script type='text/javascript' src='script/v3/infoglue.js'></script><script type='text/javascript' src='script/jqueryplugins-latest/thickbox/thickbox-compressed.js'></script><link rel='stylesheet' type='text/css' href='script/jqueryplugins-latest/thickbox/thickbox-ig.css' /><script type='text/javascript' src='script/v3/admin.js'></script></head><body style=\"font-family:verdana, sans-serif; font-size:10px;\">The page has no base component assigned yet. Click <a href=\"" + url + "\">here</a> to assign one" + (foundPageTemplate ? pageTemplateHTML : "") + "</body></html>";
-	 }
+	}
 
 
 	/**

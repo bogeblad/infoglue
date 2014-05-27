@@ -69,6 +69,7 @@ import org.infoglue.deliver.controllers.kernel.impl.simple.ContentDeliveryContro
 import org.infoglue.deliver.controllers.kernel.impl.simple.DecoratedComponentLogic;
 import org.infoglue.deliver.controllers.kernel.impl.simple.LanguageDeliveryController;
 import org.infoglue.deliver.controllers.kernel.impl.simple.NodeDeliveryController;
+import org.infoglue.deliver.controllers.kernel.impl.simple.RepositoryDeliveryController;
 import org.infoglue.deliver.controllers.kernel.impl.simple.TemplateController;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.Timer;
@@ -224,70 +225,98 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 	 /**
 	  * This method prints out the first template dialog.
 	  */
-
-	 private String showInitialBindingDialog(Integer siteNodeId, Integer languageId, Integer contentId)
-	 {
-		 String componentEditorUrl = CmsPropertyHandler.getComponentEditorUrl();
-		 //String url = "javascript:window.open('" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?eee=1&siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + (contentId == null ? "-1" : contentId) + "&specifyBaseTemplate=true&showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "', 'BaseTemplate', 'width=600,height=700,left=50,top=50,toolbar=no,status=no,scrollbars=yes,location=no,menubar=no,directories=no,resizable=yes');";
-		 
-		 String url = "" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?eee=1&siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + (contentId == null ? "-1" : contentId) + "&specifyBaseTemplate=true&showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "";
-		 url = "javascript:openInlineDiv('" + url + "', 600, 800, true, true, 'BaseTemplate');";
-		 
-		 String pageTemplateHTML = " or choose a page template below.<br><br>";
-		 
-	     boolean foundPageTemplate = false;
-
-	     try
-		 {
-	    	 SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
-	    	 LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId());
+	
+	private String showInitialBindingDialog(Integer siteNodeId, Integer languageId, Integer contentId)
+	{
+		String componentEditorUrl = CmsPropertyHandler.getComponentEditorUrl();
+		//String url = "javascript:window.open('" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?eee=1&siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + (contentId == null ? "-1" : contentId) + "&specifyBaseTemplate=true&showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "', 'BaseTemplate', 'width=600,height=700,left=50,top=50,toolbar=no,status=no,scrollbars=yes,location=no,menubar=no,directories=no,resizable=yes');";
+		
+		String url = "" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?eee=1&siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + (contentId == null ? "-1" : contentId) + "&specifyBaseTemplate=true&showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "";
+		url = "javascript:openInlineDiv('" + url + "', 600, 800, true, true, 'BaseTemplate');";
+		
+		String pageTemplateHTML = " or choose a page template below.<br><br>";
+		
+		boolean foundPageTemplate = false;
+	     
+		try
+		{
+			SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
+			LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId());
 	    	 
-	    	 InfoGluePrincipal principal = this.getTemplateController().getPrincipal();
-	    	 String cmsUserName = (String)this.getTemplateController().getHttpServletRequest().getSession().getAttribute("cmsUserName");
-	    	 if(cmsUserName != null)
-	    		 principal = this.getTemplateController().getPrincipal(cmsUserName);
+			InfoGluePrincipal principal = this.getTemplateController().getPrincipal();
+			String cmsUserName = (String)this.getTemplateController().getHttpServletRequest().getSession().getAttribute("cmsUserName");
+			if(cmsUserName != null)
+				principal = this.getTemplateController().getPrincipal(cmsUserName);
 		    
-		     List sortedPageTemplates = PageTemplateController.getController().getPageTemplates(principal, masterLanguageVO.getId());
-			 Iterator sortedPageTemplatesIterator = sortedPageTemplates.iterator();
-			 int index = 0;
-			 pageTemplateHTML += "<table border=\"0\" width=\"80%\" cellspacing=\"0\"><tr>";
+			List<ContentVO> sortedPageTemplates = PageTemplateController.getController().getPageTemplates(principal, masterLanguageVO.getId());
 			 
-		     while(sortedPageTemplatesIterator.hasNext())
-			 {
-			     ContentVO contentVO = (ContentVO)sortedPageTemplatesIterator.next();
-			     ContentVersionVO contentVersionVO = this.getTemplateController().getContentVersion(contentVO.getId(), LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForSiteNode(getDatabase(), siteNodeId).getId(), false);
-			     if(contentVersionVO != null)
-			     {
-				     String imageUrl = this.getTemplateController().getAssetUrl(contentVO.getId(), "thumbnail");
-				     if(imageUrl == null || imageUrl.equals(""))
-				         imageUrl = this.getRequest().getContextPath() + "/css/images/undefinedPageTemplate.jpg";
+			String allowedPageTemplateGroupNames = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(siteNodeVO.getRepositoryId(), "allowedPageTemplateGroupNames");
+			logger.info("allowedPageTemplateGroupNames:" + allowedPageTemplateGroupNames);
+			if(allowedPageTemplateGroupNames != null && !allowedPageTemplateGroupNames.equals(""))
+			{
+				List<ContentVO> allowedComponents = new ArrayList<ContentVO>();
+				outer:for(ContentVO content : sortedPageTemplates)
+				{
+					String groupNames = ContentController.getContentController().getContentAttribute(content.getId(), masterLanguageVO.getId(), "GroupName");
+					logger.info("groupNames:" + groupNames);
+					String[] groupNameArray = groupNames.split(",");
+					for(String groupName : groupNameArray)
+					{
+						String[] allowedGroupNameArray = allowedPageTemplateGroupNames.split(",");
+						for(String allowedGroupName : allowedGroupNameArray)
+						{
+							logger.info(groupName + "=" + allowedGroupName);
+							if(groupName.equalsIgnoreCase(allowedGroupName))
+							{
+								allowedComponents.add(content);
+								continue outer;
+							}
+						}
+					}
+				}
+				sortedPageTemplates = allowedComponents;
+			}
+
+			Iterator sortedPageTemplatesIterator = sortedPageTemplates.iterator();
+			int index = 0;
+			pageTemplateHTML += "<table border=\"0\" width=\"80%\" cellspacing=\"0\"><tr>";
+			
+			while(sortedPageTemplatesIterator.hasNext())
+			{
+				ContentVO contentVO = (ContentVO)sortedPageTemplatesIterator.next();
+				ContentVersionVO contentVersionVO = this.getTemplateController().getContentVersion(contentVO.getId(), LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForSiteNode(getDatabase(), siteNodeId).getId(), false);
+				if(contentVersionVO != null)
+				{
+					String imageUrl = this.getTemplateController().getAssetUrl(contentVO.getId(), "thumbnail");
+					if(imageUrl == null || imageUrl.equals(""))
+						imageUrl = this.getRequest().getContextPath() + "/css/images/undefinedPageTemplate.jpg";
 				 
-				     pageTemplateHTML += "<td style=\"font-family:verdana, sans-serif; font-size:10px; border: 1px solid #C2D0E2; padding: 5px 5px 5px 5px;\" valign=\"bottom\" align=\"center\"><a href=\"" + componentEditorUrl + "ViewSiteNodePageComponents!addPageTemplate.action?repositoryId=" + contentVO.getRepositoryId() + "&siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + contentId + "&pageTemplateContentId=" + contentVO.getId() + "&showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "\"><img src=\"" + imageUrl + "\" border=\"0\" style=\"width: 100px;\"><br>";
-				     pageTemplateHTML += contentVO.getName() + "</a>";
-				     pageTemplateHTML += "</td>";	
+					pageTemplateHTML += "<td style=\"font-family:verdana, sans-serif; font-size:10px; border: 1px solid #C2D0E2; padding: 5px 5px 5px 5px;\" valign=\"bottom\" align=\"center\"><a href=\"" + componentEditorUrl + "ViewSiteNodePageComponents!addPageTemplate.action?repositoryId=" + contentVO.getRepositoryId() + "&siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + contentId + "&pageTemplateContentId=" + contentVO.getId() + "&showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "\"><img src=\"" + imageUrl + "\" border=\"0\" style=\"width: 100px;\"><br>";
+					pageTemplateHTML += contentVO.getName() + "</a>";
+					pageTemplateHTML += "</td>";	
 
-				     index++;
-				     if(index >= 5)
-				     {
-				    	 index = 0;
-				    	 pageTemplateHTML += "</tr><tr>";
-				     }
+					index++;
+					if(index >= 5)
+					{
+						index = 0;
+						pageTemplateHTML += "</tr><tr>";
+					}
 				     
-				     foundPageTemplate = true;
-			     }
-			 }
-			 pageTemplateHTML += "</tr></table>";
+					foundPageTemplate = true;
+				}
+			}
+			pageTemplateHTML += "</tr></table>";
 
-		 }
-		 catch(Exception e)
-		 {
-		     logger.warn("A problem arouse when getting the page templates:" + e.getMessage(), e);
-		 }
+		}
+		catch(Exception e)
+		{
+			logger.warn("A problem arouse when getting the page templates:" + e.getMessage(), e);
+		}
 		 
-		 this.getTemplateController().getDeliveryContext().setContentType("text/html");
-		 this.getTemplateController().getDeliveryContext().setDisablePageCache(true);
-		 return "<html><body style=\"font-family:verdana, sans-serif; font-size:10px;\">The page has no base component assigned yet. Click <a href=\"" + url + "\">here</a> to assign one" + (foundPageTemplate ? pageTemplateHTML : "") + "</body></html>";
-	 }
+		this.getTemplateController().getDeliveryContext().setContentType("text/html");
+		this.getTemplateController().getDeliveryContext().setDisablePageCache(true);
+		return "<html><body style=\"font-family:verdana, sans-serif; font-size:10px;\">The page has no base component assigned yet. Click <a href=\"" + url + "\">here</a> to assign one" + (foundPageTemplate ? pageTemplateHTML : "") + "</body></html>";
+	}
 
 
 	/**

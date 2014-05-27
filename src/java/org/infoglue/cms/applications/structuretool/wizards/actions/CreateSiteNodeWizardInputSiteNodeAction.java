@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.structuretool.wizards.actions;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -36,12 +37,14 @@ import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.PageTemplateController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeTypeDefinitionController;
+import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
+import org.infoglue.deliver.controllers.kernel.impl.simple.RepositoryDeliveryController;
 
 /**
  * This action represents the create SiteNode step in the wizards.
@@ -100,7 +103,34 @@ public class CreateSiteNodeWizardInputSiteNodeAction extends CreateSiteNodeWizar
 		SiteNodeVO parentSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(this.getCreateSiteNodeWizardInfoBean().getParentSiteNodeId());
 		LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(parentSiteNodeVO.getRepositoryId());
 
-		List components = PageTemplateController.getController().getPageTemplates(this.getInfoGluePrincipal(), masterLanguageVO.getId());
+		List<ContentVO> components = PageTemplateController.getController().getPageTemplates(this.getInfoGluePrincipal(), masterLanguageVO.getId());
+		
+		String allowedPageTemplateGroupNames = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(parentSiteNodeVO.getRepositoryId(), "allowedPageTemplateGroupNames");
+		logger.info("allowedPageTemplateGroupNames:" + allowedPageTemplateGroupNames);
+		if(allowedPageTemplateGroupNames != null && !allowedPageTemplateGroupNames.equals(""))
+		{
+			List<ContentVO> allowedComponents = new ArrayList<ContentVO>();
+			outer:for(ContentVO content : components)
+			{
+				String groupNames = ContentController.getContentController().getContentAttribute(content.getId(), masterLanguageVO.getId(), "GroupName");
+				logger.info("groupNames:" + groupNames);
+				String[] groupNameArray = groupNames.split(",");
+				for(String groupName : groupNameArray)
+				{
+					String[] allowedGroupNameArray = allowedPageTemplateGroupNames.split(",");
+					for(String allowedGroupName : allowedGroupNameArray)
+					{
+						logger.info(groupName + "=" + allowedGroupName);
+						if(groupName.equalsIgnoreCase(allowedGroupName))
+						{
+							allowedComponents.add(content);
+							continue outer;
+						}
+					}
+				}
+			}
+			components = allowedComponents;
+		}
 		
 		Collections.sort(components, new ReflectionComparator(sortProperty));
 		

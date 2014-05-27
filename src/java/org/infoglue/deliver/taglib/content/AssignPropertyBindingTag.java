@@ -105,7 +105,7 @@ public class AssignPropertyBindingTag extends ComponentLogicTag
     {
         this.hideComponentPropertiesOnLoad = hideComponentPropertiesOnLoad;
     }
-    public void setKeepExising(final boolean keepExisting) throws JspException
+    public void setKeepExisting(final boolean keepExisting) throws JspException
     {
         this.keepExisting = keepExisting;
     }

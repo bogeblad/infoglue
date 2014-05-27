@@ -46,6 +46,7 @@ public class AssignPropertyBindingTag extends ComponentLogicTag
     private boolean showDecorated = true;
     private String extraParameters = null;
     private boolean hideComponentPropertiesOnLoad = true;
+    private boolean keepExisting = false;
     
     public AssignPropertyBindingTag()
     {
@@ -58,7 +59,7 @@ public class AssignPropertyBindingTag extends ComponentLogicTag
     		showDecoratedString = "" + this.getController().getIsDecorated();
     	showDecorated = new Boolean(showDecoratedString).booleanValue();
     	
-        produceResult(this.getController().getAssignPropertyBindingTag(propertyName, createNew, html, showInPublishedMode, showDecorated, extraParameters, hideComponentPropertiesOnLoad));
+    	produceResult(this.getController().getAssignPropertyBindingTag(propertyName, createNew, html, showInPublishedMode, showDecorated, extraParameters, hideComponentPropertiesOnLoad, keepExisting));
         
         showDecoratedString = null;
         
@@ -98,5 +99,9 @@ public class AssignPropertyBindingTag extends ComponentLogicTag
     public void setHideComponentPropertiesOnLoad(final boolean hideComponentPropertiesOnLoad) throws JspException
     {
         this.hideComponentPropertiesOnLoad = hideComponentPropertiesOnLoad;
+    }
+    public void setKeepExising(final boolean keepExisting) throws JspException
+    {
+        this.keepExisting = keepExisting;
     }
 }

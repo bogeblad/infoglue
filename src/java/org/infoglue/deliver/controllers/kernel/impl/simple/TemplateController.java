@@ -1750,7 +1750,7 @@ public interface TemplateController
 	 * @param showInPublishedMode
 	 * @return
 	 */
-	public String getAssignPropertyBindingTag(String propertyName, boolean createNew, String html, boolean showInPublishedMode, boolean showDecorated);
+	public String getAssignPropertyBindingTag(String propertyName, boolean createNew, String html, boolean showInPublishedMode, boolean showDecorated, boolean keepExisting);
 
 	/**
 	 * This method returns the neccessairy html to assign by klicking on a link.
@@ -1759,7 +1759,7 @@ public interface TemplateController
 	 * @param showInPublishedMode
 	 * @return
 	 */
-	public String getAssignPropertyBindingTag(String propertyName, boolean createNew, String html, boolean showInPublishedMode, boolean showDecorated, String extraParameters, boolean hideComponentPropertiesOnLoad);
+	public String getAssignPropertyBindingTag(String propertyName, boolean createNew, String html, boolean showInPublishedMode, boolean showDecorated, String extraParameters, boolean hideComponentPropertiesOnLoad, boolean keepExisting);
 
 	
     public boolean getThreatFoldersAsContents();

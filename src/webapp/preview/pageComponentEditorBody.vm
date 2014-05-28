@@ -238,7 +238,7 @@ function registerOnChange()
 								},
 							   error: function (XMLHttpRequest, textStatus, errorThrown) {
 							   		//alert("textStatus:" + textStatus);
-								   	alert("ResponseCode:" + XMLHttpRequest.status);
+								   	//alert("ResponseCode:" + XMLHttpRequest.status);
 								   	//alert("errorThrown:" + errorThrown);
 								   	if(XMLHttpRequest.status == 403)
 								   	{
@@ -373,7 +373,7 @@ function initWYSIWYGInstance(key, isTextField)
 					},
 				   error: function (XMLHttpRequest, textStatus, errorThrown) {
 				   		//alert("textStatus:" + textStatus);
-					   	alert("ResponseCode:" + XMLHttpRequest.status);
+					   	//alert("ResponseCode:" + XMLHttpRequest.status);
 					   	//alert("errorThrown:" + errorThrown);
 					   	if(XMLHttpRequest.status == 403)
 					   	{
@@ -755,7 +755,7 @@ function updatePageStatus()
 		   },
 		   error: function (XMLHttpRequest, textStatus, errorThrown) {
 			   //alert("textStatus:" + textStatus);
-			   alert("ResponseCode:" + XMLHttpRequest.status);
+			   //alert("ResponseCode:" + XMLHttpRequest.status);
 			   //alert("errorThrown:" + errorThrown);
 			   if(XMLHttpRequest.status == 403)
 			   {

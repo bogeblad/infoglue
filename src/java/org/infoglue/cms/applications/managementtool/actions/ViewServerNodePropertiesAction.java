@@ -141,7 +141,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "recacheUrl");
 	    populate(ps, "useUpdateSecurity");
 	    populate(ps, "allowXForwardedIPCheck");
-
+	    
 	    populate(ps, "allowedAdminIP");
 	    String allowedAdminIP = this.getRequest().getParameter("allowedAdminIP");
 	    if(allowedAdminIP != null && !allowedAdminIP.equals(""))
@@ -229,6 +229,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "casProxyValidateUrl");
 	    populate(ps, "casServiceUrl");
 	    populate(ps, "casLogoutUrl");
+	    populate(ps, "useBrowserLanguage");
 	    populate(ps, "ipAddressesToFallbackToBasicAuth");
 	    
 	    populate(ps, "deliver_loginUrl");

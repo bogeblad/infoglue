@@ -1141,7 +1141,7 @@ public class CmsPropertyHandler
 	
 	public static String getUseBrowserLanguage()
 	{
-		return getServerNodeProperty("useBrowserLanguage", true, "true");
+		return getServerNodeProperty("useBrowserLanguage", true, "false");
 	}
 
 	public static String getUseAlternativeBrowserLanguageCheck()

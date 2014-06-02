@@ -278,6 +278,7 @@
 				#selectFieldCSS("ServerNode.property.maxNumberOfVersionsForDerivedLastModifiedInLive" "maxNumberOfVersionsForDerivedLastModifiedInLive" $this.getPropertyValue('maxNumberOfVersionsForDerivedLastModifiedInLive') $maxNumberOfVersionsForDerivedLastModifiedInLiveOptions "$!cmsPH.setDerivedLastModifiedInLive")
 
 				#editPropertyFieldCSS("ServerNode.property.standardResponseHeaders" "standardResponseHeaders" "$this.getPropertyValue('standardResponseHeaders')" "51" "$!serverNodeId" "$!cmsPH.standardResponseHeaders")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.useBrowserLanguage" "useBrowserLanguage" "$this.getPropertyValue('useBrowserLanguage')" $!cmsPH.useBrowserLanguage)
 			</div>
 		
 			<div class="inlineTabDiv" id="urlEncoding">

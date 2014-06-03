@@ -323,8 +323,6 @@
 		.ui-state-disabled, .ui-widget-content .ui-state-disabled, .ui-widget-header .ui-state-disabled { opacity: .95 !important; filter:Alpha(Opacity=95) !important; background-image: none; }
 		.notActive { outline: 0px !important; background: transparent url(images/trans.gif) 50% 50% repeat-x !important;} 	
 	</style>
-	#set($sortLanguageVO = $this.getLanguageVO($sortLanguageId))
-	
 </head>
 <body oncontextmenu="return false;" class="generaltooledit" onload="onloadFn()" style="margin:0px">
 	

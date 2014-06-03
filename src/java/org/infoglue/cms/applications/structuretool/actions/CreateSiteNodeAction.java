@@ -44,6 +44,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.PageTemplateController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
+import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryLanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeTypeDefinitionController;
@@ -77,6 +78,7 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
     private Integer siteNodeTypeDefinitionId;
     private Integer pageTemplateContentId;
     private Integer repositoryId;
+    private Integer languageId;
     private String returnAddress;
     private String originalAddress;
     private ConstraintExceptionBuffer ceb;
@@ -86,6 +88,7 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
    	private String sortProperty = "name";
    	private String userSessionKey;
    	private Integer changeTypeId = new Integer(0);
+   	private List<LanguageVO> availablePageLanguages = new ArrayList<LanguageVO>();
    	
    	private List<ContentTypeAttribute> specialMetaAttributes = new ArrayList<ContentTypeAttribute>();
    	
@@ -344,18 +347,22 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
         	SiteNode newSiteNode = SiteNodeControllerProxy.getSiteNodeControllerProxy().acCreate(this.getInfoGluePrincipal(), this.parentSiteNodeId, this.siteNodeTypeDefinitionId, this.repositoryId, this.siteNodeVO, db);            
             newSiteNodeVO = newSiteNode.getValueObject();
             t.printElapsedTime("acCreate took");
-            
+
+            List<LanguageVO> languages = RepositoryLanguageController.getController().getLanguageVOListForRepositoryId(newSiteNode.getValueObject().getRepositoryId(), db);
             Map<String,String> metaAttributes = new HashMap<String,String>();
     	    ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Meta info");
     	    List<ContentTypeAttribute> attributes = ContentTypeDefinitionController.getController().getContentTypeAttributes(ctdVO, false);
-    	    for(ContentTypeAttribute attribute : attributes)
+    	    for(LanguageVO languageVO : languages)
     	    {
-    	    	if(getRequest().getParameter(attribute.getName()) != null && !getRequest().getParameter(attribute.getName()).equals(""))
-    	    	{
-    	    		metaAttributes.put(attribute.getName(), getRequest().getParameter(attribute.getName()));
-    	    	}
+	    	    for(ContentTypeAttribute attribute : attributes)
+	    	    {
+	    	    	if(getRequest().getParameter(languageVO.getLanguageCode() + "_" + attribute.getName()) != null && !getRequest().getParameter(languageVO.getLanguageCode() + "_" + attribute.getName()).equals(""))
+	    	    	{
+	    	    		metaAttributes.put(languageVO.getLanguageCode() + "_" + attribute.getName(), getRequest().getParameter(languageVO.getLanguageCode() + "_" + attribute.getName()));
+	    	    	}
+	    	    }
     	    }
-
+    	    
             SiteNodeController.getController().createSiteNodeMetaInfoContent(db, newSiteNodeVO, metaAttributes, this.repositoryId, this.getInfoGluePrincipal(), this.pageTemplateContentId, new ArrayList(), false);
             t.printElapsedTime("createSiteNodeMetaInfoContent took");
             
@@ -421,6 +428,8 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 
 		parentSiteNodeVO = SiteNodeControllerProxy.getController().getSiteNodeVOWithId(parentSiteNodeId);
 
+		this.availablePageLanguages = RepositoryLanguageController.getController().getAvailableLanguageVOListForRepositoryId(parentSiteNodeVO.getRepositoryId());
+		
 		String createSiteNodeInlineOperationDoneHeader = getLocalizedString(getLocale(), "tool.structuretool.createSiteNodeInlineOperationDoneHeader", parentSiteNodeVO.getName());
 		String createSiteNodeInlineOperationBackToCurrentPageLinkText = getLocalizedString(getLocale(), "tool.structuretool.createSiteNodeInlineOperationBackToCurrentPageLinkText");
 		String createSiteNodeInlineOperationBackToCurrentPageTitleText = getLocalizedString(getLocale(), "tool.structuretool.createSiteNodeInlineOperationBackToCurrentPageTitleText");
@@ -489,6 +498,16 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
         this.pageTemplateContentId = pageTemplateContentId;
     }
 
+    public Integer getLanguageId()
+    {
+        return languageId;
+    }
+    
+    public void setLanguageId(Integer languageId)
+    {
+        this.languageId = languageId;
+    }
+
 	public SiteNodeVO getParentSiteNodeVO()
 	{
 		return parentSiteNodeVO;
@@ -539,5 +558,9 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 		return specialMetaAttributes;
 	}
 	
+	public List<LanguageVO> getAvailablePageLanguages()
+	{
+		return availablePageLanguages;
+	}
 
 }

@@ -289,7 +289,12 @@
 			}
 			loaded();
 		}
-
+		
+		function changeLanguage()
+		{
+			var toLanguageId = $("#languageDrop").val();
+			parent.htmlTreeItemClickWithLanguage('$rootNode.id','$repositoryId','$rootNode.Title', toLanguageId);
+		}
 		// ]]>
 	</script>
 
@@ -316,9 +321,10 @@
 		.webfx-tree-slot { height: 6px; border: 0; position: absolute; width: 100%; margin-top: -3px; z-index: 100000000;}
 		.treeSlotActive { height: 6px; z-index: 100000000; background: url('css/images/v3/margin-dot.png') repeat-x;}
 		.ui-state-disabled, .ui-widget-content .ui-state-disabled, .ui-widget-header .ui-state-disabled { opacity: .95 !important; filter:Alpha(Opacity=95) !important; background-image: none; }
-		.notActive { outline: 0px !important; background: transparent url(images/trans.gif) 50% 50% repeat-x !important;} 
+		.notActive { outline: 0px !important; background: transparent url(images/trans.gif) 50% 50% repeat-x !important;} 	
 	</style>
-
+	#set($sortLanguageVO = $this.getLanguageVO($sortLanguageId))
+	
 </head>
 <body oncontextmenu="return false;" class="generaltooledit" onload="onloadFn()" style="margin:0px">
 	
@@ -372,6 +378,9 @@
 	tree.myId = "$rootNode.Id";	
 	document.write(tree);
 
+	$(".root").append(" <select id='languageDrop' onchange='changeLanguage();'>#foreach($repoLanguageVO in $this.getRepositoryLanguages($repositoryId))<option value='$repoLanguageVO.id' #if($repoLanguageVO.id == $sortLanguageId)selected='selected'#end>$repoLanguageVO.localizedDisplayLanguage</option>#end</ul>");
+	
+	
 	$("#" + tree.id + " a").droppable({
 		greedy: true,
 		hoverClass: 'ui-state-active',
@@ -454,7 +463,7 @@
    	
 	-->
 	</script>	
-	
+		
 	</div>
 	
 	<div id="debug" style="display: none; background-color: white; position: absolute; left: 0px; bottom: 0px; width: 100%; height: 100px;"></div>

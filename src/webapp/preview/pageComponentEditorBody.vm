@@ -471,7 +471,7 @@ function toggleInline(event, id)
 							}
 							else
 							{
-								console.log("Not destroying it: " + key);
+								//console.log("Not destroying it: " + key);
 							}
 						}
 						else
@@ -549,7 +549,7 @@ function completeSaveProcedure()
 			for(var key in window.igInlineSaveErrorKeys) 
 			{
 				$("#" + key).addClass("validationError").focus();
-				console.log("Error found.." + window.igInlineSaveErrorKeys[key]);
+				//console.log("Error found.." + window.igInlineSaveErrorKeys[key]);
 			}
 			for (key in editOnSightAttributeNames)
 			{

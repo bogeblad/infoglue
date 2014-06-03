@@ -106,9 +106,7 @@
 						$(ui.helper).css('border', '1px solid #ccc');
 				    	$(ui.helper).css('background-color', 'white');
 				    	var currentMovedComponentId = $(ev.target).closest(".dragableComponent").attr("id");
-				    	console.log("currentMovedComponentId:", currentMovedComponentId);
-				    	console.log("movedComponentId:", movedComponentId);
-						if(currentMovedComponentId != '-1' && currentMovedComponentId != movedComponentId)
+				    	if(currentMovedComponentId != '-1' && currentMovedComponentId != movedComponentId)
 						{
 							movedElementId = currentMovedComponentId;
 							currentMovedComponentId = currentMovedComponentId.substring(currentMovedComponentId.indexOf("_") + 1, currentMovedComponentId.indexOf("Comp"));

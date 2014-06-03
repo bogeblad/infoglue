@@ -2112,11 +2112,12 @@ public class SiteNodeController extends BaseController
         	
         	newSiteNode.setMetaInfoContentId(contentVO.getId());
         	
+    	    LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(repositoryId, db);
+
         	String componentStructure = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><components></components>";
         	if(pageTemplateContentId != null)
         	{
-        	    Integer masterLanguageId = LanguageController.getController().getMasterLanguage(repositoryId, db).getId();
-        		ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(pageTemplateContentId, masterLanguageId, db);
+        		ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(pageTemplateContentId, masterLanguageVO.getId(), db);
         		
         	    componentStructure = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO, "ComponentStructure", false);
         	
@@ -2129,49 +2130,73 @@ public class SiteNodeController extends BaseController
     				String componentId = element.getAttribute("id");
     				String componentContentId = element.getAttribute("contentId");
     				
-    				ComponentController.getController().checkAndAutoCreateContents(db, newSiteNode.getId(), masterLanguageId, masterLanguageId, null, new Integer(componentId), document, new Integer(componentContentId), principal);
+    				ComponentController.getController().checkAndAutoCreateContents(db, newSiteNode.getId(), masterLanguageVO.getId(), masterLanguageVO.getId(), null, new Integer(componentId), document, new Integer(componentContentId), principal);
     				componentStructure = XMLHelper.serializeDom(document, new StringBuffer()).toString();
     			}
             	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("meta info create 1", t.getElapsedTime());
         	}
         	
-        	//Create initial content version also... in masterlanguage
-        	String versionValue = "<?xml version='1.0' encoding='UTF-8'?><article xmlns=\"x-schema:ArticleSchema.xml\"><attributes>";
-        	if(metaAttributes == null || !metaAttributes.containsKey("Title"))
-        		versionValue += "<Title><![CDATA[" + newSiteNode.getName() + "]]></Title>";
-        	if(metaAttributes == null || !metaAttributes.containsKey("NavigationTitle"))
-            	versionValue += "<NavigationTitle><![CDATA[" + newSiteNode.getName() + "]]></NavigationTitle>";
-        	if(metaAttributes == null || !metaAttributes.containsKey("NiceURIName"))
-            	versionValue += "<NiceURIName><![CDATA[" + new VisualFormatter().replaceNiceURINonAsciiWithSpecifiedChars(newSiteNode.getName(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter()) + "]]></NiceURIName>";
-        	if(metaAttributes == null || !metaAttributes.containsKey("Description"))
-            	versionValue += "<Description><![CDATA[" + newSiteNode.getName() + "]]></Description>";
-        	if(metaAttributes == null || !metaAttributes.containsKey("MetaInfo"))
-            	versionValue += "<MetaInfo><![CDATA[" + newSiteNode.getName() + "]]></MetaInfo>";
-        	
-        	if(metaAttributes != null)
+        	List<LanguageVO> languageVOList = RepositoryLanguageController.getController().getLanguageVOListForRepositoryId(repositoryId, db);
+        	for(LanguageVO languageVO : languageVOList)
         	{
-	        	for(String metaAttributeName : metaAttributes.keySet())
+	        	//Create initial content version also... in languageVO
+	        	String versionValue = "<?xml version='1.0' encoding='UTF-8'?><article xmlns=\"x-schema:ArticleSchema.xml\"><attributes>";
+	        	if(metaAttributes == null || !metaAttributes.containsKey(languageVO.getLanguageCode() + "_Title"))
+	        		versionValue += "<Title><![CDATA[" + newSiteNode.getName() + "]]></Title>";
+	        	if(metaAttributes == null || !metaAttributes.containsKey(languageVO.getLanguageCode() + "_NavigationTitle"))
+	            	versionValue += "<NavigationTitle><![CDATA[" + newSiteNode.getName() + "]]></NavigationTitle>";
+	        	if(metaAttributes == null || !metaAttributes.containsKey(languageVO.getLanguageCode() + "_NiceURIName"))
+	            	versionValue += "<NiceURIName><![CDATA[" + new VisualFormatter().replaceNiceURINonAsciiWithSpecifiedChars(newSiteNode.getName(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter()) + "]]></NiceURIName>";
+	        	if(metaAttributes == null || !metaAttributes.containsKey(languageVO.getLanguageCode() + "_Description"))
+	            	versionValue += "<Description><![CDATA[" + newSiteNode.getName() + "]]></Description>";
+	        	if(metaAttributes == null || !metaAttributes.containsKey(languageVO.getLanguageCode() + "_MetaInfo"))
+	            	versionValue += "<MetaInfo><![CDATA[" + newSiteNode.getName() + "]]></MetaInfo>";
+	        	
+	        	boolean saveVersion = false;
+	        	boolean realValue = false;
+	        	if(metaAttributes != null)
 	        	{
-	        		versionValue += "<" + metaAttributeName + "><![CDATA[" + metaAttributes.get(metaAttributeName) + "]]></" + metaAttributeName + ">";
+		        	for(String metaAttributeName : metaAttributes.keySet())
+		        	{
+		        		if(metaAttributeName.startsWith(languageVO.getLanguageCode() + "_"))
+		        		{
+		        			versionValue += "<" + metaAttributeName.replaceFirst(languageVO.getLanguageCode() + "_", "") + "><![CDATA[" + metaAttributes.get(metaAttributeName) + "]]></" + metaAttributeName.replaceFirst(languageVO.getLanguageCode() + "_", "") + ">";
+		        			saveVersion = true;
+		        			realValue = true;
+		        		}
+		        	}
+	        	}
+	        		        	
+	        	if(!realValue) //No other values
+	        		versionValue = "<?xml version='1.0' encoding='UTF-8'?><article xmlns=\"x-schema:ArticleSchema.xml\"><attributes>";
+	        	
+	        	if(languageVO.getId().equals(masterLanguageVO.getId()))
+	        	{
+	        		versionValue += "<ComponentStructure><![CDATA[" + componentStructure + "]]></ComponentStructure>";
+        			saveVersion = true;
+	        	}
+	        	
+	        	versionValue += "</attributes></article>";
+	        	
+	        	if(saveVersion)
+	        	{
+		        	ContentVersionVO contentVersionVO = new ContentVersionVO();
+		        	contentVersionVO.setVersionComment("Autogenerated version");
+		        	contentVersionVO.setVersionModifier(principal.getName());
+		        	contentVersionVO.setVersionValue(versionValue);
+		        	//ContentVersionController.getContentVersionController().create(contentVO.getId(), masterLanguage.getId(), contentVersionVO, null, db);
+		        	MediumContentVersionImpl contentVersionImpl = ContentVersionController.getContentVersionController().createMedium(contentVO.getId(), languageVO.getId(), contentVersionVO, db);
+		        	if(newContentVersions != null)
+		        		newContentVersions.add(contentVersionImpl);
+	
+		        	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("meta info create 2", t.getElapsedTime());
 	        	}
         	}
         	
-        	versionValue += "<ComponentStructure><![CDATA[" + componentStructure + "]]></ComponentStructure>";
-        	versionValue += "</attributes></article>";
         	
-        	ContentVersionVO contentVersionVO = new ContentVersionVO();
-        	contentVersionVO.setVersionComment("Autogenerated version");
-        	contentVersionVO.setVersionModifier(principal.getName());
-        	contentVersionVO.setVersionValue(versionValue);
-        	//ContentVersionController.getContentVersionController().create(contentVO.getId(), masterLanguage.getId(), contentVersionVO, null, db);
-        	MediumContentVersionImpl contentVersionImpl = ContentVersionController.getContentVersionController().createMedium(contentVO.getId(), masterLanguage.getId(), contentVersionVO, db);
-        	if(newContentVersions != null)
-        		newContentVersions.add(contentVersionImpl);
-
-        	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("meta info create 2", t.getElapsedTime());
-
-        	//Also created a version in the local master language for this part of the site if any
         	LanguageVO localMasterLanguageVO = getInitialLanguageVO(db, parentFolderContent.getId(), repositoryId);
+        	//Also created a version in the local master language for this part of the site if any
+        	/*
         	if(localMasterLanguageVO.getId().intValue() != masterLanguage.getId().intValue())
         	{
 	        	String versionValueLocalMaster = "<?xml version='1.0' encoding='UTF-8'?><article xmlns=\"x-schema:ArticleSchema.xml\"><attributes><Title><![CDATA[" + newSiteNode.getName() + "]]></Title><NavigationTitle><![CDATA[" + newSiteNode.getName() + "]]></NavigationTitle><NiceURIName><![CDATA[" + new VisualFormatter().replaceNiceURINonAsciiWithSpecifiedChars(newSiteNode.getName(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter()) + "]]></NiceURIName><Description><![CDATA[" + newSiteNode.getName() + "]]></Description><MetaInfo><![CDATA[" + newSiteNode.getName() + "]]></MetaInfo><ComponentStructure><![CDATA[]]></ComponentStructure></attributes></article>";
@@ -2185,6 +2210,7 @@ public class SiteNodeController extends BaseController
 	        		newContentVersions.add(contentVersionImplLocal);
 	        	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("meta info create 3", t.getElapsedTime());
         	}
+        	*/
 
         	//If the content has other language versions we should copy them
         	if(oldMetaInfoContentVO != null)

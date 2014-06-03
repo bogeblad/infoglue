@@ -19,7 +19,8 @@
 		
 		var exp;
 		var currentRepositoryId = "$!repositoryId";
-
+		var lastClickedId = -1;
+		
 		function reload()
 		{
 			removeCookies()
@@ -48,12 +49,11 @@
 				//parent.changeRepository(repositoryId, escape(path));
 				timeout = 2000;
 			}
-			
 			window.setTimeout(function () {
 				if(frames['itreeFrame'].syncWithTree)
 					frames['itreeFrame'].syncWithTree(path);
 				}, timeout);
-				
+
 			var deliverLanguageId = top.getDeliverLanguageId();
 			if(window.languageId != deliverLanguageId)
 			{
@@ -68,7 +68,16 @@
 
 		function htmlTreeItemClick(itemId, repoId, path)
 		{
+			//alert("htmlTreeItemClick");
+			lastClickedId = itemId;
 			openUrlInWorkArea("ViewSiteNode!V3.action?siteNodeId=" + itemId + "&repositoryId=" + repoId + "&languageId=" + window.languageId, path);
+		}
+		
+		function htmlTreeItemClickWithLanguage(itemId, repoId, path, languageId)
+		{
+			//alert("htmlTreeItemClick");
+			lastClickedId = itemId;
+			openUrlInWorkArea("ViewSiteNode!V3.action?siteNodeId=" + itemId + "&repositoryId=" + repoId + "&languageId=" + languageId, path);
 		}
 		
 		function openUrlInWorkArea(url, titel)
@@ -87,13 +96,16 @@
 	    
 	    function refreshNode(nodeId, changeTypeId, addedNodeId)
 		{
-			if(frames['itreeFrame'].refreshTreeNode)
-				frames['itreeFrame'].refreshTreeNode(parseInt(nodeId), parseInt(changeTypeId), parseInt(addedNodeId));
+			if(lastClickedId != nodeId || changeTypeId != 1)
+			{
+				if(frames['itreeFrame'].refreshTreeNode)
+					frames['itreeFrame'].refreshTreeNode(parseInt(nodeId), parseInt(changeTypeId), parseInt(addedNodeId));
+			}
 		}
 
 	    function markSelected(nodeId)
 		{
-			//console.log("markSelected...");
+			//alert("markSelected...");
 			setTimeout("1000");
 				frames['itreeFrame'].markSelected(parseInt(nodeId));
 		}
@@ -175,6 +187,6 @@
     <div id="treeDivContainer" class="onlyExpanded">
 		<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="" width="220" height="150" allowtransparency="true"></iframe>
     </div>
-	
+    	
 </body>
 </html>

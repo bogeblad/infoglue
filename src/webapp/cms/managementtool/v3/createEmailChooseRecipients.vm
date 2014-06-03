@@ -44,7 +44,6 @@
 		function selectUserFromField(userName)
 		{
 			jQuery.getJSON("ViewCommonAjaxServices!userSearch.action", { "q": "" + $("#userNameField").val(), "fieldToMatchExact": "email" }, function(data) { 
-				console.log(data.users.length);
 				if(data.users.length == 0)
 					alert("$ui.getString("tool.common.noUserWithEmailFound.warning")");
 				else

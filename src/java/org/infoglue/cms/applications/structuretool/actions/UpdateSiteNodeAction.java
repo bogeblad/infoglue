@@ -201,6 +201,8 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 			        CacheController.clearCache("childSiteNodesCache");
 			        CacheController.clearCache("propertySetCache");
 			        CacheController.clearCache("siteNodeLanguageCache");
+			        CacheController.clearCache("pageCacheLatestSiteNodeVersions");
+			        CacheController.clearCache("latestSiteNodeVersionCache");
 				}
 		    	
 			}

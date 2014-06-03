@@ -192,7 +192,6 @@
 	
 		function activateTool(toolName, windowTitle, url, workAreaUrl)
 		{
-			//console.log("" + activeToolName + "=" + toolName + "," + url + ":" + workAreaUrl);
 			if(activeToolName == toolName && workAreaUrl == "")
 				return false;
 			
@@ -244,7 +243,6 @@
 			{	
 				if(workAreaUrl && workAreaUrl != "" && targetIframe && targetIframe.contentWindow.openUrlInWorkArea)
 				{
-					console.log("targetIframe:" + targetIframe + ":" + targetIframe.contentWindow.openUrlInWorkArea);
 					targetIframe.contentWindow.openUrlInWorkArea(workAreaUrl);
 				}
 			}

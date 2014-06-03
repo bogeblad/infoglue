@@ -124,8 +124,6 @@
 						#if($defaultPublicationEventFilter == "emailBased")
 							jQuery.getJSON("ViewCommonAjaxServices!userSearch.action", { "q": "" + xrecipientFilter.value, "fieldToMatchExact": "email" }, function(data) { 
 							
-								console.log(data.users.length + "/" + attemptDirectPublishing); 
-								
 								if(data.users.length == 0 && attemptDirectPublishing == 'false')
 									alert("$ui.getString("tool.common.noUserWithEmailFound.warning")");
 								else

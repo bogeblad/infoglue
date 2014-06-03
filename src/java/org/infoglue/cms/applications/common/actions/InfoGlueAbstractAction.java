@@ -1091,6 +1091,11 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
     	return LanguageController.getController().getLanguageVOList();
     }
 
+    public List<LanguageVO> getRepositoryLanguages(Integer repositoryId) throws SystemException, Bug, Exception
+    {
+    	return LanguageController.getController().getLanguageVOList(repositoryId);
+    }
+
 	public String getDefaultGUI()
 	{
 		String guiVersion = CmsPropertyHandler.getDefaultGUI(getUserName());

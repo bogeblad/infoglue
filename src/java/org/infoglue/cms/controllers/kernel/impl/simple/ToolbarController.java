@@ -1883,7 +1883,7 @@ public class ToolbarController implements ToolbarProvider
 			buttons.add(new ToolbarButton("createSiteNode",
 					  getLocalizedString(locale, "tool.structuretool.toolbarV3.createPageLabel"), 
 					  getLocalizedString(locale, "tool.structuretool.toolbarV3.createPageTitle"),
-					  "CreateSiteNode!inputV3.action?isBranch=true&repositoryId=" + siteNodeVO.getRepositoryId() + "&parentSiteNodeId=" + siteNodeId + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
+					  "CreateSiteNode!inputV3.action?isBranch=true&repositoryId=" + siteNodeVO.getRepositoryId() + "&parentSiteNodeId=" + siteNodeId + ((languageId != null && !languageId.equals("")) ? "&languageId=" + languageId : "") + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
 					  "",
 					  "create"));
 			

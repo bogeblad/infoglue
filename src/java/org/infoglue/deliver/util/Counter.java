@@ -56,7 +56,7 @@ public class Counter
     private static Map allComponentsStatistics = new HashMap();
     private static Map allPageStatistics = new HashMap();
     private static LinkedBlockingQueue<String> latestPageStatistics = new LinkedBlockingQueue<String>(100);
-    private static LinkedBlockingQueue<CacheEvictionBean> latestPublications = new LinkedBlockingQueue<CacheEvictionBean>(200);
+    private static LinkedBlockingQueue<CacheEvictionBean> latestPublications = new LinkedBlockingQueue<CacheEvictionBean>(2000);
     private static List<CacheEvictionBean> ongoingPublications = new ArrayList<CacheEvictionBean>();
     private static Integer numberOfPublicationsSinceStart = new Integer(0);
     

@@ -525,7 +525,6 @@
 						
 							if(ui.tab.href.indexOf("contentVersionAssetsDiv") > -1) 
 							{
-								console.log($(".attachAsset"));
 								$(".attachAsset").show();
 							}
 							else

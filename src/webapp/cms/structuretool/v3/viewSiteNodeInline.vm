@@ -120,7 +120,6 @@
 	
 	function submitLanguageLimitations(select)
 	{
-		console.log($(select).val());
 		document.editForm.submit();
 	}
 	

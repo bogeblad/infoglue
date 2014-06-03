@@ -1759,7 +1759,7 @@ function showComponentPropertiesInDiv(targetDivId, parameterString, skipFloat, e
 
 				var theHandle = document.getElementById("componentPropertiesHandle");
 				//var theRoot   = document.getElementById("componentProperties");
-				console.log($(window).height() / 2 + $(window).scrollTop() - ($(theRoot).height() / 2));
+				//console.log($(window).height() / 2 + $(window).scrollTop() - ($(theRoot).height() / 2));
 				var windowHeight = $(window).height();
 				if($(window).height() > 1000)
 					windowHeight = 1000;

@@ -178,7 +178,6 @@
 									container = jQuery("#template").clone();
 									container.removeClass("template");
 									container.attr("id", "container_" + process.processId);
-									console.log("Cloned container template", container);
 
 									container.find("h4").text(process.processId);
 									container.show();
@@ -235,7 +234,6 @@
 
 								## Handle process information
 								var processInfo = container.find(".processInfo").eq(0);
-								console.log("processInfo", processInfo);
 								if (process.status === 0) // not started
 								{
 									processInfo.find(".labelStarted").hide();
@@ -269,11 +267,10 @@
 								## Handle process events
 								var processEvents = container.find(".processEvents").eq(0);
 								processEvents.attr("id", "processEvents_" + process.processId);
-								//console.log("Number of <li>s" + processEvents.children("li").length + ". Number of events: " + process.processEvents.length);
+
 								var numberOfEvents = process.processEvents.length + (process.status === 1 ? 1 : 0); ## Add one for the loading 
 								if (processEvents.children("li").length !== numberOfEvents)
 								{
-									console.log("list needs refresh");
 									processEvents.empty();
 									for (var processEventListId in process.processEvents) {
 										##ongoingHtmlList += "<li>" + process.processEvents[processEventListId] + "</li>";

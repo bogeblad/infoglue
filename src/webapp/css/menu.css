@@ -28,6 +28,11 @@
 	color: #ccc;
 }
 
+#languageDrop {
+	width: 70px;
+	display: inline;
+}
+
 /* GENERAL TREE PROPERTIES */
 .webfx-tree-item {
 	height: 20px;

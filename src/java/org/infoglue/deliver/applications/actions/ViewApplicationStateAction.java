@@ -1332,9 +1332,9 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 	    	{
 		    	int startLocation = originalSummary.indexOf("Approximate size");
 		    	//logger.info("startLocation:" + startLocation);
-		    	String size = originalSummary.substring(startLocation + 17, originalSummary.indexOf("KB") + 2);
+		    	//String size = originalSummary.substring(startLocation + 17, originalSummary.indexOf("KB") + 2);
 		    	//logger.info("size:" + size);
-		    	data.put("estimatedSize", "" + size);
+		    	data.put("estimatedSize", "Unknown");
 		
 		    	int startHitLocation = originalStats.indexOf("Hit count");
 		    	String hits = originalStats.substring(startHitLocation + 12, originalStats.indexOf(",", startHitLocation));
@@ -1352,7 +1352,7 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 		    		int missInt = Integer.parseInt(miss.trim());
 		    		int hitInt = Integer.parseInt(hits.trim());
 		    		if(missInt > 0 && hitInt > 0)
-		    			data.put("hitMissRatio", "" + (int)((float)missInt / (float)hitInt * 100));
+		    			data.put("hitMissRatio", "" + (int)((float)hitInt / (float)((int)missInt + (int)hitInt) * 100));
 		    		else if(missInt == 0)
 		    			data.put("hitMissRatio", "0");
 		    		else if(hitInt == 0)

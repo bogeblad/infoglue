@@ -69,7 +69,7 @@
 									</script>
 									#set($selectedCode = ", selected: $index ")
 								#end
-						        <li><a href="#${languageVO.languageCode}Tab"><span>$languageVO.name $ui.getString("tool.structuretool.createSiteNode.metaFields")</span></a></li>
+						        <li><a href="#${languageVO.languageCode}Tab"><span>$languageVO.name</span></a></li>
 					       #end
 						   <li><a href="#publishingTab"><span>$ui.getString("tool.common.publicationSpan.label")</span></a></li>
 					    </ul>

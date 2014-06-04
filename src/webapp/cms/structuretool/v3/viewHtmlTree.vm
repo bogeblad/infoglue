@@ -376,8 +376,9 @@
 	tree.myId = "$rootNode.Id";	
 	document.write(tree);
 
-	$(".root").append(" <select id='languageDrop' onchange='changeLanguage();'>#foreach($repoLanguageVO in $this.getRepositoryLanguages($repositoryId))<option value='$repoLanguageVO.id' #if($repoLanguageVO.id == $sortLanguageId)selected='selected'#end>$repoLanguageVO.localizedDisplayLanguage</option>#end</ul>");
-	
+	#if($showLanguageVariationsInStructureTree == "true")
+		$(".root").append(" <select id='languageDrop' onchange='changeLanguage();'>#foreach($repoLanguageVO in $this.getRepositoryLanguages($repositoryId))<option value='$repoLanguageVO.id' #if($repoLanguageVO.id == $sortLanguageId)selected='selected'#end>$repoLanguageVO.localizedDisplayLanguage</option>#end</ul>");
+	#end
 	
 	$("#" + tree.id + " a").droppable({
 		greedy: true,

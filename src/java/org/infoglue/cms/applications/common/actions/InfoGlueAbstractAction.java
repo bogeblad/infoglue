@@ -1051,7 +1051,12 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	{
 	    return CmsPropertyHandler.getCustomContentTypeIcons();
 	}
-	
+
+	public String getShowLanguageVariationsInStructureTree()
+	{
+	    return CmsPropertyHandler.getShowLanguageVariationsInStructureTree();
+	}
+
     public String getEnableDateTimeDirectEditing()
     {
         return CmsPropertyHandler.getEnableDateTimeDirectEditing();

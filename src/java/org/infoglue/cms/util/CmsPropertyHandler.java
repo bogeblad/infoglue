@@ -1099,6 +1099,11 @@ public class CmsPropertyHandler
 		return getServerNodeProperty("structure.tree.hideForbidden", true, "false");
 	}
 
+	public static String getShowLanguageVariationsInStructureTree()
+	{
+		return getServerNodeProperty("showLanguageVariationsInStructureTree", true, "true");
+	}
+
 	public static String getEnforceRigidContentAccess()
 	{
 		return getEnforceRigidContentAccess(false);

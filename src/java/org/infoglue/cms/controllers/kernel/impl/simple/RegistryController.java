@@ -40,6 +40,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
+import org.exolab.castor.jdo.CacheManager;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.QueryResults;
@@ -50,6 +51,10 @@ import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
+import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
+import org.infoglue.cms.entities.content.impl.simple.MediumContentImpl;
+import org.infoglue.cms.entities.content.impl.simple.SmallContentImpl;
+import org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.CategoryVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinition;
@@ -481,6 +486,23 @@ public class RegistryController extends BaseController
 	    }
 	}
 
+	private static synchronized void clearCache(Class c, Database db) throws Exception
+	{
+		try
+		{
+		    Class[] types = {c};
+			Class[] ids = {null};
+			CacheManager manager = db.getCacheManager();
+			manager.expireCache(types);
+			//db.expireCache(types, null);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	
 	private static ThreadLocal<List<Object[]>> queuedUpdatedContentVersions = new ThreadLocal<List<Object[]>>() 
 	{
 		protected List<Object[]> initialValue()
@@ -517,6 +539,11 @@ public class RegistryController extends BaseController
 						{
 							RegistryController.getController().updateContentVersion((ContentVersionVO)bean[0], (SiteNodeVersionVO)bean[1], db);
 						}
+
+						clearCache(ContentImpl.class, db);
+						clearCache(SmallContentImpl.class, db);
+						clearCache(SmallishContentImpl.class, db);
+						clearCache(MediumContentImpl.class, db);
 
 						commitTransaction(db);
 

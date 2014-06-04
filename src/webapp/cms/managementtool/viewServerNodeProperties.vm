@@ -411,6 +411,8 @@
 				#editPropertyFieldCSS("ServerNode.property.structure.tree.isHidden" "structure.tree.isHidden" "$this.getPropertyValue('structure.tree.isHidden')" "51" "$!serverNodeId" "$!cmsPH.structureTreeIsHidden")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.content.tree.hideForbidden" "content.tree.hideForbidden" "$this.getPropertyValue('content.tree.hideForbidden')" "$!cmsPH.contentTreeHideForbidden")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.structure.tree.hideForbidden" "structure.tree.hideForbidden" "$this.getPropertyValue('structure.tree.hideForbidden')" "$!cmsPH.structureTreeHideForbidden")
+
+				#yesNoDropDownWithInheritCSS("ServerNode.property.showLanguageVariationsInStructureTree" "showLanguageVariationsInStructureTree" "$this.getPropertyValue('showLanguageVariationsInStructureTree')" "$!cmsPH.showLanguageVariationsInStructureTree")
 				
 				#editPropertyFieldCSS("ServerNode.property.workingStyleInformation" "workingStyleInformation" "$this.getPropertyValue('workingStyleInformation')" "51" "$!serverNodeId" "$!cmsPH.workingStyleInformation")
 				#editPropertyFieldCSS("ServerNode.property.finalStyleInformation" "finalStyleInformation" "$this.getPropertyValue('finalStyleInformation')" "51" "$!serverNodeId" "$!cmsPH.finalStyleInformation")

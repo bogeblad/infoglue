@@ -280,6 +280,9 @@
 		#selectField("ContentTypeDefinition.type" "type" $!type [["0", "Ordinary Content Type"], ["1", "Role Properties"], ["2", "User Properties"], ["3", "Group Properties"]])
 	</p>
 	<p>
+		#selectField("ContentTypeDefinition.versionsToKeep" "versionsToKeep" $!versionsToKeep [["-1", "All"], ["1", "1"], ["2", "2"], ["3", "3"], ["4", "4"], ["5", "5"], ["10", "10"], ["20", "20"], ["50", "50"]])
+	</p>
+	<p>
 		$ui.getString("entity.ContentTypeDefinition.parent.label")<br/>
 		<select name="parentContentTypeDefinitionId" id="parentContentTypeDefinitionId">
 			<option value="-1">-</option>

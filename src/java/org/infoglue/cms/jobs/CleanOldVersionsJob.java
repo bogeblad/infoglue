@@ -22,11 +22,16 @@
 */
 package org.infoglue.cms.jobs;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
+import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.util.ChangeNotificationController;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.NotificationMessage;
@@ -60,31 +65,54 @@ public class CleanOldVersionsJob implements Job
 	    		Boolean deleteVersions = (Boolean)context.get("deleteVersions");
 	    		if(deleteVersions == null)
 	    			deleteVersions = new Boolean(true);
-		    	logger.info("deleteVersions:" + deleteVersions);
-		    	String numberOfVersionsToKeepDuringClean = CmsPropertyHandler.getNumberOfVersionsToKeepDuringClean();
-		    	logger.info("numberOfVersionsToKeepDuringClean:" + numberOfVersionsToKeepDuringClean);
-				Integer numberOfVersionsToKeepDuringCleanInteger = new Integer(numberOfVersionsToKeepDuringClean);
-		    	String keepOnlyOldPublishedVersionsString = CmsPropertyHandler.getKeepOnlyOldPublishedVersionsDuringClean();
-		    	logger.info("keepOnlyOldPublishedVersionsString:" + keepOnlyOldPublishedVersionsString);
-		    	long minimumTimeBetweenVersionsDuringClean = CmsPropertyHandler.getMinimumTimeBetweenVersionsDuringClean();
-		    	logger.info("minimumTimeBetweenVersionsDuringClean:" + minimumTimeBetweenVersionsDuringClean);
-		    	boolean keepOnlyOldPublishedVersions = Boolean.parseBoolean(keepOnlyOldPublishedVersionsString);
+
+	    		Map<String,Integer> totalCleanedContentVersions = new HashMap<String,Integer>();
+	    		//Map<String,Integer> totalCleanedSiteNodeVersions = new HashMap<String,Integer>();
+	    		int cleanedSiteNodeVersions = 0;
+	    		
+	    		List<ContentTypeDefinitionVO> contentTypes = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList();
+	    		for(ContentTypeDefinitionVO ctdVO : contentTypes)
+	    		{
+	    			Integer numberOfVersionsToKeepDuringCleanInteger = -1;
+	    			try
+	    			{
+	    				numberOfVersionsToKeepDuringCleanInteger = new Integer(CmsPropertyHandler.getServerNodeProperty("contentTypeDefinitionId_" + ctdVO.getId() + "_versionsToKeep", false, "-1", true));
+	    			}
+	    			catch (Exception e) 
+	    			{
+	    				logger.warn("Could not get number of versions to keep:" + e.getMessage());
+	    			}
+	    			
+	    			logger.info("numberOfVersionsToKeepDuringCleanInteger: " + numberOfVersionsToKeepDuringCleanInteger);
+	    			logger.info("deleteVersions:" + deleteVersions);
+			    	String keepOnlyOldPublishedVersionsString = CmsPropertyHandler.getKeepOnlyOldPublishedVersionsDuringClean();
+			    	logger.info("keepOnlyOldPublishedVersionsString:" + keepOnlyOldPublishedVersionsString);
+			    	long minimumTimeBetweenVersionsDuringClean = CmsPropertyHandler.getMinimumTimeBetweenVersionsDuringClean();
+			    	logger.info("minimumTimeBetweenVersionsDuringClean:" + minimumTimeBetweenVersionsDuringClean);
+			    	boolean keepOnlyOldPublishedVersions = Boolean.parseBoolean(keepOnlyOldPublishedVersionsString);
+					
+			    	if(numberOfVersionsToKeepDuringCleanInteger.intValue() < 3 && numberOfVersionsToKeepDuringCleanInteger.intValue() > -1)
+						numberOfVersionsToKeepDuringCleanInteger = new Integer(3);
+			    	
+					if(numberOfVersionsToKeepDuringCleanInteger.intValue() > -1)
+					{
+						int cleanedContentVersions = ContentVersionController.getContentVersionController().cleanContentVersions(numberOfVersionsToKeepDuringCleanInteger.intValue(), keepOnlyOldPublishedVersions, minimumTimeBetweenVersionsDuringClean, deleteVersions, ctdVO.getId());
+						logger.info("cleanedContentVersions:" + cleanedContentVersions);
+						totalCleanedContentVersions.put(ctdVO.getName(), cleanedContentVersions);
+						if(ctdVO.getName().equalsIgnoreCase("Meta information"))
+						{
+							cleanedSiteNodeVersions = SiteNodeController.getController().cleanSiteNodeVersions(numberOfVersionsToKeepDuringCleanInteger.intValue(), keepOnlyOldPublishedVersions, minimumTimeBetweenVersionsDuringClean, deleteVersions);
+							totalCleanedContentVersions.put(ctdVO.getName(), cleanedSiteNodeVersions);
+						}
+					}
+	    		}
+	    		
+				logger.info("totalCleanedContentVersions:" + totalCleanedContentVersions);
+				context.setResult(totalCleanedContentVersions);
 				
-		    	if(numberOfVersionsToKeepDuringCleanInteger.intValue() < 3 && numberOfVersionsToKeepDuringCleanInteger.intValue() > -1)
-					numberOfVersionsToKeepDuringCleanInteger = new Integer(3);
-		    	
-				if(numberOfVersionsToKeepDuringCleanInteger.intValue() > -1)
-				{
-					int cleanedContentVersions = ContentVersionController.getContentVersionController().cleanContentVersions(numberOfVersionsToKeepDuringCleanInteger.intValue(), keepOnlyOldPublishedVersions, minimumTimeBetweenVersionsDuringClean, deleteVersions);
-					int cleanedSiteNodeVersions = SiteNodeController.getController().cleanSiteNodeVersions(numberOfVersionsToKeepDuringCleanInteger.intValue(), keepOnlyOldPublishedVersions, minimumTimeBetweenVersionsDuringClean, deleteVersions);
-					logger.info("cleanedContentVersions:" + cleanedContentVersions);
-					logger.info("cleanedSiteNodeVersions:" + cleanedSiteNodeVersions);
-					context.setResult(new Integer[]{cleanedContentVersions, cleanedSiteNodeVersions});
-				
-					NotificationMessage notificationMessage = new NotificationMessage("CleanOldVersionsJob.execute():", "ServerNodeProperties", "administrator", NotificationMessage.SYSTEM, "0", "ServerNodeProperties");
-				    ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
-		        	ChangeNotificationController.getInstance().notifyListeners();
-				}
+				NotificationMessage notificationMessage = new NotificationMessage("CleanOldVersionsJob.execute():", "ServerNodeProperties", "administrator", NotificationMessage.SYSTEM, "0", "ServerNodeProperties");
+			    ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
+	        	ChangeNotificationController.getInstance().notifyListeners();
 			}
 			catch(Exception e)
 		    {

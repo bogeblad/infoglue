@@ -26,6 +26,7 @@ package org.infoglue.cms.applications.managementtool.actions;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
@@ -65,6 +66,7 @@ public class ViewArchiveToolAction extends InfoGlueAbstractAction
 	private boolean deleteVersions = false;
 	private Integer numberOfCleanedSiteNodeVersions = null;
 	private Integer numberOfCleanedContentVersions = null;
+	private Map<String,Integer> cleaningMap = null;
 	
 	public String doInput() throws Exception
     {
@@ -110,11 +112,9 @@ public class ViewArchiveToolAction extends InfoGlueAbstractAction
 		JobExecutionContext jec = new JobExecutionContext(null, new TriggerFiredBundle(jobDetail, trig, null, false, null, null, null, null), new NoOpJob());
 		jec.put("deleteVersions", new Boolean(deleteVersions));
 		new CleanOldVersionsJob().execute(jec);
-		Integer[] result = (Integer[])jec.getResult();
-		if(result != null && result.length > 0)
-			this.numberOfCleanedContentVersions = result[0];
-		if(result != null && result.length > 1)
-			this.numberOfCleanedSiteNodeVersions = result[1];
+
+		Map<String,Integer> result = (Map<String,Integer>)jec.getResult();
+		this.cleaningMap = result;
 		
         return "input";
     }
@@ -202,6 +202,11 @@ public class ViewArchiveToolAction extends InfoGlueAbstractAction
 	public void setDeleteVersions(boolean deleteVersions)
 	{
 		this.deleteVersions = deleteVersions;
+	}
+	
+	public Map<String, Integer> getCleaningMap() 
+	{
+		return cleaningMap;
 	}
 
 }

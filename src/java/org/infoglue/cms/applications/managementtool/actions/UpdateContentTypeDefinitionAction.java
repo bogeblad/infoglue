@@ -23,6 +23,8 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,7 +34,9 @@ import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
-import org.jfree.util.Log;
+
+import com.opensymphony.module.propertyset.PropertySet;
+import com.opensymphony.module.propertyset.PropertySetManager;
 
 
 /**
@@ -45,6 +49,7 @@ public class UpdateContentTypeDefinitionAction extends ViewContentTypeDefinition
 	private final static Logger logger = Logger.getLogger(UpdateContentTypeDefinitionAction.class.getName());
 
 	private ContentTypeDefinitionVO contentTypeDefinitionVO;
+	private Integer versionsToKeep;
 	private ConstraintExceptionBuffer ceb;
 	
 	public UpdateContentTypeDefinitionAction()
@@ -67,7 +72,13 @@ public class UpdateContentTypeDefinitionAction extends ViewContentTypeDefinition
     	ceb.throwIfNotEmpty();		
     	
 		ContentTypeDefinitionController.getController().update(contentTypeDefinitionVO.getParentId(), contentTypeDefinitionVO);
-				
+		
+    	Map args = new HashMap();
+	    args.put("globalKey", "infoglue");
+	    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
+	    
+	    ps.setString("contentTypeDefinitionId_" + this.contentTypeDefinitionVO.getId() + "_versionsToKeep", "" + this.versionsToKeep);
+
 		return "success";
 	}
 
@@ -143,7 +154,17 @@ public class UpdateContentTypeDefinitionAction extends ViewContentTypeDefinition
 	{
 		this.contentTypeDefinitionVO.setType(type);
 	}
-	
+
+	public Integer getVersionsToKeep()
+	{
+		return this.versionsToKeep;
+	}
+
+	public void setVersionsToKeep(Integer versionsToKeep)
+	{
+		this.versionsToKeep = versionsToKeep;
+	}
+
 	public void setDetailPageResolverClass(String detailPageResolverClass)
 	{
 		this.contentTypeDefinitionVO.setDetailPageResolverClass(detailPageResolverClass);

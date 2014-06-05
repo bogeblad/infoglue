@@ -46,6 +46,7 @@ import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.providers.ContentDetailPageResolver;
 import org.infoglue.cms.services.ContentDetailPageResolversService;
+import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.XMLHelper;
 import org.w3c.dom.Document;
@@ -54,6 +55,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
 
 /**
  * This class implements the action class for viewContentTypeDefinition.
@@ -103,8 +105,9 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 	
 	private List activatedName = new ArrayList();
 	private Integer tabToActivate = -1;
+	private Integer versionsToKeep = -1;
 
-    public ViewContentTypeDefinitionAction()
+	public ViewContentTypeDefinitionAction()
     {
         this(new ContentTypeDefinitionVO());
     }
@@ -123,7 +126,16 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
         this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentTypeDefinitionId);
 		this.attributes = ContentTypeDefinitionController.getController().getContentTypeAttributes(this.contentTypeDefinitionVO, true);
 		this.availableLanguages = LanguageController.getController().getLanguageVOList();
-    }
+		
+		try
+		{
+			this.versionsToKeep = new Integer(CmsPropertyHandler.getServerNodeProperty("contentTypeDefinitionId_" + this.contentTypeDefinitionVO.getId() + "_versionsToKeep", false, "-1", true));
+		}
+		catch (Exception e) 
+		{
+			logger.warn("Could not get number of versions to keep:" + e.getMessage());
+		}
+	}
 
     /**
      * The main method that fetches the Value-object for this use-case
@@ -1432,7 +1444,17 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 	{
 		this.tabToActivate = tabToActivate;
 	}
-	
+
+	public Integer getVersionsToKeep() 
+	{
+		return versionsToKeep;
+	}
+
+	public void setVersionsToKeep(Integer versionsToKeep) 
+	{
+		this.versionsToKeep = versionsToKeep;
+	}
+
 	public List<ContentTypeDefinitionVO> getContentTypeDefinitions() throws Exception
 	{
 		return ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList(ContentTypeDefinitionVO.CONTENT);

@@ -2832,7 +2832,7 @@ public class ContentVersionController extends BaseController
 	 * @throws SystemException 
 	 */
 	
-	public int cleanContentVersions(int numberOfVersionsToKeep, boolean keepOnlyOldPublishedVersions, long minimumTimeBetweenVersionsDuringClean, boolean deleteVersions) throws SystemException, Exception 
+	public int cleanContentVersions(int numberOfVersionsToKeep, boolean keepOnlyOldPublishedVersions, long minimumTimeBetweenVersionsDuringClean, boolean deleteVersions, Integer contentTypeDefinitionId) throws SystemException, Exception 
 	{
 		int cleanedVersions = 0;
 		
@@ -2844,7 +2844,7 @@ public class ContentVersionController extends BaseController
 		{
 			LanguageVO languageVO = languageVOListIterator.next();
 			
-			Map<Integer,Integer> contentIdMap = getContentIdVersionCountMap(languageVO.getId(), numberOfVersionsToKeep);
+			Map<Integer,Integer> contentIdMap = getContentIdVersionCountMap(languageVO.getId(), numberOfVersionsToKeep, contentTypeDefinitionId);
 			if(!deleteVersions)
 			{
 				for(Integer contentId : contentIdMap.keySet())
@@ -2857,9 +2857,9 @@ public class ContentVersionController extends BaseController
 			}
 			else
 			{
-				List<SmallestContentVersionVO> contentVersionVOList = getSmallestContentVersionVOList(languageVO.getId(), numberOfVersionsToKeep, keepOnlyOldPublishedVersions, minimumTimeBetweenVersionsDuringClean);
+				List<SmallestContentVersionVO> contentVersionVOList = getSmallestContentVersionVOList(languageVO.getId(), numberOfVersionsToKeep, keepOnlyOldPublishedVersions, minimumTimeBetweenVersionsDuringClean, contentTypeDefinitionId);
 				
-				//System.out.println("Deleting " + contentVersionVOList.size() + " versions for language " + languageVO.getName());
+				logger.info("Deleting " + contentVersionVOList.size() + " versions for language " + languageVO.getName());
 				int maxIndex = (contentVersionVOList.size() > batchLimit ? batchLimit : contentVersionVOList.size());
 				List partList = contentVersionVOList.subList(0, maxIndex);
 				while(partList.size() > 0)
@@ -2975,7 +2975,7 @@ public class ContentVersionController extends BaseController
 	}
 
 	
-	public Map<Integer,Integer> getContentIdVersionCountMap(Integer languageId, int numberOfVersionsToKeep) throws SystemException 
+	public Map<Integer,Integer> getContentIdVersionCountMap(Integer languageId, int numberOfVersionsToKeep, Integer contentTypeDefinitionId) throws SystemException 
 	{
 		Map<Integer,Integer> result = new HashMap<Integer,Integer>();
 		Database db = CastorDatabaseService.getDatabase();
@@ -2985,11 +2985,21 @@ public class ContentVersionController extends BaseController
         try
         {
 			StringBuilder sql = new StringBuilder();
-			if(CmsPropertyHandler.getUseShortTableNames().equals("true"))
-				sql.append("select contId as contentId, versionCount from ( select cv.contId, count(*) as versionCount from cmContVer cv where cv.languageId = " + languageId + " group by cv.contId order by versionCount desc ) res where versionCount > " + numberOfVersionsToKeep);
+			if(contentTypeDefinitionId == null)
+			{
+				if(CmsPropertyHandler.getUseShortTableNames().equals("true"))
+					sql.append("select contId as contentId, versionCount from ( select cv.contId, count(*) as versionCount from cmContVer cv where cv.languageId = " + languageId + " group by cv.contId order by versionCount desc ) res where versionCount > " + numberOfVersionsToKeep);
+				else
+					sql.append("select contentId, versionCount from ( select cv.contentId, count(*) as versionCount from cmContentVersion cv where cv.languageId = " + languageId + " group by cv.contentId order by versionCount desc ) res where versionCount > " + numberOfVersionsToKeep);
+			}
 			else
-				sql.append("select contentId, versionCount from ( select cv.contentId, count(*) as versionCount from cmContentVersion cv where cv.languageId = " + languageId + " group by cv.contentId order by versionCount desc ) res where versionCount > " + numberOfVersionsToKeep);
-
+			{
+				if(CmsPropertyHandler.getUseShortTableNames().equals("true"))
+					sql.append("select contId as contentId, versionCount from ( select cv.contId, count(*) as versionCount from cmContVer cv, cmCont c where c.contId = cv.contId AND c.contentTypeDefId = " + contentTypeDefinitionId + " AND cv.languageId = " + languageId + " group by cv.contId order by versionCount desc ) res where versionCount > " + numberOfVersionsToKeep);
+				else
+					sql.append("select contentId, versionCount from ( select cv.contentId, count(*) as versionCount from cmContentVersion cv, cmContent c where c.contentId = cv.contentId AND c.contentTypeDefinitionId = " + contentTypeDefinitionId + " AND cv.languageId = " + languageId + " group by cv.contentId order by versionCount desc ) res where versionCount > " + numberOfVersionsToKeep);				
+			}
+			
 			Connection conn = (Connection) db.getJdbcConnection();
 			
 			PreparedStatement psmt = conn.prepareStatement(sql.toString());
@@ -3029,9 +3039,9 @@ public class ContentVersionController extends BaseController
 	 * @throws SystemException 
 	 */
 
-	public List<SmallestContentVersionVO> getSmallestContentVersionVOList(Integer languageId, int numberOfVersionsToKeep, boolean keepOnlyOldPublishedVersions, long minimumTimeBetweenVersionsDuringClean) throws SystemException, Bug, Exception
+	public List<SmallestContentVersionVO> getSmallestContentVersionVOList(Integer languageId, int numberOfVersionsToKeep, boolean keepOnlyOldPublishedVersions, long minimumTimeBetweenVersionsDuringClean, Integer contentTypeDefinitionId) throws SystemException, Bug, Exception
 	{
-		Map<Integer,Integer> contentIdMap = getContentIdVersionCountMap(languageId, numberOfVersionsToKeep);
+		Map<Integer,Integer> contentIdMap = getContentIdVersionCountMap(languageId, numberOfVersionsToKeep, contentTypeDefinitionId);
 		//System.out.println("contentVOList:" + contentIdMap.size());
 
 		List<SmallestContentVersionVO> contentVersionVOList = new ArrayList<SmallestContentVersionVO>();
@@ -3055,7 +3065,7 @@ public class ContentVersionController extends BaseController
     			subList.addAll(contentIdList);
     			contentIdList.clear();
     		}
-    		
+
     		if(subList.size() > 0)
 	    	{
 	    		contentVersionVOList.addAll(getSmallestContentVersionVOListImpl(subList, languageId, numberOfVersionsToKeep, keepOnlyOldPublishedVersions, minimumTimeBetweenVersionsDuringClean));
@@ -3116,7 +3126,7 @@ public class ContentVersionController extends BaseController
 				SmallestContentVersionImpl version = (SmallestContentVersionImpl)results.next();
 				if(previousContentId != null && previousContentId.intValue() != version.getContentId().intValue())
 				{
-					if(minimumTimeBetweenVersionsDuringClean != -1 && versionInitialSuggestions.size() > numberOfVersionsToKeep)
+					if(minimumTimeBetweenVersionsDuringClean != -1 && versionInitialSuggestions.size() >= numberOfVersionsToKeep)
 					{
 						Iterator potentialContentVersionVOListIterator = potentialContentVersionVOList.iterator();
 						while(potentialContentVersionVOListIterator.hasNext())
@@ -3163,8 +3173,8 @@ public class ContentVersionController extends BaseController
 				{
 					difference = previousDate.getTime() - version.getModifiedDateTime().getTime();
 				}
-				
-				if(numberOfLaterVersions > numberOfVersionsToKeep || (keepOnlyOldPublishedVersions && numberOfLaterVersions > 0 && !version.getStateId().equals(ContentVersionVO.PUBLISHED_STATE)))
+
+				if(numberOfLaterVersions >= numberOfVersionsToKeep || (keepOnlyOldPublishedVersions && numberOfLaterVersions > 0 && !version.getStateId().equals(ContentVersionVO.PUBLISHED_STATE)))
             	{
 					if(version.getStateId().equals(ContentVersionVO.PUBLISHED_STATE))
 					{
@@ -3191,6 +3201,43 @@ public class ContentVersionController extends BaseController
 				previousContentId = version.getContentId();
             }
             
+			if(minimumTimeBetweenVersionsDuringClean != -1 && versionInitialSuggestions.size() >= numberOfVersionsToKeep)
+			{
+				//System.out.println("Inside again....");
+				//System.out.println("potentialContentVersionVOList:" + potentialContentVersionVOList.size());
+				Iterator potentialContentVersionVOListIterator = potentialContentVersionVOList.iterator();
+				while(potentialContentVersionVOListIterator.hasNext())
+				{
+					SmallestContentVersionVO potentialContentVersionVO = (SmallestContentVersionVO)potentialContentVersionVOListIterator.next();
+					
+					SmallestContentVersionVO firstInitialSuggestedContentVersionVO = null;
+					Iterator versionInitialSuggestionsIterator = versionInitialSuggestions.iterator();
+					while(versionInitialSuggestionsIterator.hasNext())
+					{
+						SmallestContentVersionVO initialSuggestedContentVersionVO = (SmallestContentVersionVO)versionInitialSuggestionsIterator.next();
+						if(initialSuggestedContentVersionVO.getStateId().equals(ContentVersionVO.PUBLISHED_STATE))
+						{
+							firstInitialSuggestedContentVersionVO = initialSuggestedContentVersionVO;
+							//System.out.println("Breaking...");
+							break;
+						}
+					}
+					
+					if(firstInitialSuggestedContentVersionVO != null)
+					{
+						keptContentVersionVOList.remove(potentialContentVersionVO);
+						keptContentVersionVOList.add(firstInitialSuggestedContentVersionVO);
+						versionInitialSuggestions.remove(firstInitialSuggestedContentVersionVO);
+						versionInitialSuggestions.add(potentialContentVersionVO);
+					}
+				}
+			}
+			
+			//System.out.println("versionNonPublishedSuggestions:" + versionNonPublishedSuggestions.size());
+			//System.out.println("versionInitialSuggestions:" + versionInitialSuggestions.size());
+			contentVersionsIdList.addAll(versionNonPublishedSuggestions);
+			contentVersionsIdList.addAll(versionInitialSuggestions);
+			
 			results.close();
 			oql.close();
 

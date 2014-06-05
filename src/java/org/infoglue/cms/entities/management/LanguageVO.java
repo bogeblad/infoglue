@@ -167,5 +167,16 @@ public class LanguageVO implements BaseEntityVO
 	    return locale.getDisplayLanguage(locale); 
 	}
 
+	/**
+	 * Returns the localized display name for the given language
+	 * @return
+	 */
+
+	public String getLocalizedDisplayLanguage(Locale displayLocale)
+	{
+	    Locale locale = getLocale();
+	    return locale.getDisplayLanguage(displayLocale); 
+	}
+
 }
         

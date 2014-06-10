@@ -2218,6 +2218,16 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 					{
 						SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(entityId));
 						path = siteNodeVO.getName();
+						if(this.languageId != null && this.languageId > -1)
+						{
+							ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNodeVO.getMetaInfoContentId(), this.languageId);
+							if(cvVO != null)
+							{
+								String navigationTitle = ContentVersionController.getContentVersionController().getAttributeValue(cvVO, "NavigationTitle", true);
+								if(navigationTitle != null && !navigationTitle.equals(""))
+									path = navigationTitle;
+							}
+						}
 					}
 					else if(entityName.equalsIgnoreCase("Content")) 
 					{

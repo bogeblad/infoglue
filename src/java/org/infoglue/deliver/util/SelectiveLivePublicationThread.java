@@ -557,12 +557,12 @@ public class SelectiveLivePublicationThread extends PublicationThread
 	
 											    SiteNodeVO previousSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
 											    Integer previousParentSiteNodeId = previousSiteNodeVO.getParentSiteNodeId();
-											    System.out.println("previousParentSiteNodeId:" + previousParentSiteNodeId);
+											    //System.out.println("previousParentSiteNodeId:" + previousParentSiteNodeId);
 											    Object previousParentSiteNodeIdCandidate = CacheController.getCachedObject("parentSiteNodeCache", "" + siteNodeId);
-											    System.out.println("previousParentSiteNodeIdCandidate:" + previousParentSiteNodeIdCandidate);
+											    //System.out.println("previousParentSiteNodeIdCandidate:" + previousParentSiteNodeIdCandidate);
 											    if(previousParentSiteNodeIdCandidate != null && !(previousParentSiteNodeIdCandidate instanceof NullObject))
 											    	previousParentSiteNodeId = ((SiteNodeVO)previousParentSiteNodeIdCandidate).getId();
-											    System.out.println("previousParentSiteNodeId:" + previousParentSiteNodeId);
+											    //System.out.println("previousParentSiteNodeId:" + previousParentSiteNodeId);
 											    	
 											    //CacheController.clearCaches(publicationDetailVO.getEntityClass(), publicationDetailVO.getEntityId().toString(), null);
 												//if(siteNodeId != null)
@@ -674,8 +674,8 @@ public class SelectiveLivePublicationThread extends PublicationThread
 												
 												SiteNodeVO siteNodeVOAfter = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
 											    Integer currentParentSiteNodeId = siteNodeVOAfter.getParentSiteNodeId();
-											    System.out.println("previousParentSiteNodeId:" + previousParentSiteNodeId);
-											    System.out.println("currentParentSiteNodeId:" + currentParentSiteNodeId);
+											    //System.out.println("previousParentSiteNodeId:" + previousParentSiteNodeId);
+											    //System.out.println("currentParentSiteNodeId:" + currentParentSiteNodeId);
 	
 											    logger.info("We should also clear the parents...");
 												if(currentParentSiteNodeId != null)

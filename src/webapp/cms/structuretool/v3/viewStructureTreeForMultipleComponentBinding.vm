@@ -12,6 +12,11 @@
 	
 	<script type="text/javascript">
 	<!-- 
+		#set($sortArg = "")
+		#if($languageId && $languageId != -1)
+			#set($sortArg = "&sortLanguageId=$!{languageId}")
+		#end
+	
 		var exp;
 	
 		/**
@@ -438,7 +443,7 @@
 				</tr>	
 				<tr>
 					<td class="menu" style="border-right: 0px solid #ccc;">    
-						<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureToolMenuHtml!bindingViewV3.action?exp=${exp}&repositoryId=${repositoryId}" width="350" height="430" align="baseline"></iframe>
+						<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureToolMenuHtml!bindingViewV3.action?exp=${exp}&repositoryId=${repositoryId}$sortArg" width="350" height="430" align="baseline"></iframe>
 					</td>
 				</tr>	
 				<tr>

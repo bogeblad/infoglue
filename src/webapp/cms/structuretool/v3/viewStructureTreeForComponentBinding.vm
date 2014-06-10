@@ -31,6 +31,11 @@
 
 	<script type="text/javascript">
 	<!-- 
+		#set($sortArg = "")
+		#if($languageId && $languageId != -1)
+			#set($sortArg = "&sortLanguageId=$!{languageId}")
+		#end
+
 	    function notifyIsLoaded()
 	    {
 	    }
@@ -56,7 +61,7 @@
 	    function changeRepository(selectBox)
 		{
 			var repositoryId = selectBox.value;
-			var url = "${currentAction}?repositoryId=" + repositoryId + "&siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&componentId=$componentId&propertyName=$propertyName&tree=$tree&showSimple=$showSimple&showDecorated=$!showDecorated";
+			var url = "${currentAction}?repositoryId=" + repositoryId + "&siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&componentId=$componentId&propertyName=$propertyName&tree=$tree&showSimple=$showSimple&showDecorated=$!showDecorated$sortArg";
 			document.location.href = url;
 		}
 	    
@@ -132,7 +137,7 @@
 		<p>
 		
 		<p>
-			<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureToolMenuHtml!bindingViewV3.action?repositoryId=${repositoryId}" width="100%" height="426" ></iframe>
+			<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureToolMenuHtml!bindingViewV3.action?repositoryId=${repositoryId}$sortArg" width="100%" height="426" ></iframe>
 		</p>
 	</div>
 	

@@ -166,7 +166,12 @@
 		#set($par = "&parent=$rootNode.Id")
 	#end 
 	
-	var tree = new WebFXLoadTree("$rootNode.Title", "SimpleStructureXml.action?action=SimpleStructureXml.action&createAction=true&repositoryId=$!{repositoryId}&deliverLanguageId=$!{deliverLanguageId}$par", "javascript:htmlTreeItemClick('$rootNode.Id','${repositoryId}','$formatter.escapeExtendedHTML($rootNode.Title)');");
+	#set($sortArg = "")
+	#if($sortLanguageId && $sortLanguageId != -1)
+		#set($sortArg = "&sortLanguageId=$!{sortLanguageId}")
+	#end
+	
+	var tree = new WebFXLoadTree("$rootNode.Title", "SimpleStructureXml.action?action=SimpleStructureXml.action&createAction=true&repositoryId=$!{repositoryId}${sortArg}$par", "javascript:htmlTreeItemClick('$rootNode.Id','${repositoryId}','$formatter.escapeExtendedHTML($rootNode.Title)');");
 	tree.myId = "$rootNode.Id";	
 	document.write(tree);
 	var oldSelected = null;

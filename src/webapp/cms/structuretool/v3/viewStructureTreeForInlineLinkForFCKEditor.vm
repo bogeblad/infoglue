@@ -11,6 +11,11 @@
 
 		var navigationTitleHash = new Array();
 		
+		#set($sortArg = "")
+		#if($languageId && $languageId != -1)
+			#set($sortArg = "&sortLanguageId=$!{languageId}")
+		#end
+
 		var exp;
 	    function notifyExp(v)
 	    {
@@ -28,9 +33,9 @@
 			var repositoryId = selectBox.value;
 
 			if(iframeName == "itreeFrame")
-				document.getElementById("itreeFrame").src = "ViewStructureToolMenuHtml!bindingViewV3.action?repositoryId=" + repositoryId;
+				document.getElementById("itreeFrame").src = "ViewStructureToolMenuHtml!bindingViewV3.action?repositoryId=" + repositoryId + "$sortArg";
 			else
-				document.getElementById("itreeFrameContent").src = "ViewContentHtmlTree.action?repositoryId=" + repositoryId + "&bodyClass=generaltooledit";
+				document.getElementById("itreeFrameContent").src = "ViewContentHtmlTree.action?repositoryId=" + repositoryId + "&bodyClass=generaltooledit" + "$sortArg";
 		}
 
 		var previousPath = "";
@@ -167,7 +172,7 @@
 			<tr>
 				<td class="menu" colspan="2" style="border: 1px solid silver;">   
 					#set($exp = $this.getExpansion($oldSiteNodeId))
-					<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureToolMenuHtml!bindingViewV3.action?repositoryId=${repositoryId}&exp=$exp&akey=/$!oldSiteNodeId/&select=$!oldSiteNodeId" width="310" height="385" ></iframe>
+					<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureToolMenuHtml!bindingViewV3.action?repositoryId=${repositoryId}$sortArg&exp=$exp&akey=/$!oldSiteNodeId/&select=$!oldSiteNodeId" width="310" height="385" ></iframe>
 				</td>
 			</tr>	
 			</table>

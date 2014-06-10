@@ -107,17 +107,26 @@
 
 		function save()
 		{
-			saveCurrentTab();
+			var anyCheckedSize = $("input:checkbox:checked").size();
+			var checked = $("input[id$=${anonymousPrincipal.name}_hasAccess]").prop('checked');
+			if(anyCheckedSize == 0 || checked || confirm('$ui.getString("tool.contenttool.accessRightsAnonymousWarning")'))
+			{
+				saveCurrentTab();
+			}
 		}
 
 		function saveAndExit(action)
 		{
-			//$("form").get(0).action = action;
-			if(parent.saveFormAndExit)
-				parent.saveFormAndExit(window);
-			else
+			var anyCheckedSize = $("input:checkbox:checked").size();
+			var checked = $("input[id$=${anonymousPrincipal.name}_hasAccess]").prop('checked');
+			if(anyCheckedSize == 0 || checked || confirm('$ui.getString("tool.contenttool.accessRightsAnonymousWarning")'))
 			{
-				saveCurrentTab(true);
+				if(parent.saveFormAndExit)
+					parent.saveFormAndExit(window);
+				else
+				{
+					saveCurrentTab(true);
+				}
 			}
 		}
 
@@ -128,119 +137,6 @@
 		var groups = new Array($!anonymousPrincipal.groups.size());
 		
 		var hasGroupLimitation = false;
-		
-		function confirmSave()
-		{
-			var x=0;
-			var selected = false;
-			
-			//alert("roles:" + roles.length);
-			for (x=0; x<roles.length; x++)
-			{
-				var roleElementId = roles[x];
-				//alert("roleElementId:" + roleElementId);
-				var element = document.getElementById(roleElementId);
-				//alert("element:" + element.checked);
-				if(element && element.checked)
-				{
-					//alert("element:" + element.name + ":" + element.checked);
-					selected = true;
-				}
-			}
-			
-			#set($anonymousGroupsSize = $anonymousPrincipal.groups.size())
-			#if($anonymousGroupsSize > 0)
-			//alert("hasGroupLimitation:" + hasGroupLimitation);
-			if(selected && hasGroupLimitation)
-			{
-				var y=0;
-				var selected = false;
-				//alert("groups:" + groups.length);
-				for (y=0; y<groups.length; y++)
-				{
-					var groupElementId = groups[y];
-					//alert("groupElementId:" + groupElementId);
-					var element = document.getElementById(groupElementId);
-					//alert("element:" + element.checked);
-					if(element && element.checked)
-					{
-						selected = true;
-					}
-				}
-			} 
-			#end
-			
-			//alert("selected:" + selected);
-			//alert("useAnonymousWarningCheck:" + useAnonymousWarningCheck);
-			if(!selected && useAnonymousWarningCheck)
-			{
-				if(confirm('$ui.getString("tool.contenttool.accessRightsAnonymousWarning")'))
-				{
-					document.editForm.submit();
-				}
-			}
-			else
-			{
-				document.editForm.submit();
-			}
-		}
-	
-		function confirmSaveAndExit()
-		{
-			var x=0;
-			var selected = false;
-			
-			//alert("roles:" + roles.length);
-			for (x=0; x<roles.length; x++)
-			{
-				var roleElementId = roles[x];
-				//alert("roleElementId:" + roleElementId);
-				var element = document.getElementById(roleElementId);
-				//alert("element:" + element.checked);
-				if(element && element.checked)
-				{
-					//alert("element:" + element.name + ":" + element.checked);
-					selected = true;
-				}
-			}
-			
-			#set($anonymousGroupsSize = $anonymousPrincipal.groups.size())
-			#if($anonymousGroupsSize > 0)
-			//alert("hasGroupLimitation:" + hasGroupLimitation);
-			if(selected && hasGroupLimitation)
-			{
-				var y=0;
-				var selected = false;
-				//alert("groups:" + groups.length);
-				for (y=0; y<groups.length; y++)
-				{
-					var groupElementId = groups[y];
-					//alert("groupElementId:" + groupElementId);
-					var element = document.getElementById(groupElementId);
-					//alert("element:" + element.checked);
-					if(element && element.checked)
-					{
-						selected = true;
-					}
-				}
-			} 
-			#end
-	
-			document.editForm.returnAddress.value = "$returnAddress";
-			//alert("selected:" + selected);
-			//alert("useAnonymousWarningCheck:" + useAnonymousWarningCheck);
-			if(!selected && useAnonymousWarningCheck)
-			{
-				if(confirm('$ui.getString("tool.contenttool.accessRightsAnonymousWarning")'))
-				{
-					document.editForm.submit();
-				}
-			}
-			else
-			{
-				document.editForm.submit();
-			}
-		}
 
 		#if($saved == "true")
 		$(document).ready(function() {

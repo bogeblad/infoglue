@@ -42,6 +42,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionControllerProxy;
+import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
@@ -50,6 +51,7 @@ import org.infoglue.cms.exception.AccessConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.AccessConstraintExceptionBuffer;
+import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
 import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Timer;
@@ -83,6 +85,7 @@ public class ViewListSiteNodeVersionAction extends InfoGlueAbstractAction
     private String originalAddress;
    	private String userSessionKey;
    	private String attemptDirectPublishing;
+   	private boolean anonymousNoAccessWarning = false;
 
 	protected String doExecute() throws Exception 
 	{
@@ -154,6 +157,17 @@ public class ViewListSiteNodeVersionAction extends InfoGlueAbstractAction
 					{
 						if(snVO.getStateId() == 0)
 						{
+							Integer pageProtectedSiteNodeVersionId = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getProtectedSiteNodeVersionId(snVO.getId());
+							if(pageProtectedSiteNodeVersionId != null)
+							{
+								boolean hasAnonymousUserAccess = AccessRightController.getController().getIsPrincipalAuthorized(db, UserControllerProxy.getController().getUser(CmsPropertyHandler.getAnonymousUser()), "SiteNodeVersion.Read", pageProtectedSiteNodeVersionId.toString(), false);
+								if(!hasAnonymousUserAccess)
+								{
+									anonymousNoAccessWarning = true;
+									snVO.setHasAnonymousUserAccess(false);
+								}
+							}
+							
 							if(!skipDisplayName)
 							{
 								InfoGluePrincipal principal = (InfoGluePrincipal)getInfoGluePrincipal(snVO.getVersionModifier(), db);
@@ -180,6 +194,17 @@ public class ViewListSiteNodeVersionAction extends InfoGlueAbstractAction
 					{
 						if(contentVersionVO.getStateId() == 0)	
 						{
+							Integer protectedContentId = ContentControllerProxy.getController().getProtectedContentId(contentId, db);
+							if(protectedContentId != null)
+							{
+								boolean hasAnonymousUserAccess = AccessRightController.getController().getIsPrincipalAuthorized(db, UserControllerProxy.getController().getUser(CmsPropertyHandler.getAnonymousUser()), "Content.Read", protectedContentId.toString(), false);
+								if(!hasAnonymousUserAccess)
+								{
+									anonymousNoAccessWarning = true;
+									contentVersionVO.setHasAnonymousUserAccess(false);
+								}
+							}
+
 							if(!skipDisplayName)
 							{
 								InfoGluePrincipal principal = (InfoGluePrincipal)getInfoGluePrincipal(contentVersionVO.getVersionModifier(), db);
@@ -350,6 +375,11 @@ public class ViewListSiteNodeVersionAction extends InfoGlueAbstractAction
 	public void setAttemptDirectPublishing(String attemptDirectPublishing)
 	{
 		this.attemptDirectPublishing = attemptDirectPublishing;
+	}
+
+	public boolean getHasAnonymousNoAccessWarning() 
+	{
+		return anonymousNoAccessWarning;
 	}
 
 }

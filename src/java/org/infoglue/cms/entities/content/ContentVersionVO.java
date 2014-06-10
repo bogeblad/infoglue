@@ -66,6 +66,7 @@ public class ContentVersionVO implements BaseEntityVO
    	private Integer repositoryId				= null;
     private String versionModifierDisplayName 	= null;
 	private String path = null;
+	private Boolean hasAnonymousUserAccess = new Boolean(true);
 
 	public java.lang.Integer getContentVersionId()
     {
@@ -323,6 +324,17 @@ public class ContentVersionVO implements BaseEntityVO
 	{
 		this.siteNodeId = siteNodeId;
 	}
+	
+	public Boolean getHasAnonymousUserAccess() 
+	{
+		return hasAnonymousUserAccess;
+	}
+
+	public void setHasAnonymousUserAccess(Boolean hasAnonymousUserAccess) 
+	{
+		this.hasAnonymousUserAccess = hasAnonymousUserAccess;
+	}
+
 
 	public String toString()
 	{

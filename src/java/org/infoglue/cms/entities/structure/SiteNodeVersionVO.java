@@ -76,8 +76,9 @@ public class SiteNodeVersionVO implements BaseEntityVO
 	//Fields only here for performance - not allways populated, only in some views
     private String versionModifierDisplayName = null;
 	private String path = null;
+	private Boolean hasAnonymousUserAccess = new Boolean(true);
   
-    public java.lang.Integer getSiteNodeVersionId()
+	public java.lang.Integer getSiteNodeVersionId()
     {
         return this.siteNodeVersionId;
     }
@@ -337,6 +338,16 @@ public class SiteNodeVersionVO implements BaseEntityVO
     	this.isHidden = isHidden;
     }
 
+	public Boolean getHasAnonymousUserAccess() 
+	{
+		return hasAnonymousUserAccess;
+	}
+
+	public void setHasAnonymousUserAccess(Boolean hasAnonymousUserAccess) 
+	{
+		this.hasAnonymousUserAccess = hasAnonymousUserAccess;
+	}
+
 	public String toString()
 	{
 	    StringBuffer sb = new StringBuffer();
@@ -385,5 +396,6 @@ public class SiteNodeVersionVO implements BaseEntityVO
 	}
 
 
+	
 }
         

@@ -501,7 +501,30 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 		    if(getContentId() != null && getContentId().intValue() != -1)
 		        this.contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), getContentId());
 		}
-		
+	    
+	    if(languageId == null)
+    	{
+    		LanguageVO languageVO = LanguageController.getController().getMasterLanguage(this.contentVO.getRepositoryId());
+    		if(languageVO != null)
+    		{
+        		languageId = languageVO.getId();
+        		this.languageId = languageId;
+    		}
+    	}
+
+    	this.contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(this.contentVO.getId(), languageId);
+       	if(this.contentVersionVO == null)
+		{
+		    //logger.info("repositoryId:" + repositoryId);
+		    Integer usedRepositoryId = this.repositoryId;
+		    if(this.repositoryId == null && this.contentVO != null)
+		        usedRepositoryId = this.contentVO.getRepositoryId();
+		    
+		    LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(usedRepositoryId);
+		    //logger.info("MasterLanguage: " + masterLanguageVO);
+		    this.contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(this.contentVO.getId(), masterLanguageVO.getId());
+		}
+       	
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), true);
 
 		return "viewAssetsDialogForFCKEditorV3";
@@ -541,7 +564,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 		    if(getContentId() != null && getContentId().intValue() != -1)
 		        this.contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), getContentId());
 		}
-		
+
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), true);
 
 		return "viewSmallAssetBrowserForFCKEditorV3";

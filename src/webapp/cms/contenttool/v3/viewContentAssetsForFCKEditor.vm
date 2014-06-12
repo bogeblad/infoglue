@@ -12,11 +12,80 @@
 	
 	#includeLatestJQuery()
 	
+	<script type="text/javascript" src="script/jqueryplugins-latest/thickbox/thickbox-compressed.js"></script>
+	<link rel="stylesheet" type="text/css" href="script/jqueryplugins-latest/thickbox/thickbox-ig.css" />
+	
 	<script type="text/javascript">
 	//<!|CDATA[
 		#set($exp = $this.getExpansion($oldContentId))
 		var exp = "$exp";
 		
+		function closeInlineDiv()
+		{
+			tb_remove();
+			reloadAssetView();
+		}
+		
+		function getWindowHeight()
+		{
+			var y;
+			if (self.innerHeight) // all except Explorer
+			{
+				y = self.innerHeight;
+			}
+			else if (document.documentElement && document.documentElement.clientHeight)
+				// Explorer 6 Strict Mode
+			{
+				y = document.documentElement.clientHeight;
+			}
+			else if (document.body) // other Explorers
+			{
+				y = document.body.clientHeight;
+			}
+			return y;
+		}
+
+		function getWindowWidth()
+		{
+			var x;
+			if (self.innerHeight) // all except Explorer
+			{
+				x = self.innerWidth;
+			}
+			else if (document.documentElement && document.documentElement.clientHeight)
+				// Explorer 6 Strict Mode
+			{
+				x = document.documentElement.clientWidth;
+			}
+			else if (document.body) // other Explorers
+			{
+				x = document.body.clientWidth;
+			}
+			return x;
+		}
+		
+		function openInlineDiv(url, height, width, modal, iframe, title) 
+		{
+			var windowHeight = getWindowHeight();
+	  		//alert("windowHeight:" + windowHeight);
+	   		if(windowHeight < height)
+	   			height = windowHeight - 60;
+		
+			var windowWidth = getWindowWidth();
+	   		//alert("windowWidth:" + windowWidth);
+	   		if(windowWidth < width)
+	   			width = windowWidth - 60;
+	   		//alert("height:" + height + " - width:" + width);
+		   			
+	   	  	var separatorSign = "?";
+	   		if(url.indexOf("?") > -1)
+		  		separatorSign = "&";
+		   		
+	   		var addition = separatorSign + "KeepThis=true&" + (iframe ? "TB_iframe=true&" : "") + "height=" + height + "&width=" + width + (modal ? "&modal=true" : "");
+		   		
+		   	tb_show(title, url + addition, title);
+		}
+		   	
 	    function notifyExp(v)
 	    {
 	    	//alert("v:" + v);
@@ -76,16 +145,25 @@
 			}
 		})();
 
+		window.contentVersionId = $contentVersionId;
+		function getContentVersionId()
+		{
+			return contentVersionId;
+		}
+
 		function htmlTreeItemClick(entityId, repositoryId, path)
 		{
 			var url = "ViewContentVersion!viewAssetsForFCKEditorSmallV3.action?contentId=" + entityId + "&languageId=$languageId&treatAsLink=$treatAsLink&assetTypeFilter=$assetTypeFilter";
 			document.getElementById("contentVersionAssetsFrame").src = url;
 			selectedContentId(entityId);
+			setTimeout(function(){
+				window.contentVersionId = document.getElementById("contentVersionAssetsFrame").contentWindow.contentVersionId;
+			}, 500);
 		}
 
 		function reloadAssetView()
 		{
-			document.getElementById("contentVersionAssetsFrame")
+			document.getElementById("contentVersionAssetsFrame").contentWindow.location.reload();
 		}
 
 		function assetMarked(contentId, assetKey, assetUrl, contentVersionId)
@@ -94,6 +172,11 @@
 				parent.assetMarked(contentId, assetKey, assetUrl, contentVersionId);
 		}
 				
+		function uploadAsset(cid)
+		{
+			openInlineDiv("ViewDigitalAsset.action?contentVersionId=" + cid, 500, 550, true, true, "uploadAsset");
+		}
+		
 		function onOk(contentId, assetKey, assetUrl)
 		{
 			if(window.top.opener)

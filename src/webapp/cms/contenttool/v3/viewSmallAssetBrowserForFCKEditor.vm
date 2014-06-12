@@ -96,6 +96,8 @@
 		else if (showingContentBrowser)
 		{
 			cid = getContentVersionIdFromFrame(document.getElementById("repositoryBrowserFrame"));
+			document.getElementById("repositoryBrowserFrame").contentWindow.uploadAsset(cid);
+			return;
 		}
 		if(cid)
 		{
@@ -113,9 +115,9 @@
 					/*resizeInlineTabDivs();*/
 
 					showingContentVerison = ui.index == 0;
-					##showingContentBrowser = ui.index == 2;
+					showingContentBrowser = ui.index == 2;
 
-					if (ui.index == 0)##  || ui.index == 2
+					if (ui.index == 0 || ui.index == 2)
 					{
 						setShowUploadButton(true);
 					}

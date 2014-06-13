@@ -145,7 +145,7 @@
 			}
 		})();
 
-		window.contentVersionId = $contentVersionId;
+		window.contentVersionId = "$!contentVersionId";
 		function getContentVersionId()
 		{
 			return contentVersionId;

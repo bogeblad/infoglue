@@ -222,6 +222,7 @@ public class InterceptionPointController extends BaseController
 	    systemInterceptionPoints.put("ToolTabsAndButtons.ContentToolbarContentPropertiesButton", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.ContentToolbarContentPropertiesButton", "Intercepts the content properties button", false));
 
 	    systemInterceptionPoints.put("TrashcanTool.Read", new InterceptionPointVO("TrashcanTool", "TrashcanTool.Read", "Intercepts the trashcan option", false));
+	    systemInterceptionPoints.put("ChatTool.Write", new InterceptionPointVO("ChatTool", "ChatTool.Write", "Intercepts the send form in chat form", false));
 	}
     
 	/**

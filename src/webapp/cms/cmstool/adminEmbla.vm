@@ -406,7 +406,9 @@
 	
 	<div id="messagesDiv" style="display: none;">
 		<div id="messages" style="border: 1px solid #ccc; height: 400px; overflow: auto;"></div>
+		#if($this.hasAccessTo("ChatTool.Write", true, false))
 		<div id="messageInput" style="margin-top: 4px; padding: 2px; border: 1px solid #ccc; background-color: #dff0fc;"><input type="text" style="width: 80%;" id="chatMessage" name="chatMessage"/> <input type="button" onclick="sendMessage();" value="Send"/></div>
+		#end
 	</div>
 	
 	<div id="popupAlertMessageDivContainer"> 

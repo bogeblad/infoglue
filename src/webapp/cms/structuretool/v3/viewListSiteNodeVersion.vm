@@ -262,7 +262,7 @@
 				#set($displayName = "$snv.versionModifier")
 			#end
 					
-			#set( $row = ["<img src='css/images/v3/pageIcon.gif'> $this.getSiteNodePath($snv.siteNodeId) ($snv.getId())", $ui.getString("tool.common.publishing.typePageLabel"), "$formatter.formatDate($snv.modifiedDateTime, 'yyyy-MM-dd')", "$displayName", "#if($snv.hasAnonymousUserAccess == false) <img src='css/images/v3/locked.png' title='$ui.getString('tool.contenttool.accessRightsAnonymousWarning')'/> #end"] )
+			#set( $row = ["<img src='css/images/v3/pageIcon.gif'> $this.getLocalizedSiteNodePath($snv.siteNodeId) ($snv.getId())", $ui.getString("tool.common.publishing.typePageLabel"), "$formatter.formatDate($snv.modifiedDateTime, 'yyyy-MM-dd')", "$displayName", "#if($snv.hasAnonymousUserAccess == false) <img src='css/images/v3/locked.png' title='$ui.getString('tool.contenttool.accessRightsAnonymousWarning')'/> #end"] )
 			#set($cnt = $cnt + 1)
 			
 			#lvAddRowV3($row $cnt $snv.id false)

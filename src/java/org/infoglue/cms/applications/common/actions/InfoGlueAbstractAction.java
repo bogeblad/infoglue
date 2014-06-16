@@ -48,6 +48,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.controllers.kernel.impl.simple.InfoGluePrincipalControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
@@ -60,6 +61,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController
 import org.infoglue.cms.controllers.kernel.impl.simple.ThemeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.entities.content.ContentVO;
+import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.InterceptionPointVO;
@@ -1595,6 +1597,47 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		while(siteNodeVO != null)
 		{
 			sb.insert(0, "/" + siteNodeVO.getName());
+			if(siteNodeVO.getParentSiteNodeId() != null)
+				siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVO.getParentSiteNodeId());
+			else
+				siteNodeVO = null;
+		}
+		
+		return sb.toString();
+	}
+
+	public String getLocalizedSiteNodePath(Integer siteNodeId) throws Exception
+	{
+		Integer structureLanguageId = (Integer)getHttpSession().getAttribute("structureLanguageId");
+		logger.info("structureLanguageId:" + structureLanguageId);	
+		StringBuffer sb = new StringBuffer();
+		
+		SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
+		while(siteNodeVO != null)
+		{
+			String pageName = siteNodeVO.getName();
+			if(structureLanguageId != null)
+			{
+				ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNodeVO.getMetaInfoContentId(), structureLanguageId);
+				if(cvVO != null)
+				{
+					String navigationTitle = ContentVersionController.getContentVersionController().getAttributeValue(cvVO, "NavigationTitle", true);
+					if(pageName != null && !pageName.equals(""))
+						pageName = navigationTitle;
+				}
+				else
+				{
+					ContentVersionVO masterCVVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNodeVO.getMetaInfoContentId(), structureLanguageId);
+					if(masterCVVO != null)
+					{
+						String navigationTitle = ContentVersionController.getContentVersionController().getAttributeValue(masterCVVO, "NavigationTitle", true);
+						if(pageName != null && !pageName.equals(""))
+							pageName = navigationTitle;
+					}
+				}
+			}
+			
+			sb.insert(0, "/" + pageName);
 			if(siteNodeVO.getParentSiteNodeId() != null)
 				siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVO.getParentSiteNodeId());
 			else

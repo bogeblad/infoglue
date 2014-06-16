@@ -256,7 +256,7 @@
 			#set($displayName = "$snv.versionModifier")
 		#end
 		
-		#set( $row = ["<img src='css/images/v3/pageIcon.gif'> $this.getSiteNodePath($siteNode.id) ($siteNode.getId())", "$formatter.formatDate($snv.modifiedDateTime, 'yyyy-MM-dd')", "$displayName"] )
+		#set( $row = ["<img src='css/images/v3/pageIcon.gif'> $this.getLocalizedSiteNodePath($siteNode.id) ($siteNode.getId())", "$formatter.formatDate($snv.modifiedDateTime, 'yyyy-MM-dd')", "$displayName"] )
 		#set($cnt = $cnt + 1)
 		
 		#lvAddRowV3($row $cnt $siteNode.id false)

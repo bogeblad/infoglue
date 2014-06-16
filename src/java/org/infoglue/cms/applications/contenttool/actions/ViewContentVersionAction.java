@@ -512,8 +512,8 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
     		}
     	}
 
-    	this.contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(this.contentVO.getId(), languageId);
-       	if(this.contentVersionVO == null)
+	    this.contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(this.contentVO.getId(), languageId);
+    	if(this.contentVersionVO == null)
 		{
 		    //logger.info("repositoryId:" + repositoryId);
 		    Integer usedRepositoryId = this.repositoryId;

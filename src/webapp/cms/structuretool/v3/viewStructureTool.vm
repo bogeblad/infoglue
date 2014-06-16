@@ -23,9 +23,10 @@
 		}		
 	
 		/* Proxy functions */
-		function refreshPage(siteNodeId, changeTypeId, addedSiteNodeId)
+		function refreshPage(siteNodeId, changeTypeId, addedSiteNodeId, force)
 		{
-			$("#treeIframe").get(0).contentWindow.refreshNode(siteNodeId, changeTypeId, addedSiteNodeId);
+			//alert("1");
+			$("#treeIframe").get(0).contentWindow.refreshNode(siteNodeId, changeTypeId, addedSiteNodeId, force);
 		}		
 	
 		function openUrlInWorkArea(url)

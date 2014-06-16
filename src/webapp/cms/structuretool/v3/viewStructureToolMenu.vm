@@ -94,9 +94,10 @@
 		    parent.frames[3].location.href = "$this.getCMSBaseUrl()/ViewSiteNode!V3.action?siteNodeId=" + siteNodeId + "&repositoryId=" + repositoryId;
 		}
 	    
-	    function refreshNode(nodeId, changeTypeId, addedNodeId)
+	    function refreshNode(nodeId, changeTypeId, addedNodeId, force)
 		{
-			if(lastClickedId != nodeId || changeTypeId != 1)
+			//alert("nodeId: " + nodeId + " / " + changeTypeId + " / " + addedNodeId + " / " + lastClickedId + " / " + force);
+			if(lastClickedId != nodeId || changeTypeId != 1 || force)
 			{
 				if(frames['itreeFrame'].refreshTreeNode)
 					frames['itreeFrame'].refreshTreeNode(parseInt(nodeId), parseInt(changeTypeId), parseInt(addedNodeId));

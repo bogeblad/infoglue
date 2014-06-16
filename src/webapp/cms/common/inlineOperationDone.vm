@@ -61,9 +61,9 @@
 							parent.parent.refreshPage($siteNodeId, 2, $siteNodeId);
 					#else
 						if(parent.refreshPage)
-							parent.refreshPage($this.getActionExtraData("unrefreshedNodeId"), $changeTypeId, $newSiteNodeId);
+							parent.refreshPage($this.getActionExtraData("unrefreshedNodeId"), $changeTypeId, $newSiteNodeId, true);
 						else if(parent.parent.refreshPage)
-							parent.parent.refreshPage($this.getActionExtraData("unrefreshedNodeId"), $changeTypeId, $newSiteNodeId);
+							parent.parent.refreshPage($this.getActionExtraData("unrefreshedNodeId"), $changeTypeId, $newSiteNodeId, true);
 					#end
 					
 					var currentMenutoolbarLeftUrl = top.getCurrentMenutoolbarLeftUrl();

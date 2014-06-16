@@ -1185,10 +1185,10 @@ public class ContentController extends BaseController
         }
         catch(ConstraintException ce)
         {
-			logger.error("An error occurred so we should not complete the transaction:" + ce.getMessage());
-			logger.warn("An error occurred so we should not complete the transaction:" + ce.getMessage(), ce);
+			logger.error("An contraint occurred so we should not complete the transaction:" + ce.getMessage());
+			logger.warn("An contraint occurred so we should not complete the transaction:" + ce.getMessage(), ce);
             rollbackTransaction(db);
-            throw new SystemException(ce.getMessage());
+            throw ce;
         }
         catch(Exception e)
         {
@@ -1208,18 +1208,40 @@ public class ContentController extends BaseController
 		
 	public void moveDigitalAsset(InfoGluePrincipal principal, Integer digitalAssetId, Integer contentId, Boolean fixReferences, Database db) throws ConstraintException, SystemException, Exception
     {
-        ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
-
 		if(contentId == null)
         {
         	logger.warn("You must specify the new content......");
-        	throw new ConstraintException("Content.parentContentId", "3303");
+			throw new ConstraintException("Content.parentContentId", "3303");
         }
 		
 		List<SmallestContentVersionVO> versions = DigitalAssetController.getController().getContentVersionVOListConnectedToAssetWithId(digitalAssetId);
+		Integer languageId = null;
+		for(SmallestContentVersionVO version : versions)
+		{
+			languageId = version.getLanguageId();
+		}
 		
-		ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, db);
+		if(languageId == null)
+		{
+			logger.warn("You must specify the new content......");
+			throw new ConstraintException("Content.mustHaveSameLanguage", "3309");
+		}
+		
+		MediumContentVersionImpl selfNewVersion = null;
+		ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, languageId, db);
+
+		if(contentVersionVO == null)
+		{
+			logger.warn("There must be a version....");
+			throw new ConstraintException("Content.mustHaveSameLanguage", "3309");
+		}
+	
 		MediumContentVersionImpl contentVersion = ContentVersionController.getContentVersionController().checkStateAndChangeIfNeeded(contentVersionVO.getId(), principal, db);
+		if(contentVersion.getId() > contentVersionVO.getId())
+		{
+			selfNewVersion = contentVersion;
+		}
+		
 		MediumDigitalAssetImpl asset = DigitalAssetController.getController().getMediumDigitalAssetWithId(digitalAssetId, db);
 
 		Map<Integer,Integer> replaceMap = new HashMap<Integer,Integer>();
@@ -1319,6 +1341,13 @@ public class ContentController extends BaseController
 							    
 	   							//newVersionValue = newVersionValue.replaceAll("getInlineAssetUrl\\(" + oldContentId + ",", "getInlineAssetUrl(" + newContentId + ",");
 	   							ContentVersion cvReal = ContentVersionController.getContentVersionController().getMediumContentVersionWithId(cv.getId(), db);
+	   							logger.info("cvReal:" + cvReal.getId());
+	   						    if(selfNewVersion != null && selfNewVersion.getContentId().intValue() == cvReal.getValueObject().getContentId().intValue() && selfNewVersion.getLanguageId().intValue() == cvReal.getValueObject().getLanguageId().intValue() && selfNewVersion.getId().intValue() > cvReal.getId().intValue())
+	   						    {
+	   						    	logger.info("Was itself - lets use the new version instead...");
+	   						    	cvReal = selfNewVersion;
+	   						    }
+
 	   							cvReal.setVersionValue(newVersionValue);
 	   							cvReal.setVersionComment("Asset moved...");
 	   							cvReal.setVersionModifier(principal.getName());
@@ -1329,12 +1358,12 @@ public class ContentController extends BaseController
 	   						else if(o instanceof SiteNodeVersionVO)
 	   						{
 	   							SiteNodeVersionVO snvo = (SiteNodeVersionVO)o;
-   							logger.info("Replacing in sn:" + snvo.getId());
+	   							logger.info("Replacing in sn:" + snvo.getId());
 	   							
 	   			                SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(snvo.getSiteNodeId(), db);
 	   				    		LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId(), db);
 	   				    		ContentVersionVO cv = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNodeVO.getMetaInfoContentId(), masterLanguageVO.getId(), db);
-   				    		logger.info("Replacing in:" + cv.getVersionValue());
+	   				    		logger.info("Replacing in:" + cv.getVersionValue());
 	   							
 	   							String newVersionValue = cv.getVersionValue(); //.replaceAll("\"" + oldContentId + "\"", "\"" + newContentId + "\"");
 	   							
@@ -1371,9 +1400,6 @@ public class ContentController extends BaseController
    				}
 			}
 		}
-		
-		//If any of the validations or setMethods reported an error, we throw them up now before create.
-        ceb.throwIfNotEmpty();
     }  
 
 	/**

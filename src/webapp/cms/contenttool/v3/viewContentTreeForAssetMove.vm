@@ -41,7 +41,7 @@
 #beginLightCommonToolV3Impl("tool.contenttool.moveDigitalAsset.header" "" "" false true $!disableCloseButton $headerMarkup false "")
 	
 	#lightMenuToolbar("" $buttons $rightButtons) 
-
+		
 	<div style="clear: both;"></div>
 		
 	<form name="inputForm" action="MoveDigitalAsset.action">
@@ -55,6 +55,10 @@
 		<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
 	
 		<h3>$ui.getString("tool.contenttool.moveDigitalAsset.header")</h3>
+		#if($errors && $errors.getErrors("Content.mustHaveSameLanguage").size() > 0)
+			<p style="color: red">$errors.getErrors("Content.mustHaveSameLanguage").get(0)</p>
+		#end
+		
 		<p>
 			<input type="checkbox" name="fixReferences" value="true" checked="1"> Fix reference
 		</p>

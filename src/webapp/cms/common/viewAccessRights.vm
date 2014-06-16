@@ -109,6 +109,10 @@
 		{
 			var anyCheckedSize = $("input:checkbox:checked").size();
 			var checked = $("input[id$=${anonymousPrincipal.name}_hasAccess]").prop('checked');
+			#if($interceptionPointCategory != "SiteNodeVersion" && $interceptionPointCategory != "Content")
+				checked = true;
+			#end
+				
 			if(anyCheckedSize == 0 || checked || confirm('$ui.getString("tool.contenttool.accessRightsAnonymousWarning")'))
 			{
 				saveCurrentTab();
@@ -119,6 +123,10 @@
 		{
 			var anyCheckedSize = $("input:checkbox:checked").size();
 			var checked = $("input[id$=${anonymousPrincipal.name}_hasAccess]").prop('checked');
+			#if($interceptionPointCategory != "SiteNodeVersion" && $interceptionPointCategory != "Content")
+				checked = true;
+			#end
+
 			if(anyCheckedSize == 0 || checked || confirm('$ui.getString("tool.contenttool.accessRightsAnonymousWarning")'))
 			{
 				if(parent.saveFormAndExit)

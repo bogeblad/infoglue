@@ -219,6 +219,7 @@ public class InterceptionPointController extends BaseController
 	    systemInterceptionPoints.put("ToolTabsAndButtons.convertToFromFolderPart", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.convertToFromFolderPart", "Intercepts the link to convert a folder to a normal content or vice versa", false));
 	    
 	    systemInterceptionPoints.put("ToolTabsAndButtons.ContentToolbarAdvancedButtons", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.ContentToolbarAdvancedButtons", "Intercepts advanced buttons", false));
+	    systemInterceptionPoints.put("ToolTabsAndButtons.ContentToolbarChangeContentTypeAndLanguageButtons", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.ContentToolbarChangeContentTypeAndLanguageButtons", "Intercepts some of the advanced buttons", false));
 	    systemInterceptionPoints.put("ToolTabsAndButtons.ContentToolbarContentPropertiesButton", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.ContentToolbarContentPropertiesButton", "Intercepts the content properties button", false));
 
 	    systemInterceptionPoints.put("TrashcanTool.Read", new InterceptionPointVO("TrashcanTool", "TrashcanTool.Read", "Intercepts the trashcan option", false));

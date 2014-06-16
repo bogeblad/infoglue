@@ -1259,10 +1259,11 @@ public class ToolbarController implements ToolbarProvider
 				  "runTask");
 
 		changeContentTypeButton.getSubButtons().add(runTaskButton);
-
+		
+		ToolbarButton changeLanguageButton = null;
 		if(contentVersionId != null)
 		{
-			ToolbarButton changeLanguageButton = new ToolbarButton("",
+			changeLanguageButton = new ToolbarButton("",
 					  getLocalizedString(locale, "tool.contenttool.toolbarV3.changeLanguageLabel"), 
 					  getLocalizedString(locale, "tool.contenttool.toolbarV3.changeLanguageTitle"),
 					  "ChangeVersionLanguage!inputV3.action?contentId=" + contentId + "&repositoryId=" + contentVO.getRepositoryId() + "&contentVersionId=" + contentVersionId + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
@@ -1285,12 +1286,21 @@ public class ToolbarController implements ToolbarProvider
 				  "ExportContent!input.action?contentId=" + contentId + "&repositoryId=" + contentVO.getRepositoryId(),
 				  "",
 				  "exportContent");
+		
 		changeContentTypeButton.getSubButtons().add(exportContentButton);
 
 		if(hasAccessTo(principal, "ToolTabsAndButtons.ContentToolbarAdvancedButtons", true))
 		{
 			buttons.add(changeContentTypeButton);
 		}
+		else if(hasAccessTo(principal, "ToolTabsAndButtons.ContentToolbarChangeContentTypeAndLanguageButtons", true))
+		{
+			changeContentTypeButton.getSubButtons().clear();
+			if(changeLanguageButton != null)
+				changeContentTypeButton.getSubButtons().add(changeLanguageButton);
+			buttons.add(changeContentTypeButton);
+		}
+		
 		/*
 		buttons.add(new ToolbarButton("",
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.showContentInTreeLabel"), 

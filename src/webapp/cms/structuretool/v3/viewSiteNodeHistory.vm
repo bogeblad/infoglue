@@ -172,7 +172,7 @@
 					<td>$siteNodeVersionVO.isActive</td>
 					<td>$formatter.formatDate($siteNodeVersionVO.modifiedDateTime, 'yyyy-MM-dd HH:mm:ss')</td>
 					<td>$siteNodeVersionVO.versionModifier</td>
-					<td>$siteNodeVersionVO.versionComment</td>
+					<td>$siteNodeVersionVO.versionComment <a href="ViewAccessRights!V3.action?interceptionPointCategory=SiteNodeVersion&extraParameters=$siteNodeVersionVO.id&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent&KeepThis=true&forceVersion=true" target="_blank">.</a></td>
 				</tr>
 			#end
 			

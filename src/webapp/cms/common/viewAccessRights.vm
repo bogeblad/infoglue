@@ -154,6 +154,15 @@
 
 		$(document).ready(function(){
 			#if($closeOnLoad)
+				if(top.getActiveToolName() == "StructureTool")
+				{
+					if(parent.refreshPage)
+						parent.refreshPage($!unrefreshedNodeId, 1, $!unrefreshedNodeId, true);
+					else if(parent.parent.refreshPage)
+						parent.parent.refreshPage($!unrefreshedNodeId, 1, $!unrefreshedNodeId, true);
+						
+					parent.refreshWorkSurface();	
+				}
 				if(parent && parent.document.location.href != document.location.href && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.document.location.href != document.location.href && parent.closeDialog) parent.closeDialog(); else { window.close();}
 			#else
 				$("#tabsContainer").tabs( {
@@ -254,7 +263,6 @@
 	    </ul>
 
 		<div id="rolesTab" class="inlineTabDiv">
-			
 			<form method="post" name="editForm" id="roleForm" action="UpdateAccessRights.action">
 				<input type="hidden" name="interceptionPointCategory" value="$interceptionPointCategory"/>
 				<input type="hidden" name="parameters" value="$extraParameters"/>
@@ -594,11 +602,11 @@
 				</script>
 				
 				<div id="groups$accessRightId" class="groupTable" style="position: absolute; overflow: auto; top: 10px; left: 50px; visibility: hidden; width:700px; height:500px; background-color: white; border:1px solid black;">
-
 					<form method="POST" id="groups${accessRightId}Form" name="groups${accessRightId}Form" action="UpdateAccessRights!addGroups.action">
 						<input type="hidden" name="interceptionPointCategory" value="$interceptionPointCategory">
 						<input type="hidden" name="parameters" value="$extraParameters">
 						<input type="hidden" name="accessRightId" value="$accessRightId">
+						<input type="hidden" name="interceptionPointId" value="$interceptionPointVO.id">
 						<input type="hidden" name="returnAddress" value="$returnAddress">
 
 						<div id="menutoolbar">

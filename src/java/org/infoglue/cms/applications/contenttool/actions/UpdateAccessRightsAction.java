@@ -34,6 +34,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeStateController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionControllerProxy;
 import org.infoglue.cms.entities.content.ContentVO;
+import org.infoglue.cms.entities.management.AccessRightVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.exception.AccessConstraintException;
 import org.infoglue.cms.util.AccessConstraintExceptionBuffer;
@@ -184,7 +185,7 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 			SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(siteNodeVersionId);
 			
 			//If in published state we must first make it working state so it can later be published
-			if(siteNodeVersionVO.getStateId().intValue() != SiteNodeVersionVO.WORKING_STATE)
+			if(siteNodeVersionVO.getStateId().intValue() != SiteNodeVersionVO.WORKING_STATE.intValue())
 			{
 				this.oldParameters = "" + siteNodeVersionId;
 				List events = new ArrayList();
@@ -192,6 +193,16 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 				this.newParameters = "" + siteNodeVersionVO.getId();
 				this.parameters = "" + siteNodeVersionVO.getId();
 				siteNodeVersionId = siteNodeVersionVO.getId();
+			
+				AccessRightVO accessRightVO = AccessRightController.getController().getAccessRightVOWithId(this.accessRightId);
+				List<AccessRightVO> accessRightsVOList = AccessRightController.getController().getAccessRightVOList(accessRightVO.getInterceptionPointName(), newParameters);
+				for(AccessRightVO accessRightVOCandidate : accessRightsVOList)
+				{
+					if(accessRightVOCandidate.getInterceptionPointId().intValue() == interceptionPointId.intValue())
+					{
+						this.accessRightId = accessRightVOCandidate.getId();
+					}
+				}
 			}
 
 			if(!siteNodeVersionVO.getVersionModifier().equalsIgnoreCase(this.getInfoGluePrincipal().getName()))

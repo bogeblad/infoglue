@@ -42,7 +42,6 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.GroupControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RoleControllerProxy;
-import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeStateController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionControllerProxy;
 import org.infoglue.cms.entities.content.ContentVO;
@@ -92,7 +91,8 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 	private Map<Integer,List<AccessRightGroupVO>> accessRightGroupsMap = new HashMap<Integer,List<AccessRightGroupVO>>();
 	private Map<String,Object> accessRightHasAccessMap = new HashMap<String,Object>();
 	private String extraAccessRightInfo = "";
-
+	private String unrefreshedNodeId = "";
+	
 	public String doV3() throws Exception
     {
     	doExecute();
@@ -135,7 +135,16 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 
 			Integer siteNodeVersionId = new Integer(extraParameters);
 			SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(siteNodeVersionId);
-				
+			SiteNodeVersionVO latestSiteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(siteNodeVersionVO.getSiteNodeId());
+			if(latestSiteNodeVersionVO.getId().intValue() > siteNodeVersionVO.getId().intValue() && (getRequest().getParameter("forceVersion") == null || getRequest().getParameter("forceVersion").equals("")))
+			{
+				siteNodeVersionId = latestSiteNodeVersionVO.getId();
+				siteNodeVersionVO = latestSiteNodeVersionVO;
+				extraParameters = siteNodeVersionId.toString();
+			}
+			if(siteNodeVersionVO != null)
+				unrefreshedNodeId = "" + siteNodeVersionVO.getSiteNodeId();
+			
 			if(!siteNodeVersionVO.getVersionModifier().equalsIgnoreCase(this.getInfoGluePrincipal().getName()))
 			{
 				boolean isSiteNodeVersionProtected = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getIsSiteNodeVersionProtected(siteNodeVersionVO.getId());
@@ -525,5 +534,15 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 	public String getAnchor()
 	{
 		return this.anchor;
+	}
+
+	public String getUnrefreshedNodeId() 
+	{
+		return unrefreshedNodeId;
+	}
+
+	public void setUnrefreshedNodeId(String unrefreshedNodeId) 
+	{
+		this.unrefreshedNodeId = unrefreshedNodeId;
 	}
 }

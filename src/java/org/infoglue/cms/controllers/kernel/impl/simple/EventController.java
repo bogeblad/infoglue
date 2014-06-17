@@ -189,19 +189,21 @@ public class EventController extends BaseController
 	 * Returns a list of events currently available for the certain entity.
 	 */
 	
-	public static List getEventVOListForEntity(String entityClass, Integer entityId) throws SystemException, Bug
+ 	public static List<EventVO> getEventVOListForEntity(String entityClass, Integer entityId) throws SystemException, Bug
 	{
-		List events = new ArrayList();
+ 		Timer t = new Timer();
+ 		
+		List<EventVO> events = new ArrayList<EventVO>();
 		Database db = CastorDatabaseService.getDatabase();
 		beginTransaction(db);
 
 		try
 		{
-			OQLQuery oql = db.getOQLQuery("SELECT e FROM org.infoglue.cms.entities.workflow.impl.simple.EventImpl e WHERE e.entityClass = $1 AND e.entityId = $2");
+			OQLQuery oql = db.getOQLQuery("SELECT e FROM org.infoglue.cms.entities.workflow.impl.simple.SmallEventImpl e WHERE e.entityClass = $1 AND e.entityId = $2");
 			oql.bind(entityClass);
 			oql.bind(entityId);
 
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute();
 
 			while (results.hasMore())
 			{
@@ -221,6 +223,8 @@ public class EventController extends BaseController
 			throw new SystemException(e.getMessage());
 		}
 
+ 		t.printElapsedTime("getEventVOListForEntity took", 50);
+ 		
 		return events;
 	}
 
@@ -241,6 +245,8 @@ public class EventController extends BaseController
 	{
 		List<Event> events = new ArrayList<Event>();
 		
+		Timer t = new Timer();
+		
         OQLQuery oql = db.getOQLQuery( "SELECT e FROM org.infoglue.cms.entities.workflow.impl.simple.EventImpl e WHERE (e.typeId = $1 OR e.typeId = $2) AND e.repositoryId = $3 ORDER BY e.eventId desc");
     	oql.bind(EventVO.PUBLISH);
     	oql.bind(EventVO.UNPUBLISH_LATEST);
@@ -257,6 +263,8 @@ public class EventController extends BaseController
             
 		results.close();
 		oql.close();
+		
+		t.printElapsedTime("getPublicationEventVOListForRepository took", 50);
 
         return events;	
 	}

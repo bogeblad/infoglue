@@ -1761,7 +1761,40 @@
     </field>
   </class>
 
-
+<!--  Mapping for Event  -->
+  <class name="org.infoglue.cms.entities.workflow.impl.simple.SmallEventImpl" identity="eventId" key-generator="IDENTITY">
+    <description>SmallEvent</description>
+    <cache-type type="unlimited"/>
+    <map-to table="cmEvent"/>
+    <field name="eventId" type="java.lang.Integer">
+      <sql name="eventId" type="integer" dirty="check" />
+    </field>
+    <field name="name" type="java.lang.String">
+      <sql name="name" type="varchar" dirty="check" />
+    </field>
+    <field name="description" type="java.lang.String">
+      <sql name="description" type="varchar" dirty="check" />
+    </field>
+    <field name="entityClass" type="java.lang.String">
+      <sql name="entityClass" type="varchar" dirty="check" />
+    </field>
+    <field name="entityId" type="java.lang.Integer">
+      <sql name="entityId" type="integer" dirty="check" />
+    </field>
+    <field name="typeId" type="java.lang.Integer">
+      <sql name="typeId" type="integer" dirty="check" />
+    </field>
+    <field name="creationDateTime" type="java.util.Date">
+      <sql name="creationDateTime" type="timestamp" dirty="ignore" />
+    </field>
+    <field name="repositoryId" type="java.lang.Integer">
+      <sql name="repositoryId" type="integer" dirty="check"/>
+    </field>
+    <field name="creator" type="java.lang.String">
+      <sql name="creator" type="varchar" dirty="check" />
+    </field>
+  </class>
+  
 <!--  Mapping for Publication  -->
   <class name="org.infoglue.cms.entities.publishing.impl.simple.PublicationImpl" identity="publicationId" key-generator="IDENTITY">
     <description>Publication</description>

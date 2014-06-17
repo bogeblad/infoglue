@@ -763,45 +763,50 @@ public class PublicationController extends BaseController
 			logger.error("An error occurred when we tried to commit the publication: " + e.getMessage(), e);
 	    	rollbackTransaction(db);
 		}
-
+		
         return publicationVO;
     }
+
+	private static Object publishingLock = new Object();
 
 	/**
 	 * This method creates a new publication with the concerned events carried out.
 	 */
 	public PublicationVO createAndPublish(PublicationVO publicationVO, List<EventVO> events, Map<Integer,SiteNodeVO> newSiteNodeMap, Map<Integer,ContentVO> newContentMap, boolean overrideVersionModifyer, InfoGluePrincipal infoGluePrincipal) throws SystemException
 	{
-		Map<Integer, Map<String, Map<String, String>>> allPageUrlsBeforePublication = getPageUrlsForSiteNodes(newSiteNodeMap, infoGluePrincipal);
-
-		Database db = CastorDatabaseService.getDatabase();
-		try
+		synchronized (publishingLock) 
 		{
-			beginTransaction(db);
-			publicationVO = createAndPublish(publicationVO, events, newSiteNodeMap, newContentMap, overrideVersionModifyer, infoGluePrincipal, db);
-			commitRegistryAwareTransaction(db);
+			Map<Integer, Map<String, Map<String, String>>> allPageUrlsBeforePublication = getPageUrlsForSiteNodes(newSiteNodeMap, infoGluePrincipal);
 
-			// Notify the interceptors!!!
+			Database db = CastorDatabaseService.getDatabase();
 			try
 			{
-				Map hashMap = new HashMap();
-				hashMap.put("publicationId", publicationVO.getId());
-
-				intercept(hashMap, "Publication.Written", infoGluePrincipal, true, true);
+				beginTransaction(db);
+				publicationVO = createAndPublish(publicationVO, events, newSiteNodeMap, newContentMap, overrideVersionModifyer, infoGluePrincipal, db);
+				commitRegistryAwareTransaction(db);
+	
+				// Notify the interceptors!!!
+				try
+				{
+					Map hashMap = new HashMap();
+					hashMap.put("publicationId", publicationVO.getId());
+	
+					intercept(hashMap, "Publication.Written", infoGluePrincipal, true, true);
+				}
+				catch (Exception e)
+				{
+					logger.error("An error occurred when we tried to replicate the data:" + e.getMessage(), e);
+				}
 			}
-			catch (Exception e)
+			catch(Exception e)
 			{
-				logger.error("An error occurred when we tried to replicate the data:" + e.getMessage(), e);
+				logger.error("An error occurred when we tried to commit the publication: " + e.getMessage(), e);
+				rollbackTransaction(db);
 			}
+	
+			Map<Integer, Map<String, Map<String, String>>> allPageUrlsAfterPublication = getPageUrlsForSiteNodes(newSiteNodeMap, infoGluePrincipal);
+			createSystemRedirectsForNiceUriChanges(allPageUrlsBeforePublication, allPageUrlsAfterPublication, infoGluePrincipal);
 		}
-		catch(Exception e)
-		{
-			logger.error("An error occurred when we tried to commit the publication: " + e.getMessage(), e);
-			rollbackTransaction(db);
-		}
-
-		Map<Integer, Map<String, Map<String, String>>> allPageUrlsAfterPublication = getPageUrlsForSiteNodes(newSiteNodeMap, infoGluePrincipal);
-		createSystemRedirectsForNiceUriChanges(allPageUrlsBeforePublication, allPageUrlsAfterPublication, infoGluePrincipal);
 
 		return publicationVO;
 	}

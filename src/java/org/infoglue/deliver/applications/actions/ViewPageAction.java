@@ -632,7 +632,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 			extraInformation += "Referer: " + getRequest().getHeader("Referer") + "\n";
 			extraInformation += "UserAgent: " + getRequest().getHeader("User-Agent") + "\n";
 			extraInformation += "User IP: " + getRequest().getRemoteAddr();
-			
+
 			logger.info("A user requested page which has no published version:" + e.getMessage() + "\n" + extraInformation);
 			rollbackTransaction(dbWrapper.getDatabase());
 
@@ -640,6 +640,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 			getRequest().setAttribute("responseCode", "404");
 			getRequest().setAttribute("error", e);
 			getRequest().setAttribute("errorUrl", getErrorUrl());
+			getRequest().setAttribute("originalFullURL", getOriginalFullURL());
 			getRequest().getRequestDispatcher("/ErrorPage.action").forward(getRequest(), getResponse());
 		}
 		catch(NoBaseTemplateFoundException e)

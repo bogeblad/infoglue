@@ -122,6 +122,8 @@ public class ViewPageFilter implements Filter
         HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
         
+    	httpRequest.setAttribute("originalFullURL", getOriginalFullURL(httpRequest));
+
         /*
         Enumeration enAttr = httpRequest.getAttributeNames(); 
         while(enAttr.hasMoreElements()){
@@ -818,4 +820,17 @@ public class ViewPageFilter implements Filter
 
     }
     
+
+	/**
+	 * This method returns the exact full url from the original request - not modified
+	 * @return
+	 */
+	
+	public String getOriginalFullURL(HttpServletRequest request)
+	{
+    	String originalRequestURL = request.getRequestURL().toString();
+    	String originalQueryString = request.getQueryString();
+
+    	return originalRequestURL + (originalQueryString == null ? "" : "?" + originalQueryString);
+	}
 }

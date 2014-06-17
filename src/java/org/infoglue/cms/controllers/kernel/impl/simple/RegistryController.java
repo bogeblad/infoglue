@@ -1742,29 +1742,31 @@ public class RegistryController extends BaseController
             {
                 try
                 {
-                    ContentVersion contentVersion = ContentVersionController.getContentVersionController().getContentVersionWithId(new Integer(registryVO.getReferencingEntityId()), db);
+                    ContentVersionVO contentVersion = ContentVersionController.getContentVersionController().getContentVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
                     //logger.info("content: " + contentVersion.getOwningContent().getContentId() + " - contentVersion: " + contentVersion.getId());
-                    Boolean hasVersion = checkedLanguageVersions.get("" + contentVersion.getValueObject().getContentId() + "_" + contentVersion.getLanguageId());
+                    Boolean hasVersion = checkedLanguageVersions.get("" + contentVersion.getContentId() + "_" + contentVersion.getLanguageId());
                     if(hasVersion != null && onlyOneVersionPerLanguage)
                     {
                     	continue;
                     	//referenceBeanList.remove(existingReferenceBean);
                     }
-                    else if(excludeInternalContentReferences && contentVersion.getValueObject().getContentId().equals(contentId))
+                    else if(excludeInternalContentReferences && contentVersion.getContentId().equals(contentId))
 		    		{
 		    			logger.info("Skipping internal reference " + contentId + " had on itself.");
 		    			referenceBeanList.remove(existingReferenceBean);
 		    		}
 		    		else
 		    		{
-			    		existingReferenceBean.setName(contentVersion.getOwningContent().getName());
-			    		existingReferenceBean.setReferencingCompletingObject(contentVersion.getOwningContent().getValueObject());
-			    		existingReferenceBean.setPath(ContentController.getContentController().getContentPath(contentVersion.getValueObject().getContentId(), false, true, db));
+	    				ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentVersion.getContentId(), db);
+
+			    		existingReferenceBean.setName(contentVO.getName());
+			    		existingReferenceBean.setReferencingCompletingObject(contentVO);
+			    		existingReferenceBean.setPath(ContentController.getContentController().getContentPath(contentVersion.getContentId(), false, true, db));
 			    		try
 			    		{
 			    			String userName = contentVersion.getVersionModifier();
 			    			if(userName == null || userName.equals(""))
-			    				userName = contentVersion.getOwningContent().getCreator();
+			    				userName = contentVO.getCreatorName();
 
 				    		InfoGluePrincipal user = UserControllerProxy.getController().getUser(userName);
 				    		if(user != null)
@@ -1776,7 +1778,7 @@ public class RegistryController extends BaseController
 			    		{
 			    			logger.warn("Problem getting version modifier email: " + e.getMessage());
 						}
-			    		referenceVersionBean.setReferencingObject(contentVersion.getValueObject());
+			    		referenceVersionBean.setReferencingObject(contentVersion);
 			    		referenceVersionBean.getRegistryVOList().add(registryVO);
 		    			
 			    		String assetExtraInfo = RegistryController.getController().getInlineAssetInformation(contentVersion.getVersionValue(), new Integer(registryVO.getEntityId()), contentVersion.getLanguageId(), null, true, db);
@@ -1785,7 +1787,7 @@ public class RegistryController extends BaseController
 			    		
 			    		logger.info("assetExtraInfo:" + assetExtraInfo);
 
-			    		checkedLanguageVersions.put("" + contentVersion.getValueObject().getContentId() + "_" + contentVersion.getLanguageId(), new Boolean(true));
+			    		checkedLanguageVersions.put("" + contentVersion.getContentId() + "_" + contentVersion.getLanguageId(), new Boolean(true));
 		    		}
                 }
                 catch(Exception e)
@@ -2009,15 +2011,15 @@ public class RegistryController extends BaseController
 	            {
 	                try
 	                {
-	                    ContentVersion cv = ContentVersionController.getContentVersionController().getContentVersionWithId(new Integer(registryVO.getReferencingEntityId()), db);
-	                    ContentVersion latestContentVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersion(new Integer(registryVO.getReferencingEntityCompletingId()), cv.getLanguageId(), db);
-	                    Boolean hasVersion = checkedLanguageVersions.get("" + latestContentVersion.getValueObject().getContentId() + "_" + latestContentVersion.getLanguageId());
+	                    ContentVersionVO cv = ContentVersionController.getContentVersionController().getContentVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
+	                    ContentVersionVO latestContentVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(new Integer(registryVO.getReferencingEntityCompletingId()), cv.getLanguageId(), db);
+	                    Boolean hasVersion = checkedLanguageVersions.get("" + latestContentVersion.getContentId() + "_" + latestContentVersion.getLanguageId());
 	                    if(hasVersion != null && onlyLatestVersionPerLanguage)
 	                    {
 	                    	continue;
 	                    	//referenceBeanList.remove(existingReferenceBean);
 	                    }
-	                    else if(excludeInternalContentReferences && latestContentVersion.getValueObject().getContentId().equals(contentId))
+	                    else if(excludeInternalContentReferences && latestContentVersion.getContentId().equals(contentId))
 			    		{
 	                    	logger.info("Skipping internal reference " + contentId + " had on itself.");
 			    			referenceBeanList.remove(existingReferenceBean);
@@ -2029,14 +2031,15 @@ public class RegistryController extends BaseController
 			    			logger.info("includesAsset:" + includesAsset);
 			    			if(includesAsset)
 		                    {
-		                    	existingReferenceBean.setName(latestContentVersion.getOwningContent().getName());
-					    		existingReferenceBean.setReferencingCompletingObject(latestContentVersion.getOwningContent().getValueObject());
-					    		existingReferenceBean.setPath(ContentController.getContentController().getContentPath(latestContentVersion.getValueObject().getContentId(), false, true, db));
+			    				ContentVO contentVO = ContentController.getContentController().getContentVOWithId(latestContentVersion.getContentId(), db);
+		                    	existingReferenceBean.setName(contentVO.getName());
+					    		existingReferenceBean.setReferencingCompletingObject(contentVO);
+					    		existingReferenceBean.setPath(ContentController.getContentController().getContentPath(contentVO.getContentId(), false, true, db));
 					    		try
 					    		{
 					    			String userName = latestContentVersion.getVersionModifier();
 					    			if(userName == null || userName.equals(""))
-					    				userName = latestContentVersion.getOwningContent().getCreator();
+					    				userName = contentVO.getCreatorName();
 		
 						    		InfoGluePrincipal user = UserControllerProxy.getController().getUser(userName);
 						    		if(user != null)
@@ -2048,10 +2051,10 @@ public class RegistryController extends BaseController
 					    		{
 					    			logger.warn("Problem getting version modifier email: " + e.getMessage());
 								}
-					    		referenceVersionBean.setReferencingObject(latestContentVersion.getValueObject());
+					    		referenceVersionBean.setReferencingObject(latestContentVersion);
 					    		referenceVersionBean.getRegistryVOList().add(registryVO);
 					    
-					    		checkedLanguageVersions.put("" + latestContentVersion.getValueObject().getContentId() + "_" + latestContentVersion.getLanguageId(), new Boolean(true));
+					    		checkedLanguageVersions.put("" + latestContentVersion.getContentId() + "_" + latestContentVersion.getLanguageId(), new Boolean(true));
 		                    }
 		                    else
 			    			{

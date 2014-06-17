@@ -3371,7 +3371,8 @@ public class ContentController extends BaseController
 		
 		try
 		{
-			ContentVersion contentVersion = ContentVersionController.getContentVersionController().getLatestPublishedContentVersion(contentId);
+			ContentVersionVO contentVersion = ContentVersionController.getContentVersionController().getLatestPublishedContentVersionVO(contentId);
+			//ContentVersion contentVersion = ContentVersionController.getContentVersionController().getLatestPublishedContentVersion(contentId);
 			if(contentVersion != null)
 			{
 				hasPublishedVersion = true;

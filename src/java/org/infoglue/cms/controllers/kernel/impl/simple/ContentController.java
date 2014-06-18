@@ -251,7 +251,13 @@ public class ContentController extends BaseController
 			if(rs.getString(4) != null && !rs.getString(4).equals(""))
 				content.setContentTypeDefinitionId(new Integer(rs.getString(4)));
 			content.setRepositoryId(new Integer(rs.getString(5)));
-			content.setParentContentId(new Integer(rs.getString(6)));
+			if(rs.getString(6) == null)
+			{
+				logger.warn("Parent content ID was null on " + content.getId());
+				content.setParentContentId(null);
+			}
+			else
+				content.setParentContentId(new Integer(rs.getString(6)));
 			content.setStateId(new Integer(rs.getString(7)));
             siteNodeVOMap.put(content.getValueObject().getContentVersionId(), content.getValueObject());
             logger.info("Adding:" + content.getValueObject().getContentVersionId() + "=" + content.getValueObject());

@@ -294,6 +294,30 @@ public class AccessRightController extends BaseController
 	}
 	
 	
+	public List getAccessRightVOList(String interceptionPointName, String parameters) throws SystemException, Bug
+	{
+		List<AccessRightVO> accessRightVOList = new ArrayList<AccessRightVO>();
+		
+		Database db = CastorDatabaseService.getDatabase();
+
+		try 
+		{
+			beginTransaction(db);
+			
+			accessRightVOList = getAccessRightVOList(interceptionPointName, parameters, db);
+			
+			commitTransaction(db);
+		} 
+		catch (Exception e) 
+		{
+		    logger.info("An error occurred so we should not complete the transaction:" + e);
+			rollbackTransaction(db);
+			throw new SystemException(e.getMessage());					
+		}
+		
+		return accessRightVOList;	
+	}
+	
 	public List getAccessRightVOList(String interceptionPointName, String parameters, Database db) throws SystemException, Bug
 	{
 		String key = "" + interceptionPointName + "_" + parameters;

@@ -4154,6 +4154,18 @@ public class CacheController extends Thread
 	
 	public static void clearCache(Class type, Object[] ids, boolean forceClear) throws Exception
 	{		
+		if(logger.isInfoEnabled() && CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms") && type != null && (type.equals(SiteNodeImpl.class) || type.equals(SiteNodeVersionImpl.class) || type.getName().contains("ContentVersionImpl") || type.getName().contains("DigitalAssetImpl")))
+		{
+			try
+			{
+				throw new Exception("Debug");
+			}
+			catch (Exception e) 
+			{
+				logger.warn("ClearCache for objekt:" + type + " in " + CmsPropertyHandler.getApplicationName(), e);
+			}
+		}
+		
 		Timer t = new Timer();
 		
 		if(CmsPropertyHandler.getOperatingMode().equals("3"))
@@ -4215,6 +4227,18 @@ public class CacheController extends Thread
 
 	public static void clearCache(Class c) throws Exception
 	{
+		if(CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms") && c != null && (c.equals(SiteNodeImpl.class) || c.equals(SiteNodeVersionImpl.class) || c.getName().contains("ContentVersionImpl") || c.getName().contains("DigitalAssetImpl")))
+		{
+			try
+			{
+				throw new Exception("Debug");
+			}
+			catch (Exception e) 
+			{
+				logger.warn("ClearCache 3:" + c + " in " + CmsPropertyHandler.getApplicationName(), e);
+			}
+		}
+		
 	    Database db = CastorDatabaseService.getDatabase();
 
 		try
@@ -4238,6 +4262,18 @@ public class CacheController extends Thread
 	
 	public static void clearCache(Class type, Object[] ids, boolean forceClear, Database db) throws Exception
 	{
+		if(CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms") && type != null && (type.equals(SiteNodeImpl.class) || type.equals(SiteNodeVersionImpl.class) || type.getName().contains("ContentVersionImpl") || type.getName().contains("DigitalAssetImpl")))
+		{
+			try
+			{
+				throw new Exception("Debug");
+			}
+			catch (Exception e) 
+			{
+				logger.warn("ClearCache force:" + type + " in " + CmsPropertyHandler.getApplicationName(), e);
+			}
+		}
+
 		long wait = 0;
 	    while(!forceClear && !getForcedCacheEvictionMode() && RequestAnalyser.getRequestAnalyser().getApproximateNumberOfDatabaseQueries() > 0)
 		{
@@ -4274,6 +4310,18 @@ public class CacheController extends Thread
 
 	public static void clearCache(Database db, Class c) throws Exception
 	{
+		if(CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms") && c != null && (c.equals(SiteNodeImpl.class) || c.equals(SiteNodeVersionImpl.class) || c.getName().contains("ContentVersionImpl") || c.getName().contains("DigitalAssetImpl")))
+		{
+			try
+			{
+				throw new Exception("Debug");
+			}
+			catch (Exception e) 
+			{
+				logger.warn("ClearCache for an entire class:" + c + " in " + CmsPropertyHandler.getApplicationName(), e);
+			}
+		}
+		
 		long wait = 0;
 		while(!getForcedCacheEvictionMode() && RequestAnalyser.getRequestAnalyser().getApproximateNumberOfDatabaseQueries() > 0)
 		{
@@ -4426,7 +4474,6 @@ public class CacheController extends Thread
 	    
 	    logger.info("evictWaitingCache starting");
     	logger.info("blocking");
-    	
     	synchronized(notifications)
         {
         	if(notifications == null || notifications.size() == 0)

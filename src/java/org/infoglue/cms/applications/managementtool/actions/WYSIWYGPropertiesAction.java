@@ -133,7 +133,8 @@ public class WYSIWYGPropertiesAction extends InfoGlueAbstractAction
 				if(contentId != null && !contentId.equals("-1") && languageId != null && !languageId.equals("-1"))
 				{
 					ContentVersionVO cvo = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(new Integer(contentId), new Integer(languageId));
-					parameters.put("contentVersionId", cvo.getId());
+					if(cvo != null)
+						parameters.put("contentVersionId", cvo.getId());
 				}
 			}
 			else

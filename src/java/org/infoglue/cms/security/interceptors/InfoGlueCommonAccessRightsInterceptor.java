@@ -144,12 +144,15 @@ public class InfoGlueCommonAccessRightsInterceptor implements InfoGlueIntercepto
 		else if(interceptionPointVO.getName().equalsIgnoreCase("Content.CreateVersion"))
 		{
 			Integer contentId = (Integer)extradata.get("contentId");
-			ContentVO contentVO = ContentControllerProxy.getController().getContentVOWithId(contentId);
-			if(!allowCreatorAccess || !contentVO.getCreatorName().equalsIgnoreCase(infoGluePrincipal.getName()))
+			if(contentId != null)
 			{
-				Integer protectedContentId = ContentControllerProxy.getController().getProtectedContentId(contentId);
-				if(ContentVersionControllerProxy.getController().getIsContentProtected(contentId, true) && !AccessRightController.getController().getIsPrincipalAuthorized(infoGluePrincipal, "Content.CreateVersion", protectedContentId.toString()))
-					ceb.add(new AccessConstraintException("Content.contentId", "1002"));
+				ContentVO contentVO = ContentControllerProxy.getController().getContentVOWithId(contentId);
+				if(!allowCreatorAccess || !contentVO.getCreatorName().equalsIgnoreCase(infoGluePrincipal.getName()))
+				{
+					Integer protectedContentId = ContentControllerProxy.getController().getProtectedContentId(contentId);
+					if(ContentVersionControllerProxy.getController().getIsContentProtected(contentId, true) && !AccessRightController.getController().getIsPrincipalAuthorized(infoGluePrincipal, "Content.CreateVersion", protectedContentId.toString()))
+						ceb.add(new AccessConstraintException("Content.contentId", "1002"));
+				}
 			}
 		}
 		else if(interceptionPointVO.getName().equalsIgnoreCase("Content.SubmitToPublish"))

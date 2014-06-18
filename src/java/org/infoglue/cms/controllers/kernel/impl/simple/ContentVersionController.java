@@ -4118,7 +4118,7 @@ public class ContentVersionController extends BaseController
 		results.close();
 		oql.close();
 		
-		t.printElapsedTime("getLatestContentVersion from content ids took", 20);
+		t.printElapsedTime("getLatestContentVersion from content ids took", 100);
 		return result;
 	}
 }

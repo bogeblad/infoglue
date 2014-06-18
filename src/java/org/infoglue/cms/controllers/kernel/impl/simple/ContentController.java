@@ -3036,8 +3036,8 @@ public class ContentController extends BaseController
 	    ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId);
 		
 		ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVO.getId(), languageId);
-
-		attribute = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO, attributeName, false);
+		if(contentVersionVO != null)
+			attribute = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO, attributeName, false);
 		
 		return attribute;
 	}	

@@ -883,7 +883,7 @@ public class SiteNodeController extends BaseController
 			if(repositoryId == null)
 				repositoryId = parentSiteNode.getRepository().getRepositoryId();	
         }		
-        
+                
         if(siteNodeTypeDefinitionId != null)
         	siteNodeTypeDefinition = SiteNodeTypeDefinitionController.getController().getSiteNodeTypeDefinitionWithId(siteNodeTypeDefinitionId, db);
 
@@ -902,12 +902,9 @@ public class SiteNodeController extends BaseController
         if(parentSiteNode != null)
         	parentSiteNode.getChildSiteNodes().add(siteNode);
         
-        //commitTransaction(db);
-        //siteNode = (SiteNode) createEntity(siteNode, db);
-        
         //No siteNode is an island (humhum) so we also have to create an siteNodeVersion for it. 
         SiteNodeVersionController.createInitialSiteNodeVersion(db, siteNode, infoGluePrincipal);
-                    
+        
         return siteNode;
     }
 
@@ -2069,12 +2066,9 @@ public class SiteNodeController extends BaseController
         
         RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Getting path", t.getElapsedTime());
         
-        SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestSiteNodeVersionVO(db, newSiteNode.getId());
         LanguageVO masterLanguage 			= LanguageController.getController().getMasterLanguage(repositoryId, db);
   	   
         RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getLatestSiteNodeVersionVO", t.getElapsedTime());
-        
-        ServiceDefinitionVO singleServiceDefinitionVO 	= null;
         
         Integer metaInfoContentTypeDefinitionId = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Meta info", db).getId();
         Integer availableServiceBindingId = AvailableServiceBindingController.getController().getAvailableServiceBindingVOWithName("Meta information", db).getId();
@@ -2085,11 +2079,6 @@ public class SiteNodeController extends BaseController
             ServiceDefinition serviceDefinition = ServiceDefinitionController.getController().getServiceDefinitionWithName("Core content service", db, false);
             String[] values = {serviceDefinition.getId().toString()};
             AvailableServiceBindingController.getController().update(availableServiceBindingId, values, db);
-            singleServiceDefinitionVO = serviceDefinition.getValueObject();
-        }
-        else if(serviceDefinitions.size() == 1)
-        {
-        	singleServiceDefinitionVO = (ServiceDefinitionVO)serviceDefinitions.get(0);	    
         }
         RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getAvailableServiceBindingVOWithName", t.getElapsedTime());
 

@@ -404,7 +404,7 @@ public class ContentControllerProxy extends ContentController
 		try
 		{
 			ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId);
-			if(contentVO.getIsProtected() != null)
+			if(contentVO != null && contentVO.getIsProtected() != null)
 			{	
 				if(contentVO.getIsProtected().intValue() == NO.intValue())
 					protectedContentId = null;
@@ -438,7 +438,7 @@ public class ContentControllerProxy extends ContentController
 		try
 		{
 			ContentVO contentVO = ContentController.getContentController().getSmallContentVOWithId(contentId, db, null);
-			if(contentVO.getIsProtected() != null)
+			if(contentVO != null && contentVO.getIsProtected() != null)
 			{	
 				if(contentVO.getIsProtected().intValue() == NO.intValue())
 					protectedContentId = null;
@@ -471,7 +471,7 @@ public class ContentControllerProxy extends ContentController
 		try
 		{
 			ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId);
-			if(contentVO.getIsProtected() != null)
+			if(contentVO != null && contentVO.getIsProtected() != null)
 			{	
 				if(contentVO.getIsProtected().intValue() == NO.intValue())
 					isContentProtected = false;

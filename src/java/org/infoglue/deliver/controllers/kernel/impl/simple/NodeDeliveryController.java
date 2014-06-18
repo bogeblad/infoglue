@@ -1829,7 +1829,7 @@ public class NodeDeliveryController extends BaseDeliveryController
         {
         	try
         	{
-        		siteNodes = this.getChildSiteNodes(db, parentSiteNodeId, 0, true, null, false);
+        		siteNodes = this.getChildSiteNodes(db, parentSiteNodeId, 0, true, null, true);
         		//NEW!!! siteNodes = this.getChildSiteNodes(db, parentSiteNodeId, 1);
         	}
         	catch (Exception e) 
@@ -2230,7 +2230,7 @@ public class NodeDeliveryController extends BaseDeliveryController
     		for(int repPathIndex = 0; repPathIndex < repositoryPaths.length; repPathIndex++)
     		{
     			String repPath = repositoryPaths[repPathIndex];
-	    		if(logger.isInfoEnabled())
+    			if(logger.isInfoEnabled())
 	    			logger.info("repPath:" + repPath);
     	    	if(path.length > repPathIndex)
     	    	{

@@ -488,6 +488,21 @@ public class RegistryController extends BaseController
 
 	private static synchronized void clearCache(Class c, Database db) throws Exception
 	{
+		if(c.getName().contains(".SiteNodeVersionImpl") || 
+		   c.getName().contains(".MediumSiteNodeVersionImpl") || 
+		   c.getName().contains(".SiteNodeImpl") || 
+		   c.getName().contains(".DigitalAssetImpl") || 
+		   c.getName().contains(".MediumDigitalAssetImpl") || 
+		   c.getName().contains(".ContentVersionImpl") || 
+		   c.getName().contains(".AccessRightRoleImpl") || 
+		   c.getName().contains(".AccessRightGroupImpl") || 
+		   c.getName().contains(".AccessRightUserImpl") || 
+		   c.getName().contains(".RegistryImpl"))
+		{
+			logger.info("Skipping " + c.getName() + " as they have no castor cache");
+			return;
+		}
+
 		try
 		{
 		    Class[] types = {c};

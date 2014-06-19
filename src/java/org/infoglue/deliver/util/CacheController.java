@@ -3972,7 +3972,8 @@ public class CacheController extends Thread
 
 	public static void clearCastorCaches(DefeatCacheParameters dcp) throws Exception
 	{
-	    logger.info("Emptying the Castor Caches");
+	    if(CmsPropertyHandler.getApplicationName().equals("cms"))
+	    	logger.info("Emptying the Castor Caches - why");
 	    
 		long wait = 0;
 		
@@ -4033,8 +4034,9 @@ public class CacheController extends Thread
 	
 	public static void clearCastorCaches() throws Exception
 	{
-	    logger.info("Emptying the Castor Caches");
-	    
+		if(CmsPropertyHandler.getApplicationName().equals("cms"))
+	    	System.out.println("Emptying the Castor Caches... why");
+	    	    
 		long wait = 0;
 		
 		while(!getForcedCacheEvictionMode() && RequestAnalyser.getRequestAnalyser().getApproximateNumberOfDatabaseQueries() > 0)
@@ -4154,18 +4156,6 @@ public class CacheController extends Thread
 	
 	public static void clearCache(Class type, Object[] ids, boolean forceClear) throws Exception
 	{		
-		if(logger.isInfoEnabled() && CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms") && type != null && (type.equals(SiteNodeImpl.class) || type.equals(SiteNodeVersionImpl.class) || type.getName().contains("ContentVersionImpl") || type.getName().contains("DigitalAssetImpl")))
-		{
-			try
-			{
-				throw new Exception("Debug");
-			}
-			catch (Exception e) 
-			{
-				logger.warn("ClearCache for objekt:" + type + " in " + CmsPropertyHandler.getApplicationName(), e);
-			}
-		}
-		
 		Timer t = new Timer();
 		
 		if(CmsPropertyHandler.getOperatingMode().equals("3"))
@@ -4192,11 +4182,28 @@ public class CacheController extends Thread
 	    Database db = CastorDatabaseService.getDatabase();
 		try
 		{
-		    CacheManager manager = db.getCacheManager();
-		    manager.expireCache(type, ids);
-		    //Class[] types = {type};
-		    //db.expireCache(types, ids);
-		    
+			if(type.getName().contains(".SiteNodeVersionImpl") || 
+			   type.getName().contains(".MediumSiteNodeVersionImpl") || 
+			   type.getName().contains(".SiteNodeImpl") || 
+			   type.getName().contains(".DigitalAssetImpl") || 
+			   type.getName().contains(".MediumDigitalAssetImpl") || 
+			   type.getName().contains(".ContentVersionImpl") || 
+			   type.getName().contains(".AccessRightRoleImpl") || 
+			   type.getName().contains(".AccessRightGroupImpl") || 
+			   type.getName().contains(".AccessRightUserImpl") || 
+			   type.getName().contains(".RegistryImpl"))
+			{
+				logger.info("Skipping clear of " + type);
+			}
+			else
+			{
+				logger.info("Clearing " + type);
+			    CacheManager manager = db.getCacheManager();
+			    manager.expireCache(type, ids);
+			    //Class[] types = {type};
+			    //db.expireCache(types, ids);
+			}
+			
 		    if(type.getName().equalsIgnoreCase(SmallContentImpl.class.getName()) || 
 		       type.getName().equalsIgnoreCase(SmallishContentImpl.class.getName()) ||
 		       type.getName().equalsIgnoreCase(MediumContentImpl.class.getName()) ||
@@ -4227,18 +4234,6 @@ public class CacheController extends Thread
 
 	public static void clearCache(Class c) throws Exception
 	{
-		if(CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms") && c != null && (c.equals(SiteNodeImpl.class) || c.equals(SiteNodeVersionImpl.class) || c.getName().contains("ContentVersionImpl") || c.getName().contains("DigitalAssetImpl")))
-		{
-			try
-			{
-				throw new Exception("Debug");
-			}
-			catch (Exception e) 
-			{
-				logger.warn("ClearCache 3:" + c + " in " + CmsPropertyHandler.getApplicationName(), e);
-			}
-		}
-		
 	    Database db = CastorDatabaseService.getDatabase();
 
 		try
@@ -4262,18 +4257,6 @@ public class CacheController extends Thread
 	
 	public static void clearCache(Class type, Object[] ids, boolean forceClear, Database db) throws Exception
 	{
-		if(CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms") && type != null && (type.equals(SiteNodeImpl.class) || type.equals(SiteNodeVersionImpl.class) || type.getName().contains("ContentVersionImpl") || type.getName().contains("DigitalAssetImpl")))
-		{
-			try
-			{
-				throw new Exception("Debug");
-			}
-			catch (Exception e) 
-			{
-				logger.warn("ClearCache force:" + type + " in " + CmsPropertyHandler.getApplicationName(), e);
-			}
-		}
-
 		long wait = 0;
 	    while(!forceClear && !getForcedCacheEvictionMode() && RequestAnalyser.getRequestAnalyser().getApproximateNumberOfDatabaseQueries() > 0)
 		{
@@ -4291,11 +4274,28 @@ public class CacheController extends Thread
 	        wait++;
 	    }
 		
-	    CacheManager manager = db.getCacheManager();
-	    manager.expireCache(type, ids);
-	    //Class[] types = {type};
-	    //db.expireCache(types, ids);
-	    
+		if(type.getName().contains(".SiteNodeVersionImpl") || 
+		   type.getName().contains(".MediumSiteNodeVersionImpl") || 
+		   type.getName().contains(".SiteNodeImpl") || 
+		   type.getName().contains(".DigitalAssetImpl") || 
+		   type.getName().contains(".MediumDigitalAssetImpl") || 
+		   type.getName().contains(".ContentVersionImpl") || 
+		   type.getName().contains(".AccessRightRoleImpl") || 
+		   type.getName().contains(".AccessRightGroupImpl") || 
+		   type.getName().contains(".AccessRightUserImpl") || 
+		   type.getName().contains(".RegistryImpl"))
+		{
+			logger.info("Skipping clear of " + type);
+		}
+		else
+		{
+			logger.info("Clearing for real: " + type);
+		    CacheManager manager = db.getCacheManager();
+		    manager.expireCache(type, ids);
+		    //Class[] types = {type};
+		    //db.expireCache(types, ids);
+		}
+		
 	    if(type.getName().equalsIgnoreCase(SmallContentImpl.class.getName()) || 
 	 	   type.getName().equalsIgnoreCase(SmallishContentImpl.class.getName()) ||
 	       type.getName().equalsIgnoreCase(MediumContentImpl.class.getName()) ||
@@ -4310,18 +4310,6 @@ public class CacheController extends Thread
 
 	public static void clearCache(Database db, Class c) throws Exception
 	{
-		if(CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms") && c != null && (c.equals(SiteNodeImpl.class) || c.equals(SiteNodeVersionImpl.class) || c.getName().contains("ContentVersionImpl") || c.getName().contains("DigitalAssetImpl")))
-		{
-			try
-			{
-				throw new Exception("Debug");
-			}
-			catch (Exception e) 
-			{
-				logger.warn("ClearCache for an entire class:" + c + " in " + CmsPropertyHandler.getApplicationName(), e);
-			}
-		}
-		
 		long wait = 0;
 		while(!getForcedCacheEvictionMode() && RequestAnalyser.getRequestAnalyser().getApproximateNumberOfDatabaseQueries() > 0)
 		{
@@ -4339,13 +4327,30 @@ public class CacheController extends Thread
 	        wait++;
 	    }
 
-		Class[] types = {c};
-		CacheManager manager = db.getCacheManager();
-		manager.expireCache(types);
-		//db.expireCache(types, null);
+		if(c.getName().contains(".SiteNodeVersionImpl") || 
+		   c.getName().contains(".MediumSiteNodeVersionImpl") || 
+		   c.getName().contains(".SiteNodeImpl") || 
+		   c.getName().contains(".DigitalAssetImpl") || 
+		   c.getName().contains(".MediumDigitalAssetImpl") || 
+		   c.getName().contains(".ContentVersionImpl") || 
+		   c.getName().contains(".AccessRightRoleImpl") || 
+		   c.getName().contains(".AccessRightGroupImpl") || 
+		   c.getName().contains(".AccessRightUserImpl") ||
+		   c.getName().contains(".RegistryImpl"))
+		{
+			logger.info("Skipping " + c.getName() + " as they have no castor cache");
+		}
+		else
+		{
+			logger.info("Clearing for real: " + c);
+			Class[] types = {c};
+			CacheManager manager = db.getCacheManager();
+			manager.expireCache(types);
+			//db.expireCache(types, null);
+		}
 		
 	    if(c.getName().equalsIgnoreCase(SmallContentImpl.class.getName()) || 
-	 	       c.getName().equalsIgnoreCase(SmallishContentImpl.class.getName()) ||
+	 	   c.getName().equalsIgnoreCase(SmallishContentImpl.class.getName()) ||
 	       c.getName().equalsIgnoreCase(MediumContentImpl.class.getName()) ||
 	       c.getName().equalsIgnoreCase(ContentImpl.class.getName()) ||
 	       c.getName().equalsIgnoreCase(SmallSiteNodeImpl.class.getName()) || 

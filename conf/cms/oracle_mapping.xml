@@ -303,7 +303,7 @@
 
   <class name="org.infoglue.cms.entities.management.impl.simple.AccessRightRoleImpl" identity="accessRightRoleId" key-generator="SEQUENCE">
     <description>AccessRightRole</description>
-    <cache-type type="none" capacity="10000"/>
+    <cache-type type="none"/>
     <map-to table="cmAccessRightRole"/>
     <field name="accessRightRoleId" type="java.lang.Integer">
       <sql name="accessRightRoleId" type="integer" dirty="check" />
@@ -318,7 +318,7 @@
   
   <class name="org.infoglue.cms.entities.management.impl.simple.AccessRightGroupImpl" identity="accessRightGroupId" key-generator="SEQUENCE">
     <description>AccessRightGroup</description>
-    <cache-type type="none" capacity="10000"/>
+    <cache-type type="none"/>
     <map-to table="cmAccessRightGroup"/>
     <field name="accessRightGroupId" type="java.lang.Integer">
       <sql name="accessRightGroupId" type="integer" dirty="check" />
@@ -333,7 +333,7 @@
 
   <class name="org.infoglue.cms.entities.management.impl.simple.AccessRightUserImpl" identity="accessRightUserId" key-generator="SEQUENCE">
     <description>AccessRightUser</description>
-    <cache-type type="none" capacity="10000"/>
+    <cache-type type="none"/>
     <map-to table="cmAccessRightUser"/>
     <field name="accessRightUserId" type="java.lang.Integer">
       <sql name="accessRightUserId" type="integer" dirty="check" />
@@ -481,8 +481,7 @@
 <!--  Mapping for SiteNodeVersion  -->
   <class name="org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl" identity="siteNodeVersionId" key-generator="SEQUENCE">
     <description>SiteNodeVersion</description>
-    <cache-type type="unlimited" capacity="10000"/>
-    <!--<cache-type type="none"/>-->
+    <cache-type type="none"/>
     <map-to table="cmSiNoVer"/>
     <field name="siteNodeVersionId" type="java.lang.Integer">
       <sql name="SiNoVerId" type="integer" dirty="check" />
@@ -578,7 +577,7 @@
 <!--  Mapping for SiteNode  -->
   <class name="org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl" identity="siteNodeId" key-generator="SEQUENCE">
     <description>SiteNode</description>
-    <cache-type type="count-limited" capacity="10000"/>
+    <cache-type type="none"/>
     <map-to table="cmSiNo"/>
     <field name="siteNodeId" type="java.lang.Integer">
       <sql name="SiNoId" type="integer" dirty="check" />
@@ -1375,7 +1374,7 @@
 <!--  Mapping for ContentVersion  -->
   <class name="org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl" identity="contentVersionId" key-generator="SEQUENCE">
     <description>ContentVersion</description>
-    <cache-type type="count-limited" capacity="20000"/>
+    <cache-type type="none"/>
     <map-to table="cmContVer"/>
     <field name="contentVersionId" type="java.lang.Integer">
       <sql name="ContVerId" type="integer" dirty="check" />
@@ -1638,7 +1637,7 @@
 <!--  Mapping for MediumDigitalAsset  -->
   <class name="org.infoglue.cms.entities.content.impl.simple.MediumDigitalAssetImpl" identity="digitalAssetId" key-generator="SEQUENCE">
     <description>MediumDigitalAsset</description>
-    <cache-type type="count-limited" capacity="10000"/>
+    <cache-type type="none"/>
     <map-to table="cmDigAsset"/>
     <field name="digitalAssetId" type="java.lang.Integer">
       <sql name="DigAssetId" type="integer" dirty="check" />

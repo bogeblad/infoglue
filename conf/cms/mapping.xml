@@ -265,7 +265,7 @@
 <!--  Mapping for AccessRight  -->
   <class name="org.infoglue.cms.entities.management.impl.simple.AccessRightImpl" identity="accessRightId" key-generator="IDENTITY">
     <description>AccessRight</description>
-    <cache-type type="none" capacity="10000"/>
+    <cache-type type="none"/>
     <map-to table="cmAccessRight"/>
     <field name="accessRightId" type="java.lang.Integer">
       <sql name="accessRightId" type="integer" dirty="check" />
@@ -305,7 +305,7 @@
   
   <class name="org.infoglue.cms.entities.management.impl.simple.AccessRightRoleImpl" identity="accessRightRoleId" key-generator="IDENTITY">
     <description>AccessRightRole</description>
-    <cache-type type="unlimited" capacity="10000"/>
+    <cache-type type="none"/>
     <map-to table="cmAccessRightRole"/>
     <field name="accessRightRoleId" type="java.lang.Integer">
       <sql name="accessRightRoleId" type="integer" dirty="check" />
@@ -320,7 +320,7 @@
   
   <class name="org.infoglue.cms.entities.management.impl.simple.AccessRightGroupImpl" identity="accessRightGroupId" key-generator="IDENTITY">
     <description>AccessRightGroup</description>
-    <cache-type type="unlimited" capacity="10000"/>
+    <cache-type type="none"/>
     <map-to table="cmAccessRightGroup"/>
     <field name="accessRightGroupId" type="java.lang.Integer">
       <sql name="accessRightGroupId" type="integer" dirty="check" />
@@ -335,7 +335,7 @@
 
   <class name="org.infoglue.cms.entities.management.impl.simple.AccessRightUserImpl" identity="accessRightUserId" key-generator="IDENTITY">
     <description>AccessRightUser</description>
-    <cache-type type="unlimited" capacity="10000"/>
+    <cache-type type="none"/>
     <map-to table="cmAccessRightUser"/>
     <field name="accessRightUserId" type="java.lang.Integer">
       <sql name="accessRightUserId" type="integer" dirty="check" />
@@ -351,7 +351,7 @@
 <!--  Mapping for SiteNodeVersion  -->
   <class name="org.infoglue.cms.entities.structure.impl.simple.MediumSiteNodeVersionImpl" identity="siteNodeVersionId" key-generator="IDENTITY">
     <description>SiteNodeVersion</description>
-    <cache-type type="count-limited" capacity="10000"/>
+    <cache-type type="none"/>
     <map-to table="cmSiteNodeVersion"/>
     <field name="siteNodeVersionId" type="java.lang.Integer">
       <sql name="siteNodeVersionId" type="integer" dirty="check" />
@@ -421,7 +421,7 @@
 <!--  Mapping for SiteNodeVersion  -->
   <class name="org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl" identity="siteNodeVersionId" key-generator="IDENTITY">
     <description>SiteNodeVersion</description>
-    <cache-type type="count-limited" capacity="10000"/>
+    <cache-type type="none"/>
     <map-to table="cmSiteNodeVersion"/>
 	<field name="siteNodeVersionId" type="java.lang.Integer">
       <sql name="siteNodeVersionId" type="integer" dirty="check" />
@@ -580,7 +580,7 @@
 <!--  Mapping for SiteNode  -->
   <class name="org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl" identity="siteNodeId" key-generator="IDENTITY">
     <description>SiteNode</description>
-    <cache-type type="count-limited" capacity="10000"/>
+    <cache-type type="none"/>
     <map-to table="cmSiteNode"/>
     <field name="siteNodeId" type="java.lang.Integer">
       <sql name="siteNodeId" type="integer" dirty="check" />
@@ -1282,7 +1282,7 @@
 <!--  Mapping for ContentVersion  -->
   <class name="org.infoglue.cms.entities.content.impl.simple.MediumContentVersionImpl" identity="contentVersionId" key-generator="IDENTITY">
     <description>ContentVersion</description>
-    <cache-type type="count-limited" capacity="20000"/>
+    <cache-type type="none"/>
     <map-to table="cmContentVersion"/>
     <field name="contentVersionId" type="java.lang.Integer">
       <sql name="contentVersionId" type="integer" dirty="check" />
@@ -1648,7 +1648,7 @@
 <!--  Mapping for MediumDigitalAsset  -->
   <class name="org.infoglue.cms.entities.content.impl.simple.MediumDigitalAssetImpl" identity="digitalAssetId" key-generator="IDENTITY">
     <description>MediumDigitalAsset</description>
-    <cache-type type="count-limited" capacity="10000"/>
+    <cache-type type="none"/>
     <map-to table="cmDigitalAsset"/>
     <field name="digitalAssetId" type="java.lang.Integer">
       <sql name="digitalAssetId" type="integer" dirty="check" />

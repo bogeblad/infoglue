@@ -140,15 +140,14 @@ public class CmsJDOCallback implements CallbackInterceptor
 
     public void storing(Object object, boolean modified) throws Exception
     {
-    	/*
+/*
     	if(object.getClass().getName().indexOf(".ContentVersionImpl") > -1 || object.getClass().getName().indexOf(".ContentImpl") > -1 || object.getClass().getName().indexOf(".SiteNodeVersionImpl") > -1 || object.getClass().getName().indexOf(".SiteNodeImpl") > -1)
     	{
     		logger.warn("storing " + object.getClass().getName());
     		if(logger.isDebugEnabled())
     			Thread.dumpStack();
     	}
-    	*/
-
+*/
 		//logger.error("storing...:" + object + ":" + modified);
 		// ( (Persistent) object ).jdoStore( modified );
    		
@@ -621,6 +620,21 @@ public class CmsJDOCallback implements CallbackInterceptor
 
 	private synchronized void clearCache(Class c) throws Exception
 	{
+		if(c.getName().contains(".SiteNodeVersionImpl") || 
+		   c.getName().contains(".MediumSiteNodeVersionImpl") || 
+		   c.getName().contains(".SiteNodeImpl") || 
+		   c.getName().contains(".DigitalAssetImpl") || 
+		   c.getName().contains(".MediumDigitalAssetImpl") || 
+		   c.getName().contains(".ContentVersionImpl") || 
+		   c.getName().contains(".AccessRightRoleImpl") || 
+		   c.getName().contains(".AccessRightGroupImpl") || 
+		   c.getName().contains(".AccessRightUserImpl") || 
+		   c.getName().contains(".RegistryImpl"))
+		{
+			logger.info("Skipping " + c.getName() + " as they have no castor cache");
+			return;
+		}
+
 		Database db = CastorDatabaseService.getDatabase();
 
 		try
@@ -643,6 +657,21 @@ public class CmsJDOCallback implements CallbackInterceptor
 
 	private synchronized void clearCache(Class c, Object id) throws Exception
 	{
+		if(c.getName().contains(".SiteNodeVersionImpl") || 
+		   c.getName().contains(".MediumSiteNodeVersionImpl") || 
+		   c.getName().contains(".SiteNodeImpl") || 
+		   c.getName().contains(".DigitalAssetImpl") || 
+		   c.getName().contains(".MediumDigitalAssetImpl") || 
+		   c.getName().contains(".ContentVersionImpl") || 
+		   c.getName().contains(".AccessRightRoleImpl") || 
+		   c.getName().contains(".AccessRightGroupImpl") || 
+		   c.getName().contains(".AccessRightUserImpl") || 
+		   c.getName().contains(".RegistryImpl"))
+		{
+			logger.info("Skipping " + c.getName() + " as they have no castor cache");
+			return;
+		}
+
 		Database db = CastorDatabaseService.getDatabase();
 
 		try

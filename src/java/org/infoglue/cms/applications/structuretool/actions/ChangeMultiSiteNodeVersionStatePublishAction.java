@@ -83,8 +83,6 @@ public class ChangeMultiSiteNodeVersionStatePublishAction extends InfoGlueAbstra
 	   
     public String doExecute() throws Exception
     {      
-    	synchronized (publishingLock) 
-		{
 			ProcessBean processBean = ProcessBean.createProcessBean(this.getClass().getName(), "" + getInfoGluePrincipal().getName());
 			processBean.setStatus(ProcessBean.RUNNING);
 			
@@ -224,7 +222,6 @@ public class ChangeMultiSiteNodeVersionStatePublishAction extends InfoGlueAbstra
 				processBean.setStatus(ProcessBean.FINISHED);
 				processBean.removeProcess();
 			}
-		}
     }
         
     public java.lang.Integer getSiteNodeId()

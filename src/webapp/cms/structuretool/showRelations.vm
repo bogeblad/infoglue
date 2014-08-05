@@ -74,19 +74,36 @@
 
 <div style="clear: both;"></div>
 
-<h3>$ui.getString("tool.structuretool.fixReferencesBeforeDelete.header")</h3>
+<h3>
+#if($notifyResponsibleOnReferenceChange)
+$ui.getString("tool.structuretool.fixReferencesBeforeDelete.notifiedResponsible.header")
+#else
+$ui.getString("tool.structuretool.fixReferencesBeforeDelete.forceDelete.header")
+#end
+</h3>
+
+<p>
+#if($notifyResponsibleOnReferenceChange)
+	$ui.getString("tool.structuretool.fixReferencesBeforeDelete.notifiedResponsible.info")
+#else
+	$ui.getString("tool.structuretool.fixReferencesBeforeDelete.forceDelete.info")
+#end
+</p>
 
 <div id="tabsContainer" class="flora cleanTopDiv">
 	<ul>
-        <li><a href="#contentReferencesTab"><span>$ui.getString("tool.structuretool.contentVersionReferences.header")</span></a></li>
-        <li><a href="#pageReferencesTab"><span>$ui.getString("tool.structuretool.siteNodeReferences.header")</span></a></li>
-    </ul>
+		<li><a href="#contentReferencesTab"><span>$ui.getString("tool.structuretool.contentVersionReferences.header")</span></a></li>
+		<li><a href="#pageReferencesTab"><span>$ui.getString("tool.structuretool.siteNodeReferences.header")</span></a></li>
+	</ul>
 
-    <div id="contentReferencesTab" class="inlineTabDiv">
+	<div id="contentReferencesTab" class="inlineTabDiv">
+
 		<table cellpadding="0" cellspacing="0" border="1" class="display" id="contentVersions" width="100%">
 			<thead>
 				<tr>
+					#if(!$notifyResponsibleOnReferenceChange)
 					<th>$ui.getString("tool.common.action.label")</th>
+					#end
 					<th>$ui.getString("tool.contenttool.searchResultContentHeader")</th>
 					<th>$ui.getString("tool.structuretool.contactPersonEmail.label")</th>
 				</tr>
@@ -97,10 +114,12 @@
 					#if($referenceBean.referencingCompletingObject.class.name.indexOf("Content") > -1)
 						#set($hasContentReferences = true)
 						#set($lastIndex = $referenceBean.versions.size() - 1)
-			
+
 						#foreach ($version in $referenceBean.versions)
 						<tr>
+							#if(!$notifyResponsibleOnReferenceChange)
 							<td><a class="deleteCross" href="DeleteSiteNode!deleteReference.action?siteNodeId=$originalSiteNodeId#foreach($version in $referenceBean.versions)#foreach($registryVO in $version.registryVOList)&registryId=$registryVO.id#end#end&returnAddress=$returnAddress&userSessionKey=$userSessionKey">&nbsp;</a></td>
+							#end
 							<td>
 								<a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$version.referencingObject.languageId" target="_blank">$referenceBean.path</a> ($version.referencingObject.languageName)
 			 				</td>
@@ -114,7 +133,9 @@
 
 				#if(!$hasContentReferences)
 					<tr>
+						#if(!$notifyResponsibleOnReferenceChange)
 						<td>&nbsp;</td>
+						#end
 						<td>$ui.getString("tool.structuretool.noContentReferencesFound")</td>
 						<td>&nbsp;</td>
 					</tr>
@@ -122,13 +143,15 @@
 
 			</tbody>
 		</table>
-    </div>
+	</div>
 
-    <div id="pageReferencesTab" class="inlineTabDiv">
+	<div id="pageReferencesTab" class="inlineTabDiv">
 		<table cellpadding="0" cellspacing="0" border="1" class="display" id="siteNodes" width="100%">
 			<thead>
 				<tr>
+					#if(!$notifyResponsibleOnReferenceChange)
 					<th>$ui.getString("tool.common.action.label")</th>
+					#end
 					<th>$ui.getString("tool.contenttool.searchResultPageHeader")</th>
 					<th>$ui.getString("tool.structuretool.contactPersonEmail.label")</th>
 				</tr>
@@ -140,7 +163,9 @@
 						#set($hasPageReferences = true)
 						#set($lastIndex = $referenceBean.versions.size() - 1)
 						<tr>
+							#if(!$notifyResponsibleOnReferenceChange)
 							<td><a class="deleteCross" href="DeleteSiteNode!deleteReference.action?siteNodeId=$originalSiteNodeId#foreach($version in $referenceBean.versions)#foreach($registryVO in $version.registryVOList)&registryId=$registryVO.id#end#end&returnAddress=$returnAddress&userSessionKey=$userSessionKey">&nbsp;</a></td>
+							#end
 							<td>
 								<a href="DeleteContent!fixPage.action?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1&returnAddress=$returnAddress" target="_blank">$referenceBean.path</a>
 			 				</td>
@@ -153,7 +178,9 @@
 
 				#if(!$hasPageReferences)
 					<tr>
+						#if(!$notifyResponsibleOnReferenceChange)
 						<td>&nbsp;</td>
+						#end
 						<td>$ui.getString("tool.contenttool.noPageReferencesFound")</td>
 						<td>&nbsp;</td>
 					</tr>
@@ -161,7 +188,7 @@
 
 			</tbody>
 		</table>
-    </div>
+	</div>
 </div>
 
 #lightFooterToolbar($footerButtons)

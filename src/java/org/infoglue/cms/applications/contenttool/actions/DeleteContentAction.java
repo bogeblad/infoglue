@@ -37,6 +37,7 @@ import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.management.RegistryVO;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
+import org.infoglue.cms.util.CmsPropertyHandler;
 
 /**
  * This action removes a content from the system.
@@ -331,6 +332,11 @@ public class DeleteContentAction extends InfoGlueAbstractAction
 	public String getOriginalAddress()
 	{
 		return this.originalAddress;
+	}
+
+	public boolean getNotifyResponsibleOnReferenceChange()
+	{
+		return CmsPropertyHandler.getNotifyResponsibleOnReferenceChange();
 	}
 
 	public String getReturnAddress()

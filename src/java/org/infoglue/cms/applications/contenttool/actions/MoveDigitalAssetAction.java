@@ -136,34 +136,32 @@ public class MoveDigitalAssetAction extends InfoGlueAbstractAction
 		return "input";
     }
 
-
-    public String doExecute() throws Exception
-    {
-        try
-        {
-            ceb.throwIfNotEmpty();
-        	
-    		ContentControllerProxy.getController().acMoveDigitalAsset(this.getInfoGluePrincipal(), this.getDigitalAssetId(), this.getContentId(), this.fixReferences);
-
-    	    addActionLinkFirst(userSessionKey, new LinkBean("parent.parent.refreshView('contentVersionAssets');", "", "", "", "parent.parent.refreshView('contentVersionAssets');closeDialog();", true, ""));
-    	    setActionExtraData(userSessionKey, "confirmationMessage", getLocalizedString(getLocale(), "tool.contenttool.assetMoved.confirmation", getContentVO(this.getContentId()).getName()));
-        }
-        catch(ConstraintException ce)
-        {
-        	logger.warn("An error occurred so we should not complete the transaction:" + ce);
+	public String doExecute() throws Exception
+	{
+		try
+		{
+			ceb.throwIfNotEmpty();
+			ContentControllerProxy.getController().acMoveDigitalAsset(this.getInfoGluePrincipal(), this.getDigitalAssetId(), this.getContentId(), this.fixReferences);
+			String successAction = "(parent.refreshView || parent.parent.refreshView)('contentVersionAssets');";
+			successAction += "closeDialog();";
+			addActionLinkFirst(userSessionKey, new LinkBean("parent.parent.refreshView('contentVersionAssets');", "", "", "", successAction, true, ""));
+			setActionExtraData(userSessionKey, "confirmationMessage", getLocalizedString(getLocale(), "tool.contenttool.assetMoved.confirmation", getContentVO(this.getContentId()).getName()));
+		}
+		catch(ConstraintException ce)
+		{
+			logger.warn("An error occurred so we should not complete the transaction:" + ce);
 
 			ce.setResult(INPUT);
 			throw ce;
-        }
-        catch(Exception e)
-        {
-            logger.error("An error occurred so we should not complete the transaction:" + e, e);
-            throw new SystemException(e.getMessage());
-        }
-    	        
-        return "success";
-    }
-	
+		}
+		catch(Exception e)
+		{
+			logger.error("An error occurred so we should not complete the transaction:" + e, e);
+			throw new SystemException(e.getMessage());
+		}
+		return "success";
+	}
+
 	public String getReturnAddress()
 	{
 		return this.returnAddress;

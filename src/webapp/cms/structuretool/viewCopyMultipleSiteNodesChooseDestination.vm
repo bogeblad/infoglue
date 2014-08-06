@@ -16,7 +16,13 @@
 	    {
 		    finish();
 	    }
-	    
+
+		## If the tree view in the iframe is a binding view this method is called and not htmlTreeItemClick
+		function structureTreeItemClick(itemId)
+		{
+			htmlTreeItemClick(itemId);
+		}
+
 		function htmlTreeItemClick(itemId, repoId)
 		{
 		    document.inputForm.newParentSiteNodeId.value = itemId;
@@ -84,7 +90,7 @@
 		    #end
 		</select>
 		
-		<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!V3.action?repositoryId=${repositoryId}" width="90%" height="450" ></iframe>
+		<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!bindingViewV3.action?repositoryId=${repositoryId}&sortLanguageId=${sortLanguageId}" width="90%" height="450" ></iframe>
 	
 		<form name="inputForm" action="CopyMultipleSiteNodes.action">
 			<input type="hidden" name="userSessionKey" value="$userSessionKey"/>

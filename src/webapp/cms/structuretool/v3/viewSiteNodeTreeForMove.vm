@@ -9,6 +9,12 @@
 	    {
 	    }
 
+		## If the tree view in the iframe is a binding view this method is called and not htmlTreeItemClick
+		function structureTreeItemClick(itemId)
+		{
+			htmlTreeItemClick(itemId);
+		}
+
 		function htmlTreeItemClick(itemId, repoId)
 		{
 		    document.inputForm.newParentSiteNodeId.value = itemId;
@@ -52,13 +58,14 @@
 		<input type="hidden" name="changeTypeId" value="3">
 		<input type="hidden" name="returnAddress" value="$returnAddress">
 		<input type="hidden" name="originalAddress" value="$originalAddress">
+		<input type="hidden" name="sortLanguageId" value="$sortLanguageId">
 	
 		<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
 	
 		<h3>$ui.getString("tool.structuretool.moveSiteNode.headline", $siteNodeName)</h3>
 		
 		<p>
-			<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!V3.action?showLeafs=no&repositoryId=${repositoryId}" width="350" height="460" ></iframe>
+			<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!bindingViewV3.action?showLeafs=no&repositoryId=${repositoryId}&sortLanguageId=${sortLanguageId}" width="350" height="460" ></iframe>
 		</p>
 	
 		#lightFooterToolbar($footerButtons)

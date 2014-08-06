@@ -857,8 +857,8 @@
 		<div style="float: left;">
 			<h3>#if($translate)$ui.getString('tool.contenttool.translationViewLabel') #else $ui.getString('tool.contenttool.editingViewLabel') #end $ui.getString('tool.contenttool.contentLabel') "$contentVO.name" - $currentLanguageVO.name</h3>
 			#if($contentVersionVO)
-	    	<p>$ui.getString("tool.contenttool.versionLastUpdatedByLabel") $contentVersionVO.versionModifier ($formatter.formatDate($contentVersionVO.modifiedDateTime, "yyyy-MM-dd HH:mm") - $contentVersionVO.versionComment)</p>
-	    	#end
+			<p>$ui.getString("tool.contenttool.versionLastUpdatedByLabel") $contentVersionVO.versionModifier ($formatter.formatDate($contentVersionVO.modifiedDateTime, "yyyy-MM-dd HH:mm") - $contentVersionVO.versionComment)</p>
+			#end
 		</div>
 	</div>
 	

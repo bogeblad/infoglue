@@ -44,6 +44,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
@@ -2030,22 +2032,22 @@ public class SiteNodeController extends BaseController
 	 * @throws ConstraintException
 	 */
 
-    public MediumContentImpl createSiteNodeMetaInfoContent(Database db, SiteNodeVO newSiteNode, Integer repositoryId, InfoGluePrincipal principal, Integer pageTemplateContentId, List<ContentVersion> newContentVersions) throws SystemException, Bug, Exception, ConstraintException
-    {
-    	return createSiteNodeMetaInfoContent(db, newSiteNode, null, repositoryId, principal, pageTemplateContentId, newContentVersions, false, null);
-    }
+	public MediumContentImpl createSiteNodeMetaInfoContent(Database db, SiteNodeVO newSiteNode, Integer repositoryId, InfoGluePrincipal principal, Integer pageTemplateContentId, List<ContentVersion> newContentVersions) throws SystemException, Bug, Exception, ConstraintException
+	{
+		return createSiteNodeMetaInfoContent(db, newSiteNode, null, repositoryId, principal, pageTemplateContentId, newContentVersions, false, null, null);
+	}
 
-    public MediumContentImpl createSiteNodeMetaInfoContent(Database db, SiteNodeVO newSiteNode, Integer repositoryId, InfoGluePrincipal principal, Integer pageTemplateContentId, List<ContentVersion> newContentVersions, boolean checkIfMetaInfoIsBroken) throws SystemException, Bug, Exception, ConstraintException
-    {
-    	return createSiteNodeMetaInfoContent(db, newSiteNode, null, repositoryId, principal, pageTemplateContentId, newContentVersions, checkIfMetaInfoIsBroken, null);
-    }
+	public MediumContentImpl createSiteNodeMetaInfoContent(Database db, SiteNodeVO newSiteNode, Integer repositoryId, InfoGluePrincipal principal, Integer pageTemplateContentId, List<ContentVersion> newContentVersions, boolean checkIfMetaInfoIsBroken) throws SystemException, Bug, Exception, ConstraintException
+	{
+		return createSiteNodeMetaInfoContent(db, newSiteNode, null, repositoryId, principal, pageTemplateContentId, newContentVersions, checkIfMetaInfoIsBroken, null, null);
+	}
 
-    public MediumContentImpl createSiteNodeMetaInfoContent(Database db, SiteNodeVO newSiteNode, Map<String,String> metaAttributes, Integer repositoryId, InfoGluePrincipal principal, Integer pageTemplateContentId, List<ContentVersion> newContentVersions, boolean checkIfMetaInfoIsBroken) throws SystemException, Bug, Exception, ConstraintException
-    {
-    	return createSiteNodeMetaInfoContent(db, newSiteNode, metaAttributes, repositoryId, principal, pageTemplateContentId, newContentVersions, checkIfMetaInfoIsBroken, null);
-    }
-    
-    public MediumContentImpl createSiteNodeMetaInfoContent(Database db, SiteNodeVO newSiteNode, Map<String,String> metaAttributes, Integer repositoryId, InfoGluePrincipal principal, Integer pageTemplateContentId, List<ContentVersion> newContentVersions, boolean checkIfMetaInfoIsBroken, ContentVO oldMetaInfoContentVO) throws SystemException, Bug, Exception, ConstraintException
+	public MediumContentImpl createSiteNodeMetaInfoContent(Database db, SiteNodeVO newSiteNode, Map<String,String> metaAttributes, Integer repositoryId, InfoGluePrincipal principal, Integer pageTemplateContentId, List<ContentVersion> newContentVersions, boolean checkIfMetaInfoIsBroken) throws SystemException, Bug, Exception, ConstraintException
+	{
+		return createSiteNodeMetaInfoContent(db, newSiteNode, metaAttributes, repositoryId, principal, pageTemplateContentId, newContentVersions, checkIfMetaInfoIsBroken, null, null);
+	}
+
+    public MediumContentImpl createSiteNodeMetaInfoContent(Database db, SiteNodeVO newSiteNode, Map<String,String> metaAttributes, Integer repositoryId, InfoGluePrincipal principal, Integer pageTemplateContentId, List<ContentVersion> newContentVersions, boolean checkIfMetaInfoIsBroken, ContentVO oldMetaInfoContentVO, String navigationTitleSuffix) throws SystemException, Bug, Exception, ConstraintException
     {
     	Timer t = new Timer();
     	MediumContentImpl content = null;
@@ -2201,33 +2203,59 @@ public class SiteNodeController extends BaseController
         	}
         	*/
 
-        	//If the content has other language versions we should copy them
-        	if(oldMetaInfoContentVO != null)
-        	{
-	        	List<ContentVersionVO> contentVersions = ContentVersionController.getContentVersionController().getContentVersionVOList(oldMetaInfoContentVO.getId(), db);
-				logger.info("contentVersions " + contentVersions.size());
-				logger.info("master: " + masterLanguage.getId());
-				logger.info("localMasterLanguageVO: " + localMasterLanguageVO.getId());
-	        	for(ContentVersionVO cv : contentVersions)
-	        	{
-	        		logger.info("cv " + cv.getLanguageId() + ":" + cv.getId());
-	            	if(!cv.getLanguageId().equals(masterLanguage.getId()) && !cv.getLanguageId().equals(localMasterLanguageVO.getId()))
-	        		{
-	            		logger.info("Should create version for " + cv.getLanguageId());
-	    	        	String versionValueOtherVersion = cv.getVersionValue();
-	    	            ContentVersionVO contentVersionVOLocalMaster = new ContentVersionVO();
-	    	        	contentVersionVOLocalMaster.setVersionComment("Autogenerated version");
-	    	        	contentVersionVOLocalMaster.setVersionModifier(principal.getName());
-	    	        	contentVersionVOLocalMaster.setVersionValue(versionValueOtherVersion);
-	    	        	MediumContentVersionImpl contentVersionImplLocal = ContentVersionController.getContentVersionController().createMedium(contentVO.getId(), cv.getLanguageId(), contentVersionVOLocalMaster, db);
-	    	        	if(newContentVersions != null)
-	    	        		newContentVersions.add(contentVersionImplLocal);
-	    	        	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("meta info create 4", t.getElapsedTime());
-	        			
-	        		}
-	        	}
-        	}
-        	        	
+			// If there is an old meta info content this is a copy action and we should take appropriate actions
+			if (oldMetaInfoContentVO != null)
+			{
+				List<ContentVersionVO> contentVersions = ContentVersionController.getContentVersionController().getContentVersionVOList(oldMetaInfoContentVO.getId(), db);
+				if (logger.isDebugEnabled())
+				{
+					StringBuilder sb = new StringBuilder();
+					sb.append("Copying ContentVersions to new Meta info. Old Content.id: " + oldMetaInfoContentVO.getContentId());
+					sb.append("\n\tNumber of contentVersions: " + contentVersions.size());
+					sb.append("\n\tSite master language.id: " + masterLanguage.getId());
+					sb.append("\n\tParent folder master language: " + localMasterLanguageVO.getId());
+					logger.debug(sb);
+				}
+				else
+				{
+					logger.info("Copying ContentVersions to new Meta info. Old Content.id: " + oldMetaInfoContentVO.getContentId());
+				}
+				for(ContentVersionVO cv : contentVersions)
+				{
+					logger.debug("cv " + cv.getLanguageId() + ":" + cv.getId());
+					if(!cv.getLanguageId().equals(masterLanguage.getId()) && !cv.getLanguageId().equals(localMasterLanguageVO.getId()))
+					{
+						logger.info("Should create version for content <" + contentVO.getId() + "> with language.id " + cv.getLanguageId());
+						String versionValueOtherVersion = cv.getVersionValue();
+						ContentVersionVO contentVersionVOLocalMaster = new ContentVersionVO();
+						contentVersionVOLocalMaster.setVersionComment("Autogenerated version");
+						contentVersionVOLocalMaster.setVersionModifier(principal.getName());
+						contentVersionVOLocalMaster.setVersionValue(versionValueOtherVersion);
+						MediumContentVersionImpl contentVersionImplLocal = ContentVersionController.getContentVersionController().createMedium(contentVO.getId(), cv.getLanguageId(), contentVersionVOLocalMaster, db);
+						if(newContentVersions != null)
+							newContentVersions.add(contentVersionImplLocal);
+						RequestAnalyser.getRequestAnalyser().registerComponentStatistics("meta info create 4", t.getElapsedTime());
+					}
+				}
+
+				logger.info("Transforming NavigationTitle for copied Meta info. Content.id " + contentVO.getId());
+				List<ContentVersionVO> newContentsVersions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentVO.getId(), db);
+				Pattern navigationTransformPattern = Pattern.compile(Pattern.quote("<NavigationTitle><![CDATA[") + "(.+?)" + Pattern.quote("]]></NavigationTitle>"));
+				for (ContentVersionVO contentVersionVO : newContentsVersions)
+				{
+					String versionValue = contentVersionVO.getVersionValue();
+					Matcher matcher = navigationTransformPattern.matcher(versionValue);
+
+					versionValue = matcher.replaceFirst(Matcher.quoteReplacement("<NavigationTitle><![CDATA[") + "$1" + navigationTitleSuffix + Matcher.quoteReplacement("]]></NavigationTitle>"));
+					contentVersionVO.setVersionValue(versionValue);
+					if (logger.isTraceEnabled())
+					{
+						logger.trace("Version value after copy transformation (ContentVersion.id: " + contentVersionVO.getContentVersionId() + "). VersionValue: " + contentVersionVO.getVersionValue());
+					}
+					ContentVersionController.getContentVersionController().update(contentVO.getId(), contentVersionVO.getLanguageId(), contentVersionVO, db);
+				}
+			}
+
         	ServiceBindingVO serviceBindingVO = new ServiceBindingVO();
         	serviceBindingVO.setName(newSiteNode.getName() + " Metainfo");
         	serviceBindingVO.setPath("/None specified/");
@@ -3270,14 +3298,13 @@ public class SiteNodeController extends BaseController
 		    */
 		    //t.printElapsedTime("copy access");
 		}
-        
+
 		//ContentVersion newCV = null;
 		List<ContentVersion> newContentVersions = new ArrayList<ContentVersion>();
-		
-		Content newMetaInfoContent = SiteNodeController.getController().createSiteNodeMetaInfoContent(db, newSiteNode, null, newParentSiteNode.getRepositoryId(), principal, null, newContentVersions, false, oldMetaInfoContentVO);
-	    RequestAnalyser.getRequestAnalyser().registerComponentStatistics("createSiteNodeMetaInfoContent", t.getElapsedTime());
-		//t.printElapsedTime("newMetaInfoContent:" + newMetaInfoContent);
-        
+
+		Content newMetaInfoContent = SiteNodeController.getController().createSiteNodeMetaInfoContent(db, newSiteNode, null, newParentSiteNode.getRepositoryId(), principal, null, newContentVersions, false, oldMetaInfoContentVO, newNameSuffix);
+		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("createSiteNodeMetaInfoContent", t.getElapsedTime());
+
         //ContentVersionVO newCV = ContentVersionController.getContentVersionController().getLatestActiveContentVersion(newMetaInfoContent.getId(), masterLanguage.getId(), db);
         //t.printElapsedTime("newCV:" + newCV);
         
@@ -3286,14 +3313,15 @@ public class SiteNodeController extends BaseController
 
         logger.info("Mapping siteNode " + oldSiteNodeVO.getId() + " to " + newSiteNode.getId());
         siteNodesIdsMapping.put(oldSiteNodeVO.getId(), newSiteNode.getId());
-        
-        String versionValue = oldCVVO.getVersionValue();
-        if(newContentVersions.size() > 0)
-        {
-        	ContentVersion newCV = newContentVersions.get(0);
-        	newCV.getValueObject().setVersionValue(versionValue);
-        }
-        
+
+		String versionValue = oldCVVO.getVersionValue();
+		if(newContentVersions.size() > 0)
+		{
+			ContentVersion newCV = newContentVersions.get(0);
+			versionValue = versionValue.replaceFirst(Pattern.quote("<NavigationTitle><![CDATA[") + "(.+?)" + Pattern.quote("]]></NavigationTitle>"), Matcher.quoteReplacement("<NavigationTitle><![CDATA[") + "$1" + newNameSuffix + Matcher.quoteReplacement("]]></NavigationTitle>"));
+			newCV.getValueObject().setVersionValue(versionValue);
+		}
+
         for(SiteNodeVO childNode : (Collection<SiteNodeVO>)getChildSiteNodeVOList(siteNode.getId(), false, db, null))
         {
         	copySiteNodeRecursive(childNode, newSiteNode, principal, siteNodesIdsMapping, contentIdsMapping, contentIdsToCopy, newCreatedContentVersions, newNameSuffix, db, processBean);

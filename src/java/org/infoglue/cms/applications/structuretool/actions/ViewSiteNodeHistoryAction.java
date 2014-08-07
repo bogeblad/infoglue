@@ -84,7 +84,7 @@ public class ViewSiteNodeHistoryAction extends InfoGlueAbstractAction
 			{
 				long diff = Math.abs(metaInfoContentVersionModifiedDateTime.getTime() - modifiedDateTime.getTime());
 				logger.info("diff:" + diff + " : " + previousDiff);
-				if(previousDiff < diff)
+				if(previousDiff > diff)
 					metaInfoContentVersionVO = metaInfoContentVersionVOCandidate;					
 			}
 		}

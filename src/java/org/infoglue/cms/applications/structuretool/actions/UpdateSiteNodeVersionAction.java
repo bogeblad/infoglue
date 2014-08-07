@@ -23,7 +23,15 @@
 
 package org.infoglue.cms.applications.structuretool.actions;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+
+import org.infoglue.cms.applications.databeans.LinkBean;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
+import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
@@ -41,7 +49,9 @@ public class UpdateSiteNodeVersionAction extends ViewSiteNodeVersionAction
 	private Integer languageId;
 	private Integer siteNodeVersionId;
 	private String inline = "true";
-	
+	private String userSessionKey;
+
+
 	private ConstraintExceptionBuffer ceb;
 	
 	public UpdateSiteNodeVersionAction()
@@ -79,10 +89,22 @@ public class UpdateSiteNodeVersionAction extends ViewSiteNodeVersionAction
 	}
 
 	public String doReactivate() throws Exception
-    {
+	{
+		this.userSessionKey = "" + System.currentTimeMillis();
 		SiteNodeVersionController.getController().reactivate(this.siteNodeVersionId, this.getInfoGluePrincipal());
-						 
-		return "success";
+
+		Locale locale = getLocale();
+		SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
+		String reactiveConfirmationMessage = getLocalizedString(locale, "tool.structuretool.reactivate.succesConfirmationMessage", siteNodeVO.getName());
+
+		List<LinkBean> actionLinks = new LinkedList<LinkBean>();
+		String javascriptAction = "refreshParent(null,null,null);parent.parent.closeInlineDiv();";
+		actionLinks.add(new LinkBean("refreshParent", "", "", "", javascriptAction, true, "", "", "", ""));
+		setActionLinks(userSessionKey, actionLinks);
+		setActionExtraData(userSessionKey, "confirmationMessage", reactiveConfirmationMessage);
+		setActionExtraData(userSessionKey, "siteNodeId", "" + this.siteNodeId);
+		setActionExtraData(userSessionKey, "unrefreshedNodeId", "" + this.siteNodeId);
+		return "successAndExit";
 	}
 
 	public void setSiteNodeVersionId(Integer siteNodeVersionId)
@@ -135,5 +157,9 @@ public class UpdateSiteNodeVersionAction extends ViewSiteNodeVersionAction
 		this.inline = inline;
 	}
 
+	public String getUserSessionKey()
+	{
+		return userSessionKey;
+	}
 
 }

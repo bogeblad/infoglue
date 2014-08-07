@@ -79,9 +79,23 @@
 			
 			if(text1VersionId != "" && text2VersionId != "")
 			{
-				calculateDiffSummary(text1VersionId, text2VersionId);					
+				try
+				{
+					var version1 = parseInt(text1VersionId);
+					var version2 = parseInt(text2VersionId);
+					if (version2 < version1)
+					{
+						text1VersionId = "" + version2;
+						text2VersionId = "" + version1;
+					}
+					calculateDiffSummary(text1VersionId, text2VersionId);
+					$("#compareDiv").show();
+				}
+				catch(err)
+				{
+					alert("Something went wrong when comparing the versions.");
+				}
 
-				$("#compareDiv").show();
 			}
 			else
 			{

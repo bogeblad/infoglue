@@ -277,6 +277,11 @@ public class DeleteSiteNodeAction extends InfoGlueAbstractAction
 		this.returnAddress = returnAddress;
 	}
 
+	public boolean getNotifyResponsibleOnReferenceChange()
+	{
+		return CmsPropertyHandler.getNotifyResponsibleOnReferenceChange();
+	}
+
 	public String getReturnAddress()
 	{
 		if(this.returnAddress != null && !this.returnAddress.equals(""))

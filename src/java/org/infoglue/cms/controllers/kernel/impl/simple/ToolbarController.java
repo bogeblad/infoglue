@@ -3946,11 +3946,7 @@ public class ToolbarController implements ToolbarProvider
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
-		String label = "tool.structuretool.removeAndCleanAllReferences";
-		if (CmsPropertyHandler.getNotifyResponsibleOnReferenceChange())
-		{
-			label = "tool.structuretool.removeAndNotifyAllReferences";
-		}
+		String label = "tool.structuretool.removeSiteNodeAndReferences";
 
 		buttons.add(new ToolbarButton("",
 				getLocalizedString(locale, label),
@@ -3968,11 +3964,7 @@ public class ToolbarController implements ToolbarProvider
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
-		String label = "tool.structuretool.removeAndCleanAllReferences";
-		if (CmsPropertyHandler.getNotifyResponsibleOnReferenceChange())
-		{
-			label = "tool.structuretool.removeAndNotifyAllReferences";
-		}
+		String label = "tool.structuretool.removeSiteNodeAndReferences";
 
 		buttons.add(new ToolbarButton("",
 				getLocalizedString(locale, label),

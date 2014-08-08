@@ -3922,12 +3922,14 @@ public class ContentController extends BaseController
 							}
 							else
 							{
+								LanguageVO languageVO;
 								for(ReferenceVersionBean versionBean : reference.getVersions())
 								{
 									ContentVersionVO version = (ContentVersionVO)versionBean.getReferencingObject();
 									languageId = version.getLanguageId();
+									languageVO = LanguageController.getController().getLanguageVOWithId(languageId, db);
 									url = CmsPropertyHandler.getCmsFullBaseUrl() + "/Admin.action?contentId=" + ((ContentVO)reference.getReferencingCompletingObject()).getContentId() + "&languageId=" + languageId;
-									contentBuilder.append("<li><a href=\"" + url + "\">" + path + "</a> (" + version.getLanguageName() + ")</li>");
+									contentBuilder.append("<li><a href=\"" + url + "\">" + path + "</a>" + (languageVO == null ? "" : " (" + languageVO.getLocalizedDisplayLanguage() + ")") + "</li>");
 								}
 							}
 						}

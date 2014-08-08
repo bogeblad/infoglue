@@ -684,7 +684,7 @@ label {
 	border-radius: 5px;
 	top: 0px;
 	color: #fff;
-	content: attr(title);
+	content: attr(data-ig-tooltip);
 	left: 26px;
 	margin-top: -4px;
 	padding: 5px 15px;

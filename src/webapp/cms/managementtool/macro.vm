@@ -3323,7 +3323,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 					-->
 					</script>
 				#elseif($attribute.inputType == "textfield")
-                    <label for="$attribute.name" title="$attribute.name"><span class="attributeTitle">$attributeTitle</span> #if($attributeDescription.trim() != "")<div class="fieldHelp" title="$attributeDescription"></div>#end
+                    <label for="$attribute.name" title="$attribute.name"><span class="attributeTitle">$attributeTitle</span> #if($attributeDescription.trim() != "")<div class="fieldHelp" title=" " data-ig-tooltip="$attributeDescription"></div>#end
 					#printErrorV3("ContentVersion.$attribute.name" false)</label>
 					<input $readonly type="text" length="50" class="$class" maxlength="" id="$attribute.name" name="$attribute.name" value="$value"/>
 				#elseif($attribute.inputType == "textarea")
@@ -3331,7 +3331,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 					<table cellpadding="0" cellspacing="0" border="0" width="100%">
 					    <tr>
 					    	<td align="left">
-                                <label for="$attribute.name" title="$attribute.name"><span class="attributeTitle">$attributeTitle</span> #if($attributeDescription.trim() != "")<div class="fieldHelp" title="$attributeDescription"></div>#end
+                                <label for="$attribute.name" title="$attribute.name"><span class="attributeTitle">$attributeTitle</span> #if($attributeDescription.trim() != "")<div class="fieldHelp" title=" " data-ig-tooltip="$attributeDescription"></div>#end
 								#printErrorV3("ContentVersion.$attribute.name" false)</label>
 							</td>
 					    	<td align="right">
@@ -3631,7 +3631,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 						
 				#elseif($attribute.inputType == "select")
 					<!-- Handles the input type select = dropbox -->
-                    <label for="$attribute.name" title="$attribute.name"><span class="attributeTitle">$attributeTitle</span> #if($attributeDescription.trim() != "")<div class="fieldHelp" title="$attributeDescription"></div>#end
+                    <label for="$attribute.name" title="$attribute.name"><span class="attributeTitle">$attributeTitle</span> #if($attributeDescription.trim() != "")<div class="fieldHelp" title=" " data-ig-tooltip="$attributeDescription"></div>#end
 					#printErrorV3("ContentVersion.$attribute.name" false)</label>
 					<select $readonly size="1" id="$attribute.name" name="$attribute.name" class="$class">
 						#foreach($option in $attribute.options)
@@ -3640,7 +3640,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 		    		</select>
 				#elseif($attribute.inputType == "checkbox")
 					<!-- Handles the input type checkbox -->
-					<label for="$attribute.name" title="$attribute.name"><span class="attributeTitle">$attributeTitle</span> #if($attributeDescription.trim() != "")<div class="fieldHelp" title="$attributeDescription"></div>#end
+					<label for="$attribute.name" title="$attribute.name"><span class="attributeTitle">$attributeTitle</span> #if($attributeDescription.trim() != "")<div class="fieldHelp" title=" " data-ig-tooltip="$attributeDescription"></div>#end
 			    	#printErrorV3("ContentVersion.$attribute.name" false)
 					#if($widget == "transfer")
 		
@@ -3688,7 +3688,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 
 				#elseif($attribute.inputType == "radiobutton")
 				<!-- Handles the input type radiobutton -->
-					<label for="$attribute.name" title="$attribute.name"><span class="attributeTitle">$attributeTitle</span> #if($attributeDescription.trim() != "")<div class="fieldHelp" title="$attributeDescription"></div>#end
+					<label for="$attribute.name" title="$attribute.name"><span class="attributeTitle">$attributeTitle</span> #if($attributeDescription.trim() != "")<div class="fieldHelp" title=" " data-ig-tooltip="$attributeDescription"></div>#end
 					#printErrorV3("ContentVersion.$attribute.name" false)</label>
 					<ul class="optionList">
 					#foreach($option in $attribute.options)
@@ -3698,7 +3698,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 				#elseif($attribute.inputType == "customfield")
 				<!-- Handles the input type customfield -->
 					#set($attributeMarkup = $!attribute.getContentTypeAttribute("Markup").getContentTypeAttributeParameterValue().getValue("label"))
-                    <label for="$attribute.name" title="$attribute.name"><span class="attributeTitle">$attributeTitle</span> #if($attributeDescription.trim() != "")<div class="fieldHelp" title="$attributeDescription"></div>#end
+                    <label for="$attribute.name" title="$attribute.name"><span class="attributeTitle">$attributeTitle</span> #if($attributeDescription.trim() != "")<div class="fieldHelp" title=" " data-ig-tooltip="$attributeDescription"></div>#end
 					#printErrorV3("ContentVersion.$attribute.name" false)</label>
 					#set($processedMarkup = $attributeMarkup.replaceAll("attributeName", "$attribute.name"))
 					#set($processedMarkup = $processedMarkup.replaceAll("attributeValue", "$value"))

@@ -48,7 +48,7 @@
 
 	<div style="clear: both;"></div>
 	
-	<h3>$ui.getString("tool.structuretool.createSiteNodeHeadline") "$parentSiteNodeVO.name"</h3>
+	<h3>$ui.getString("tool.structuretool.createSiteNodeHeadline") "$this.getLocalizedNameForSiteNode($parentSiteNodeVO, $languageId)"</h3>
 
 	<form name="editForm" method="POST" action="CreateSiteNode!executeV3.action">
 		<div id="tabsContainer" class="flora">      

@@ -16,7 +16,13 @@
 	    {
 		    finish();
 	    }
-	    
+
+		## If the tree view in the iframe is a binding view this method is called and not htmlTreeItemClick
+		function structureTreeItemClick(itemId)
+		{
+			htmlTreeItemClick(itemId);
+		}
+
 		function htmlTreeItemClick(itemId, repoId)
 		{
 		    document.inputForm.newParentSiteNodeId.value = itemId;
@@ -73,7 +79,7 @@
 
 	<div style="clear: both;"></div>
 
-	<h3>$ui.getString("tool.structuretool.moveSiteNode.headline")</h3>
+	<h3>$ui.getString("tool.structuretool.moveMultipleSiteNode.destination.headline")</h3>
 		
 	<div style="margin: 16px;">	
 	
@@ -84,7 +90,7 @@
 		    #end
 		</select>
 		<p>
-			<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!V3.action?repositoryId=${repositoryId}" width="90%" height="500" ></iframe>
+			<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!bindingViewV3.action?repositoryId=${repositoryId}&sortLanguageId=$!{sortLanguageId}" width="90%" height="500" ></iframe>
 		</p>
 
 		<form name="inputForm" action="MoveMultipleSiteNodes.action">
@@ -98,6 +104,7 @@
 			<input type="hidden" name="changeTypeId" value="3">
 			<input type="hidden" name="returnAddress" value="$returnAddress">
 			<input type="hidden" name="originalAddress" value="$originalAddress">
+			<input type="hidden" name="sortLanguageId" value="$sortLanguageId">
 		</form>
 		<br/><br/><br/><br/><br/><br/>
 	</div>

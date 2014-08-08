@@ -1904,7 +1904,7 @@ public class ToolbarController implements ToolbarProvider
 			ToolbarButton copyPageButton = new ToolbarButton("",
 					  getLocalizedString(locale, "tool.structuretool.toolbarV3.copyPageLabel"), 
 					  getLocalizedString(locale, "tool.structuretool.toolbarV3.copyPageLabel"),
-					  "CopyMultipleSiteNodes!input.action?siteNodeId=" + new Integer(siteNodeId) + "&repositoryId=" + siteNodeVO.getRepositoryId() + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
+					  "CopyMultipleSiteNodes!input.action?siteNodeId=" + new Integer(siteNodeId) + "&repositoryId=" + siteNodeVO.getRepositoryId() + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent" + ((languageId != null && !languageId.equals("")) ? "&sortLanguageId=" + languageId : ""),
 					  "",
 					  "copy");
 			buttons.add(copyPageButton);
@@ -1913,7 +1913,7 @@ public class ToolbarController implements ToolbarProvider
 		ToolbarButton moveSiteNodeButton = new ToolbarButton("moveSiteNode",
 				  getLocalizedString(locale, "tool.structuretool.toolbarV3.movePageLabel"), 
 				  getLocalizedString(locale, "tool.structuretool.toolbarV3.movePageTitle"),
-				  "MoveSiteNode!inputV3.action?repositoryId=" + siteNodeVO.getRepositoryId() + "&siteNodeId=" + siteNodeId + "&hideLeafs=true&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
+				  "MoveSiteNode!inputV3.action?repositoryId=" + siteNodeVO.getRepositoryId() + "&siteNodeId=" + siteNodeId + "&hideLeafs=true&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent" + ((languageId != null && !languageId.equals("")) ? "&sortLanguageId=" + languageId : ""),
 				  "",
 				  "movePage");
 
@@ -1921,7 +1921,7 @@ public class ToolbarController implements ToolbarProvider
 		ToolbarButton moveMultipleSiteNodeButton = new ToolbarButton("moveMultipleSiteNode",
 				  getLocalizedString(locale, "tool.structuretool.toolbarV3.moveMultiplePageLabel"), 
 				  getLocalizedString(locale, "tool.structuretool.toolbarV3.moveMultiplePageTitle"),
-				  "MoveMultipleSiteNodes!input.action?repositoryId=" + siteNodeVO.getRepositoryId() + "&siteNodeId=" + siteNodeId + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
+				  "MoveMultipleSiteNodes!input.action?repositoryId=" + siteNodeVO.getRepositoryId() + "&siteNodeId=" + siteNodeId + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent" + ((languageId != null && !languageId.equals("")) ? "&sortLanguageId=" + languageId : ""),
 				  "",
 				  "movePage");
 		
@@ -1931,6 +1931,24 @@ public class ToolbarController implements ToolbarProvider
 		
 		if(siteNodeVO != null && hasAccessTo(principal, "Common.DeletePage", true))
 		{
+			String localizedSiteNodeName = null;
+			try
+			{
+				localizedSiteNodeName = ContentController.getContentController().getContentAttribute(siteNodeVO.getMetaInfoContentId(), Integer.valueOf(languageId), "NavigationTitle");
+			}
+			catch (NumberFormatException nex)
+			{
+				logger.warn("Failed to parse languageId for Delete page toolbar button. Message: " + nex.getMessage());
+			}
+			catch (Exception ex)
+			{
+				logger.warn("Error looking up localized name for SiteNode for Delete page toolbar botton. Message: " + ex.getMessage());
+			}
+			if (localizedSiteNodeName == null || localizedSiteNodeName.equals(""))
+			{
+				localizedSiteNodeName = siteNodeVO.getName();
+			}
+
 			ToolbarButton deleteButton = new ToolbarButton("deleteSiteNode",
 					  getLocalizedString(locale, "tool.structuretool.toolbarV3.deletePageLabel"), 
 					  getLocalizedString(locale, "tool.structuretool.toolbarV3.deletePageTitle"),
@@ -1941,7 +1959,7 @@ public class ToolbarController implements ToolbarProvider
 					  true,
 					  true,
 					  getLocalizedString(locale, "tool.structuretool.toolbarV3.deletePageLabel"), 
-					  getLocalizedString(locale, "tool.structuretool.toolbarV3.deletePageConfirmationLabel", new String[]{siteNodeVO.getName()}),
+					  getLocalizedString(locale, "tool.structuretool.toolbarV3.deletePageConfirmationLabel", new String[]{localizedSiteNodeName}),
 					  "inlineDiv");
 			
 			if(SiteNodeVersionController.getLatestPublishedSiteNodeVersionVO(new Integer(siteNodeId)) != null)

@@ -54,6 +54,7 @@ public class MoveMultipleSiteNodeAction extends InfoGlueAbstractAction
     private List qualifyers = new ArrayList();
     private boolean errorsOccurred = false;
 	protected List repositories = null;
+	private Integer sortLanguageId;
     
     //Move params
     protected String qualifyerXML = null;
@@ -77,7 +78,7 @@ public class MoveMultipleSiteNodeAction extends InfoGlueAbstractAction
 	public MoveMultipleSiteNodeAction(SiteNodeVO siteNodeVO)
 	{
 		this.siteNodeVO = siteNodeVO;
-		this.ceb = new ConstraintExceptionBuffer();			
+		this.ceb = new ConstraintExceptionBuffer();
 	}	
 
 	public void setSiteNodeId(Integer siteNodeId)
@@ -89,25 +90,26 @@ public class MoveMultipleSiteNodeAction extends InfoGlueAbstractAction
 	{
 		return siteNodeVO.getSiteNodeId();
 	}
-      
-	
-   public String doInput() throws Exception
-    {    	
+
+	@SuppressWarnings("unchecked")
+	public String doInput() throws Exception
+	{
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 
-        if(this.qualifyerXML != null && !this.qualifyerXML.equals(""))
-        {
-            this.qualifyers = parseSiteNodesFromXML(this.qualifyerXML);
-        }
-        else
-        {
-            SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(getSiteNodeId());
-            this.qualifyers.add(siteNodeVO);
-        }
-        
-        return "input";
-    }
-    
+		if(this.qualifyerXML != null && !this.qualifyerXML.equals(""))
+		{
+			this.qualifyers = parseSiteNodesFromXML(this.qualifyerXML);
+		}
+		else
+		{
+			SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(getSiteNodeId());
+			siteNodeVO.getExtraProperties().put("displayName", getLocalizedNameForSiteNode(siteNodeVO, sortLanguageId));
+			this.qualifyers.add(siteNodeVO);
+		}
+
+		return "input";
+	}
+
     public String doExecute() throws Exception
     {
         if(this.newParentSiteNodeId == null)
@@ -150,43 +152,41 @@ public class MoveMultipleSiteNodeAction extends InfoGlueAbstractAction
         return "success";
     }
 
-	private List parseSiteNodesFromXML(String qualifyerXML)
+	@SuppressWarnings("unchecked")
+	private List<SiteNodeVO> parseSiteNodesFromXML(String qualifyerXML)
 	{
-		List siteNodes = new ArrayList(); 
-    	
+		List<SiteNodeVO> siteNodes = new ArrayList<SiteNodeVO>();
+
 		try
 		{
 			Document document = new DOMBuilder().getDocument(qualifyerXML);
-			
 			String entity = document.getRootElement().attributeValue("entity");
+			Map<String, SiteNodeVO> addedSiteNodes = new HashMap<String, SiteNodeVO>();
 			
-			Map addedSiteNodes = new HashMap();
-			
-			List children = document.getRootElement().elements();
-			Iterator i = children.iterator();
+			List<Element> children = document.getRootElement().elements();
+			Iterator<Element> i = children.iterator();
 			while(i.hasNext())
 			{
-				Element child = (Element)i.next();
+				Element child = i.next();
 				String id = child.getStringValue();
-				String path = child.attributeValue("path");
 				
 				if(!addedSiteNodes.containsKey(id))
 				{
-				    SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(id));
-				    siteNodes.add(siteNodeVO);     
+					SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(id));
+					siteNodeVO.getExtraProperties().put("displayName", getLocalizedNameForSiteNode(siteNodeVO, sortLanguageId));
+					siteNodes.add(siteNodeVO);
 					addedSiteNodes.put(id, siteNodeVO);
-				}    
-			}		        	
+				}
+			}
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
-		
+
 		return siteNodes;
 	}
-	
-    
+
     public Integer getChangeTypeId()
     {
         return changeTypeId;
@@ -285,6 +285,16 @@ public class MoveMultipleSiteNodeAction extends InfoGlueAbstractAction
 	public void setDeliverLanguageId(Integer deliverLanguageId) 
 	{
 		this.deliverLanguageId = deliverLanguageId;
+	}
+
+	public Integer getSortLanguageId()
+	{
+		return sortLanguageId;
+	}
+
+	public void setSortLanguageId(Integer sortLanguageId)
+	{
+		this.sortLanguageId = sortLanguageId;
 	}
 
 }

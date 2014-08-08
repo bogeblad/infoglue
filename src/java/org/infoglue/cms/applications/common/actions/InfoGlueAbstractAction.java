@@ -1796,5 +1796,15 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		return "successShowProcessesAsJSON";
 	}
 
+	public String getLocalizedNameForSiteNode(SiteNodeVO siteNodeVO, Integer languageId) throws Exception
+	{
+		String navigationTitle = ContentController.getContentController().getContentAttribute(siteNodeVO.getMetaInfoContentId(), languageId, "NavigationTitle");
+		if (navigationTitle == null || navigationTitle.equals(""))
+		{
+			navigationTitle = siteNodeVO.getName();
+		}
+		return navigationTitle;
+	}
+
 }
 

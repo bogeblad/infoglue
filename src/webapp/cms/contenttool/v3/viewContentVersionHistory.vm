@@ -89,13 +89,13 @@
 						text2VersionId = "" + version1;
 					}
 					calculateDiffSummary(text1VersionId, text2VersionId);
+					$("#compareDiv").show();
 				}
 				catch(err)
 				{
 					alert("Something went wrong when comparing the versions.");
 				}
 
-				$("#compareDiv").show();
 			}
 			else
 			{

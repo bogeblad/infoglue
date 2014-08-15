@@ -248,7 +248,9 @@ WebFXTreeAbstractNode.prototype.add = function (node, bNoIdent) {
 					var beforeNodeId = beforeNode.find("a").attr("entityid");
 					var beforeNodeParentId = beforeNode.find("a").attr("parententityid");
 					
-					moveNode(movedNodeId, beforeNodeParentId, parentNodeId, beforeNodeId);
+					if(confirm(window.movePageWarning))
+						moveNode(movedNodeId, beforeNodeParentId, parentNodeId, beforeNodeId);
+					
 					$(".webfx-tree-slot").remove();
 					$(".moveIntoTarget").droppable( "enable" );
 				},
@@ -278,7 +280,9 @@ WebFXTreeAbstractNode.prototype.add = function (node, bNoIdent) {
 					var parentNodeId = aTag.attr("parentEntityId");
 					var newParentNodeId = $("#" + node.id + " a").attr("entityId");		
 					
-					moveNode(movedNodeId, newParentNodeId, parentNodeId);
+					if(confirm(window.movePageWarning))
+						moveNode(movedNodeId, newParentNodeId, parentNodeId);
+					
 					$(".webfx-tree-slot").remove();
 					$(".moveIntoTarget").droppable( "enable" );
 				}

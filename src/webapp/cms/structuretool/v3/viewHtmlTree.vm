@@ -304,6 +304,8 @@
 		var defaultFinalStyleInformation = "$this.finalStyleInformation";
 		var defaultPublishStyleInformation = "$this.publishStyleInformation";
 		var defaultPublishedStyleInformation = "$this.publishedStyleInformation";
+		
+		window.movePageWarning = "$ui.getString("tool.structuretool.moveSiteNode.areYouSureWarning")";
 	</script>
 	<script type="text/javascript" src="script/v3/infoglue.js"></script>
 	<script type="text/javascript" src="script/xloadtree/xtree.js"></script>
@@ -393,7 +395,8 @@
 			var parentNodeId = dragEl.attr("parentEntityId");
 			var newParentNodeId = $("#" + tree.id + " a").attr("entityId");
 			//alert('dropped:' + movedNodeId + " on " + newParentNodeId);
-			moveNode(movedNodeId, newParentNodeId, parentNodeId);
+			if(confirm(movePageWarning))
+				moveNode(movedNodeId, newParentNodeId, parentNodeId);
 		}
 	});
 		

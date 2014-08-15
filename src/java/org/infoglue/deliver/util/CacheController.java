@@ -24,14 +24,11 @@
 package org.infoglue.deliver.util;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -57,9 +54,7 @@ import org.apache.pluto.portalImpl.services.ServiceManager;
 import org.apache.pluto.portalImpl.services.portletentityregistry.PortletEntityRegistry;
 import org.exolab.castor.jdo.CacheManager;
 import org.exolab.castor.jdo.Database;
-import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.ObjectNotFoundException;
-import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
@@ -92,7 +87,6 @@ import org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl;
 import org.infoglue.cms.entities.management.AccessRightVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
-import org.infoglue.cms.entities.management.GeneralOQLResult;
 import org.infoglue.cms.entities.management.InterceptionPointVO;
 import org.infoglue.cms.entities.management.impl.simple.AccessRightGroupImpl;
 import org.infoglue.cms.entities.management.impl.simple.AccessRightImpl;
@@ -158,9 +152,6 @@ import org.infoglue.deliver.applications.actions.InfoGlueComponent;
 import org.infoglue.deliver.applications.databeans.CacheEvictionBean;
 import org.infoglue.deliver.applications.databeans.DatabaseWrapper;
 import org.infoglue.deliver.cache.PageCacheHelper;
-import org.infoglue.deliver.controllers.kernel.impl.simple.ContentDeliveryController;
-import org.infoglue.deliver.controllers.kernel.impl.simple.DigitalAssetDeliveryController;
-import org.infoglue.deliver.controllers.kernel.impl.simple.NodeDeliveryController;
 import org.infoglue.deliver.invokers.PageInvoker;
 import org.infoglue.deliver.portal.ServletConfigContainer;
 import org.xmlpull.v1.builder.XmlDocument;
@@ -1865,7 +1856,6 @@ public class CacheController extends Thread
 		    		ReentrantReadWriteLock rwl = locksCache.get(cacheName);
 		    		boolean lockSuccess = false;
 		    		try {
-		    			System.out.println("EAAAAAAAAAAAAAAAAAA");
 						lockSuccess = rwl.writeLock().tryLock(writeLockTimeout, TimeUnit.SECONDS);
 						printLockDebug(rwl);
 					} catch (InterruptedException e1) {
@@ -2131,7 +2121,6 @@ public class CacheController extends Thread
 	
 	public static void clearCaches(String entity, String entityId, Map<String,String> extraInformation, String[] cachesToSkip, boolean forceClear) throws Exception
 	{	
-		logger.info("entity:" + entity + ", " + entityId);
 		Timer t = new Timer();
 		//t.setActive(false);
 		
@@ -2504,7 +2493,11 @@ public class CacheController extends Thread
 					{
 						clear = true;
 					}
-					if(cacheName.equalsIgnoreCase("groupPropertiesCache") && entity.indexOf("Group") > 0)
+					if(cacheName.equalsIgnoreCase("groupPropertiesCache") && (entity.indexOf("Group") > 0 || entity.indexOf("PropertiesCategory") > 0))
+					{
+						clear = true;
+					}
+					if(cacheName.equalsIgnoreCase("propertiesCategoryCache") && (entity.indexOf("Group") > 0 || entity.indexOf("Role") > 0 || entity.indexOf("User") > 0 || entity.indexOf("PropertiesCategory") > 0))
 					{
 						clear = true;
 					}
@@ -2516,7 +2509,7 @@ public class CacheController extends Thread
 					{
 						clear = true;
 					}
-					if(cacheName.equalsIgnoreCase("relatedCategoriesCache") && (entity.indexOf("Group") > 0 || entity.indexOf("Role") > 0 || entity.indexOf("User") > 0))
+					if(cacheName.equalsIgnoreCase("relatedCategoriesCache") && (entity.indexOf("Group") > 0 || entity.indexOf("Role") > 0 || entity.indexOf("User") > 0 || entity.indexOf("PropertiesCategory") > 0))
 					{
 						clear = true;
 					}
@@ -2739,7 +2732,6 @@ public class CacheController extends Thread
 							    }
 							    else if(selectiveCacheUpdate && entity.indexOf("SiteNodeVersion") > 0)
 							    {
-							    	//System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 							    	//Thread.dumpStack();
 							    	//How to solve this good
 							    	if(CmsPropertyHandler.getOperatingMode().equalsIgnoreCase("0"))

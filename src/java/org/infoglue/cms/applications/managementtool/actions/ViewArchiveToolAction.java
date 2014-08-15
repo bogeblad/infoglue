@@ -75,7 +75,8 @@ public class ViewArchiveToolAction extends InfoGlueAbstractAction
 
 	public String doInputArchiveOldAssets() throws Exception
     {
-		optimizationBeanList = ContentVersionController.getContentVersionController().getHeavyContentVersions(numberOfVersionsToKeep, assetFileSizeLimit, assetNumberLimit);
+		//optimizationBeanList = ContentVersionController.getContentVersionController().getHeavyContentVersions(numberOfVersionsToKeep, assetFileSizeLimit, assetNumberLimit);
+		optimizationBeanList = ContentVersionController.getContentVersionController().getAssetsPossibleToArchive(numberOfVersionsToKeep, assetFileSizeLimit, assetNumberLimit);
         		
         return "inputArchiveOldAssets";
     }

@@ -1045,50 +1045,7 @@ public class SiteNodeVersionController extends BaseController
     	return returnVO;
     }        
     
-    public SiteNodeVersion updateStateId(SiteNodeVersion siteNodeVersion, Integer stateId, String versionComment, InfoGluePrincipal infoGluePrincipal, Database db) throws ConstraintException, SystemException, Exception
-    {
-    	if(siteNodeVersion.getStateId().equals(stateId))
-    	{
-    		siteNodeVersion.setVersionComment(versionComment);
-    		siteNodeVersion.setVersionModifier(infoGluePrincipal.getName());
-    		return siteNodeVersion;
-    	}
-    	
-    	//Here we just updates the state if it's a publish-state-change.
-    	if(stateId.intValue() == 2)
-    	{    		
-    		siteNodeVersion.setStateId(stateId);
-    		siteNodeVersion.setVersionComment(versionComment);
-    		siteNodeVersion.setVersionModifier(infoGluePrincipal.getName());
-    	}
-    	    	
-    	//Here we create a new version if it was a state-change back to working
-    	if(stateId.intValue() == 0)
-    	{
-    		SiteNodeVersionVO siteNodeVersionVO = new SiteNodeVersionVO();
-    		siteNodeVersionVO.setContentType(siteNodeVersion.getContentType());
-    		siteNodeVersionVO.setDisableEditOnSight(siteNodeVersion.getDisableEditOnSight());
-    		siteNodeVersionVO.setDisableForceIdentityCheck(siteNodeVersion.getDisableForceIdentityCheck());
-    		siteNodeVersionVO.setForceProtocolChange(siteNodeVersion.getForceProtocolChange());
-    		siteNodeVersionVO.setDisableLanguages(siteNodeVersion.getDisableLanguages());
-    		siteNodeVersionVO.setDisablePageCache(siteNodeVersion.getDisablePageCache());
-    		siteNodeVersionVO.setIsActive(siteNodeVersion.getIsActive());
-    		siteNodeVersionVO.setIsCheckedOut(siteNodeVersion.getIsCheckedOut());
-    		siteNodeVersionVO.setIsHidden(siteNodeVersion.getIsHidden());
-    		siteNodeVersionVO.setIsProtected(siteNodeVersion.getIsProtected());
-    		siteNodeVersionVO.setPageCacheKey(siteNodeVersion.getPageCacheKey());
-    		siteNodeVersionVO.setPageCacheTimeout(siteNodeVersion.getPageCacheTimeout());
-    		siteNodeVersionVO.setSortOrder(siteNodeVersion.getSortOrder());
-    		siteNodeVersionVO.setVersionModifier(infoGluePrincipal.getName());
-    		siteNodeVersionVO.setVersionNumber(siteNodeVersion.getVersionNumber() + 1);
-    		siteNodeVersionVO.setStateId(stateId);
-			siteNodeVersionVO.setVersionComment(versionComment);
-			
-			siteNodeVersion = createFull(siteNodeVersion.getValueObject().getSiteNodeId(), infoGluePrincipal, siteNodeVersionVO, db);
-    	}
-    	
-    	return siteNodeVersion;
-    }        
+   
 
 	public static void deleteVersionsForSiteNodeWithId(Integer siteNodeId) throws ConstraintException, SystemException, Bug
     {

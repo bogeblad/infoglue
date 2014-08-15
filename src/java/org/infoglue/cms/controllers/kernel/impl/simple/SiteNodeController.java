@@ -1729,7 +1729,7 @@ public class SiteNodeController extends BaseController
 				logger.warn("You cannot have the siteNode as it's own parent......");
 				throw new ConstraintException("SiteNode.parentSiteNodeId", "3401");
 			}
-
+			
 			siteNode          = getSiteNodeWithId(siteNodeVO.getSiteNodeId(), db);
 			oldParentSiteNode = siteNode.getParentSiteNode();
 			newParentSiteNode = getSiteNodeWithId(newParentSiteNodeId, db);
@@ -3994,7 +3994,7 @@ public class SiteNodeController extends BaseController
 				logger.info("latestChildSiteNodeVersion.getSortOrder():" + latestChildSiteNodeVersion.getSortOrder() + "=" + index);
 				if(latestChildSiteNodeVersion.getSortOrder() != index)
 				{
-					latestChildSiteNodeVersion = SiteNodeVersionController.getController().updateStateId(latestChildSiteNodeVersion, SiteNodeVersionVO.WORKING_STATE, "Changed sortOrder", infoGluePrincipal, db);
+					latestChildSiteNodeVersion = SiteNodeStateController.getController().updateStateId(latestChildSiteNodeVersion, SiteNodeVersionVO.WORKING_STATE, "Changed sortOrder", infoGluePrincipal, db);
 	
 					//Integer currentSortOrder = latestChildSiteNodeVersion.getSortOrder();
 					//logger.info("currentSortOrder:" + currentSortOrder + " on " + childSiteNodeVO.getName());
@@ -4103,7 +4103,10 @@ public class SiteNodeController extends BaseController
     					//if(siteNodeVersionVO.getSortOrder() < highestSortOrder || localizedSortOrder < highestSortOrder)
     					if(siteNodeVersionVO.getSortOrder() < highestSortOrder || localizedSortOrder < highestSortOrder || i != localizedSortOrder)
     	    			{
-    						siteNodeVersionVO = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), SiteNodeVersionVO.WORKING_STATE, "Changed sortOrder", false, infoGluePrincipal, siteNodeVersionVO.getSiteNodeId(), events);
+    						if(!siteNodeVersionVO.getStateId().equals(SiteNodeVersionVO.WORKING_STATE))
+    						{	
+	    						siteNodeVersionVO = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), SiteNodeVersionVO.WORKING_STATE, "Changed sortOrder", false, infoGluePrincipal, siteNodeVersionVO.getSiteNodeId(), events);
+    						}
     						siteNodeVersionVO.setSortOrder(i);
     						
     						if(CmsPropertyHandler.getAllowLocalizedSortAndVisibilityProperties())
@@ -4112,7 +4115,7 @@ public class SiteNodeController extends BaseController
 	    						if(cvVO != null)
 	    							ContentVersionController.getContentVersionController().updateAttributeValue(cvVO.getContentVersionId(), "SortOrder", "" + i, infoGluePrincipal, db, true);
     						}
-    						
+
     						SiteNodeVersionController.getController().update(siteNodeVersionVO);
     					}
     					else
@@ -4166,7 +4169,7 @@ public class SiteNodeController extends BaseController
 					logger.info("currentSortOrder:" + currentSortOrder);
 					if(currentSortOrder.equals(oldSortOrder))
 					{
-						latestChildSiteNodeVersion = SiteNodeVersionController.getController().updateStateId(latestChildSiteNodeVersion, SiteNodeVersionVO.WORKING_STATE, "Changed sortOrder", infoGluePrincipal, db);
+						latestChildSiteNodeVersion = SiteNodeStateController.getController().updateStateId(latestChildSiteNodeVersion, SiteNodeVersionVO.WORKING_STATE, "Changed sortOrder", infoGluePrincipal, db);
 						latestChildSiteNodeVersion.setSortOrder(newSortOrder);
 						//logger.info("Changed sort order on:" + latestChildSiteNodeVersion.getId() + " into " + newSortOrder);
 
@@ -4179,7 +4182,7 @@ public class SiteNodeController extends BaseController
 					}
 					else if(currentSortOrder.equals(newSortOrder))
 					{
-						latestChildSiteNodeVersion = SiteNodeVersionController.getController().updateStateId(latestChildSiteNodeVersion, SiteNodeVersionVO.WORKING_STATE, "Changed sortOrder", infoGluePrincipal, db);
+						latestChildSiteNodeVersion = SiteNodeStateController.getController().updateStateId(latestChildSiteNodeVersion, SiteNodeVersionVO.WORKING_STATE, "Changed sortOrder", infoGluePrincipal, db);
 						latestChildSiteNodeVersion.setSortOrder(oldSortOrder);
 						//logger.info("Changed sort order on:" + latestChildSiteNodeVersion.getId() + " into " + oldSortOrder);
 
@@ -4264,7 +4267,7 @@ public class SiteNodeController extends BaseController
             //logger.info("latestSiteNodeVersion:" + latestSiteNodeVersion);
             if(latestSiteNodeVersion != null)
 			{
-        		latestSiteNodeVersion = SiteNodeVersionController.getController().updateStateId(latestSiteNodeVersion, SiteNodeVersionVO.WORKING_STATE, "Changed hidden", infoGluePrincipal, db);
+        		latestSiteNodeVersion = SiteNodeStateController.getController().updateStateId(latestSiteNodeVersion, SiteNodeVersionVO.WORKING_STATE, "Changed hidden", infoGluePrincipal, db);
         		if(latestSiteNodeVersion.getIsHidden())
         			latestSiteNodeVersion.setIsHidden(false);
         		else

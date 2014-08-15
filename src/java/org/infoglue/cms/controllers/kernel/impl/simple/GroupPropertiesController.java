@@ -1131,23 +1131,39 @@ public class GroupPropertiesController extends BaseController
 	
 	public List<SiteNodeVO> getReadOnlyRelatedSiteNodeVOList(String groupName, Integer languageId, String attributeName, Database db) throws SystemException, Exception
 	{
-		List<SiteNodeVO> relatedSiteNodeList = new ArrayList<SiteNodeVO>();
-
-		List groupProperties = this.getGroupPropertiesVOList(groupName, languageId, db);
-	    Iterator iterator = groupProperties.iterator();
-	    GroupPropertiesVO groupPropertyVO = null;
-	    while(iterator.hasNext())
-	    {
-	        groupPropertyVO = (GroupPropertiesVO)iterator.next();
-	        break;
-	    }
-	    
-		if(groupPropertyVO != null)
+		String cacheKey = "relatedSiteNodes_" + groupName + "_" + languageId + "_" + attributeName;
+		logger.info("cacheKey:" + cacheKey);
+		List<SiteNodeVO> relatedSiteNodeList = (List<SiteNodeVO>)CacheController.getCachedObject("groupPropertiesCache", cacheKey);
+		if(relatedSiteNodeList != null)
 		{
-			String xml = this.getAttributeValue(groupPropertyVO.getValue(), attributeName, false);
-			relatedSiteNodeList = this.getReadOnlyRelatedSiteNodeVOListFromXML(db, xml);
+			logger.info("There was an cached relatedSiteNodeList:" + relatedSiteNodeList.size());
 		}
+		else
+		{
+			Timer t = new Timer();
 
+			relatedSiteNodeList = new ArrayList<SiteNodeVO>();
+
+			List<GroupPropertiesVO> groupProperties = this.getGroupPropertiesVOList(groupName, languageId, db);
+			Iterator<GroupPropertiesVO> iterator = groupProperties.iterator();
+		    GroupPropertiesVO groupPropertyVO = null;
+		    while(iterator.hasNext())
+		    {
+		        groupPropertyVO = iterator.next();
+		        break;
+		    }
+		    
+			if(groupPropertyVO != null)
+			{
+				String xml = this.getAttributeValue(groupPropertyVO.getValue(), attributeName, false);
+				relatedSiteNodeList = this.getReadOnlyRelatedSiteNodeVOListFromXML(db, xml);
+			}
+
+			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getReadOnlyRelatedSiteNodeVOList", t.getElapsedTime());
+			
+			CacheController.cacheObject("groupPropertiesCache", cacheKey, relatedSiteNodeList);
+		}
+		
 		return relatedSiteNodeList;
 	}
 
@@ -1343,7 +1359,7 @@ public class GroupPropertiesController extends BaseController
     	
 		if(qualifyerXML == null || qualifyerXML.length() == 0)
 			return siteNodes;
-		
+
 		try
 		{
 			org.dom4j.Document document = new DOMBuilder().getDocument(qualifyerXML);

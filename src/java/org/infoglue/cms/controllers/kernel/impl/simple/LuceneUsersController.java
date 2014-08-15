@@ -141,7 +141,18 @@ public class LuceneUsersController extends BaseController implements Notificatio
 		idx = newIndex;
 		idxCreatedDateTime = System.currentTimeMillis();
 	}
-	
+
+	/**
+	 * Call this method directly if you must have a forced reset right away.
+	 * 
+	 * @throws Exception
+	 */
+
+	public synchronized void reset() throws Exception
+	{
+		idx = null;
+	}
+
 	/**
 	 * This method creates the index by indexing all users.
 	 */

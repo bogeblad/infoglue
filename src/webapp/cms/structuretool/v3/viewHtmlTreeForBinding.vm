@@ -23,11 +23,11 @@
 		
 		function setSelected(itemId, repoId, path)
 		{
-			if(itemId)
+			if(itemId && parent.document.inputForm.entityId)
 				parent.document.inputForm.entityId.value     = itemId;
-			if(repoId)
+			if(repoId && parent.document.inputForm.repositoryId)
 				parent.document.inputForm.repositoryId.value = repoId;
-			if(path)
+			if(path && parent.document.inputForm.path)
 			 	parent.document.inputForm.path.value         = path;
 			
 			if(parent.structureTreeItemClick)
@@ -165,12 +165,12 @@
 	#else
 		#set($par = "&parent=$rootNode.Id")
 	#end 
-	
+
 	#set($sortArg = "")
 	#if($sortLanguageId && $sortLanguageId != -1)
 		#set($sortArg = "&sortLanguageId=$!{sortLanguageId}")
 	#end
-	
+
 	var tree = new WebFXLoadTree("$rootNode.Title", "SimpleStructureXml.action?action=SimpleStructureXml.action&createAction=true&repositoryId=$!{repositoryId}${sortArg}$par", "javascript:htmlTreeItemClick('$rootNode.Id','${repositoryId}','$formatter.escapeExtendedHTML($rootNode.Title)');");
 	tree.myId = "$rootNode.Id";	
 	document.write(tree);

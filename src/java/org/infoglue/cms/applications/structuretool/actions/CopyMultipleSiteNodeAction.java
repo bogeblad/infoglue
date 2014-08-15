@@ -34,8 +34,6 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.applications.databeans.ProcessBean;
-import org.infoglue.cms.applications.contenttool.actions.CopyContentAction;
-import org.infoglue.cms.applications.databeans.LinkBean;
 import org.infoglue.cms.controllers.kernel.impl.simple.LabelController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
@@ -51,7 +49,9 @@ import org.infoglue.cms.util.dom.DOMBuilder;
 
 public class CopyMultipleSiteNodeAction extends InfoGlueAbstractAction
 {
-    private final static Logger logger = Logger.getLogger(CopyMultipleSiteNodeAction.class.getName());
+	private static final long serialVersionUID = 955902951432881226L;
+
+	private final static Logger logger = Logger.getLogger(CopyMultipleSiteNodeAction.class.getName());
 
    	//  Initial params
     private Integer originalSiteNodeId;
@@ -61,6 +61,7 @@ public class CopyMultipleSiteNodeAction extends InfoGlueAbstractAction
     private List qualifyers = new ArrayList();
     private boolean errorsOccurred = false;
 	protected List repositories = null;
+	private Integer sortLanguageId;
     
     //Move params
     protected String qualifyerXML = null;
@@ -101,26 +102,27 @@ public class CopyMultipleSiteNodeAction extends InfoGlueAbstractAction
 	{
 		return siteNodeVO.getSiteNodeId();
 	}
-      
-	
-   public String doInput() throws Exception
-    {    	
-		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
-    	this.returnAddress = "ViewInlineOperationMessages.action"; //ViewContent!V3.action?contentId=" + contentId + "&repositoryId=" + this.repositoryId;
 
-        if(this.qualifyerXML != null && !this.qualifyerXML.equals(""))
-        {
-            this.qualifyers = parseSiteNodesFromXML(this.qualifyerXML);
-        }
-        else
-        {
-            SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(getSiteNodeId());
-            this.qualifyers.add(siteNodeVO);
-        }
-        
-        return "input";
-    }
-    
+	@SuppressWarnings("unchecked")
+	public String doInput() throws Exception
+	{
+		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
+		this.returnAddress = "ViewInlineOperationMessages.action"; //ViewContent!V3.action?contentId=" + contentId + "&repositoryId=" + this.repositoryId;
+
+		if(this.qualifyerXML != null && !this.qualifyerXML.equals(""))
+		{
+			this.qualifyers = parseSiteNodesFromXML(this.qualifyerXML);
+		}
+		else
+		{
+			SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(getSiteNodeId());
+			siteNodeVO.getExtraProperties().put("displayName", getLocalizedNameForSiteNode(siteNodeVO, sortLanguageId));
+			this.qualifyers.add(siteNodeVO);
+		}
+
+		return "input";
+	}
+
    public String doCopyDone() throws Exception
    {    	
        return "success";
@@ -203,44 +205,44 @@ public class CopyMultipleSiteNodeAction extends InfoGlueAbstractAction
         return "success";
     }
 
-
-	private List parseSiteNodesFromXML(String qualifyerXML)
+	@SuppressWarnings("unchecked")
+	private List<SiteNodeVO> parseSiteNodesFromXML(String qualifyerXML)
 	{
-		List siteNodes = new ArrayList(); 
-    	
+		List<SiteNodeVO> siteNodes = new ArrayList<SiteNodeVO>();
+
 		try
 		{
 			Document document = new DOMBuilder().getDocument(qualifyerXML);
-			
 			String entity = document.getRootElement().attributeValue("entity");
-			
-			Map addedSiteNodes = new HashMap();
-			
-			List children = document.getRootElement().elements();
-			Iterator i = children.iterator();
+			Map<String, SiteNodeVO> addedSiteNodes = new HashMap<String, SiteNodeVO>();
+
+			@SuppressWarnings("unchecked")
+			List<Element> children = document.getRootElement().elements();
+			Iterator<Element> i = children.iterator();
 			while(i.hasNext())
 			{
-				Element child = (Element)i.next();
+				Element child = i.next();
 				String id = child.getStringValue();
 				String path = child.attributeValue("path");
-				
+
 				if(!addedSiteNodes.containsKey(id))
 				{
-				    SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(id));
-				    siteNodes.add(siteNodeVO);     
+					SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(id));
+					siteNodeVO.getExtraProperties().put("displayName", getLocalizedNameForSiteNode(siteNodeVO, sortLanguageId));
+					siteNodes.add(siteNodeVO);
 					addedSiteNodes.put(id, siteNodeVO);
-				}    
-			}		        	
+				}
+			}
 		}
-		catch(Exception e)
+		catch(Exception ex)
 		{
-			e.printStackTrace();
+			logger.error("Error when parsing XML for SiteNodes. Message: " + ex.getMessage());
+			logger.warn("Error when parsing XML for SiteNodes.", ex);
 		}
-		
+
 		return siteNodes;
 	}
-	
-    
+
     public Integer getChangeTypeId()
     {
         return changeTypeId;
@@ -360,5 +362,15 @@ public class CopyMultipleSiteNodeAction extends InfoGlueAbstractAction
 	{
 		this.returnAddress = returnAddress;
 	}
-	
+
+	public Integer getSortLanguageId()
+	{
+		return sortLanguageId;
+	}
+
+	public void setSortLanguageId(Integer languageId)
+	{
+		this.sortLanguageId = languageId;
+	}
+
 }

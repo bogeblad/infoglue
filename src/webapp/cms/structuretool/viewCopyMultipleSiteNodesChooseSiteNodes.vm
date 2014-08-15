@@ -204,7 +204,11 @@
 		{
 			#foreach($content in $qualifyers)
 				//alert("$qualifyer");
-				qualifyer = new Qualifyer("Content", "$content.id", "$content.name");
+				#set( $contentName = $!content.extraProperties.displayName )
+				#if("$!contentName" == "")
+					#set( $contentName = $content.name )
+				#end
+				qualifyer = new Qualifyer("Content", "$content.id", "$contentName");
 				qualifyersVector.addElement(qualifyer);
 			#end
 	
@@ -278,7 +282,7 @@
 				</tr>
 				<tr>
 					<td class="menu" style="border: 1px solid #C7D1B3;">    
-						<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!bindingViewV3.action?repositoryId=${repositoryId}" width="100%" height="350" align="baseline"></iframe>
+						<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!bindingViewV3.action?repositoryId=${repositoryId}&sortLanguageId=$!sortLanguageId" width="100%" height="350" align="baseline"></iframe>
 					</td>
 				</tr>	
 				</table>
@@ -317,6 +321,7 @@
 		<input type="hidden" name="qualifyerXML" value="">
 		<input type="hidden" name="returnAddress" value="$returnAddress">
 		<input type="hidden" name="originalAddress" value="$originalAddress">
+		<input type="hidden" name="sortLanguageId" value="$sortLanguageId">
 	</form>
 		
 	#lightFooterToolbar($footerButtons)

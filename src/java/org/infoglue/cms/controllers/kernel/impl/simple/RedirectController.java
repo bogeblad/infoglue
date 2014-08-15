@@ -41,12 +41,14 @@ import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.QueryResults;
+import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.Redirect;
 import org.infoglue.cms.entities.management.RedirectVO;
 import org.infoglue.cms.entities.management.impl.simple.RedirectImpl;
+import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
@@ -482,37 +484,33 @@ public class RedirectController extends BaseController
 			dc.setContentId(-1);
 
 			List<LanguageVO> languageVOList =  LanguageController.getController().getLanguageVOList(repositoryId, db);
+			SiteNodeVO siteNodeVO = SiteNodeController.getSiteNodeVOWithId(siteNodeId, db);
 			for(LanguageVO languageVO : languageVOList)
 			{
-				dc.setLanguageId(languageVO.getLanguageId());
+				ContentVersionVO currentPublishedMetainfoVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNodeVO.getMetaInfoContentId(), languageVO.getLanguageId(), ContentVersionVO.PUBLISHED_STATE, db);
+				if (logger.isDebugEnabled())
+				{
+					logger.debug("Getting NiceUri path for SiteNode: " + siteNodeId + ", in language: " + languageVO.getLanguageId() + ". SiteNode has version in current language: " + (currentPublishedMetainfoVersion != null));
+				}
+				if (currentPublishedMetainfoVersion != null)
+				{
+					dc.setLanguageId(languageVO.getLanguageId());
 
-//				String pageUrlWithLang = URLComposer.getURLComposer().composePageUrlForRedirectRegistry(db, principal, siteNodeId, languageVO.getId(), -1, dc, true, true);
-				String pageUrlWithLang = URLComposer.getURLComposer().composePageUrl(db, principal, siteNodeId, languageVO.getLanguageId(), -1, PLACEHOLDER_CONTEXT, dc);
-				if(logger.isInfoEnabled())
-				{
-					logger.info("pageUrlWithLang: " + pageUrlWithLang);
+					String pageUrlWithLang = URLComposer.getURLComposer().composePageUrl(db, principal, siteNodeId, languageVO.getLanguageId(), -1, PLACEHOLDER_CONTEXT, dc);
+					if(logger.isInfoEnabled())
+					{
+						logger.info("pageUrlWithLang: " + pageUrlWithLang);
+					}
+					pageUrls.put("" + languageVO.getId() + "_LangInUrl", pageUrlWithLang);
+					String pageUrl = URLComposer.getURLComposer().composePageUrl(db, principal, siteNodeId, languageVO.getLanguageId(), -1, PLACEHOLDER_CONTEXT, dc);
+					if(logger.isInfoEnabled())
+					{
+						logger.info("pageUrl: " + pageUrl);
+					}
+					pageUrls.put("" + languageVO.getId(), pageUrl);
 				}
-				pageUrls.put("" + languageVO.getId() + "_LangInUrl", pageUrlWithLang);
-//				String pageUrl = URLComposer.getURLComposer().composePageUrlForRedirectRegistry(db, principal, siteNodeId, languageVO.getId(), -1, dc, true, false);
-				String pageUrl = URLComposer.getURLComposer().composePageUrl(db, principal, siteNodeId, languageVO.getLanguageId(), -1, PLACEHOLDER_CONTEXT, dc);
-				if(logger.isInfoEnabled())
-				{
-					logger.info("pageUrl: " + pageUrl);
-				}
-				pageUrls.put("" + languageVO.getId(), pageUrl);
 			}
 
-			Iterator<String> valueIterator = pageUrls.values().iterator();
-			Set<String> uniqueList = new HashSet<String>();
-			while (valueIterator.hasNext())
-			{
-				String url = valueIterator.next();
-				if (!uniqueList.add(url))
-				{
-					logger.debug("Found duplicate page URL for redirect, will remove. URL: " + url);
-					valueIterator.remove();
-				}
-			}
 			if (logger.isInfoEnabled())
 			{
 				logger.info("Generated URLs for system redirects. URLs: " + pageUrls);
@@ -550,9 +548,9 @@ public class RedirectController extends BaseController
 
 		@SuppressWarnings("static-access")
 		SiteNodeVersionVO snvVO = SiteNodeVersionController.getController().getLatestPublishedSiteNodeVersionVO(siteNodeId, db);
-		if(logger.isInfoEnabled())
+		if(logger.isTraceEnabled())
 		{
-			logger.info("snvVO:" + snvVO);
+			logger.trace("snvVO:" + snvVO);
 		}
 		if(snvVO != null && pageUrls != null && pageUrls.size() > 0)
 		{
@@ -624,7 +622,7 @@ public class RedirectController extends BaseController
 					}
 					else
 					{
-						logger.info("A redirect rule already exists for the URL (language-in-URK). URL: " + urlWithLangInUrl);
+						logger.info("A redirect rule already exists for the URL (language-in-URL). URL: " + urlWithLangInUrl);
 					}
 				}
 			}

@@ -130,9 +130,6 @@
 		<input type="hidden" name="contentId" value="$contentId">
 		<input type="hidden" name="componentId" value="$!componentId">
 	</form>
-				
-	#lightFooterToolbar($footerButtons)
-	
 </div>
 
 #endCommonToolV3()

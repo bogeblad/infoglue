@@ -1326,6 +1326,7 @@
 	</action>
 	<action name="org.infoglue.cms.applications.structuretool.actions.UpdateSiteNodeVersionAction" alias="UpdateSiteNodeVersion">
 		<view name="success">ExtendedRedirect.action?url=ViewSiteNodeHistory.action#siteNodeId#inline</view>
+		<view name="successAndExit">ViewInlineOperationMessages.action?automaticClose=true&amp;userSessionKey=${userSessionKey}</view>
 		<view name="error">/cms/structuretool/error.vm</view>
 	</action>
 	<action name="org.infoglue.cms.applications.structuretool.actions.ChangeSiteNodeStateAction" alias="ChangeSiteNodeState">

@@ -144,22 +144,22 @@ public class MoveSiteNodeAction extends InfoGlueAbstractAction
 		this.userSessionKey = userSessionKey;
 	}
 
-    public String doInputV3() throws Exception
-    {		
-        userSessionKey = "" + System.currentTimeMillis();
+	public String doInputV3() throws Exception
+	{
+		userSessionKey = "" + System.currentTimeMillis();
 
 		SiteNodeVO siteNodeVO = SiteNodeControllerProxy.getController().getSiteNodeVOWithId(getSiteNodeId());
-		this.siteNodeName = siteNodeVO.getName();
-		
-        String createSiteNodeInlineOperationDoneHeader = getLocalizedString(getLocale(), "tool.structuretool.moveSiteNodeInlineOperationDoneHeader", siteNodeVO.getName());
+		this.siteNodeName = getLocalizedNameForSiteNode(siteNodeVO, sortLanguageId);
+
+		String createSiteNodeInlineOperationDoneHeader = getLocalizedString(getLocale(), "tool.structuretool.moveSiteNodeInlineOperationDoneHeader", siteNodeVO.getName());
 		String createSiteNodeInlineOperationBackToCurrentPageLinkText = getLocalizedString(getLocale(), "tool.structuretool.moveSiteNodeInlineOperationBackToCurrentPageLinkText");
 		String createSiteNodeInlineOperationBackToCurrentPageTitleText = getLocalizedString(getLocale(), "tool.structuretool.moveSiteNodeInlineOperationBackToCurrentPageTitleText");
 
-	    setActionMessage(userSessionKey, createSiteNodeInlineOperationDoneHeader);
-	    addActionLink(userSessionKey, new LinkBean("currentPageUrl", createSiteNodeInlineOperationBackToCurrentPageLinkText, createSiteNodeInlineOperationBackToCurrentPageTitleText, createSiteNodeInlineOperationBackToCurrentPageTitleText, this.originalAddress, false, ""));
+		setActionMessage(userSessionKey, createSiteNodeInlineOperationDoneHeader);
+		addActionLink(userSessionKey, new LinkBean("currentPageUrl", createSiteNodeInlineOperationBackToCurrentPageLinkText, createSiteNodeInlineOperationBackToCurrentPageTitleText, createSiteNodeInlineOperationBackToCurrentPageTitleText, this.originalAddress, false, ""));
 
 		return "inputV3";
-    }
+	}
 	
     public String doExecute() throws Exception
     {
@@ -177,8 +177,8 @@ public class MoveSiteNodeAction extends InfoGlueAbstractAction
         try
         {
             ceb.throwIfNotEmpty();
-        	
-    		SiteNodeVO siteNodeVO = SiteNodeControllerProxy.getController().getSiteNodeVOWithId(getSiteNodeId());
+
+			this.siteNodeVO = SiteNodeControllerProxy.getController().getSiteNodeVOWithId(getSiteNodeId());
 
     		this.parentSiteNodeId = siteNodeVO.getParentSiteNodeId();
     		logger.info("parentSiteNodeId:" + parentSiteNodeId);
@@ -192,11 +192,13 @@ public class MoveSiteNodeAction extends InfoGlueAbstractAction
             setActionExtraData(userSessionKey, "unrefreshedSiteNodeId", "" + parentSiteNodeId);
             setActionExtraData(userSessionKey, "unrefreshedNodeId", "" + parentSiteNodeId);
             setActionExtraData(userSessionKey, "changeTypeId", "" + this.changeTypeId);
+            setActionExtraData(userSessionKey, "sortLanguageId", "" + this.sortLanguageId);
             //setActionExtraData(userSessionKey, "confirmationMessage", getLocalizedString(getLocale(), "tool.contenttool.siteNodeMoved.confirmation", getSiteNodeVO(newParentSiteNodeId).getName()));
         }
         catch(ConstraintException ce)
-        {
-        	logger.warn("An error occurred so we should not complete the transaction:" + ce);
+		{
+			logger.warn("An error occurred so we should not complete the transaction:" + ce);
+			this.siteNodeName = getLocalizedNameForSiteNode(siteNodeVO, sortLanguageId);
 
 			ce.setResult(INPUT + "V3");
 			throw ce;

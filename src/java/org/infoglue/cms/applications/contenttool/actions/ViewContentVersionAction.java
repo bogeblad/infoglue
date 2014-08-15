@@ -2198,4 +2198,14 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 		}
 	}
 
+	public String getLocalizedContentName() throws Exception
+	{
+		String navigationTitle = ContentController.getContentController().getContentAttribute(this.contentVO.getContentId(), languageId, "NavigationTitle");
+		if (navigationTitle == null || navigationTitle.equals(""))
+		{
+			navigationTitle = this.contentVO.getName();
+		}
+		return navigationTitle;
+	}
+
 }

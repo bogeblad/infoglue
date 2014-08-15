@@ -48,7 +48,7 @@
 
 	<div style="clear: both;"></div>
 	
-	<h3>$ui.getString("tool.structuretool.createSiteNodeHeadline") "$parentSiteNodeVO.name"</h3>
+	<h3>$ui.getString("tool.structuretool.createSiteNodeHeadline") "$this.getLocalizedNameForSiteNode($parentSiteNodeVO, $languageId)"</h3>
 
 	<form name="editForm" method="POST" action="CreateSiteNode!executeV3.action">
 		<div id="tabsContainer" class="flora">      
@@ -98,7 +98,7 @@
 									#if(($attribute.name == "Title" || $attribute.name == "NavigationTitle" || $attribute.name == "NavigationTitle" || $attribute.name == "NiceURIName") && $languageVO.languageId == $languageId)
 										#set($autofill = true)
 									#end
-									<p><span class="attributeTitle">$attributeTitle</span> #if($attributeDescription.trim() != "")<span class="fieldHelp" title="$attributeDescription"></span>#end<br/>
+									<p><span class="attributeTitle">$attributeTitle</span> #if($attributeDescription.trim() != "")<span class="fieldHelp" data-ig-tooltip="$attributeDescription"></span>#end<br/>
 									<input type="text" id="${languageVO.languageCode}_$attribute.name" name="${languageVO.languageCode}_$attribute.name" value="" class="normaltextfield #if($autofill)autofill#end"/></p>
 								#end
 							</div>

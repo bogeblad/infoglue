@@ -85,7 +85,7 @@
 					}
 					else if(position == -1) 
 					{
-						if(window.name.indexOf("TB_iframe") == -1)
+						if(window.name.indexOf("TB_iframe") === -1 && (window.parent && window.parent.name.indexOf("TB_iframe") === -1))
 						{
 	    					//top.refreshTopToolBar('tool.structuretool.siteNodeComponentsHeader', 'tool.structuretool.siteNodeComponentsHeader', 'siteNodeId=$newSiteNodeId&repositoryId=$repositoryId&isBranch=true', $unrefreshedNodeId, $changeTypeId, -1);
 							#if($siteNodeId)

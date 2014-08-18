@@ -1447,6 +1447,7 @@
 	<action name="org.infoglue.cms.applications.publishingtool.actions.ViewPublicationsAction" alias="ViewPublications">
 		<view name="success">/cms/publishingtool/viewPublications.vm</view>
 		<view name="successV3">/cms/publishingtool/v3/viewPublications.vm</view>
+		<view name="successV3Filtered">/cms/publishingtool/v3/viewListPublication.vm</view>
 		<view name="successSystem">/cms/publishingtool/v3/viewSystemPublications.vm</view>
 		<view name="showPublicationDetails">/cms/publishingtool/viewPublicationDetails.vm</view>
 		<view name="showDebugEntityPublication">/cms/publishingtool/viewDebugEntityPublication.vm</view>

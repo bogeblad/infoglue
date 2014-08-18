@@ -1,0 +1,10 @@
+{
+	"sEcho": "$sEcho", 
+	"iTotalRecords": $editionBrowser.totalEditions,
+	"iTotalDisplayRecords": $editionBrowser.totalEditions, 
+	"aaData": [ 
+		#foreach($edition in $editionBrowser.editions)
+		#if($velocityCount > 1),#end["$edition.id", "<a href='javascript:showHide($edition.id);'>$edition.name</a>","$edition.description","$edition.publicationDateTime","$edition.publisher"]
+		#end
+	] 
+}

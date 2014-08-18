@@ -59,6 +59,8 @@ public class ViewPublicationsAction extends InfoGlueAbstractAction
 	private List<String[]> publicationStatusList = new ArrayList<String[]>();
 	private EditionBrowser editionBrowser;
 	private String filter = null;
+	private String sEcho = null;
+	private Integer iDisplayStart = 0;
 	
 	private String entityName = "";
 	private String entityId = "";
@@ -121,7 +123,8 @@ public class ViewPublicationsAction extends InfoGlueAbstractAction
 		repositoryVO		= RepositoryController.getController().getRepositoryVOWithId(repositoryId);
 		publicationEvents	= PublicationController.getPublicationEvents(repositoryId, getInfoGluePrincipal(), filter, true);
 		editionBrowser		= PublicationController.getEditionPage(repositoryId, startIndex);
-					
+		this.repositoryId 	= repositoryVO.getId();
+		
 		return SUCCESS;
 	}
 	
@@ -137,6 +140,18 @@ public class ViewPublicationsAction extends InfoGlueAbstractAction
 		return "showPublicationDetails";
 	}
 
+	/**
+	 * This command shows the items in a earlier publication. It also shows the status reported from all the 
+	 * deliver instances on if the publication was processed or not.
+	 */
+	public String doListFilteredPublication() throws Exception
+	{
+		editionBrowser = PublicationController.getEditionPage(repositoryId, startIndex);
+		
+		return "successV3Filtered";
+	}
+
+	
 	/**
 	 * This command shows the items in a earlier publication. It also shows the status reported from all the 
 	 * deliver instances on if the publication was processed or not.
@@ -258,4 +273,24 @@ public class ViewPublicationsAction extends InfoGlueAbstractAction
 		this.entityId = entityId;
 	}
     
+	public String getsEcho() 
+	{
+		return sEcho;
+	}
+
+	public void setsEcho(String sEcho) 
+	{
+		this.sEcho = sEcho;
+	}
+
+	public Integer getiDisplayStart()
+	{
+		return iDisplayStart;
+	}
+	
+	public void setiDisplayStart(Integer iDisplayStart)
+	{
+		this.iDisplayStart = iDisplayStart;
+		this.startIndex = iDisplayStart;
+	}
 }

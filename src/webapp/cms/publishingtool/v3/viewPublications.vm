@@ -10,7 +10,12 @@
 			$("#tabsContainer").tabs({ show:function() { resizeScrollArea }, select: function(event, ui) { resizeScrollArea(); } });
 
 			#set($extraParameter = '')
+			
 			#initDataTableImpl("dataTable" $extraParameter)
+			
+			#set($ajaxBaseUrl = "ViewPublications!listFilteredPublication.action?repositoryId=$repositoryId")
+			var ajaxBaseUrl = "$ajaxBaseUrl";
+			#set($extraParameter = '"iDisplayLength": 10, "bProcessing": true, "bServerSide": true, "fnServerData": function ( sSource, aoData, fnCallback ) { jQuery.post( sSource, aoData, fnCallback, "json" ); }, "sAjaxSource": ajaxBaseUrl, "aoColumns": [ { "sWidth": "30px" }, null, null, null, null ]')
 			#initDataTableImpl("editions" $extraParameter)
 		});
 	-->
@@ -345,7 +350,8 @@
 						</tr>
 					</thead>
 					<tbody>
-				
+					
+					#*
 					#foreach ($publicationVO in $editionBrowser.editions)
 						<tr>
 							<td><input type="checkbox" name="selPublication" value="$publicationVO.getPublicationId()" /></td>
@@ -357,6 +363,7 @@
 							<td>$publicationVO.publisher</td>
 						</tr>
 					#end
+					*#
 					
 					</tbody>
 				</table>

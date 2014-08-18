@@ -834,7 +834,7 @@
 <!--  Mapping for Repository  -->
   <class name="org.infoglue.cms.entities.management.impl.simple.RepositoryImpl" identity="repositoryId" key-generator="SEQUENCE">
     <description>Repository</description>
-    <cache-type type="unlimited" capacity="1000"/>
+    <cache-type type="none"/>
     <map-to table="cmRepository"/>
     <field name="repositoryId" type="java.lang.Integer">
     	<sql name="repositoryId" type="integer" dirty="check" />
@@ -859,7 +859,7 @@
 <!--  Mapping for RepositoryLanguage  -->
   <class name="org.infoglue.cms.entities.management.impl.simple.RepositoryLanguageImpl" identity="repositoryLanguageId" key-generator="SEQUENCE">
     <description>RepositoryLanguage</description>
-    <cache-type type="unlimited" capacity="1000"/>
+    <cache-type type="none"/>
     <map-to table="cmRepositoryLanguage"/>
     <field name="repositoryLanguageId" type="java.lang.Integer">
       <sql name="repositoryLanguageId" type="integer" dirty="check" />
@@ -881,7 +881,7 @@
 <!--  Mapping for Language  -->
   <class name="org.infoglue.cms.entities.management.impl.simple.LanguageImpl" identity="languageId" key-generator="SEQUENCE">
     <description>Language</description>
-    <cache-type type="unlimited" capacity="1000"/>
+    <cache-type type="none"/>
     <map-to table="cmLanguage"/>
     <field name="languageId" type="java.lang.Integer">
       <sql name="languageId" type="integer" dirty="check" />

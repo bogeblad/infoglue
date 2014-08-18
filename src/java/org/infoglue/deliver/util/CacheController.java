@@ -4177,6 +4177,9 @@ public class CacheController extends Thread
 			if(type.getName().contains(".SiteNodeVersionImpl") || 
 			   type.getName().contains(".MediumSiteNodeVersionImpl") || 
 			   type.getName().contains(".SiteNodeImpl") || 
+			   type.getName().contains(".LanguageImpl") || 
+			   type.getName().contains(".RepositoryImpl") || 
+			   type.getName().contains(".RepositoryLanguageImpl") || 
 			   type.getName().contains(".DigitalAssetImpl") || 
 			   type.getName().contains(".MediumDigitalAssetImpl") || 
 			   type.getName().contains(".ContentVersionImpl") || 
@@ -4269,6 +4272,9 @@ public class CacheController extends Thread
 		if(type.getName().contains(".SiteNodeVersionImpl") || 
 		   type.getName().contains(".MediumSiteNodeVersionImpl") || 
 		   type.getName().contains(".SiteNodeImpl") || 
+		   type.getName().contains(".LanguageImpl") || 
+		   type.getName().contains(".RepositoryImpl") || 
+		   type.getName().contains(".RepositoryLanguageImpl") || 
 		   type.getName().contains(".DigitalAssetImpl") || 
 		   type.getName().contains(".MediumDigitalAssetImpl") || 
 		   type.getName().contains(".ContentVersionImpl") || 
@@ -4322,6 +4328,9 @@ public class CacheController extends Thread
 		if(c.getName().contains(".SiteNodeVersionImpl") || 
 		   c.getName().contains(".MediumSiteNodeVersionImpl") || 
 		   c.getName().contains(".SiteNodeImpl") || 
+		   c.getName().contains(".LanguageImpl") || 
+		   c.getName().contains(".RepositoryImpl") || 
+		   c.getName().contains(".RepositoryLanguageImpl") || 
 		   c.getName().contains(".DigitalAssetImpl") || 
 		   c.getName().contains(".MediumDigitalAssetImpl") || 
 		   c.getName().contains(".ContentVersionImpl") || 

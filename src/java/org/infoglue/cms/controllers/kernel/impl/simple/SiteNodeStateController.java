@@ -575,19 +575,26 @@ public class SiteNodeStateController extends BaseController
 
     private static void copyServiceBindings(MediumSiteNodeVersionImpl originalSiteNodeVersion, MediumSiteNodeVersionImpl newSiteNodeVersion, Database db) throws ConstraintException, SystemException, Exception
 	{
-		Collection serviceBindings = originalSiteNodeVersion.getServiceBindings();	
-		Iterator iterator = serviceBindings.iterator();
-		while(iterator.hasNext())
-		{
-			ServiceBinding serviceBinding = (ServiceBinding)iterator.next();
-			ServiceBindingVO serviceBindingVO = serviceBinding.getValueObject();			
-			ServiceBindingVO newServiceBindingVO = new ServiceBindingVO();
-			newServiceBindingVO.setBindingTypeId(serviceBindingVO.getBindingTypeId());
-			newServiceBindingVO.setName(serviceBindingVO.getName());
-			newServiceBindingVO.setPath(serviceBindingVO.getPath());
-			ServiceBinding newServiceBinding = ServiceBindingController.create(newServiceBindingVO, serviceBinding.getAvailableServiceBinding().getAvailableServiceBindingId(), newSiteNodeVersion.getSiteNodeVersionId(), serviceBinding.getServiceDefinition().getServiceDefinitionId(), db);
-			newSiteNodeVersion.getServiceBindings().add(newServiceBinding);
-			copyQualifyers(serviceBinding, newServiceBinding, db);
+    	try
+    	{
+			Collection serviceBindings = originalSiteNodeVersion.getServiceBindings();	
+			Iterator iterator = serviceBindings.iterator();
+			while(iterator.hasNext())
+			{
+				ServiceBinding serviceBinding = (ServiceBinding)iterator.next();
+				ServiceBindingVO serviceBindingVO = serviceBinding.getValueObject();			
+				ServiceBindingVO newServiceBindingVO = new ServiceBindingVO();
+				newServiceBindingVO.setBindingTypeId(serviceBindingVO.getBindingTypeId());
+				newServiceBindingVO.setName(serviceBindingVO.getName());
+				newServiceBindingVO.setPath(serviceBindingVO.getPath());
+				ServiceBinding newServiceBinding = ServiceBindingController.create(newServiceBindingVO, serviceBinding.getAvailableServiceBinding().getAvailableServiceBindingId(), newSiteNodeVersion.getSiteNodeVersionId(), serviceBinding.getServiceDefinition().getServiceDefinitionId(), db);
+				newSiteNodeVersion.getServiceBindings().add(newServiceBinding);
+				copyQualifyers(serviceBinding, newServiceBinding, db);
+			}
+    	}
+    	catch (Exception e) 
+    	{
+    		logger.warn("The sitenode " + (originalSiteNodeVersion != null ? originalSiteNodeVersion.getSiteNodeId() : "null") + " have an invalid service bindning. Skipping it.");
 		}
 	}	
 

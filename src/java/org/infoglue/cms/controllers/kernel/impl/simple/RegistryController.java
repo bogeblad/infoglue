@@ -491,6 +491,9 @@ public class RegistryController extends BaseController
 		if(c.getName().contains(".SiteNodeVersionImpl") || 
 		   c.getName().contains(".MediumSiteNodeVersionImpl") || 
 		   c.getName().contains(".SiteNodeImpl") || 
+		   c.getName().contains(".LanguageImpl") || 
+		   c.getName().contains(".RepositoryImpl") || 
+		   c.getName().contains(".RepositoryLanguageImpl") || 
 		   c.getName().contains(".DigitalAssetImpl") || 
 		   c.getName().contains(".MediumDigitalAssetImpl") || 
 		   c.getName().contains(".ContentVersionImpl") || 

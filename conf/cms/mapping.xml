@@ -730,7 +730,7 @@
 <!--  Mapping for ServiceBinding  -->
   <class name="org.infoglue.cms.entities.structure.impl.simple.ServiceBindingImpl" identity="serviceBindingId" key-generator="IDENTITY">
     <description>ServiceBinding</description>
-    <cache-type type="unlimited" capacity="10000"/>
+    <cache-type type="none"/>
     <map-to table="cmServiceBinding"/>
     <field name="serviceBindingId" type="java.lang.Integer">
       <sql name="serviceBindingId" type="integer" dirty="check" />
@@ -761,7 +761,7 @@
     <!--  Mapping for SmallServiceBinding  -->
   <class name="org.infoglue.cms.entities.structure.impl.simple.SmallServiceBindingImpl" identity="serviceBindingId" key-generator="IDENTITY">
     <description>ServiceBinding</description>
-    <cache-type type="unlimited" capacity="10000"/>
+    <cache-type type="none"/>
     <map-to table="cmServiceBinding"/>
       <field name="serviceBindingId" type="java.lang.Integer">
       <sql name="serviceBindingId" type="integer" dirty="check" />
@@ -793,7 +793,7 @@
 <!--  Mapping for Qualifyer  -->
   <class name="org.infoglue.cms.entities.structure.impl.simple.QualifyerImpl" depends="org.infoglue.cms.entities.structure.impl.simple.ServiceBindingImpl" identity="qualifyerId" key-generator="IDENTITY">
     <description>Qualifyer</description>
-	<cache-type type="unlimited"/>
+	<cache-type type="none"/>
     <map-to table="cmQualifyer"/>
     <field name="qualifyerId" type="java.lang.Integer">
       <sql name="qualifyerId" type="integer" dirty="check" />
@@ -837,7 +837,7 @@
 <!--  Mapping for Repository  -->
   <class name="org.infoglue.cms.entities.management.impl.simple.RepositoryImpl" identity="repositoryId" key-generator="IDENTITY">
     <description>Repository</description>
-    <cache-type type="unlimited" capacity="1000"/>
+    <cache-type type="none"/>
     <map-to table="cmRepository"/>
     <field name="repositoryId" type="java.lang.Integer">
       	<sql name="repositoryId" type="integer" dirty="check" />
@@ -862,7 +862,7 @@
 <!--  Mapping for RepositoryLanguage  -->
   <class name="org.infoglue.cms.entities.management.impl.simple.RepositoryLanguageImpl" identity="repositoryLanguageId" key-generator="IDENTITY">
     <description>RepositoryLanguage</description>
-    <cache-type type="unlimited" capacity="1000"/>
+    <cache-type type="none"/>
     <map-to table="cmRepositoryLanguage"/>
     <field name="repositoryLanguageId" type="java.lang.Integer">
       <sql name="repositoryLanguageId" type="integer" dirty="check" />
@@ -884,7 +884,7 @@
 <!--  Mapping for Language  -->
   <class name="org.infoglue.cms.entities.management.impl.simple.LanguageImpl" identity="languageId" key-generator="IDENTITY">
     <description>Language</description>
-    <cache-type type="unlimited" capacity="1000"/>
+    <cache-type type="none"/>
     <map-to table="cmLanguage"/>
     <field name="languageId" type="java.lang.Integer">
       <sql name="languageId" type="integer" dirty="check" />
@@ -929,7 +929,7 @@
 <!--  Mapping for AvailableServiceBinding  -->
   <class name="org.infoglue.cms.entities.management.impl.simple.AvailableServiceBindingImpl" identity="availableServiceBindingId" key-generator="IDENTITY">
     <description>AvailableServiceBinding</description>
-    <cache-type type="unlimited" capacity="1000"/>
+    <cache-type type="none"/>
     <map-to table="cmAvailableServiceBinding"/>
       <field name="availableServiceBindingId" type="java.lang.Integer">
       <sql name="availableServiceBindingId" type="integer" dirty="check" />
@@ -968,7 +968,7 @@
 <!--  Mapping for SmallAvailableServiceBinding  -->
   <class name="org.infoglue.cms.entities.management.impl.simple.SmallAvailableServiceBindingImpl" identity="availableServiceBindingId" key-generator="IDENTITY">
     <description>AvailableServiceBinding</description>
-    <cache-type type="unlimited" capacity="1000"/>
+    <cache-type type="none"/>
     <map-to table="cmAvailableServiceBinding"/>
       <field name="availableServiceBindingId" type="java.lang.Integer">
       <sql name="availableServiceBindingId" type="integer" dirty="check" />

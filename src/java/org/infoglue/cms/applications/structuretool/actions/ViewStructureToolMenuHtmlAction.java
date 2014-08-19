@@ -26,6 +26,8 @@ package org.infoglue.cms.applications.structuretool.actions;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.TreeViewAbstractAction;
 import org.infoglue.cms.applications.contenttool.actions.CreateContentAction;
+import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
+import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.treeservice.ss.SiteNodeNodeSupplier;
@@ -45,9 +47,12 @@ public class ViewStructureToolMenuHtmlAction extends TreeViewAbstractAction
 	private String treeMode = "classic";
 	private BaseNode rootNode = null; 
     private Integer sortLanguageId;
-
+    private boolean binding = false;
+    
 	public String doBindingView() throws Exception
 	{
+		setBinding(true);
+		
 		super.doExecute();
         
 		return "bindingView";
@@ -55,11 +60,30 @@ public class ViewStructureToolMenuHtmlAction extends TreeViewAbstractAction
 
 	public String doBindingViewV3() throws Exception
 	{
+		setBinding(true);
+
 		super.doExecute();
         
 		return "bindingViewV3";
 	}
 
+	@Override
+	public String doExecute() throws Exception
+	{
+		setBinding(false);
+
+		return super.doExecute();
+	}
+
+	@Override
+	public String doV3() throws Exception
+	{
+		setBinding(false);
+
+		return super.doV3();       
+	}
+
+	
 	/**
 	 * @see org.infoglue.cms.applications.common.actions.TreeViewAbstractAction#getNodeSupplier()
 	 */
@@ -68,11 +92,25 @@ public class ViewStructureToolMenuHtmlAction extends TreeViewAbstractAction
 		if(getRepositoryId() == null  || getRepositoryId().intValue() < 1)
 			this.repositoryId = super.getRepositoryId();
 
-		String treeMode = CmsPropertyHandler.getTreeMode(); 
-		if(treeMode != null) setTreeMode(treeMode);
-		SiteNodeNodeSupplier sup = new SiteNodeNodeSupplier(getRepositoryId(), this.getInfoGluePrincipal(), sortLanguageId);
-		rootNode = sup.getRootNode();
-	    return sup;
+		// Check if this user really has access to this repository
+		String interceptionPointName = isBinding() ? "Repository.ReadForBinding" : "Repository.Read";
+		AccessRightController accessController = AccessRightController.getController();
+		boolean hasAccess = accessController.getIsPrincipalAuthorized(CastorDatabaseService.getDatabase(), 
+		                                                              getInfoGluePrincipal(), 
+		                                                              interceptionPointName, 
+		                                                              getRepositoryId().toString());
+
+		if (hasAccess) {
+			String treeMode = CmsPropertyHandler.getTreeMode(); 
+			if(treeMode != null) {
+				setTreeMode(treeMode);
+			}
+			SiteNodeNodeSupplier sup = new SiteNodeNodeSupplier(getRepositoryId(), this.getInfoGluePrincipal(), sortLanguageId);
+			rootNode = sup.getRootNode();
+			return sup;
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -138,5 +176,19 @@ public class ViewStructureToolMenuHtmlAction extends TreeViewAbstractAction
 	public void setSortLanguageId(Integer sortLanguageId)
 	{
 		this.sortLanguageId = sortLanguageId;
+	}
+
+	/** 
+			Returns true if this is a binding action.
+	*/
+	public boolean isBinding() {
+		return binding;
+	}
+
+	/** 
+			Set if this is a binding action.
+	*/
+	public void setBinding(boolean binding) {
+		this.binding = binding;
 	}
 }

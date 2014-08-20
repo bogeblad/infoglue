@@ -1415,7 +1415,18 @@ public class CmsPropertyHandler
 		
 		return skipResultDialogIfPossible;
 	}
-
+	
+	public static boolean getEnableIfModifiedHeaders()
+	{
+		String enableIfModifiedHeaders = getServerNodeProperty("enableIfModifiedHeaders", true, "true");
+		boolean enableIfModifiedHeadersBool = true;
+	
+		if (enableIfModifiedHeaders.equalsIgnoreCase("false")) {
+			enableIfModifiedHeadersBool = false;
+		}
+		return enableIfModifiedHeadersBool;
+	}
+	
 	public static Boolean getUseHashCodeInCaches()
 	{
 		return getUseHashCodeInCaches(false);

@@ -1340,18 +1340,7 @@ public class CmsPropertyHandler
 	{
 	    return getServerNodeProperty("liveDeliverRequestTimeout", true, "60000");
 	}
-	
-	public static boolean getEnableIfModifiedHeaders()
-	{
-		String enableIfModifiedHeaders = getServerNodeProperty("enableIfModifiedHeaders", true, "true");
-		boolean enableIfModifiedHeadersBool = true;
-		
-		if (enableIfModifiedHeaders.equalsIgnoreCase("false")) {
-			enableIfModifiedHeadersBool = false;
-		}
-		return enableIfModifiedHeadersBool;
-	}
-	
+
 	public static boolean getKillLiveRequestWhichTimedout()
 	{
 		boolean killLiveRequestWhichTimedout = false;

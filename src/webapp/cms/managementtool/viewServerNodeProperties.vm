@@ -230,7 +230,6 @@
 				#editPropertyFieldCSS("ServerNode.property.siteNodesToRecacheOnPublishing" "siteNodesToRecacheOnPublishing" "$this.getPropertyValue('siteNodesToRecacheOnPublishing')" "51" "$!serverNodeId" "$!cmsPH.siteNodesToRecacheOnPublishing")
 				#editPropertyFieldCSS("ServerNode.property.recachePublishingMethod" "recachePublishingMethod" "$this.getPropertyValue('recachePublishingMethod')" "51" "$!serverNodeId" "$!cmsPH.recachePublishingMethod")
 				#editPropertyFieldCSS("ServerNode.property.recacheUrl" "recacheUrl" "$this.getPropertyValue('recacheUrl')" "51" "$!serverNodeId" "$!cmsPH.recacheUrl")
-				#yesNoDropDownWithInheritCSS("ServerNode.property.enableIfModifiedHeaders" "enableIfModifiedHeaders" "$this.getPropertyValue('enableIfModifiedHeaders')" "$!cmsPH.enableIfModifiedHeaders")
 			</div>
 		
 			<div class="inlineTabDiv" id="cmsConnection">

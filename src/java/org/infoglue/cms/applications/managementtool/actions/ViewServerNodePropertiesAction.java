@@ -141,6 +141,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "recacheUrl");
 	    populate(ps, "useUpdateSecurity");
 	    populate(ps, "allowXForwardedIPCheck");
+	    populate(ps, "enableIfModifiedHeaders");
 	    
 	    populate(ps, "allowedAdminIP");
 	    String allowedAdminIP = this.getRequest().getParameter("allowedAdminIP");

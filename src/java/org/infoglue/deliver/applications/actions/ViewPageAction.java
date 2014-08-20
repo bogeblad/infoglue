@@ -161,7 +161,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 	private static boolean memoryWarningSent = false;
 	
 	private static Random random = new Random();
-
+	private boolean enableIfModifiedHeaders = CmsPropertyHandler.getEnableIfModifiedHeaders();
 	
 	/**
 	 * The constructor for this action - contains nothing right now.
@@ -279,7 +279,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 					isUserRedirected = authenticateUser(dbWrapper.getDatabase());
 				}
 			}
-
+			
 			if(!isUserRedirected)
 			{
 				if(logger.isInfoEnabled())
@@ -443,49 +443,52 @@ public class ViewPageAction extends InfoGlueAbstractAction
 				
 				boolean skipRender = false;
 				PageDeliveryMetaDataVO pdmd = null;
-				try
-				{
-					boolean isIfModifiedLogic = getIsIfModifiedLogicValid(deliveryContext, templateController.getPrincipal(), true); 
-					logger.info("isIfModifiedLogic:" + isIfModifiedLogic);
-					if(isIfModifiedLogic)
+				
+				/*Determine through the application setting if to use the header cache or not*/
+				if (enableIfModifiedHeaders) {
+					try
 					{
-						String ifModifiedSince = this.getRequest().getHeader("If-Modified-Since");
-						logger.info("ifModifiedSince:" + ifModifiedSince);
-						//System.out.println("pageKey:" + pageKey);
-						if(ifModifiedSince != null && !ifModifiedSince.equals(""))
+						boolean isIfModifiedLogic = getIsIfModifiedLogicValid(deliveryContext, templateController.getPrincipal(), true); 
+						logger.info("isIfModifiedLogic:" + isIfModifiedLogic);
+						if(isIfModifiedLogic)
 						{
-							pdmd = PageDeliveryMetaDataController.getController().getPageDeliveryMetaDataVO(dbWrapper.getDatabase(), this.siteNodeId, this.languageId, this.contentId);
-							logger.info("pdmd A:" + (pdmd == null ? "null" : pdmd.getId()));
-							if(pdmd != null && pdmd.getLastModifiedDateTime() != null)
+							String ifModifiedSince = this.getRequest().getHeader("If-Modified-Since");
+							logger.info("ifModifiedSince:" + ifModifiedSince);
+							//System.out.println("pageKey:" + pageKey);
+							if(ifModifiedSince != null && !ifModifiedSince.equals(""))
 							{
-								logger.info("pdmd getLastModifiedTimeout:" + pdmd.getLastModifiedTimeout());
-								logger.info("System.currentTimeMillis:" + System.currentTimeMillis());
-								long diff = System.currentTimeMillis() - (pdmd.getLastModifiedTimeout() != null ? pdmd.getLastModifiedTimeout().getTime() : 0);
-								logger.info("diff:" + diff);
-								if(diff < 0 || pdmd.getLastModifiedTimeout() == null)
+								pdmd = PageDeliveryMetaDataController.getController().getPageDeliveryMetaDataVO(dbWrapper.getDatabase(), this.siteNodeId, this.languageId, this.contentId);
+								logger.info("pdmd A:" + (pdmd == null ? "null" : pdmd.getId()));
+								if(pdmd != null && pdmd.getLastModifiedDateTime() != null)
 								{
-									Date ifModifiedSinceDate = HTTP_DATE_FORMAT.parse( ifModifiedSince );
-									logger.info("pdmd B:" + pdmd.getId() + ":" + pdmd.getLastModifiedDateTime());
-									logger.info("*************\nCompares:" + pdmd.getLastModifiedDateTime() + "=" + ifModifiedSinceDate);
-									logger.info("pdmd.getLastModifiedTimeout():" + pdmd.getLastModifiedTimeout());
-									if(ifModifiedSinceDate.getTime() >= pdmd.getLastModifiedDateTime().getTime() - 1000)
+									logger.info("pdmd getLastModifiedTimeout:" + pdmd.getLastModifiedTimeout());
+									logger.info("System.currentTimeMillis:" + System.currentTimeMillis());
+									long diff = System.currentTimeMillis() - (pdmd.getLastModifiedTimeout() != null ? pdmd.getLastModifiedTimeout().getTime() : 0);
+									logger.info("diff:" + diff);
+									if(diff < 0 || pdmd.getLastModifiedTimeout() == null)
 									{
-										logger.info("Returning NOT_MODIFIED");
-										this.getResponse().setStatus( HttpServletResponse.SC_NOT_MODIFIED );
-										pageTimer.printElapsedTime("Delivered NOT MODIFIED IN", 50);
-										skipRender = true;
-										return NONE;
+										Date ifModifiedSinceDate = HTTP_DATE_FORMAT.parse( ifModifiedSince );
+										logger.info("pdmd B:" + pdmd.getId() + ":" + pdmd.getLastModifiedDateTime());
+										logger.info("*************\nCompares:" + pdmd.getLastModifiedDateTime() + "=" + ifModifiedSinceDate);
+										logger.info("pdmd.getLastModifiedTimeout():" + pdmd.getLastModifiedTimeout());
+										if(ifModifiedSinceDate.getTime() >= pdmd.getLastModifiedDateTime().getTime() - 1000)
+										{
+											logger.info("Returning NOT_MODIFIED");
+											this.getResponse().setStatus( HttpServletResponse.SC_NOT_MODIFIED );
+											pageTimer.printElapsedTime("Delivered NOT MODIFIED IN", 50);
+											skipRender = true;
+											return NONE;
+										}
 									}
 								}
 							}
 						}
 					}
+					catch (Exception e) 
+					{
+						e.printStackTrace();
+					}
 				}
-				catch (Exception e) 
-				{
-					e.printStackTrace();
-				}
-				
 				logger.info("skipRender:" + skipRender);
 				if(!skipRender)
 				{
@@ -504,7 +507,8 @@ public class ViewPageAction extends InfoGlueAbstractAction
 						boolean isIfModifiedLogic = getIsIfModifiedLogicValid(deliveryContext, templateController.getPrincipal(), false); 
 						logger.info("isIfModifiedLogic 2:" + isIfModifiedLogic);
 						logger.info("deliveryContext.getLastModifiedDateTime():" + deliveryContext.getLastModifiedDateTime());
-						if(isCachedResponse && pdmd == null && isIfModifiedLogic)
+						
+						if(isCachedResponse && pdmd == null && isIfModifiedLogic && enableIfModifiedHeaders)
 							pdmd = PageDeliveryMetaDataController.getController().getPageDeliveryMetaDataVO(dbWrapper.getDatabase(), this.siteNodeId, this.languageId, this.contentId);
 						
 						

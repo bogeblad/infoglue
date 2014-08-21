@@ -28,6 +28,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.TreeViewAbstractAction;
+import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
+import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryLanguageController;
@@ -53,7 +55,8 @@ public class ViewContentToolMenuHtmlAction extends TreeViewAbstractAction
 	private BaseNode rootNode = null;
 	private String[] allowedContentTypeIds = null;
 	private String bodyClass;
-		
+  private boolean binding = false;
+
 	/* Experiment 2003-09-11 TODO:
 	 * Provide a list of content-type definition, so that
 	 * we can populate a contenxt menu, to support the
@@ -64,6 +67,8 @@ public class ViewContentToolMenuHtmlAction extends TreeViewAbstractAction
 	
 	public String doBindingView() throws Exception
 	{
+		setBinding(true);
+		
 		super.doExecute();
         
 		return "bindingView";
@@ -71,9 +76,27 @@ public class ViewContentToolMenuHtmlAction extends TreeViewAbstractAction
 
 	public String doBindingViewV3() throws Exception
 	{
+		setBinding(true);
+
 		super.doExecute();
         
 		return "bindingViewV3";
+	}
+
+	@Override
+	public String doExecute() throws Exception
+	{
+		setBinding(false);
+
+		return super.doExecute();
+	}
+
+	@Override
+	public String doV3() throws Exception
+	{
+		setBinding(false);
+
+		return super.doV3();       
 	}
 
 	/**
@@ -81,19 +104,31 @@ public class ViewContentToolMenuHtmlAction extends TreeViewAbstractAction
 	 */
 	protected INodeSupplier getNodeSupplier() throws Exception, org.infoglue.cms.exception.SystemException
 	{
-		if(getRepositoryId() == null  || getRepositoryId().intValue() < 1)
+		if (getRepositoryId() == null  || getRepositoryId().intValue() < 1)
+		{
 			return null;
-				
-		if (this.showVersions == null || this.showVersions.equals("")) 
-		{
-			this.showVersions = (String)getRequest().getSession().getAttribute("htmlTreeShowVersions");
-		} 
-		else 
-		{
-			getRequest().getSession().setAttribute("htmlTreeShowVersions", this.showVersions);
 		}
 		
-		/*		
+		// Check if this user really has access to this repository
+		String interceptionPointName = isBinding() ? "Repository.ReadForBinding" : "Repository.Read";
+		AccessRightController accessController = AccessRightController.getController();
+		boolean hasAccess = accessController.getIsPrincipalAuthorized(CastorDatabaseService.getDatabase(), 
+		                                                              getInfoGluePrincipal(), 
+		                                                              interceptionPointName, 
+		                                                              getRepositoryId().toString());
+		
+		if (hasAccess)
+		{
+			if (this.showVersions == null || this.showVersions.equals("")) 
+			{
+				this.showVersions = (String)getRequest().getSession().getAttribute("htmlTreeShowVersions");
+			} 
+			else 
+			{
+				getRequest().getSession().setAttribute("htmlTreeShowVersions", this.showVersions);
+			}
+			
+			/*		
 		Cookie[] cookies = getRequest().getCookies();
 	    if(cookies != null)
 			for (int i=0; i < cookies.length; i++)
@@ -103,27 +138,34 @@ public class ViewContentToolMenuHtmlAction extends TreeViewAbstractAction
 						setShowVersions("yes");
 						return new ContentNodeVersionSupplier(getRepositoryId(), this.getInfoGluePrincipal().getName());
 					}
-					*/		
-		
-		INodeSupplier sup = null;
-		if (this.showVersions != null && this.showVersions.equalsIgnoreCase("yes")) 
+			 */		
+			
+			INodeSupplier sup = null;
+			if (this.showVersions != null && this.showVersions.equalsIgnoreCase("yes")) 
+			{
+				sup = new ContentNodeVersionSupplier(getRepositoryId(), this.getInfoGluePrincipal().getName());
+			} 
+			else 
+			{
+				ContentNodeSupplier contentNodeSupplier = new ContentNodeSupplier(getRepositoryId(), this.getInfoGluePrincipal());
+				contentNodeSupplier.setShowLeafs(showLeafs.compareTo("yes")==0);
+				contentNodeSupplier.setAllowedContentTypeIds(allowedContentTypeIds);
+				sup = contentNodeSupplier;
+			}
+			
+			String treeMode = CmsPropertyHandler.getTreeMode(); 
+			if(treeMode != null) 
+			{
+				setTreeMode(treeMode);
+			}
+			
+			rootNode = sup.getRootNode();
+			return sup;
+		} 
+		else
 		{
-			sup = new ContentNodeVersionSupplier(getRepositoryId(), this.getInfoGluePrincipal().getName());
-        } 
-		else 
-		{
-			ContentNodeSupplier contentNodeSupplier = new ContentNodeSupplier(getRepositoryId(), this.getInfoGluePrincipal());
-			contentNodeSupplier.setShowLeafs(showLeafs.compareTo("yes")==0);
-			contentNodeSupplier.setAllowedContentTypeIds(allowedContentTypeIds);
-			sup = contentNodeSupplier;
-        }
-		
-		String treeMode = CmsPropertyHandler.getTreeMode(); 
-		if(treeMode != null) setTreeMode(treeMode);
-		
-
-		rootNode = sup.getRootNode();
-		return sup;
+			return null;
+		}
 	}
 
 	public List getAvailableLanguages() throws Exception
@@ -277,5 +319,21 @@ public class ViewContentToolMenuHtmlAction extends TreeViewAbstractAction
     public void setBodyClass(String bodyClass)
     {
         this.bodyClass = bodyClass;
+    }
+
+    /** 
+				Returns true if this is a binding action.
+    */
+    public boolean isBinding()
+    {
+    	return binding;
+    }
+    
+    /** 
+				Set if this is a binding action.
+     */
+    public void setBinding(boolean binding)
+    {
+    	this.binding = binding;
     }
 }

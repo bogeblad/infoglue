@@ -607,7 +607,7 @@
 						<input type="hidden" name="parameters" value="$extraParameters">
 						<input type="hidden" name="accessRightId" value="$accessRightId">
 						<input type="hidden" name="interceptionPointId" value="$interceptionPointVO.id">
-						<input type="hidden" name="returnAddress" value="$returnAddress">
+						<input type="hidden" name="returnAddress" value="$unencodedCurrentUrl">
 
 						<div id="menutoolbar">
 							<div id="menutoolbarLeft" style="position: absolute; z-index: 1005; padding-left: 4px; padding-top: 2px;">

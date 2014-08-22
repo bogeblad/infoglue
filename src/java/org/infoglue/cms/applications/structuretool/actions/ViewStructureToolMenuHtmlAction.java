@@ -25,10 +25,6 @@ package org.infoglue.cms.applications.structuretool.actions;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.TreeViewAbstractAction;
-import org.infoglue.cms.applications.contenttool.actions.CreateContentAction;
-import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
-import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
-import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.treeservice.ss.SiteNodeNodeSupplier;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -89,18 +85,16 @@ public class ViewStructureToolMenuHtmlAction extends TreeViewAbstractAction
 	 */
 	protected INodeSupplier getNodeSupplier() throws Exception, SystemException
 	{
-		if(getRepositoryId() == null  || getRepositoryId().intValue() < 1)
+		String interceptionPointName = isBinding() ? "Repository.ReadForBinding" : "Repository.Read";
+
+		if(getRepositoryId() == null  || getRepositoryId().intValue() < 1) 
+		{
 			this.repositoryId = super.getRepositoryId();
+		}
 
 		// Check if this user really has access to this repository
-		String interceptionPointName = isBinding() ? "Repository.ReadForBinding" : "Repository.Read";
-		AccessRightController accessController = AccessRightController.getController();
-		boolean hasAccess = accessController.getIsPrincipalAuthorized(CastorDatabaseService.getDatabase(), 
-		                                                              getInfoGluePrincipal(), 
-		                                                              interceptionPointName, 
-		                                                              getRepositoryId().toString());
-
-		if (hasAccess) {
+		if (hasAccessTo(interceptionPointName, getRepositoryId().toString()))
+		{
 			String treeMode = CmsPropertyHandler.getTreeMode(); 
 			if(treeMode != null) {
 				setTreeMode(treeMode);
@@ -108,7 +102,9 @@ public class ViewStructureToolMenuHtmlAction extends TreeViewAbstractAction
 			SiteNodeNodeSupplier sup = new SiteNodeNodeSupplier(getRepositoryId(), this.getInfoGluePrincipal(), sortLanguageId);
 			rootNode = sup.getRootNode();
 			return sup;
-		} else {
+		}
+		else
+		{
 			return null;
 		}
 	}

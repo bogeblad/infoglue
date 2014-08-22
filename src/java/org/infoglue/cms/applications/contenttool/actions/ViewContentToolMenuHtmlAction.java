@@ -28,8 +28,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.TreeViewAbstractAction;
-import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
-import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryLanguageController;
@@ -104,20 +102,15 @@ public class ViewContentToolMenuHtmlAction extends TreeViewAbstractAction
 	 */
 	protected INodeSupplier getNodeSupplier() throws Exception, org.infoglue.cms.exception.SystemException
 	{
+		String interceptionPointName = isBinding() ? "Repository.ReadForBinding" : "Repository.Read";
+		
 		if (getRepositoryId() == null  || getRepositoryId().intValue() < 1)
 		{
 			return null;
 		}
-		
+
 		// Check if this user really has access to this repository
-		String interceptionPointName = isBinding() ? "Repository.ReadForBinding" : "Repository.Read";
-		AccessRightController accessController = AccessRightController.getController();
-		boolean hasAccess = accessController.getIsPrincipalAuthorized(CastorDatabaseService.getDatabase(), 
-		                                                              getInfoGluePrincipal(), 
-		                                                              interceptionPointName, 
-		                                                              getRepositoryId().toString());
-		
-		if (hasAccess)
+		if (hasAccessTo(interceptionPointName, getRepositoryId().toString()))
 		{
 			if (this.showVersions == null || this.showVersions.equals("")) 
 			{

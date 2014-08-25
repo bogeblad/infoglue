@@ -142,8 +142,7 @@ public class MoveDigitalAssetAction extends InfoGlueAbstractAction
 		{
 			ceb.throwIfNotEmpty();
 			ContentControllerProxy.getController().acMoveDigitalAsset(this.getInfoGluePrincipal(), this.getDigitalAssetId(), this.getContentId(), this.fixReferences);
-			String successAction = "(parent.refreshView || parent.parent.refreshView)('contentVersionAssets');";
-			successAction += "closeDialog();";
+			String successAction = "(\"refreshAll\" in parent ? parent.refreshAll() : parent.location.reload());";
 			addActionLinkFirst(userSessionKey, new LinkBean("parent.parent.refreshView('contentVersionAssets');", "", "", "", successAction, true, ""));
 			setActionExtraData(userSessionKey, "confirmationMessage", getLocalizedString(getLocale(), "tool.contenttool.assetMoved.confirmation", getContentVO(this.getContentId()).getName()));
 		}

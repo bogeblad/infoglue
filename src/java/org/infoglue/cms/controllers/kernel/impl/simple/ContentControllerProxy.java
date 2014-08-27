@@ -176,18 +176,18 @@ public class ContentControllerProxy extends ContentController
 
     
 	/**
-	 * This method returns a list of content-objects after checking that it is accessable by the given user
+	 * This method returns a list of content-objects after checking that it is accessible by the given user
 	 */
 		
-    public List getACContentVOList(InfoGluePrincipal infoGluePrincipal, HashMap argumentHashMap) throws SystemException, Bug
-    {
-    	List contents = null;
-    	
-    	String method = (String)argumentHashMap.get("method");
-    	logger.info("method:" + method);
-    	
-    	if(method.equalsIgnoreCase("selectContentListOnIdList"))
-    	{
+	public List<ContentVO> getACContentVOList(InfoGluePrincipal infoGluePrincipal, HashMap argumentHashMap) throws SystemException, Bug
+	{
+		List<ContentVO> contents = null;
+
+		String method = (String)argumentHashMap.get("method");
+		logger.info("method:" + method);
+
+		if(method.equalsIgnoreCase("selectContentListOnIdList"))
+		{
 			contents = new ArrayList();
 			List arguments = (List)argumentHashMap.get("arguments");
 			logger.info("Arguments:" + arguments.size());  
@@ -207,34 +207,33 @@ public class ContentControllerProxy extends ContentController
 				    e.printStackTrace();
 				}
 			}
-    	}
-        else if(method.equalsIgnoreCase("selectListOnContentTypeName"))
-    	{
-			List arguments = (List)argumentHashMap.get("arguments");
-			logger.info("Arguments:" + arguments.size());   		
+		}
+		else if(method.equalsIgnoreCase("selectListOnContentTypeName"))
+		{
+			@SuppressWarnings("unchecked")
+			List<HashMap<String, Object>> arguments = (List<HashMap<String, Object>>)argumentHashMap.get("arguments");
+			logger.info("Arguments for 'selectListOnContentTypeName': " + arguments.size());
 			contents = getContentVOListByContentTypeNames(arguments);
-			Iterator contentIterator = contents.iterator();
+			Iterator<ContentVO> contentIterator = contents.iterator();
 			while(contentIterator.hasNext())
 			{
-			    ContentVO candidateContentVO = (ContentVO)contentIterator.next();
-			    
-		    	Map hashMap = new HashMap();
-		    	hashMap.put("contentId", candidateContentVO.getContentId());
-		    	
-		    	try
-		    	{
-		    	    intercept(hashMap, "Content.Read", infoGluePrincipal, false);
-		    	}
-		    	catch(Exception e)
-		    	{
-		    		logger.info("Was not authorized to look at task...");
-		    	    contentIterator.remove();
-		    	}
+				ContentVO candidateContentVO = (ContentVO)contentIterator.next();
+				Map<String, Integer> hashMap = new HashMap<String, Integer>();
+				hashMap.put("contentId", candidateContentVO.getContentId());
+				try
+				{
+					intercept(hashMap, "Content.Read", infoGluePrincipal, false);
+				}
+				catch(Exception e)
+				{
+					logger.debug("User <" + infoGluePrincipal.getName() + "> was not authorized to look at task with Content-id: " + candidateContentVO.getContentId());
+					contentIterator.remove();
+				}
 			}
-    	}
-        return contents;
-    }
-    
+		}
+		return contents;
+	}
+
 	/**
 	 * This method finishes up what the create content wizard has resulted after first checking that the user has rights to complete the action.
 	 */

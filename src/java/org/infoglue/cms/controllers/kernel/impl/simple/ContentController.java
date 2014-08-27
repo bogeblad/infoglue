@@ -1621,61 +1621,52 @@ public class ContentController extends BaseController
     
 
 	/**
-	 * The input is a list of hashmaps.
+	 * The input is a list of <em>HashMap</em>s. Each <em>HashMap</em> must contain the key <em>contentTypeDefinitionName</em>.
 	 */
-	
-	protected List getContentVOListByContentTypeNames(List arguments) throws SystemException, Bug
+	protected List<ContentVO> getContentVOListByContentTypeNames(List<HashMap<String, Object>> arguments) throws SystemException, Bug
 	{
 		Database db = CastorDatabaseService.getDatabase();
-	
-		List contents = new ArrayList();
-		
-        beginTransaction(db);
+		List<ContentVO> contents = new ArrayList<ContentVO>();
+		beginTransaction(db);
+		try
+		{
+			Iterator<HashMap<String, Object>> i = arguments.iterator();
+			while(i.hasNext())
+			{
+				HashMap<String, Object> argument = i.next();
+				String contentTypeDefinitionName = (String)argument.get("contentTypeDefinitionName");
+				ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(contentTypeDefinitionName, db);
 
-        try
-        {
-			Iterator i = arguments.iterator();
-	    	while(i.hasNext())
-	    	{
-		        HashMap argument = (HashMap)i.next();
-	    		String contentTypeDefinitionName = (String)argument.get("contentTypeDefinitionName");
-	    		ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(contentTypeDefinitionName, db);
-	    		
-				//OQLQuery oql = db.getOQLQuery("CALL SQL SELECT c.contentId, c.name, c.publishDateTime, c.expireDateTime, c.isBranch, c.isProtected, c.creator, ctd.contentTypeDefinitionId, r.repositoryId FROM cmContent c, cmContentTypeDefinition ctd, cmRepository r where c.repositoryId = r.repositoryId AND c.contentTypeDefinitionId = ctd.contentTypeDefinitionId AND ctd.name = $1 AS org.infoglue.cms.entities.content.impl.simple.SmallContentImpl");
-				//OQLQuery oql = db.getOQLQuery("CALL SQL SELECT contentId, name FROM cmContent c, cmContentTypeDefinition ctd WHERE c.contentTypeDefinitionId = ctd.contentTypeDefinitionId AND ctd.name = $1 AS org.infoglue.cms.entities.content.impl.simple.ContentImpl");
-	    		OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.content.impl.simple.MediumContentImpl c WHERE c.contentTypeDefinitionId = $1 ORDER BY c.contentId");
-	        	oql.bind(ctdVO.getId());
-	        	
-	        	QueryResults results = oql.execute(Database.ReadOnly);
-				
+				OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.content.impl.simple.MediumContentImpl c WHERE c.contentTypeDefinitionId = $1 AND c.isDeleted = $2 ORDER BY c.contentId");
+				oql.bind(ctdVO.getId());
+				oql.bind(0);
+
+				QueryResults results = oql.execute(Database.ReadOnly);
 				while(results.hasMore()) 
-	            {
-	            	MediumContentImpl content = (MediumContentImpl)results.next();
+				{
+					MediumContentImpl content = (MediumContentImpl)results.next();
 					contents.add(content.getValueObject());
-	            }
-				
+				}
 				results.close();
 				oql.close();
-		   	}
-            
-            commitTransaction(db);
-        }
-        catch(Exception e)
-        {
-			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
-			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
-            rollbackTransaction(db);
-            throw new SystemException(e.getMessage());
-        }
+			}
+			commitTransaction(db);
+		}
+		catch(Exception e)
+		{
+			logger.error("An error occurred so we should not complete the transaction. Message: " + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction.", e);
+			rollbackTransaction(db);
+			throw new SystemException(e.getMessage());
+		}
 		
-		return contents;    	
+		return contents;
 	}
 	
 	
 	/**
 	 * The input is a list of hashmaps.
 	 */
-	
 	protected List getContentVOListByContentTypeNames(List arguments, Database db) throws SystemException, Exception
 	{
 		List contents = new ArrayList();

@@ -162,7 +162,6 @@ public class ViewPageAction extends InfoGlueAbstractAction
 	
 	private static Random random = new Random();
 
-	private boolean enableIfModifiedHeaders = CmsPropertyHandler.getEnableIfModifiedHeaders();
 	
 	/**
 	 * The constructor for this action - contains nothing right now.
@@ -441,15 +440,16 @@ public class ViewPageAction extends InfoGlueAbstractAction
 				deliveryContext.setHttpServletRequest(this.getRequest());
 				deliveryContext.setHttpServletResponse(this.getResponse());
 				deliveryContext.setUseFullUrl(Boolean.parseBoolean(CmsPropertyHandler.getUseDNSNameInURI()));
+				boolean enableIfModifiedHeaders = CmsPropertyHandler.getEnableIfModifiedHeaders();
 				
 				boolean skipRender = false;
 				PageDeliveryMetaDataVO pdmd = null;
-				
+
 				if (enableIfModifiedHeaders) {
 					try
 					{
 						boolean isIfModifiedLogic = getIsIfModifiedLogicValid(deliveryContext, templateController.getPrincipal(), true); 
-						logger.info("isIfModifiedLogic:" + isIfModifiedLogic);
+						logger.info("enableIfModifiedHeaders state is:" + enableIfModifiedHeaders);
 						if(isIfModifiedLogic)
 						{
 							String ifModifiedSince = this.getRequest().getHeader("If-Modified-Since");
@@ -508,9 +508,12 @@ public class ViewPageAction extends InfoGlueAbstractAction
 						boolean isIfModifiedLogic = getIsIfModifiedLogicValid(deliveryContext, templateController.getPrincipal(), false); 
 						logger.info("isIfModifiedLogic 2:" + isIfModifiedLogic);
 						logger.info("deliveryContext.getLastModifiedDateTime():" + deliveryContext.getLastModifiedDateTime());
-						if(isCachedResponse && pdmd == null && isIfModifiedLogic && enableIfModifiedHeaders)
-							pdmd = PageDeliveryMetaDataController.getController().getPageDeliveryMetaDataVO(dbWrapper.getDatabase(), this.siteNodeId, this.languageId, this.contentId);
 						
+						/*Fetching meta info data*/
+						if(isCachedResponse && pdmd == null && isIfModifiedLogic && enableIfModifiedHeaders) {
+							logger.info("enableIfModifiedHeaders state is:" + enableIfModifiedHeaders);
+							pdmd = PageDeliveryMetaDataController.getController().getPageDeliveryMetaDataVO(dbWrapper.getDatabase(), this.siteNodeId, this.languageId, this.contentId);
+						}
 						
 						if(pdmd != null)
 							logger.info("pdmd():" + pdmd.getLastModifiedDateTime());
@@ -584,8 +587,11 @@ public class ViewPageAction extends InfoGlueAbstractAction
 									logger.info("AAAAAAAAAAAAAAAAAAAAA: " + deliveryContext.getPageCacheTimeout());
 
 								pageDeliveryMetaDataVO.setUsedEntities(allUsedEntitiesAsString);
-								PageDeliveryMetaDataController.getController().deletePageDeliveryMetaData(dbWrapper.getDatabase(), pageDeliveryMetaDataVO.getSiteNodeId(), null);
-								PageDeliveryMetaDataController.getController().create(dbWrapper.getDatabase(), pageDeliveryMetaDataVO, entitiesCollection);
+								
+								if (enableIfModifiedHeaders) {
+									PageDeliveryMetaDataController.getController().deletePageDeliveryMetaData(dbWrapper.getDatabase(), pageDeliveryMetaDataVO.getSiteNodeId(), null);
+									PageDeliveryMetaDataController.getController().create(dbWrapper.getDatabase(), pageDeliveryMetaDataVO, entitiesCollection);
+								}
 								
 								String key = "" + pageDeliveryMetaDataVO.getSiteNodeId() + "_" + pageDeliveryMetaDataVO.getLanguageId() + "_" + pageDeliveryMetaDataVO.getContentId();
 						    	logger.info("key on store:" + key);

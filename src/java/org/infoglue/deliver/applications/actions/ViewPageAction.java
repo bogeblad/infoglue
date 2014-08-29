@@ -162,7 +162,6 @@ public class ViewPageAction extends InfoGlueAbstractAction
 	
 	private static Random random = new Random();
 
-	private boolean enableIfModifiedHeaders = CmsPropertyHandler.getEnableIfModifiedHeaders();
 	
 	/**
 	 * The constructor for this action - contains nothing right now.
@@ -441,6 +440,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 				deliveryContext.setHttpServletRequest(this.getRequest());
 				deliveryContext.setHttpServletResponse(this.getResponse());
 				deliveryContext.setUseFullUrl(Boolean.parseBoolean(CmsPropertyHandler.getUseDNSNameInURI()));
+				boolean enableIfModifiedHeaders = CmsPropertyHandler.getEnableIfModifiedHeaders();
 				
 				boolean skipRender = false;
 				PageDeliveryMetaDataVO pdmd = null;

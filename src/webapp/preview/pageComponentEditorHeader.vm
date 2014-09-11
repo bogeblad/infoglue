@@ -229,6 +229,17 @@ ${skinDeliveryCSS}
 				
 		$(document).mouseup(function(e){
 				
+			/*
+			This code is not currently in use since it causes problems with inline edit clicks for ckEditor	
+			if($(e.target).closest("div[ondblclick]").length == 0)
+			{
+			if(window.isPageDirty)
+				saveAllEditing();
+			else
+				cancelAllEditing();
+			}
+			*/
+			
 			if(isDragActive)
 			{
 				isDragActive = false;

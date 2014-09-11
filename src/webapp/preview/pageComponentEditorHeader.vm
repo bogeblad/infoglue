@@ -228,15 +228,18 @@ ${skinDeliveryCSS}
 		});
 				
 		$(document).mouseup(function(e){
-					
-			if($(e.target).closest("div[ondblclick]").length == 0 && $(e.target).closest(".cke_dialog").length == 0  && $(e.target).closest(".cke_button").length == 0)
-			{
-				if(window.isPageDirty)
-					saveAllEditing();
-				else
-					cancelAllEditing();
-			}
 				
+			/*
+			This code is not currently in use since it causes problems with inline edit clicks for ckEditor	
+			if($(e.target).closest("div[ondblclick]").length == 0)
+			{
+			if(window.isPageDirty)
+				saveAllEditing();
+			else
+				cancelAllEditing();
+			}
+			*/
+			
 			if(isDragActive)
 			{
 				isDragActive = false;

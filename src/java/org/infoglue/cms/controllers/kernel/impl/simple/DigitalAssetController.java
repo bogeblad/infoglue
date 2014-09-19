@@ -170,15 +170,16 @@ public class DigitalAssetController extends BaseController
    	/**
    	 * returns the digital asset VO
    	 */
-   	
-   	public static DigitalAssetVO getDigitalAssetVOWithId(Integer digitalAssetId) throws SystemException, Bug
+    public static DigitalAssetVO getDigitalAssetVOWithId(Integer digitalAssetId) throws SystemException, Bug
     {
-		return (DigitalAssetVO) getVOWithId(DigitalAssetImpl.class, digitalAssetId);
+     return getSmallDigitalAssetVOWithId(digitalAssetId);
+  //return (DigitalAssetVO) getVOWithId(DigitalAssetImpl.class, digitalAssetId);
     }
 
-   	public static DigitalAssetVO getDigitalAssetVOWithId(Integer digitalAssetId, Database db) throws SystemException, Bug
+    public static DigitalAssetVO getDigitalAssetVOWithId(Integer digitalAssetId, Database db) throws SystemException, Bug
     {
-		return (DigitalAssetVO) getVOWithId(DigitalAssetImpl.class, digitalAssetId, db);
+     return getSmallDigitalAssetVOWithId(digitalAssetId, db);
+  //return (DigitalAssetVO) getVOWithId(DigitalAssetImpl.class, digitalAssetId, db);
     }
 
     /**

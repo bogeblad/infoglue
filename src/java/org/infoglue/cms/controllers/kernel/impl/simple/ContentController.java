@@ -3594,6 +3594,7 @@ public class ContentController extends BaseController
 		}
 		catch ( Exception e)		
 		{
+			rollbackTransaction(db);
 			throw new SystemException("An error occurred when we tried to fetch a list of deleted pages. Reason:" + e.getMessage(), e);			
 		}
 		
@@ -3646,6 +3647,7 @@ public class ContentController extends BaseController
 		}
 		catch ( Exception e)		
 		{
+			rollbackTransaction(db);
 			e.printStackTrace();
 			throw new SystemException("An error occurred when we tried to fetch a list contents last modified by the user. Reason:" + e.getMessage(), e);			
 		}

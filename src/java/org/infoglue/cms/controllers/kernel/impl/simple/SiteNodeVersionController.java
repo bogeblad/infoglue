@@ -360,6 +360,7 @@ public class SiteNodeVersionController extends BaseController
         catch(Exception e)
         {
             logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
     	

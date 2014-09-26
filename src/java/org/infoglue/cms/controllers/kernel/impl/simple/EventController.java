@@ -241,23 +241,33 @@ public class EventController extends BaseController
 	{
 		List<Event> events = new ArrayList<Event>();
 		
-        OQLQuery oql = db.getOQLQuery( "SELECT e FROM org.infoglue.cms.entities.workflow.impl.simple.EventImpl e WHERE (e.typeId = $1 OR e.typeId = $2) AND e.repositoryId = $3 ORDER BY e.eventId desc");
-    	oql.bind(EventVO.PUBLISH);
-    	oql.bind(EventVO.UNPUBLISH_LATEST);
-    	oql.bind(repositoryId);
-    	
-    	//logger.info("Fetching entity in read/write mode" + repositoryId);
-    	QueryResults results = oql.execute();
-    	
-		while (results.hasMore()) 
-        {
-        	Event event = (Event)results.next();
-           	events.add(event);
+		Timer t = new Timer();
+		try {
+	        OQLQuery oql = db.getOQLQuery( "SELECT e FROM org.infoglue.cms.entities.workflow.impl.simple.EventImpl e WHERE (e.typeId = $1 OR e.typeId = $2) AND e.repositoryId = $3 ORDER BY e.eventId desc");
+	    	oql.bind(EventVO.PUBLISH);
+	    	oql.bind(EventVO.UNPUBLISH_LATEST);
+	    	oql.bind(repositoryId);
+	    	
+	    	//logger.info("Fetching entity in read/write mode" + repositoryId);
+	    	QueryResults results = oql.execute();
+	    	
+			while (results.hasMore()) 
+	        {
+	        	Event event = (Event)results.next();
+	           	events.add(event);
+	        }
+	            
+			results.close();
+			oql.close();
+			
+			t.printElapsedTime("getPublicationEventVOListForRepository took", 50);
         }
-            
-		results.close();
-		oql.close();
-
+        catch(Exception e)
+        {
+        	logger.error("Could not add event to publication list:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
         return events;	
 	}
 	

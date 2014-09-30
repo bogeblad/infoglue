@@ -149,7 +149,7 @@ public class DigitalAssetController extends BaseController
     	oql.bind(assetFileSizeLimit);
     	oql.bind(limit);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		
 		while(results.hasMore()) 
         {
@@ -209,7 +209,7 @@ public class DigitalAssetController extends BaseController
 
         	oql.bind(digitalAssetId);
         	
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
     		
     		while(results.hasMore()) 
             {
@@ -885,7 +885,7 @@ public class DigitalAssetController extends BaseController
 
     	oql.bind(contentVersionId);
 
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 
 		while(results.hasMore()) 
         {
@@ -2248,7 +2248,7 @@ public class DigitalAssetController extends BaseController
 
     	oql.bind(contentVersionId);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		
 		if(results.hasMore()) 
         {
@@ -2317,7 +2317,7 @@ public class DigitalAssetController extends BaseController
 		oql.bind(contentVersionId);
     	oql.bind(assetKey);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		
 		if(results.hasMore()) 
         {
@@ -2352,7 +2352,7 @@ public class DigitalAssetController extends BaseController
 	    	if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
 	    		oql = db.getOQLQuery("CALL SQL select count(*) from cmDigAsset da where da.assetKey <> 'portletentityregistry.xml' AND (da.assetcontenttype like 'application/apple%' OR da.assetcontenttype like 'application/postscript%' OR da.assetcontenttype like 'application/x-shock%' OR da.assetcontenttype like 'application/ms%' OR da.assetcontenttype like 'application/vnd%' OR da.assetcontenttype like 'application/pdf%' OR da.assetcontenttype like 'image/%' OR da.assetcontenttype like 'video/%' OR da.assetcontenttype like 'audio/%' OR da.assetcontenttype like 'message/rfc%' OR da.assetfilename like '%.pdf' OR da.assetfilename like '%.jpg' OR da.assetfilename like '%.doc' OR da.assetfilename like '%.dot' OR da.assetfilename like '%.xls' OR da.assetfilename like '%.psd' OR da.assetfilename like '%.exe') AND da.digAssetId not in (select digAssetId from cmContVerDigAsset) AND da.digAssetId not in (select digAssetId from cmGroupPropDigAsset) AND  da.digAssetId not in (select digAssetId from cmRolePropDigAsset) AND da.digAssetId not in (select digAssetId from cmUserPropDigAsset) AS org.infoglue.cms.entities.management.TableCount");
 	 
-	    	QueryResults results = oql.execute(Database.ReadOnly);
+	    	QueryResults results = oql.execute(Database.READONLY);
 			if(results.hasMore()) 
 	        {
 				numberOfUnusedAssetsCount = (TableCount)results.next();

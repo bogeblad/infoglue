@@ -621,7 +621,7 @@ public abstract class BaseController
         try
         {
 			RequestAnalyser.getRequestAnalyser().incApproximateNumberOfDatabaseQueries();
-            object = db.load(arg, id, Database.ReadOnly);    			
+            object = db.load(arg, id, Database.READONLY);    			
         }
         catch(Exception e)
         {
@@ -769,7 +769,7 @@ public abstract class BaseController
         IBaseEntity vo = null;
         try
         {
-    		vo = (IBaseEntity)db.load(arg, id, Database.ReadOnly);
+    		vo = (IBaseEntity)db.load(arg, id, Database.READONLY);
         }
         catch(Exception e)
         {
@@ -816,7 +816,7 @@ public abstract class BaseController
 		IBaseEntity vo = null;
 		try
 		{
-			vo = (IBaseEntity)db.load(arg, id, Database.ReadOnly);
+			vo = (IBaseEntity)db.load(arg, id, Database.READONLY);
 		}
 		catch(Exception e)
 		{
@@ -893,7 +893,7 @@ public abstract class BaseController
 			if(logger.isInfoEnabled())
 				logger.info("BaseHelper::GetAllObjects for " + arg.getName());
 			oql = db.getOQLQuery( "SELECT u FROM " + arg.getName() + " u ORDER BY u." + orderByField + " " + direction);
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			
 			while (results.hasMore()) 
 			{
@@ -949,7 +949,7 @@ public abstract class BaseController
 		try
 		{
 			oql = db.getOQLQuery( "SELECT u FROM " + arg.getName() + " u ORDER BY u." + primaryKey);
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			
 			while (results.hasMore()) 
 			{
@@ -980,7 +980,7 @@ public abstract class BaseController
 		try
 		{
 			oql = db.getOQLQuery( "SELECT u FROM " + arg.getName() + " u ORDER BY u." + primaryKey);
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			
 			while (results.hasMore()) 
 			{
@@ -1054,7 +1054,7 @@ public abstract class BaseController
 		try
 		{
 			List results = new ArrayList();
-			results = Collections.list(createQuery(db, query, params).execute(Database.ReadOnly));
+			results = Collections.list(createQuery(db, query, params).execute(Database.READONLY));
 			commitTransaction(db);
 			return toVOList(results);
 		}
@@ -1114,7 +1114,7 @@ public abstract class BaseController
 			List resultList = new ArrayList();
 			
 			OQLQuery oql = createQuery(db, query, params);
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			resultList = Collections.list(results);
 
 			results.close();

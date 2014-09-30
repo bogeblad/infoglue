@@ -68,14 +68,12 @@ import org.infoglue.cms.entities.content.impl.simple.SmallContentVersionImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
-import org.infoglue.cms.entities.management.ContentTypeDefinition;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.GeneralOQLResult;
 import org.infoglue.cms.entities.management.Language;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RegistryVO;
 import org.infoglue.cms.entities.management.impl.simple.LanguageImpl;
-import org.infoglue.cms.entities.management.impl.simple.RegistryImpl;
 import org.infoglue.cms.entities.publishing.PublicationVO;
 import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
@@ -357,7 +355,7 @@ public class ContentVersionController extends BaseController
         OQLQuery oql = db.getOQLQuery( "SELECT cv FROM org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl cv WHERE cv.owningContent.contentId = $1 ORDER BY cv.contentVersionId desc");
     	oql.bind(contentId);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		
 		while (results.hasMore()) 
         {
@@ -426,7 +424,7 @@ public class ContentVersionController extends BaseController
 		oql.bind(contentId);
 		// oql.bind(stateId);
     	
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		
 		// New improved
 		while (results.hasMore()) 
@@ -634,7 +632,7 @@ public class ContentVersionController extends BaseController
 	    	oql.bind(stateId);
 	    	oql.bind(true);
 	
-	    	QueryResults results = oql.execute(Database.ReadOnly);
+	    	QueryResults results = oql.execute(Database.READONLY);
 	    	
 			if (results.hasMore()) 
 	        {
@@ -669,7 +667,7 @@ public class ContentVersionController extends BaseController
     	oql.bind(contentId);
 		oql.bind(true);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		
 		if (results.hasMore()) 
         {
@@ -707,7 +705,7 @@ public class ContentVersionController extends BaseController
 	    	oql.bind(languageId);
 			oql.bind(true);
 	    	
-	    	QueryResults results = oql.execute(Database.ReadOnly);
+	    	QueryResults results = oql.execute(Database.READONLY);
 			
 			if (results.hasMore()) 
 	        {
@@ -767,7 +765,7 @@ public class ContentVersionController extends BaseController
     	oql.bind(contentId);
 		oql.bind(true);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		while (results.hasMore()) 
         {
 			ContentVersion contentVersion = (ContentVersion)results.next();
@@ -827,7 +825,7 @@ public class ContentVersionController extends BaseController
     	oql.bind(contentId);
 		oql.bind(true);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		while (results.hasMore()) 
         {
 			GeneralOQLResult resultBean = (GeneralOQLResult)results.next();
@@ -970,7 +968,7 @@ public class ContentVersionController extends BaseController
 		oql.bind(minimumId);
 		oql.bind(limit);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		while (results.hasMore()) 
         {
 			ExportContentVersionImpl contentVersion = (ExportContentVersionImpl)results.next();
@@ -1187,7 +1185,7 @@ public class ContentVersionController extends BaseController
 	    	oql.bind(contentId);
 	    	oql.bind(languageId);
 	    	
-	    	QueryResults results = oql.execute(Database.ReadOnly);
+	    	QueryResults results = oql.execute(Database.READONLY);
 			
 			if (results.hasMore()) 
 	        {
@@ -1261,7 +1259,7 @@ public class ContentVersionController extends BaseController
         OQLQuery oql = db.getOQLQuery( "SELECT cv FROM org.infoglue.cms.entities.content.impl.simple.SmallContentVersionImpl cv WHERE cv.languageId = $1 ORDER BY cv.contentVersionId desc");
     	oql.bind(languageId);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		
 		if (results.hasMore()) 
         {
@@ -1767,7 +1765,7 @@ public class ContentVersionController extends BaseController
 		    	latestSiteNodeVersionVO = SiteNodeVersionController.getController().getLatestSiteNodeVersionVO(db, siteNodeVO.getId());
 		    	latestSiteNodeVersionVO.setVersionModifier(contentVersionVO.getVersionModifier());
 		    	latestSiteNodeVersionVO.setModifiedDateTime(DateHelper.getSecondPreciseDate());
-				SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().acUpdate(principal, latestSiteNodeVersionVO, db);
+		    	SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().acUpdate(principal, latestSiteNodeVersionVO, db);
 
 				Map extraInfoMap = new HashMap();
 			    extraInfoMap.put("skipSiteNodeVersionUpdate", "true");
@@ -1863,7 +1861,7 @@ public class ContentVersionController extends BaseController
 	    	oql.bind(ContentVersionVO.PUBLISHED_STATE);
 	    	oql.bind(true);
 	    	
-	    	QueryResults results = oql.execute(Database.ReadOnly);
+	    	QueryResults results = oql.execute(Database.READONLY);
 			
 			while (results.hasMore()) 
 	        {
@@ -1947,7 +1945,7 @@ public class ContentVersionController extends BaseController
 		for(Integer entityId : contentIds)
 			oql.bind(entityId);
 
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		while (results.hasMore()) 
 		{
 			SmallestContentVersionImpl contentVersion = (SmallestContentVersionImpl)results.next();
@@ -1969,7 +1967,7 @@ public class ContentVersionController extends BaseController
     	oql.bind(ContentVersionVO.PUBLISHED_STATE);
     	oql.bind(true);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		
 		while (results.hasMore()) 
         {
@@ -1996,7 +1994,7 @@ public class ContentVersionController extends BaseController
 	    	oql.bind(ContentVersionVO.PUBLISHED_STATE);
 	    	oql.bind(true);
 	    	
-	    	QueryResults results = oql.execute(Database.ReadOnly);
+	    	QueryResults results = oql.execute(Database.READONLY);
 			
 			if (results.hasMore()) 
 	        {
@@ -2033,7 +2031,7 @@ public class ContentVersionController extends BaseController
 	    	oql.bind(ContentVersionVO.PUBLISHED_STATE);
 	    	oql.bind(true);
 	    	
-	    	QueryResults results = oql.execute(Database.ReadOnly);
+	    	QueryResults results = oql.execute(Database.READONLY);
 			
 			if (results.hasMore()) 
 	        {
@@ -2071,7 +2069,7 @@ public class ContentVersionController extends BaseController
 	    	oql.bind(ContentVersionVO.PUBLISHED_STATE);
 	    	oql.bind(true);
 	    	
-	    	QueryResults results = oql.execute(Database.ReadOnly);
+	    	QueryResults results = oql.execute(Database.READONLY);
 			
 			if (results.hasMore()) 
 	        {
@@ -2138,7 +2136,7 @@ public class ContentVersionController extends BaseController
         	oql.bind(languageId);
         	oql.bind(contentVersionId);
         	
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
 			
 			if (results.hasMore()) 
             {
@@ -2178,7 +2176,7 @@ public class ContentVersionController extends BaseController
     	oql.bind(new Boolean(true));
     	oql.bind(contentVersionId);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		
 		if (results.hasMore()) 
         {
@@ -2203,7 +2201,7 @@ public class ContentVersionController extends BaseController
 		oql.bind(new Boolean(true));
 		oql.bind(CmsPropertyHandler.getOperatingMode());
 
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 
 		if (results.hasMore())
 		{
@@ -2961,7 +2959,7 @@ public class ContentVersionController extends BaseController
         OQLQuery oql = db.getOQLQuery("SELECT cv FROM org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl cv WHERE cv.contentId = $1 ORDER BY cv.contentVersionId desc");
     	oql.bind(contentId);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		
     	while (results.hasMore())
         {
@@ -3111,7 +3109,7 @@ public class ContentVersionController extends BaseController
     			//System.out.println("contentId:" + contentId);
     		}
 
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
 			
         	int numberOfLaterVersions = 0;
         	Integer previousContentId = null;
@@ -3280,7 +3278,7 @@ public class ContentVersionController extends BaseController
             OQLQuery oql = db.getOQLQuery( "SELECT da FROM org.infoglue.cms.entities.content.impl.simple.MediumDigitalAssetImpl da WHERE da.assetFileSize >= $1 ORDER BY da.digitalAssetId asc");
         	oql.bind(assetSizeLimit);
         	
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
 			
         	int i = 0;
 			while (results.hasMore() && i < assetNumberLimit) 
@@ -3358,7 +3356,7 @@ public class ContentVersionController extends BaseController
         	oql.bind(assetSizeLimit);
         	oql.bind(assetNumberLimit);
         	
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
 			
 			while (results.hasMore()) 
             {
@@ -3547,7 +3545,7 @@ public class ContentVersionController extends BaseController
         oql.bind(contentId);
         oql.bind(languageId);
         oql.bind(true);
-        final QueryResults results = oql.execute(Database.ReadOnly);
+        final QueryResults results = oql.execute(Database.READONLY);
         int cnt = 0;
         while (results.hasMore() && ++cnt <= hitSize)
         {
@@ -3775,7 +3773,7 @@ public class ContentVersionController extends BaseController
 	    	oql.bind(operatingMode);
 	    	oql.bind(true);
 
-	    	QueryResults results = oql.execute(Database.ReadOnly);
+	    	QueryResults results = oql.execute(Database.READONLY);
 	    	
 			while(results.hasMore()) 
 	        {
@@ -3884,7 +3882,7 @@ public class ContentVersionController extends BaseController
 		oql.bind(stateId);
 		oql.bind(limit);
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		while (results.hasMore()) 
 		{
 			IndexFriendlyContentVersionImpl contentVersion = (IndexFriendlyContentVersionImpl)results.next();
@@ -3919,7 +3917,7 @@ public class ContentVersionController extends BaseController
     	oql.bind(languageId);
     	//oql.bind(10);
 
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
     	
 		if (results.hasMore()) 
         {
@@ -4079,7 +4077,7 @@ public class ContentVersionController extends BaseController
 		//if(CmsPropertyHandler.getUseShortTableNames() == null || !CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
 			oql.bind(limit);
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		
 		logger.info("Getting all IndexFriendlyContentVersionImpl took:" +  t.getElapsedTime());
 		while (results.hasMore()) 
@@ -4154,7 +4152,7 @@ public class ContentVersionController extends BaseController
 	    	}
 		}
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
     	if (results.hasMore()) 
 		{
 			SmallestContentVersionImpl contentVersion = (SmallestContentVersionImpl)results.next();
@@ -4211,7 +4209,7 @@ public class ContentVersionController extends BaseController
 	    	}
 		}
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
     	if (results.hasMore()) 
 		{
 			SmallestContentVersionImpl contentVersion = (SmallestContentVersionImpl)results.next();

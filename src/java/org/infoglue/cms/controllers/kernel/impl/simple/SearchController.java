@@ -311,7 +311,7 @@ public class SearchController extends BaseController
 			    oql.bind(value);
 			}
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			
 			Integer previousContentId  = new Integer(-1);
 			Integer previousLanguageId = new Integer(-1);  	
@@ -347,7 +347,7 @@ public class SearchController extends BaseController
 				assetOQL.bind("%" + searchString + "%");
 				assetOQL.bind("%" + searchString + "%");
 		        
-				QueryResults assetResults = assetOQL.execute(Database.ReadOnly);
+				QueryResults assetResults = assetOQL.execute(Database.READONLY);
 				
 				previousContentId  = new Integer(-1);
 				previousLanguageId = new Integer(-1);  	
@@ -502,7 +502,7 @@ public class SearchController extends BaseController
 			    oql.bind(iterator.next());
 			}
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			
 			while(results.hasMore()) 
 			{
@@ -616,7 +616,7 @@ public class SearchController extends BaseController
 			assetOQL.bind("%" + searchString + "%");
 			assetOQL.bind("%" + searchString + "%");
 	        
-			QueryResults assetResults = assetOQL.execute(Database.ReadOnly);
+			QueryResults assetResults = assetOQL.execute(Database.READONLY);
 			
 			Integer previousContentId  = new Integer(-1);
 			Integer previousLanguageId = new Integer(-1);  	
@@ -826,7 +826,7 @@ public class SearchController extends BaseController
 				assetOQL.bind(repositoryId[i]);
 			}
 			
-			QueryResults assetResults = assetOQL.execute(Database.ReadOnly);
+			QueryResults assetResults = assetOQL.execute(Database.READONLY);
 
 			int currentCount = 0;
 			while(assetResults.hasMore() && currentCount < maxRows)

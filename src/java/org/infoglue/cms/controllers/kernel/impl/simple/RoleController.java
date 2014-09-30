@@ -420,7 +420,7 @@ public class RoleController extends BaseController
         	oql = db.getOQLQuery( "CALL SQL SELECT r.roleName, r.description, r.source, r.isActive, r.modifiedDateTime FROM cmRole r, cmSystemUserRole sur WHERE r.roleName = sur.roleName AND sur.userName = $1 AS org.infoglue.cms.entities.management.impl.simple.RoleImpl");
         	oql.bind(userName);
         	
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
 			
 			while(results.hasMore()) 
             {
@@ -599,7 +599,7 @@ public class RoleController extends BaseController
         	OQLQuery oql = db.getOQLQuery( "SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RoleImpl r WHERE r.roleName = $1");
         	oql.bind(roleName);
         	
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
 			
 			if (results.hasMore()) 
             {

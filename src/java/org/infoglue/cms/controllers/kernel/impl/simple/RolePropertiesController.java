@@ -254,7 +254,7 @@ public class RolePropertiesController extends BaseController
 		QueryResults results = null;
 		if(readOnly)
 		{
-		    results = oql.execute(Database.ReadOnly);
+		    results = oql.execute(Database.READONLY);
 		}
 		else
 		{
@@ -328,7 +328,7 @@ public class RolePropertiesController extends BaseController
 		else
 			oql.bind(FREETEXT_EXPRESSION_VARIABLE);
 
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 
 		while (results.hasMore()) 
 		{

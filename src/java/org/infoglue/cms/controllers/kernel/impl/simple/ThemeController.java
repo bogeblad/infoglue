@@ -30,8 +30,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
@@ -157,7 +159,7 @@ public class ThemeController extends BaseController
         oql.bind("zip/infoglue-theme");
         oql.bind(name);
 
-        QueryResults results = oql.execute(Database.ReadOnly);
+        QueryResults results = oql.execute(Database.READONLY);
 
         while (results.hasMore()) 
         {
@@ -170,61 +172,73 @@ public class ThemeController extends BaseController
 		return contents;
     }
 
+    private static Map<String,Long> checkedThemes = new HashMap<String,Long>();
+    	
 	public static String verifyThemeExistenceOtherwiseFallback(String theme) throws SystemException
 	{
-		List themes = ThemeController.getController().getAvailableThemes();
-		if(themes.contains(theme))
+		Long lastCheck = checkedThemes.get(theme);
+		if(lastCheck == null || (lastCheck < 0 && System.currentTimeMillis() - lastCheck > 30000))
 		{
-			Database db = CastorDatabaseService.getDatabase();
-
-	        try
+			System.out.println("Have not checked for a while..");
+			List themes = ThemeController.getController().getAvailableThemes();
+			if(themes.contains(theme))
 			{
-				db.begin();
-
-				List assets = getDigitalAssetByName(theme, db);
-				
-				Iterator assetsIterator = assets.iterator();
-				if(assetsIterator.hasNext())
-				{
-					File skinsDir = new File(CmsPropertyHandler.getContextRootPath() + File.separator + "css" + File.separator + "skins");
-						
-					DigitalAsset da = (DigitalAsset)assetsIterator.next();
-					String themeName = da.getAssetFileName();
-					
-					File zip = new File(CmsPropertyHandler.getContextRootPath() + File.separator + "css" + File.separator + "skins" + File.separator + da.getAssetFileName());
-					logger.info("Caching " + themeName + " at " + skinsDir);
-					InputStream is = da.getAssetBlob();
-
-					FileOutputStream os = new FileOutputStream(zip);
-		            BufferedOutputStream bos = new BufferedOutputStream(os);
-		            int num = copyStream(is, bos);
-		            bos.close();
-		            os.close();
-		            is.close();
-				}
-			}
-	        catch(Exception e)
-	        {
-	        	logger.error("An error occurred when caching theme:" + e.getMessage(), e);
-	        }
-	        finally
-	        {
+				Database db = CastorDatabaseService.getDatabase();
+	
 		        try
 				{
-					db.commit();
-					db.close();
-				} 
-		        catch (Exception e)
-				{
-		        	logger.error("Error closing db: " + e.getMessage());
-				} 
-	        }
-			return theme;
+					db.begin();
+	
+					List assets = getDigitalAssetByName(theme, db);
+					
+					Iterator assetsIterator = assets.iterator();
+					if(assetsIterator.hasNext())
+					{
+						File skinsDir = new File(CmsPropertyHandler.getContextRootPath() + File.separator + "css" + File.separator + "skins");
+							
+						DigitalAsset da = (DigitalAsset)assetsIterator.next();
+						String themeName = da.getAssetFileName();
+						
+						File zip = new File(CmsPropertyHandler.getContextRootPath() + File.separator + "css" + File.separator + "skins" + File.separator + da.getAssetFileName());
+						logger.info("Caching " + themeName + " at " + skinsDir);
+						InputStream is = da.getAssetBlob();
+	
+						FileOutputStream os = new FileOutputStream(zip);
+			            BufferedOutputStream bos = new BufferedOutputStream(os);
+			            int num = copyStream(is, bos);
+			            bos.close();
+			            os.close();
+			            is.close();
+					}
+				}
+		        catch(Exception e)
+		        {
+		        	logger.error("An error occurred when caching theme:" + e.getMessage(), e);
+		        }
+		        finally
+		        {
+			        try
+					{
+						db.commit();
+						db.close();
+					} 
+			        catch (Exception e)
+					{
+			        	logger.error("Error closing db: " + e.getMessage());
+					} 
+		        }
+		        checkedThemes.put(theme, System.currentTimeMillis());
+		        
+				return theme;
+			}
+			else
+			{
+		        checkedThemes.put(theme, -1L);
+				return "Default";
+			}
 		}
 		else
-		{
-			return "Default";
-		}
+			return theme;
 	}
 
 	private static int copyStream(InputStream is, OutputStream os) throws IOException 

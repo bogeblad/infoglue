@@ -42,6 +42,7 @@ import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.applications.contenttool.actions.databeans.AccessRightsUserRow;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
+import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.AccessRight;
 import org.infoglue.cms.entities.management.AccessRightGroup;
@@ -221,7 +222,7 @@ public class AccessRightController extends BaseController
 		
 		int duplicates = 0;
 		Map<String,Integer> accessRightsMap = new ConcurrentHashMap<String,Integer>();
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		int i=0;
 		while(results.hasMore()) 
 	    {
@@ -612,7 +613,7 @@ public class AccessRightController extends BaseController
 	    	oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.AccessRightImpl f WHERE f.interceptionPoint = $1 ORDER BY f.accessRightId");
 			oql.bind(interceptionPointId);
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			while (results.hasMore()) 
 			{
 				AccessRight accessRight = (AccessRight)results.next();
@@ -653,7 +654,7 @@ public class AccessRightController extends BaseController
 				oql.bind(parameters);
 			}
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			while (results.hasMore()) 
 			{
 				AccessRight accessRight = (AccessRight)results.next();
@@ -691,7 +692,7 @@ public class AccessRightController extends BaseController
 			OQLQuery oql = db.getOQLQuery(SQL);
 			oql.bind(repositoryId);
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			while (results.hasMore()) 
 			{
 				SmallAccessRightImpl smallAccessRight = (SmallAccessRightImpl)results.next();
@@ -731,7 +732,7 @@ public class AccessRightController extends BaseController
 			OQLQuery oql = db.getOQLQuery(SQL);
 			oql.bind(repositoryId);
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			while (results.hasMore()) 
 			{
 				SmallAccessRightImpl smallAccessRight = (SmallAccessRightImpl)results.next();
@@ -976,7 +977,7 @@ public class AccessRightController extends BaseController
 						
 			QueryResults results;
 			if(readOnly)
-				results = oql.execute(Database.ReadOnly);
+				results = oql.execute(Database.READONLY);
 			else
 				results = oql.execute();
 				
@@ -3111,7 +3112,7 @@ public class AccessRightController extends BaseController
 			QueryResults results = null;
 			
 			if(readOnly)
-				results = oql.execute(Database.ReadOnly);
+				results = oql.execute(Database.READONLY);
 			else
 				results = oql.execute();
 				
@@ -3226,7 +3227,7 @@ public class AccessRightController extends BaseController
 
 			QueryResults results;
 			if(readOnly)
-				results = oql.execute(Database.ReadOnly);
+				results = oql.execute(Database.READONLY);
 			else
 				results = oql.execute();
 				
@@ -3278,7 +3279,7 @@ public class AccessRightController extends BaseController
 			QueryResults results = null;
 			
 			if(readOnly)
-				results = oql.execute(Database.ReadOnly);
+				results = oql.execute(Database.READONLY);
 			else
 				results = oql.execute();
 				
@@ -3370,7 +3371,7 @@ public class AccessRightController extends BaseController
 			QueryResults results = null;
 			
 			if(readOnly)
-				results = oql.execute(Database.ReadOnly);
+				results = oql.execute(Database.READONLY);
 			else
 				results = oql.execute();
 				
@@ -3391,6 +3392,174 @@ public class AccessRightController extends BaseController
 		return accessRightsGroups;		
 	}
 
+	
+	public List<AccessRightVO> getAccessRightVOListForGroupWithName(String groupName) throws SystemException, Bug	
+	{
+		List<AccessRightVO> accessRightVOList = null;
+		
+		Database db = CastorDatabaseService.getDatabase();
+
+		try 
+		{
+			beginTransaction(db);
+			
+			accessRightVOList = getAccessRightVOListForGroupWithName(groupName, db);
+
+			logger.info("accessRightVOList:" + accessRightVOList.size());
+			
+			commitTransaction(db);
+		} 
+		catch (Exception e) 
+		{
+			logger.warn("An error occurred so we should not complete the transaction:" + e);
+			rollbackTransaction(db);
+			throw new SystemException(e.getMessage());
+		}
+		
+		return accessRightVOList;	
+	}
+	
+	public List<AccessRightVO> getAccessRightVOListForGroupWithName(String groupName, Database db) throws SystemException, Bug
+	{
+		List<AccessRightVO> accessRightGroupList = new ArrayList<AccessRightVO>();
+		
+		try
+		{
+			OQLQuery oql = null;
+			
+	    	oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.AccessRightGroupImpl f WHERE f.groupName = $1");
+			oql.bind(groupName);
+
+			QueryResults results = oql.execute(Database.READONLY);
+
+			while (results.hasMore()) 
+			{
+				AccessRightGroup accessRightGroup = (AccessRightGroup)results.next();
+				
+				accessRightGroupList.add(accessRightGroup.getAccessRight().getValueObject());
+			}
+			
+			results.close();
+			oql.close();
+		}
+		catch(Exception e)
+		{
+		    e.printStackTrace();
+			throw new SystemException("An error occurred when we tried to fetch a list of Access rights users. Reason:" + e.getMessage(), e);    
+		}
+		
+		return accessRightGroupList;		
+	}
+	
+
+	public Map<String,List<AccessRightVO>> getAccessRightsForGroups() throws SystemException, Bug	
+	{
+		Map<String,List<AccessRightVO>> accessRights = null;
+		
+		Database db = CastorDatabaseService.getDatabase();
+
+		try 
+		{
+			beginTransaction(db);
+			
+			accessRights = getAccessRightsForGroups(db);
+
+			logger.info("accessRights:" + accessRights.size());
+			
+			commitTransaction(db);
+		} 
+		catch (Exception e) 
+		{
+			logger.warn("An error occurred so we should not complete the transaction:" + e);
+			rollbackTransaction(db);
+			throw new SystemException(e.getMessage());
+		}
+		
+		return accessRights;	
+	}
+	
+	public Map<String,List<AccessRightVO>> getAccessRightsForGroups(Database db) throws SystemException, Bug
+	{
+		Map<String,List<AccessRightVO>> accessRights = new HashMap<String,List<AccessRightVO>>();
+		
+		try
+		{
+			OQLQuery oql = null;
+			
+	    	oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.AccessRightGroupImpl f");
+
+			QueryResults results = oql.execute(Database.READONLY);
+
+			while (results.hasMore()) 
+			{
+				AccessRightGroup accessRightGroup = (AccessRightGroup)results.next();
+				List<AccessRightVO> existingAccessRights = accessRights.get(accessRightGroup.getGroupName());
+				if(existingAccessRights == null)
+				{
+					existingAccessRights = new ArrayList<AccessRightVO>();
+					accessRights.put(accessRightGroup.getGroupName(), existingAccessRights);
+				}
+				
+				existingAccessRights.add(accessRightGroup.getAccessRight().getValueObject());
+			}
+			
+			results.close();
+			oql.close();
+		}
+		catch(Exception e)
+		{
+		    e.printStackTrace();
+			throw new SystemException("An error occurred when we tried to fetch a list of Access rights users. Reason:" + e.getMessage(), e);    
+		}
+		
+		return accessRights;		
+	}
+	
+	public String getReadableDescriptionForAccessRight(AccessRightVO accessRight)
+	{
+		StringBuffer sb = new StringBuffer();
+		try
+		{
+			System.out.println(accessRight.getInterceptionPointName());
+			if(accessRight.getInterceptionPointName().startsWith("SiteNodeVersion"))
+			{
+				SiteNodeVersionVO snvVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(accessRight.getParameters()));
+				String path = SiteNodeController.getController().getSiteNodePath(snvVO.getSiteNodeId(), true, false);
+				sb.append("Page access right on [" + path + "]");
+			}
+			else if(accessRight.getInterceptionPointName().startsWith("Content"))
+			{
+				ContentVO contentVO = ContentController.getContentController().getContentVOWithId(new Integer(accessRight.getParameters()));
+				String path = ContentController.getContentController().getContentPath(contentVO.getId(), true, false);				
+				sb.append("Content access right on [" + path + "]");
+			}
+			else if(accessRight.getInterceptionPointName().startsWith("ContentVersion"))
+			{
+				ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(new Integer(accessRight.getParameters()));
+				String path = ContentController.getContentController().getContentPath(contentVersionVO.getContentId(), true, false);				
+				sb.append("Content access right on [" + path + "]");
+			}
+			else if(accessRight.getInterceptionPointName().startsWith("Repository"))
+			{
+				RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(new Integer(accessRight.getParameters()));
+				String path = repositoryVO.getName();			
+				sb.append("Repository access right on [" + path + "]");
+			}
+			else
+			{
+				sb.append("Other access right on [" + accessRight.getInterceptionPointName() + "/" + accessRight.getParameters() + "]");
+			}
+		}
+		catch (Exception e) 
+		{
+			sb.append("Not a valid access right. Could be a deleted object referenced. Error: " + e.getMessage());
+			logger.warn("Error creating readable access right message", e);
+		}
+		
+		return sb.toString();
+	}
+	
+	
 	public List getAccessRightGroupList(String groupName, Database db) throws SystemException, Bug
 	{
 		List accessRightGroupList = new ArrayList();
@@ -3436,7 +3605,7 @@ public class AccessRightController extends BaseController
 		
 		OQLQuery oql = db.getOQLQuery("CALL SQL select max(accessRightUserId), userName, max(accessRightId) from cmAccessRightUser aru group by userName AS org.infoglue.cms.entities.management.impl.simple.AccessRightUserImpl");
  
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		while(results.hasMore()) 
         {
 			AccessRightUserImpl aru = (AccessRightUserImpl)results.next();
@@ -3461,7 +3630,7 @@ public class AccessRightController extends BaseController
 		
 		OQLQuery oql = db.getOQLQuery("CALL SQL select max(accessRightRoleId), roleName, max(accessRightId) from cmAccessRightRole arr group by roleName AS org.infoglue.cms.entities.management.impl.simple.AccessRightRoleImpl");
 		 
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		while(results.hasMore()) 
         {
 			AccessRightRoleImpl arr = (AccessRightRoleImpl)results.next();
@@ -3486,7 +3655,7 @@ public class AccessRightController extends BaseController
 
 		OQLQuery oql = db.getOQLQuery("CALL SQL select max(accessRightGroupId), groupName, max(accessRightId) from cmAccessRightGroup arr group by groupName AS org.infoglue.cms.entities.management.impl.simple.AccessRightGroupImpl");
 		 
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		while(results.hasMore()) 
         {
 			AccessRightGroupImpl arr = (AccessRightGroupImpl)results.next();
@@ -3533,7 +3702,7 @@ public class AccessRightController extends BaseController
 			
 		OQLQuery oql = db.getOQLQuery(sqlSNV);
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		while (results.hasMore()) 
 		{
 			TableCount tableCount = (TableCount)results.next();
@@ -3546,7 +3715,7 @@ public class AccessRightController extends BaseController
 			
 		OQLQuery oql = db.getOQLQuery(sql);
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		while (results.hasMore()) 
 		{
 			TableCount tableCount = (TableCount)results.next();
@@ -3594,7 +3763,7 @@ public class AccessRightController extends BaseController
 			
 		OQLQuery oql = db.getOQLQuery(sqlSNV);
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		int itemsRemoved = 0;
 		while (results.hasMore() && itemsRemoved < 1000) 
 		{
@@ -3622,7 +3791,7 @@ public class AccessRightController extends BaseController
 			
 		OQLQuery oql = db.getOQLQuery(sql);
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		while (results.hasMore()) 
 		{
 			TableCount tableCount = (TableCount)results.next();
@@ -3892,7 +4061,7 @@ public class AccessRightController extends BaseController
 		OQLQuery oql = db.getOQLQuery(SQL);
 		
 		int deletable=0;
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		while (results.hasMore()) 
 		{
 			AccessRight accessRight = (AccessRight)results.next();
@@ -3947,7 +4116,7 @@ public class AccessRightController extends BaseController
 		//System.out.println(sb.toString());
 		OQLQuery oql = db.getOQLQuery(sb.toString());
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		while (results.hasMore()) 
 		{
 			AccessRight accessRight = (AccessRight)results.next();

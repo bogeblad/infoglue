@@ -62,7 +62,6 @@ import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.Registry;
 import org.infoglue.cms.entities.management.RegistryVO;
-import org.infoglue.cms.entities.management.SystemUser;
 import org.infoglue.cms.entities.management.impl.simple.RegistryImpl;
 import org.infoglue.cms.entities.structure.Qualifyer;
 import org.infoglue.cms.entities.structure.SiteNode;
@@ -133,6 +132,12 @@ public class RegistryController extends BaseController
 		return registryVO;
 	}
 
+	public Registry getRegistryWithId(Integer registryId, Database db) throws SystemException, Exception
+	{
+		Registry registry = (RegistryImpl)getObjectWithId(RegistryImpl.class, registryId, db);
+
+		return registry;
+	}
 	
 	/**
 	 * This method creates a registry entity in the db.
@@ -497,6 +502,7 @@ public class RegistryController extends BaseController
 		   c.getName().contains(".DigitalAssetImpl") || 
 		   c.getName().contains(".MediumDigitalAssetImpl") || 
 		   c.getName().contains(".ContentVersionImpl") || 
+		   c.getName().contains(".MediumContentVersionImpl") || 
 		   c.getName().contains(".AccessRightRoleImpl") || 
 		   c.getName().contains(".AccessRightGroupImpl") || 
 		   c.getName().contains(".AccessRightUserImpl") || 
@@ -1615,6 +1621,7 @@ public class RegistryController extends BaseController
 
 	public List<ReferenceBean> getReferencingObjectsForContent(Integer contentId, int maxRows, boolean excludeInternalContentReferences, boolean onlyOneVersionPerLanguage) throws SystemException
     {
+
 		List<ReferenceBean> referenceBeanList = new ArrayList<ReferenceBean>();
 
 		Database db = CastorDatabaseService.getDatabase();
@@ -1622,7 +1629,6 @@ public class RegistryController extends BaseController
 		try 
 		{
 			beginTransaction(db);
-
 			referenceBeanList = getReferencingObjectsForContent(contentId, maxRows, excludeInternalContentReferences, onlyOneVersionPerLanguage, db);
 
 	        commitTransaction(db);
@@ -2648,6 +2654,30 @@ public class RegistryController extends BaseController
         return result;
     }
 
+    
+	public List<RegistryVO> getMatchingRegistryVOList(String entityName, String entityId, int maxRows) throws SystemException, Exception
+    {
+	    List<RegistryVO> matchingRegistryVOList = new ArrayList<RegistryVO>();
+
+        Database db = CastorDatabaseService.getDatabase();
+
+		try 
+		{
+			beginTransaction(db);
+
+			matchingRegistryVOList = getMatchingRegistryVOList(entityName, entityId, maxRows, db);
+
+		    commitTransaction(db);
+		}
+		catch (Exception e)
+		{
+		    logger.warn("One of the references was not found which is bad but not critical:" + e.getMessage(), e);
+		    rollbackTransaction(db);
+		}
+
+        return matchingRegistryVOList;
+    }
+
 	/**
 	 * Gets matching references
 	 */
@@ -2672,14 +2702,13 @@ public class RegistryController extends BaseController
 		oql.bind(entityName);
 		oql.bind(entityId);
 
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 
 		int i = 0;
 		while (results.hasMore() && (maxRows == -1 || i < maxRows)) 
         {
             Registry registry = (Registry)results.next();
             RegistryVO registryVO = registry.getValueObject();
-
             matchingRegistryVOList.add(registryVO);
 
             i++;
@@ -2730,7 +2759,7 @@ public class RegistryController extends BaseController
 			//t.printElapsedTime("bindings done");
 			
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			//t.printElapsedTime("results");
 	
 			int i = 0;
@@ -2917,7 +2946,7 @@ public class RegistryController extends BaseController
 			oql.bind(referencingEntityName);
 			oql.bind(referencingEntityId);
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			
 			while (results.hasMore()) 
 	        {
@@ -2955,7 +2984,7 @@ public class RegistryController extends BaseController
 		for(Integer entityId : referencingEntityIds)
 			oql.bind(entityId.toString());
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		
 		while (results.hasMore()) 
         {

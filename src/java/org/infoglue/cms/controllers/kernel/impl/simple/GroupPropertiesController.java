@@ -374,7 +374,7 @@ public class GroupPropertiesController extends BaseController
 			if(readOnly)
 			{
 				logger.info("Fetching groupPropertiesList in readonly mode");
-			    results = oql.execute(Database.ReadOnly);
+			    results = oql.execute(Database.READONLY);
 			}
 			else
 			{
@@ -461,7 +461,7 @@ public class GroupPropertiesController extends BaseController
 		else
 			oql.bind(FREETEXT_EXPRESSION_VARIABLE);
 
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 
 		while (results.hasMore()) 
 		{
@@ -1095,7 +1095,7 @@ public class GroupPropertiesController extends BaseController
 			oql.bind(languageVO.getId());
 	
 			QueryResults results;
-		    results = oql.execute(Database.ReadOnly);
+		    results = oql.execute(Database.READONLY);
 	
 		    String groupName = "";
 		    List groupPropertyValues = new ArrayList();

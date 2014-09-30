@@ -450,7 +450,7 @@ public class ContentTypeDefinitionController extends BaseController
 				OQLQuery oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl f WHERE f.name = $1");
 				oql.bind(name);
 	
-				QueryResults results = oql.execute(Database.ReadOnly);
+				QueryResults results = oql.execute(Database.READONLY);
 				if (results.hasMore())
 				{
 				    ContentTypeDefinition contentTypeDefinition = (ContentTypeDefinition)results.next();
@@ -505,7 +505,7 @@ public class ContentTypeDefinitionController extends BaseController
 			OQLQuery oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl f WHERE f.type = $1");
 			oql.bind(type);
 
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			while (results.hasMore())
 			{
 				ContentTypeDefinition contentTypeDefinition = (ContentTypeDefinition)results.next();

@@ -25,29 +25,34 @@ package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
-import org.exolab.castor.jdo.JDO;
+import org.exolab.castor.jdo.JDOManager;
 import org.infoglue.cms.exception.SystemException;
 
 public class CastorDatabaseService //extends DatabaseService
 {
     public final static Logger logger = Logger.getLogger(CastorDatabaseService.class.getName());
 
-    private static JDO jdo = null;
+    private static JDOManager jdo = null;
     
-    public synchronized static JDO getJDO() throws SystemException
+    public synchronized static JDOManager getJDO() throws SystemException
     {
         if(jdo != null)
             return jdo;
         
         try
         {
-        	jdo = new JDO();
-            jdo.setDatabaseName("INFOGLUE_CMS"); 
+        	
+        	JDOManager.loadConfiguration(CastorDatabaseService.class.getResource("/database.xml").toString(), CastorDatabaseService.class.getClassLoader());
+
+        	jdo = JDOManager.createInstance("INFOGLUE_CMS");
+        	
+        	//jdo = new JDOManager();
+        	//jdo.setDatabaseName("INFOGLUE_CMS"); 
             
             //DatabaseDefinitionsController.getController().getCastorDatabaseDefinitionFile("default");
             //jdo.setConfiguration(CastorDatabaseService.class.getResource("/currentDatabase.xml").toString());
-            jdo.setConfiguration(CastorDatabaseService.class.getResource("/database.xml").toString());
-            jdo.setClassLoader(CastorDatabaseService.class.getClassLoader());
+            //jdo.setConfiguration(CastorDatabaseService.class.getResource("/database.xml").toString());
+            //jdo.setClassLoader(CastorDatabaseService.class.getClassLoader());
             jdo.setCallbackInterceptor(new CmsJDOCallback());
             jdo.setLockTimeout(10);
         }

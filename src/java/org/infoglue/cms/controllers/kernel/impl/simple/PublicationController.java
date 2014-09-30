@@ -159,7 +159,7 @@ public class PublicationController extends BaseController
             OQLQuery oql = db.getOQLQuery( "SELECT c FROM org.infoglue.cms.entities.publishing.impl.simple.PublicationImpl c WHERE c.repositoryId = $1 order by publicationDateTime desc");
 			oql.bind(repositoryId);
 
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
 
 			while (results.hasMore())
             {
@@ -196,7 +196,7 @@ public class PublicationController extends BaseController
             OQLQuery oql = db.getOQLQuery( "SELECT p FROM org.infoglue.cms.entities.publishing.impl.simple.PublicationImpl p WHERE p.publicationDateTime > $1 order by publicationDateTime desc");
 			oql.bind(startDate);
 
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
 
 			while (results.hasMore())
             {
@@ -235,7 +235,7 @@ public class PublicationController extends BaseController
 			oql.bind(entityName);
 			oql.bind(entityId);
 
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
 
 			while (results.hasMore())
             {
@@ -276,7 +276,7 @@ public class PublicationController extends BaseController
 			publicationDateTimeCalendar.add(Calendar.MONTH, -2);
 			oql.bind(publicationDateTimeCalendar.getTime());
 
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
 
 			List allEditions = Collections.list(results);
 
@@ -767,15 +767,15 @@ public class PublicationController extends BaseController
         return publicationVO;
     }
 
-	private static Object publishingLock = new Object();
+	//private static Object publishingLock = new Object();
 
 	/**
 	 * This method creates a new publication with the concerned events carried out.
 	 */
 	public PublicationVO createAndPublish(PublicationVO publicationVO, List<EventVO> events, Map<Integer,SiteNodeVO> newSiteNodeMap, Map<Integer,ContentVO> newContentMap, boolean overrideVersionModifyer, InfoGluePrincipal infoGluePrincipal) throws SystemException
 	{
-		synchronized (publishingLock) 
-		{
+		//synchronized (publishingLock) 
+		//{
 			Map<Integer, Map<String, Map<String, String>>> allPageUrlsBeforePublication = getPageUrlsForSiteNodes(newSiteNodeMap, infoGluePrincipal);
 
 			Database db = CastorDatabaseService.getDatabase();
@@ -806,7 +806,7 @@ public class PublicationController extends BaseController
 	
 			Map<Integer, Map<String, Map<String, String>>> allPageUrlsAfterPublication = getPageUrlsForSiteNodes(newSiteNodeMap, infoGluePrincipal);
 			createSystemRedirectsForNiceUriChanges(allPageUrlsBeforePublication, allPageUrlsAfterPublication, infoGluePrincipal);
-		}
+		//}
 
 		return publicationVO;
 	}

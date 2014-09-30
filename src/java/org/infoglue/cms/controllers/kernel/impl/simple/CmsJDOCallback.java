@@ -635,6 +635,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 		   c.getName().contains(".DigitalAssetImpl") || 
 		   c.getName().contains(".MediumDigitalAssetImpl") || 
 		   c.getName().contains(".ContentVersionImpl") || 
+		   c.getName().contains(".MediumContentVersionImpl") || 
 		   c.getName().contains(".AccessRightRoleImpl") || 
 		   c.getName().contains(".AccessRightGroupImpl") || 
 		   c.getName().contains(".AccessRightUserImpl") || 
@@ -675,6 +676,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 		   c.getName().contains(".DigitalAssetImpl") || 
 		   c.getName().contains(".MediumDigitalAssetImpl") || 
 		   c.getName().contains(".ContentVersionImpl") || 
+		   c.getName().contains(".MediumContentVersionImpl") || 
 		   c.getName().contains(".AccessRightRoleImpl") || 
 		   c.getName().contains(".AccessRightGroupImpl") || 
 		   c.getName().contains(".AccessRightUserImpl") || 
@@ -1490,6 +1492,11 @@ public class CmsJDOCallback implements CallbackInterceptor
 		}
 		
 		return objectName;
+	}
+
+	//@Override
+	public void modifying(Object arg0) throws Exception 
+	{
 	}
 }
 

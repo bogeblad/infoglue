@@ -147,7 +147,7 @@ public class SiteNodeController extends BaseController
 		oql.bind(minimumId);
 		oql.bind(limit);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		while (results.hasMore()) 
         {
 			SiteNode siteNode = (SiteNode)results.next();
@@ -306,7 +306,7 @@ public class SiteNodeController extends BaseController
 			//oql.bind(true);
 			oql.bind(new Integer(CmsPropertyHandler.getOperatingMode()));
 	
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			//t.printElapsedTime("Executed query.....");
 			if (results.hasMore()) 
 			{
@@ -394,7 +394,7 @@ public class SiteNodeController extends BaseController
 	    	OQLQuery oql = db.getOQLQuery(SQL.toString());
 			oql.bind(siteNodeId);
 	
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 			//t.printElapsedTime("Executed query.....");
 			if (results.hasMore()) 
 			{
@@ -490,7 +490,7 @@ public class SiteNodeController extends BaseController
 		for(Integer entityId : siteNodeIds)
 			oql.bind(entityId);
 
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		while (results.hasMore()) 
 		{
 			SiteNode siteNode = (SiteNode)results.next();
@@ -570,7 +570,7 @@ public class SiteNodeController extends BaseController
 		for(Integer entityId : siteNodeVersionIds)
 			oql.bind(entityId);
 
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		//t.printElapsedTime("Executed query.....");
 		while (results.hasMore()) 
 		{
@@ -624,7 +624,7 @@ public class SiteNodeController extends BaseController
 			RequestAnalyser.getRequestAnalyser().incApproximateNumberOfDatabaseQueries();
 
 			if(readOnly)
-	            siteNode = (SiteNode)db.load(org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl.class, siteNodeId, Database.ReadOnly);
+	            siteNode = (SiteNode)db.load(org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl.class, siteNodeId, Database.READONLY);
     		else
     		{
                 logger.info("Loading " + siteNodeId + " in read/write mode.");
@@ -1132,7 +1132,7 @@ public class SiteNodeController extends BaseController
     	OQLQuery oql = db.getOQLQuery(SQL.toString());
     	oql.bind(parentSiteNodeId);
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 
 		while (results.hasMore()) 
 		{
@@ -1223,7 +1223,7 @@ public class SiteNodeController extends BaseController
 		oql.bind(stateId);
 		oql.bind(limit);
 
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		t.printElapsedTime("Executed query.....");
 		while (results.hasMore()) 
 		{
@@ -1318,7 +1318,7 @@ public class SiteNodeController extends BaseController
 		oql.bind(stateId);
 		oql.bind(limit);
 
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		//t.printElapsedTime("Executed query.....");
 		
 		int lastBegunParentSiteNodeId = -1;
@@ -1481,7 +1481,7 @@ public class SiteNodeController extends BaseController
 		oql.bind(true);
 		oql.bind(0);
 
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		while (results.hasMore()) 
 		{
 			SiteNode siteNode = (SiteNode)results.next();
@@ -1660,7 +1660,7 @@ public class SiteNodeController extends BaseController
 		OQLQuery oql = db.getOQLQuery( "SELECT s FROM org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl s WHERE is_undefined(s.parentSiteNode) AND s.repositoryId = $1");
 		oql.bind(repositoryId);
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		if (results.hasMore()) 
 		{
 			SiteNode siteNode = (SiteNode)results.next();
@@ -2006,7 +2006,7 @@ public class SiteNodeController extends BaseController
 		OQLQuery oql = db.getOQLQuery("SELECT sn FROM org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl sn WHERE sn.repository.repositoryId = $1");
     	oql.bind(repositoryId);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		
 		while(results.hasMore()) 
         {
@@ -2506,7 +2506,7 @@ public class SiteNodeController extends BaseController
 			OQLQuery oql = db.getOQLQuery("SELECT sn FROM org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl sn WHERE sn.metaInfoContentId = $1 ORDER BY sn.siteNodeId");
 	    	oql.bind(contentId);
 	    	
-	    	QueryResults results = oql.execute(Database.ReadOnly);
+	    	QueryResults results = oql.execute(Database.READONLY);
 			
 	    	if(results.hasMore()) 
 	        {
@@ -2879,7 +2879,7 @@ public class SiteNodeController extends BaseController
     		for(Integer siteNodeId : siteNodeIdList)
     			oql.bind(siteNodeId);
 
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
 			
         	int numberOfLaterVersions = 0;
         	Integer previousSiteNodeId = null;
@@ -3934,7 +3934,7 @@ public class SiteNodeController extends BaseController
            	oql.bind(futureDate);
            	oql.bind(currentDate);
 
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
     		while(results.hasMore()) 
             {
     			SiteNode siteNode = (SiteNodeImpl)results.next();
@@ -3980,7 +3980,7 @@ public class SiteNodeController extends BaseController
            	oql.bind(currentDate);
            	oql.bind(principal.getName());
 
-        	QueryResults results = oql.execute(Database.ReadOnly);
+        	QueryResults results = oql.execute(Database.READONLY);
     		while(results.hasMore()) 
             {
     			SiteNode siteNode = (SiteNodeImpl)results.next();
@@ -4543,7 +4543,7 @@ public class SiteNodeController extends BaseController
         beginTransaction(db);
 		try
         {	
-			db.load(SmallSiteNodeImpl.class, siteNodeId, Database.ReadOnly);
+			db.load(SmallSiteNodeImpl.class, siteNodeId, Database.READONLY);
 	    	commitTransaction(db);
         }
 		catch(ObjectNotFoundException onfe)

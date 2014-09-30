@@ -116,10 +116,14 @@
 						if(xrecipientFilter)
 						{
 							#if($defaultPublicationEventFilter == "emailBased")
+								document.getElementById("processDiv").style.display = 'block';
 								jQuery.getJSON("ViewCommonAjaxServices!userSearch.action", { "q": "" + xrecipientFilter.value, "fieldToMatchExact": "email" }, function(data) { 
 								
 									if(data.users.length == 0 && attemptDirectPublishing == 'false')
+									{
+										document.getElementById("processDiv").style.display = 'none';
 										alert("$ui.getString("tool.common.noUserWithEmailFound.warning")");
+									}
 									else
 									{
 										listForm.recipientFilter.value = xrecipientFilter.value;

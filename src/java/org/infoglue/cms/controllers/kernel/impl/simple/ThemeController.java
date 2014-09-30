@@ -179,7 +179,6 @@ public class ThemeController extends BaseController
 		Long lastCheck = checkedThemes.get(theme);
 		if(lastCheck == null || (lastCheck < 0 && System.currentTimeMillis() - lastCheck > 30000))
 		{
-			System.out.println("Have not checked for a while..");
 			List themes = ThemeController.getController().getAvailableThemes();
 			if(themes.contains(theme))
 			{

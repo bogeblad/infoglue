@@ -1239,6 +1239,7 @@
   <class name="org.infoglue.cms.entities.content.impl.simple.MediumContentImpl" identity="contentId" key-generator="IDENTITY">
     <description>MediumContent</description>
     <cache-type type="count-limited" capacity="10000"/>
+    <!--<cache-type type="none"/>-->
     <map-to table="cmContent"/>
     <field name="contentId" type="java.lang.Integer">
       <sql name="contentId" type="integer" dirty="check" />

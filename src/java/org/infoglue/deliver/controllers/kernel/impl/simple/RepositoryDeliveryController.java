@@ -90,7 +90,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
 		
      	OQLQuery oql = db.getOQLQuery( "SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RepositoryImpl r ORDER BY r.repositoryId");
 		
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		
 		if (results.hasMore()) 
         {
@@ -157,7 +157,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
 		    cachedRepositories = new ArrayList();
 
 	        OQLQuery oql = db.getOQLQuery( "SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RepositoryImpl r WHERE is_defined(r.dnsName) ORDER BY r.repositoryId");
-	        QueryResults results = oql.execute(Database.ReadOnly);
+	        QueryResults results = oql.execute(Database.READONLY);
 		
 	        while (results.hasMore()) 
 	        {
@@ -333,7 +333,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
 	    List repositories = new ArrayList();
 	    
         OQLQuery oql = db.getOQLQuery( "SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RepositoryImpl r WHERE is_defined(r.dnsName)");
-        QueryResults results = oql.execute(Database.ReadOnly);
+        QueryResults results = oql.execute(Database.READONLY);
         while (results.hasMore()) 
         {
             Repository repository = (Repository) results.next();
@@ -393,7 +393,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
 		
 		OQLQuery oql = db.getOQLQuery( "SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RepositoryImpl r ORDER BY r.repositoryId");
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		
 		if (results.hasMore()) 
 		{
@@ -417,7 +417,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
 			OQLQuery oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.RepositoryImpl f WHERE f.name = $1");
 			oql.bind(name);
 			
-			QueryResults results = oql.execute(Database.ReadOnly);
+			QueryResults results = oql.execute(Database.READONLY);
 
 			if (results.hasMore()) 
 			{

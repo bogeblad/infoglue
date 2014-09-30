@@ -73,7 +73,7 @@ public class ViewSiteNodeTreeUCCImpl extends BaseUCCController implements ViewSi
 			//OQLQuery oql = db.getOQLQuery( "SELECT c FROM org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl c WHERE is_undefined(c.parentSiteNode) AND c.repository.repositoryId = $1");
 			//oql.bind(repositoryId);
 			
-			//QueryResults results = oql.execute(Database.ReadOnly);
+			//QueryResults results = oql.execute(Database.READONLY);
 			
 			if (siteNodeVO != null /*results.hasMore()*/) 
             {

@@ -212,7 +212,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 			OQLQuery oql = db.getOQLQuery( "SELECT c FROM org.infoglue.cms.entities.content.impl.simple.ContentImpl c WHERE is_undefined(c.parentContent) AND c.repository = $1");
 			oql.bind(repositoryId);
 			
-	    	QueryResults results = oql.execute(Database.ReadOnly);
+	    	QueryResults results = oql.execute(Database.READONLY);
 			
 	    	if (results.hasMore()) 
 	        {
@@ -248,7 +248,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 	    	oql.bind(parentContentId);
 	    	oql.bind(name);
 	    	
-	    	QueryResults results = oql.execute(Database.ReadOnly);
+	    	QueryResults results = oql.execute(Database.READONLY);
 			
 			if(results.hasMore()) 
 	        {
@@ -569,7 +569,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 	    	oql.bind(operatingMode);
 	    	oql.bind(true);
 	
-	    	QueryResults results = oql.execute(Database.ReadOnly);
+	    	QueryResults results = oql.execute(Database.READONLY);
 
 			if (results.hasMore()) 
 	        {
@@ -654,7 +654,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		    	oql.bind(operatingMode);
 		    	oql.bind(true);
 		
-		    	QueryResults results = oql.execute(Database.ReadOnly);
+		    	QueryResults results = oql.execute(Database.READONLY);
 		    	
 				if (results.hasMore()) 
 		        {
@@ -713,7 +713,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 	    	oql.bind(operatingMode);
 	    	oql.bind(true);
 	    	
-	    	QueryResults results = oql.execute(Database.ReadOnly);
+	    	QueryResults results = oql.execute(Database.READONLY);
 
 			if (results.hasMore()) 
 	        {
@@ -754,7 +754,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 	    oql.bind(operatingMode);
     	oql.bind(true);
 
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		
     	ContentVersion contentVersion;
     	
@@ -792,7 +792,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 	    oql.bind(operatingMode);
     	oql.bind(true);
 
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		
     	ContentVersion contentVersion;
     	
@@ -1406,7 +1406,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 
     	oql.bind(contentVersionId);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		
 		while(results.hasMore()) 
         {
@@ -2927,7 +2927,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		oql.bind(new Boolean(true));
     	oql.bind(contentId);
     	
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		
 		while (results.hasMore()) 
 		{
@@ -2952,7 +2952,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		//OQLQuery oql = db.getOQLQuery("SELECT content FROM org.infoglue.cms.entities.content.impl.simple.ContentImpl content WHERE content.parentContent.contentId = $1 ORDER BY content.contentId");
     	oql.bind(contentId);
     	
-    	QueryResults results = oql.execute(Database.ReadOnly);
+    	QueryResults results = oql.execute(Database.READONLY);
 		
 		while (results.hasMore()) 
         {
@@ -2986,7 +2986,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		OQLQuery oql = db.getOQLQuery( "SELECT content FROM org.infoglue.cms.entities.content.impl.simple.ContentImpl content WHERE content.parentContent.contentId = $1 ORDER BY content.contentId");
 		oql.bind(contentId);
     	
-		QueryResults results = oql.execute(Database.ReadOnly);
+		QueryResults results = oql.execute(Database.READONLY);
 		
 		while (results.hasMore()) 
 		{

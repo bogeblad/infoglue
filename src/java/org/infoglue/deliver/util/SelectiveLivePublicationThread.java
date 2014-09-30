@@ -1178,7 +1178,7 @@ public class SelectiveLivePublicationThread extends PublicationThread
 		Object object = null;
 		try
 		{
-			object = db.load(arg, id, Database.ReadOnly);
+			object = db.load(arg, id, Database.READONLY);
 		}
 		catch(Exception e)
 		{

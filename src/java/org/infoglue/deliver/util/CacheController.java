@@ -4334,6 +4334,7 @@ public class CacheController extends Thread
 		   c.getName().contains(".DigitalAssetImpl") || 
 		   c.getName().contains(".MediumDigitalAssetImpl") || 
 		   c.getName().contains(".ContentVersionImpl") || 
+		   c.getName().contains(".MediumContentVersionImpl") || 
 		   c.getName().contains(".AccessRightRoleImpl") || 
 		   c.getName().contains(".AccessRightGroupImpl") || 
 		   c.getName().contains(".AccessRightUserImpl") ||

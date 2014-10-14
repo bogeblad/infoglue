@@ -96,7 +96,7 @@ public abstract class ViewCMSAbstractToolAction extends InfoGlueAbstractAction
 			    			List<RepositoryVO> acceptedDefaultRepositoryVOList = new ArrayList<RepositoryVO>();
 			    			
 							for (RepositoryVO repositoryVO : authorizedRepositoryVOList) {
-								System.out.println(" repositoryVO.getName():" + repositoryVO.getName());
+				
 								if (!repositoryVO.getName().equalsIgnoreCase("Infoglue calendar system") && !repositoryVO.getName().equalsIgnoreCase("Infoglue form system")) {
 									acceptedDefaultRepositoryVOList.add(repositoryVO);
 								}

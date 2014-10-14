@@ -85,7 +85,7 @@ public class ViewMySettingsAction extends InfoGlueAbstractAction
 		List<RepositoryVO> authorizedRepositoryVOList =RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 		
 		for (RepositoryVO repositoryVO : authorizedRepositoryVOList) {
-			System.out.println(" repositoryVO.getName():" + repositoryVO.getName());
+
 			if (!repositoryVO.getName().equalsIgnoreCase("Infoglue calendar system") && !repositoryVO.getName().equalsIgnoreCase("Infoglue form system")) {
 				acceptedDefaultRepositoryVOList.add(repositoryVO);
 			}

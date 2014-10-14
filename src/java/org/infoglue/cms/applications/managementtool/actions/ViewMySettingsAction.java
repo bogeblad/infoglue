@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import java.util.Map;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ThemeController;
+import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
 import com.opensymphony.module.propertyset.PropertySet;
@@ -78,8 +80,17 @@ public class ViewMySettingsAction extends InfoGlueAbstractAction
 	    this.theme 					= CmsPropertyHandler.getTheme(this.getInfoGluePrincipal().getName());
 	    this.toolbarVariant			= ps.getString("principal_" + this.getInfoGluePrincipal().getName() + "_toolbarVariant");
 
-	    
-		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
+	    /* Provide the list of repositories but do not include the system tool repositories */
+		List<RepositoryVO> acceptedDefaultRepositoryVOList = new ArrayList<RepositoryVO>();
+		List<RepositoryVO> authorizedRepositoryVOList =RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
+		
+		for (RepositoryVO repositoryVO : authorizedRepositoryVOList) {
+			System.out.println(" repositoryVO.getName():" + repositoryVO.getName());
+			if (!repositoryVO.getName().equalsIgnoreCase("Infoglue calendar system") && !repositoryVO.getName().equalsIgnoreCase("Infoglue form system")) {
+				acceptedDefaultRepositoryVOList.add(repositoryVO);
+			}
+		}
+		this.repositories = acceptedDefaultRepositoryVOList;
 		this.themes = ThemeController.getController().getAvailableThemes();
 		
         return "success";

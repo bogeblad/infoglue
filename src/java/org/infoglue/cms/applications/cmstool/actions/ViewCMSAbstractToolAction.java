@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.cmstool.actions;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -71,7 +72,8 @@ public abstract class ViewCMSAbstractToolAction extends InfoGlueAbstractAction
 	    		
 	    		if(this.repositoryId == null)
 	    		{
-					List authorizedRepositoryVOList = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
+					List<RepositoryVO> authorizedRepositoryVOList = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
+
 					if(authorizedRepositoryVOList.size() > 0)
 					{
 			    		String prefferedRepositoryId = CmsPropertyHandler.getPreferredRepositoryId(this.getInfoGluePrincipal().getName());
@@ -90,9 +92,22 @@ public abstract class ViewCMSAbstractToolAction extends InfoGlueAbstractAction
 			    		}
 			    		else
 			    		{
-							RepositoryVO repositoryVO = (RepositoryVO)authorizedRepositoryVOList.get(0);
-							this.repositoryId = repositoryVO.getId();
-				    	}
+			    			/* If the repository is not set we get the user defined default repository which cannot be the system tools repository */
+			    			List<RepositoryVO> acceptedDefaultRepositoryVOList = new ArrayList<RepositoryVO>();
+			    			
+							for (RepositoryVO repositoryVO : authorizedRepositoryVOList) {
+								System.out.println(" repositoryVO.getName():" + repositoryVO.getName());
+								if (!repositoryVO.getName().equalsIgnoreCase("Infoglue calendar system") && !repositoryVO.getName().equalsIgnoreCase("Infoglue form system")) {
+									acceptedDefaultRepositoryVOList.add(repositoryVO);
+								}
+							}
+							if(acceptedDefaultRepositoryVOList.size() > 0) {
+								RepositoryVO repositoryVO = acceptedDefaultRepositoryVOList.get(0);
+								this.repositoryId = repositoryVO.getId();
+							} else {
+								this.repositoryId = null;
+							}
+						}
 			    		getHttpSession().setAttribute("repositoryId", this.repositoryId);		
 			    		logger.info("We set the defaultRepositoryId in the users session to " + this.repositoryId);
 		    		}

@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.cmstool.actions;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -31,6 +32,7 @@ import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.util.CmsPropertyHandler;
+import org.infoglue.deliver.controllers.kernel.impl.simple.RepositoryDeliveryController;
 
 /**
  * This class implements the base class for a tool.
@@ -71,7 +73,7 @@ public abstract class ViewCMSAbstractToolAction extends InfoGlueAbstractAction
 	    		
 	    		if(this.repositoryId == null)
 	    		{
-					List authorizedRepositoryVOList = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
+					List<RepositoryVO> authorizedRepositoryVOList = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 					if(authorizedRepositoryVOList.size() > 0)
 					{
 			    		String prefferedRepositoryId = CmsPropertyHandler.getPreferredRepositoryId(this.getInfoGluePrincipal().getName());
@@ -90,6 +92,23 @@ public abstract class ViewCMSAbstractToolAction extends InfoGlueAbstractAction
 			    		}
 			    		else
 			    		{
+			    			 /* If the repository is not set we get the user defined default repository which cannot be the system tools repository */
+			    			 List<RepositoryVO> acceptedDefaultRepositoryVOList = new ArrayList<RepositoryVO>();
+			    			
+			    			 for (RepositoryVO repositoryVO : authorizedRepositoryVOList) {
+			    				/*This setting is stored in extraproperty for repository*/
+			    				String hideAsDefault = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(repositoryVO.getRepositoryId(), "hideAsDefault");
+			    				if (hideAsDefault != null && !hideAsDefault.equalsIgnoreCase("true")) {
+			    					acceptedDefaultRepositoryVOList.add(repositoryVO);
+			    				}
+			    			 }
+			    			 if(acceptedDefaultRepositoryVOList.size() > 0) {
+			    				 RepositoryVO repositoryVO = acceptedDefaultRepositoryVOList.get(0);
+			    				 this.repositoryId = repositoryVO.getId();
+			    			 } else {
+			    				 this.repositoryId = null;
+			    			 }
+			    		
 							RepositoryVO repositoryVO = (RepositoryVO)authorizedRepositoryVOList.get(0);
 							this.repositoryId = repositoryVO.getId();
 				    	}

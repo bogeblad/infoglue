@@ -93,18 +93,18 @@ public abstract class ViewCMSAbstractToolAction extends InfoGlueAbstractAction
 			    		else
 			    		{
 			    			 /* If the repository is not set we get the user defined default repository which cannot be the system tools repository */
-			    			 List<RepositoryVO> acceptedDefaultRepositoryVOList = new ArrayList<RepositoryVO>();
+			    			 List<RepositoryVO> acceptedHomeRepositoryVOList = new ArrayList<RepositoryVO>();
 			    			
 			    			 for (RepositoryVO repositoryVO : authorizedRepositoryVOList) {
 			    				/*This setting is stored in extraproperty for repository*/
-		    			    	String hideAsDefaultRepository = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(repositoryVO.getRepositoryId(), "hideAsDefaultRepository");
-		    					if (hideAsDefaultRepository == null) {
-			    					acceptedDefaultRepositoryVOList.add(repositoryVO);
+		    			    	String hideAsHomeRepository = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(repositoryVO.getRepositoryId(), "hideAsHomeRepository");
+		    					if (hideAsHomeRepository == null) {
+			    					acceptedHomeRepositoryVOList.add(repositoryVO);
 			    				}
 			    			 }
-			    			 if(acceptedDefaultRepositoryVOList.size() > 0) {
-			    				 RepositoryVO repositoryVO = acceptedDefaultRepositoryVOList.get(0);
-			    				 logger.info("Setting default repository to:" + repositoryVO.getName());
+			    			 if(acceptedHomeRepositoryVOList.size() > 0) {
+			    				 RepositoryVO repositoryVO = acceptedHomeRepositoryVOList.get(0);
+			    				 logger.info("Setting home repository to:" + repositoryVO.getName());
 			    				 this.repositoryId = repositoryVO.getId();
 			    			 } else {
 			    				 logger.error("This user does not has access to any allowed repositoies");

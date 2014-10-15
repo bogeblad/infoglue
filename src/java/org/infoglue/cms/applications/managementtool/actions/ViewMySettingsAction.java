@@ -82,17 +82,17 @@ public class ViewMySettingsAction extends InfoGlueAbstractAction
 	    this.toolbarVariant			= ps.getString("principal_" + this.getInfoGluePrincipal().getName() + "_toolbarVariant");
 
 	    /* Provide the list of repositories but do not include the system tool repositories */
-	    List<RepositoryVO> acceptedDefaultRepositoryVOList = new ArrayList<RepositoryVO>();
+	    List<RepositoryVO> acceptedHomeRepositoryVOList = new ArrayList<RepositoryVO>();
 	    List<RepositoryVO> authorizedRepositoryVOList = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 
 	    for (RepositoryVO repositoryVO : authorizedRepositoryVOList) {
 			/*This setting is stored in extraproperty for repository*/
-	    	String hideAsDefaultRepository = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(repositoryVO.getRepositoryId(), "hideAsDefaultRepository");
-			if (hideAsDefaultRepository == null) {
-	    		acceptedDefaultRepositoryVOList.add(repositoryVO);
+	    	String hideAsHomeRepository = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(repositoryVO.getRepositoryId(), "hideAsHomeRepository");
+			if (hideAsHomeRepository == null) {
+	    		acceptedHomeRepositoryVOList.add(repositoryVO);
 	    	}
 	    }
-	    this.repositories = acceptedDefaultRepositoryVOList;
+	    this.repositories = acceptedHomeRepositoryVOList;
 
 		this.themes = ThemeController.getController().getAvailableThemes();
 		

@@ -83,12 +83,12 @@ public class ViewMySettingsAction extends InfoGlueAbstractAction
 
 	    /* Provide the list of repositories but do not include the system tool repositories */
 	    List<RepositoryVO> acceptedDefaultRepositoryVOList = new ArrayList<RepositoryVO>();
-	    List<RepositoryVO> authorizedRepositoryVOList =RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
+	    List<RepositoryVO> authorizedRepositoryVOList = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 
 	    for (RepositoryVO repositoryVO : authorizedRepositoryVOList) {
 			/*This setting is stored in extraproperty for repository*/
-			String hideAsDefault = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(repositoryVO.getRepositoryId(), "hideAsDefault");
-			if (hideAsDefault != null && !hideAsDefault.equalsIgnoreCase("true")) {
+	    	String hideAsDefaultRepository = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(repositoryVO.getRepositoryId(), "hideAsDefaultRepository");
+			if (hideAsDefaultRepository == null) {
 	    		acceptedDefaultRepositoryVOList.add(repositoryVO);
 	    	}
 	    }

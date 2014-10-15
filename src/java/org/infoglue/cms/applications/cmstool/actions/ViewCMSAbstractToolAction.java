@@ -97,20 +97,19 @@ public abstract class ViewCMSAbstractToolAction extends InfoGlueAbstractAction
 			    			
 			    			 for (RepositoryVO repositoryVO : authorizedRepositoryVOList) {
 			    				/*This setting is stored in extraproperty for repository*/
-			    				String hideAsDefault = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(repositoryVO.getRepositoryId(), "hideAsDefault");
-			    				if (hideAsDefault != null && !hideAsDefault.equalsIgnoreCase("true")) {
+		    			    	String hideAsDefaultRepository = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(repositoryVO.getRepositoryId(), "hideAsDefaultRepository");
+		    					if (hideAsDefaultRepository == null) {
 			    					acceptedDefaultRepositoryVOList.add(repositoryVO);
 			    				}
 			    			 }
 			    			 if(acceptedDefaultRepositoryVOList.size() > 0) {
 			    				 RepositoryVO repositoryVO = acceptedDefaultRepositoryVOList.get(0);
+			    				 logger.info("Setting default repository to:" + repositoryVO.getName());
 			    				 this.repositoryId = repositoryVO.getId();
 			    			 } else {
+			    				 logger.error("This user does not has access to any allowed repositoies");
 			    				 this.repositoryId = null;
 			    			 }
-			    		
-							RepositoryVO repositoryVO = (RepositoryVO)authorizedRepositoryVOList.get(0);
-							this.repositoryId = repositoryVO.getId();
 				    	}
 			    		getHttpSession().setAttribute("repositoryId", this.repositoryId);		
 			    		logger.info("We set the defaultRepositoryId in the users session to " + this.repositoryId);

@@ -26,11 +26,14 @@ package org.infoglue.cms.applications.managementtool.actions;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ThemeController;
 import org.infoglue.cms.util.CmsPropertyHandler;
+import org.infoglue.cms.entities.management.RepositoryVO;
+import org.infoglue.deliver.controllers.kernel.impl.simple.RepositoryDeliveryController;
 
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.module.propertyset.PropertySetManager;
@@ -78,8 +81,19 @@ public class ViewMySettingsAction extends InfoGlueAbstractAction
 	    this.theme 					= CmsPropertyHandler.getTheme(this.getInfoGluePrincipal().getName());
 	    this.toolbarVariant			= ps.getString("principal_" + this.getInfoGluePrincipal().getName() + "_toolbarVariant");
 
-	    
-		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
+	    /* Provide the list of repositories but do not include the system tool repositories */
+	    List<RepositoryVO> acceptedHomeRepositoryVOList = new ArrayList<RepositoryVO>();
+	    List<RepositoryVO> authorizedRepositoryVOList = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
+
+	    for (RepositoryVO repositoryVO : authorizedRepositoryVOList) {
+			/*This setting is stored in extraproperty for repository*/
+	    	String hideAsHomeRepository = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(repositoryVO.getRepositoryId(), "hideAsHomeRepository");
+			if (hideAsHomeRepository == null) {
+	    		acceptedHomeRepositoryVOList.add(repositoryVO);
+	    	}
+	    }
+	    this.repositories = acceptedHomeRepositoryVOList;
+
 		this.themes = ThemeController.getController().getAvailableThemes();
 		
         return "success";

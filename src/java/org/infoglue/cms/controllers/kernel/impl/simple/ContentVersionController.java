@@ -2877,6 +2877,55 @@ public class ContentVersionController extends BaseController
 	}
 	
 	/**
+	 * This method are here to return all content versions that are x number of versions behind the current active version. This is for cleanup purposes.
+	 * 
+	 * @param numberOfVersionsToKeep
+	 * @return
+	 * @throws SystemException 
+	 */
+	
+	public int cleanContentVersions(ContentVO contentVO, boolean recurse, int numberOfVersionsToKeep, boolean keepOnlyOldPublishedVersions, long minimumTimeBetweenVersionsDuringClean, boolean deleteVersions) throws SystemException, Exception 
+	{
+		int cleanedVersions = 0;
+		
+		int batchLimit = 20;
+		List languageVOList = LanguageController.getController().getLanguageVOList();
+		
+		Iterator<LanguageVO> languageVOListIterator = languageVOList.iterator();
+		while(languageVOListIterator.hasNext())
+		{
+			LanguageVO languageVO = languageVOListIterator.next();
+			
+			List<Integer> contentIds = new ArrayList<Integer>();
+			contentIds.add(contentVO.getId());
+			if(recurse)
+			{
+				contentIds.addAll(ContentController.getContentController().getContentIdsForAllChildren(contentVO.getId()));
+			}
+			
+			List<SmallestContentVersionVO> contentVersionVOList = getSmallestContentVersionVOListImpl(contentIds, languageVO.getId(), numberOfVersionsToKeep, keepOnlyOldPublishedVersions, minimumTimeBetweenVersionsDuringClean);
+			
+			//System.out.println("Deleting " + contentVersionVOList.size() + " versions for language " + languageVO.getName());
+
+			int maxIndex = (contentVersionVOList.size() > batchLimit ? batchLimit : contentVersionVOList.size());
+			List partList = contentVersionVOList.subList(0, maxIndex);
+			while(partList.size() > 0)
+			{
+				if(deleteVersions)
+				{
+					cleanVersions(numberOfVersionsToKeep, partList);
+				}
+				cleanedVersions = cleanedVersions + partList.size();
+				System.out.println("Cleaned " + cleanedVersions + " of " + contentVersionVOList.size());
+				partList.clear();
+				maxIndex = (contentVersionVOList.size() > batchLimit ? batchLimit : contentVersionVOList.size());
+				partList = contentVersionVOList.subList(0, maxIndex);
+			}
+		}
+		return cleanedVersions;
+	}
+	
+	/**
 	 * Cleans the list of versions - even published ones. Use with care only for cleanup purposes.
 	 * 
 	 * @param numberOfVersionsToKeep
@@ -3084,7 +3133,7 @@ public class ContentVersionController extends BaseController
 	 */
 	public List<SmallestContentVersionVO> getSmallestContentVersionVOListImpl(List<Integer> contentIdList, Integer languageId, int numberOfVersionsToKeep, boolean keepOnlyOldPublishedVersions, long minimumTimeBetweenVersionsDuringClean) throws SystemException 
 	{
-		logger.info("numberOfVersionsToKeep:" + numberOfVersionsToKeep);
+		System.out.println("numberOfVersionsToKeep:" + numberOfVersionsToKeep);
 
 		Database db = CastorDatabaseService.getDatabase();
     	

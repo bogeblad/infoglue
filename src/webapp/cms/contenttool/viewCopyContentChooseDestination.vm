@@ -12,6 +12,22 @@
 	    	exp=v;
 	    }
 	    
+	    function showWeightList()
+	    {
+		    $('#weightList').toggle();
+		}
+	    
+	    $(document).ready(function() {
+		    jQuery.get("ViewCommonAjaxServices!assetWeight.action?contentId=$contentId", function(data) {
+				//alert("Count:" + data + " on $contentId");
+				if(data != "0")
+				{
+					$('#weightText').empty().append("<a href='javascript:showWeightList();'><b>" + data.substring(0,data.indexOf(":")) + "</b></a>");
+					$('#weightList').empty().append("<b>Contents over 100Kb</b>" + data.substring(data.indexOf(":")+1) + "");
+				}
+			});
+		});
+		
 	    function save()
 	    {
 		    finish();
@@ -82,10 +98,15 @@
 
 	<div style="clear: both;"></div>
 
-	<h3>$ui.getString("tool.contenttool.copyContent.header")</h3>
+	<h3>$ui.getString("tool.contenttool.copyContent.header") </h3>
 	<p>
 		$ui.getString("tool.contenttool.copyContent.introduction")
+		<br/>Size (including children): <span id="weightText"></span>
 	</p>	
+	<p id="weightList" style="border: 1px solid #ccc; background-color: white; display: none;">
+	
+	</p>
+
 	<div style="margin: 16px;">	
 	
   		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);" class="contenttool">

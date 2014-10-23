@@ -1,51 +1,140 @@
-<?xml version="1.0" encoding="UTF-8"?> 
+#if($contentId)
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	#define( $headerMarkup )
 
-#beginManagementTool("tool.managementtool.viewSystemTools.header" "tool.managementtool.viewSystemTools.header" "")
+	#end
 
-<div class="fullymarginalized">
-
-	<h2>$ui.getString("tool.managementtool.archiveTool.header")</h2>
+	#beginLightCommonToolV3Impl("tool.managementtool.archiveTool.header" "" "" false true $!disableCloseButton $headerMarkup false "")
+		
+		#lightMenuToolbar("" $buttons $rightButtons) 
 	
-	<h3>Asset archiving</h3>
-	<p>
-		<a href="ViewArchiveTool!inputArchiveOldAssets.action?numberOfVersionsToKeep=3">$ui.getString("tool.managementtool.archiveAssets.title") - $ui.getString("tool.managementtool.archiveAssets.leadin")</a>
-	</p>
-	<p>
-		<a href="ViewArchiveTool!inputRestoreAssetArchive.action">$ui.getString("tool.managementtool.restoreAssetArchive.title") - $ui.getString("tool.managementtool.restoreAssetArchive.leadin")</a>
-	</p>
+		<div style="clear: both;"></div>
 
-	<h3>Version archiving</h3>
-	#if($cleaningMap)
-		<p style="color:red;">
-			#if($deleteVersions)
-				Deleted versions per content type:<br/>
-			#else
-				Number of versions that will be cleaned per content type:<br/>
-			#end
-			
-			<ul style="margin-left: 16px; padding-left: 16px; list-style-type: initial;">
-			#foreach($key in $cleaningMap.keySet())
-				<li>$key: $cleaningMap.get($key) versions</li>
-			#end
-			</ul>
-			
-			#if($deleteVersions)
+		<h2>Version archiving</h2>
+		
+		#if($cleaningMap)
+			<p style="color:red;">
+				#if($deleteVersions)
+					Deleted versions<br/>
+				#else
+					Number of versions that will be cleaned<br/>
+				#end
+				
+				<ul style="margin-left: 16px; padding-left: 16px; list-style-type: initial;">
+				#foreach($key in $cleaningMap.keySet())
+					<li>$cleaningMap.get($key) versions</li>
+				#end
+				</ul>
+				
 				<p>
-					<a href="ViewArchiveTool!cleanOldVersions.action?igSecurityCode=$!securityCode">$ui.getString("tool.managementtool.cleanOldVersionsDiagnose.title") - $ui.getString("tool.managementtool.cleanOldVersionsDiagnose.leadin")</a>
+				Number of versions to keep for each language:<br/>
+				<select id="numberOfVersionsToKeep">
+					<option value="3" #if($numberOfVersionsToKeep == 3)selected='selected'#end>3</option>
+					<option value="5" #if($numberOfVersionsToKeep == 5)selected='selected'#end>5</option>
+					<option value="7" #if($numberOfVersionsToKeep == 7)selected='selected'#end>7</option>
+					<option value="10" #if($numberOfVersionsToKeep == 10)selected='selected'#end>10</option>
+					<option value="20" #if($numberOfVersionsToKeep == 20)selected='selected'#end>20</option>
+				</select>
 				</p>
-			#else
-				<p>
-					<input type="button" onclick="document.location.href = 'ViewArchiveTool!cleanOldVersions.action?igSecurityCode=$!securityCode';" value="Check again"/>
-					<input type="button" onclick="if(confirm('Make sure you take a backup of the database first. The versions will be completely deleted and not possible to restore again. Do you want to continue?')) document.location.href = 'ViewArchiveTool!cleanOldVersions.action?deleteVersions=true&igSecurityCode=$!securityCode';" value="$ui.getString("tool.managementtool.cleanOldVersions.title")"/>
-				</p>
-			#end		
-		</p>
+				
+				#if($deleteVersions)
+					<p>
+						<input type="button" onclick="document.location.href = 'ViewArchiveTool!cleanOldVersionsForContent.action?contentId=$contentId&recurse=$recurse&numberOfVersionsToKeep=' + $('#numberOfVersionsToKeep').val() + '&igSecurityCode=$!securityCode';" value="Check again"/>
+					</p>
+				#else
+					<p>
+						<input type="button" onclick="document.location.href = 'ViewArchiveTool!cleanOldVersionsForContent.action?contentId=$contentId&recurse=$recurse&numberOfVersionsToKeep=' + $('#numberOfVersionsToKeep').val() + '&igSecurityCode=$!securityCode';" value="Check again"/>
+						<input type="button" onclick="if(confirm('Make sure you take a backup of the database first. The versions will be completely deleted and not possible to restore again. Do you want to continue?')) document.location.href = 'ViewArchiveTool!cleanOldVersionsForContent.action?contentId=$contentId&recurse=$recurse&deleteVersions=true&numberOfVersionsToKeep=' + $('#numberOfVersionsToKeep').val() + '&igSecurityCode=$!securityCode';" value="$ui.getString("tool.managementtool.cleanOldVersions.title")"/>
+					</p>
+				#end		
+			</p>
+		#else
+			<p>
+				<a href="ViewArchiveTool!cleanOldVersions.action?igSecurityCode=$!securityCode">$ui.getString("tool.managementtool.cleanOldVersionsDiagnose.title") - $ui.getString("tool.managementtool.cleanOldVersionsDiagnose.leadin")</a>
+			</p>
+		#end
+		
+		#lightFooterToolbar($footerButtons)
+
+		#endLightCommonToolV3()
+		
 	#else
-		<p>
-			<a href="ViewArchiveTool!cleanOldVersions.action?igSecurityCode=$!securityCode">$ui.getString("tool.managementtool.cleanOldVersionsDiagnose.title") - $ui.getString("tool.managementtool.cleanOldVersionsDiagnose.leadin")</a>
-		</p>
+		
+		<?xml version="1.0" encoding="UTF-8"?> 
+
+		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+		
+		#beginManagementTool("tool.managementtool.viewSystemTools.header" "tool.managementtool.viewSystemTools.header" "")
+		<script type="text/javascript">
+
+			function analyzeContents()
+			{
+				jQuery.get("ViewCommonAjaxServices!heaviestContents.action?contentId=$contentId", function(data) {
+					//alert("Count:" + data + " on $contentId");
+					if(data != "0")
+					{
+						$('#contentAnalysisResult').empty().append("<b>Contents</b>" + data.substring(data.indexOf(":")+1) + "");
+						$("#contentAnalysisResult").toggle();
+					}
+				});
+			
+			}
+
+		</script>
+
+		<div class="fullymarginalized">
+		
+				<h2>$ui.getString("tool.managementtool.archiveTool.header")</h2>
+				
+				<h3>Asset archiving</h3>
+				<p>
+					<a href="ViewArchiveTool!inputArchiveOldAssets.action?numberOfVersionsToKeep=3">$ui.getString("tool.managementtool.archiveAssets.title") - $ui.getString("tool.managementtool.archiveAssets.leadin")</a>
+				</p>
+				<p>
+					<a href="ViewArchiveTool!inputRestoreAssetArchive.action">$ui.getString("tool.managementtool.restoreAssetArchive.title") - $ui.getString("tool.managementtool.restoreAssetArchive.leadin")</a>
+				</p>
+			
+				<h3>Version archiving</h3>
+				#if($cleaningMap)
+					<p style="color:red;">
+						#if($deleteVersions)
+							Deleted versions per content type:<br/>
+						#else
+							Number of versions that will be cleaned per content type:<br/>
+						#end
+						
+						<ul style="margin-left: 16px; padding-left: 16px; list-style-type: initial;">
+						#foreach($key in $cleaningMap.keySet())
+							<li>$key: $cleaningMap.get($key) versions</li>
+						#end
+						</ul>
+						
+						#if($deleteVersions)
+							<p>
+								<a href="ViewArchiveTool!cleanOldVersions.action?igSecurityCode=$!securityCode">$ui.getString("tool.managementtool.cleanOldVersionsDiagnose.title") - $ui.getString("tool.managementtool.cleanOldVersionsDiagnose.leadin")</a>
+							</p>
+						#else
+							<p>
+								<input type="button" onclick="document.location.href = 'ViewArchiveTool!cleanOldVersions.action?igSecurityCode=$!securityCode';" value="Check again"/>
+								<input type="button" onclick="if(confirm('Make sure you take a backup of the database first. The versions will be completely deleted and not possible to restore again. Do you want to continue?')) document.location.href = 'ViewArchiveTool!cleanOldVersions.action?deleteVersions=true&igSecurityCode=$!securityCode';" value="$ui.getString("tool.managementtool.cleanOldVersions.title")"/>
+							</p>
+						#end		
+					</p>
+				#else
+					<p>
+						<a href="ViewArchiveTool!cleanOldVersions.action?igSecurityCode=$!securityCode">$ui.getString("tool.managementtool.cleanOldVersionsDiagnose.title") - $ui.getString("tool.managementtool.cleanOldVersionsDiagnose.leadin")</a>
+					</p>
+				#end
+				
+				<h3>Content analysis</h3>
+				<p>
+					<a href="javascript:analyzeContents();">Click to analyze heaviest contents</a>
+				</p>
+				<div id="contentAnalysisResult" style="margin-left: 16px; border: 1px solid #ccc; background-color: white; display: none;">
+					
+				</div>
+		
+		#endManagementTool()
+
 	#end
 	
-#endManagementTool()

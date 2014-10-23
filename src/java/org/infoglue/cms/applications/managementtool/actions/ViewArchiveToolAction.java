@@ -25,14 +25,21 @@ package org.infoglue.cms.applications.managementtool.actions;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
+import org.infoglue.cms.entities.content.ContentVO;
+import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.jobs.CleanOldVersionsJob;
+import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.FileUploadHelper;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
@@ -67,6 +74,10 @@ public class ViewArchiveToolAction extends InfoGlueAbstractAction
 	private Integer numberOfCleanedSiteNodeVersions = null;
 	private Integer numberOfCleanedContentVersions = null;
 	private Map<String,Integer> cleaningMap = null;
+
+	private Integer contentId = null;
+	private Boolean recurse = false;
+	private Map<Integer,Long> sizes = new HashMap<Integer,Long>();
 	
 	public String doInput() throws Exception
     {
@@ -116,6 +127,25 @@ public class ViewArchiveToolAction extends InfoGlueAbstractAction
 
 		Map<String,Integer> result = (Map<String,Integer>)jec.getResult();
 		this.cleaningMap = result;
+		
+        return "input";
+    }
+
+	public String doCleanOldVersionsForContent() throws Exception
+    {
+		Map<String,Integer> totalCleanedContentVersions = new HashMap<String,Integer>();
+		
+		ContentVO contentVOToClean = ContentController.getContentController().getContentVOWithId(contentId);
+		ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVOToClean.getContentTypeDefinitionId());
+		
+    	String keepOnlyOldPublishedVersionsString = CmsPropertyHandler.getKeepOnlyOldPublishedVersionsDuringClean();
+    	long minimumTimeBetweenVersionsDuringClean = CmsPropertyHandler.getMinimumTimeBetweenVersionsDuringClean();
+    	boolean keepOnlyOldPublishedVersions = Boolean.parseBoolean(keepOnlyOldPublishedVersionsString);
+
+		int cleanedContentVersions = ContentVersionController.getContentVersionController().cleanContentVersions(contentVOToClean, recurse, numberOfVersionsToKeep, keepOnlyOldPublishedVersions, minimumTimeBetweenVersionsDuringClean, deleteVersions);
+		totalCleanedContentVersions.put(ctdVO.getName(), cleanedContentVersions);
+		
+		this.cleaningMap = totalCleanedContentVersions;
 		
         return "input";
     }
@@ -205,9 +235,33 @@ public class ViewArchiveToolAction extends InfoGlueAbstractAction
 		this.deleteVersions = deleteVersions;
 	}
 	
+    public Integer getContentId()
+	{
+		return contentId;
+	}
+
+    public void setContentId(Integer contentId)
+	{
+		this.contentId = contentId;
+	}
+    
+    public Boolean getRecurse()
+	{
+		return recurse;
+	}
+	
+    public void setRecurse(Boolean recurse)
+	{
+		this.recurse = recurse;
+	}
+
 	public Map<String, Integer> getCleaningMap() 
 	{
 		return cleaningMap;
 	}
 
+	public Map<Integer, Long> getContentSizes()
+	{
+		return this.sizes;
+	}
 }

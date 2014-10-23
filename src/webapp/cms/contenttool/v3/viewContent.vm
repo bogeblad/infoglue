@@ -48,7 +48,27 @@
 				$("#genericDialog").dialog('open');
 				return false;
 			});
+						
 		});
+	
+		function showWeightList()
+	    {
+		    $('#weightList').toggle();
+		}
+	
+		function showWeight()
+		{
+			$('#weightText').empty().append("Loading...");
+			jQuery.get("ViewCommonAjaxServices!assetWeight.action?contentId=$contentId", function(data) {
+				//alert("Count:" + data + " on $contentId");
+				if(data != "0")
+				{
+					$('#weightText').empty().append("<b><a href='javascript:showWeightList();'>" + data.substring(0,data.indexOf(":")) + "</a></b>");
+					$('#weightList').empty().append("<b>Contents over 100Kb</b>" + data.substring(data.indexOf(":")+1) + "");
+				}
+			});
+			
+		}
 	
 		var dirty = false;
 		//-----------------------------------------------
@@ -180,7 +200,11 @@
 			
 			<p>
 				Content ID: $contentVO.id (Repository ID: $contentVO.repositoryId)<br/>
-				Path: $this.getContentPath($contentVO.id)
+				Path: $this.getContentPath($contentVO.id)<br/>
+				Size (including children): <span id="weightText"><a href="javascript:showWeight();">Click to analyze</a></span>
+			</p>
+			<p id="weightList" style="border: 1px solid #ccc; background-color: white; display: none;">
+			
 			</p>
 						
 	        #if($this.hasAccessTo("ToolTabsAndButtons.convertToFromFolderPart", true, false, true))

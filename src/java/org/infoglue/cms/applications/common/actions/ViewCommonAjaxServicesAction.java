@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -193,6 +194,54 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 		return NONE;
     }
 
+	public String doAssetWeight() throws Exception
+    {
+		VisualFormatter formatter = new VisualFormatter();
+
+		Map<Integer,Long> sizes = ContentController.getContentController().getContentWeight(new Integer(getRequest().getParameter("contentId")), true);
+		Long totalSize = 0L;
+		StringBuffer sb = new StringBuffer();
+		
+		for(Integer id : sizes.keySet())
+		{
+			totalSize = totalSize + sizes.get(id);
+			if(sizes.get(id) > 100000)
+			{
+				String contentPath = ContentController.getContentController().getContentPath(id, false, true);
+				sb.append("<br/>" + contentPath + "=" + formatter.formatFileSize(sizes.get(id)));
+			}
+		}
+		
+		this.getResponse().setContentType("text/plain");
+		this.getResponse().getWriter().print("" + formatter.formatFileSize(totalSize) + ":" + sb.toString());
+		
+		return NONE;
+    }
+	
+	public String doHeaviestContents() throws Exception
+    {
+		VisualFormatter formatter = new VisualFormatter();
+
+		Map<Integer,Long> sizes = ContentController.getContentController().getHeaviestContents();
+		Long totalSize = 0L;
+		StringBuffer sb = new StringBuffer();
+		
+		for(Integer id : sizes.keySet())
+		{
+			totalSize = totalSize + sizes.get(id);
+			if(sizes.get(id) > 100000)
+			{
+				String contentPath = ContentController.getContentController().getContentPath(id, false, true);
+				sb.append("<br/><a href='ViewArchiveTool!cleanOldVersionsForContent.action?contentId=" + id + "&recurse=true' target='_blank'>" + contentPath + " (" + formatter.formatFileSize(sizes.get(id)) + ")</a>");
+			}
+		}
+		
+		this.getResponse().setContentType("text/plain");
+		this.getResponse().getWriter().print("" + formatter.formatFileSize(totalSize) + ":" + sb.toString());
+		
+		return NONE;
+    }
+	
 	public String doCategoryCount() throws Exception
     {
 		List categories = ContentCategoryController.getController().findByContentVersion(new Integer(getRequest().getParameter("contentVersionId")));

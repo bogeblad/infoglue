@@ -154,7 +154,7 @@ public class ViewContentAction extends InfoGlueAbstractAction
        		this.defaultFolderContentTypeName = InfoGlueSettingsController.getInfoGlueSettingsController().getProperty("repository_" + this.getRepositoryId() + "_defaultFolderContentTypeName", "applicationProperties", null, false, false, false, false, null);
 		    if(this.defaultFolderContentTypeName == null || this.defaultFolderContentTypeName.equals(""))
 		    	this.defaultFolderContentTypeName = "Folder";
-		}
+		}        
     } 
 
     public String doExecute() throws Exception

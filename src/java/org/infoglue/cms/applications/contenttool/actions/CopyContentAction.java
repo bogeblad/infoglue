@@ -25,15 +25,14 @@ package org.infoglue.cms.applications.contenttool.actions;
 
 import java.util.List;
 
+import javax.transaction.SystemException;
+
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.applications.databeans.LinkBean;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
-import org.infoglue.cms.entities.content.ContentVO;
-import org.infoglue.cms.util.ConstraintExceptionBuffer;
-import org.infoglue.deliver.controllers.kernel.impl.simple.BasicTemplateController;
 
 /**
  * This action represents the Copy Content Usecase.
@@ -141,7 +140,11 @@ public class CopyContentAction extends InfoGlueAbstractAction
     		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
             return "input";
         }
-
+        
+        Long totalSize = ContentController.getContentController().getContentWeightTotal(contentId, true);
+        if(totalSize > (500 * 1000 * 1000))
+        	throw new SystemException("Folder / content is to large to copy. Please clean some versions or copy subparts.");
+		
 		ContentControllerProxy.getController().acCopyContent(this.getInfoGluePrincipal(), contentId, newParentContentId, maxAssetSize, onlyLatestVersions);
 
         if(this.returnAddress != null && !this.returnAddress.equals(""))

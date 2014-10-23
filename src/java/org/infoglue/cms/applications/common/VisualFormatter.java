@@ -24,6 +24,7 @@
 package org.infoglue.cms.applications.common;
 
 import java.net.URLEncoder;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -685,17 +686,38 @@ public class VisualFormatter
         else if(fileSizeObject instanceof Long)
         	fileSize = (Long)fileSizeObject;
         
+        float newSize = fileSize;
+        String suffix = "Bytes";
+        
         if(fileSize.longValue() >= 1000000000000L)
-        	fileSizeString = "" + fileSize / (1000 * 1000 * 1000 * 1000) + " TB";
+        {	
+        	newSize = fileSize / (1000F * 1000F * 1000F * 1000F);
+        	suffix = "TB";
+        }
         if(fileSize.longValue() >= 1000000000)
-        	fileSizeString = "" + fileSize / (1000 * 1000 * 1000) + " GB";
+        {	
+        	newSize = fileSize / (1000F * 1000F * 1000F);
+        	suffix = "GB";
+        }
         else if(fileSize.longValue() >= 1000000)
-        	fileSizeString = "" + fileSize / (1000 * 1000) + " MB";
+        {	
+        	newSize = fileSize / (1000F * 1000F);
+        	suffix = "MB";
+        }
         else if(fileSize.longValue() >= 1000)
-        	fileSizeString = "" + fileSize / 1000 + " KB";
+        {	
+        	newSize = fileSize / (1000F);
+        	suffix = "KB";
+        }
+        
+        if(newSize > 0)
+        {
+	        DecimalFormat df1 = new DecimalFormat("####.00");
+	        fileSizeString = df1.format(newSize) + " " + suffix;
+        }
         else
-        	fileSizeString = "" + fileSize + " Bytes";
-        	
+        	fileSizeString = "0 Bytes";
+        
         return fileSizeString;
     }
 

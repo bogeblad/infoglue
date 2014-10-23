@@ -643,6 +643,7 @@ ul.assignedEntities li
 .pageItem {display: block; float: left; background:url(images/v3/pageIcon.gif) no-repeat left center; background-position: 0px 0px; height: 20px; text-indent: 18px; }
 .unpublishItem { color: #333; text-decoration: line-through; }
 .analytics {background:url(images/v3/analytics.png) no-repeat left center; background-position: 0px 4px;}
+.archiveContentVersions {background:url(images/cleanVersions.png) no-repeat left center; background-position: 0px 4px;}
 
 li.content {background:url(images/v3/contentIcon.gif) no-repeat left center; background-position: 0px 0px; height: 20px; text-indent: 18px; }
 li.page { background:url(images/v3/pageIcon.gif) no-repeat left center; background-position: 0px 0px; height: 20px; text-indent: 18px; }

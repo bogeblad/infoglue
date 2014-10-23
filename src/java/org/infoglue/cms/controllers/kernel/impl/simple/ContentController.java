@@ -36,6 +36,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -57,6 +58,7 @@ import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
+import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.content.SmallestContentVersionVO;
 import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.MediumContentImpl;
@@ -3995,5 +3997,177 @@ public class ContentController extends BaseController
         }  
         
         return exists;
+	}
+
+	public Long getContentWeightTotal(Integer contentId, boolean recurse) throws Exception
+	{
+		Map<Integer,Long> sizes = ContentController.getContentController().getContentWeight(contentId, true);
+	    Long totalSize = 0L;
+		StringBuffer sb = new StringBuffer();
+		
+		for(Integer id : sizes.keySet())
+		{
+			totalSize = totalSize + sizes.get(id);
+		}
+		return totalSize;
+	}
+	
+	public Map<Integer,Long> getContentWeight(Integer contentId, boolean recurse) throws Exception
+	{
+		Map<Integer,Long> weights = new HashMap<Integer,Long>();
+		
+		Database db = CastorDatabaseService.getDatabase();
+        beginTransaction(db);
+		try
+        {	
+			weights = getContentWeight(contentId, recurse, db);
+				
+			commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+            rollbackTransaction(db);
+        }  
+        
+        return weights;
+	}
+	
+
+	public Map<Integer,Long> getContentWeight(Integer contentId, boolean recurse, Database db) throws Exception
+	{
+		Map<Integer,Long> weights = new HashMap<Integer,Long>();
+		
+		Long weight = getContentWeight(contentId, db);
+		weights.put(contentId, weight);
+		if(recurse)
+		{
+			List<ContentVO> childContents = ContentController.getContentController().getContentChildrenVOList(contentId, null, false, db);
+			for(ContentVO child : childContents)
+			{
+				Map<Integer,Long> weightsChildren = getContentWeight(child.getContentId(), recurse, db);
+				weights.putAll(weightsChildren);
+			}
+		}
+		
+		return weights;
+	}
+	
+
+	public Long getContentWeight(Integer contentId, Database db) throws Exception
+	{
+		Map<Integer,Long> assetSizes = new HashMap<Integer,Long>();
+		
+		Long totalSize = 0L;
+		
+		List<SmallestContentVersionVO> contentVersions = ContentVersionController.getContentVersionController().getSmallestContentVersionVOList(contentId, db);
+		for(SmallestContentVersionVO version : contentVersions)
+		{
+			List<DigitalAssetVO> assets = DigitalAssetController.getController().getDigitalAssetVOList(version.getId(), db);
+			for(DigitalAssetVO asset : assets)
+			{
+				Long size = assetSizes.get(asset.getId());
+				if(size == null)
+				{
+					totalSize = totalSize + asset.getAssetFileSize();
+				}
+				assetSizes.put(asset.getId(), asset.getAssetFileSize().longValue());
+			}
+		}
+		
+		return totalSize;
+	}
+
+	public List<Integer> getContentIdsForAllChildren(Integer contentId) throws Exception
+	{
+		List<Integer> childIds = new ArrayList<Integer>();
+		
+		Database db = CastorDatabaseService.getDatabase();
+        beginTransaction(db);
+		try
+        {	
+			childIds = getContentIdsForAllChildren(contentId, db);
+				
+			commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+            rollbackTransaction(db);
+        }  
+        
+        return childIds;
+	}
+	
+	public List<Integer> getContentIdsForAllChildren(Integer contentId, Database db) throws Exception
+	{
+		List<Integer> childIds = new ArrayList<Integer>();
+		List<ContentVO> childContents = ContentController.getContentController().getContentChildrenVOList(contentId, null, false, db);
+		for(ContentVO child : childContents)
+		{
+			childIds.addAll(getContentIdsForAllChildren(child.getId(), db));
+			childIds.add(child.getId());
+		}
+		
+		return childIds;
+	}
+	
+	
+	public Map<Integer,Long> getHeaviestContents() throws Exception
+	{
+	    Map<Integer,Long> sizes = new HashMap<Integer,Long>();
+	    		
+		Database db = CastorDatabaseService.getDatabase();
+        beginTransaction(db);
+		try
+        {	
+			sizes = getHeaviestContents(db);
+				
+			commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+            rollbackTransaction(db);
+        }  
+        
+        return sizes;
+	}
+	
+	
+	public Map<Integer,Long> getHeaviestContents(Database db) throws SystemException, Bug, Exception
+	{
+	    Timer t = new Timer();
+	    Map<Integer,Long> sizes = new LinkedHashMap<Integer,Long>();
+	    	    
+		StringBuilder sql = new StringBuilder();
+		if(CmsPropertyHandler.getUseShortTableNames().equals("true"))
+		{
+			sql.append("select cv.contId, count(distinct cv.contVerId) as versionCount, count(cvda.digAssetId) as assetCount, sum(distinct da.assetFileSize) as totalSize from cmContVer cv, cmContVerDigAsset cvda, cmDigAsset da where cv.contVerId = cvda.contVerId AND cvda.digAssetId = da.digAssetId group by cv.contId order by totalSize desc ");
+		}
+		else
+		{
+			sql.append("select cv.contentId, count(distinct cv.contentVersionId) as versionCount, count(cvda.digitalAssetId) as assetCount, sum(distinct da.assetFileSize) as totalSize from cmContentVersion cv, cmContentVersionDigitalAsset cvda, cmDigitalAsset da where cv.contentVersionId = cvda.contentVersionId AND cvda.digitalAssetId = da.digitalAssetId group by cv.contentId order by totalSize desc");
+		}
+
+		String SQL = "" + sql.toString() + "";
+		logger.info("SQL:" + SQL);
+		
+		Connection conn = (Connection) db.getJdbcConnection();
+		
+		PreparedStatement psmt = conn.prepareStatement(SQL.toString());
+
+		ResultSet rs = psmt.executeQuery();
+		while(rs.next() && sizes.size() < 500)
+		{
+			sizes.put(new Integer(rs.getString(1)), new Long(rs.getString(4)));
+            System.out.println(new Integer(rs.getString(1)) + ":" + new Long(rs.getString(4)));
+            if(new Long(rs.getString(4)) < 2000000)
+            	break;
+		}
+		rs.close();
+		psmt.close();
+
+		return sizes;		
 	}
 }

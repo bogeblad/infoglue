@@ -890,6 +890,15 @@ public class ToolbarController implements ToolbarProvider
 			changeContentTypeButton.getSubButtons().add(exportContentButton);
 			changeContentTypeButton.getSubButtons().add(importContentButton);
 			changeContentTypeButton.getSubButtons().add(createContentsFromUploadButton);
+			
+			ToolbarButton archiveVersionsButton = new ToolbarButton("",
+					  getLocalizedString(locale, "tool.contenttool.toolbarV3.archiveContentLabel"), 
+					  getLocalizedString(locale, "tool.contenttool.toolbarV3.archiveContentLabel"),
+					  "ViewArchiveTool!cleanOldVersionsForContent.action?contentId=" + contentId + "&recurse=true",
+					  "",
+					  "archiveContentVersions");
+			changeContentTypeButton.getSubButtons().add(archiveVersionsButton);
+					
 			buttons.add(changeContentTypeButton);
 		}
 		
@@ -1301,6 +1310,15 @@ public class ToolbarController implements ToolbarProvider
 			buttons.add(changeContentTypeButton);
 		}
 		
+		ToolbarButton archiveVersionsButton = new ToolbarButton("",
+				  getLocalizedString(locale, "tool.contenttool.toolbarV3.archiveContentLabel"), 
+				  getLocalizedString(locale, "tool.contenttool.toolbarV3.archiveContentLabel"),
+				  "ViewArchiveTool!cleanOldVersionsForContent.action?contentId=" + contentId,
+				  "",
+				  "archiveContentVersions");
+		
+		changeContentTypeButton.getSubButtons().add(archiveVersionsButton);
+
 		/*
 		buttons.add(new ToolbarButton("",
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.showContentInTreeLabel"), 

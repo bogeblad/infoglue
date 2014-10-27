@@ -50,7 +50,7 @@
 	    function addQualifyer()
 		{
 			entityId = document.inputForm.entityId.value;
-			if(entityId == '' || entityId == '${select}')
+			if(entityId == '' || entityId == '${select}' || entityId == '-1')
 			{
 				alert("You must choose a content to add");
 			}

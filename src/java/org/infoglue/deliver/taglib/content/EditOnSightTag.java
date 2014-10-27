@@ -25,6 +25,8 @@ package org.infoglue.deliver.taglib.content;
 
 import javax.servlet.jsp.JspException;
 
+import org.apache.log4j.Logger;
+import org.infoglue.cms.applications.contenttool.actions.ViewContentVersionAction;
 import org.infoglue.deliver.taglib.component.ComponentLogicTag;
 
 /**
@@ -41,6 +43,7 @@ public class EditOnSightTag extends ComponentLogicTag
 	private Integer contentId;
 	private Integer languageId;
     private String attributeName;
+    private String extraClasses;
     private String html;
     private boolean showInPublishedMode = false;
     
@@ -53,14 +56,16 @@ public class EditOnSightTag extends ComponentLogicTag
     {
         if(languageId == null)
             this.languageId = getController().getLanguageId();
-        
-        produceResult(this.getController().getEditOnSightTag(contentId, languageId, attributeName, html, showInPublishedMode));
-        
+      
+        produceResult(this.getController().getEditOnSightTag(contentId, languageId, attributeName, html, showInPublishedMode, extraClasses));
+     
         this.contentId = null;
         this.languageId = null;
         this.attributeName = null;
+        this.extraClasses = null;
         this.html = null;
         this.showInPublishedMode = false;
+        
         
         return EVAL_PAGE;
     }    
@@ -88,5 +93,9 @@ public class EditOnSightTag extends ComponentLogicTag
     public void setShowInPublishedMode(boolean showInPublishedMode)
     {
         this.showInPublishedMode = showInPublishedMode;
+    }
+    public void setExtraClasses(final String extraClasses) throws JspException
+    {
+    	this.extraClasses = evaluateString("EditOnSightTag", "extraClasses", extraClasses);
     }
 }

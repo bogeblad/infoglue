@@ -1419,12 +1419,15 @@ public abstract class BaseController
 
 	public Locale getUserPrefferedLocale(String userName)
 	{
+
 		Locale locale = Locale.ENGLISH;
 		try
 		{
 			List toolLocales = CmsPropertyHandler.getToolLocales();
-			if(toolLocales != null && toolLocales.size() > 0)
+
+			if(toolLocales != null && toolLocales.size() > 0) 
 				locale = (Locale)toolLocales.get(0);
+			
 		}
 		catch (Exception e) 
 		{

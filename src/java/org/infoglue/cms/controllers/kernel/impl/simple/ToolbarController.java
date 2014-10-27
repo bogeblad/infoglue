@@ -232,7 +232,6 @@ public class ToolbarController implements ToolbarProvider
 			{
 				return getInstallUpgradeDatabaseFooterButtons(toolbarKey, principal, locale, request, disableCloseButton);
 			}
-				
 
 			if(toolbarKey.equalsIgnoreCase("tool.common.install.installationFinished.title"))
 				asButtons(getDialogCloseButton(toolbarKey, principal, locale, request, false));
@@ -277,6 +276,9 @@ public class ToolbarController implements ToolbarProvider
 				return asButtons(getDialogCloseButton(toolbarKey, principal, locale, request, disableCloseButton));
 			
 			if(toolbarKey.equalsIgnoreCase("tool.contenttool.createContentHeader") || toolbarKey.equalsIgnoreCase("tool.contenttool.createFolderHeader"))
+				return getCommonFooterSaveOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
+			
+			if(toolbarKey.equalsIgnoreCase("tool.contenttool.createFolderFromStructureHeader"))
 				return getCommonFooterSaveOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
 			
 			if(toolbarKey.equalsIgnoreCase("tool.contenttool.contentVersionHeader"))
@@ -386,7 +388,6 @@ public class ToolbarController implements ToolbarProvider
 
 			if(toolbarKey.equalsIgnoreCase("tool.common.trashcan.title"))
 				return getTrashcanFooterButtons(toolbarKey, principal, locale, request, disableCloseButton);
-			
 			
 			/*
 			if(toolbarKey.equalsIgnoreCase("tool.managementtool.repositoryList.header"))
@@ -4098,7 +4099,7 @@ public class ToolbarController implements ToolbarProvider
 		return new ToolbarButton("cancelButton",
 									  getLocalizedString(locale, "tool.common.cancelButton.label"), 
 									  getLocalizedString(locale, "tool.common.cancelButton.label"),
-									  "if(parent && parent.document.location.href != document.location.href && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.document.location.href != document.location.href && parent.closeDialog) parent.closeDialog(); else { window.close();}",
+									  "if(typeof window.returnToReferrer == 'function') returnToReferrer(); else history.back();",
 				  					  "css/images/v3/cancel.gif",
 				  					  "left",
 									  "cancel",

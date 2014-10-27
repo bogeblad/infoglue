@@ -1023,19 +1023,19 @@
 	<action name="org.infoglue.cms.applications.contenttool.actions.UpdateContentVersionAction" alias="UpdateContentVersion">
 		<view name="input">/cms/contenttool/v3/viewContentVersionForFCKEditor.vm</view>
 		<view name="inputStandalone">/cms/contenttool/v3/viewContentVersionStandaloneForFCKEditor.vm</view>
-		<view name="success">ExtendedRedirect.action?url=ViewContentVersion.action#contentId#languageId#currentEditorId#concurrentModification#oldModifiedDateTime#stateChanged#anchor</view>
-		<view name="successV3">ExtendedRedirect.action?url=ViewContentVersion!V3.action#contentVersionId#contentId#languageId#attributeName#currentEditorId#concurrentModification#oldModifiedDateTime#closeOnLoad#publishOnLoad#stateChanged#anchor</view>
-		<view name="successXMLV3">ExtendedRedirect.action?url=ViewContentVersion!asXMLV3.action?#contentVersionId#contentId#repositoryId</view>
+		<view name="success">ExtendedRedirect.action?url=ViewContentVersion.action#contentId#languageId#currentEditorId#concurrentModification#oldModifiedDateTime#stateChanged#anchor#extraClasses</view>
+		<view name="successV3">ExtendedRedirect.action?url=ViewContentVersion!V3.action#contentVersionId#contentId#languageId#attributeName#currentEditorId#concurrentModification#oldModifiedDateTime#closeOnLoad#publishOnLoad#stateChanged#anchor#extraClasses</view>
+		<view name="successXMLV3">ExtendedRedirect.action?url=ViewContentVersion!asXMLV3.action?#contentVersionId#contentId#repositoryId#extraClasses</view>
 		<!--<view name="success">ViewContentVersion.action</view>-->
 		<view name="background">ViewContentVersion!background.action</view>
-		<view name="standalone">ExtendedRedirect.action?url=ViewContentVersion!standalone.action#contentVersionId#contentId#languageId#attributeName#currentEditorId#concurrentModification#oldModifiedDateTime#closeOnLoad#publishOnLoad#saveAndExitURL#anchor</view>
+		<view name="standalone">ExtendedRedirect.action?url=ViewContentVersion!standalone.action#contentVersionId#contentId#languageId#attributeName#currentEditorId#concurrentModification#oldModifiedDateTime#closeOnLoad#publishOnLoad#saveAndExitURL#anchor#extraClasses</view>
 		<!--<view name="standalone">ViewContentVersion!standalone.action</view>-->
 		<view name="saveAndExit">ViewContent.action?stay=true</view>
 		<view name="saveAndExitStandalone">ViewContent!standalone.action</view>
 		<view name="saveAndExitInline">ViewInlineOperationMessages.action</view>
 		<view name="error">/cms/contenttool/error.vm</view>
 		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
-		<view name="successVersionReverted">ExtendedRedirect.action?url=ViewContent!V3.action#contentId#languageId</view>
+		<view name="successVersionReverted">ExtendedRedirect.action?url=ViewContent!V3.action#contentId#languageId#extraClasses</view>
 	</action>
 	<action name="org.infoglue.cms.applications.contenttool.actions.RequestContentVersionUnpublishAction" alias="RequestContentVersionUnpublish">
 		<view name="success">ViewContentVersion.action</view>

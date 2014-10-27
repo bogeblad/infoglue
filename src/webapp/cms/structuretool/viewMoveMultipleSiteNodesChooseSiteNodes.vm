@@ -26,7 +26,11 @@
 
 		function next()
 		{
-			submitQualifyer();
+			if (qualifyersVector.getSize() > 0) {
+				submitQualifyer();
+			} else {
+				alert("$ui.getString('tool.structuretool.moveMultipleSiteNode.selectAtLeastOneSiteNode')");
+			}
 		}
 
 		/**
@@ -47,7 +51,7 @@
 		{
 			entityId = document.inputForm.entityId.value;
 			path     = document.inputForm.path.value;
-			
+
 			if(entityId == '' || entityId == '${select}' || entityId == '-1')
 			{
 				alert("$ui.getString("tool.common.siteNode.mustChooseSiteNode")");

@@ -426,8 +426,9 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
         else if(languageId != null)
         	this.currentLanguageVO = LanguageController.getController().getLanguageVOWithId(languageId);
 
-        if(this.anchor == null && getRequest().getParameter("anchor") != null)
+        if(this.anchor == null && getRequest().getParameter("anchor") != null) 
         	this.anchor = getRequest().getParameter("anchor");
+
     } 
 
     public String doExecute() throws Exception

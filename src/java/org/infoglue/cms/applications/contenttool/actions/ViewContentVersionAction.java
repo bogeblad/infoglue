@@ -102,6 +102,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	private Integer repositoryId;
 	private Integer currentEditorId;
 	private String attributeName = "";
+
 	private String textAreaId = "";
 	private boolean forceWorkingChange = false;
 			
@@ -141,6 +142,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	private Integer assignedContentId;
 	private String assignedAssetKey;
 	
+	private String extraClasses;
 	private String anchor = null;
 	private String anchorName = null;
 	
@@ -415,7 +417,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 				}
 			}
 		}
-
+		
         if(this.fromLanguageId != null)
 			this.originalLanguageContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, fromLanguageId);
         
@@ -428,6 +430,9 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
         if(this.anchor == null && getRequest().getParameter("anchor") != null) 
         	this.anchor = getRequest().getParameter("anchor");
+        
+        if(this.extraClasses == null && getRequest().getParameter("extraClasses") != null)
+        	this.extraClasses = getRequest().getParameter("extraClasses");
 
     } 
 
@@ -1904,7 +1909,16 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 		this.componentId = componentId;
 	}
 
+	public String getExtraClasses()
+	{
+		return extraClasses;
+	}
 
+	public void setExtraClasses(String extraClasses)
+	{
+		this.extraClasses = extraClasses;
+	}
+	
 	public String getPropertyName()
 	{
 		return propertyName;

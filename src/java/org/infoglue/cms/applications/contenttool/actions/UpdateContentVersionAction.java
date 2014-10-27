@@ -74,6 +74,7 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 	private long oldModifiedDateTime = -1;
 	private boolean concurrentModification = false;
 	private String saveAndExitURL = null;
+	private String extraClasses;
 	
 	//Set to true if version was a state change
 	private Boolean stateChanged = false;
@@ -95,7 +96,8 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 	{
 		super.initialize(this.contentVersionId, this.contentId, this.languageId);
 		ceb.throwIfNotEmpty();
-
+		
+				
 		ContentVersionVO currentContentVersionVO = null;
 		if(this.contentVersionVO.getId() != null)
 		{
@@ -585,7 +587,17 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 	{
 		return this.attributeName;
 	}
-
+	
+	public String getExtraClasses()
+	{
+		return this.extraClasses;
+	}
+	
+	public String setExtraClasses()
+	{
+		return this.extraClasses;
+	}
+	
 	public String getVersionComment()
 	{
 		return this.contentVersionVO.getVersionComment();

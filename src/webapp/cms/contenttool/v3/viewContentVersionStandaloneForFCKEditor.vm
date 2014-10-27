@@ -2,7 +2,7 @@
 	<html>
 	<head>
 		<script type="text/javascript">
-			alert("bingbong");
+
 			function refreshCaller()
 			{
 				if(window.opener)
@@ -151,7 +151,9 @@
 			//*******************************************
 			//This method refreshes the caller
 			//*******************************************
-		
+			
+			$('body').addClass("$!extraClasses");
+			
 			function refreshCaller()
 			{
 				parent.closeDialog();
@@ -296,7 +298,7 @@
 				
 				if ((!getDirty() && !checkWYSIWYGDirty()) || confirm('$ui.getString("tool.contenttool.languageVersionChangeWarning")'))
 				{
-					window.location.href="ViewContentVersion!standalone.action?contentId=" + contentId + "&languageId=" + languageId + "&attributeName=" + attributeName;
+					window.location.href="ViewContentVersion!standalone.action?contentId=" + contentId + "&languageId=" + languageId + "&attributeName=" + attributeName + "&extraClasses=" + "$!extraClasses";
 				}
 				else
 				{
@@ -561,6 +563,11 @@
 		
 			$(document).ready(function(){
 			
+				var extraClasses = getRequestParameter(document.URL,"extraClasses");
+				if (extraClasses != "" && extraClasses != null) {
+					$('body').addClass(extraClasses);
+				}
+				
 				$("input.compare").hide();
 				$("input.reset").hide();
 				$("input.preview").hide();
@@ -1066,6 +1073,8 @@
 				<input type="hidden" name="publishOnLoad" value="false"/>
 				<input type="hidden" id="contentId" name="contentId" value="$!contentId"/>
 				<input type="hidden" name="repositoryId" value="$!repositoryId"/>
+				<input type="hidden" name="extraClasses" value="$!extraClasses"/>
+				
 				#if($contentVersionId > -1)
 					<input type="hidden" name="contentVersionId" value="$!contentVersionId"/>
 					#if("$oldModifiedDateTime" == "-1")
@@ -1390,4 +1399,3 @@
 	#endCommonToolV3()
 
 #end
-<script>console.log("grrrrrr");</script>

@@ -4214,12 +4214,12 @@ public class ContentController extends BaseController
 		PreparedStatement psmt = conn.prepareStatement(SQL.toString());
 
 		ResultSet rs = psmt.executeQuery();
-		while(rs.next() && sizes.size() < 500)
+		while(rs.next() && sizes.size() < 200)
 		{
 			Integer latestContentVersionId = new Integer(rs.getString(1));
 			Integer totalSize = new Integer(rs.getString(5));
-            ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(latestContentVersionId, db);
-            ContentVersionVO lastPublishedCVVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(cvVO.getContentId(), cvVO.getLanguageId(), ContentVersionVO.PUBLISHED_STATE, db);
+            ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(latestContentVersionId);
+            ContentVersionVO lastPublishedCVVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(cvVO.getContentId(), cvVO.getLanguageId(), ContentVersionVO.PUBLISHED_STATE);
             if(lastPublishedCVVO != null && cvVO.getId() < lastPublishedCVVO.getId())
             {
             	logger.warn("The found version had an reference to an asset which the latest published version did not... can be removed.");

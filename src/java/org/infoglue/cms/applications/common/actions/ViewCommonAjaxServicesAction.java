@@ -229,7 +229,31 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 		for(Integer id : sizes.keySet())
 		{
 			totalSize = totalSize + sizes.get(id);
-			if(sizes.get(id) > 100000)
+			if(sizes.get(id) > 10000)
+			{
+				String contentPath = ContentController.getContentController().getContentPath(id, false, true);
+				sb.append("<br/><a href='ViewArchiveTool!cleanOldVersionsForContent.action?contentId=" + id + "&recurse=true' target='_blank'>" + contentPath + " (" + formatter.formatFileSize(sizes.get(id)) + ")</a>");
+			}
+		}
+		
+		this.getResponse().setContentType("text/plain");
+		this.getResponse().getWriter().print("" + formatter.formatFileSize(totalSize) + ":" + sb.toString());
+		
+		return NONE;
+    }
+	
+	public String doContentsWithDeletableAssets() throws Exception
+    {
+		VisualFormatter formatter = new VisualFormatter();
+
+		Map<Integer,Long> sizes = ContentController.getContentController().getContentsWithDeletableAssets();
+		Long totalSize = 0L;
+		StringBuffer sb = new StringBuffer();
+		
+		for(Integer id : sizes.keySet())
+		{
+			totalSize = totalSize + sizes.get(id);
+			if(sizes.get(id) > 10000)
 			{
 				String contentPath = ContentController.getContentController().getContentPath(id, false, true);
 				sb.append("<br/><a href='ViewArchiveTool!cleanOldVersionsForContent.action?contentId=" + id + "&recurse=true' target='_blank'>" + contentPath + " (" + formatter.formatFileSize(sizes.get(id)) + ")</a>");

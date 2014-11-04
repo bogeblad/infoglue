@@ -4134,6 +4134,26 @@ public class ContentController extends BaseController
         return sizes;
 	}
 	
+	public Map<Integer,Long> getContentsWithDeletableAssets() throws Exception
+	{
+	    Map<Integer,Long> sizes = new HashMap<Integer,Long>();
+	    		
+		Database db = CastorDatabaseService.getDatabase();
+        beginTransaction(db);
+		try
+        {	
+			sizes = getContentsWithDeletableAssets(db);
+				
+			commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+            rollbackTransaction(db);
+        }  
+        
+        return sizes;
+	}
 	
 	public Map<Integer,Long> getHeaviestContents(Database db) throws SystemException, Bug, Exception
 	{
@@ -4163,6 +4183,49 @@ public class ContentController extends BaseController
 			sizes.put(new Integer(rs.getString(1)), new Long(rs.getString(4)));
             System.out.println(new Integer(rs.getString(1)) + ":" + new Long(rs.getString(4)));
             if(new Long(rs.getString(4)) < 2000000)
+            	break;
+		}
+		rs.close();
+		psmt.close();
+
+		return sizes;	
+	}
+	
+	public Map<Integer,Long> getContentsWithDeletableAssets(Database db) throws SystemException, Bug, Exception
+	{
+	    Timer t = new Timer();
+	    Map<Integer,Long> sizes = new LinkedHashMap<Integer,Long>();
+	    	    
+		StringBuilder sql = new StringBuilder();
+		if(CmsPropertyHandler.getUseShortTableNames().equals("true"))
+		{
+			sql.append("select max(cvda.contVerId) AS latestContentVersionId, count(cvda.contVerId) as versionCount, cvda.digAssetId, max(da.assetKey) AS assetKey, max(da.assetFileSize) as assetFileSize from cmContVer cv, cmContVerDigAsset cvda, cmDigAsset da where cv.contVerId = cvda.contVerId AND cvda.digAssetId = da.digAssetId AND da.assetFileSize > 10000 GROUP BY cvda.DIGASSETID order by assetFileSize desc");
+		}
+		else
+		{
+			sql.append("select max(cvda.contentVersionId) as latestContentVersionId, count(cvda.contentVersionId) as versionCount, cvda.digitalAssetId, max(da.assetKey) as assetKey, max(da.assetFileSize) as assetFileSize from cmContentVersion cv, cmContentVersionDigitalAsset cvda, cmDigitalAsset da where cv.contentVersionId = cvda.contentVersionId AND cvda.digitalAssetId = da.digitalAssetId AND da.assetFileSize > 10000 group by cvda.digitalAssetId order by da.assetFileSize desc");
+		}
+
+		String SQL = "" + sql.toString() + "";
+		logger.info("SQL:" + SQL);
+		
+		Connection conn = (Connection) db.getJdbcConnection();
+		
+		PreparedStatement psmt = conn.prepareStatement(SQL.toString());
+
+		ResultSet rs = psmt.executeQuery();
+		while(rs.next() && sizes.size() < 500)
+		{
+			Integer latestContentVersionId = new Integer(rs.getString(1));
+			Integer totalSize = new Integer(rs.getString(5));
+            ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(latestContentVersionId, db);
+            ContentVersionVO lastPublishedCVVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(cvVO.getContentId(), cvVO.getLanguageId(), ContentVersionVO.PUBLISHED_STATE, db);
+            if(lastPublishedCVVO != null && cvVO.getId() < lastPublishedCVVO.getId())
+            {
+            	logger.warn("The found version had an reference to an asset which the latest published version did not... can be removed.");
+    			sizes.put(cvVO.getContentId(), new Long(totalSize));
+            }
+            if(totalSize < 10000)
             	break;
 		}
 		rs.close();

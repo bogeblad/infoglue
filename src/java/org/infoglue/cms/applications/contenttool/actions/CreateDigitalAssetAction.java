@@ -370,6 +370,10 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 		            	logger.info("contentType:" + contentType);
 		            	
 		            	file = mpr.getFile(name);
+		            	logger.info("file:" + file.getPath());
+		            	logger.info("file.exists:" + file.exists());
+		            	logger.info("file.length:" + file.length());
+		            	
 						String fileName = fileSystemName;
 
 		            	logger.info("fileName:" + fileName);
@@ -380,7 +384,8 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 		            	//String filePath = file.getParentFile().getPath();
 		            	String filePath = CmsPropertyHandler.getDigitalAssetPath();
 		            	fileSystemName = filePath + File.separator + tempFileName;
-		            							
+		            	logger.info("fileSystemName:" + fileSystemName);
+		            	
 		            	DigitalAssetVO newAsset = new DigitalAssetVO();
 						newAsset.setAssetContentType(contentType);
 						newAsset.setAssetKey(digitalAssetKey);
@@ -388,6 +393,7 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 						newAsset.setAssetFilePath(filePath);
 						newAsset.setAssetFileSize(new Integer(new Long(file.length()).intValue()));
 						//is = new FileInputStream(renamedFile);
+						logger.info("CmsPropertyHandler.getEnableDiskAssets():" + CmsPropertyHandler.getEnableDiskAssets());
 						if(CmsPropertyHandler.getEnableDiskAssets().equals("false"))
 							is = new FileInputStream(file);
 
@@ -410,7 +416,7 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 		            		}
 		            	}
 
-						logger.info("fileUploadMaximumSize in create:" + fileUploadMaximumSize);
+						System.out.println("fileUploadMaximumSize in create:" + fileUploadMaximumSize);
 						if(!fileUploadMaximumSize.equalsIgnoreCase("-1") && new Integer(fileUploadMaximumSize).intValue() < new Long(file.length()).intValue())
 						{
 						    file.delete();
@@ -499,16 +505,20 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 						}
 						
 						boolean keepOriginal = true;
+						logger.info("this.contentVersionId:" + this.contentVersionId);
 						if(this.contentVersionId != null)
 						{
 							AssetKeyDefinition assetKeyDefinition = ContentTypeDefinitionController.getController().getDefinedAssetKey(contentTypeDefinitionVO, true, digitalAssetKey);
+							logger.info("assetKeyDefinition:" + assetKeyDefinition);
 							
 							keepOriginal = handleTransformations(newAsset, file, contentType, assetKeyDefinition, contentTypeDefinitionVO);
+							logger.info("keepOriginal:" + keepOriginal);
 						    if(keepOriginal)
 						    {
 						    	List<Integer> newContentVersionIdList = new ArrayList<Integer>();
 						    	digitalAssetVO = DigitalAssetController.create(newAsset, is, this.contentVersionId, this.getInfoGluePrincipal(), newContentVersionIdList);
-						    	if(newContentVersionIdList.size() > 0)
+						    	logger.info("digitalAssetVO:" + digitalAssetVO);
+							    if(newContentVersionIdList.size() > 0)
 						    	{
 						    		Integer newContentVersionId = newContentVersionIdList.get(0);
 						    		if(this.contentVersionId != newContentVersionId)

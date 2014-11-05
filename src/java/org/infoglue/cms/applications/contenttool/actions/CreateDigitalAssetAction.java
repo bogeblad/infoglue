@@ -395,8 +395,36 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 						//is = new FileInputStream(renamedFile);
 						logger.info("CmsPropertyHandler.getEnableDiskAssets():" + CmsPropertyHandler.getEnableDiskAssets());
 						if(CmsPropertyHandler.getEnableDiskAssets().equals("false"))
+						{
+							logger.info("Trying to debug:" + file.getPath() + ":" + file.length());
+							if(file.length() < 1000 && logger.isInfoEnabled())
+							{
+								try
+								{
+									InputStream in = new FileInputStream(file);
+									byte[] b  = new byte[(int)file.length()];
+									int len = b.length;
+									int total = 0;
+		
+									while (total < len) {
+									  int result = in.read(b, total, len - total);
+									  if (result == -1) {
+									    break;
+									  }
+									  total += result;
+									}
+									in.close();
+									logger.info(new String(b, "UTF-8"));
+								}
+								catch (Exception e) 
+								{
+									e.printStackTrace();
+								}
+							}
+							
 							is = new FileInputStream(file);
-
+						}
+						
 		            	List existingAssetVOList = DigitalAssetController.getDigitalAssetVOList(contentVersionId);
 		            	Iterator existingAssetVOListIterator = existingAssetVOList.iterator();
 		            	while(existingAssetVOListIterator.hasNext())
@@ -416,7 +444,7 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 		            		}
 		            	}
 
-						System.out.println("fileUploadMaximumSize in create:" + fileUploadMaximumSize);
+						logger.info("fileUploadMaximumSize in create:" + fileUploadMaximumSize);
 						if(!fileUploadMaximumSize.equalsIgnoreCase("-1") && new Integer(fileUploadMaximumSize).intValue() < new Long(file.length()).intValue())
 						{
 						    file.delete();
@@ -532,6 +560,22 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 							digitalAssetVO = DigitalAssetController.create(newAsset, is, this.entity, this.entityId);
 						}
 
+						try
+						{
+							String checkUrl = DigitalAssetController.getController().getDigitalAssetUrl(digitalAssetVO.getId());
+				    		logger.info("checkUrl: " + checkUrl);
+							if(checkUrl.indexOf("brokenAsset.gif") > -1)
+				    		{
+								InputStream is2 = new FileInputStream(file);    	
+								DigitalAssetController.update(digitalAssetVO, is2);
+								is2.close();
+				    		}
+						}
+						catch (Exception e) 
+						{
+							e.printStackTrace();
+						}
+						
 						if(CmsPropertyHandler.getEnableDiskAssets().equals("true"))
 						{
 							if(keepOriginal)

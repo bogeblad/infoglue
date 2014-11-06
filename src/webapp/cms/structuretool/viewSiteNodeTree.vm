@@ -34,7 +34,7 @@
 		    newParentSiteNodeId = document.inputForm.newParentSiteNodeId.value;
 			changeTypeId = 3; //3 = Move...
 			
-			if(newParentSiteNodeId != "")
+			if(newParentSiteNodeId != "" && newParentSiteNodeId != "-1")
 			{
 			    if (confirm('Are you sure you want to move the siteNode to the folder you have just selected?'))
 				{

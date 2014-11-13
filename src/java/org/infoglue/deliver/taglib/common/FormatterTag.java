@@ -103,6 +103,11 @@ public class FormatterTag extends TemplateControllerTag
 		this.pattern = evaluateString("formatterTag", "pattern", pattern);
 	}
 
+	public void setLocale(Object locale) throws JspException
+	{
+		this.locale = (Locale)locale;
+	}
+
 	public void setLocale(String locale) throws JspException
 	{
 		this.locale = (Locale)evaluate("formatterTag", "locale", locale, Locale.class);

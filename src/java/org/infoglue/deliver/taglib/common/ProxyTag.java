@@ -262,38 +262,6 @@ public class ProxyTag extends TemplateControllerTag
 		this.srcExclusionRegexp = evaluateString("proxyTag", "srcExclusionRegexp", srcExclusionRegexp);
 	}
 
-    /*
-    public void setUseCache(String useCache) throws JspException
-    {
-        this.useCache = (Boolean)evaluate("importTag", "useCache", useCache, Boolean.class);
-    }
-
-    public void setUseFileCacheFallback(String useFileCacheFallback) throws JspException
-    {
-        this.useFileCacheFallback = (Boolean)evaluate("importTag", "useFileCacheFallback", useFileCacheFallback, Boolean.class);
-    }
-
-    public void setFileCacheCharEncoding(String fileCacheCharEncoding) throws JspException
-    {
-        this.fileCacheCharEncoding = evaluateString("importTag", "fileCacheCharEncoding", fileCacheCharEncoding);
-    }
-
-    public void setCacheName(String cacheName) throws JspException
-    {
-        this.cacheName = evaluateString("importTag", "cacheName", cacheName);
-    }
-
-    public void setCacheKey(String cacheKey) throws JspException
-    {
-        this.cacheKey = evaluateString("importTag", "cacheKey", cacheKey);
-    }
-
-    public void setCacheTimeout(String cacheTimeout) throws JspException
-    {
-        this.cacheTimeout = evaluateInteger("importTag", "cacheTimeout", cacheTimeout);
-    }
-	*/
-
     protected final void addCookie(final String name, final String value)
 	{
 		cookies.put(name, value);

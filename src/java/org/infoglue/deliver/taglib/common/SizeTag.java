@@ -23,6 +23,7 @@
 package org.infoglue.deliver.taglib.common;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.jsp.JspException;
@@ -32,7 +33,7 @@ import org.infoglue.deliver.taglib.AbstractTag;
 /**
  * This class implements the &lt;common:size&gt; tag, which stores the size of a collection
  * in the page context variable specified by the <code>id</code> attribute.  
- */
+ */ 
 public class SizeTag extends AbstractTag 
 {
 	/**
@@ -75,7 +76,7 @@ public class SizeTag extends AbstractTag
         return EVAL_PAGE;
     }
 
-	/**
+    /**
 	 * TODO: This class operates on collection; change name to setCollection.
 	 * 
 	 * Sets the collection attribute.
@@ -91,4 +92,15 @@ public class SizeTag extends AbstractTag
     {
         this.map = (Map)evaluate("size", "map", map, Map.class);
     }
+    
+    public void setList(Object collection) throws JspException
+    {
+        this.collection = (Collection)collection;
+    }
+    
+    public void setMap(Object map) throws JspException
+    {
+        this.map = (Map)map;
+    }
+
 }

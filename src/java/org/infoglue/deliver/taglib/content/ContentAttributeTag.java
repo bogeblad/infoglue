@@ -126,7 +126,7 @@ public class ContentAttributeTag extends ComponentLogicTag
         }
         else if(propertyName != null)
         {
-	        if(!parse)
+        	if(!parse)
             {
                 result = getComponentLogic().getContentAttribute(propertyName, languageId, attributeName, disableEditOnSight, useInheritance, useRepositoryInheritance, useStructureInheritance);
         	    //result = result.replaceAll("#", "&#35;");
@@ -169,7 +169,6 @@ public class ContentAttributeTag extends ComponentLogicTag
         }
         
         result = getContentAttributeValue(this.languageId);
-        
         if((result == null || result.trim().equals("")) && useAttributeLanguageFallback)
 		{
 			try

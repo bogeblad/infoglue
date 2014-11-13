@@ -107,7 +107,7 @@ public class ParseMultipartTag extends TemplateControllerTag
 				        String contentType = item.getContentType();
 				        boolean isInMemory = item.isInMemory();
 				        long sizeInBytes = item.getSize();
-
+				        System.out.println("contentType:" + contentType);
 				        if(isValidContentType(contentType))
 				        {
 				            files.add(item);

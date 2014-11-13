@@ -116,7 +116,12 @@ public class DocumentConverterTag extends TemplateControllerTag
     {
         this.menuTextLength = evaluateString("DocumentConverterTag", "menuTextLength", menuTextLength);
     }
-    
+
+    public void setCssList(Object cssList) throws JspException
+    {
+        this.cssList = (List)cssList;
+    }
+
     public void setCssList(String cssList) throws JspException
     {
         this.cssList = (List)evaluate("DocumentConverterTag", "cssList", cssList, List.class);

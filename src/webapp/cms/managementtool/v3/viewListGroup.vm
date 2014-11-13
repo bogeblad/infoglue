@@ -36,10 +36,11 @@
 					<th>$ui.getString("tool.common.action.label")</th>
 					<th>$ui.getString("entity.Group.groupName.label")</th>
 					<th>$ui.getString("entity.Group.displayName.label")</th>
-					<th>$ui.getString("entity.Group.description.label")</th>
+					##<th>$ui.getString("entity.Group.description.label")</th>
 					<th>$ui.getString("entity.Group.source.label")</th>
 					<th>$ui.getString("entity.Group.groupType.label")</th>
 					<th>$ui.getString("entity.Group.isActive.label")</th>
+					<th>Rights</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -51,10 +52,11 @@
 							<a class="group" href="ViewGroup.action?groupName=$formatter.encodeBase64($group.name)">$group.name</a>
 						</td>
 						<td>$group.displayName</td>
-						<td>$group.description</td>
+						##<td>$group.description</td>
 						<td>$group.source</td>
 						<td>$group.groupType</td>
 						<td>$ui.getString("entity.Group.isActive.${group.isActive}.label")</td>
+						<td>$!this.getAccessRightsWithGroups().get($group.name).size()</td>
 					</tr>
 				#end
 				

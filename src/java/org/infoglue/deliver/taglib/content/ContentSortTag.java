@@ -122,6 +122,14 @@ public class ContentSortTag extends TemplateControllerTag
 	{
 		this.input = evaluateCollection("contentSort", "input", input);
 	}
+
+	/**
+	 * 
+	 */
+	public void setInput(Object input) throws JspException
+	{
+		this.input = (java.util.Collection)input;
+	}
 	
 	/**
 	 * @param comparatorClass the comparatorClass to set
@@ -135,10 +143,14 @@ public class ContentSortTag extends TemplateControllerTag
 	/**
 	 * @param comparatorClass the comparatorClass to set
 	 */
-	
 	public void setComparatorLocale(String comparatorLocale) throws JspException
 	{
 		this.comparatorLocale = (Locale)evaluate("contentSort", "comparatorLocale", comparatorLocale, Locale.class);
+	}
+
+	public void setComparatorLocale(Object comparatorLocale) throws JspException
+	{
+		this.comparatorLocale = (Locale)comparatorLocale;
 	}
 
 }

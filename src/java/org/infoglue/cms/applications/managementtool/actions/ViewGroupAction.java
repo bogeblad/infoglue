@@ -23,14 +23,17 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
+import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.GroupControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.GroupPropertiesController;
+import org.infoglue.cms.entities.management.AccessRightVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.security.InfoGlueGroup;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -47,6 +50,8 @@ public class ViewGroupAction extends InfoGlueAbstractAction
 	private List contentTypeDefinitionVOList;
 	private List assignedContentTypeDefinitionVOList;    
 	
+	private List<AccessRightVO> relatedAccessRights = new ArrayList<AccessRightVO>();
+	
 	/**
 	 * This method initializes the view by populating all the entities. 
 	 * It fetches the group itself, the type of authorization update support and all the assigned principals.
@@ -59,6 +64,8 @@ public class ViewGroupAction extends InfoGlueAbstractAction
 		
 		this.contentTypeDefinitionVOList 			= ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList(ContentTypeDefinitionVO.EXTRANET_GROUP_PROPERTIES);
 		this.assignedContentTypeDefinitionVOList 	= GroupPropertiesController.getController().getContentTypeDefinitionVOList(groupName);  
+    
+		this.relatedAccessRights = AccessRightController.getController().getAccessRightVOListForGroupWithName(groupName);
     } 
 
     public String doExecute() throws Exception
@@ -173,5 +180,16 @@ public class ViewGroupAction extends InfoGlueAbstractAction
 	public boolean getSupportsUpdate()
 	{
 		return this.supportsUpdate;
+	}
+
+	public List<AccessRightVO> getRelatedAccessRights() 
+	{
+		return relatedAccessRights;
+	}
+
+	public String getReadableDescriptionForAccessRight(AccessRightVO accessRightVO) 
+	{
+		String desc = AccessRightController.getController().getReadableDescriptionForAccessRight(accessRightVO);
+		return desc;
 	}
 }

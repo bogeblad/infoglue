@@ -83,6 +83,11 @@ public class ContentVersionTag extends TemplateControllerTag
         this.contentVersionId = evaluateInteger("contentVersion", "contentVersionId", contentVersionId);;
     }
 
+    public void setContent(Object contentVOAsObject) throws JspException
+    {
+		this.content = (ContentVO)contentVOAsObject; //
+    }
+
     public void setContent(String contentExp) throws JspException
     {
     	try
@@ -94,7 +99,7 @@ public class ContentVersionTag extends TemplateControllerTag
     		logger.warn("Content evaluated wrong:" + t.getMessage());
 		}
     }
-    
+
     public void setLanguageId(String languageId) throws JspException
     {
         this.languageId = evaluateInteger("contentVersion", "languageId", languageId);;

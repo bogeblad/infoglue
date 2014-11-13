@@ -23,10 +23,14 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
+import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.GroupControllerProxy;
+import org.infoglue.cms.entities.management.AccessRightVO;
 
 
 /**
@@ -41,17 +45,20 @@ public class ViewListGroupAction extends InfoGlueAbstractAction
 	private static final long serialVersionUID = 1L;
 
 	private List groups;
+	private Map<String,List<AccessRightVO>> accessRightsWithGroups = new HashMap<String,List<AccessRightVO>>();
 		
 	protected String doExecute() throws Exception 
 	{
 	    this.groups = GroupControllerProxy.getController().getAllGroups();
-
+		this.accessRightsWithGroups = AccessRightController.getController().getAccessRightsForGroups();
+		
 	    return "success";
 	}
 	
 	public String doListManagableGroups() throws Exception 
 	{
 		this.groups = GroupControllerProxy.getController().getAvailableGroups(this.getInfoGluePrincipal(), "Group.ManageUsers");
+		this.accessRightsWithGroups = AccessRightController.getController().getAccessRightsForGroups();
 	    
 	    return "successV3";
 	}
@@ -61,5 +68,9 @@ public class ViewListGroupAction extends InfoGlueAbstractAction
 		return this.groups;		
 	}
 
-	
+	public Map<String, List<AccessRightVO>> getAccessRightsWithGroups() 
+	{
+		return accessRightsWithGroups;
+	}
+
 }

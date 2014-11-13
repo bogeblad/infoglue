@@ -54,23 +54,15 @@ import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.CategoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
+import org.infoglue.cms.controllers.kernel.impl.simple.CopyRepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ImportController;
-import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
-import org.infoglue.cms.controllers.kernel.impl.simple.OptimizedExportController;
 import org.infoglue.cms.controllers.kernel.impl.simple.OptimizedImportController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
-import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.entities.content.Content;
-import org.infoglue.cms.entities.management.AccessRight;
-import org.infoglue.cms.entities.management.InterceptionPointVO;
-import org.infoglue.cms.entities.management.Repository;
 import org.infoglue.cms.entities.management.RepositoryVO;
-import org.infoglue.cms.entities.management.impl.simple.InfoGlueExportImpl;
-import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.FileUploadHelper;
-import org.infoglue.cms.util.handlers.DigitalAssetBytesHandler;
 
 import webwork.action.ActionContext;
 
@@ -79,8 +71,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import com.opensymphony.module.propertyset.PropertySet;
-import com.opensymphony.module.propertyset.PropertySetManager;
 
 /**
  * This class handles Exporting of a repository to an XML-file.
@@ -368,10 +358,16 @@ public class ImportRepositoryAction extends InfoGlueAbstractAction
 	 * This handles copying of a repository.
 	 */
 	
-	public String doCopy() throws SystemException 
+	public String doCopy() throws Exception 
 	{
-		Database db = CastorDatabaseService.getDatabase();
+		String exportId = "Copy_Repository_" + visualFormatter.formatDate(new Date(), "yyyy-MM-dd_HHmm");
+		ProcessBean processBean = ProcessBean.createProcessBean(ImportRepositoryAction.class.getName(), exportId);
 		
+		CopyRepositoryController.importRepositories(getRequest().getParameterValues("repositoryId"), this.getInfoGluePrincipal(), this.onlyLatestVersions, this.standardReplacement, this.replacements, processBean);
+		
+		return "successRedirectToProcesses";
+
+		/*
 		File file = null;
 		
 		try 
@@ -560,8 +556,9 @@ public class ImportRepositoryAction extends InfoGlueAbstractAction
 			if(file != null)
 				file.delete();
 		}
-		
+
 		return "success";
+		*/
 	}
 
 	public String getOnlyLatestVersions() 

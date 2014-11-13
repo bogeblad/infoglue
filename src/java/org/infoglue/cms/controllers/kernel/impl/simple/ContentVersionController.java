@@ -2315,7 +2315,6 @@ public class ContentVersionController extends BaseController
 		    Iterator digitalAssetsIterator = digitalAssets.iterator();
 			while(digitalAssetsIterator.hasNext())
 			{
-				
 			    DigitalAsset digitalAsset = (DigitalAsset)digitalAssetsIterator.next();
 			    logger.info("Make copy of reference to digitalAssets " + digitalAsset.getAssetKey());
 			    if(excludedAssetId == null || !digitalAsset.getId().equals(excludedAssetId))
@@ -2404,7 +2403,7 @@ public class ContentVersionController extends BaseController
 		
 		return digitalAssetVO;
 	}	
-	
+
 	
 	/**
 	 * This method fetches a value from the xml that is the contentVersions Value. If the 
@@ -3704,7 +3703,15 @@ public class ContentVersionController extends BaseController
 				ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentVersionVO.getContentId(), db);
 				contentVersion = ContentStateController.changeState(contentVersionVO.getId(), contentVO, ContentVersionVO.WORKING_STATE, "new working version", false, null, principal, contentVersionVO.getContentId(), db, events);
 				newContentVersionIdList.add(contentVersion.getId());
-				digitalAssetVO = DigitalAssetController.getController().getLatestDigitalAssetVO(contentVersion.getId(), digitalAssetVO.getAssetKey(), db);
+				for(MediumDigitalAssetImpl asset : (List<MediumDigitalAssetImpl>)contentVersion.getDigitalAssets())
+				{
+					if(asset.getAssetKey().equals(digitalAssetVO.getAssetKey()))
+					{
+						digitalAssetVO = asset.getValueObject();
+						break;
+					}
+				}
+				//digitalAssetVO = DigitalAssetController.getController().getLatestDigitalAssetVO(contentVersion.getId(), digitalAssetVO.getAssetKey(), db);
 			}
     	    
     	    boolean duplicateAssetsBetweenVersions = CmsPropertyHandler.getDuplicateAssetsBetweenVersions();
@@ -3735,7 +3742,7 @@ public class ContentVersionController extends BaseController
 	            	}
 	            	if(!exists)
 	            	{
-		            	digitalAssetVO = copyDigitalAssetAndRemoveOldReference(contentVersion, oldDigitalAsset, false, db);
+	            		digitalAssetVO = copyDigitalAssetAndRemoveOldReference(contentVersion, oldDigitalAsset, false, db);
 		            	logger.info("new digitalAssetVO:" + digitalAssetVO.getId());
 	            	}
     	    	}

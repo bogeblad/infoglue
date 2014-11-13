@@ -39,6 +39,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -152,6 +153,8 @@ public class CASBasicAuthenticationModule extends AuthenticationModule//, Author
 				else
 					redirectUrl = loginUrl + "?service=" + getService(request) + ((casRenew != null && !casRenew.equals("")) ? "&renew="+ casRenew : "");
 	
+				setCasCookies(response);
+
 				logger.info("redirectUrl 1:" + redirectUrl);
 				response.sendRedirect(redirectUrl);
 			}
@@ -178,6 +181,8 @@ public class CASBasicAuthenticationModule extends AuthenticationModule//, Author
 			else
 				redirectUrl = loginUrl + "?service=" + getService(request) + ((casRenew != null && !casRenew.equals("")) ? "&renew="+ casRenew : "");
 		
+			setCasCookies(response);
+
 			logger.error("redirectUrl 2:" + redirectUrl);
 			response.sendRedirect(redirectUrl);
 	
@@ -327,6 +332,8 @@ public class CASBasicAuthenticationModule extends AuthenticationModule//, Author
 			else
 				redirectUrl = loginUrl + "?service=" + getService(request) + ((casRenew != null && !casRenew.equals("")) ? "&renew="+ casRenew : "");
 	
+			setCasCookies(response);
+
 			logger.info("redirectUrl 3:" + redirectUrl);
 
 			return redirectUrl;
@@ -346,6 +353,8 @@ public class CASBasicAuthenticationModule extends AuthenticationModule//, Author
 			else
 				redirectUrl = loginUrl + "?service=" + getService(request) + ((casRenew != null && !casRenew.equals("")) ? "&renew="+ casRenew : "");
 		
+			setCasCookies(response);
+
 			logger.info("redirectUrl 4:" + redirectUrl);
 			response.sendRedirect(redirectUrl);
 	
@@ -864,6 +873,8 @@ public class CASBasicAuthenticationModule extends AuthenticationModule//, Author
 			
 			logger.info("redirectUrl 6:" + redirectUrl);
 			
+			setCasCookies(response);
+
 			response.sendRedirect(redirectUrl);
 			status.put("redirected", new Boolean(true));
 			return null;
@@ -883,8 +894,9 @@ public class CASBasicAuthenticationModule extends AuthenticationModule//, Author
 			else
 				redirectUrl = loginUrl + "?service=" + getService(request) + ((casRenew != null && !casRenew.equals("")) ? "&renew="+ casRenew : "" + ((gateway != null && !gateway.equals("")) ? "&gateway="+ gateway : ""));
 		
+			setCasCookies(response);
+
 			logger.info("redirectUrl 7:" + redirectUrl);
-		
 			response.sendRedirect(redirectUrl);
 	
 			status.put("redirected", new Boolean(true));
@@ -895,6 +907,54 @@ public class CASBasicAuthenticationModule extends AuthenticationModule//, Author
 		return authenticatedUserName;
 	}
 
+	/**
+	 * This method sets cookies based on what is defined in CasCookiesBeforeRedirect-field in application settings.
+	 * 
+	 * @param response
+	 */
+	public void setCasCookies(HttpServletResponse response) 
+	{
+		try
+		{
+			Map<String,String> CASCookies = CmsPropertyHandler.getCasCookiesBeforeRedirect();
+			if(CASCookies != null && CASCookies.size() > 0)
+			{
+				for(String name : CASCookies.keySet())
+				{
+					String pureName = name;
+					Integer expireTime = 1800;
+					String domain = null;
+					String path = null;
+					String[] cookieParts = name.split("\\|");
+					if(cookieParts.length > 0)
+						pureName = cookieParts[0];
+					if(cookieParts.length > 1)
+					{
+						try { expireTime = new Integer(cookieParts[1]); } catch (Exception e) { logger.warn("CAS Cookie has a faulty expire time [" + cookieParts[1] + "]:" + e.getMessage()); }
+					}
+					if(cookieParts.length > 2)
+						domain = cookieParts[2];
+					if(cookieParts.length > 3)
+						path = cookieParts[3];
+					
+				    Cookie cookie = new Cookie(pureName, CASCookies.get(name));
+				    logger.info("Set cookie:" + name + ": " + CASCookies.get(name));
+				    
+				    cookie.setMaxAge(expireTime);
+				    if(domain != null)
+				    	cookie.setDomain(domain);
+				    if(path != null)
+				    	cookie.setPath(path);
+				    
+				    response.addCookie(cookie);	
+				}
+			}
+		}
+		catch (Exception e) 
+		{
+			logger.warn("Error setting cas redirect cookies: " + e.getMessage());
+		}
+	}
 
 	public String getSuccessLoginUrl()
 	{

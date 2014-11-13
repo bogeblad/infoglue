@@ -34,7 +34,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
@@ -1746,58 +1745,38 @@ public class AccessRightController extends BaseController
 	 * @throws SystemException
 	 */
 
-	public void delete(String roleName) throws SystemException, Exception
+	public void deleteAccessRightGroup(String groupName, Database db) throws SystemException, Exception
 	{
-		Database db = CastorDatabaseService.getDatabase();
-		
-		logger.info("roleName:" + roleName);
-		
-		try 
+		List<AccessRightGroup> accessRightGroupList = getAccessRightGroupList(groupName, db);
+		Iterator<AccessRightGroup> accessRightGroupListIterator = accessRightGroupList.iterator();
+		while(accessRightGroupListIterator.hasNext())
 		{
-			beginTransaction(db);
-
-			List accessRightList = getAccessRightList(roleName, db);
-			Iterator i = accessRightList.iterator();
-			while(i.hasNext())
-			{
-				AccessRight accessRight = (AccessRight)i.next();
-				
-				Iterator accessRightRolesIterator = accessRight.getRoles().iterator();
-				while(accessRightRolesIterator.hasNext())
-				{
-					AccessRightRole accessRightRole = (AccessRightRole)accessRightRolesIterator.next();
-					if(roleName.equals(accessRightRole.getRoleName()))
-					{
-						accessRightRolesIterator.remove();
-						db.remove(accessRightRole);
-					}
-				}
-				/*
-				Iterator accessRightGroupsIterator = accessRight.getGroups().iterator();
-				while(accessRightGroupsIterator.hasNext())
-				{
-					AccessRightGroup accessRightGroup = (AccessRightGroup)accessRightGroupsIterator.next();
-					db.remove(accessRightGroup);
-				}
-				Iterator accessRightUsersIterator = accessRight.getUsers().iterator();
-				while(accessRightRolesIterator.hasNext())
-				{
-					AccessRightUser accessRightUser = (AccessRightUser)accessRightUsersIterator.next();
-					db.remove(accessRightUser);
-				}
-				*/
-				//db.remove(accessRight);
-			}
-			
-			commitTransaction(db);
-		} 
-		catch (Exception e) 
-		{
-			logger.info("An error occurred so we should not complete the transaction:" + e);
-			rollbackTransaction(db);
-			throw new SystemException(e.getMessage());
+			AccessRightGroup accessRightGroup = (AccessRightGroup)accessRightGroupListIterator.next();
+			accessRightGroupListIterator.remove();
+			db.remove(accessRightGroup);
 		}
-	}        
+	}  
+	
+	/**
+	 * This method deletes all occurrencies of AccessRight which has the interceptionPointId.
+	 * 
+	 * @param roleName
+	 * @throws ConstraintException
+	 * @throws SystemException
+	 */
+
+	public void deleteAccessRightRole(String roleName, Database db) throws SystemException, Exception
+	{
+		List<AccessRightRole> accessRightRoleList = getAccessRightRoleList(roleName, db, false);
+		Iterator<AccessRightRole> accessRightRoleListIterator = accessRightRoleList.iterator();
+		while(accessRightRoleListIterator.hasNext())
+		{
+			AccessRightRole accessRightRole = (AccessRightRole)accessRightRoleListIterator.next();
+			accessRightRoleListIterator.remove();
+			db.remove(accessRightRole);
+		}
+	}  
+
 
 	/**
 	 * This method deletes all occurrencies of AccessRight which has the interceptionPointId.
@@ -3560,9 +3539,9 @@ public class AccessRightController extends BaseController
 	}
 	
 	
-	public List getAccessRightGroupList(String groupName, Database db) throws SystemException, Bug
+	public List<AccessRightGroup> getAccessRightGroupList(String groupName, Database db) throws SystemException, Bug
 	{
-		List accessRightGroupList = new ArrayList();
+		List<AccessRightGroup> accessRightGroupList = new ArrayList<AccessRightGroup>();
 		
 		try
 		{

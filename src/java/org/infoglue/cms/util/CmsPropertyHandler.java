@@ -2533,6 +2533,28 @@ public class CmsPropertyHandler
 	    return customContentTypeIcons;
 	}
 
+	public static Map<String,String> getCasCookiesBeforeRedirect()
+	{
+		Map casCookiesBeforeRedirect = new HashMap();
+		
+	    String customContentTypeIconsString = CmsPropertyHandler.getServerNodeDataProperty(null, "casCookiesBeforeRedirect", true, null);
+	    if(customContentTypeIconsString != null && !customContentTypeIconsString.equals(""))
+		{
+	    	try
+			{
+	    		Properties properties = new Properties();
+				properties.load(new ByteArrayInputStream(customContentTypeIconsString.getBytes("UTF-8")));
+				casCookiesBeforeRedirect.putAll(properties);
+			}	
+			catch(Exception e)
+			{
+			    logger.error("Error loading properties from string. Reason:" + e.getMessage());
+			}
+		}
+	    
+	    return casCookiesBeforeRedirect;
+	}
+
 	public static String getAllowedFolderContentTypeNames()
 	{
 		String customContentTypeIconsString = getServerNodeProperty("allowedFolderContentTypeNames", false, "Folder");

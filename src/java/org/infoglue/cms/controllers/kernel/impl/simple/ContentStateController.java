@@ -177,7 +177,8 @@ public class ContentStateController extends BaseController
 
 		try
 		{
-			MediumContentVersionImpl oldContentVersion = ContentVersionController.getContentVersionController().getReadOnlyMediumContentVersionWithId(oldContentVersionId, db);
+			//MediumContentVersionImpl oldContentVersion = ContentVersionController.getContentVersionController().getReadOnlyMediumContentVersionWithId(oldContentVersionId, db);
+			MediumContentVersionImpl oldContentVersion = ContentVersionController.getContentVersionController().getMediumContentVersionWithId(oldContentVersionId, db);
 			newContentVersion = oldContentVersion;
 			logger.info("oldContentVersion:" + oldContentVersion.getId());
 			//t.printElapsedTime("oldContentVersion");
@@ -211,7 +212,7 @@ public class ContentStateController extends BaseController
 				newContentVersionVO.setVersionValue(oldContentVersion.getVersionValue());
 				newContentVersion = ContentVersionController.getContentVersionController().createMedium(oldContentVersion, contentId, oldContentVersion.getValueObject().getLanguageId(), newContentVersionVO, oldContentVersion.getContentVersionId(), (oldContentVersion.getDigitalAssets().size() > 0), true, duplicateAssets, excludedAssetId, db);
 				//newContentVersion = ContentVersionController.getContentVersionController().create(contentId, oldContentVersion.getLanguage().getLanguageId(), newContentVersionVO, oldContentVersion.getContentVersionId(), true, duplicateAssets, excludedAssetId, db);
-
+				
 				//ContentVersionController.getContentVersionController().copyDigitalAssets(oldContentVersion, newContentVersion, db);
 				if(contentVO.getIsProtected().equals(ContentVO.YES))
 					copyAccessRights(oldContentVersion.getId(), newContentVersion.getId(), db);

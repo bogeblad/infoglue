@@ -2752,6 +2752,32 @@ public class ContentController extends BaseController
 
 		return contents;    	
 	}
+	
+	
+	/**
+	 * This method returns the contents belonging to a certain repository.
+	 */
+	
+	public List<ContentVO> getRepositoryContentVOList(Integer repositoryId, Database db) throws SystemException, Exception
+	{
+		List<ContentVO> contents = new ArrayList<ContentVO>();
+		
+		OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.content.impl.simple.SmallContentImpl c WHERE c.repositoryId = $1 ORDER BY c.contentId");
+    	oql.bind(repositoryId);
+    	
+    	QueryResults results = oql.execute(Database.READONLY);
+		
+		while(results.hasMore()) 
+        {
+        	SmallContentImpl content = (SmallContentImpl)results.next();
+			contents.add(content.getValueObject());
+        }
+
+		results.close();
+		oql.close();
+
+		return contents;    	
+	}
 
 	
 	/**

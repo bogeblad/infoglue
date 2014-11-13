@@ -75,6 +75,10 @@
 		padding:8px;
 	}
 	
+	.inlineTabDiv {
+		margin-bottom: 35px !important;
+	}
+	
 </style>
 <script type="text/javascript">
 <!--
@@ -327,6 +331,7 @@
 				#editPropertyFieldCSS("ServerNode.property.casProxyValidateUrl" "casProxyValidateUrl" "$this.getPropertyValue('casProxyValidateUrl')" "51" "$!serverNodeId" "$!cmsPH.casProxyValidateUrl")
 				#editPropertyFieldCSS("ServerNode.property.casServiceUrl" "casServiceUrl" "$this.getPropertyValue('casServiceUrl')" "51" "$!serverNodeId" "$!cmsPH.casServiceUrl")
 				#editPropertyFieldCSS("ServerNode.property.casLogoutUrl" "casLogoutUrl" "$this.getPropertyValue('casLogoutUrl')" "51" "$!serverNodeId" "$!cmsPH.casLogoutUrl")
+				#editPropertyFieldCSS("ServerNode.property.casCookiesBeforeRedirect" "casCookiesBeforeRedirect" "$this.getPropertyValue('casCookiesBeforeRedirect')" "51" "$!serverNodeId" "$!cmsPH.casCookiesBeforeRedirect")
 				#editPropertyFieldCSS("ServerNode.property.ipAddressesToFallbackToBasicAuth" "ipAddressesToFallbackToBasicAuth" "$this.getPropertyValue('ipAddressesToFallbackToBasicAuth')" "51" "$!serverNodeId" "$!cmsPH.ipAddressesToFallbackToBasicAuth")
 			</div>
 		

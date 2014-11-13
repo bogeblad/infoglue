@@ -229,8 +229,10 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "casProxyValidateUrl");
 	    populate(ps, "casServiceUrl");
 	    populate(ps, "casLogoutUrl");
+	    populate(ps, "casCookiesBeforeRedirect");
 	    populate(ps, "useBrowserLanguage");
 	    populate(ps, "ipAddressesToFallbackToBasicAuth");
+	    
 	    
 	    populate(ps, "deliver_loginUrl");
 	    populate(ps, "deliver_logoutUrl");
@@ -248,7 +250,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "deliver_casProxyValidateUrl");
 	    populate(ps, "deliver_casServiceUrl");
 	    populate(ps, "deliver_casLogoutUrl");
-
+	    
 	    populate(ps, "workingStyleInformation");
 	    populate(ps, "finalStyleInformation");
 	    populate(ps, "publishStyleInformation");

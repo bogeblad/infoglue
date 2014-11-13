@@ -23,8 +23,12 @@
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -455,6 +459,63 @@ public class GroupController extends BaseController
 		}
     }
 
+    public void addUsers(String groupName, Set<String> userNames, Database db) throws ConstraintException, SystemException, Exception
+    {
+    	try
+    	{
+	    	String sql = "insert into cmSystemUserGroup (userName, groupName) values (?, ?)";
+			Connection connection = db.getJdbcConnection();
+	    	PreparedStatement ps = connection.prepareStatement(sql);
+	    	 
+	    	final int batchSize = 1000;
+	    	int count = 0;
+	    	 
+	    	for (String userName: userNames) 
+	    	{
+	    		if(logger.isInfoEnabled())
+	    			logger.info("Adding " + groupName + " = " + userName);
+	    	    ps.setString(1, userName);
+	    		ps.setString(2, groupName);
+	    	    ps.addBatch();
+	    	     
+	    	    if(++count % batchSize == 0) {
+	    	        ps.executeBatch();
+	    	    }
+	    	}
+	    	ps.executeBatch(); // insert remaining records
+	    	ps.close();
+    	}
+    	catch (Exception e) 
+    	{
+    		logger.error("Error inserting users: " + e.getMessage(), e);
+		}
+    }
+    
+    public Map<String,List<String>> getSystemUserGroupMappingLowerCase(Database db) throws ConstraintException, SystemException, Exception
+    {
+    	Map<String,List<String>> userGroupMapping = new HashMap<String,List<String>>();
+    	
+    	OQLQuery oql = db.getOQLQuery( "SELECT sur FROM org.infoglue.cms.entities.management.impl.simple.SystemUserGroupImpl sur ORDER BY sur.userName");
+    	
+    	QueryResults results = oql.execute(Database.READONLY);
+		while (results.hasMore()) 
+        {
+			SystemUserGroupImpl sur = (SystemUserGroupImpl)results.nextElement();
+			List<String> groupNames = userGroupMapping.get(sur.getUserName());
+			if(groupNames == null)
+			{
+				groupNames = new ArrayList<String>();
+				userGroupMapping.put(sur.getUserName().toLowerCase(), groupNames);
+			}
+			groupNames.add(sur.getGroupName().toLowerCase());
+        }
+		
+		results.close();
+		oql.close();
+		
+		return userGroupMapping;
+    }
+    
     public void removeUser(String groupName, String userName) throws ConstraintException, SystemException
     {
         Database db = CastorDatabaseService.getDatabase();
@@ -590,6 +651,31 @@ public class GroupController extends BaseController
         
         return groupExists;		
 	}
+	
+    public Map<String,List<String>> getSystemUserGroupMapping(Database db) throws ConstraintException, SystemException, Exception
+    {
+    	Map<String,List<String>> userGroupMapping = new HashMap<String,List<String>>();
+    	
+    	OQLQuery oql = db.getOQLQuery( "SELECT sur FROM org.infoglue.cms.entities.management.impl.simple.SystemUserGroupImpl sur ORDER BY sur.userName");
+    	
+    	QueryResults results = oql.execute(Database.READONLY);
+		while (results.hasMore()) 
+        {
+			SystemUserGroupImpl sur = (SystemUserGroupImpl)results.nextElement();
+			List<String> groupNames = userGroupMapping.get(sur.getUserName());
+			if(groupNames == null)
+			{
+				groupNames = new ArrayList<String>();
+				userGroupMapping.put(sur.getUserName(), groupNames);
+			}
+			groupNames.add(sur.getGroupName());
+        }
+		
+		results.close();
+		oql.close();
+		
+		return userGroupMapping;
+    }
 
 	/**
 	 * This is a method that gives the user back an newly initialized ValueObject for this entity that the controller

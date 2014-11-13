@@ -1303,6 +1303,15 @@ public class ComponentLogic
 		return pageUrl;
 	}
 
+	public String getPageUrl(Integer siteNodeId, Integer languageId)
+	{
+		String pageUrl = "";
+
+		pageUrl = this.getPageUrl(siteNodeId, languageId, null);
+
+		return pageUrl;
+	}
+
 	public String getPageUrl(String propertyName, Integer contentId)
 	{
 	    return getPageUrl(propertyName, contentId, this.useInheritance);
@@ -1324,8 +1333,13 @@ public class ComponentLogic
 
 		Map property = getInheritedComponentProperty(this.infoGlueComponent, propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
 		Integer siteNodeId = getSiteNodeId(property);
+		
+		Integer entityLanguageId = getLanguageId(property);
+		if(entityLanguageId == null)
+			entityLanguageId = templateController.getLanguageId();
+			
 		if(siteNodeId != null)
-			pageUrl = this.getPageUrl(siteNodeId, templateController.getLanguageId(), contentId);
+			pageUrl = this.getPageUrl(siteNodeId, entityLanguageId, contentId);
 			
 		return pageUrl;
 	}
@@ -1867,9 +1881,10 @@ public class ComponentLogic
 						for(int j=0; j < bindingNodeList.getLength(); j++)
 						{
 							Element bindingElement = (Element)bindingNodeList.item(j);
-							String entityName = bindingElement.getAttribute("entity");
-							String entityId = bindingElement.getAttribute("entityId");
-							String assetKey = bindingElement.getAttribute("assetKey");
+							String entityName 		= bindingElement.getAttribute("entity");
+							String entityId 		= bindingElement.getAttribute("entityId");
+							String assetKey 		= bindingElement.getAttribute("assetKey");
+							String entityLanguageId = bindingElement.getAttribute("entityLanguageId");
 							//logger.info("Binding found:" + entityName + ":" + entityId);
 							
 							ComponentBinding componentBinding = new ComponentBinding();
@@ -1878,6 +1893,7 @@ public class ComponentLogic
 							componentBinding.setEntityClass(entity);
 							componentBinding.setEntityId(new Integer(entityId));
 							componentBinding.setAssetKey(assetKey);
+							componentBinding.setEntityLanguageId(entityLanguageId);
 							//componentBinding.setBindingPath(path);
 							
 							bindings.add(componentBinding);
@@ -2535,9 +2551,10 @@ public class ComponentLogic
 			for(int j=0; j < bindingNodeList.getLength(); j++)
 			{
 				Element bindingElement = (Element)bindingNodeList.item(j);
-				String entityName = bindingElement.getAttribute("entity");
-				String entityId = bindingElement.getAttribute("entityId");
-				String assetKey = bindingElement.getAttribute("assetKey");
+				String entityName 		= bindingElement.getAttribute("entity");
+				String entityId 		= bindingElement.getAttribute("entityId");
+				String assetKey 		= bindingElement.getAttribute("assetKey");
+				String entityLanguageId = bindingElement.getAttribute("entityLanguageId");
 				//logger.info("Binding found:" + entityName + ":" + entityId);
 				
 				ComponentBinding componentBinding = new ComponentBinding();
@@ -2546,6 +2563,7 @@ public class ComponentLogic
 				componentBinding.setEntityClass(entity);
 				componentBinding.setEntityId(new Integer(entityId));
 				componentBinding.setAssetKey(assetKey);
+				componentBinding.setEntityLanguageId(entityLanguageId);
 				//componentBinding.setBindingPath(path);
 				
 				bindings.add(componentBinding);
@@ -2663,9 +2681,10 @@ public class ComponentLogic
 			while(bindingNodeListIterator.hasNext())
 			{
 				org.dom4j.Element bindingElement = (org.dom4j.Element)bindingNodeListIterator.next();
-				String entityName = bindingElement.attributeValue("entity");
-				String entityId = bindingElement.attributeValue("entityId");
-				String assetKey = bindingElement.attributeValue("assetKey");
+				String entityName 		= bindingElement.attributeValue("entity");
+				String entityId 		= bindingElement.attributeValue("entityId");
+				String assetKey 		= bindingElement.attributeValue("assetKey");
+				String entityLanguageId = bindingElement.attributeValue("entityLanguageId");
 				//logger.info("Binding found:" + entityName + ":" + entityId);
 				
 				ComponentBinding componentBinding = new ComponentBinding();
@@ -2674,6 +2693,7 @@ public class ComponentLogic
 				componentBinding.setEntityClass(entity);
 				componentBinding.setEntityId(new Integer(entityId));
 				componentBinding.setAssetKey(assetKey);
+				componentBinding.setEntityLanguageId(entityLanguageId);
 				//componentBinding.setBindingPath(path);
 				
 				bindings.add(componentBinding);
@@ -2826,9 +2846,10 @@ public class ComponentLogic
 			while(bindingNodeListIterator.hasNext())
 			{
 				XmlElement bindingElement = (XmlElement)bindingNodeListIterator.next();
-				String entityName = bindingElement.getAttributeValue(infosetItem.getNamespaceName(), "entity");
-				String entityId = bindingElement.getAttributeValue(infosetItem.getNamespaceName(), "entityId");
-				String assetKey = bindingElement.getAttributeValue(infosetItem.getNamespaceName(), "assetKey");
+				String entityName 		= bindingElement.getAttributeValue(infosetItem.getNamespaceName(), "entity");
+				String entityId 		= bindingElement.getAttributeValue(infosetItem.getNamespaceName(), "entityId");
+				String assetKey 		= bindingElement.getAttributeValue(infosetItem.getNamespaceName(), "assetKey");
+				String entityLanguageId = bindingElement.getAttributeValue(infosetItem.getNamespaceName(), "entityLanguageId");
 				//logger.info("Binding found:" + entityName + ":" + entityId);
 
 				if(propertyName.equals("GUFlashImages") || propertyName.equals("MiniArticleShortcuts"))
@@ -2840,6 +2861,7 @@ public class ComponentLogic
 				componentBinding.setEntityClass(entity);
 				componentBinding.setEntityId(new Integer(entityId));
 				componentBinding.setAssetKey(assetKey);
+				componentBinding.setEntityLanguageId(entityLanguageId);
 				//componentBinding.setBindingPath(path);
 				
 				bindings.add(componentBinding);
@@ -3044,16 +3066,18 @@ public class ComponentLogic
 					for(int j=0; j < bindingNodeList.getLength(); j++)
 					{
 						Element bindingElement = (Element)bindingNodeList.item(j);
-						String entityName = bindingElement.getAttribute("entity");
-						String entityId = bindingElement.getAttribute("entityId");
-						String assetKey = bindingElement.getAttribute("assetKey");
-						
+						String entityName 		= bindingElement.getAttribute("entity");
+						String entityId 		= bindingElement.getAttribute("entityId");
+						String assetKey 		= bindingElement.getAttribute("assetKey");
+						String entityLanguageId = bindingElement.getAttribute("entityLanguageId");
+
 						ComponentBinding componentBinding = new ComponentBinding();
 						//componentBinding.setId(new Integer(id));
 						//componentBinding.setComponentId(componentId);
 						componentBinding.setEntityClass(entity);
 						componentBinding.setEntityId(new Integer(entityId));
 						componentBinding.setAssetKey(assetKey);
+						componentBinding.setEntityLanguageId(entityLanguageId);
 						//componentBinding.setBindingPath(path);
 
 						/*
@@ -3786,6 +3810,23 @@ public class ComponentLogic
 
 		return siteNodeId;
 	}
+	
+	public Integer getLanguageId(Map property)
+	{
+	    Integer languageId = null;
+
+	    if(property != null)
+		{	
+	    	List<ComponentBinding> bindings = (List<ComponentBinding>)property.get("bindings");
+			if(bindings.size() > 0)
+			{
+				ComponentBinding componentBinding = bindings.get(0);
+				languageId = componentBinding.getEntityLanguageId();
+			}
+		}
+
+		return languageId;
+	}
 
 	/*
 	public Integer getSiteNodeId(Map property)
@@ -3869,15 +3910,20 @@ public class ComponentLogic
 				webPage = new WebPage();
 				ComponentBinding componentBinding = bindingsIterator.next();
 				Integer siteNodeId = componentBinding.getEntityId();
+				Integer entityLanguageId = componentBinding.getEntityLanguageId();
+				if(entityLanguageId == null)
+					entityLanguageId = templateController.getLanguageId();
+				
 				SiteNodeVO siteNode = templateController.getSiteNode(siteNodeId);
 				if(siteNode != null && !siteNode.getIsDeleted())
 				{
 					webPage.setSiteNodeId(siteNodeId);
-					webPage.setLanguageId(templateController.getLanguageId());
+					
+					webPage.setLanguageId(entityLanguageId);
 					webPage.setContentId(null);
 					webPage.setNavigationTitle(getPageNavTitle(siteNodeId));
 					webPage.setMetaInfoContentId(siteNode.getMetaInfoContentId());
-					webPage.setUrl(getPageUrl(siteNodeId));
+					webPage.setUrl(getPageUrl(siteNodeId, entityLanguageId));
 				}
 			}
 		}

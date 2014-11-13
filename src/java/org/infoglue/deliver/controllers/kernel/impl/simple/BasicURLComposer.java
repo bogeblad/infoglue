@@ -494,20 +494,20 @@ public class BasicURLComposer extends URLComposer
 				logger.warn("composePageUrl was called with siteNodeId which does not exist:" + siteNodeId + " from the page with key: " + deliveryContext.getPageKey());
 				return "";
 			}
+		    
+			SiteNodeVO currentSiteNode = SiteNodeController.getController().getSmallSiteNodeVOWithId(deliveryContext.getSiteNodeId(), db);
+
 			String enableNiceURIForLanguage = CmsPropertyHandler.getEnableNiceURIForLanguage();
-			/*
-		    //logger.info("enableNiceURIForLanguage:" + enableNiceURIForLanguage);
-		    if(enableNiceURIForLanguage == null || !enableNiceURIForLanguage.equals("true"))
+			if(enableNiceURIForLanguage == null || !enableNiceURIForLanguage.equals("true"))
 		    {
 		        String enableNiceURIForLanguageForRepo = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(siteNode.getRepositoryId(), "enableNiceURIForLanguage");
 				if(enableNiceURIForLanguageForRepo != null && enableNiceURIForLanguageForRepo.equals("true"))
 					enableNiceURIForLanguage = enableNiceURIForLanguageForRepo;
 		    }
-
+		    String languageCode = null;
 		    if(enableNiceURIForLanguage.equalsIgnoreCase("true"))
-        		context = context + "/" + LanguageDeliveryController.getLanguageDeliveryController().getLanguageVO(db, languageId).getLanguageCode();
-			*/
-			SiteNodeVO currentSiteNode = SiteNodeController.getController().getSmallSiteNodeVOWithId(deliveryContext.getSiteNodeId(), db);
+		    	languageCode = LanguageDeliveryController.getLanguageDeliveryController().getLanguageVO(db, languageId).getLanguageCode();
+
 
 			if(!siteNode.getRepositoryId().equals(currentSiteNode.getRepositoryId()))
 			{
@@ -599,20 +599,20 @@ public class BasicURLComposer extends URLComposer
 				{
 					logger.info("A42:" + dnsName);
 				}
-
+			    
 				if(repositoryPath != null)
 				{
 					if(applicationContext.startsWith("/"))
-						applicationContext = dnsName + applicationContext + "/" + repositoryPath;
+						applicationContext = dnsName + applicationContext + "/" + languageCode + "/" + repositoryPath;
 					else
-						applicationContext = dnsName + "/" + (applicationContext.equals("") ? "" : applicationContext + "/") + repositoryPath;
+						applicationContext = dnsName + "/" + (applicationContext.equals("") ? "" : applicationContext + "/") + languageCode + "/" + repositoryPath;
 				}
 				else
 				{
 					if(applicationContext.startsWith("/"))
-						applicationContext = dnsName + applicationContext;
+						applicationContext = dnsName + applicationContext + "/" + languageCode;
 					else
-						applicationContext = dnsName + "/" + applicationContext;
+						applicationContext = dnsName + "/" + applicationContext + "/" + languageCode;
 				}
 
 				if(logger.isInfoEnabled())
@@ -657,7 +657,7 @@ public class BasicURLComposer extends URLComposer
 
 				if(repositoryPath != null)
 				{
-					applicationContext = applicationContext + "/" + repositoryPath;
+					applicationContext = applicationContext + "/" + languageCode + "/" + repositoryPath;
 				}
 			}
 

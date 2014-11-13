@@ -212,12 +212,19 @@
 	}
 
 	var selectedSiteNodeContentId = -1;
+	var selectedSiteNodeLanguageId = "$templateLogic.languageId";
 	var selectedSiteNodeContentPath;
 	function contentMarked(contentId, path)
 	{
 		//alert("Content was marked in link:" + contentId + ":" + path);
 		selectedSiteNodeContentId = contentId;
 		selectedSiteNodeContentPath = path;
+	}
+	
+	function languageMarked(languageId)
+	{
+		alert("selectedSiteNodeLanguageId:" + selectedSiteNodeLanguageId);
+		selectedSiteNodeLanguageId = languageId;
 	}
 	
 	function useSelectedAsset()
@@ -246,7 +253,9 @@
 			alert("$ui.getString("tool.contenttool.linkDialog.pageMandatoryWarning")");
 		else
 		{
-			url = getInlineLinkUrl(selectedSiteNodeId, selectedSiteNodeContentId);
+		  	alert(selectedSiteNodeLanguageId);
+
+			url = getInlineLinkUrl(selectedSiteNodeId, selectedSiteNodeContentId, selectedSiteNodeLanguageId);
 			var CKEditorFuncNum = getRequestParameter(window.location.href, "CKEditorFuncNum");
 			if(window.opener.CKEDITOR && window.opener.CKEDITOR.tools.callFunction)
 				window.opener.CKEDITOR.tools.callFunction(CKEditorFuncNum, url);
@@ -276,13 +285,13 @@
 		}
 	}
 	
-	function onOkForInlineLink(siteNodeId, contentId)
+	function onOkForInlineLink(siteNodeId, contentId, languageId)
 	{
 		if(selectedSiteNodeId == "")
 			alert("$ui.getString("tool.contenttool.linkDialog.pageMandatoryWarning")");
 		else
 		{
-			url = getInlineLinkUrl(siteNodeId, contentId);
+			url = getInlineLinkUrl(siteNodeId, contentId, languageId);
 			var CKEditorFuncNum = getRequestParameter(window.location.href, "CKEditorFuncNum");
 			if(window.opener.CKEDITOR && window.opener.CKEDITOR.tools.callFunction)
 				window.opener.CKEDITOR.tools.callFunction(CKEditorFuncNum, url);
@@ -305,12 +314,14 @@
 		return "DownloadAsset.action?contentId=" + contentId + "&languageId=$languageId&assetKey=" + assetKey;
 	}
 
-	function getInlineLinkUrl(siteNodeId, contentId)
+	function getInlineLinkUrl(siteNodeId, contentId, languageId)
 	{
 		if(typeof(contentId) == "undefined")
 			contentId = -1;
+		if(typeof(languageId) == "undefined")
+			languageId = "$templateLogic.languageId";
 			
-		return "$templateLogic.getPageUrl(" + siteNodeId + ", $templateLogic.languageId," + contentId + ")";
+		return "$templateLogic.getPageUrl(" + siteNodeId + ", " + languageId + "," + contentId + ")";
 	}
 
 	var selectedContentVersionId;
@@ -351,7 +362,7 @@
 	    </ul>
 	
 		<div id="internalLinkTab" class="inlineTabDiv">
-			<iframe frameborder="0" marginwidth="0" marginheight="0" ascrolling="no" name="internalLinkFrame" id="internalLinkFrame" src="" width="690" height="450" ></iframe>
+			<iframe frameborder="0" marginwidth="0" marginheight="0" name="internalLinkFrame" id="internalLinkFrame" src="" width="690" height="450"></iframe>
 		</div>
 
 		<div id="internalAssetTab" class="inlineTabDiv">

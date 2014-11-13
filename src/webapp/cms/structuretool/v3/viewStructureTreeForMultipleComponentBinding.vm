@@ -4,6 +4,11 @@
 	<style type="text/css">
 		#bindings li {
 			cursor: default;
+			height: 20px;
+		}
+		#actions li {
+			cursor: default;
+			height: 20px;
 		}
 	</style>
 	<script type="text/javascript" src="script/vector.js"></script>
@@ -80,6 +85,13 @@
 				drawList();
 			}
 		}
+
+	    function complementQualifyerWithLanguageId(vectorIndex, languageId)
+		{
+			var binding = siteNodesVector.addElement.getElementAt(vectorIndex);
+			binding.setEntityLanguageId(languageId);
+			drawList();
+		}
 				
 		function save(form)
 		{
@@ -96,13 +108,15 @@
 				var binding = siteNodesVector.getElementAt(i);
 				if(i > 0) 
 					path = path + ", ";
-				path 		= path + binding.getPath();
-				entityName 	= binding.getEntityName();
-				entityId   	= binding.getEntityId();
-				qualifyerXML += "<" + entityName + ">" + entityId + "</" + entityName + ">";
+				path 				= path + binding.getPath();
+				entityName 			= binding.getEntityName();
+				entityId   			= binding.getEntityId();
+				entityLanguageId	= binding.getEntityLanguageId();
+				qualifyerXML += "<" + entityName + " entityLanguageId='" + entityLanguageId + "'>" + entityId + "</" + entityName + ">";
 			}
 		   	qualifyerXML += "</qualifyer>";
 			
+			alert("qualifyerXML:" + qualifyerXML);
 		    document.submitForm.path.value = path;
 		    document.submitForm.qualifyerXML.value = qualifyerXML;
 		    
@@ -123,18 +137,21 @@
 		 * Binding object
 		 */
 
-		function Binding(entityName, entityId, path)
+		function Binding(entityName, entityId, path, entityLanguageId)
 		{
-			this.entityName = entityName;
-			this.entityId 	= entityId;
-			this.path 		= path;
+			this.entityName 		= entityName;
+			this.entityId 			= entityId;
+			this.entityLanguageId 	= entityLanguageId;
+			this.path 				= path;
 		  
-		  	this.getPath 		= getPath;
-		  	this.getEntityName 	= getEntityName;
-		  	this.getEntityId 	= getEntityId;
-		  	this.setPath 		= setPath;
-		  	this.setEntityName 	= setEntityName;
-		  	this.setEntityId 	= setEntityId;
+		  	this.getPath 				= getPath;
+		  	this.getEntityName 			= getEntityName;
+		  	this.getEntityId 			= getEntityId;
+		  	this.getEntityLanguageId 	= getEntityLanguageId;
+		  	this.setPath 				= setPath;
+		  	this.setEntityName 			= setEntityName;
+		  	this.setEntityId 			= setEntityId;
+		  	this.setEntityLanguageId 	= setEntityLanguageId;
 		}
 		  
 		function getPath()
@@ -152,6 +169,11 @@
 		  	return this.entityId;
 		}
 
+		function getEntityLanguageId()
+		{
+		  	return this.entityLanguageId;
+		}
+
 		function setPath(path)
 		{
 		  	this.path = path;
@@ -166,6 +188,12 @@
 		{
 			this.entityId = entityId;
 		}
+		
+		function setEntityLanguageId(entityLanguageId)
+		{
+			this.entityLanguageId = entityLanguageId;
+		}
+		
 
 	  
 	  	/**
@@ -209,6 +237,22 @@
 	  	 * This function creates a href-tag by manipulating the DOM.
 	  	 */
 	  	 
+		function addLanguageSelectDrop(parent, index, value)
+		{
+			$(parent).append("<select id='languageId_" + index + "' onchange='siteNodesVector.getElementAt(" + index + ").setEntityLanguageId($(this).val());' style='margin-right: 4px;'><option value='-1'>Default</option><option value='1'" + (""+value == "1" ? " selected='selected'" : "") + ">English</option><option value='3'" + (""+value == "3" ? " selected='selected'" : "") + ">Svenska</option></select>");
+			/*
+			var link = document.createElement("a");
+			link.setAttribute("href", address);
+			var linkText = document.createTextNode(text);
+			link.appendChild(linkText);
+			parent.appendChild(link);
+			*/
+		}
+		
+		/**
+	  	 * This function creates a href-tag by manipulating the DOM.
+	  	 */
+	  	 
 		function addDividerImage(parent, width, height)
 		{
 			var separator = document.createElement("img");
@@ -241,7 +285,7 @@
 			var bindingTD = document.createElement("td");
 			bindingTD.setAttribute("width", "100%");
 			var actionTD = document.createElement("td");
-			actionTD.setAttribute("width", "100");
+			actionTD.setAttribute("width", "150");
 						
 			myActionList = document.createElement("ul");
 			myActionList.setAttribute("id", "actions");
@@ -253,6 +297,11 @@
 				var myLI = document.createElement("li");
 				myLI.setAttribute("itemID", i);
 				
+				var entityLanguageId = "-1";
+				if(binding.getEntityLanguageId())
+					entityLanguageId = binding.getEntityLanguageId();
+				
+				addLanguageSelectDrop(myLI, i, entityLanguageId);
 				addImageLink(myLI, "javascript:moveBindingDown(" + i + ");", "css/images/downArrow.gif");
 				addImageLink(myLI, "javascript:moveBindingUp(" + i + ");", "css/images/upArrow.gif");
 				addImageLink(myLI, "javascript:deleteBinding(" + i + ");", "css/images/delete.gif");
@@ -315,17 +364,20 @@
 				var binding 		= siteNodesVector.getElementAt(index);
 				var previousBinding = siteNodesVector.getElementAt(index - 1);
 				
-				path 		= binding.getPath();
-				entityName 	= binding.getEntityName();
-				entityId 	= binding.getEntityId();
+				path 				= binding.getPath();
+				entityName 			= binding.getEntityName();
+				entityId 			= binding.getEntityId();
+				entityLanguageId 	= binding.getEntityLanguageId();
 				
 				binding.setPath(previousBinding.getPath())
 				binding.setEntityName(previousBinding.getEntityName())
 				binding.setEntityId(previousBinding.getEntityId())
+				binding.setEntityLanguageId(previousBinding.getEntityLanguageId())
 			
 				previousBinding.setPath(path)
 				previousBinding.setEntityName(entityName)
 				previousBinding.setEntityId(entityId)
+				previousBinding.setEntityLanguageId(entityLanguageId)
 				
 				drawList();
 			}			
@@ -342,17 +394,20 @@
 				var binding 		= siteNodesVector.getElementAt(index);
 				var previousBinding = siteNodesVector.getElementAt(index + 1);
 				
-				path 		= binding.getPath();
-				entityName 	= binding.getEntityName();
-				entityId 	= binding.getEntityId();
+				path 				= binding.getPath();
+				entityName 			= binding.getEntityName();
+				entityId 			= binding.getEntityId();
+				entityLanguageId 	= binding.getEntityLanguageId();
 				
 				binding.setPath(previousBinding.getPath())
 				binding.setEntityName(previousBinding.getEntityName())
 				binding.setEntityId(previousBinding.getEntityId())
+				binding.setEntityLanguageId(previousBinding.getEntityLanguageId())
 			
 				previousBinding.setPath(path)
 				previousBinding.setEntityName(entityName)
 				previousBinding.setEntityId(entityId)
+				previousBinding.setEntityLanguageId(entityLanguageId)
 			
 				drawList();
 			}
@@ -365,7 +420,7 @@
 		function init()
 		{
 			#foreach($binding in $componentBindings)
-				binding = new Binding("SiteNode", "$binding.entityId", "$formatter.cleanForJavascriptStrings($binding.path)");
+				binding = new Binding("SiteNode", "$binding.entityId", "$formatter.cleanForJavascriptStrings($binding.path)", "$binding.entityLanguageId");
 				siteNodesVector.addElement(binding);
 			#end
 	

@@ -695,7 +695,8 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 						String entityId = bindingElement.attributeValue("entityId");
 						String assetKey = bindingElement.attributeValue("assetKey");
 						//logger.info("Binding found:" + entity + ":" + entityId);
-
+						String entityLanguageId = bindingElement.attributeValue("entityLanguageId");
+						
 						ComponentBinding componentBinding = new ComponentBinding();
 						//componentBinding.setId(new Integer(id));
 						//componentBinding.setComponentId(componentId);
@@ -703,7 +704,8 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 						componentBinding.setEntityId(new Integer(entityId));
 						componentBinding.setAssetKey(assetKey);
 						componentBinding.setBindingPath(path);
-						
+						componentBinding.setEntityLanguageId(entityLanguageId);
+		
 						bindings.add(componentBinding);
 					}
 	
@@ -983,6 +985,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 						String entity = bindingElement.getAttributeValue(bindingElement.getNamespaceName(), "entity");
 						String entityId = bindingElement.getAttributeValue(bindingElement.getNamespaceName(), "entityId");
 						String assetKey = bindingElement.getAttributeValue(bindingElement.getNamespaceName(), "assetKey");
+						String entityLanguageId = bindingElement.getAttributeValue(bindingElement.getNamespaceName(), "entityLanguageId");
 						//logger.info("Binding found:" + entity + ":" + entityId);
 
 						ComponentBinding componentBinding = new ComponentBinding();
@@ -991,6 +994,8 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 						componentBinding.setEntityClass(entity);
 						componentBinding.setEntityId(new Integer(entityId));
 						componentBinding.setAssetKey(assetKey);
+						componentBinding.setEntityLanguageId(entityLanguageId);
+						
 						componentBinding.setBindingPath(path);
 						
 						bindings.add(componentBinding);
@@ -1258,6 +1263,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 						String entity = bindingElement.attributeValue("entity");
 						String entityId = bindingElement.attributeValue("entityId");
 						String assetKey = bindingElement.attributeValue("assetKey");
+						String entityLanguageId = bindingElement.attributeValue("entityLanguageId");
 						////logger.info("Binding found:" + entity + ":" + entityId);
 						
 						ComponentBinding componentBinding = new ComponentBinding();
@@ -1451,6 +1457,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 						String entity = bindingElement.getAttributeValue(bindingElement.getNamespaceName(), "entity");
 						String entityId = bindingElement.getAttributeValue(bindingElement.getNamespaceName(), "entityId");
 						String assetKey = bindingElement.getAttributeValue(bindingElement.getNamespaceName(), "assetKey");
+						String entityLanguageId = bindingElement.getAttributeValue(bindingElement.getNamespaceName(), "entityLanguageId");
 						////logger.info("Binding found:" + entity + ":" + entityId);
 						
 						ComponentBinding componentBinding = new ComponentBinding();
@@ -1460,7 +1467,8 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 						componentBinding.setEntityId(new Integer(entityId));
 						componentBinding.setAssetKey(assetKey);
 						componentBinding.setBindingPath(path);
-						
+						componentBinding.setEntityLanguageId(entityLanguageId);
+
 						bindings.add(componentBinding);
 					}
 	
@@ -2558,6 +2566,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 								String entity = bindingElement.attributeValue("entity");
 								String entityId = bindingElement.attributeValue("entityId");
 								String assetKey = bindingElement.attributeValue("assetKey");
+								String entityLanguageId = bindingElement.attributeValue("entityLanguageId");
 
 								ComponentBinding componentBinding = new ComponentBinding();
 								//componentBinding.setId(new Integer(id));
@@ -2566,7 +2575,8 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 								componentBinding.setEntityId(new Integer(entityId));
 								componentBinding.setAssetKey(assetKey);
 								componentBinding.setBindingPath(path);
-								
+								componentBinding.setEntityLanguageId(entityLanguageId);
+
 								bindings.add(componentBinding);
 							}
 			
@@ -2948,6 +2958,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 								String entity = bindingElement.getAttributeValue(bindingElement.getNamespaceName(), "entity");
 								String entityId = bindingElement.getAttributeValue(bindingElement.getNamespaceName(), "entityId");
 								String assetKey = bindingElement.getAttributeValue(bindingElement.getNamespaceName(), "assetKey");
+								String entityLanguageId = bindingElement.getAttributeValue(bindingElement.getNamespaceName(), "entityLanguageId");
 								XmlElement supplementingBindingElement = bindingElement.element(bindingElement.getNamespace(), "supplementing-binding");
 
 								ComponentBinding componentBinding;
@@ -2982,7 +2993,8 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 								componentBinding.setEntityId(new Integer(entityId));
 								componentBinding.setAssetKey(assetKey);
 								componentBinding.setBindingPath(path);
-								
+								componentBinding.setEntityLanguageId(entityLanguageId);
+				
 								bindings.add(componentBinding);
 							}
 			
@@ -3217,6 +3229,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 					String entity = bindingElement.attributeValue("entity");
 					String entityId = bindingElement.attributeValue("entityId");
 					String assetKey = bindingElement.attributeValue("assetKey");
+					String entityLanguageId = bindingElement.attributeValue("entityLanguageId");
 					//logger.info("Binding found:" + entity + ":" + entityId);
 					
 					ComponentBinding componentBinding = new ComponentBinding();
@@ -3225,8 +3238,9 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 					componentBinding.setEntityClass(entity);
 					componentBinding.setEntityId(new Integer(entityId));
 					componentBinding.setAssetKey(assetKey);
-					componentBinding.setBindingPath(path);
-					
+					componentBinding.setBindingPath(path);							
+					componentBinding.setEntityLanguageId(entityLanguageId);
+		
 					bindings.add(componentBinding);
 				}
 

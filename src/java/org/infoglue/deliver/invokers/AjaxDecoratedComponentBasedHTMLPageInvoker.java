@@ -1865,11 +1865,13 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 			String entity   = property.attributeValue("entity");
 			String entityId = property.attributeValue("entityId");
 			String assetKey = property.attributeValue("assetKey");
+			String entityLanguageId = property.attributeValue("entityLanguageId");
 			
 			ComponentBinding componentBinding = new ComponentBinding();
 			componentBinding.setEntityClass(entity);
 			componentBinding.setEntityId(new Integer(entityId));
 			componentBinding.setAssetKey(assetKey);
+			componentBinding.setEntityLanguageId(entityLanguageId);
 
 			componentBindings.add(componentBinding);
 		}
@@ -1964,10 +1966,11 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 			//logger.info(XMLHelper.serializeDom(binding, new StringBuffer()));
 			//logger.info("YES - we read the binding properties...");		
 			
-			String id 			= binding.attributeValue("id");
-			String entityClass 	= binding.attributeValue("entity");
-			String entityId 	= binding.attributeValue("entityId");
-			String assetKey 	= binding.attributeValue("assetKey");
+			String id 				= binding.attributeValue("id");
+			String entityClass 		= binding.attributeValue("entity");
+			String entityId 		= binding.attributeValue("entityId");
+			String assetKey 		= binding.attributeValue("assetKey");
+			String entityLanguageId = binding.attributeValue("entityLanguageId");
 			//logger.info("id:" + id);
 			//logger.info("entityClass:" + entityClass);
 			//logger.info("entityId:" + entityId);
@@ -1981,6 +1984,7 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 				componentBinding.setEntityClass(entityClass);
 				componentBinding.setEntityId(new Integer(entityId));
 				componentBinding.setAssetKey(assetKey);
+				componentBinding.setEntityLanguageId(entityLanguageId);
 				componentBinding.setBindingPath(contentVO.getName());
 				
 				contentBindings.add(componentBinding);

@@ -35,6 +35,7 @@ public class ComponentBinding
 	private Integer entityId;
 	private String assetKey;
 	private String bindingPath;
+	private Integer entityLanguageId;
 
 	public Integer getId()
 	{
@@ -95,4 +96,25 @@ public class ComponentBinding
 	{
 		this.assetKey = assetKey;
 	}
+	
+	public Integer getEntityLanguageId() 
+	{
+		return entityLanguageId;
+	}
+
+	public void setEntityLanguageId(String entityLanguageId)
+	{
+		if(entityLanguageId != null)
+		{
+			try
+			{
+				this.entityLanguageId = new Integer(entityLanguageId);
+			}
+			catch (Exception e) 
+			{
+				System.out.println("A binding has a faulty entityLanguageId: " + entityLanguageId);
+			}
+		}
+	}
+
 }

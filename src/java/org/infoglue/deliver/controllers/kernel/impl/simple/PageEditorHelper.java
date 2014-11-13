@@ -1649,14 +1649,16 @@ public class PageEditorHelper extends BaseDeliveryController
 		{
 			Element property = (Element)anlIterator.next();
 			
-			String entity   = property.attributeValue("entity");
-			String entityId = property.attributeValue("entityId");
-			String assetKey = property.attributeValue("assetKey");
+			String entity   		= property.attributeValue("entity");
+			String entityId 		= property.attributeValue("entityId");
+			String assetKey 		= property.attributeValue("assetKey");
+			String entityLanguageId = property.attributeValue("entityLanguageId");
 			
 			ComponentBinding componentBinding = new ComponentBinding();
 			componentBinding.setEntityClass(entity);
 			componentBinding.setEntityId(new Integer(entityId));
 			componentBinding.setAssetKey(assetKey);
+			componentBinding.setEntityLanguageId(entityLanguageId);
 
 			componentBindings.add(componentBinding);
 		}
@@ -2279,6 +2281,7 @@ public class PageEditorHelper extends BaseDeliveryController
 								String entity = bindingElement.attributeValue("entity");
 								String entityId = bindingElement.attributeValue("entityId");
 								String assetKey = bindingElement.attributeValue("assetKey");
+								String entityLanguageId = bindingElement.attributeValue("entityLanguageId");
 
 								ComponentBinding componentBinding = new ComponentBinding();
 								//componentBinding.setId(new Integer(id));
@@ -2286,6 +2289,7 @@ public class PageEditorHelper extends BaseDeliveryController
 								componentBinding.setEntityClass(entity);
 								componentBinding.setEntityId(new Integer(entityId));
 								componentBinding.setAssetKey(assetKey);
+								componentBinding.setEntityLanguageId(entityLanguageId);
 								componentBinding.setBindingPath(path);
 								
 								bindings.add(componentBinding);

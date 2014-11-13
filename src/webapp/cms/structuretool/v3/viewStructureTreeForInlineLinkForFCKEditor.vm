@@ -44,7 +44,10 @@
 		{
 			if(parent.contentMarked)
 				parent.contentMarked(entityId, path);
-		
+
+			languageId = document.inputForm.linkLanguageId.value;
+		  	alert(languageId);
+			
 			document.inputForm.contentId.value = entityId;
 			var shortPath = "";
 			if(path != "")
@@ -75,6 +78,12 @@
 			}
 		}
 		
+		function languageSelected()
+		{
+			languageId = $("#linkLanguageId").val();
+			if(parent.languageMarked )
+				parent.languageMarked(languageId);
+		}
 				
 		function init() 
 		{
@@ -100,10 +109,12 @@
 		{
 		  	siteNodeId = document.inputForm.entityId.value;
 		  	contentId = document.inputForm.contentId.value;
+		  	languageId = document.inputForm.linkLanguageId.value;
+		  	alert(languageId);
 			path = document.inputForm.path.value;
 
 			if(siteNodeId != "" && siteNodeId.indexOf("select") == -1)
-				parent.onOkForInlineLink(siteNodeId, contentId);
+				parent.onOkForInlineLink(siteNodeId, contentId, linkLanguageId);
 			else
 				alert("$ui.getString("tool.contenttool.linkDialog.pageMandatoryWarning")");
 			
@@ -173,6 +184,15 @@
 				<td class="menu" colspan="2" style="border: 1px solid silver;">   
 					#set($exp = $this.getExpansion($oldSiteNodeId))
 					<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureToolMenuHtml!bindingViewV3.action?repositoryId=${repositoryId}$sortArg&exp=$exp&akey=/$!oldSiteNodeId/&select=$!oldSiteNodeId" width="310" height="385" ></iframe>
+				</td>
+			</tr>	
+			<tr>
+				<td class="menu" colspan="2" style="padding-top: 10px;">   
+					Language: <select id="linkLanguageId" onchange="languageSelected();">
+						<option value="-1">Inherit</option>
+						<option value="1">English if available</option>
+						<option value="3">Svenska if available</option>
+					</select>
 				</td>
 			</tr>	
 			</table>

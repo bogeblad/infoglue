@@ -50,6 +50,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
+import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RedirectController;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
@@ -220,8 +221,18 @@ public class ViewPageFilter implements Filter
 	                if(logger.isInfoEnabled())
 	                	logger.info("repositoryVOList:" + repositoryVOList.size());
             
-	            	languageId = getLanguageId(httpRequest, httpSession, repositoryVOList, requestURI, db);
-	            
+	                languageId = getLanguageId(httpRequest, httpSession, repositoryVOList, requestURI, db);
+	                LanguageVO foundLanguageVO = LanguageDeliveryController.getLanguageDeliveryController().getLanguageVO(db, languageId);
+	                System.out.println("foundLanguageVO:" + foundLanguageVO.getName());
+	                if(requestURI.contains("/" + foundLanguageVO.getLanguageCode() + "/")) 
+	                {
+	                	requestURI = requestURI.replaceFirst("/" + foundLanguageVO.getLanguageCode() + "/", "/");
+	                }
+	                else if(requestURI.endsWith("/" + foundLanguageVO.getLanguageCode())) 
+	                {
+	                	requestURI = requestURI.replaceFirst("/" + foundLanguageVO.getLanguageCode(), "/");
+	                }
+	                	
 	                Integer siteNodeId = null;
 	                if(languageId != null)
 	                {
@@ -573,6 +584,24 @@ public class ViewPageFilter implements Filter
         }
         else
         {
+        	System.out.println("requestURI:" + requestURI);
+        	String firstPathOfUrl = requestURI.substring(0,(requestURI.length() > 4 ? 4 : requestURI.length()));
+        	System.out.println("firstPathOfUrl:" + firstPathOfUrl);
+        	String languageCandidate = firstPathOfUrl.replaceAll("/", "");
+        	System.out.println("languageCandidate:" + languageCandidate);
+        	if(languageCandidate.length() == 2)
+        	{
+        		System.out.println("Can be a language code");
+        		LanguageVO languageVO = LanguageController.getController().getLanguageVOWithCode(languageCandidate, db);
+        		if(languageVO != null)
+        		{
+        			System.out.println("Was a language part: " + languageVO.getName());
+        			languageId = languageVO.getId();
+                    session.setAttribute(FilterConstants.LANGUAGE_ID, languageId);
+                    return languageId;
+        		}
+        	}
+        	
         	Timer t = new Timer();
         	Iterator repositoryVOListIterator = repositoryVOList.iterator();
         	outer: while(repositoryVOListIterator.hasNext())

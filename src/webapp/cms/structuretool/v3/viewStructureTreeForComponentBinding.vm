@@ -93,14 +93,15 @@
 			{
 				path = document.inputForm.path.value;
 			    var repositoryId = document.inputForm.repositoryId.value;
+			    var linkLanguageId = $("#linkLanguageId").val();
 				bindingTypeId = 1; //0 = Content, 1 = SiteNode
 				
 				qualifyerXML = "<?xml version='1.0' encoding='UTF-8'?>";
 				qualifyerXML += "<qualifyer>";
-				qualifyerXML += 	"<siteNodeId>" + entityId + "</siteNodeId>";
+				qualifyerXML += 	"<siteNodeId languageId=\"" + linkLanguageId + "\">" + entityId + "</siteNodeId>";
 				qualifyerXML += "</qualifyer>";
 				 		    
-			    var url = "ViewSiteNodePageComponents!addComponentPropertyBinding.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=-1&entity=SiteNode&entityId=" + entityId + "&componentId=$componentId&propertyName=$propertyName&showSimple=$showSimple&showDecorated=$!showDecorated&path=" + escape(path);
+			    var url = "ViewSiteNodePageComponents!addComponentPropertyBinding.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=-1&entity=SiteNode&entityId=" + entityId + "&entityLanguageId=" + linkLanguageId + "&componentId=$componentId&propertyName=$propertyName&showSimple=$showSimple&showDecorated=$!showDecorated&path=" + escape(path);
 			    if(self.opener)
 			    {
 				    self.opener.location.href = url;
@@ -137,7 +138,14 @@
 		<p>
 		
 		<p>
-			<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureToolMenuHtml!bindingViewV3.action?repositoryId=${repositoryId}$sortArg" width="100%" height="426" ></iframe>
+			<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureToolMenuHtml!bindingViewV3.action?repositoryId=${repositoryId}$sortArg" width="100%" height="410" ></iframe>
+		</p>
+		<p>
+			Language: <select id="linkLanguageId" onchange="languageSelected();">
+				<option value="-1">Inherit</option>
+				<option value="1">English if available</option>
+				<option value="3">Svenska if available</option>
+			</select>
 		</p>
 	</div>
 	

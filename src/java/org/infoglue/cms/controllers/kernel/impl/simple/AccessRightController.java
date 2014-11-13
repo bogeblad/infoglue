@@ -1744,6 +1744,55 @@ public class AccessRightController extends BaseController
 	 * @throws ConstraintException
 	 * @throws SystemException
 	 */
+/*
+	public void deleteRoleName(String roleName) throws SystemException, Exception
+	{
+		Database db = CastorDatabaseService.getDatabase();
+		
+		logger.info("roleName:" + roleName);
+		
+		try 
+		{
+			beginTransaction(db);
+
+			List accessRightList = getAccessRightList(roleName, db);
+			Iterator i = accessRightList.iterator();
+			while(i.hasNext())
+			{
+				AccessRight accessRight = (AccessRight)i.next();
+				
+				Iterator accessRightRolesIterator = accessRight.getRoles().iterator();
+				while(accessRightRolesIterator.hasNext())
+				{
+					AccessRightRole accessRightRole = (AccessRightRole)accessRightRolesIterator.next();
+					if(roleName.equals(accessRightRole.getRoleName()))
+					{
+						accessRightRolesIterator.remove();
+						db.remove(accessRightRole);
+					}
+				}
+				
+				//db.remove(accessRight);
+			}
+			
+			commitTransaction(db);
+		} 
+		catch (Exception e) 
+		{
+			logger.info("An error occurred so we should not complete the transaction:" + e);
+			rollbackTransaction(db);
+			throw new SystemException(e.getMessage());
+		}
+	}  
+	*/
+	
+	/**
+	 * This method deletes all occurrencies of AccessRight which has the interceptionPointId.
+	 * 
+	 * @param roleName
+	 * @throws ConstraintException
+	 * @throws SystemException
+	 */
 
 	public void deleteAccessRightGroup(String groupName, Database db) throws SystemException, Exception
 	{

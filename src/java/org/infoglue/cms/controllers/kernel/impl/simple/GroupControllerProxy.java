@@ -257,13 +257,29 @@ public class GroupControllerProxy extends BaseController
 	}
 
 	/**
-	 * This method deletes an existing user
+	 * This method deletes an existing group and all the entities that are connected to that group.
 	 */
 	
 	public void deleteGroup(String groupName) throws ConstraintException, SystemException, Exception
 	{
-		getAuthorizationModule().deleteInfoGlueGroup(groupName);
-		AccessRightController.getController().delete(groupName);
+		Database db = CastorDatabaseService.getDatabase();
+		
+		try 
+		{
+			beginTransaction(db);
+			
+			this.transactionObject = db;
+			getAuthorizationModule().deleteInfoGlueGroup(groupName);
+			AccessRightController.getController().deleteAccessRightGroup(groupName, db);
+			
+			commitTransaction(db);
+		} 
+		catch (Exception e) 
+		{
+			rollbackTransaction(db);
+			throw new SystemException(e);
+		}
+
 	}
 	
 	public BaseEntityVO getNewVO()

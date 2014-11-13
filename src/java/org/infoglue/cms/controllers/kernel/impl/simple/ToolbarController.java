@@ -1118,7 +1118,7 @@ public class ToolbarController implements ToolbarProvider
 		
 		buttons.add(deleteButton);
 
-        //if(!isReadOnly(contentVersionId))
+		//if(!isReadOnly(contentVersionId))
 		//{
 			if(contentVersionId != null)
 			{
@@ -1144,6 +1144,9 @@ public class ToolbarController implements ToolbarProvider
 			}
 		}
 		
+		SiteNodeVO rootSiteNodeVO = SiteNodeController.getController().getRootSiteNodeVO(contentVO.getRepositoryId());
+		buttons.add(StructureToolbarController.getPreviewButtons(contentVO.getRepositoryId(), rootSiteNodeVO.getId(), null, locale));
+
 		ToolbarButton publishButton = new ToolbarButton("",
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.publishContentLabel"), 
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.publishContentTitle"),
@@ -4104,6 +4107,18 @@ public class ToolbarController implements ToolbarProvider
 									  "cancel",
 				  					  true);
 	}
+	
+	private ToolbarButton getDialogCancelToReturnAddressButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton, String returnAddress)
+	{
+		return new ToolbarButton("cancelButton",
+									  getLocalizedString(locale, "tool.common.cancelButton.label"), 
+									  getLocalizedString(locale, "tool.common.cancelButton.label"),
+									  "document.location.href = '" + returnAddress + "'",
+				  					  "css/images/v3/cancel.gif",
+				  					  "left",
+									  "cancel",
+				  					  true);
+	}
 
 	private ToolbarButton getDialogCancelButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton, String cancelJavascript)
 	{
@@ -4144,7 +4159,20 @@ public class ToolbarController implements ToolbarProvider
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
 		buttons.add(getCommonFooterSaveButton(toolbarKey, principal, locale, request, disableCloseButton));
-		buttons.add(getDialogCancelButton(toolbarKey, principal, locale, request, disableCloseButton));
+		if(toolbarKey.equalsIgnoreCase("tool.contenttool.createFolderHeader"))
+		{
+			String returnAddress = request.getParameter("returnAddress");
+			if(returnAddress != null && !returnAddress.equals(""))
+			{
+				buttons.add(getDialogCancelToReturnAddressButton(toolbarKey, principal, locale, request, disableCloseButton, returnAddress));
+			}
+			else
+			{
+				buttons.add(getDialogCancelButton(toolbarKey, principal, locale, request, disableCloseButton));
+			}
+		}
+		else
+			buttons.add(getDialogCancelButton(toolbarKey, principal, locale, request, disableCloseButton));
 				
 		return buttons;		
 	}

@@ -27,7 +27,9 @@ import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.codec.binary.Base64;
@@ -719,6 +721,24 @@ public class VisualFormatter
         	fileSizeString = "0 Bytes";
         
         return fileSizeString;
+    }
+    
+    /**
+     * Handles replacements on a string from a replacements map
+     */
+    public String replaceAccordingToMappings(Map<String,String> replaceMap, String original)
+    {
+    	if(original == null || replaceMap == null || replaceMap.size() == 0)
+    		return original;
+    	
+	    Iterator<String> replaceMapIterator = replaceMap.keySet().iterator();
+        while(replaceMapIterator.hasNext())
+        {
+			String key = replaceMapIterator.next();
+			String value = (String)replaceMap.get(key);
+			original = original.replaceAll(key, value);
+        }
+        return original;
     }
 
 }

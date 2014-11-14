@@ -33,6 +33,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.ObjectNotFoundException;
+import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
@@ -69,6 +70,8 @@ import org.infoglue.deliver.util.Timer;
 public class SiteNodeStateController extends BaseController 
 {
     private final static Logger logger = Logger.getLogger(SiteNodeStateController.class.getName());
+
+	private VisualFormatter visualFormatter = new VisualFormatter();
 
     /**
 	 * Factory method
@@ -668,16 +671,11 @@ public class SiteNodeStateController extends BaseController
 				{
 				    AccessRightGroup accessRightGroup = (AccessRightGroup)groupsIterator.next();
 				    AccessRightGroupVO newAccessRightGroupVO = new AccessRightGroupVO();
-				    String oldGroupName = accessRightGroup.getGroupName();
-				    Iterator<String> replaceMapIterator = replaceMap.keySet().iterator();
-		            while(replaceMapIterator.hasNext())
-		            {
-						String key = replaceMapIterator.next();
-						String value = (String)replaceMap.get(key);
-						oldGroupName = oldGroupName.replaceAll(key, value);
-		            }
-		            
-				    newAccessRightGroupVO.setGroupName(oldGroupName);
+				    String groupName = accessRightGroup.getGroupName();
+				    String newGroupName = visualFormatter.replaceAccordingToMappings(replaceMap, groupName);
+				    if(GroupControllerProxy.getController().groupExists(newGroupName))
+				    	groupName = newGroupName;
+				    newAccessRightGroupVO.setGroupName(groupName);
 				    AccessRightGroup newAccessRightGroup = AccessRightController.getController().createAccessRightGroup(db, newAccessRightGroupVO, newAccessRight);
 				    newAccessRight.getGroups().add(newAccessRightGroup);
 				}

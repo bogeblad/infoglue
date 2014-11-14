@@ -95,9 +95,9 @@ public class CopyRepositoryController extends BaseController implements Runnable
 				RepositoryVO repository = RepositoryController.getController().getRepositoryVOWithId(new Integer(repositoryIds[0]));
 				
 				RepositoryVO repositoryVO = new RepositoryVO();
-				repositoryVO.setName(repository.getName() + " Copy " + visualFormatter.formatDate(new Date(), "yyyy-MM-dd_HHmm"));
-				repositoryVO.setDescription(repository.getDescription());
-				repositoryVO.setDnsName(repository.getDnsName());
+				repositoryVO.setName(visualFormatter.replaceAccordingToMappings(replaceMap, repository.getName()));
+				repositoryVO.setDescription(visualFormatter.replaceAccordingToMappings(replaceMap, repository.getDescription()));
+				repositoryVO.setDnsName(visualFormatter.replaceAccordingToMappings(replaceMap, repository.getDnsName()));
 		
 				RepositoryVO repo = RepositoryController.getController().create(repositoryVO);
 				logger.info("repo: " + repo.getId());

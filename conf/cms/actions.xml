@@ -989,6 +989,8 @@
 		<view name="successForFCKEditor">/cms/contenttool/viewContentVersionForFCKEditor.vm</view>
 		<view name="successForFCKEditorV3">/cms/contenttool/v3/viewContentVersionForFCKEditor.vm</view>
 		<view name="standaloneForFCKEditor">/cms/contenttool/v3/viewContentVersionStandaloneForFCKEditor.vm</view>
+		<view name="successVersionEditor">/cms/contenttool/v3/viewContentVersionEditor.vm</view>
+		<view name="successStandaloneVersionEditor">/cms/contenttool/v3/viewContentVersionStandaloneEditor.vm</view>
 		<view name="background">/cms/contenttool/viewContentVersionBackground.vm</view>
 		<view name="viewAssetsDialog">/cms/contenttool/viewContentAssets.vm</view>
 		<view name="viewAssetsDialogForFCKEditor">/cms/contenttool/viewContentAssetsForFCKEditor.vm</view>

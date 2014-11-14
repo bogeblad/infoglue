@@ -3424,23 +3424,26 @@ public class SiteNodeController extends BaseController
 
 	private void copyContents(SiteNodeVO newParentSiteNode, InfoGluePrincipal principal, Set<Integer> contentIdsToCopy, /*String versionValue, */Integer oldRepositoryId, Integer newRepositoryId, Map<Integer,Integer> contentIdsMapping, List<ContentVersion> versions, Database db) throws Exception
 	{
-		copyContents(newParentSiteNode, principal, contentIdsToCopy, oldRepositoryId, newRepositoryId, contentIdsMapping, versions, true, "false", db);
+		copyContents(newParentSiteNode, principal, contentIdsToCopy, oldRepositoryId, newRepositoryId, contentIdsMapping, versions, true, "false", null, db);
 	}
 	
-	private void copyContents(SiteNodeVO newParentSiteNode, InfoGluePrincipal principal, Set<Integer> contentIdsToCopy, /*String versionValue, */Integer oldRepositoryId, Integer newRepositoryId, Map<Integer,Integer> contentIdsMapping, List<ContentVersion> versions, boolean includeRootContentInPath, String onlyLatestVersions, Database db) throws Exception
+	private void copyContents(SiteNodeVO newParentSiteNode, InfoGluePrincipal principal, Set<Integer> contentIdsToCopy, /*String versionValue, */Integer oldRepositoryId, Integer newRepositoryId, Map<Integer,Integer> contentIdsMapping, List<ContentVersion> versions, boolean includeRootContentInPath, String onlyLatestVersions, ProcessBean processBean, Database db) throws Exception
 	{
 		logger.info("contentIdsToCopy:" + contentIdsToCopy.size());
-
+		int totalCount = 0;
 		int count = 0;
 		for(Integer contentId : contentIdsToCopy)
 		{
 			if(count > 100)
 			{
 				count = 0;
+				if(processBean != null)
+					processBean.updateProcess("Copied " + totalCount + " contents so far.");
 				db.commit();
 				db.begin();
 			}
 			count++;
+			totalCount++;
 			logger.info("contentId:" + contentId);
 			try
 			{
@@ -4764,13 +4767,14 @@ public class SiteNodeController extends BaseController
 		{
 			contentIdsToCopy.add(contentVO.getId());
 		}
+		processBean.updateProcess("Analyzed all contents to copy. Was " + contentIdsToCopy.size());
 		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("fetched all repository contents", t.getElapsedTime());
 			
 		db.commit();
 		db.begin();
 
 		//After this all related sitenodes should have been created and all related contents accounted for
-		copyContents(newParentSiteNode, principal, contentIdsToCopy, oldRepositoryVO.getId(), newParentSiteNode.getRepositoryId(), contentIdsMapping, newCreatedContentVersions, false, onlyLatestVersions, db);
+		copyContents(newParentSiteNode, principal, contentIdsToCopy, oldRepositoryVO.getId(), newParentSiteNode.getRepositoryId(), contentIdsMapping, newCreatedContentVersions, false, onlyLatestVersions, processBean, db);
 		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("copyContents", t.getElapsedTime());
 
 		db.commit();

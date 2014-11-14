@@ -396,6 +396,12 @@
 
 				#editPropertyFieldCSS("ServerNode.property.metaInfoAttributesToShowInCreatePageDialog" "metaInfoAttributesToShowInCreatePageDialog" "$this.getPropertyValue('metaInfoAttributesToShowInCreatePageDialog')" "51" "$!serverNodeId" "$!cmsPH.metaInfoAttributesToShowInCreatePageDialog")
 
+				#set($option1 = ["default", "Default"])
+				#set($option2 = ["v3TabbedLanguages", "Tabbed language editor"])
+	
+				#set($versionEditorOptions = [$option1, $option2]) 
+				#selectFieldCSS("ServerNode.property.contentVersionEditorFlavour" "contentVersionEditorFlavour" $this.getPropertyValue('contentVersionEditorFlavour') $versionEditorOptions "$!cmsPH.contentVersionEditorFlavour")
+
 				#set($option1 = ["fckeditor2", "FCKEditor 2.x"])
 				#set($option2 = ["ckeditor4", "CKEditor 4.x"])
 	

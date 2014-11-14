@@ -25,8 +25,10 @@ package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
@@ -627,6 +629,15 @@ public class SiteNodeStateController extends BaseController
 	
 	public void copyAccessRights(String interceptionPointCategory, Integer originalSiteNodeVersionId, Integer newSiteNodeVersionId, Database db) throws ConstraintException, SystemException, Exception
 	{
+		copyAccessRights(interceptionPointCategory, originalSiteNodeVersionId, newSiteNodeVersionId, new HashMap<String,String>(), db);
+	}
+	
+	/**
+	 * This method assigns the same access rights as the old content-version has.
+	 */
+	
+	public void copyAccessRights(String interceptionPointCategory, Integer originalSiteNodeVersionId, Integer newSiteNodeVersionId, Map<String,String> replaceMap, Database db) throws ConstraintException, SystemException, Exception
+	{
 		Timer t = new Timer();
 		
 		List<InterceptionPoint> interceptionPointList = InterceptionPointController.getController().getInterceptionPointList(interceptionPointCategory, db);
@@ -657,7 +668,16 @@ public class SiteNodeStateController extends BaseController
 				{
 				    AccessRightGroup accessRightGroup = (AccessRightGroup)groupsIterator.next();
 				    AccessRightGroupVO newAccessRightGroupVO = new AccessRightGroupVO();
-				    newAccessRightGroupVO.setGroupName(accessRightGroup.getGroupName());
+				    String oldGroupName = accessRightGroup.getGroupName();
+				    Iterator<String> replaceMapIterator = replaceMap.keySet().iterator();
+		            while(replaceMapIterator.hasNext())
+		            {
+						String key = replaceMapIterator.next();
+						String value = (String)replaceMap.get(key);
+						oldGroupName = oldGroupName.replaceAll(key, value);
+		            }
+		            
+				    newAccessRightGroupVO.setGroupName(oldGroupName);
 				    AccessRightGroup newAccessRightGroup = AccessRightController.getController().createAccessRightGroup(db, newAccessRightGroupVO, newAccessRight);
 				    newAccessRight.getGroups().add(newAccessRightGroup);
 				}

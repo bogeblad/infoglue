@@ -284,6 +284,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "componentBindningAssetBrowser");
 	    populate(ps, "wysiwygEditor");
 	    populate(ps, "prefferedWYSIWYG");
+	    populate(ps, "contentVersionEditorFlavour");
 	    
 	    populate(ps, "defaultNumberOfYearsBeforeExpire");
 	    populate(ps, "defaultNumberOfMonthsBeforeRedirectExpire");

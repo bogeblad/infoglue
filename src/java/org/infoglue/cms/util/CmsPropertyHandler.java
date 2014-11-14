@@ -1931,6 +1931,11 @@ public class CmsPropertyHandler
 		return Boolean.parseBoolean(useContextBasedHelp);
 	}
 
+	public static String getContentVersionEditorFlavour() 
+	{
+		return getServerNodeProperty("contentVersionEditorFlavour", true, "v3default");
+	}
+
 	public static String getHeaderHTML()
 	{
 	    return getServerNodeDataProperty(null, "headerHTML", true, "");

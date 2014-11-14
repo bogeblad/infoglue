@@ -70,6 +70,25 @@ public class CopyRepositoryController extends BaseController implements Runnable
 
 			try 
 			{
+				Map<String,String> replaceMap = new HashMap<String,String>();
+				Properties properties = new Properties();
+				try
+				{
+					properties.load(new ByteArrayInputStream(replacements.getBytes("ISO-8859-1")));
+					Iterator propertySetIterator = properties.keySet().iterator();
+					while(propertySetIterator.hasNext())
+					{
+						String key = (String)propertySetIterator.next();
+						String value = properties.getProperty(key);
+						replaceMap.put(key, value);
+					}
+				}	
+				catch(Exception e)
+				{
+				    logger.error("Error loading properties from string. Reason:" + e.getMessage());
+					e.printStackTrace();
+				}
+
 				String exportId = "Copy_Repository_" + visualFormatter.formatDate(new Date(), "yyyy-MM-dd_HHmm");
 				ProcessBean processBean = ProcessBean.createProcessBean(ImportRepositoryAction.class.getName(), exportId);
 		
@@ -95,29 +114,9 @@ public class CopyRepositoryController extends BaseController implements Runnable
 
 				db.begin();
 
-			    SiteNodeStateController.getController().copyAccessRights("Repository", repository.getId(), repo.getId(), db);
+			    SiteNodeStateController.getController().copyAccessRights("Repository", repository.getId(), repo.getId(), replaceMap, db);
 
 				db.commit();
-
-				Map<String,String> replaceMap = new HashMap<String,String>();
-				Properties properties = new Properties();
-				try
-				{
-					properties.load(new ByteArrayInputStream(replacements.getBytes("ISO-8859-1")));
-					Iterator propertySetIterator = properties.keySet().iterator();
-					while(propertySetIterator.hasNext())
-					{
-						String key = (String)propertySetIterator.next();
-						String value = properties.getProperty(key);
-						replaceMap.put(key, value);
-					}
-				}	
-				catch(Exception e)
-				{
-				    logger.error("Error loading properties from string. Reason:" + e.getMessage());
-					e.printStackTrace();
-				}
-
 				db.begin();
 				
 				SiteNodeController.getController().copyRepository(repository, repo, this.principal, onlyLatestVersions, standardReplacement, replaceMap, processBean, db);

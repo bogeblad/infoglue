@@ -172,12 +172,12 @@ public class ContentStateController extends BaseController
 	
 	public static MediumContentVersionImpl changeState(Integer oldContentVersionId, ContentVO contentVO, Integer stateId, String versionComment, boolean overrideVersionModifyer, String recipientFilter, InfoGluePrincipal infoGluePrincipal, Integer contentId, Database db, List resultingEvents, Integer excludedAssetId) throws SystemException, ConstraintException
 	{
-		Timer t = new Timer();
 		MediumContentVersionImpl newContentVersion = null;
 
 		try
 		{
-			MediumContentVersionImpl oldContentVersion = ContentVersionController.getContentVersionController().getReadOnlyMediumContentVersionWithId(oldContentVersionId, db);
+			//MediumContentVersionImpl oldContentVersion = ContentVersionController.getContentVersionController().getReadOnlyMediumContentVersionWithId(oldContentVersionId, db);
+			MediumContentVersionImpl oldContentVersion = ContentVersionController.getContentVersionController().getMediumContentVersionWithId(oldContentVersionId, db);
 			newContentVersion = oldContentVersion;
 			logger.info("oldContentVersion:" + oldContentVersion.getId());
 			//t.printElapsedTime("oldContentVersion");

@@ -1415,9 +1415,9 @@ public class ContentController extends BaseController
 	 * @param contentId
 	 * @param newParentContentId
 	 */
-	public void copyContent(Integer contentId, Integer newParentContentId, Integer assetMaxSize, String onlyLatestVersions) throws Exception
+	public void copyContent(Integer contentId, Integer newParentContentId, Integer assetMaxSize, String onlyLatestVersions, ProcessBean processBean) throws Exception
 	{
-		ExportImportController.getController().exportContents(contentId, newParentContentId, assetMaxSize, onlyLatestVersions);
+		ExportImportController.getController().exportContents(contentId, newParentContentId, assetMaxSize, onlyLatestVersions, processBean);
 	}
 	
 	/**
@@ -2285,7 +2285,7 @@ public class ContentController extends BaseController
 	    	sb.append("CALL SQL select c.contentId, c.name, c.publishDateTime, c.expireDateTime, c.isBranch, c.isProtected, c.isDeleted, ");
 	    	sb.append("c.creator, c.contentTypeDefinitionId, c.repositoryId, c.parentContentId, ");
 	    	sb.append("(");
-	    	sb.append("  select stateId from cmContentVersion cv2 where  ");
+	    	sb.append("  select min(stateId) from cmContentVersion cv2 where  ");
 			sb.append("  cv2.contentId = c.contentId ");
 			if(languageVOList.size() > 0)
 			{
@@ -2828,6 +2828,12 @@ public class ContentController extends BaseController
 		return contentVO;
 	}
 	
+	
+	public ContentVO getContentVOWithPath(Integer repositoryId, String path, boolean forceFolders, InfoGluePrincipal creator, Database db) throws SystemException, Exception 
+	{
+		return getContentVOWithPath(repositoryId, path, forceFolders, false, creator, db);
+	}
+	
 	/**
 	 * Returns the content belonging to the specified repository and with the specified path.
 	 * Note! If a folder contains more than one child with a requested name, then one of the children
@@ -2851,7 +2857,7 @@ public class ContentController extends BaseController
 	 * @param forceFolders if true then non-existing folders will be created; otherwise an exception will be thrown
 	 * @param db the database to use
 	 */
-	public ContentVO getContentVOWithPath(Integer repositoryId, String path, boolean forceFolders, InfoGluePrincipal creator, Database db) throws SystemException, Exception 
+	public ContentVO getContentVOWithPath(Integer repositoryId, String path, boolean forceFolders, boolean forceDuplicates, InfoGluePrincipal creator, Database db) throws SystemException, Exception 
 	{
 		ContentVO content = getRootContentVO(db, repositoryId, creator.getName(), false);
 		final String paths[] = path.split("/");
@@ -2865,7 +2871,20 @@ public class ContentController extends BaseController
 			{
 				final ContentVO childContent = getChildVOWithName(content.getContentId(), name, db);
 				if(childContent != null)
-					content = childContent;
+				{
+					if((i == paths.length-1) && forceDuplicates)
+					{
+						ContentVO contentVO = new ContentVO();
+						contentVO.setIsBranch(Boolean.FALSE);
+						contentVO.setCreatorName(creator.getName());
+						contentVO.setName(name);
+						Content newContent = create(db, content.getId(), null, repositoryId, contentVO);
+						if(newContent != null)
+							content = newContent.getValueObject();
+					}
+					else
+						content = childContent;
+				}
 				else if(childContent == null && !forceFolders)
 					throw new SystemException("There exists no content with the path [" + path + "].");
 				else 

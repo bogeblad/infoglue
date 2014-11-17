@@ -84,7 +84,7 @@ public class ImportRepositoryAction extends InfoGlueAbstractAction
 
 	private Integer repositoryId = null;
 	
-	private String onlyLatestVersions = "true";
+	private String onlyLatestVersions = "false";
 	private String standardReplacement = null;
 	private String replacements = null;
 	private Boolean mergeExistingRepositories = false;

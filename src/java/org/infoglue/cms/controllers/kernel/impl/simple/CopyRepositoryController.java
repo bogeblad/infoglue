@@ -60,7 +60,28 @@ public class CopyRepositoryController extends BaseController implements Runnable
     private String[] repositoryIds;
     
 	private VisualFormatter visualFormatter = new VisualFormatter();
-
+	
+	private CopyRepositoryController(String[] repositoryIds, InfoGluePrincipal principal, String onlyLatestVersions, String standardReplacement, String replacements, ProcessBean processBean)
+	{
+		this.principal = principal;
+		this.repositoryIds = repositoryIds;
+		this.onlyLatestVersions = onlyLatestVersions;
+		this.standardReplacement = standardReplacement;
+		this.replacements = replacements;
+		this.processBean = processBean;
+	}
+	
+	/**
+	 * Factory method to get object
+	 */
+	
+	public static void importRepositories(String[] repositoryIds, InfoGluePrincipal principal, String onlyLatestVersions, String standardReplacement, String replacements, ProcessBean processBean) throws Exception
+	{
+		CopyRepositoryController copyController = new CopyRepositoryController(repositoryIds, principal, onlyLatestVersions, standardReplacement, replacements, processBean);
+		Thread thread = new Thread(copyController);
+		thread.start();
+	}
+	   	
 	public synchronized void run()
 	{
 		logger.info("Starting Copy Thread....");
@@ -150,27 +171,6 @@ public class CopyRepositoryController extends BaseController implements Runnable
 		}
 	}
 	
-	private CopyRepositoryController(String[] repositoryIds, InfoGluePrincipal principal, String onlyLatestVersions, String standardReplacement, String replacements, ProcessBean processBean)
-	{
-		this.principal = principal;
-		this.repositoryIds = repositoryIds;
-		this.onlyLatestVersions = onlyLatestVersions;
-		this.standardReplacement = standardReplacement;
-		this.replacements = replacements;
-		this.processBean = processBean;
-	}
-	
-	/**
-	 * Factory method to get object
-	 */
-	
-	public static void importRepositories(String[] repositoryIds, InfoGluePrincipal principal, String onlyLatestVersions, String standardReplacement, String replacements, ProcessBean processBean) throws Exception
-	{
-		CopyRepositoryController copyController = new CopyRepositoryController(repositoryIds, principal, onlyLatestVersions, standardReplacement, replacements, processBean);
-		Thread thread = new Thread(copyController);
-		thread.start();
-	}
-	   	
     public BaseEntityVO getNewVO()
     {
         return null;

@@ -3228,6 +3228,8 @@ public class SiteNodeController extends BaseController
 
         LanguageVO masterLanguage = LanguageController.getController().getMasterLanguage(siteNode.getRepositoryId(), db);
         ContentVersionVO oldCVVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(oldMetaInfoContentVO.getId(), masterLanguage.getId(), db);
+        if(oldCVVO == null)
+        	logger.warn("No meta info version on: " + oldSiteNodeVO.getName() + ":" + oldMetaInfoContentVO.getId());
         RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getLatestActiveContentVersionVO", t.getElapsedTime());
 
 		SiteNodeVO newSiteNodeVO = new SiteNodeVO();
@@ -3314,14 +3316,17 @@ public class SiteNodeController extends BaseController
         logger.info("Mapping siteNode " + oldSiteNodeVO.getId() + " to " + newSiteNode.getId());
         siteNodesIdsMapping.put(oldSiteNodeVO.getId(), newSiteNode.getId());
 
-		String versionValue = oldCVVO.getVersionValue();
-		if(newContentVersions.size() > 0)
-		{
-			ContentVersion newCV = newContentVersions.get(0);
-			versionValue = versionValue.replaceFirst(Pattern.quote("<NavigationTitle><![CDATA[") + "(.+?)" + Pattern.quote("]]></NavigationTitle>"), Matcher.quoteReplacement("<NavigationTitle><![CDATA[") + "$1" + newNameSuffix + Matcher.quoteReplacement("]]></NavigationTitle>"));
-			newCV.getValueObject().setVersionValue(versionValue);
-		}
-
+        if(oldCVVO != null)
+        {
+			String versionValue = oldCVVO.getVersionValue();
+			if(newContentVersions.size() > 0)
+			{
+				ContentVersion newCV = newContentVersions.get(0);
+				versionValue = versionValue.replaceFirst(Pattern.quote("<NavigationTitle><![CDATA[") + "(.+?)" + Pattern.quote("]]></NavigationTitle>"), Matcher.quoteReplacement("<NavigationTitle><![CDATA[") + "$1" + newNameSuffix + Matcher.quoteReplacement("]]></NavigationTitle>"));
+				newCV.getValueObject().setVersionValue(versionValue);
+			}
+        }
+        
         for(SiteNodeVO childNode : (Collection<SiteNodeVO>)getChildSiteNodeVOList(siteNode.getId(), false, db, null))
         {
         	copySiteNodeRecursive(childNode, newSiteNode, principal, siteNodesIdsMapping, contentIdsMapping, contentIdsToCopy, newCreatedContentVersions, newNameSuffix, db, processBean);
@@ -3462,7 +3467,7 @@ public class SiteNodeController extends BaseController
 						
 						String path = ContentController.getContentController().getContentPath(contentId, includeRootContentInPath, false, db);
 						logger.info("path:" + path);
-						ContentVO copiedContent = ContentController.getContentController().getContentVOWithPath(newRepositoryId, path, true, principal, db);
+						ContentVO copiedContent = ContentController.getContentController().getContentVOWithPath(newRepositoryId, path, true, !contentVO.getIsBranch(), principal, db);
 						
 			            logger.info("Mapping content " + contentVO.getId() + " to " + copiedContent.getId());
 			            contentIdsMapping.put(contentVO.getId(), copiedContent.getId());

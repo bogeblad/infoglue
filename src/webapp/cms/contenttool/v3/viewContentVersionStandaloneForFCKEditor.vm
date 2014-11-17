@@ -12,7 +12,10 @@
 			else if(top.refreshWorkSurface)
 			{
 				top.refreshWorkSurface("StructureTool");
-				parent.refreshTreeSurface();
+				if(parent.refreshTreeSurface)
+					parent.refreshTreeSurface();
+				else if(parent.parent.refreshTreeSurface)
+					parent.parent.refreshTreeSurface();
 				if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();
 			}
 			else if(top.getIsIGStandardTools && top.getIsIGStandardTools() == true)
@@ -957,7 +960,6 @@
 ##end
 
 <div style="z-index: 3;">
-
 	#lightMenuToolbar("" $buttons $rightButtons) 
 
 	<div style="clear: both;"></div>

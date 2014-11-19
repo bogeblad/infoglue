@@ -41,6 +41,7 @@ import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
+import org.infoglue.cms.util.CmsPropertyHandler;
 
 /**
 * This class handles Importing copying of a repository - by processing it as a thread in a process bean.
@@ -92,6 +93,46 @@ public class CopyRepositoryController extends BaseController implements Runnable
 			try 
 			{
 				Map<String,String> replaceMap = new HashMap<String,String>();
+				try
+				{
+					boolean isUTF8 = false;
+					boolean hasUnicodeChars = false;
+					if(replacements.indexOf((char)65533) > -1)
+						isUTF8 = true;
+					
+					for(int i=0; i<replacements.length(); i++)
+					{
+						int c = (int)replacements.charAt(i);
+						if(c > 255 && c < 65533)
+							hasUnicodeChars = true;
+					}
+
+					if(!isUTF8 && !hasUnicodeChars)
+					{
+						String fromEncoding = CmsPropertyHandler.getUploadFromEncoding();
+						if(fromEncoding == null)
+							fromEncoding = "iso-8859-1";
+						
+						String toEncoding = CmsPropertyHandler.getUploadToEncoding();
+						if(toEncoding == null)
+							toEncoding = "utf-8";
+						
+						if(replacements.indexOf("å") == -1 && 
+						   replacements.indexOf("ä") == -1 && 
+						   replacements.indexOf("ö") == -1 && 
+						   replacements.indexOf("Å") == -1 && 
+						   replacements.indexOf("Ä") == -1 && 
+						   replacements.indexOf("Ö") == -1)
+						{
+							replacements = new String(replacements.getBytes(fromEncoding), toEncoding);
+						}
+					}
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+				}
+				
 				Properties properties = new Properties();
 				try
 				{

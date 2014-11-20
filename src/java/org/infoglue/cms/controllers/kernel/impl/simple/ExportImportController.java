@@ -22,6 +22,7 @@ import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.xml.Marshaller;
 import org.exolab.castor.xml.Unmarshaller;
 import org.infoglue.cms.applications.common.VisualFormatter;
+import org.infoglue.cms.applications.databeans.ProcessBean;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentCategory;
 import org.infoglue.cms.entities.content.ContentVO;
@@ -54,6 +55,8 @@ import com.opensymphony.module.propertyset.PropertySetManager;
 public class ExportImportController extends BaseController
 {
     private final static Logger logger = Logger.getLogger(ExportImportController.class.getName());
+
+	private VisualFormatter visualFormatter = new VisualFormatter();
 
 	public static ExportImportController getController()
 	{
@@ -141,17 +144,22 @@ public class ExportImportController extends BaseController
 		return fileName;
 	}
 
-	public void exportContents(Integer contentId, Integer newParentContentId, Integer assetMaxSize, String onlyLatestVersions) throws SystemException, Bug, Exception 
+	public void exportContents(Integer contentId, Integer newParentContentId, Integer assetMaxSize, String onlyLatestVersions, ProcessBean processBean) throws SystemException, Bug, Exception 
 	{
 		Timer t = new Timer();
 		logger.info("onlyLatestVersions:" + onlyLatestVersions);
 		File file = exportContents(contentId, assetMaxSize, false);
 		if(logger.isInfoEnabled())
 			t.printElapsedTime("Exporting file of " + (file != null ? file.length() / 1000 + " KB" : " error size ") + " took:");
+		
+		processBean.updateProcess("Exported contents to file: " + visualFormatter.formatFileSize((file != null ? file.length() : 0)));
+		
 		if(file != null)
 			importContent(file, newParentContentId, onlyLatestVersions);
 		if(logger.isInfoEnabled())
 			t.printElapsedTime("Importing file of " + (file != null ? file.length() / 1000 + " KB" : " error size ") + " took:");
+
+		processBean.updateProcess("Imported contents to file: " + visualFormatter.formatFileSize((file != null ? file.length() : 0)));
 	}
 	
 	private File exportContents(Integer contentId, Integer assetMaxSize, boolean includeSystemTypes) throws SystemException, Bug, TransactionNotInProgressException, PersistenceException 

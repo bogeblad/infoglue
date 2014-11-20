@@ -35,6 +35,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.contenttool.wizards.actions.CreateContentWizardInfoBean;
+import org.infoglue.cms.applications.databeans.ProcessBean;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
@@ -494,7 +495,7 @@ public class ContentControllerProxy extends ContentController
 		return isContentProtected;
 	}
 
-	public void acCopyContent(InfoGluePrincipal infogluePrincipal, Integer contentId, Integer newParentContentId, Integer maxAssetSize, String onlyLatestVersions) throws ConstraintException, SystemException, Bug, Exception 
+	public void acCopyContent(InfoGluePrincipal infogluePrincipal, Integer contentId, Integer newParentContentId, Integer maxAssetSize, String onlyLatestVersions, ProcessBean processBean) throws ConstraintException, SystemException, Bug, Exception 
 	{
 		Map hashMap = new HashMap();
 		hashMap.put("contentId", contentId);
@@ -506,7 +507,7 @@ public class ContentControllerProxy extends ContentController
 
 		intercept(hashMap, "Content.Create", infogluePrincipal);
 
-		copyContent(contentId, newParentContentId, maxAssetSize, onlyLatestVersions);
+		copyContent(contentId, newParentContentId, maxAssetSize, onlyLatestVersions, processBean);
 	}
 	
 	/*

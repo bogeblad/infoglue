@@ -955,6 +955,9 @@
 	<action name="org.infoglue.cms.applications.contenttool.actions.CopyContentAction" alias="CopyContent">
 		<view name="input">/cms/contenttool/viewCopyContentChooseDestination.vm</view>
 		<view name="success">ViewInlineOperationMessages.action</view>
+		<view name="successRedirectToProcesses">org.infoglue.cms.applications.common.actions.ExtendedRedirect.action?url=CopyContent!showProcesses.action</view>
+		<view name="successShowProcesses">/cms/managementtool/viewImportRepositoryProcesses.vm</view>
+		<view name="successShowProcessesAsJSON">/cms/managementtool/viewExportRepositoryProcessesAsJson.vm</view>
 		<view name="error">/cms/contenttool/error.vm</view>
 		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
 	</action>

@@ -80,7 +80,7 @@
 			//alert("Here we commit the binding and close the window...");
 			entityId = document.inputForm.entityId.value;
 			
-			if(entityId == '' || entityId == '${select}')
+			if(entityId == '' || entityId == '${select}' || entityId == '-1')
 			{
 				alert("You must choose a content before you can save");
 			}

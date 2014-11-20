@@ -28,7 +28,7 @@
 	    function save()
 		{
 			var newParentSiteNodeId = document.inputForm.newParentSiteNodeId.value;
-			if(newParentSiteNodeId != "")
+			if(newParentSiteNodeId != "" && newParentSiteNodeId != "-1")
 			{
 			    if (confirm('$ui.getString("tool.structuretool.moveSiteNode.areYouSureWarning")'))
 				{

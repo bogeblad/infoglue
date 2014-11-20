@@ -25,7 +25,11 @@
 
 		function next()
 		{
-			submitQualifyer();
+			if (qualifyersVector.getSize() > 0) {
+				submitQualifyer();
+			} else {
+				alert("$ui.getString("tool.structuretool.moveSiteNode.mustSelectSiteNodeWarning")");
+			}
 		}
 			    
 		/**

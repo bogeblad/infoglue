@@ -125,6 +125,7 @@ public class ComponentPropertyDefinitionController extends BaseController
 				    String dataProvider				= propertyElement.getAttribute("dataProvider");
 				    String dataProviderParameters	= propertyElement.getAttribute("dataProviderParameters");
 				    String allowMultipleSelections	= propertyElement.getAttribute("allowMultipleSelections");
+				    String multipleSelectAreaSize	= propertyElement.getAttribute("multipleSelectAreaSize");
 				    String WYSIWYGEnabled			= propertyElement.getAttribute("WYSIWYGEnabled");
 				    String WYSIWYGToolbar			= propertyElement.getAttribute("WYSIWYGToolbar");
 				    String autoCreateContent		= propertyElement.getAttribute("autoCreateContent");
@@ -136,7 +137,7 @@ public class ComponentPropertyDefinitionController extends BaseController
 				    if(allowLanguageVariations == null || allowLanguageVariations.equals(""))
 				    	allowLanguageVariations = "true";
 				    	
-				    ComponentPropertyDefinition cpd = new ComponentPropertyDefinition(name, displayName, type, entity, new Boolean(multiple), new Boolean(assetBinding), assetMask, new Boolean(isPuffContentForPage), allowedContentTypeNames, description, defaultValue, new Boolean(allowLanguageVariations), new Boolean(WYSIWYGEnabled), WYSIWYGToolbar, dataProvider, dataProviderParameters, new Boolean(autoCreateContent), autoCreateContentMethod, autoCreateContentPath, customMarkup, new Boolean(allowMultipleSelections), supplementingEntityType, externalBindingConfig);
+				    ComponentPropertyDefinition cpd = new ComponentPropertyDefinition(name, displayName, type, entity, new Boolean(multiple), new Boolean(assetBinding), assetMask, new Boolean(isPuffContentForPage), allowedContentTypeNames, description, defaultValue, new Boolean(allowLanguageVariations), new Boolean(WYSIWYGEnabled), WYSIWYGToolbar, dataProvider, dataProviderParameters, new Boolean(autoCreateContent), autoCreateContentMethod, autoCreateContentPath, customMarkup, new Boolean(allowMultipleSelections), multipleSelectAreaSize, supplementingEntityType, externalBindingConfig);
 				    
 					NodeList optionsNodeList = propertyElement.getElementsByTagName("option");
 					for(int k=0; k<optionsNodeList.getLength(); k++)

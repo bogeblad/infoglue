@@ -1809,7 +1809,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 					
 					if(hasAccessToProperty)
 					{
-						sb.append("			<td class=\"igpropertyvalue igpropertyDivider\" align=\"left\"><input type=\"hidden\" name=\"" + propertyIndex + "_propertyName\" value=\"" + componentProperty.getName() + "\"/><select class=\"propertyselect\" name=\"" + componentProperty.getName() + "\" onchange=\"setDirty();\"" + (componentProperty.getAllowMultipleSelections() ? " multiple=\"1\" size=\"3\"" : "") + ">");
+						sb.append("			<td class=\"igpropertyvalue igpropertyDivider\" align=\"left\"><input type=\"hidden\" name=\"" + propertyIndex + "_propertyName\" value=\"" + componentProperty.getName() + "\"/><select class=\"propertyselect\" name=\"" + componentProperty.getName() + "\" onchange=\"setDirty();\"" + (componentProperty.getAllowMultipleSelections() ? " multiple=\"1\" size=\""+ componentProperty.getMultipleSelectAreaSize() +"\"" : "") + ">");
 						
 						Iterator optionsIterator = componentProperty.getOptions().iterator();
 						List<GenericOptionDefinition> options = null;
@@ -3020,9 +3020,13 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 					{		
 						String value = getComponentPropertyValue(componentId, name, property.getAllowLanguageVariations());
 						String allowMultipleSelections = binding.attributeValue("allowMultipleSelections");
-						if(allowMultipleSelections != null && allowMultipleSelections.equalsIgnoreCase("true"))
+						if(allowMultipleSelections != null && allowMultipleSelections.equalsIgnoreCase("true")) {
 							property.setAllowMultipleSelections(true);
-						
+							String multipleSelectAreaSize = binding.attributeValue("multipleSelectAreaSize");
+							if (multipleSelectAreaSize != null && !multipleSelectAreaSize.equalsIgnoreCase("")) {
+								property.setMultipleSelectAreaSize(multipleSelectAreaSize);
+							}
+						}
 						List optionList = binding.elements("option");
 						Iterator optionListIterator = optionList.iterator();
 						while(optionListIterator.hasNext())
@@ -3300,9 +3304,13 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 					{		
 						String value = getComponentPropertyValue(componentId, name, templateController, property.getAllowLanguageVariations());
 						String allowMultipleSelections = binding.attributeValue("allowMultipleSelections");
-						if(allowMultipleSelections != null && allowMultipleSelections.equalsIgnoreCase("true"))
+						if(allowMultipleSelections != null && allowMultipleSelections.equalsIgnoreCase("true")) {
 							property.setAllowMultipleSelections(true);
-						
+							String multipleSelectAreaSize = binding.attributeValue("multipleSelectAreaSize");
+							if (multipleSelectAreaSize != null && !multipleSelectAreaSize.equalsIgnoreCase("")) {
+								property.setMultipleSelectAreaSize(multipleSelectAreaSize);
+							}
+						}
 						List optionList = binding.elements("option");
 						Iterator optionListIterator = optionList.iterator();
 						while(optionListIterator.hasNext())

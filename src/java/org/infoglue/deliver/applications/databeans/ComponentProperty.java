@@ -77,6 +77,7 @@ public class ComponentProperty
 	private String externalBindingConfig	= "";
 	private String supplementingEntityType	= null;
 	private boolean allowMultipleSelections = false;
+	private String multipleSelectAreaSize = "3";
 	
 	private List options = new ArrayList();
 	
@@ -468,6 +469,16 @@ public class ComponentProperty
 	public void setAllowMultipleSelections(boolean allowMultipleSelections)
 	{
 		this.allowMultipleSelections = allowMultipleSelections;
+	}
+	
+	public String getMultipleSelectAreaSize()
+	{
+		return multipleSelectAreaSize;
+	}
+
+	public void setMultipleSelectAreaSize(String multipleSelectAreaSize)
+	{
+		this.multipleSelectAreaSize = multipleSelectAreaSize;
 	}
 	
 	public void setSupplementingEntityType(String supplementingEntityType)

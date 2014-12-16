@@ -3960,6 +3960,7 @@ public class ComponentLogic
 					String dataProvider 			= element.attributeValue("dataProvider");
 					String dataProviderParameters 	= element.attributeValue("dataProviderParameters");
 					String allowMultipleSelections 	= element.attributeValue("allowMultipleSelections");
+					String multipleSelectAreaSize 	= element.attributeValue("multipleSelectAreaSize");
 					String WYSIWYGEnabled 			= element.attributeValue("WYSIWYGEnabled");
 					String WYSIWYGToolbar 			= element.attributeValue("WYSIWYGToolbar");
 					String autoCreatContent 		= element.attributeValue("autoCreatContent");
@@ -3971,7 +3972,7 @@ public class ComponentLogic
 					if(allowLanguageVariations == null || allowLanguageVariations.equals(""))
 						allowLanguageVariations = "true";
 					
-					propertyDefinition = new ComponentPropertyDefinition(name, displayName, type, entity, new Boolean(multiple), new Boolean(assetBinding), assetMask, new Boolean(isPuffContentForPage), allowedContTypeDefNames, description, defaultValue, new Boolean(allowLanguageVariations), new Boolean(WYSIWYGEnabled), WYSIWYGToolbar, dataProvider, dataProviderParameters, new Boolean(autoCreatContent), autoCreatContentMethod, autoCreatContentPath, customMarkup, new Boolean(allowMultipleSelections), supplementingEntityType, externalBindingConfig);
+					propertyDefinition = new ComponentPropertyDefinition(name, displayName, type, entity, new Boolean(multiple), new Boolean(assetBinding), assetMask, new Boolean(isPuffContentForPage), allowedContTypeDefNames, description, defaultValue, new Boolean(allowLanguageVariations), new Boolean(WYSIWYGEnabled), WYSIWYGToolbar, dataProvider, dataProviderParameters, new Boolean(autoCreatContent), autoCreatContentMethod, autoCreatContentPath, customMarkup, new Boolean(allowMultipleSelections), multipleSelectAreaSize, supplementingEntityType, externalBindingConfig);
 				}
 			}
 		}

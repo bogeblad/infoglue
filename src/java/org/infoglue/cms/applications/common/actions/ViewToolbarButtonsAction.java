@@ -120,6 +120,9 @@ public class ViewToolbarButtonsAction extends InfoGlueAbstractAction
 
 			ToolbarButtonGroup previewGroup = new ToolbarButtonGroup("preview", "preview", "preview operations");
 			previewGroup.addButton(findButton(buttons, "previewPage"));
+			previewGroup.addButton(findButton(buttons, "previewMediumScreenPage"));	
+			previewGroup.addButton(findButton(buttons, "previewSmallScreenPage"));	
+			
 			this.groups.add(previewGroup);
 
 			ToolbarButtonGroup publishGroup = new ToolbarButtonGroup("publish", "publish", "publish operations");

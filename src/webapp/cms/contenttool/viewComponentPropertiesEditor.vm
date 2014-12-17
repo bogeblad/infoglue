@@ -87,6 +87,7 @@
 				propertyDataProvider 			= property.getDataProvider();
 				propertyDataProviderParameters 	= property.getDataProviderParameters();
 				propertyAllowMultipleSelections	= property.getAllowMultipleSelections();
+				propertyMultipleSelectAreaSize	= property.getMultipleSelectAreaSize();
 				
 				propertyAutoCreateContent	 	= property.getAutoCreateContent();
 				propertyAutoCreateContentMethod	= property.getAutoCreateContentMethod();
@@ -101,7 +102,7 @@
 				
 				if(propertyType == "select" || propertyType == "checkbox")
 				{
-					propertiesXML += "<property name='" + clean(propertyName) + "' displayName='" + clean(propertyDisplayName) + "' type='" + propertyType + "' multiple='" + propertyMultiple + "' assetBinding='" + propertyAssetBinding + "' assetMask='" + propertyAssetMask + "' isPuffContentForPage='" + isPuffContentForPage + "' description='" + clean(propertyDescription) + "' defaultValue='" + clean(propertyDefaultValue) + "' allowLanguageVariations='" + propertyAllowLanguageVariations + "' dataProvider='" + propertyDataProvider + "' dataProviderParameters='" + propertyDataProviderParameters + "' allowMultipleSelections='" + propertyAllowMultipleSelections + "'>";
+					propertiesXML += "<property name='" + clean(propertyName) + "' displayName='" + clean(propertyDisplayName) + "' type='" + propertyType + "' multiple='" + propertyMultiple + "' assetBinding='" + propertyAssetBinding + "' assetMask='" + propertyAssetMask + "' isPuffContentForPage='" + isPuffContentForPage + "' description='" + clean(propertyDescription) + "' defaultValue='" + clean(propertyDefaultValue) + "' allowLanguageVariations='" + propertyAllowLanguageVariations + "' dataProvider='" + propertyDataProvider + "' dataProviderParameters='" + propertyDataProviderParameters + "' allowMultipleSelections='" + propertyAllowMultipleSelections + "' multipleSelectAreaSize='" + propertyMultipleSelectAreaSize + "'>";
 
 					for (var j=0; j<property.getOptions().getSize(); j++)
 					{
@@ -303,6 +304,7 @@
 			document.componentPropertyDefinitionForm.componentPropertyDefinition_dataProvider.value 	= componentPropertyDefinition.dataProvider;
 			document.componentPropertyDefinitionForm.componentPropertyDefinition_dataProviderParameters.value = componentPropertyDefinition.dataProviderParameters;
 			document.componentPropertyDefinitionForm.componentPropertyDefinition_allowMultipleSelections.value = componentPropertyDefinition.allowMultipleSelections;
+			document.componentPropertyDefinitionForm.componentPropertyDefinition_multipleSelectAreaSize.value = componentPropertyDefinition.multipleSelectAreaSize;
 			document.componentPropertyDefinitionForm.componentPropertyDefinition_WYSIWYGEnabled.value 	= componentPropertyDefinition.WYSIWYGEnabled;
 			document.componentPropertyDefinitionForm.componentPropertyDefinition_WYSIWYGToolbar.value 	= componentPropertyDefinition.WYSIWYGToolbar;
 
@@ -443,6 +445,8 @@
 				componentPropertyDefinition.setDataProvider(document.getElementById("componentPropertyDefinition_dataProvider").value);
 				componentPropertyDefinition.setDataProviderParameters(document.getElementById("componentPropertyDefinition_dataProviderParameters").value);
 				componentPropertyDefinition.setAllowMultipleSelections(document.getElementById("componentPropertyDefinition_allowMultipleSelections").value);
+				componentPropertyDefinition.setMultipleSelectAreaSize(document.getElementById("componentPropertyDefinition_multipleSelectAreaSize").value);
+				
 				componentPropertyDefinition.setCustomMarkup(document.getElementById("componentPropertyDefinition_customMarkup").value + "<!--igescaped-->");
 			}
 			
@@ -649,6 +653,7 @@
 				dataProvider 			= property.getDataProvider();
 				dataProviderParameters 	= property.getDataProviderParameters();
 				allowMultipleSelections = property.getAllowMultipleSelections();
+				multipleSelectAreaSize  = property.getMultipleSelectAreaSize();
 				customMarkup 			= property.getCustomMarkup();
 				options					= property.getOptions();
 				
@@ -695,6 +700,7 @@
 				previousProperty.setDataProvider(dataProvider);
 				previousProperty.setDataProviderParameters(dataProviderParameters);
 				previousProperty.setAllowMultipleSelections(allowMultipleSelections);
+				previousProperty.setMultipleSelectAreaSize(multipleSelectAreaSize);
 				previousProperty.setAutoCreateContent(property.getAutoCreateContent());
 				previousProperty.setAutoCreateContentMethod(property.getAutoCreateContentMethod());
 				previousProperty.setAutoCreateContentPath(property.getAutoCreateContentPath());
@@ -733,6 +739,7 @@
 				dataProvider 			= property.getDataProvider();
 				dataProviderParameters 	= property.getDataProviderParameters();
 				allowMultipleSelections = property.getAllowMultipleSelections();
+				multipleSelectAreaSize  = property.getMultipleSelectAreaSize();
 				customMarkup 			= property.getCustomMarkup();
 				options					= property.getOptions();
 				
@@ -779,6 +786,7 @@
 				previousProperty.setDataProvider(dataProvider);
 				previousProperty.setDataProviderParameters(dataProviderParameters);
 				previousProperty.setAllowMultipleSelections(allowMultipleSelections);
+				previousProperty.setMultipleSelectAreaSize(multipleSelectAreaSize);
 				previousProperty.setAutoCreateContent(property.getAutoCreateContent());
 				previousProperty.setAutoCreateContentMethod(property.getAutoCreateContentMethod());
 				previousProperty.setAutoCreateContentPath(property.getAutoCreateContentPath());
@@ -871,6 +879,7 @@
 			if(selectBox.value == "textfield")
 			{
 				document.getElementById("allowMultipleSelections").style.display = "none";
+				document.getElementById("multipleSelectAreaSize").style.display = "none";
 				document.getElementById("dataProviderParagraph").style.display = "none";
 				document.getElementById("customMarkupParagraph").style.display = "none";
 				document.getElementById("optionsParagraph").style.display = "none";
@@ -885,6 +894,7 @@
 			else if(selectBox.value == "textarea")
 			{							 
 				document.getElementById("allowMultipleSelections").style.display = "none";
+				document.getElementById("multipleSelectAreaSize").style.display = "none";
 				document.getElementById("dataProviderParagraph").style.display = "none";
 				document.getElementById("customMarkupParagraph").style.display = "none";
 				document.getElementById("wysiwygParagraph").style.display = "block";
@@ -907,6 +917,7 @@
 					document.getElementById("optionsParagraph").style.display = "none";
 				
 				document.getElementById("allowMultipleSelections").style.display = "block";
+				document.getElementById("multipleSelectAreaSize").style.display = "block";
 				document.getElementById("customMarkupParagraph").style.display = "none";
 				document.getElementById("entityParagraph").style.display = "none";
 				document.getElementById("multipleParagraph").style.display = "none";
@@ -919,6 +930,7 @@
 			else if(selectBox.value == "datefield")
 			{							 
 				document.getElementById("allowMultipleSelections").style.display = "none";
+				document.getElementById("multipleSelectAreaSize").style.display = "none";
 				document.getElementById("customMarkupParagraph").style.display = "none";
 				document.getElementById("optionsParagraph").style.display = "none";
 				document.getElementById("entityParagraph").style.display = "none";
@@ -933,6 +945,7 @@
 			else if(selectBox.value == "customfield")
 			{							 
 				document.getElementById("allowMultipleSelections").style.display = "none";
+				document.getElementById("multipleSelectAreaSize").style.display = "none";
 				document.getElementById("customMarkupParagraph").style.display = "block";
 				document.getElementById("optionsParagraph").style.display = "none";
 				document.getElementById("entityParagraph").style.display = "none";
@@ -980,7 +993,7 @@
 		function init()
 		{
 			#foreach($propertyDefinition in $componentPropertyDefinitions)
-				property = new ComponentPropertyDefinition("$propertyDefinition.name", "$!propertyDefinition.displayName", "$propertyDefinition.type", "$propertyDefinition.entity", "$propertyDefinition.multiple", "$propertyDefinition.assetBinding", "$propertyDefinition.assetMask", "$propertyDefinition.isPuffContentForPage", "$propertyDefinition.allowedContentTypeNames", "$propertyDefinition.description", "$!propertyDefinition.defaultValue", "$!propertyDefinition.allowLanguageVariations", "$!propertyDefinition.WYSIWYGEnabled", "$!propertyDefinition.WYSIWYGToolbar", "$!propertyDefinition.dataProvider", "$!propertyDefinition.dataProviderParameters", "$!propertyDefinition.autoCreateContent", "$!propertyDefinition.autoCreateContentMethod", "$!propertyDefinition.autoCreateContentPath", "$!propertyDefinition.encodedCustomMarkup", "$!propertyDefinition.allowMultipleSelections");
+				property = new ComponentPropertyDefinition("$propertyDefinition.name", "$!propertyDefinition.displayName", "$propertyDefinition.type", "$propertyDefinition.entity", "$propertyDefinition.multiple", "$propertyDefinition.assetBinding", "$propertyDefinition.assetMask", "$propertyDefinition.isPuffContentForPage", "$propertyDefinition.allowedContentTypeNames", "$propertyDefinition.description", "$!propertyDefinition.defaultValue", "$!propertyDefinition.allowLanguageVariations", "$!propertyDefinition.WYSIWYGEnabled", "$!propertyDefinition.WYSIWYGToolbar", "$!propertyDefinition.dataProvider", "$!propertyDefinition.dataProviderParameters", "$!propertyDefinition.autoCreateContent", "$!propertyDefinition.autoCreateContentMethod", "$!propertyDefinition.autoCreateContentPath", "$!propertyDefinition.encodedCustomMarkup", "$!propertyDefinition.allowMultipleSelections", "$!propertyDefinition.multipleSelectAreaSize");
 
 				#foreach($propertyOptionDefinition in $propertyDefinition.options)
 					propertyOption = new ComponentPropertyOptionDefinition("$propertyOptionDefinition.name", "$propertyOptionDefinition.value");
@@ -1085,6 +1098,10 @@
 						<p><label for="componentPropertyDefinition_allowMultipleSelections">Allow multiple selections:</label><input type="textfield" name="componentPropertyDefinition_allowMultipleSelections" id="componentPropertyDefinition_allowMultipleSelections" value=""/></p>
 					</div>
 					
+					<div id="multipleSelectAreaSize" style="display: none;">
+						<p><label for="componentPropertyDefinition_multipleSelectAreaSize">Select area size:</label><input type="textfield" name="componentPropertyDefinition_multipleSelectAreaSize" id="componentPropertyDefinition_multipleSelectAreaSize" value=""/></p>
+					</div>	
+									
 					<div id="customMarkupParagraph" style="display: none;">
 						<p>
 						<label for="customMarkup">Custom Markup:</label>

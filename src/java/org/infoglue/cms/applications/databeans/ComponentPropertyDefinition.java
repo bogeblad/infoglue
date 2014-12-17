@@ -64,12 +64,13 @@ public class ComponentPropertyDefinition
 	private String customMarkup 			= "";
 	private String externalBindingConfig	= "";
 	private Boolean allowMultipleSelections	= new Boolean(false);
+	private String multipleSelectAreaSize = "3";
 	private String supplementingEntityType	= "";
 	
     private List options = new ArrayList();
 
     
-    public ComponentPropertyDefinition(String name, String displayName, String type, String entity, Boolean multiple, Boolean assetBinding, String assetMask, Boolean isPuffContentForPage, String allowedContentTypeNames, String description, String defaultValue, Boolean allowLanguageVariations, Boolean WYSIWYGEnabled, String WYSIWYGToolbar, String dataProvider, String dataProviderParameters, Boolean autoCreateContent, String autoCreateContentMethod, String autoCreateContentPath, String customMarkup, boolean allowMultipleSelections, String supplementingEntityType, String externalBindingConfig)
+    public ComponentPropertyDefinition(String name, String displayName, String type, String entity, Boolean multiple, Boolean assetBinding, String assetMask, Boolean isPuffContentForPage, String allowedContentTypeNames, String description, String defaultValue, Boolean allowLanguageVariations, Boolean WYSIWYGEnabled, String WYSIWYGToolbar, String dataProvider, String dataProviderParameters, Boolean autoCreateContent, String autoCreateContentMethod, String autoCreateContentPath, String customMarkup, boolean allowMultipleSelections, String multipleSelectAreaSize, String supplementingEntityType, String externalBindingConfig)
     {
         this.name 						= name;
         this.displayName				= displayName;
@@ -93,6 +94,7 @@ public class ComponentPropertyDefinition
         this.customMarkup 				= customMarkup;
         this.externalBindingConfig 		= externalBindingConfig;
         this.allowMultipleSelections 	= allowMultipleSelections;
+        this.multipleSelectAreaSize		= multipleSelectAreaSize;
         this.supplementingEntityType 	= supplementingEntityType;
     }
         
@@ -215,7 +217,10 @@ public class ComponentPropertyDefinition
 	{
 		return allowMultipleSelections;
 	}
-
+	public String getMultipleSelectAreaSize()
+	{
+		return multipleSelectAreaSize;
+	}
 	public String getSupplementingEntityType()
 	{
 		return supplementingEntityType;

@@ -172,7 +172,6 @@ public class ContentStateController extends BaseController
 	
 	public static MediumContentVersionImpl changeState(Integer oldContentVersionId, ContentVO contentVO, Integer stateId, String versionComment, boolean overrideVersionModifyer, String recipientFilter, InfoGluePrincipal infoGluePrincipal, Integer contentId, Database db, List resultingEvents, Integer excludedAssetId) throws SystemException, ConstraintException
 	{
-		Timer t = new Timer();
 		MediumContentVersionImpl newContentVersion = null;
 
 		try

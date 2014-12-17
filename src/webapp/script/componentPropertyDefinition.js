@@ -12,7 +12,7 @@
  * ComponentPropertyDefinition object
  */
 
-function ComponentPropertyDefinition(name, displayName, type, entity, multiple, assetBinding, assetMask, isPuffContentForPage, allowedContentTypeNames, description, defaultValue, allowLanguageVariations, WYSIWYGEnabled, WYSIWYGToolbar, dataProvider, dataProviderParameters, autoCreateContent, autoCreateContentMethod, autoCreateContentPath, customMarkup, allowMultipleSelections)
+function ComponentPropertyDefinition(name, displayName, type, entity, multiple, assetBinding, assetMask, isPuffContentForPage, allowedContentTypeNames, description, defaultValue, allowLanguageVariations, WYSIWYGEnabled, WYSIWYGToolbar, dataProvider, dataProviderParameters, autoCreateContent, autoCreateContentMethod, autoCreateContentPath, customMarkup, allowMultipleSelections, multipleSelectAreaSize)
 {
 	this.name 						= name;
 	this.displayName				= displayName;
@@ -31,6 +31,7 @@ function ComponentPropertyDefinition(name, displayName, type, entity, multiple, 
 	this.dataProvider 				= dataProvider;
 	this.dataProviderParameters		= dataProviderParameters;
 	this.allowMultipleSelections    = allowMultipleSelections;
+	this.multipleSelectAreaSize     = multipleSelectAreaSize;
 	this.autoCreateContent			= autoCreateContent;
 	this.autoCreateContentMethod	= autoCreateContentMethod;
 	this.autoCreateContentPath		= autoCreateContentPath;
@@ -55,6 +56,7 @@ function ComponentPropertyDefinition(name, displayName, type, entity, multiple, 
 	this.getDataProvider			= getDataProvider;
 	this.getDataProviderParameters	= getDataProviderParameters;
 	this.getAllowMultipleSelections	= getAllowMultipleSelections;
+	this.getMultipleSelectAreaSize  = getMultipleSelectAreaSize;
 	this.getAutoCreateContent		= getAutoCreateContent;
 	this.getAutoCreateContentMethod	= getAutoCreateContentMethod;
 	this.getAutoCreateContentPath	= getAutoCreateContentPath;
@@ -77,6 +79,7 @@ function ComponentPropertyDefinition(name, displayName, type, entity, multiple, 
 	this.setDataProvider			= setDataProvider;
 	this.setDataProviderParameters	= setDataProviderParameters;
 	this.setAllowMultipleSelections	= setAllowMultipleSelections;
+	this.setMultipleSelectAreaSize  = setMultipleSelectAreaSize;
 	this.setAutoCreateContent		= setAutoCreateContent;
 	this.setAutoCreateContentMethod	= setAutoCreateContentMethod;
 	this.setAutoCreateContentPath	= setAutoCreateContentPath;
@@ -262,6 +265,16 @@ function getAllowMultipleSelections()
 function setAllowMultipleSelections(allowMultipleSelections)
 {
 	this.allowMultipleSelections = allowMultipleSelections;
+}
+
+function getMultipleSelectAreaSize()
+{
+	return this.multipleSelectAreaSize;
+}
+
+function setMultipleSelectAreaSize(multipleSelectAreaSize)
+{
+	this.multipleSelectAreaSize = multipleSelectAreaSize;
 }
 
 function getAutoCreateContent()

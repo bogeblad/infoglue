@@ -271,6 +271,8 @@ public class GroupControllerProxy extends BaseController
 			this.transactionObject = db;
 			getAuthorizationModule().deleteInfoGlueGroup(groupName);
 			AccessRightController.getController().deleteAccessRightGroup(groupName, db);
+			GroupPropertiesController.getController().delete(groupName, db);
+			GroupPropertiesController.getController().deleteContentTypeDefinitions(groupName, db);
 			
 			commitTransaction(db);
 		} 

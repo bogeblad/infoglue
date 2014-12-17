@@ -24,7 +24,9 @@
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -617,6 +619,30 @@ public class RoleController extends BaseController
         return roleExists;		
 	}
 
+    public Map<String,List<String>> getSystemUserRoleMapping(Database db) throws ConstraintException, SystemException, Exception
+    {
+    	Map<String,List<String>> userRoleMapping = new HashMap<String,List<String>>();
+    	
+    	OQLQuery oql = db.getOQLQuery( "SELECT sur FROM org.infoglue.cms.entities.management.impl.simple.SystemUserRoleImpl sur ORDER BY sur.userName");
+    	
+    	QueryResults results = oql.execute(Database.READONLY);
+		while (results.hasMore()) 
+        {
+			SystemUserRoleImpl sur = (SystemUserRoleImpl)results.nextElement();
+			List<String> roleNames = userRoleMapping.get(sur.getUserName());
+			if(roleNames == null)
+			{
+				roleNames = new ArrayList<String>();
+				userRoleMapping.put(sur.getUserName(), roleNames);
+			}
+			roleNames.add(sur.getRoleName());
+        }
+		
+		results.close();
+		oql.close();
+		
+		return userRoleMapping;
+    }
 	/**
 	 * This is a method that gives the user back an newly initialized ValueObject for this entity that the controller
 	 * is handling.

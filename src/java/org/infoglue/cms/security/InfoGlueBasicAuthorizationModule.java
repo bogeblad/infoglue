@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -382,31 +383,59 @@ public class InfoGlueBasicAuthorizationModule extends BaseController implements 
 			{
 				beginTransaction(db);
 				
-				List systemUsers = SystemUserController.getController().getSystemUserVOList(db);
-				
-				Iterator systemUserListIterator = systemUsers.iterator();
-				while(systemUserListIterator.hasNext())
+				List<RoleVO> roleVOList = RoleController.getController().getRoleVOList(db);
+				Map<String,RoleVO> rolesMap = new HashMap<String,RoleVO>();
+				for(RoleVO role : roleVOList)
 				{
-					SystemUserVO systemUser = (SystemUserVO)systemUserListIterator.next();
+					rolesMap.put(role.getRoleName(), role);
+				}
+
+				List<GroupVO> groupVOList = GroupController.getController().getGroupVOList(db);
+				Map<String,GroupVO> groupsMap = new HashMap<String,GroupVO>();
+				for(GroupVO group : groupVOList)
+				{
+					groupsMap.put(group.getGroupName().toLowerCase(), group);
+				}
+				
+				Map<String,List<String>> systemRoleMapping = RoleController.getController().getSystemUserRoleMapping(db);
+				Map<String,List<String>> systemGroupMapping = GroupController.getController().getSystemUserGroupMappingLowerCase(db);
+				
+				
+				List<SystemUserVO> systemUserVOList = SystemUserController.getController().getSystemUserVOList(db);
+				Iterator systemUserVOListIterator = systemUserVOList.iterator();
+				while(systemUserVOListIterator.hasNext())
+				{
+					SystemUserVO systemUserVO = (SystemUserVO)systemUserVOListIterator.next();
 					
 					List<InfoGlueRole> roles = new ArrayList<InfoGlueRole>();
-					List<RoleVO> roleVOList = RoleController.getController().getRoleVOList(systemUser.getUserName(), db);
-					for(RoleVO role : roleVOList)
+					List<String> roleNames = systemRoleMapping.get(systemUserVO.getUserName());
+					if(roleNames != null)
 					{
-						InfoGlueRole infoGlueRole = new InfoGlueRole(role.getRoleName(), role.getRoleName(), role.getDescription(), role.getSource(), role.getIsActive(), role.getModifiedDateTime(), this);
-						roles.add(infoGlueRole);
+						for(String roleName : roleNames)
+						{
+							if(rolesMap.get(roleName) != null)
+							{
+								InfoGlueRole infoGlueRole = new InfoGlueRole(rolesMap.get(roleName).getRoleName(), rolesMap.get(roleName).getRoleName(), rolesMap.get(roleName).getDescription(), rolesMap.get(roleName).getSource(), rolesMap.get(roleName).getIsActive(), rolesMap.get(roleName).getModifiedDateTime(), this);
+								roles.add(infoGlueRole);
+							}
+						}
 					}
-
+					
 					List<InfoGlueGroup> groups = new ArrayList<InfoGlueGroup>();
-					List<GroupVO> groupVOList = GroupController.getController().getGroupVOList(systemUser.getUserName(), db);
-					for(GroupVO group : groupVOList)
+					List<String> groupNames = systemGroupMapping.get(systemUserVO.getUserName().toLowerCase());
+					if(groupNames != null)
 					{
-						InfoGlueGroup infoGlueGroup = new InfoGlueGroup(group.getGroupName(), group.getGroupName(), group.getDescription(), group.getSource(), group.getGroupType(), group.getIsActive(), group.getModifiedDateTime(), this);
-						groups.add(infoGlueGroup);
+						for(String groupName : groupNames)
+						{
+							if(groupsMap.get(groupName.toLowerCase()) != null)
+							{
+								InfoGlueGroup infoGlueGroup = new InfoGlueGroup(groupsMap.get(groupName.toLowerCase()).getGroupName(), groupsMap.get(groupName.toLowerCase()).getGroupName(), groupsMap.get(groupName.toLowerCase()).getDescription(), groupsMap.get(groupName.toLowerCase()).getSource(), groupsMap.get(groupName.toLowerCase()).getGroupType(), groupsMap.get(groupName.toLowerCase()).getIsActive(), groupsMap.get(groupName.toLowerCase()).getModifiedDateTime(), this);
+								groups.add(infoGlueGroup);
+							}
+						}
 					}
 					
-					InfoGluePrincipal infoGluePrincipal = new InfoGluePrincipal(systemUser.getUserName(), systemUser.getUserName(), systemUser.getFirstName(), systemUser.getLastName(), systemUser.getEmail(), systemUser.getSource(), systemUser.getIsActive(), systemUser.getModifiedDateTime(), roles, groups, new HashMap(), false, this);
-					
+					InfoGluePrincipal infoGluePrincipal = new InfoGluePrincipal(systemUserVO.getUserName(), systemUserVO.getFirstName(), systemUserVO.getLastName(), systemUserVO.getEmail(), roles, groups, false, this);
 					users.add(infoGluePrincipal);
 				}
 				
@@ -421,36 +450,67 @@ public class InfoGlueBasicAuthorizationModule extends BaseController implements 
 		}
 		else
 		{
-			List systemUsers = SystemUserController.getController().getSystemUserList(transactionObject);
-			Iterator systemUserListIterator = systemUsers.iterator();
-			while(systemUserListIterator.hasNext())
+			List<RoleVO> roleVOList = RoleController.getController().getRoleVOList(transactionObject);
+			Map<String,RoleVO> rolesMap = new HashMap<String,RoleVO>();
+			for(RoleVO role : roleVOList)
 			{
-				SystemUser systemUser = (SystemUser)systemUserListIterator.next();
-	
+				rolesMap.put(role.getRoleName(), role);
+			}
+
+			List<GroupVO> groupVOList = GroupController.getController().getGroupVOList(transactionObject);
+			Map<String,GroupVO> groupsMap = new HashMap<String,GroupVO>();
+			for(GroupVO group : groupVOList)
+			{
+				groupsMap.put(group.getGroupName().toLowerCase(), group);
+			}
+			
+			Map<String,List<String>> systemRoleMapping = RoleController.getController().getSystemUserRoleMapping(transactionObject);
+			Map<String,List<String>> systemGroupMapping = GroupController.getController().getSystemUserGroupMappingLowerCase(transactionObject);
+			
+			List<SystemUserVO> systemUserVOList = SystemUserController.getController().getSystemUserVOList(transactionObject);
+			
+			Iterator systemUserVOListIterator = systemUserVOList.iterator();
+			while(systemUserVOListIterator.hasNext())
+			{
+				SystemUserVO systemUser = (SystemUserVO)systemUserVOListIterator.next();
+				
 				List<InfoGlueRole> roles = new ArrayList<InfoGlueRole>();
-				List<RoleVO> roleVOList = RoleController.getController().getRoleVOList(systemUser.getUserName(), transactionObject);
-				for(RoleVO role : roleVOList)
+				List<String> roleNames = systemRoleMapping.get(systemUser.getUserName());
+				if(roleNames != null)
 				{
-					InfoGlueRole infoGlueRole = new InfoGlueRole(role.getRoleName(), role.getRoleName(), role.getDescription(), role.getSource(), role.getIsActive(), role.getModifiedDateTime(), this);
-					roles.add(infoGlueRole);
+					for(String roleName : roleNames)
+					{
+						if(rolesMap.get(roleName) != null)
+						{
+							InfoGlueRole infoGlueRole = new InfoGlueRole(rolesMap.get(roleName).getRoleName(), rolesMap.get(roleName).getRoleName(), rolesMap.get(roleName).getDescription(), rolesMap.get(roleName).getSource(), rolesMap.get(roleName).getIsActive(), rolesMap.get(roleName).getModifiedDateTime(), this);
+							roles.add(infoGlueRole);
+						}
+					}
 				}
 
 				List<InfoGlueGroup> groups = new ArrayList<InfoGlueGroup>();
-				List<GroupVO> groupVOList = GroupController.getController().getGroupVOList(systemUser.getUserName(), transactionObject);
-				for(GroupVO group : groupVOList)
+				List<String> groupNames = systemGroupMapping.get(systemUser.getUserName().toLowerCase());
+				if(groupNames != null)
 				{
-					InfoGlueGroup infoGlueGroup = new InfoGlueGroup(group.getGroupName(), group.getGroupName(), group.getDescription(), group.getSource(), group.getGroupType(), group.getIsActive(), group.getModifiedDateTime(), this);
-					groups.add(infoGlueGroup);
+					for(String groupName : groupNames)
+					{
+						if(groupsMap.get(groupName.toLowerCase()) != null)
+						{
+							InfoGlueGroup infoGlueGroup = new InfoGlueGroup(groupsMap.get(groupName.toLowerCase()).getGroupName(), groupsMap.get(groupName.toLowerCase()).getGroupName(), groupsMap.get(groupName.toLowerCase()).getDescription(), groupsMap.get(groupName.toLowerCase()).getSource(), groupsMap.get(groupName.toLowerCase()).getGroupType(), groupsMap.get(groupName.toLowerCase()).getIsActive(), groupsMap.get(groupName.toLowerCase()).getModifiedDateTime(), this);
+							groups.add(infoGlueGroup);
+						}
+					}
 				}
 				
-				InfoGluePrincipal infoGluePrincipal = new InfoGluePrincipal(systemUser.getUserName(), systemUser.getUserName(), systemUser.getFirstName(), systemUser.getLastName(), systemUser.getEmail(), systemUser.getSource(), systemUser.getIsActive(), systemUser.getModifiedDateTime(), roles, groups, new HashMap(), false, this);
-				
+				InfoGluePrincipal infoGluePrincipal = new InfoGluePrincipal(systemUser.getUserName(), systemUser.getFirstName(), systemUser.getLastName(), systemUser.getEmail(), roles, groups, false, this);
 				users.add(infoGluePrincipal);
 			}
+			logger.info("Returning:" + users.size());
 		}
 		
 		return users;
 	}
+	
 
 	/**
 	 * This method is used to fetch all users filtered on a text or not.  

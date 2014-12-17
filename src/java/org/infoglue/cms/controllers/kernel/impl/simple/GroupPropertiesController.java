@@ -480,6 +480,21 @@ public class GroupPropertiesController extends BaseController
     	deleteEntity(GroupPropertiesImpl.class, groupPropertiesVO.getGroupPropertiesId());
     }        
 
+    public void delete(String groupName, Database db) throws Exception
+    {
+    	List<LanguageVO> languages = LanguageController.getController().getLanguageVOList(db);
+    	for(LanguageVO languageVO : languages)
+    	{
+        	List<GroupProperties> groupPropertiesList = getGroupPropertiesList(groupName, languageVO.getId(), db, false);
+        	Iterator<GroupProperties> groupPropertiesIterator = groupPropertiesList.iterator();
+        	while(groupPropertiesIterator.hasNext())
+        	{
+        		GroupProperties groupProperties = groupPropertiesIterator.next();
+        		db.remove(groupProperties);
+        		groupPropertiesIterator.remove();
+        	}
+    	}
+    }        
     
 	/**
 	 * This method should return a list of those digital assets the contentVersion has.
@@ -574,9 +589,9 @@ public class GroupPropertiesController extends BaseController
 	 * This method fetches all group content types available for this group within a transaction. 
 	 */
 	
-	public List getGroupContentTypeDefinitionList(String groupName, Database db) throws ConstraintException, SystemException, Exception
+	public List<GroupContentTypeDefinition> getGroupContentTypeDefinitionList(String groupName, Database db) throws ConstraintException, SystemException, Exception
 	{
-		List groupContentTypeDefinitionList = new ArrayList();
+		List<GroupContentTypeDefinition> groupContentTypeDefinitionList = new ArrayList<GroupContentTypeDefinition>();
 
 		OQLQuery oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.GroupContentTypeDefinitionImpl f WHERE f.groupName = $1");
 		oql.bind(groupName);
@@ -647,6 +662,21 @@ public class GroupPropertiesController extends BaseController
 		}
 	}
 	
+	
+	/**
+	 * This method deletes all content type definitions for a group
+	 */
+
+	public void deleteContentTypeDefinitions(String groupName, Database db) throws Exception
+	{
+		List groupContentTypeDefinitionList = this.getGroupContentTypeDefinitionList(groupName, db);
+		Iterator contentTypeDefinitionsIterator = groupContentTypeDefinitionList.iterator();
+		while(contentTypeDefinitionsIterator.hasNext())
+		{
+			GroupContentTypeDefinition groupContentTypeDefinition = (GroupContentTypeDefinition)contentTypeDefinitionsIterator.next();
+			db.remove(groupContentTypeDefinition);
+		}
+	}
 	
 	/**
 	 * This method fetches a value from the xml that is the groupProperties Value. It then updates that

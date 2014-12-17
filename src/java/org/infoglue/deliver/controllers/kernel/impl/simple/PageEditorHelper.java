@@ -1431,8 +1431,14 @@ public class PageEditorHelper extends BaseDeliveryController
 					{		
 						String value = getComponentPropertyValue(componentId, name, siteNodeId, languageId, contentId, locale, db, principal, property);
 						String allowMultipleSelections = binding.attributeValue("allowMultipleSelections");
-						if(allowMultipleSelections != null && allowMultipleSelections.equalsIgnoreCase("true"))
+						
+						if(allowMultipleSelections != null && allowMultipleSelections.equalsIgnoreCase("true")) {
 							property.setAllowMultipleSelections(true);
+							String multipleSelectAreaSize = binding.attributeValue("multipleSelectAreaSize");
+							if (multipleSelectAreaSize != null && !multipleSelectAreaSize.equalsIgnoreCase("")) {
+								property.setMultipleSelectAreaSize(multipleSelectAreaSize);
+							}
+						}
 							
 						List optionList = binding.elements("option");
 						Iterator optionListIterator = optionList.iterator();

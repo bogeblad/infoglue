@@ -108,6 +108,8 @@ public class CmsJDOCallback implements CallbackInterceptor
 {
     private final static Logger logger = Logger.getLogger(CmsJDOCallback.class.getName());
 
+    public static boolean disableACLNotificationsToLive = false;
+
     public void using(Object object, Database db)
     {
     	//logger.error("Using " + object);
@@ -185,10 +187,15 @@ public class CmsJDOCallback implements CallbackInterceptor
 			if(!skipRemoteUpdate)
 				ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
 	
+			boolean skipSystemNotificationUpdate = false;
+			if(disableACLNotificationsToLive && (object.getClass().getName().indexOf("SystemUserImpl") > -1 || object.getClass().getName().indexOf("SystemUserGroupImpl") > -1 || object.getClass().getName().indexOf("SystemUserRoleImpl") > -1))
+				skipSystemNotificationUpdate = true;
+
 			if(object.getClass().getName().indexOf("org.infoglue.cms.entities.management") > -1 && 
 					!object.getClass().getName().equals(RegistryImpl.class.getName()) && 
 					object.getClass().getName().indexOf("AccessRight") == -1 && 
-					object.getClass().getName().indexOf("ContentTypeDefinitionImpl") == -1)
+					object.getClass().getName().indexOf("ContentTypeDefinitionImpl") == -1 && 
+					!skipSystemNotificationUpdate)
 			{
 				//System.out.println("object.getClass():" + object.getClass());
 				RemoteCacheUpdater.getSystemNotificationMessages().add(notificationMessage);
@@ -755,11 +762,18 @@ public class CmsJDOCallback implements CallbackInterceptor
     	    NotificationMessage notificationMessage = new NotificationMessage("CMSJDOCallback", storedClassName, userName, NotificationMessage.TRANS_CREATE, getObjectIdentity(object), getObjectName(object), CacheController.getExtraInfo(storedClassName, getObjectIdentity(object).toString()));
     	    ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
 
+			boolean skipSystemNotificationUpdate = false;
+			if(disableACLNotificationsToLive && (object.getClass().getName().indexOf("SystemUserImpl") > -1 || object.getClass().getName().indexOf("SystemUserGroupImpl") > -1 || object.getClass().getName().indexOf("SystemUserRoleImpl") > -1))
+				skipSystemNotificationUpdate = true;
+
     	    if(object.getClass().getName().indexOf("org.infoglue.cms.entities.management") > -1 && 
     	    		!object.getClass().getName().equals(RegistryImpl.class.getName()) &&
-    	    		object.getClass().getName().indexOf("AccessRight") == -1)
+    	    		object.getClass().getName().indexOf("AccessRight") == -1 && 
+					!skipSystemNotificationUpdate)
+    	    {
 			    RemoteCacheUpdater.getSystemNotificationMessages().add(notificationMessage);
-
+    	    }
+    	    
 			if(object.getClass().getName().equals(RepositoryImpl.class.getName()))
 			{
 				CacheController.clearCache("repositoryCache");
@@ -1057,12 +1071,18 @@ public class CmsJDOCallback implements CallbackInterceptor
 		    NotificationMessage notificationMessage = new NotificationMessage("CMSJDOCallback", storedClassName, userName, NotificationMessage.TRANS_DELETE, getObjectIdentity(object), getObjectName(object), CacheController.getExtraInfo(storedClassName, getObjectIdentity(object).toString()));
 		    ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
 
+			boolean skipSystemNotificationUpdate = false;
+			if(disableACLNotificationsToLive && (object.getClass().getName().indexOf("SystemUserImpl") > -1 || object.getClass().getName().indexOf("SystemUserGroupImpl") > -1 || object.getClass().getName().indexOf("SystemUserRoleImpl") > -1))
+				skipSystemNotificationUpdate = true;
+
 			if(object.getClass().getName().indexOf("org.infoglue.cms.entities.management") > -1 && 
 					!object.getClass().getName().equals(RegistryImpl.class.getName()) && 
-					object.getClass().getName().indexOf("AccessRight") == -1
-					)
+					object.getClass().getName().indexOf("AccessRight") == -1 && 
+					!skipSystemNotificationUpdate)
+			{
 			    RemoteCacheUpdater.getSystemNotificationMessages().add(notificationMessage);
-
+			}
+			
 			if(object.getClass().getName().equals(RepositoryImpl.class.getName()))
 			{
 				CacheController.clearCache("repositoryCache");

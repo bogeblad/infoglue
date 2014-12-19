@@ -1099,7 +1099,7 @@
 					</div>
 					
 					<div id="multipleSelectAreaSize" style="display: none;">
-						<p><label for="componentPropertyDefinition_multipleSelectAreaSize">Select area size:</label><input type="textfield" name="componentPropertyDefinition_multipleSelectAreaSize" id="componentPropertyDefinition_multipleSelectAreaSize" value=""/></p>
+						<p><label for="componentPropertyDefinition_multipleSelectAreaSize">Select size:</label><input type="textfield" name="componentPropertyDefinition_multipleSelectAreaSize" id="componentPropertyDefinition_multipleSelectAreaSize" value=""/></p>
 					</div>	
 									
 					<div id="customMarkupParagraph" style="display: none;">

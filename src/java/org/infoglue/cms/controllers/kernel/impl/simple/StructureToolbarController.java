@@ -70,11 +70,11 @@ public class StructureToolbarController
 		String dnsName = repositoryVO.getDnsName();
 
 	    String workingUrl = getWorkingUrl(dnsName);
-	    
+	    /*width of this is common breakpoint + 17px to compensate for scrollbars*/
 	    ToolbarButton previewPage = new ToolbarButton("previewMediumScreenPage",
 				  getLocalizedString(locale, "tool.structuretool.toolbarV3.previewMediumScreenPageLabel"), 
 				  getLocalizedString(locale, "tool.structuretool.toolbarV3.previewMediumScreenPageLabel"),
-				  "javascript:openPopup('" + workingUrl + "?siteNodeId=" + siteNodeId + (siteNodeVersionId != null ? "&siteNodeVersionId=" + siteNodeVersionId : "") + "', 'Import', 'resizable=no,toolbar=yes,scrollbars=yes,status=yes,location=yes,menubar=yes,width=720');",
+				  "javascript:openInlineDiv('" + workingUrl + "?siteNodeId=" + siteNodeId + (siteNodeVersionId != null ? "&siteNodeVersionId=" + siteNodeVersionId : "") + "', 800, 737, false, true,'Tablet (720 pixels width)'); return false;",
 				  "",
 				  "left",
 				  "preview",
@@ -90,11 +90,11 @@ public class StructureToolbarController
 		String dnsName = repositoryVO.getDnsName();
 
 		String workingUrl = getWorkingUrl(dnsName);
-	
+		/*width of this is common breakpoint + 17px to compensate for scrollbars*/
 	    ToolbarButton previewPage = new ToolbarButton("previewSmallScreenPage",
 				  getLocalizedString(locale, "tool.structuretool.toolbarV3.previewSmallScreenPageLabel"), 
 				  getLocalizedString(locale, "tool.structuretool.toolbarV3.previewSmallScreenPageLabel"),
-				  "javascript:openPopup('" + workingUrl + "?siteNodeId=" + siteNodeId + (siteNodeVersionId != null ? "&siteNodeVersionId=" + siteNodeVersionId : "") + "', 'Import', 'resizable=no,toolbar=yes,scrollbars=yes,status=yes,location=yes,menubar=yes,width=320');",
+				  "javascript:openInlineDiv('" + workingUrl + "?siteNodeId=" + siteNodeId + (siteNodeVersionId != null ? "&siteNodeVersionId=" + siteNodeVersionId : "") + "', 480, 337, false, true,'Mobile phone(320 pixels width)'); return false;",
 				  "",
 				  "left",
 				  "preview",

@@ -856,125 +856,127 @@
 	<div>
 		<div style="float: left;">
 			<h3>#if($translate)$ui.getString('tool.contenttool.translationViewLabel') #else $ui.getString('tool.contenttool.editingViewLabel') #end $ui.getString('tool.contenttool.contentLabel') "$contentVO.name" - $currentLanguageVO.name</h3>
-			#if($contentVersionVO)
-			<p>$ui.getString("tool.contenttool.versionLastUpdatedByLabel") $contentVersionVO.versionModifier ($formatter.formatDate($contentVersionVO.modifiedDateTime, "yyyy-MM-dd HH:mm") - $contentVersionVO.versionComment)</p>
+			#if(!$contentVersionVO)
+				<p>$ui.getString("tool.contenttool.versionLastUpdatedByLabel") $contentVersionVO.versionModifier ($formatter.formatDate($contentVersionVO.modifiedDateTime, "yyyy-MM-dd HH:mm") - $contentVersionVO.versionComment)</p>
+			#else
+				<p>$ui.getString('tool.contenttool.createVersionFirst')</p>
 			#end
 		</div>
 	</div>
-	
+
 	<div id="allDivs">
-		
-    	<div id="tabsContainer" class="cleanTopDiv" style="#if($translate == false)width: 100%;#else width: 550px; #end float:left;">
-    	
-    	<ul>
-            <li><a href="#contentVersionDiv"><span>$ui.getString('tool.contenttool.textContentTab')</span></a></li>
-			#if($this.hasAccessTo("ContentVersionEditor.Categories", true, false))
-            	<li><a href="#contentVersionCategoriesDiv"><span>$ui.getString('tool.contenttool.categoriesTab')</span></a></li>
-            #end
-			#if($this.hasAccessTo("ContentVersionEditor.Attachments", true, false))
-            	<li><a href="#contentVersionAssetsDiv"><span>$ui.getString('tool.contenttool.assetsTab')</span></a></li>
-            #end
-            <li><a href="#contentCoverDiv"><span>$ui.getString('tool.contenttool.coverTab')</span></a></li>
-			#if($this.hasAccessTo("ContentVersionEditor.History", true, false))
-            	<li><a href="#contentHistoryDiv"><span>$ui.getString('tool.contenttool.contentHistoryTab')</span></a></li>
-            #end
-			#if($this.hasAccessTo("ContentVersionEditor.References", true, false))
-            	<li><a href="#contentReferencesDiv"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a></li>
-			#end
-			#if($this.hasAccessTo("ContentVersionEditor.AccessRights", true, false) && $this.hasAccessTo("Common.ManageAccessRights", true, false, true))
-				#if($contentTypeDefinitionVO.name != "Meta info")
-		            <li><a href="#contentAccessRightsDiv"><span>$ui.getString('tool.contenttool.contentAccessRightsTab')</span></a></li>
-		            <li><a href="#contentVersionAccessRightsDiv"><span>$ui.getString('tool.contenttool.contentVersionAccessRightsTab')</span></a></li>
-	        	#end
-        	#end
-        </ul>
-    	
-    	<div id="contentVersionDiv" class="inlineTabDiv">
-    		
-    		<form method="post" name="editForm" id="editForm" action="UpdateContentVersion!V3.action" style="float:left; width: 95%">
-    			<input type="hidden" name="contentId" value="$!contentId"/>
-    			<input type="hidden" name="languageId" value="$!languageId"/>
-    			#if("$!contentVersionId" != "")
-				<input type="hidden" name="contentVersionId" value="$!contentVersionId"/>
-    			#end
-				<input type="hidden" name="repositoryId" value="$!repositoryId"/>
-    		
-    			<input type="hidden" id="versionValue" name="versionValue" value=""/>
-				<input type="hidden" id="currentEditorId" name="currentEditorId" value=""/>
-				<input type="hidden" id="attributeName" name="attributeName" value="$attributeName"/>
-				<input type="hidden" name="inline" value="$inline"/>
-				<input type="hidden" name="closeOnLoad" value="false"/>
-				<input type="hidden" name="publishOnLoad" value="false"/>
-				<input type="hidden" id="contentId" name="contentId" value="$!contentId"/>
-				<input type="hidden" name="repositoryId" value="$!repositoryId"/>
-				#if($contentVersionId > -1)
-					<input type="hidden" name="contentVersionId" value="$!contentVersionId"/>
-					#if("$oldModifiedDateTime" == "-1")
-						<input type="hidden" name="oldModifiedDateTime" value="$!contentVersionVO.modifiedDateTime.time"/>
-					#else
-						<input type="hidden" name="oldModifiedDateTime" value="$!oldModifiedDateTime"/>
+	
+    	<div id="tabsContainer" class="cleanTopDiv" style="#if($translate == false)width: 100%;#else width: 550px; #end float:left; #if($contentVersionVO)display:none; #end">
+
+			<ul>
+				<li><a href="#contentVersionDiv"><span>$ui.getString('tool.contenttool.textContentTab')</span></a></li>
+				#if($this.hasAccessTo("ContentVersionEditor.Categories", true, false))
+					<li><a href="#contentVersionCategoriesDiv"><span>$ui.getString('tool.contenttool.categoriesTab')</span></a></li>
+				#end
+				#if($this.hasAccessTo("ContentVersionEditor.Attachments", true, false))
+					<li><a href="#contentVersionAssetsDiv"><span>$ui.getString('tool.contenttool.assetsTab')</span></a></li>
+				#end
+				<li><a href="#contentCoverDiv"><span>$ui.getString('tool.contenttool.coverTab')</span></a></li>
+				#if($this.hasAccessTo("ContentVersionEditor.History", true, false))
+					<li><a href="#contentHistoryDiv"><span>$ui.getString('tool.contenttool.contentHistoryTab')</span></a></li>
+				#end
+				#if($this.hasAccessTo("ContentVersionEditor.References", true, false))
+					<li><a href="#contentReferencesDiv"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a></li>
+				#end
+				#if($this.hasAccessTo("ContentVersionEditor.AccessRights", true, false) && $this.hasAccessTo("Common.ManageAccessRights", true, false, true))
+					#if($contentTypeDefinitionVO.name != "Meta info")
+						<li><a href="#contentAccessRightsDiv"><span>$ui.getString('tool.contenttool.contentAccessRightsTab')</span></a></li>
+						<li><a href="#contentVersionAccessRightsDiv"><span>$ui.getString('tool.contenttool.contentVersionAccessRightsTab')</span></a></li>
 					#end
 				#end
-			    		
-    			#set($event = $this.getEvent($contentVersionId) )					
-    			#if($event.id > 0)
+			</ul>
 
-    			<table border="0">
-    			<tr>
-    				<td colspan="3">
-    					<span class="warningText">
-    						#set($close = "<a href='DeleteEvent.action?eventId=$event.id&url=$currentUrl'>$ui.getString('tool.contenttool.close')</a>")
-    						#if($event.typeId == 2)
-    							$ui.getString("tool.contenttool.publishRejectedText") $close
-    						#elseif($event.typeId == 4)
-    							$ui.getString("tool.contenttool.unblishRejectedText") $close
-    						#end
-    					</span> 
-    				</td>
-    			</tr>
-    			</table>	
-    			#end
-	    		
-				#if($tabbedContentTypeAttributes.size() > 1)
+			<div id="contentVersionDiv" class="inlineTabDiv">
 				
-					<script type="text/javascript">
-					<!--
-						$(document).ready(function(){
-							$("#attributeTabsContainer").tabs({ show:function(e, ui) { 
-								resizeScrollArea(); 
-								if(ui.index == 2) 
-									$(".attachAsset").hide();
-								else
-									$(".attachAsset").show();
-							}, select: function(event, ui) { resizeScrollArea(); $("#activeDivId").val(ui.panel.id); $("#deleteActiveDivId").val(ui.panel.id) } });
-						});
-					-->
-					</script>
-					
-					<div id="attributeTabsContainer" class="flora" style="margin-top: 10px; width: 100%">
-		
-						<ul>
-							#foreach($tabbedContentTypeAttribute in $tabbedContentTypeAttributes.keySet())
-								<li><a href="#$tabbedContentTypeAttribute.name">$tabbedContentTypeAttribute.name</a></li>
-							#end
-						</ul>
-
-						#foreach($tabbedContentTypeAttribute in $tabbedContentTypeAttributes.keySet())
-							<div class="inlineTabDiv" id="$tabbedContentTypeAttribute.name">
-								#set($attributesToRender = $tabbedContentTypeAttributes.get($tabbedContentTypeAttribute))
-									
-								#renderAttributes($attributesToRender)
-							</div>
+				<form method="post" name="editForm" id="editForm" action="UpdateContentVersion!V3.action" style="float:left; width: 95%">
+					<input type="hidden" name="contentId" value="$!contentId"/>
+					<input type="hidden" name="languageId" value="$!languageId"/>
+					#if("$!contentVersionId" != "")
+					<input type="hidden" name="contentVersionId" value="$!contentVersionId"/>
+					#end
+					<input type="hidden" name="repositoryId" value="$!repositoryId"/>
+				
+					<input type="hidden" id="versionValue" name="versionValue" value=""/>
+					<input type="hidden" id="currentEditorId" name="currentEditorId" value=""/>
+					<input type="hidden" id="attributeName" name="attributeName" value="$attributeName"/>
+					<input type="hidden" name="inline" value="$inline"/>
+					<input type="hidden" name="closeOnLoad" value="false"/>
+					<input type="hidden" name="publishOnLoad" value="false"/>
+					<input type="hidden" id="contentId" name="contentId" value="$!contentId"/>
+					<input type="hidden" name="repositoryId" value="$!repositoryId"/>
+					#if($contentVersionId > -1)
+						<input type="hidden" name="contentVersionId" value="$!contentVersionId"/>
+						#if("$oldModifiedDateTime" == "-1")
+							<input type="hidden" name="oldModifiedDateTime" value="$!contentVersionVO.modifiedDateTime.time"/>
+						#else
+							<input type="hidden" name="oldModifiedDateTime" value="$!oldModifiedDateTime"/>
 						#end
-					</div>
-				#else
-					#set($attributesToRender = $contentTypeAttributes)
-					#renderAttributes($attributesToRender)
-				#end
-				
-	    		</form>
-	    					
-	    	</div>
+					#end
+							
+					#set($event = $this.getEvent($contentVersionId) )					
+					#if($event.id > 0)
+
+					<table border="0">
+					<tr>
+						<td colspan="3">
+							<span class="warningText">
+								#set($close = "<a href='DeleteEvent.action?eventId=$event.id&url=$currentUrl'>$ui.getString('tool.contenttool.close')</a>")
+								#if($event.typeId == 2)
+									$ui.getString("tool.contenttool.publishRejectedText") $close
+								#elseif($event.typeId == 4)
+									$ui.getString("tool.contenttool.unblishRejectedText") $close
+								#end
+							</span> 
+						</td>
+					</tr>
+					</table>	
+					#end
+					
+					#if($tabbedContentTypeAttributes.size() > 1)
+					
+						<script type="text/javascript">
+						<!--
+							$(document).ready(function(){
+								$("#attributeTabsContainer").tabs({ show:function(e, ui) { 
+									resizeScrollArea(); 
+									if(ui.index == 2) 
+										$(".attachAsset").hide();
+									else
+										$(".attachAsset").show();
+								}, select: function(event, ui) { resizeScrollArea(); $("#activeDivId").val(ui.panel.id); $("#deleteActiveDivId").val(ui.panel.id) } });
+							});
+						-->
+						</script>
+						
+						<div id="attributeTabsContainer" class="flora" style="margin-top: 10px; width: 100%">
+			
+							<ul>
+								#foreach($tabbedContentTypeAttribute in $tabbedContentTypeAttributes.keySet())
+									<li><a href="#$tabbedContentTypeAttribute.name">$tabbedContentTypeAttribute.name</a></li>
+								#end
+							</ul>
+
+							#foreach($tabbedContentTypeAttribute in $tabbedContentTypeAttributes.keySet())
+								<div class="inlineTabDiv" id="$tabbedContentTypeAttribute.name">
+									#set($attributesToRender = $tabbedContentTypeAttributes.get($tabbedContentTypeAttribute))
+										
+									#renderAttributes($attributesToRender)
+								</div>
+							#end
+						</div>
+					#else
+						#set($attributesToRender = $contentTypeAttributes)
+						#renderAttributes($attributesToRender)
+					#end
+					
+				</form>
+								
+			</div>
 	    	
 	    	#if($this.hasAccessTo("ContentVersionEditor.Categories", true, false))
 		    	<div id="contentVersionCategoriesDiv" class="inlineTabDiv">
@@ -1067,7 +1069,7 @@
 		    		</div>
 		    	#end
 			#end
-    		
+   
     	</div><!-- End first tabs collection -->
     	
     	#if($translate)
@@ -1195,7 +1197,6 @@
     	#end
     	
     	</div><!-- End double pane --> 
-
     </div>	
     
     #if("$!oldModifiedDateTime" != "-1" && !$errors.hasErrors() && !$concurrentModification)

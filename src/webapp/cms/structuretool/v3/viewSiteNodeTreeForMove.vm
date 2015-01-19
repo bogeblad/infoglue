@@ -49,7 +49,7 @@
 	#lightMenuToolbar("" $buttons $rightButtons) 
 
 	<div style="clear: both;"></div>
-		
+	
 	<form name="inputForm" action="MoveSiteNode!V3.action">
 		<input type="hidden" name="userSessionKey" value="$userSessionKey"/>
 		<input type="hidden" name="repositoryId" value="$repositoryId"/>
@@ -58,14 +58,16 @@
 		<input type="hidden" name="changeTypeId" value="3">
 		<input type="hidden" name="returnAddress" value="$returnAddress">
 		<input type="hidden" name="originalAddress" value="$originalAddress">
-		<input type="hidden" name="sortLanguageId" value="$sortLanguageId">
+		<input type="hidden" name="sortLanguageId" value="#if($sortLanguageId)$sortLanguageId#else1#end">
 	
 		<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
 	
 		<h3>$ui.getString("tool.structuretool.moveSiteNode.headline", $siteNodeName)</h3>
 		
+			
+		
 		<p>
-			<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!bindingViewV3.action?showLeafs=no&repositoryId=${repositoryId}&sortLanguageId=${sortLanguageId}" width="350" height="460" ></iframe>
+			<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!bindingViewV3.action?showLeafs=no&repositoryId=${repositoryId}&sortLanguageId=#if($sortLanguageId)${sortLanguageId}#else1#end" width="350" height="460" ></iframe>
 		</p>
 	
 		#lightFooterToolbar($footerButtons)

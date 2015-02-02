@@ -57,9 +57,8 @@ public class UpdateRepositoryAction extends ViewRepositoryAction //WebworkAbstra
 		super.initialize(getRepositoryId());
 
     	ceb.add(this.repositoryVO.validate());
-    	ceb.throwIfNotEmpty();		
-    	
-		RepositoryController.getController().update(this.repositoryVO);
+    	ceb.throwIfNotEmpty();
+		RepositoryController.getController().update(this.repositoryVO, "Repository.UpdateProperties", this.getInfoGluePrincipal());
 		
 	    ViewMessageCenterAction.addSystemMessage(this.getInfoGluePrincipal().getName(), ViewMessageCenterAction.SYSTEM_MESSAGE_TYPE, "refreshRepositoryList();");
 

@@ -38,6 +38,7 @@ import org.infoglue.cms.applications.databeans.ReferenceBean;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
+import org.infoglue.cms.entities.management.InterceptionPointVO;
 import org.infoglue.cms.entities.management.Language;
 import org.infoglue.cms.entities.management.Repository;
 import org.infoglue.cms.entities.management.RepositoryLanguage;
@@ -306,6 +307,53 @@ public class RepositoryController extends BaseController
     {
     	return (RepositoryVO) updateEntity(RepositoryImpl.class, (BaseEntityVO) vo);
     }        
+    
+    /*
+     * 
+     * */
+    public RepositoryVO update(RepositoryVO vo, String interceptionPointName, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
+    {
+    	Map hashMap = new HashMap();
+    	hashMap.put("repositoryId", vo.getRepositoryId());
+    	Database db = CastorDatabaseService.getDatabase();
+        ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
+
+        beginTransaction(db);
+        try
+        {
+			if(interceptionPointName.equals("Repository.UpdateProperties"))
+			{
+				InterceptionPointVO interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName(interceptionPointName, db);
+				if(interceptionPointVO != null)
+				{
+					try
+			    	{
+						intercept(hashMap, interceptionPointName, infoGluePrincipal, db);
+			    	}
+			    	catch(Exception e)
+			    	{
+			    		logger.info("Could not intercept Repository.UpdateProperties:" + e.getMessage());
+			    	}
+				}
+			}
+			ceb.throwIfNotEmpty();
+	        
+	        commitTransaction(db);
+        }
+        catch(ConstraintException ce)
+        {
+            logger.warn("An error occurred so we should not completes the transaction:" + ce, ce);
+            rollbackTransaction(db);
+            throw ce;
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+    	return (RepositoryVO) updateEntity(RepositoryImpl.class, (BaseEntityVO) vo);
+    }   
     
     public RepositoryVO update(RepositoryVO repositoryVO, String[] languageValues) throws ConstraintException, SystemException
     {

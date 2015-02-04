@@ -989,14 +989,16 @@
 			<h3>#if($translate)$ui.getString('tool.contenttool.translationViewLabel') #else $ui.getString('tool.contenttool.editingViewLabel') #end $ui.getString('tool.contenttool.contentLabel') "$contentVO.name" - $currentLanguageVO.name</h3>
 			#if($contentVersionVO)
 			   	<p>$ui.getString("tool.contenttool.versionLastUpdatedByLabel") $contentVersionVO.versionModifier ($formatter.formatDate($contentVersionVO.modifiedDateTime, "yyyy-MM-dd HH:mm") - $contentVersionVO.versionComment)</p>
-		   	#end
+		   	#else
+				<p>$ui.getString('tool.contenttool.createVersionFirst')</p>
+			#end
 		#end
 		</div>
 	</div>
 
 	<div id="allDivs">
 	
-	<div id="tabsContainer" class="cleanTopDiv" style="#if($translate == false)width: 100%;#else width: 550px; #end float:left;">
+	<div id="tabsContainer" class="cleanTopDiv" style="#if($translate == false)width: 100%;#else width: 550px; #end float:left; #if(!$contentVersionVO)display:none; #end">
 	<ul>
 		<li><a href="#contentVersionDiv"><span>#if($isMetainfoContent == false)$ui.getString('tool.contenttool.textContentTab')#else Metadata#end</span></a></li>
 

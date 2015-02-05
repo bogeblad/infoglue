@@ -296,10 +296,11 @@
 			var languageId = $(select).val();
 				
 			attributeName = document.editForm.attributeName.value;
+			saveAndExitURL = document.editForm.saveAndExitURL.value;
 			
 			if ((!getDirty() && !checkWYSIWYGDirty()) || confirm('$ui.getString("tool.contenttool.languageVersionChangeWarning")'))
 			{
-				window.location.href="ViewContentVersion!standalone.action?contentId=" + contentId + "&languageId=" + languageId + "&attributeName=" + attributeName;
+				window.location.href="ViewContentVersion!standalone.action?contentId=" + contentId + "&languageId=" + languageId + "&attributeName=" + attributeName + "&saveAndExitURL=" + saveAndExitURL;
 			}
 			else
 			{

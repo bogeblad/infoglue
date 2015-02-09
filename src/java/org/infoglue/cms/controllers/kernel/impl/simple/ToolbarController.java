@@ -1145,8 +1145,12 @@ public class ToolbarController implements ToolbarProvider
 		}
 		
 		SiteNodeVO rootSiteNodeVO = SiteNodeController.getController().getRootSiteNodeVO(contentVO.getRepositoryId());
-		buttons.add(StructureToolbarController.getPreviewButtons(contentVO.getRepositoryId(), rootSiteNodeVO.getId(), null, locale));
-
+		
+		ToolbarButton previewButton = StructureToolbarController.getPreviewButtons(contentVO.getRepositoryId(), rootSiteNodeVO.getId(), null, locale);
+		previewButton.getSubButtons().add(StructureToolbarController.getPreviewMediumScreenButtons(contentVO.getRepositoryId(), rootSiteNodeVO.getId(), null, locale));
+		previewButton.getSubButtons().add(StructureToolbarController.getPreviewSmallScreenButtons(contentVO.getRepositoryId(), rootSiteNodeVO.getId(), null, locale));
+		buttons.add(previewButton);
+		
 		ToolbarButton publishButton = new ToolbarButton("",
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.publishContentLabel"), 
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.publishContentTitle"),
@@ -2013,8 +2017,10 @@ public class ToolbarController implements ToolbarProvider
 			ToolbarButton pageDetailSimpleButton = StructureToolbarController.getPageDetailSimpleButtons(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale, principal);
 			pageMetaDataButton.getSubButtons().add(pageDetailSimpleButton);
 		}*/
-		
-		buttons.add(StructureToolbarController.getPreviewButtons(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), null, locale));
+		ToolbarButton previewButton = StructureToolbarController.getPreviewButtons(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), null, locale);
+		previewButton.getSubButtons().add(StructureToolbarController.getPreviewMediumScreenButtons(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), null, locale));
+		previewButton.getSubButtons().add(StructureToolbarController.getPreviewSmallScreenButtons(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), null, locale));
+		buttons.add(previewButton);
 
 		ToolbarButton publishButton = StructureToolbarController.getPublishCurrentNodeButton(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale);
 		ToolbarButton publishStructureButton = StructureToolbarController.getPublishButtons(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale);

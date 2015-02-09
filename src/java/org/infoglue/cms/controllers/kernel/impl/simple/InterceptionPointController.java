@@ -103,6 +103,7 @@ public class InterceptionPointController extends BaseController
 	    systemInterceptionPoints.put("ContentVersionEditor.References", new InterceptionPointVO("ContentVersionEditor", "ContentVersionEditor.References", "Intercepts the tab references", false));
 	    systemInterceptionPoints.put("ContentVersionEditor.AccessRights", new InterceptionPointVO("ContentVersionEditor", "ContentVersionEditor.AccessRights", "Intercepts the tabs for access rights", false));
 	    
+	    systemInterceptionPoints.put("Repository.UpdateProperties", new InterceptionPointVO("Repository", "Repository.UpdateProperties", "Triggered by the update action when updating repository properties", false));
 	    systemInterceptionPoints.put("Repository.Read", new InterceptionPointVO("Repository", "Repository.Read", "Gives a user access to look at a repository", true));
 	    systemInterceptionPoints.put("Repository.Write", new InterceptionPointVO("Repository", "Repository.Write", "Gives a user possible access to write in the repository", true));
 	    systemInterceptionPoints.put("Repository.ReadForBinding", new InterceptionPointVO("Repository", "Repository.ReadForBinding", "This point intercepts when a user tries to read the repository in a binding dialog", true));
@@ -384,7 +385,7 @@ public class InterceptionPointController extends BaseController
 		String cacheName = "interceptionPointCache";
 	    String key = "" + interceptorPointName;
 		//logger.info("key:" + key);
-		
+
 		InterceptionPointVO interceptionPointVO = null;
 		
 	    Object object = CacheController.getCachedObject(cacheName, key);

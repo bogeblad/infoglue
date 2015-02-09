@@ -409,8 +409,6 @@ public class LuceneController extends BaseController implements NotificationList
 
 	private void registerIndexAllProcessOngoing(Integer lastCommitedContentVersionId, Integer lastCommitedSiteNodeVersionId, Integer languageId) throws Exception
 	{
-		//M�ste skrivas om f�r att uppdatera b�ttre....
-		
 		//Document doc = new Document();
 		IndexWriter writer = getIndexWriter();
 
@@ -836,7 +834,7 @@ public class LuceneController extends BaseController implements NotificationList
 			if(qeuedMessages.size() == 1000)
 			{
 				logger.warn("qeuedMessages went over 1000 - seems wrong");
-				Thread.dumpStack();
+				//Thread.dumpStack();
 			}
 				
 			synchronized (qeuedMessages)
@@ -939,19 +937,21 @@ public class LuceneController extends BaseController implements NotificationList
 					if(ctdVO != null && ctdVO.getName().equals("Meta info"))
 					{
 						SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(contentVO.getContentId());
-						NotificationMessage newNotificationMessage = new NotificationMessage("" + siteNodeVO.getName(), SiteNodeImpl.class.getName(), "SYSTEM", notificationMessage.getType(), siteNodeVO.getId(), "" + siteNodeVO.getName());
-						String key = "" + newNotificationMessage.getClassName() + "_" + newNotificationMessage.getObjectId() + "_"  + "_" + newNotificationMessage.getType();
-						if(!existingSignatures.contains(key))
+						if(siteNodeVO != null && notificationMessage != null)
 						{
-							logger.info("++++++++++++++Got an META PAGE notification - just adding it AS A PAGE instead: " + newNotificationMessage.getObjectId());								
-							baseEntitiesToIndexMessageList.add(newNotificationMessage);
-							existingSignatures.add(key);
+							NotificationMessage newNotificationMessage = new NotificationMessage("" + siteNodeVO.getName(), SiteNodeImpl.class.getName(), "SYSTEM", notificationMessage.getType(), siteNodeVO.getId(), "" + siteNodeVO.getName());
+							String key = "" + newNotificationMessage.getClassName() + "_" + newNotificationMessage.getObjectId() + "_"  + "_" + newNotificationMessage.getType();
+							if(!existingSignatures.contains(key))
+							{
+								logger.info("++++++++++++++Got an META PAGE notification - just adding it AS A PAGE instead: " + newNotificationMessage.getObjectId());								
+								baseEntitiesToIndexMessageList.add(newNotificationMessage);
+								existingSignatures.add(key);
+							}
+							else
+							{
+								logger.info("++++++++++++++Skipping Content notification - duplicate existed: " + notificationMessage.getObjectId());
+							}
 						}
-						else
-						{
-							logger.info("++++++++++++++Skipping Content notification - duplicate existed: " + notificationMessage.getObjectId());
-						}
-
 					}
 					else
 					{
@@ -1857,7 +1857,6 @@ public class LuceneController extends BaseController implements NotificationList
 			//Deleting all info based on content
 			Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_34);
 			logger.info("Deleting all info on:" + siteNodeId);
-			//TODO - Fixa s inte assets tas med hr....
 		    Query query = new QueryParser(Version.LUCENE_34, "siteNodeId", analyzer).parse("" + siteNodeId); 
 			writer.deleteDocuments(query);
 			//End
@@ -1878,7 +1877,6 @@ public class LuceneController extends BaseController implements NotificationList
 			//Deleting all info based on content
 			Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_34);
 			logger.info("Deleting all info on:" + contentId);
-			//TODO - Fixa s inte assets tas med hr....
 			
 			String[] fields = new String[]{"isAsset","contentId"};
 			String[] queries = new String[]{"true","" + contentId};

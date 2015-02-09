@@ -2016,7 +2016,17 @@ public class ContentController extends BaseController
 				rootContentVO.setCreatorName(userName);
 				rootContentVO.setName(repositoryVO.getName());
 				rootContentVO.setIsBranch(new Boolean(true));
-				contentVO = create(db, null, null, repositoryId, rootContentVO).getValueObject();
+				
+				Map args = new HashMap();
+			    args.put("globalKey", "infoglue");
+			    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
+
+			    String defaultFolderContentTypeName = ps.getString("repository_" + repositoryId + "_defaultFolderContentTypeName");
+				if(defaultFolderContentTypeName == null || defaultFolderContentTypeName.equals(""))
+					defaultFolderContentTypeName = "Folder";
+				ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(defaultFolderContentTypeName, db);
+				
+				contentVO = create(db, null, (ctdVO == null ? null : ctdVO.getId()), repositoryId, rootContentVO).getValueObject();
 			}
 		}
 		
@@ -2059,7 +2069,17 @@ public class ContentController extends BaseController
 				rootContentVO.setCreatorName(userName);
 				rootContentVO.setName(repositoryVO.getName());
 				rootContentVO.setIsBranch(new Boolean(true));
-				content = create(db, null, null, repositoryId, rootContentVO);
+				
+				Map args = new HashMap();
+			    args.put("globalKey", "infoglue");
+			    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
+
+			    String defaultFolderContentTypeName = ps.getString("repository_" + repositoryId + "_defaultFolderContentTypeName");
+				if(defaultFolderContentTypeName == null || defaultFolderContentTypeName.equals(""))
+					defaultFolderContentTypeName = "Folder";
+				ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(defaultFolderContentTypeName, db);
+
+				content = create(db, null, (ctdVO == null ? null : ctdVO.getId()), repositoryId, rootContentVO);
 			}
 		}
 		
@@ -2893,7 +2913,17 @@ public class ContentController extends BaseController
 					contentVO.setIsBranch(Boolean.TRUE);
 					contentVO.setCreatorName(creator.getName());
 					contentVO.setName(name);
-					Content newContent = create(db, content.getId(), null, repositoryId, contentVO);
+
+					Map args = new HashMap();
+				    args.put("globalKey", "infoglue");
+				    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
+
+				    String defaultFolderContentTypeName = ps.getString("repository_" + repositoryId + "_defaultFolderContentTypeName");
+					if(defaultFolderContentTypeName == null || defaultFolderContentTypeName.equals(""))
+						defaultFolderContentTypeName = "Folder";
+					ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(defaultFolderContentTypeName, db);
+
+					Content newContent = create(db, content.getId(), (ctdVO == null ? null : ctdVO.getId()), repositoryId, contentVO);
 					if(newContent != null)
 						content = newContent.getValueObject();
 				}
@@ -4277,5 +4307,23 @@ public class ContentController extends BaseController
 		psmt.close();
 
 		return sizes;		
+	}
+	
+	public void copyContentProperties(PropertySet ps, Integer contentId, Integer destinationContentId) throws Exception
+	{
+		if ( ps.exists("content_" + contentId + "_allowedContentTypeNames" ) )
+	    {
+			String allowedContentTypeNames = ps.getString("content_" + contentId + "_allowedContentTypeNames");
+		    if(allowedContentTypeNames != null)
+		    	ps.setString("content_" + destinationContentId + "_allowedContentTypeNames", allowedContentTypeNames);
+        }
+		
+		String defaultContentTypeName 	= ps.getString("content_" + contentId + "_defaultContentTypeName");
+	    if(defaultContentTypeName != null)
+	    	ps.setString("content_" + destinationContentId + "_defaultContentTypeName", defaultContentTypeName);
+
+	    String initialLanguageId		= ps.getString("content_" + contentId + "_initialLanguageId");
+	    if(initialLanguageId != null)
+	    	ps.setString("content_" + destinationContentId + "_initialLanguageId", initialLanguageId);
 	}
 }

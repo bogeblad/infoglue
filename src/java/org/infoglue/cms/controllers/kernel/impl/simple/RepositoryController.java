@@ -26,6 +26,7 @@ package org.infoglue.cms.controllers.kernel.impl.simple;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,8 @@ import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.NullObject;
 import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Timer;
+
+import com.opensymphony.module.propertyset.PropertySet;
 
 public class RepositoryController extends BaseController
 {
@@ -811,7 +814,52 @@ public class RepositoryController extends BaseController
 
 	    return hasAccess;
 	}	
+
+	public void copyRepositoryProperties(PropertySet ps, Integer repositoryId, Integer destinationRepositoryId) throws Exception
+	{
+		Hashtable<String, String> hashTable = RepositoryController.getController().getRepositoryProperties(ps, repositoryId);
+		
+	    if(hashTable.get("WYSIWYGConfig") != null)
+	    	ps.setData("repository_" + destinationRepositoryId + "_WYSIWYGConfig", hashTable.get("WYSIWYGConfig").getBytes("utf-8"));
+	    if(hashTable.get("stylesXML") != null)
+		    ps.setData("repository_" + destinationRepositoryId + "_StylesXML", hashTable.get("stylesXML").getBytes("utf-8"));
+	    if(hashTable.get("extraProperties") != null)
+		    ps.setData("repository_" + destinationRepositoryId + "_extraProperties", hashTable.get("extraProperties").getBytes("utf-8"));
+	    if(hashTable.get("defaultFolderContentTypeName") != null)
+		    ps.setString("repository_" + destinationRepositoryId + "_defaultFolderContentTypeName", hashTable.get("defaultFolderContentTypeName"));
+	    if(hashTable.get("defaultTemplateRepository") != null)
+		    ps.setString("repository_" + destinationRepositoryId + "_defaultTemplateRepository", hashTable.get("defaultTemplateRepository"));
+	    if(hashTable.get("parentRepository") != null)
+		    ps.setString("repository_" + destinationRepositoryId + "_parentRepository", hashTable.get("parentRepository"));
+	}
+
 	
+	public Hashtable<String,String> getRepositoryProperties(PropertySet ps, Integer repositoryId) throws Exception
+	{
+		Hashtable<String,String> properties = new Hashtable<String,String>();
+			    
+	    byte[] WYSIWYGConfigBytes = ps.getData("repository_" + repositoryId + "_WYSIWYGConfig");
+	    if(WYSIWYGConfigBytes != null)
+	    	properties.put("WYSIWYGConfig", new String(WYSIWYGConfigBytes, "utf-8"));
+
+	    byte[] StylesXMLBytes = ps.getData("repository_" + repositoryId + "_StylesXML");
+	    if(StylesXMLBytes != null)
+	    	properties.put("StylesXML", new String(StylesXMLBytes, "utf-8"));
+
+	    byte[] extraPropertiesBytes = ps.getData("repository_" + repositoryId + "_extraProperties");
+	    if(extraPropertiesBytes != null)
+	    	properties.put("extraProperties", new String(extraPropertiesBytes, "utf-8"));
+	    
+	    if(ps.exists("repository_" + repositoryId + "_defaultFolderContentTypeName"))
+	    	properties.put("defaultFolderContentTypeName", "" + ps.getString("repository_" + repositoryId + "_defaultFolderContentTypeName"));
+	    if(ps.exists("repository_" + repositoryId + "_defaultTemplateRepository"))
+		    properties.put("defaultTemplateRepository", "" + ps.getString("repository_" + repositoryId + "_defaultTemplateRepository"));
+	    if(ps.exists("repository_" + repositoryId + "_parentRepository"))
+		    properties.put("parentRepository", "" + ps.getString("repository_" + repositoryId + "_parentRepository"));
+
+		return properties;
+	}
+
 	
 	/**
 	 * This is a method that gives the user back an newly initialized ValueObject for this entity that the controller

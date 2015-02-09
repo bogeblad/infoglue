@@ -24,6 +24,7 @@
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import java.io.ByteArrayInputStream;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -42,6 +43,9 @@ import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
+
+import com.opensymphony.module.propertyset.PropertySet;
+import com.opensymphony.module.propertyset.PropertySetManager;
 
 /**
 * This class handles Importing copying of a repository - by processing it as a thread in a process bean.
@@ -154,6 +158,13 @@ public class CopyRepositoryController extends BaseController implements Runnable
 				String exportId = "Copy_Repository_" + visualFormatter.formatDate(new Date(), "yyyy-MM-dd_HHmm");
 				ProcessBean processBean = ProcessBean.createProcessBean(ImportRepositoryAction.class.getName(), exportId);
 		
+				Map args = new HashMap();
+			    args.put("globalKey", "infoglue");
+			    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
+				Collection keys = ps.getKeys();
+				logger.info("keys:" + keys.size());
+				processBean.updateProcess("Propertyset fetched...");
+				
 				RepositoryVO repository = RepositoryController.getController().getRepositoryVOWithId(new Integer(repositoryIds[0]));
 				
 				RepositoryVO repositoryVO = new RepositoryVO();
@@ -181,10 +192,22 @@ public class CopyRepositoryController extends BaseController implements Runnable
 				db.commit();
 				db.begin();
 				
-				SiteNodeController.getController().copyRepository(repository, repo, this.principal, onlyLatestVersions, standardReplacement, replaceMap, processBean, db);
+				RepositoryController.getController().copyRepositoryProperties(ps, repository.getId(), repo.getId());
+				processBean.updateProcess("Copied repository properties...");
+
+				db.commit();
+				db.begin();
+				
+				SiteNodeController.getController().copyRepository(repository, repo, this.principal, onlyLatestVersions, standardReplacement, replaceMap, processBean, db, ps);
 				
 				db.commit();
-				
+				processBean.updateProcess("Creating index registry...");
+				Thread.sleep(1000);
+
+				db.begin();
+				RegistryController.getController().rebuildRepositoryRegistry(db, repo.getId());
+				db.commit();
+
 				processBean.setStatus(processBean.FINISHED);
 			} 
 			catch ( Exception e) 

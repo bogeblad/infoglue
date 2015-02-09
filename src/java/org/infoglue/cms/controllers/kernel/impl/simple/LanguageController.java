@@ -493,7 +493,7 @@ public class LanguageController extends BaseController
         return languageVOList;
     }
     
-    public List<LanguageVO> getLanguageVOList(Integer repositoryId, Database db) throws ConstraintException, SystemException
+    public List<LanguageVO> getLanguageVOList(Integer repositoryId, Database db) throws Exception
     {
 		String key = "" + repositoryId + "_allLanguages";
 		logger.info("key:" + key);
@@ -503,8 +503,11 @@ public class LanguageController extends BaseController
 			return list;
 		}
 
+		//This API is less lock prone..
+		List<LanguageVO> languageVOList = RepositoryLanguageController.getController().getLanguageVOListForRepositoryId(repositoryId, db);
+		/*
 		List<LanguageVO> languageVOList = new ArrayList<LanguageVO>();
-
+		
 		Repository repository = RepositoryController.getController().getRepositoryWithId(repositoryId, db);
 		Collection<RepositoryLanguage> repositoryLanguageList = repository.getRepositoryLanguages();
 		Iterator<RepositoryLanguage> repositoryLanguageIterator = repositoryLanguageList.iterator();
@@ -513,7 +516,8 @@ public class LanguageController extends BaseController
 			RepositoryLanguage repositoryLanguage = repositoryLanguageIterator.next();
 			languageVOList.add(repositoryLanguage.getLanguage().getValueObject());
 		}
-
+		*/
+		
     	if(languageVOList != null)
     		CacheController.cacheObject("languageCache", key, languageVOList);
 
@@ -562,7 +566,8 @@ public class LanguageController extends BaseController
 	        
         return list;
     } 
-	
+
+	/* A very ineffective way to get languageList
 	private List<Language> getLanguageList(Integer repositoryId, Database db) throws ConstraintException, SystemException
 	{
 		List<Language> languageList = new ArrayList<Language>();
@@ -578,6 +583,7 @@ public class LanguageController extends BaseController
 
 		return languageList;
 	}
+	*/
 
     public List getLanguageList(Database db) throws SystemException, Bug
     {

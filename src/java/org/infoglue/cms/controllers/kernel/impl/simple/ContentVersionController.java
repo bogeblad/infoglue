@@ -1384,7 +1384,6 @@ public class ContentVersionController extends BaseController
     
     public MediumContentVersionImpl createMedium(MediumContentVersionImpl oldContentVersion, Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, Integer oldContentVersionId, boolean hasAssets, boolean allowBrokenAssets, boolean duplicateAssets, Integer excludedAssetId, Database db) throws ConstraintException, SystemException, Exception
     {
-    	//Beh�vs verkligen content h�r? M�t tiderna ocks�
     	Timer t = new Timer();		
     	MediumContentVersionImpl contentVersion = new MediumContentVersionImpl();
 		contentVersion.setValueObject(contentVersionVO);
@@ -4224,10 +4223,43 @@ public class ContentVersionController extends BaseController
 	
 	public SmallestContentVersionVO getLatestContentVersionVOByContentIds(Set<String> contentIds, Database db) throws SystemException, Bug, Exception
     {
+		SmallestContentVersionVO latestContentVersion = null;
+		
+		List<String> contentIdsSubList = new ArrayList<String>();
+		contentIdsSubList.addAll(contentIds);
+
+    	int slotSize = 700;
+    	if(contentIdsSubList.size() > 0)
+    	{
+    		List<String> subList = new ArrayList<String>(contentIdsSubList);
+    		if(contentIdsSubList.size() > slotSize)
+    			subList = contentIdsSubList.subList(0, slotSize);
+	    	while(subList != null && subList.size() > 0)
+	    	{
+	    		
+	    		SmallestContentVersionVO latestContentVersionCandidate = getLatestContentVersionVOByContentIdsImpl(subList, db);
+	    		if(latestContentVersion == null || latestContentVersion.getModifiedDateTime().getTime() < latestContentVersionCandidate.getModifiedDateTime().getTime())
+	    		{
+	    			latestContentVersion = latestContentVersionCandidate;
+		    	}
+	    			
+	    		contentIdsSubList = contentIdsSubList.subList(subList.size(), contentIdsSubList.size());
+	    	
+	    		subList = new ArrayList(contentIdsSubList);
+	    		if(contentIdsSubList.size() > slotSize)
+	    			subList = contentIdsSubList.subList(0, slotSize);
+	    	}
+    	}
+		
+		return latestContentVersion;
+	}
+	
+	public SmallestContentVersionVO getLatestContentVersionVOByContentIdsImpl(List<String> contentIds, Database db) throws SystemException, Bug, Exception
+    {
 		Timer t = new Timer();
 		if(contentIds == null || contentIds.size() == 0)
 			return null;
-		
+
 		SmallestContentVersionVO result = null;
 		
 		StringBuilder variables = new StringBuilder();
@@ -4243,9 +4275,6 @@ public class ContentVersionController extends BaseController
 	    	}
 	    }
 		
-	    //System.out.println("variables:" + variables);
-	    //System.out.println("variables:" + variables);
-
 	    String SQL = "select cv.contentVersionId, cv.stateId, cv.modifiedDateTime, cv.versionComment, cv.isCheckedOut, cv.isActive, cv.contentId, cv.languageId, cv.versionModifier FROM cmContentVersion cv where cv.contentId IN (" + variables + ") AND cv.stateId >= " + CmsPropertyHandler.getOperatingMode() + " ORDER BY cv.modifiedDateTime DESC";
 	    if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
 	    	SQL = "select cv.contVerId, cv.stateId, cv.modifiedDateTime, cv.verComment, cv.isCheckedOut, cv.isActive, cv.contId, cv.languageId, cv.versionModifier FROM cmContVer cv where cv.contId IN (" + variables + ") AND cv.stateId >= " + CmsPropertyHandler.getOperatingMode() + " ORDER BY cv.modifiedDateTime DESC";

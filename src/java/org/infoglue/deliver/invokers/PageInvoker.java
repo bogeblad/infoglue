@@ -512,6 +512,8 @@ public abstract class PageInvoker
 		logger.info("useContentLookup:" + useContentLookup);
 		logger.info("UsedContentVersions:" + this.deliveryContext.getUsedContentVersions().size());
 		logger.info("UsedContents:" + this.deliveryContext.getUsedContents().size());
+		if(this.deliveryContext.getUsedContents().size() > 1000 && CmsPropertyHandler.getOperatingMode().equals("0"))
+			logger.warn("The page " + this.deliveryContext.getSiteNodeId() + "(" + this.deliveryContext.getOriginalFullURL() + ") has unhealthy number of relations");
 		Timer t = new Timer();
 		if(this.deliveryContext.getUsedContentVersions().size() > 0 || (useContentLookup && this.deliveryContext.getUsedContents().size() > 0))
 		{

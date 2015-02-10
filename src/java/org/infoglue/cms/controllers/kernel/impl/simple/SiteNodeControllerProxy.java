@@ -204,7 +204,7 @@ public class SiteNodeControllerProxy extends SiteNodeController
 		boolean doesObjectExist = SiteNodeController.getController().getDoesSiteNodeExist(siteNodeVO.getId());
 		if(!doesObjectExist)
 		{
-			System.out.println("The page: " + siteNodeVO.getName() + " was allready deleted. Why?");
+			//logger.info("The page: " + siteNodeVO.getName() + " was allready deleted. Why?");
 			return;
 		}
 

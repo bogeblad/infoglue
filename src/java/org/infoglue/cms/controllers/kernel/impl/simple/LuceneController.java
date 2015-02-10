@@ -1041,20 +1041,27 @@ public class LuceneController extends BaseController implements NotificationList
 					if(notificationMessage.getClassName().equals(SiteNodeVersionImpl.class.getName()) || notificationMessage.getClassName().equals(SiteNodeVersion.class.getName()))
 					{
 						logger.info("PPPPPPPPPPPPPPPPPPPPPPPPPP:" + notificationMessage.getObjectId());
-						SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId((Integer)notificationMessage.getObjectId());
-						SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersionVO.getSiteNodeId());
-						NotificationMessage newNotificationMessage = new NotificationMessage("" + siteNodeVO.getName(), SiteNodeImpl.class.getName(), "SYSTEM", notificationMessage.getType(), siteNodeVO.getId(), "" + siteNodeVO.getName());
-						key = "" + newNotificationMessage.getClassName() + "_" + newNotificationMessage.getObjectId() + "_" + newNotificationMessage.getType();
-					
-						if(!existingSignatures.contains(key))
+						try
 						{
-							logger.info("++++++++++++++Got an SiteNodeVersionImpl notification - just adding it as SiteNodeImpl: " + newNotificationMessage.getClassName() + ":" + newNotificationMessage.getObjectId());
-							baseEntitiesToIndexMessageList.add(newNotificationMessage);
-							existingSignatures.add(key);
+							SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId((Integer)notificationMessage.getObjectId());
+							SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersionVO.getSiteNodeId());
+							NotificationMessage newNotificationMessage = new NotificationMessage("" + siteNodeVO.getName(), SiteNodeImpl.class.getName(), "SYSTEM", notificationMessage.getType(), siteNodeVO.getId(), "" + siteNodeVO.getName());
+							key = "" + newNotificationMessage.getClassName() + "_" + newNotificationMessage.getObjectId() + "_" + newNotificationMessage.getType();
+						
+							if(!existingSignatures.contains(key))
+							{
+								logger.info("++++++++++++++Got an SiteNodeVersionImpl notification - just adding it as SiteNodeImpl: " + newNotificationMessage.getClassName() + ":" + newNotificationMessage.getObjectId());
+								baseEntitiesToIndexMessageList.add(newNotificationMessage);
+								existingSignatures.add(key);
+							}
+							else
+							{
+								logger.info("++++++++++++++Skipping notification - duplicate existed: " + notificationMessage.getClassName() + ":" + notificationMessage.getObjectId());
+							}
 						}
-						else
+						catch(Exception e)
 						{
-							logger.info("++++++++++++++Skipping notification - duplicate existed: " + notificationMessage.getClassName() + ":" + notificationMessage.getObjectId());
+							logger.warn("Got an error handling SiteNodeVersion with ID: " + notificationMessage.getObjectId() + ":" + e.getMessage());
 						}
 					}
 					else if(notificationMessage.getClassName().equals(SiteNodeImpl.class.getName()) || notificationMessage.getClassName().equals(SiteNode.class.getName()))

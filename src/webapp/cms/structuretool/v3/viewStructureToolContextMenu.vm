@@ -44,7 +44,11 @@
 
 	//Event listener for copy option
 	$("#contextMenuDiv #copy").click(function () { 
+		#if(!$sortLanguageId || $sortLanguageId == -1)
     	openInlineDiv("CopyMultipleSiteNodes!input.action?siteNodeId=$siteNodeId&repositoryId=$repositoryId&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 600, 800, true, true, "Copy page"); 
+		#else
+    	openInlineDiv("CopyMultipleSiteNodes!input.action?siteNodeId=$siteNodeId&repositoryId=$repositoryId&sortLanguageId=$sortLanguageId&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 600, 800, true, true, "Copy page"); 
+		#end
 		});
 
 	//Event listener for properties option

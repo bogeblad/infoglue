@@ -463,23 +463,30 @@ public class RegistryController extends BaseController
 	    
 	    if(ctd != null && ctd.getName().equalsIgnoreCase("Meta info"))
 	    {
-	        logger.info("It was a meta info so lets check it for other stuff as well");
+	    	logger.info("It was a meta info so lets check it for other stuff as well");
 
 	        SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(db, oldContentVO.getContentId());
 //	        SiteNodeVersion siteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersion(db, siteNodeVO.getId());
 	        if(siteNodeVO != null)
 	        {
-		        SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, siteNodeVO.getId());
-		        //SiteNodeVersion siteNodeVersion = getLatestActiveSiteNodeVersionWhichUsesContentVersionAsMetaInfo(oldContentVersion, db);
-			    if(siteNodeVersionVO != null)
-			    {
-			        logger.info("Going to use " + siteNodeVersionVO.getId() + " as reference");
-			        clearRegistryVOList(SiteNodeVersion.class.getName(), siteNodeVersionVO.getId().toString(), db);
-	
-				    getComponents(siteNodeVersionVO, versionValue, db);
-				    getComponentBindings(siteNodeVersionVO, versionValue, db);
-				    getPageBindings(siteNodeVersionVO, db);
-			    }
+	        	LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId(), db);
+	        	if(contentVersion.getLanguageId().equals(masterLanguageVO.getId()))
+	        	{
+	        		logger.info("It was master language - we will clear registry and reindex: " + contentVersion.getId());
+		        	SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, siteNodeVO.getId());
+			        //SiteNodeVersion siteNodeVersion = getLatestActiveSiteNodeVersionWhichUsesContentVersionAsMetaInfo(oldContentVersion, db);
+				    if(siteNodeVersionVO != null)
+				    {
+				        logger.info("Going to use " + siteNodeVersionVO.getId() + " as reference");
+				        clearRegistryVOList(SiteNodeVersion.class.getName(), siteNodeVersionVO.getId().toString(), db);
+		
+					    getComponents(siteNodeVersionVO, versionValue, db);
+					    getComponentBindings(siteNodeVersionVO, versionValue, db);
+					    getPageBindings(siteNodeVersionVO, db);
+				    }
+	        	}
+	        	else
+	        		logger.info("It was NOT master language - we will NOT clear registry and reindex: " + contentVersion.getId());
 		    }
 
 		    getInlineSiteNodes(oldContentVersion, versionValue, db);

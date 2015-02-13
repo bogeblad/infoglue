@@ -680,6 +680,11 @@ public class ToolbarController implements ToolbarProvider
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		
+		if(request.getParameter("contentId") == null)
+		{
+			logger.warn("A request was made to getContentButtons but without contentId: " + request.getRequestURI() + ":" + request.getQueryString());
+			return buttons;
+		}
 		Integer contentId = new Integer(request.getParameter("contentId"));
 		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId);
 		

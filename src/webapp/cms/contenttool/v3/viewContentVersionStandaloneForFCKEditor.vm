@@ -987,7 +987,7 @@
 				<h3>$ui.getString("tool.structuretool.pageProperties.header", $localizedContentName)</h3>
 			   	<p>$ui.getString("tool.contenttool.versionLastUpdatedByLabel") $contentVersionVO.versionModifier ($formatter.formatDate($contentVersionVO.modifiedDateTime, "yyyy-MM-dd HH:mm") - $contentVersionVO.versionComment)</p>
 		   	#else
-				<h3>$ui.getString('tool.structuretool.createSiteNodeVersionFirst1')$currentLanguageVO.name $ui.getString('tool.structuretool.createSiteNodeVersionFirst2')<h3>
+				<h3>$ui.getString('tool.structuretool.createSiteNodeVersionFirst', $currentLanguageVO.name)<h3>
 			#end
 		#else
 			<h3>#if($translate)$ui.getString('tool.contenttool.translationViewLabel') #else $ui.getString('tool.contenttool.editingViewLabel') #end $ui.getString('tool.contenttool.contentLabel') "$contentVO.name" - $currentLanguageVO.name</h3>

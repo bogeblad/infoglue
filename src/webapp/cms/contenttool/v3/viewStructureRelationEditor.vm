@@ -375,7 +375,7 @@
 				</tr>	
 				<tr>
 					<td class="menu" style="border: 0px solid #ccc;">    
-						<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!bindingViewV3.action?repositoryId=${repositoryId}" width="350" height="430" align="baseline"></IFRAME>
+						<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!bindingViewV3.action?repositoryId=${repositoryId}&sortLanguageId=$languageId" width="350" height="430" align="baseline"></IFRAME>
 					</td>
 				</tr>	
 				<tr>

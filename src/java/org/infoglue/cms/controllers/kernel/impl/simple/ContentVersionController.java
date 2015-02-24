@@ -654,6 +654,30 @@ public class ContentVersionController extends BaseController
 		return contentVersionVO;
     }
 
+   	/**
+	 * This method returns the latest active content version.
+	 */
+    
+	public ContentVersionVO getLatestActiveContentVersionVOInState(Integer contentId, Integer stateId, Database db) throws SystemException, Bug, Exception
+	{
+		ContentVersionVO contentVersionVO = null;
+    	
+		OQLQuery oql = db.getOQLQuery( "SELECT cv FROM org.infoglue.cms.entities.content.impl.simple.SmallContentVersionImpl cv WHERE cv.contentId = $1 AND cv.stateId = $2 AND cv.isActive = $3 ORDER BY cv.contentVersionId desc");
+    	oql.bind(contentId);
+    	oql.bind(stateId);
+    	oql.bind(true);
+
+    	QueryResults results = oql.execute(Database.READONLY);
+    	
+		if (results.hasMore()) 
+        {
+			ContentVersion contentVersion = (ContentVersion)results.next();
+        	contentVersionVO = contentVersion.getValueObject();
+        }
+		
+		return contentVersionVO;
+    }
+	
 
   	/**
 	 * This method returns the latest active content version.
@@ -789,6 +813,30 @@ public class ContentVersionController extends BaseController
         OQLQuery oql = db.getOQLQuery( "SELECT cv FROM org.infoglue.cms.entities.content.impl.simple.MediumContentVersionImpl cv WHERE cv.contentId = $1 AND cv.languageId = $2 ORDER BY cv.contentVersionId");
     	oql.bind(contentId);
 		oql.bind(languageId);
+    	
+    	QueryResults results = oql.execute();
+		while (results.hasMore()) 
+        {
+			MediumContentVersionImpl contentVersion = (MediumContentVersionImpl)results.next();
+			contentVersionList.add(contentVersion);
+        }
+		
+		results.close();
+		oql.close();
+
+		return contentVersionList;
+	}
+	
+   	/**
+	 * This method returns the latest active content version.
+	 */
+    
+	public List<MediumContentVersionImpl> getMediumContentVersionList(Integer contentId, Database db) throws SystemException, Bug, Exception
+	{
+		List<MediumContentVersionImpl> contentVersionList = new ArrayList<MediumContentVersionImpl>();
+
+        OQLQuery oql = db.getOQLQuery( "SELECT cv FROM org.infoglue.cms.entities.content.impl.simple.MediumContentVersionImpl cv WHERE cv.contentId = $1 ORDER BY cv.contentVersionId");
+    	oql.bind(contentId);
     	
     	QueryResults results = oql.execute();
 		while (results.hasMore()) 
@@ -1488,7 +1536,7 @@ public class ContentVersionController extends BaseController
 	 * other versions or contents reference the same asset.
 	 */
 	
-	public void deleteVersionsForContent(Content content, Database db, InfoGluePrincipal principal) throws ConstraintException, SystemException, Bug, Exception
+	public void deleteVersionsForContent(ContentVO content, Database db, InfoGluePrincipal principal) throws ConstraintException, SystemException, Bug, Exception
     {
 	    deleteVersionsForContent(content, db, false, principal);
     }
@@ -1499,12 +1547,11 @@ public class ContentVersionController extends BaseController
 	 * other versions or contents reference the same asset.
 	 */
 	
-	public void deleteVersionsForContent(Content content, Database db, boolean forceDelete, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Bug, Exception
+	public void deleteVersionsForContent(ContentVO contentVO, Database db, boolean forceDelete, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Bug, Exception
     {
-    	//TEST
         if(forceDelete)
         {
-	        List contentVersionsVOList = ContentVersionController.getContentVersionController().getPublishedActiveContentVersionVOList(content.getContentId(), db);
+	        List contentVersionsVOList = ContentVersionController.getContentVersionController().getPublishedActiveContentVersionVOList(contentVO.getContentId(), db);
 	        
 	        List events = new ArrayList();
 			Iterator it = contentVersionsVOList.iterator();
@@ -1518,7 +1565,7 @@ public class ContentVersionController extends BaseController
 				eventVO.setEntityId(contentVersionVO.getContentVersionId());
 				eventVO.setName(contentVersionVO.getContentName() + "(" + contentVersionVO.getLanguageName() + ")");
 				eventVO.setTypeId(EventVO.UNPUBLISH_LATEST);
-				eventVO = EventController.create(eventVO, content.getRepositoryId(), infogluePrincipal);
+				eventVO = EventController.create(eventVO, contentVO.getRepositoryId(), infogluePrincipal);
 				events.add(eventVO);
 			}
 		
@@ -1526,32 +1573,21 @@ public class ContentVersionController extends BaseController
 		    publicationVO.setName("Direct publication by " + infogluePrincipal.getName());
 		    publicationVO.setDescription("Unpublished all versions before forced deletion");
 		    //publicationVO.setPublisher(this.getInfoGluePrincipal().getName());
-		    publicationVO.setRepositoryId(content.getRepositoryId());
+		    publicationVO.setRepositoryId(contentVO.getRepositoryId());
 		    publicationVO = PublicationController.getController().createAndPublish(publicationVO, events, true, infogluePrincipal, db, true);
         }
         //TEST
 
-        Collection contentVersions = Collections.synchronizedCollection(content.getContentVersions());
-       	Iterator contentVersionIterator = contentVersions.iterator();
-			
-		while (contentVersionIterator.hasNext()) 
+        List<MediumContentVersionImpl> versions = getMediumContentVersionList(contentVO.getId(), db);
+        for(MediumContentVersionImpl version : versions)
         {
-        	ContentVersion contentVersion = (ContentVersion)contentVersionIterator.next();
-        	        
-        	Collection digitalAssetList = contentVersion.getDigitalAssets();
-			Iterator assets = digitalAssetList.iterator();
-			while (assets.hasNext()) 
-            {
-            	DigitalAsset digitalAsset = (DigitalAsset)assets.next();
-				assets.remove();
-				db.remove(digitalAsset);
+        	Collection<MediumDigitalAssetImpl> digitalAssetList = (Collection<MediumDigitalAssetImpl>)version.getDigitalAssets();
+			for(MediumDigitalAssetImpl asset : digitalAssetList)
+        	{
+				db.remove(asset);
 			}
-			
-        	logger.info("Deleting contentVersion:" + contentVersion.getContentVersionId());
-        	contentVersionIterator.remove();
-        	delete(contentVersion, db, forceDelete);
+        	delete(version, db, forceDelete);
         }
-        content.setContentVersions(new ArrayList());
     }
 
 	/**

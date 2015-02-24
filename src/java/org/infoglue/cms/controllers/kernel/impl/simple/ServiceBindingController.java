@@ -43,6 +43,7 @@ import org.infoglue.cms.entities.structure.Qualifyer;
 import org.infoglue.cms.entities.structure.ServiceBinding;
 import org.infoglue.cms.entities.structure.ServiceBindingVO;
 import org.infoglue.cms.entities.structure.SiteNode;
+import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.entities.structure.impl.simple.ServiceBindingImpl;
@@ -430,11 +431,11 @@ public class ServiceBindingController extends BaseController
 	 * This method deletes all service bindings pointing to a content.
 	 */
 
-	public static void deleteServiceBindingsReferencingSiteNode(SiteNode siteNode, Database db) throws ConstraintException, SystemException, Exception
+	public static void deleteServiceBindingsReferencingSiteNode(SiteNodeVO siteNodeVO, Database db) throws ConstraintException, SystemException, Exception
 	{		
 		OQLQuery oql = db.getOQLQuery( "SELECT sb FROM org.infoglue.cms.entities.structure.impl.simple.ServiceBindingImpl sb WHERE sb.bindingQualifyers.name = $1 AND sb.bindingQualifyers.value = $2 ORDER BY sb.serviceBindingId");
 		oql.bind("siteNodeId");
-		oql.bind(siteNode.getSiteNodeId().toString());
+		oql.bind(siteNodeVO.getId().toString());
 		
 		QueryResults results = oql.execute();
 		logger.info("Fetching entity in read/write mode");
@@ -449,7 +450,7 @@ public class ServiceBindingController extends BaseController
 			{	
 				Qualifyer qualifyer = (Qualifyer)qualifyersIterator.next();
 				//logger.info("qualifyer:" + qualifyer.getName() + ":" + qualifyer.getValue() + " == " + qualifyer.getValue().equals(content.getContentId().toString()));
-				if(qualifyer.getName().equalsIgnoreCase("siteNodeId") && qualifyer.getValue().equals(siteNode.getSiteNodeId().toString()))
+				if(qualifyer.getName().equalsIgnoreCase("siteNodeId") && qualifyer.getValue().equals(siteNodeVO.getId().toString()))
 				{
 					//db.remove(qualifyer);
 					qualifyersIterator.remove();

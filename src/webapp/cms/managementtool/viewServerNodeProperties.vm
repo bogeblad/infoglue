@@ -383,6 +383,8 @@
 
 				#yesNoDropDownWithInheritCSS("ServerNode.property.allowPublicationEventFilter" "allowPublicationEventFilter" "$this.getPropertyValue('allowPublicationEventFilter')" "$!cmsPH.allowPublicationEventFilter")
 
+				#yesNoDropDownWithInheritCSS("ServerNode.property.doNotUseTrashcanForRepositories" "doNotUseTrashcanForRepositories" "$this.getPropertyValue('doNotUseTrashcanForRepositories')" "$!cmsPH.doNotUseTrashcanForRepositories")
+
 				#set($option1 = ["inherit", "$ui.getString('tool.common.inherit')"])
 				#set($option2 = ["$ui.getString('entity.ServerNode.property.allPublicationEventFilter.value')", "$ui.getString('entity.ServerNode.property.allPublicationEventFilter.label')"])
 				#set($option3 = ["$ui.getString('entity.ServerNode.property.groupBasedPublicationEventFilter.value')", "$ui.getString('entity.ServerNode.property.groupBasedPublicationEventFilter.label')"])

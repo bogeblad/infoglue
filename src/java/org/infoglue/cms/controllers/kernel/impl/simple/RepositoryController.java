@@ -45,6 +45,7 @@ import org.infoglue.cms.entities.management.Repository;
 import org.infoglue.cms.entities.management.RepositoryLanguage;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.management.impl.simple.RepositoryImpl;
+import org.infoglue.cms.entities.management.impl.simple.SmallRepositoryImpl;
 import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.exception.Bug;
@@ -110,30 +111,11 @@ public class RepositoryController extends BaseController
 		Repository repository = null;
 	
 		beginTransaction(db);
-
 		try
 		{
-			repository = getRepositoryWithId(repositoryVO.getRepositoryId(), db);
+			repository = getSmallRepositoryWithId(repositoryVO.getRepositoryId(), db);
 			repository.setIsDeleted(true);
 			
-			/*
-			List<Content> contentList = ContentControllerProxy.getContentController().getRepositoryContents(repositoryId, db);
-			Iterator<Content> contentListIterator = contentList.iterator();
-			while(contentListIterator.hasNext())
-			{
-				Content content = contentListIterator.next();
-				content.setIsDeleted(false);
-			}
-			
-			List<SiteNode> siteNodeList = SiteNodeControllerProxy.getController().getRepositorySiteNodes(repositoryId, db);
-			Iterator<SiteNode> siteNodeListIterator = siteNodeList.iterator();
-			while(siteNodeListIterator.hasNext())
-			{
-				SiteNode siteNode = siteNodeListIterator.next();
-				siteNode.setIsDeleted(false);
-			}
-			*/
-
 			ContentVO contentVO = ContentControllerProxy.getController().getRootContentVO(repositoryVO.getRepositoryId(), userName, false);
 			if(contentVO != null)
 			{
@@ -187,7 +169,7 @@ public class RepositoryController extends BaseController
 
 		try
 		{
-			repository = getRepositoryWithId(repositoryId, db);
+			repository = getSmallRepositoryWithId(repositoryId, db);
 			repository.setIsDeleted(false);
 			
 			List<Content> contentList = ContentControllerProxy.getContentController().getRepositoryContents(repositoryId, db);
@@ -409,8 +391,14 @@ public class RepositoryController extends BaseController
 
         return repositoryVO;
     }        
-    
-	// Singe object
+
+	// Singel object
+    public SmallRepositoryImpl getSmallRepositoryWithId(Integer id, Database db) throws SystemException, Bug
+    {
+		return (SmallRepositoryImpl) getObjectWithId(SmallRepositoryImpl.class, id, db);
+    }
+
+	// Singel object
     public Repository getRepositoryWithId(Integer id, Database db) throws SystemException, Bug
     {
 		return (Repository) getObjectWithId(RepositoryImpl.class, id, db);
@@ -425,7 +413,7 @@ public class RepositoryController extends BaseController
 			return repositoryVO;
 		}
 
-		RepositoryVO rep = (RepositoryVO) getVOWithId(RepositoryImpl.class, repositoryId);
+		RepositoryVO rep = (RepositoryVO) getVOWithId(SmallRepositoryImpl.class, repositoryId);
 		
 		if(rep != null)
 			CacheController.cacheObject("repositoryCache", key, rep);
@@ -445,7 +433,7 @@ public class RepositoryController extends BaseController
 		{
 			try
 			{
-				repositoryVO = (RepositoryVO) getVOWithId(RepositoryImpl.class, repositoryId, db);        
+				repositoryVO = (RepositoryVO) getVOWithId(SmallRepositoryImpl.class, repositoryId, db);        
 			}
 			catch (SystemException e) 
 			{
@@ -457,7 +445,7 @@ public class RepositoryController extends BaseController
 						try
 						{
 							Thread.sleep(10);
-							repositoryVO = (RepositoryVO) getVOWithId(RepositoryImpl.class, repositoryId, db); 
+							repositoryVO = (RepositoryVO) getVOWithId(SmallRepositoryImpl.class, repositoryId, db); 
 							logger.warn("It worked out: " + repositoryId);
 							break;
 						}
@@ -540,7 +528,7 @@ public class RepositoryController extends BaseController
 		{
 			try
 			{
-				OQLQuery oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.RepositoryImpl f WHERE f.name = $1");
+				OQLQuery oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.SmallRepositoryImpl f WHERE f.name = $1");
 				oql.bind(name);
 				
 				QueryResults results = oql.execute(Database.READONLY);
@@ -623,7 +611,7 @@ public class RepositoryController extends BaseController
 			return cachedRepositoryVOList;
 		}
 				
-		List repositoryVOList = getAllVOObjects(RepositoryImpl.class, "repositoryId");
+		List repositoryVOList = getAllVOObjects(SmallRepositoryImpl.class, "repositoryId");
 
 		CacheController.cacheObject("repositoryCache", key, repositoryVOList);
 			
@@ -709,7 +697,7 @@ public class RepositoryController extends BaseController
 		{
 			beginTransaction(db);
 		
-			OQLQuery oql = db.getOQLQuery("SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RepositoryImpl r ORDER BY r.repositoryId");
+			OQLQuery oql = db.getOQLQuery("SELECT r FROM org.infoglue.cms.entities.management.impl.simple.SmallRepositoryImpl r ORDER BY r.repositoryId");
         	QueryResults results = oql.execute();
 			this.logger.info("Fetching entity in read/write mode");
 
@@ -772,7 +760,7 @@ public class RepositoryController extends BaseController
 		{
 			beginTransaction(db);
 		
-			OQLQuery oql = db.getOQLQuery("SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RepositoryImpl r WHERE r.isDeleted = $1 ORDER BY r.repositoryId");
+			OQLQuery oql = db.getOQLQuery("SELECT r FROM org.infoglue.cms.entities.management.impl.simple.SmallRepositoryImpl r WHERE r.isDeleted = $1 ORDER BY r.repositoryId");
 			oql.bind(false);
 			
 			QueryResults results = oql.execute(Database.READONLY);
@@ -781,7 +769,8 @@ public class RepositoryController extends BaseController
                 Repository repository = (Repository)results.next();
                 repositoryVOListNotMarkedForDeletion.add(repository.getValueObject());
             }
-            
+			CacheController.cacheObject("repositoryCache", key, repositoryVOListNotMarkedForDeletion);
+
 			results.close();
 			oql.close();
 
@@ -792,8 +781,6 @@ public class RepositoryController extends BaseController
 			throw new SystemException("An error occurred when we tried to fetch a list of deleted repositories. Reason:" + e.getMessage(), e);			
 		}
 
-		CacheController.cacheObject("repositoryCache", key, repositoryVOListNotMarkedForDeletion);
-			
 		return repositoryVOListNotMarkedForDeletion;
 	}
 
@@ -813,7 +800,7 @@ public class RepositoryController extends BaseController
 		{
 			beginTransaction(db);
 		
-			OQLQuery oql = db.getOQLQuery("SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RepositoryImpl r WHERE r.isDeleted = $1 ORDER BY r.repositoryId");
+			OQLQuery oql = db.getOQLQuery("SELECT r FROM org.infoglue.cms.entities.management.impl.simple.SmallRepositoryImpl r WHERE r.isDeleted = $1 ORDER BY r.repositoryId");
 			oql.bind(true);
 			
 			QueryResults results = oql.execute(Database.READONLY);

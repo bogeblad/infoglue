@@ -399,6 +399,8 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 
 	    populate(ps, "defaultSystemTheme");
 
+	    populate(ps, "doNotUseTrashcanForRepositories");
+
 	    try
 	    {
 	    	UserControllerProxy.getController().updateAnonymousUserPassword();

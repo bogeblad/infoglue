@@ -387,6 +387,7 @@
 		<!--
 		<view name="error">/cms/contenttool/error.vm</view>
 		-->
+		<view name="successChooseMethod">/cms/managementtool/chooseMethodForRepositoryDelete.vm</view>
 		<view name="input">/cms/managementtool/showConstraintExceptionForRepositoryDelete.vm</view>
 		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
 	</action>

@@ -63,6 +63,7 @@ import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.impl.simple.MediumContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.MediumContentVersionImpl;
+import org.infoglue.cms.entities.content.impl.simple.SmallContentImpl;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.AccessRight;
 import org.infoglue.cms.entities.management.AccessRightGroup;
@@ -615,7 +616,12 @@ public class SiteNodeController extends BaseController
     {
         return getSiteNodeWithId(siteNodeId, db, false);
     }
-    
+
+    public SmallSiteNodeImpl getSmallSiteNodeWithId(Integer siteNodeId, Database db) throws SystemException, Bug
+    {
+		return (SmallSiteNodeImpl) getObjectWithId(SmallSiteNodeImpl.class, siteNodeId, db);
+    }
+
     public static SiteNode getSiteNodeWithId(Integer siteNodeId, Database db, boolean readOnly) throws SystemException, Bug
     {
         SiteNode siteNode = null;
@@ -695,22 +701,28 @@ public class SiteNodeController extends BaseController
 	    
 	public void delete(SiteNodeVO siteNodeVO, Database db, boolean forceDelete, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Exception
 	{
-		SiteNode siteNode = getSiteNodeWithId(siteNodeVO.getSiteNodeId(), db);
-		SiteNode parent = siteNode.getParentSiteNode();
-		if(parent != null)
+        List referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(siteNodeVO.getId(), -1, false, db);
+		if(referenceBeanList != null && referenceBeanList.size() > 0 && !forceDelete)
+			throw new ConstraintException("SiteNode.stateId", "3405");
+
+		List<SiteNodeVO> children = getChildSiteNodeVOList(siteNodeVO.getId(), true, db, null);
+		for(SiteNodeVO childSiteNode : children)
 		{
-			Iterator childSiteNodeIterator = parent.getChildSiteNodes().iterator();
-			while(childSiteNodeIterator.hasNext())
-			{
-			    SiteNode candidate = (SiteNode)childSiteNodeIterator.next();
-			    if(candidate.getId().equals(siteNodeVO.getSiteNodeId()))
-			        deleteRecursive(siteNode, childSiteNodeIterator, db, forceDelete, infogluePrincipal);
-			}
-		}
-		else
-		{
-		    deleteRecursive(siteNode, null, db, forceDelete, infogluePrincipal);
-		}
+			delete(childSiteNode, db, forceDelete, infogluePrincipal);
+   		}
+		
+		if(forceDelete || getIsDeletable(siteNodeVO, infogluePrincipal, db))
+	    {		 
+			SiteNodeVersionController.deleteVersionsForSiteNode(siteNodeVO, db, infogluePrincipal);
+			ServiceBindingController.deleteServiceBindingsReferencingSiteNode(siteNodeVO, db);
+
+			SmallSiteNodeImpl siteNode = getSmallSiteNodeWithId(siteNodeVO.getSiteNodeId(), db);
+			db.remove(siteNode);
+	    }
+	    else
+    	{
+    		throw new ConstraintException("SiteNodeVersion.stateId", "3400");
+    	}	
 	}        
 
 	/**
@@ -752,55 +764,16 @@ public class SiteNodeController extends BaseController
 	}
 	
 
-
-	/**
-	 * Recursively deletes all siteNodes and their versions.
-	 * This method is a mess as we had a problem with the lazy-loading and transactions. 
-	 * We have to begin and commit all the time...
-	 */
-	
-    private static void deleteRecursive(SiteNode siteNode, Iterator parentIterator, Database db, boolean forceDelete, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException, Exception
-    {
-        List referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(siteNode.getId(), -1, false, db);
-		if(referenceBeanList != null && referenceBeanList.size() > 0 && !forceDelete)
-			throw new ConstraintException("SiteNode.stateId", "3405");
-
-        Collection children = siteNode.getChildSiteNodes();
-		Iterator i = children.iterator();
-		while(i.hasNext())
-		{
-			SiteNode childSiteNode = (SiteNode)i.next();
-			deleteRecursive(childSiteNode, i, db, forceDelete, infoGluePrincipal);
-   		}
-		siteNode.setChildSiteNodes(new ArrayList());
-		
-		if(forceDelete || getIsDeletable(siteNode, infoGluePrincipal, db))
-	    {		 
-			SiteNodeVersionController.deleteVersionsForSiteNode(siteNode, db, infoGluePrincipal);
-			
-			ServiceBindingController.deleteServiceBindingsReferencingSiteNode(siteNode, db);
-
-			if(parentIterator != null) 
-			    parentIterator.remove();
-			
-			db.remove(siteNode);
-	    }
-	    else
-    	{
-    		throw new ConstraintException("SiteNodeVersion.stateId", "3400");
-    	}			
-    }        
-
 	/**
 	 * This method returns true if the sitenode does not have any published siteNodeversions or 
 	 * are restricted in any other way.
 	 */
 	
-	private static boolean getIsDeletable(SiteNode siteNode, InfoGluePrincipal infogluePrincipal, Database db) throws SystemException, Exception
+	private static boolean getIsDeletable(SiteNodeVO siteNodeVO, InfoGluePrincipal infogluePrincipal, Database db) throws SystemException, Exception
 	{
 		boolean isDeletable = true;
 		
-		SiteNodeVersion latestSiteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionReadOnly(db, siteNode.getId());
+		SiteNodeVersionVO latestSiteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, siteNodeVO.getId());
 		if(latestSiteNodeVersion != null && latestSiteNodeVersion.getIsProtected().equals(SiteNodeVersionVO.YES))
 		{
 			boolean hasAccess = AccessRightController.getController().getIsPrincipalAuthorized(db, infogluePrincipal, "SiteNodeVersion.DeleteSiteNode", "" + latestSiteNodeVersion.getId());
@@ -808,13 +781,13 @@ public class SiteNodeController extends BaseController
 				return false;
 		}
 		
-        Collection siteNodeVersions = siteNode.getSiteNodeVersions();
+        List<SiteNodeVersionVO> siteNodeVersions = SiteNodeVersionController.getController().getSiteNodeVersionVOList(db, siteNodeVO.getId());
     	if(siteNodeVersions != null)
     	{
-	        Iterator versionIterator = siteNodeVersions.iterator();
+	        Iterator<SiteNodeVersionVO> versionIterator = siteNodeVersions.iterator();
 			while (versionIterator.hasNext()) 
 	        {
-	        	SiteNodeVersion siteNodeVersion = (SiteNodeVersion)versionIterator.next();
+				SiteNodeVersionVO siteNodeVersion = versionIterator.next();
 	        	if(siteNodeVersion.getStateId().intValue() == SiteNodeVersionVO.PUBLISHED_STATE.intValue() && siteNodeVersion.getIsActive().booleanValue() == true)
 	        	{
 	        		logger.warn("The siteNode had a published version so we cannot delete it..");
@@ -1486,7 +1459,7 @@ public class SiteNodeController extends BaseController
 		{
 			SiteNode siteNode = (SiteNode)results.next();
 
-			if(CmsPropertyHandler.getAllowLocalizedSortAndVisibilityProperties())
+			if(CmsPropertyHandler.getAllowLocalizedSortAndVisibilityProperties() && sortLanguageId != null)
 			{	
 				//logger.info("Name:" + siteNode.getName() + ":" + siteNode.getValueObject().getStateId() + ":" + siteNode.getValueObject().getIsProtected() + ":" + siteNode.getValueObject().getIsProtected());
 				ContentVersionVO latestVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNode.getMetaInfoContentId(), sortLanguageId, db);
@@ -1635,7 +1608,7 @@ public class SiteNodeController extends BaseController
     		if(siteNodeVO != null)
     			CacheController.cacheObject("repositoryRootNodesCache", key, siteNodeVO);
     		else
-    			logger.error("repositoryId:" + repositoryId + " had no root");
+    			logger.warn("repositoryId:" + repositoryId + " had no root");
 
 			commitTransaction(db);
         }
@@ -3866,71 +3839,63 @@ public class SiteNodeController extends BaseController
 	 */
 	public void markForDeletion(SiteNodeVO siteNodeVO, Database db, boolean forceDelete, InfoGluePrincipal infogluePrincipal, Map<SiteNodeVO, List<ReferenceBean>> contactPersons) throws ConstraintException, SystemException, Exception
 	{
-		SiteNode siteNode = getSiteNodeWithId(siteNodeVO.getSiteNodeId(), db);
-		SiteNode parent = siteNode.getParentSiteNode();
 		boolean notifyResponsibleOnReferenceChange = CmsPropertyHandler.getNotifyResponsibleOnReferenceChange();
-		logger.info("notifyResponsibleOnReferenceChange:" + notifyResponsibleOnReferenceChange);
-		if(parent != null)
+
+		List<Integer> siteNodeIds = getSiteNodeIdsForAllChildren(siteNodeVO.getId(), db);
+		siteNodeIds.add(siteNodeVO.getId());
+		 if(logger.isDebugEnabled())
+	        	logger.info("siteNodeIds:" + siteNodeIds.size());
+		for(Integer childSiteNodeId : siteNodeIds)
 		{
-			Iterator childSiteNodeIterator = parent.getChildSiteNodes().iterator();
-			while(childSiteNodeIterator.hasNext())
+			try
 			{
-			    SiteNode candidate = (SiteNode)childSiteNodeIterator.next();
-			    if(candidate.getId().equals(siteNodeVO.getSiteNodeId()))
-			    	markForDeletionRecursive(siteNode, db, forceDelete, infogluePrincipal, contactPersons, notifyResponsibleOnReferenceChange);
+				SmallSiteNodeImpl siteNode = getSmallSiteNodeWithId(childSiteNodeId, db);
+		        if(logger.isDebugEnabled())
+		        	logger.info("Marking " + siteNode.getName() + " for delete");
+
+		        List<ReferenceBean> referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(siteNode.getId(), -1, false, db);
+				if(referenceBeanList != null && referenceBeanList.size() > 0 && !forceDelete)
+					throw new ConstraintException("SiteNode.stateId", "3405", "<br/><br/>" + siteNode.getName() + " (" + siteNode.getId() + ")");
+
+				boolean isDeletable = true;
+		        if(!forceDelete)
+		        	isDeletable = getIsDeletable(siteNode.getValueObject(), infogluePrincipal, db);
+		        
+				if(forceDelete || isDeletable)
+			    {
+					siteNode.setIsDeleted(true);
+					boolean clean = true;
+					if (notifyResponsibleOnReferenceChange)
+					{
+						clean = false;
+					}
+
+					List<ReferenceBean> contactList = RegistryController.getController().deleteAllForSiteNode(siteNode.getSiteNodeId(), infogluePrincipal, clean, CmsPropertyHandler.getOnlyShowReferenceIfLatestVersion(), db);
+					if (notifyResponsibleOnReferenceChange)
+					{
+						if (contactList != null)
+						{
+							logger.info("Found " + contactList.size() + " people to notify about SiteNode removal. SiteNode.id: " + siteNode.getSiteNodeId());
+							contactPersons.put(siteNode.getValueObject(), contactList);
+						}
+					}
+			    }
+			    else
+		    	{
+		    		throw new ConstraintException("SiteNodeVersion.stateId", "3400");
+		    	}
+			}
+			catch(SystemException e)
+			{
+				e.printStackTrace();
+				logger.warn("Problem marking content: " + childSiteNodeId + " as deleted. Message: " + e.getMessage(), e);
 			}
 		}
-		else
-		{
-			markForDeletionRecursive(siteNode, db, forceDelete, infogluePrincipal, contactPersons, notifyResponsibleOnReferenceChange);
-		}
+
+
 	}
 
 
-	/**
-	 * Recursively deletes all siteNodes and their versions.
-	 * This method is a mess as we had a problem with the lazy-loading and transactions. 
-	 * We have to begin and commit all the time...
-	 */
-
-    private static void markForDeletionRecursive(SiteNode siteNode, Database db, boolean forceDelete, InfoGluePrincipal infoGluePrincipal, Map<SiteNodeVO, List<ReferenceBean>> contactPersons, boolean notifyContactPersons) throws ConstraintException, SystemException, Exception
-    {
-        List<ReferenceBean> referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(siteNode.getId(), -1, false, db);
-		if(referenceBeanList != null && referenceBeanList.size() > 0 && !forceDelete)
-			throw new ConstraintException("SiteNode.stateId", "3405", "<br/><br/>" + siteNode.getName() + " (" + siteNode.getId() + ")");
-
-        @SuppressWarnings("unchecked")
-		Collection<SiteNode> children = siteNode.getChildSiteNodes();
-		Iterator<SiteNode> i = children.iterator();
-		while(i.hasNext())
-		{
-			SiteNode childSiteNode = i.next();
-			markForDeletionRecursive(childSiteNode, db, forceDelete, infoGluePrincipal, contactPersons, notifyContactPersons);
-   		}
-
-		if(forceDelete || getIsDeletable(siteNode, infoGluePrincipal, db))
-	    {
-			siteNode.setIsDeleted(true);
-			boolean clean = true;
-			if (notifyContactPersons)
-			{
-				clean = false;
-			}
-			List<ReferenceBean> contactList = RegistryController.getController().deleteAllForSiteNode(siteNode.getSiteNodeId(), infoGluePrincipal, clean, CmsPropertyHandler.getOnlyShowReferenceIfLatestVersion(), db);
-			if (notifyContactPersons)
-			{
-				if (contactList != null)
-				{
-					logger.info("Found " + contactList.size() + " people to notify about SiteNode removal. SiteNode.id: " + siteNode.getSiteNodeId());
-					contactPersons.put(siteNode.getValueObject(), contactList);
-				}
-			}
-	    }
-	    else
-    	{
-    		throw new ConstraintException("SiteNodeVersion.stateId", "3400");
-    	}
-    }
 
     /**
 	 * This method restores a siteNode.
@@ -3977,9 +3942,9 @@ public class SiteNodeController extends BaseController
 		{
 			beginTransaction(db);
 		
-			String sql = "SELECT sn FROM org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl sn WHERE sn.isDeleted = $1 ORDER BY sn.siteNodeId";
+			String sql = "SELECT sn FROM org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl sn WHERE sn.isDeleted = $1 ORDER BY sn.siteNodeId";
 			if(repositoryId != null && repositoryId != -1)
-				sql = "SELECT sn FROM org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl sn WHERE sn.isDeleted = $1 AND sn.repository = $2 ORDER BY sn.siteNodeId";
+				sql = "SELECT sn FROM org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl sn WHERE sn.isDeleted = $1 AND sn.repositoryId = $2 ORDER BY sn.siteNodeId";
 			
 			OQLQuery oql = db.getOQLQuery(sql);
 			oql.bind(true);
@@ -3989,14 +3954,15 @@ public class SiteNodeController extends BaseController
 			QueryResults results = oql.execute(Database.READONLY);
 			while(results.hasMore()) 
             {
-				SiteNode siteNode = (SiteNode)results.next();
-				Integer siteNodeRepositoryId = siteNode.getRepository().getRepositoryId();
-				Integer siteNodeId = siteNode.getSiteNodeId();
+				SmallSiteNodeImpl siteNode = (SmallSiteNodeImpl)results.next();
+				Integer siteNodeRepositoryId = siteNode.getValueObject().getRepositoryId();
+				RepositoryVO repoVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeRepositoryId, db);
+				Integer siteNodeId = siteNode.getId();
 
 				if((AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Read", siteNodeRepositoryId.toString()) && AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Write", siteNodeRepositoryId.toString()))
 					&& (AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "SiteNodeVersion.Read", siteNodeId.toString()) && AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "SiteNodeVersion.Write", siteNodeId.toString())))
 				{
-					siteNode.getValueObject().getExtraProperties().put("repositoryMarkedForDeletion", siteNode.getRepository().getIsDeleted());
+					siteNode.getValueObject().getExtraProperties().put("repositoryMarkedForDeletion", repoVO.getIsDeleted());
 					siteNodeVOListMarkedForDeletion.add(siteNode.getValueObject());
 				}
             }
@@ -4856,17 +4822,13 @@ public class SiteNodeController extends BaseController
 		SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
 		
 		SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, siteNodeVO.getSiteNodeId());
-		System.out.println("before loop siteNodeVersionVO:" + siteNodeVersionVO);
-		
 		while(siteNodeVO != null && siteNodeVersionVO.getDisableLanguages() == 2)
 		{
-			System.out.println("before loop baseForLanguageSiteNodeVO:" + siteNodeVO.getSiteNodeId());
 			if(siteNodeVO != null && siteNodeVO.getParentSiteNodeId() != null) {
 
 				siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVO.getParentSiteNodeId(), db);
 				if(siteNodeVO != null) 
 				{
-					System.out.println("siteNodeVO.getSiteNodeVersionId()");
 					siteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, siteNodeVO.getSiteNodeId());
 				}
 			} 
@@ -4879,4 +4841,18 @@ public class SiteNodeController extends BaseController
 		return siteNodeVO;
 		
 	}
+
+	public List<Integer> getSiteNodeIdsForAllChildren(Integer siteNodeId, Database db) throws Exception
+	{
+		List<Integer> childIds = new ArrayList<Integer>();
+		List<SiteNodeVO> childSiteNodes = getChildSiteNodeVOList(siteNodeId, false, db, null);
+		for(SiteNodeVO child : childSiteNodes)
+		{
+			childIds.addAll(getSiteNodeIdsForAllChildren(child.getId(), db));
+			childIds.add(child.getId());
+		}
+		
+		return childIds;
+	}
+
 }

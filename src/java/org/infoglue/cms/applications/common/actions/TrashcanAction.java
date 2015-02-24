@@ -131,6 +131,22 @@ public class TrashcanAction extends InfoGlueAbstractAction
 		validateSecurityCode();
 
 		this.repositoriesMarkedForDeletion = RepositoryController.getController().getRepositoryVOListMarkedForDeletion(getInfoGluePrincipal());
+
+		Iterator<RepositoryVO> repositoriesMarkedForDeletionIterator = repositoriesMarkedForDeletion.iterator();
+		while(repositoriesMarkedForDeletionIterator.hasNext())
+		{
+			RepositoryVO repositoryVO = repositoriesMarkedForDeletionIterator.next();
+			try
+			{
+				RepositoryController.getController().delete(repositoryVO, true, getInfoGluePrincipal());
+			}
+			catch (Exception e) 
+			{
+				logger.error("Could not delete repository[" + repositoryVO.getName() + "]:" + e.getMessage());
+				logger.warn("Could not delete repository[" + repositoryVO.getName() + "]:" + e.getMessage(), e);
+			}
+		}
+
 		this.contentsMarkedForDeletion = ContentController.getContentController().getContentVOListMarkedForDeletion(this.repositoryFilter, getInfoGluePrincipal());
 		this.siteNodesMarkedForDeletion = SiteNodeController.getController().getSiteNodeVOListMarkedForDeletion(this.repositoryFilter, getInfoGluePrincipal());
 
@@ -161,21 +177,6 @@ public class TrashcanAction extends InfoGlueAbstractAction
 			{
 				logger.error("Could not delete content[" + contentVO.getName() + "]:" + e.getMessage());
 				logger.warn("Could not delete content[" + contentVO.getName() + "]:" + e.getMessage(), e);
-			}
-		}
-
-		Iterator<RepositoryVO> repositoriesMarkedForDeletionIterator = repositoriesMarkedForDeletion.iterator();
-		while(repositoriesMarkedForDeletionIterator.hasNext())
-		{
-			RepositoryVO repositoryVO = repositoriesMarkedForDeletionIterator.next();
-			try
-			{
-				RepositoryController.getController().delete(repositoryVO, true, getInfoGluePrincipal());
-			}
-			catch (Exception e) 
-			{
-				logger.error("Could not delete repository[" + repositoryVO.getName() + "]:" + e.getMessage());
-				logger.warn("Could not delete repository[" + repositoryVO.getName() + "]:" + e.getMessage(), e);
 			}
 		}
 		

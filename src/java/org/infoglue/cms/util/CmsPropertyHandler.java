@@ -2225,6 +2225,21 @@ public class CmsPropertyHandler
 		return max;
 	}
 
+	public static Boolean getDoNotUseTrashcanForRepositories()
+	{
+		boolean doNotUseTrashcanForRepositories = true;
+		try
+		{
+			doNotUseTrashcanForRepositories = Boolean.parseBoolean(getServerNodeProperty("doNotUseTrashcanForRepositories", true, "false"));
+		}
+		catch(Exception e)
+		{
+			logger.warn("Error parsing doNotUseTrashcanForRepositories:" + e.getMessage());
+		}
+		
+		return doNotUseTrashcanForRepositories;
+	}
+	
 	public static boolean getDuplicateAssetsBetweenVersions()
 	{
 		String duplicateAssetsBetweenVersions = getServerNodeProperty("duplicateAssetsBetweenVersions", true, "false");

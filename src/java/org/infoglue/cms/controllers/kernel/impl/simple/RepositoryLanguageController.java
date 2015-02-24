@@ -294,7 +294,7 @@ public class RepositoryLanguageController extends BaseController
 		    
 	        try
 	        { 
-			    List availableRepositoryLanguageList = RepositoryLanguageController.getController().getRepositoryLanguageListWithRepositoryId(repositoryId, db);
+			    List availableRepositoryLanguageList = RepositoryLanguageController.getController().getRepositoryLanguageListWithRepositoryId(repositoryId, true, db);
 				
 			    repositoryLanguageVOList = new ArrayList();
 			    Iterator i = availableRepositoryLanguageList.iterator();
@@ -320,15 +320,20 @@ public class RepositoryLanguageController extends BaseController
 		return repositoryLanguageVOList;
 	}
 	
-    public List getRepositoryLanguageListWithRepositoryId(Integer repositoryId, Database db) throws SystemException, Bug, Exception
+    public List getRepositoryLanguageListWithRepositoryId(Integer repositoryId, boolean readOnly, Database db) throws SystemException, Bug, Exception
     {
 		ArrayList repositoryLanguageList = new ArrayList();
         
        	OQLQuery oql = db.getOQLQuery("SELECT rl FROM org.infoglue.cms.entities.management.impl.simple.RepositoryLanguageImpl rl WHERE rl.repository = $1 ORDER BY rl.sortOrder, rl.language.languageId");
 		oql.bind(repositoryId);
 			
-       	QueryResults results = oql.execute();
-		this.logger.info("Fetching entity in read/write mode");
+		QueryResults results = null;
+		if(readOnly)
+			results = oql.execute(Database.READONLY);
+		else
+			results = oql.execute();
+		
+		this.logger.info("Fetching entity in read/write mode:" + readOnly);
 
 		while (results.hasMore()) 
         {
@@ -556,7 +561,7 @@ public class RepositoryLanguageController extends BaseController
 		 try
 		 {
 		     RepositoryLanguage originalRepositoryLanguage = this.getRepositoryLanguageWithId(repositoryLanguageVO.getRepositoryLanguageId(), db);
-		     List repositoryLanguages = this.getRepositoryLanguageListWithRepositoryId(originalRepositoryLanguage.getRepository().getId(), db);
+		     List repositoryLanguages = this.getRepositoryLanguageListWithRepositoryId(originalRepositoryLanguage.getRepository().getId(), false, db);
 			 
 			 for(int i=0; i<repositoryLanguages.size(); i++)
 			 {

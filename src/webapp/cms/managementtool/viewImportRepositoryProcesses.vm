@@ -125,7 +125,7 @@
 </div>
 
 <p>
-	<a href="javascript:window.close();">$ui.getString("tool.contenttool.close")</a>
+	<a href="javascript:if(parent.closeInlineDiv) parent.closeInlineDiv(); else window.close();">$ui.getString("tool.contenttool.close")</a>
 </p>
 
 </div>

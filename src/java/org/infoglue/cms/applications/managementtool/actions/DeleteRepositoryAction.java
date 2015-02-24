@@ -29,6 +29,7 @@ import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.exception.AccessConstraintException;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
+import org.infoglue.cms.util.CmsPropertyHandler;
 
 /**
  * This action removes a repository from the system.
@@ -40,6 +41,7 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 {
 	private RepositoryVO repositoryVO;
 	private String returnAddress = null;
+	private Boolean byPassTrashcan = false;
 	
 	public DeleteRepositoryAction()
 	{
@@ -51,6 +53,11 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 		this.repositoryVO = repositoryVO;
 	}
 
+	public String doMarkForDeleteChooseMethod() throws ConstraintException, Exception 
+	{
+		return "successChooseMethod";
+	}
+	
 	public String doMarkForDelete() throws ConstraintException, Exception 
 	{
 		boolean hasAccessToManagementTool = hasAccessTo("ManagementTool.Read");
@@ -63,6 +70,10 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 		try
 		{
 			RepositoryController.getController().markForDelete(this.repositoryVO, this.getInfoGluePrincipal().getName(), this.getInfoGluePrincipal());
+			
+			if(CmsPropertyHandler.getDoNotUseTrashcanForRepositories())
+				RepositoryController.getController().delete(this.repositoryVO, true, getInfoGluePrincipal());
+				
 			return "success";
 		}
 		catch(ConstraintException ce)
@@ -89,6 +100,10 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 		try
 		{
 			RepositoryController.getController().markForDelete(this.repositoryVO, this.getInfoGluePrincipal().getName(), true, this.getInfoGluePrincipal());
+
+			if(CmsPropertyHandler.getDoNotUseTrashcanForRepositories())
+				RepositoryController.getController().delete(this.repositoryVO, true, getInfoGluePrincipal());
+			
 			return "success";
 		}
 		catch(ConstraintException ce)
@@ -171,6 +186,17 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
         return this.repositoryVO.getRepositoryId();
     }
         
+    public void setByPassTrashcan(Boolean byPassTrashcan) throws SystemException
+	{
+		this.byPassTrashcan = byPassTrashcan;	
+	}
+
+    public java.lang.Boolean getByPassTrashcan()
+    {
+        return this.byPassTrashcan;
+    }
+    
+    
 	public String getReturnAddress() 
 	{
 		return this.returnAddress;

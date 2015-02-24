@@ -3105,7 +3105,7 @@ public class ToolbarController implements ToolbarProvider
 		buttons.add(new ToolbarButton("",
 				  getLocalizedString(locale, "tool.managementtool.deleteRepository.header"), 
 				  getLocalizedString(locale, "tool.managementtool.deleteRepository.header"),
-				  "DeleteRepository!markForDelete.action?repositoryId=" + repositoryId + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
+				  "DeleteRepository!markForDeleteChooseMethod.action?repositoryId=" + repositoryId + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
 				  "css/images/v3/createBackgroundPenPaper.gif",
 				  "left",
 				  "create",

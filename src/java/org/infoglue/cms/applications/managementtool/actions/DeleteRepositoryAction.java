@@ -71,7 +71,7 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 		{
 			RepositoryController.getController().markForDelete(this.repositoryVO, this.getInfoGluePrincipal().getName(), this.getInfoGluePrincipal());
 			
-			if(CmsPropertyHandler.getDoNotUseTrashcanForRepositories())
+			if(CmsPropertyHandler.getDoNotUseTrashcanForRepositories() || this.byPassTrashcan)
 				RepositoryController.getController().delete(this.repositoryVO, true, getInfoGluePrincipal());
 				
 			return "success";

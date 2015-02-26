@@ -53,6 +53,7 @@ import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
+import org.infoglue.cms.util.NotificationMessage;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.NullObject;
@@ -113,6 +114,9 @@ public class RepositoryController extends BaseController
 		beginTransaction(db);
 		try
 		{
+			NotificationMessage copyMessage = new NotificationMessage("Repository " + repositoryVO.getName() + " was put into trashcan", Repository.class.getName(), "SYSTEM", NotificationMessage.TRANS_UPDATE, "n/a", "" + repositoryVO.getName());
+			TransactionHistoryController.getController().create(copyMessage);
+
 			repository = getSmallRepositoryWithId(repositoryVO.getRepositoryId(), db);
 			repository.setIsDeleted(true);
 			
@@ -133,7 +137,7 @@ public class RepositoryController extends BaseController
 				else
 					SiteNodeController.getController().markForDeletion(siteNodeVO, db, infoGluePrincipal);
 			}
-			
+
 			//If any of the validations or setMethods reported an error, we throw them up now before create.
 			ceb.throwIfNotEmpty();
     
@@ -243,6 +247,9 @@ public class RepositoryController extends BaseController
 
 		try
 		{
+			NotificationMessage copyMessage = new NotificationMessage("Repository " + repositoryVO.getName() + " was deleted", Repository.class.getName(), "SYSTEM", NotificationMessage.TRANS_DELETE, "n/a", "" + repositoryVO.getName());
+			TransactionHistoryController.getController().create(copyMessage);
+
 			repository = getRepositoryWithId(repositoryVO.getRepositoryId(), db);
 			
 			RepositoryLanguageController.getController().deleteRepositoryLanguages(repository, db);

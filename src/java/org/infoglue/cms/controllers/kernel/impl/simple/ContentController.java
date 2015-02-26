@@ -93,6 +93,7 @@ import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.mail.MailServiceFactory;
 import org.infoglue.deliver.applications.databeans.DeliveryContext;
 import org.infoglue.deliver.util.CacheController;
+import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Timer;
 
 import com.opensymphony.module.propertyset.PropertySet;
@@ -713,14 +714,21 @@ public class ContentController extends BaseController
 			SmallContentImpl content = getSmallContentWithId(contentVO.getId(), db);
 	    	db.remove(content);
             
-            Map args = new HashMap();
-            args.put("globalKey", "infoglue");
-            PropertySet ps = PropertySetManager.getInstance("jdbc", args);
-
-            ps.remove( "content_" + contentVO.getId() + "_allowedContentTypeNames");
-            ps.remove( "content_" + contentVO.getId() + "_defaultContentTypeName");
-            ps.remove( "content_" + contentVO.getId() + "_initialLanguageId");
-
+	    	if(content.getIsBranch())
+	    	{
+	    		Timer t = new Timer();
+	            Map args = new HashMap();
+	            args.put("globalKey", "infoglue");
+	            PropertySet ps = PropertySetManager.getInstance("jdbc", args);
+	            RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Getting propertyset", t.getElapsedTime());
+	            //Collection keys = ps.getKeys(null);
+	            //RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Getting propertyset keys", t.getElapsedTime());
+	            
+	            ps.remove( "content_" + contentVO.getId() + "_allowedContentTypeNames");
+	            ps.remove( "content_" + contentVO.getId() + "_defaultContentTypeName");
+	            ps.remove( "content_" + contentVO.getId() + "_initialLanguageId");
+	            RequestAnalyser.getRequestAnalyser().registerComponentStatistics("remove in PS", t.getElapsedTime());
+	    	}
 	    }
 	    else
     	{

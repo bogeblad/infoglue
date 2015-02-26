@@ -59,6 +59,7 @@ public abstract class ViewRelationEditorAction extends InfoGlueAbstractAction
 	protected String updateAction				= null;
 	
     protected Integer repositoryId 				= null;
+    protected Integer languageId 				= null;
 	protected ConstraintExceptionBuffer ceb 	= null;
    	protected String qualifyerXML 				= null;
 	protected String relationXML 				= null;
@@ -102,7 +103,14 @@ public abstract class ViewRelationEditorAction extends InfoGlueAbstractAction
 	{
 		this.attributeName = attributeName;
 	}
-	
+	public void setLanguageId(Integer languageId)
+	{
+		this.languageId = languageId;
+	}
+	public Integer getLanguageId()
+	{
+		return this.languageId;
+	}
 	public void setRepositoryId(Integer repositoryId)
 	{
 		this.repositoryId = repositoryId;

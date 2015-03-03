@@ -3422,17 +3422,24 @@ public class ContentController extends BaseController
 	/**
 	 * This method deletes a content and also erases all the children and all versions.
 	 */
-	    
-    public void markForDeletion(ContentVO contentVO, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException
+	public void markForDeletion(ContentVO contentVO, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException
     {
-    	markForDeletion(contentVO, infogluePrincipal, false);
+    	markForDeletion(contentVO, infogluePrincipal, false, ProcessBean.createProcessBean("Dummy", "DeleteContent"));
     }
-    
+
+	/**
+	 * This method deletes a content and also erases all the children and all versions.
+	 */
+	public void markForDeletion(ContentVO contentVO, InfoGluePrincipal infogluePrincipal, boolean forceDelete) throws ConstraintException, SystemException
+    {
+    	markForDeletion(contentVO, infogluePrincipal, forceDelete, ProcessBean.createProcessBean("Dummy", "DeleteContent"));
+    }
+
 	/**
 	 * This method deletes a content and also erases all the children and all versions.
 	 */
 	    
-    public void markForDeletion(ContentVO contentVO, InfoGluePrincipal infogluePrincipal, boolean forceDelete) throws ConstraintException, SystemException
+    public void markForDeletion(ContentVO contentVO, InfoGluePrincipal infogluePrincipal, boolean forceDelete, ProcessBean processBean) throws ConstraintException, SystemException
     {
     	Map<ContentVO, List<ReferenceBean>> contactPersons = new HashMap<ContentVO, List<ReferenceBean>>();
     	
@@ -3440,7 +3447,7 @@ public class ContentController extends BaseController
         beginTransaction(db);
 		try
         {		
-			markForDeletion(contentVO, db, false, false, forceDelete, infogluePrincipal, contactPersons);
+			markForDeletion(contentVO, db, false, false, forceDelete, infogluePrincipal, contactPersons, processBean);
 	    	
 	    	commitTransaction(db);
             
@@ -3494,16 +3501,25 @@ public class ContentController extends BaseController
 	 * This method deletes a content and also erases all the children and all versions.
 	 */
 	    
-	public void markForDeletion(ContentVO contentVO, Database db, boolean skipRelationCheck, boolean skipServiceBindings, boolean forceDelete, InfoGluePrincipal infogluePrincipal, Map<ContentVO, List<ReferenceBean>> contactPersons) throws ConstraintException, SystemException, Exception
+	public void markForDeletion(ContentVO contentVO, Database db, boolean skipRelationCheck, boolean skipServiceBindings, boolean forceDelete, InfoGluePrincipal infogluePrincipal, Map<ContentVO, List<ReferenceBean>> contactPersons, ProcessBean processBean) throws ConstraintException, SystemException, Exception
 	{
 		boolean notifyResponsibleOnReferenceChange = CmsPropertyHandler.getNotifyResponsibleOnReferenceChange();
 
 		List<Integer> contentIds = getContentIdsForAllChildren(contentVO.getId(), db);
 		contentIds.add(contentVO.getId());
-		 if(logger.isDebugEnabled())
-	        	logger.info("contentIds:" + contentIds.size());
+		if(logger.isDebugEnabled())
+			logger.info("contentIds:" + contentIds.size());
+		 
+		processBean.updateProcess("Moving " + contentIds.size() + " contents to trashcan");
+
+		int i = 0;
 		for(Integer childContentId : contentIds)
 		{
+			i++;
+			if(i % 1000 == 0)
+			{
+				processBean.updateProcess("Moved " + i + " contents to trashcan");
+			}
 			try
 			{
 		        SmallContentImpl smallContent = getSmallContentWithId(childContentId, db);
@@ -3586,7 +3602,7 @@ public class ContentController extends BaseController
         }
     }  
 
-	public List<ContentVO> getContentVOListMarkedForDeletion(Integer repositoryId, InfoGluePrincipal infoGluePrincipal) throws SystemException, Bug
+	public List<ContentVO> getContentVOListMarkedForDeletion(Integer repositoryId, InfoGluePrincipal infoGluePrincipal, List<RepositoryVO> excludeReposVOList) throws SystemException, Bug
 	{
 		Database db = CastorDatabaseService.getDatabase();
 		
@@ -3596,15 +3612,32 @@ public class ContentController extends BaseController
 		{
 			beginTransaction(db);
 
-			String sql = "SELECT c FROM org.infoglue.cms.entities.content.impl.simple.SmallContentImpl c WHERE c.isDeleted = $1 AND is_defined(c.repositoryId) ORDER BY c.contentId";
+			int startIndex = 2;
 			if(repositoryId != null && repositoryId != -1)
-				sql = "SELECT c FROM org.infoglue.cms.entities.content.impl.simple.SmallContentImpl c WHERE c.isDeleted = $1 AND is_defined(c.repositoryId) AND c.repositoryId = $2 ORDER BY c.contentId";
+				startIndex++;
 			
+			StringBuffer excludeReposWithIdSQL = new StringBuffer("");
+			if(excludeReposVOList != null && excludeReposVOList.size() > 0)
+			{
+				excludeReposWithIdSQL.append(" AND NOT (c.repositoryId IN LIST (");
+				for(int i=0; i<excludeReposVOList.size(); i++)
+					excludeReposWithIdSQL.append("" + (i>0 ? "," : "") + "$"+(startIndex+i));
+				excludeReposWithIdSQL.append("))");
+			}
+			
+			String sql = "SELECT c FROM org.infoglue.cms.entities.content.impl.simple.SmallContentImpl c WHERE c.isDeleted = $1 AND is_defined(c.repositoryId) " + excludeReposWithIdSQL + " ORDER BY c.contentId";
+			if(repositoryId != null && repositoryId != -1)
+				sql = "SELECT c FROM org.infoglue.cms.entities.content.impl.simple.SmallContentImpl c WHERE c.isDeleted = $1 AND is_defined(c.repositoryId) AND c.repositoryId = $2 " + excludeReposWithIdSQL + " ORDER BY c.contentId";
+			
+			System.out.println("sql:" + sql);
 			OQLQuery oql = db.getOQLQuery(sql);
 			oql.bind(true);
 			if(repositoryId != null && repositoryId != -1)
 				oql.bind(repositoryId);
-			
+
+			for(RepositoryVO excludedRepoVO : excludeReposVOList)
+				oql.bind(excludedRepoVO.getId());
+
 			QueryResults results = oql.execute(Database.READONLY);
 			while(results.hasMore()) 
             {

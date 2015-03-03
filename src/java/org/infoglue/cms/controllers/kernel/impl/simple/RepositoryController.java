@@ -35,6 +35,7 @@ import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.QueryResults;
+import org.infoglue.cms.applications.databeans.ProcessBean;
 import org.infoglue.cms.applications.databeans.ReferenceBean;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
@@ -95,16 +96,16 @@ public class RepositoryController extends BaseController
 	 * This method removes a Repository from the system and also cleans out all depending repositoryLanguages.
 	 */
 	
-    public void markForDelete(RepositoryVO repositoryVO, String userName, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
+    public void markForDelete(RepositoryVO repositoryVO, String userName, InfoGluePrincipal infoGluePrincipal, ProcessBean processBean) throws ConstraintException, SystemException
     {
-    	markForDelete(repositoryVO, userName, false, infoGluePrincipal);
+    	markForDelete(repositoryVO, userName, false, infoGluePrincipal, processBean);
     }
     
 	/**
 	 * This method sets a Repository in markedForDelete mode.
 	 */
 	
-    public void markForDelete(RepositoryVO repositoryVO, String userName, boolean forceDelete, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
+    public void markForDelete(RepositoryVO repositoryVO, String userName, boolean forceDelete, InfoGluePrincipal infoGluePrincipal, ProcessBean processBean) throws ConstraintException, SystemException
     {
 		Database db = CastorDatabaseService.getDatabase();
 		ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -124,19 +125,21 @@ public class RepositoryController extends BaseController
 			if(contentVO != null)
 			{
 				if(forceDelete)
-					ContentController.getContentController().markForDeletion(contentVO, db, true, true, true, infoGluePrincipal, new HashMap<ContentVO, List<ReferenceBean>>());
+					ContentController.getContentController().markForDeletion(contentVO, db, true, true, true, infoGluePrincipal, new HashMap<ContentVO, List<ReferenceBean>>(), processBean);
 				else
-					ContentController.getContentController().markForDeletion(contentVO, db, false, false, false, infoGluePrincipal, new HashMap<ContentVO, List<ReferenceBean>>());
+					ContentController.getContentController().markForDeletion(contentVO, db, false, false, false, infoGluePrincipal, new HashMap<ContentVO, List<ReferenceBean>>(), processBean);
 			}
+			processBean.updateProcess("Moved all contents to trashcan...");
 			
 			SiteNodeVO siteNodeVO = SiteNodeController.getController().getRootSiteNodeVO(repositoryVO.getRepositoryId());
 			if(siteNodeVO != null)
 			{
 				if(forceDelete)
-					SiteNodeController.getController().markForDeletion(siteNodeVO, db, true, infoGluePrincipal);
+					SiteNodeController.getController().markForDeletion(siteNodeVO, db, true, infoGluePrincipal, processBean);
 				else
-					SiteNodeController.getController().markForDeletion(siteNodeVO, db, infoGluePrincipal);
+					SiteNodeController.getController().markForDeletion(siteNodeVO, db, infoGluePrincipal, processBean);
 			}
+			processBean.updateProcess("Moved all pages to trashcan...");
 
 			//If any of the validations or setMethods reported an error, we throw them up now before create.
 			ceb.throwIfNotEmpty();
@@ -210,14 +213,17 @@ public class RepositoryController extends BaseController
 			throw new SystemException(e.getMessage());
 		}
     } 
-    
+
 	/**
 	 * This method removes a Repository from the system and also cleans out all depending repositoryLanguages.
 	 */
 	
     public void delete(RepositoryVO repositoryVO, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
     {
-    	delete(repositoryVO, false, infoGluePrincipal);
+    	String exportId = "" + System.currentTimeMillis();
+    	ProcessBean processBean = ProcessBean.createProcessBean(this.getClass().getName(), exportId);
+
+    	delete(repositoryVO, false, infoGluePrincipal, processBean);
     }
 
     
@@ -225,18 +231,28 @@ public class RepositoryController extends BaseController
 	 * This method removes a Repository from the system and also cleans out all depending repositoryLanguages.
 	 */
 	
-    public void delete(Integer repositoryId, boolean forceDelete, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
+    public void delete(RepositoryVO repositoryVO, InfoGluePrincipal infoGluePrincipal, ProcessBean processBean) throws ConstraintException, SystemException
+    {
+    	delete(repositoryVO, false, infoGluePrincipal, processBean);
+    }
+
+    
+	/**
+	 * This method removes a Repository from the system and also cleans out all depending repositoryLanguages.
+	 */
+	
+    public void delete(Integer repositoryId, boolean forceDelete, InfoGluePrincipal infoGluePrincipal, ProcessBean processBean) throws ConstraintException, SystemException
     {
     	RepositoryVO repositoryVO = getRepositoryVOWithId(repositoryId);
     	
-    	delete(repositoryVO, forceDelete, infoGluePrincipal);
+    	delete(repositoryVO, forceDelete, infoGluePrincipal, processBean);
     }
     
 	/**
 	 * This method removes a Repository from the system and also cleans out all depending repositoryLanguages.
 	 */
 	
-    public void delete(RepositoryVO repositoryVO, boolean forceDelete, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
+    public void delete(RepositoryVO repositoryVO, boolean forceDelete, InfoGluePrincipal infoGluePrincipal, ProcessBean processBean) throws ConstraintException, SystemException
     {
 		Database db = CastorDatabaseService.getDatabase();
 		ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -253,6 +269,7 @@ public class RepositoryController extends BaseController
 			repository = getRepositoryWithId(repositoryVO.getRepositoryId(), db);
 			
 			RepositoryLanguageController.getController().deleteRepositoryLanguages(repository, db);
+			processBean.updateProcess("Deleted repo languages...");
 			
 			ContentVO contentVO = ContentControllerProxy.getController().getRootContentVO(repositoryVO.getRepositoryId(), infoGluePrincipal.getName(), false);
 			if(contentVO != null)
@@ -262,6 +279,7 @@ public class RepositoryController extends BaseController
 				else
 					ContentController.getContentController().delete(contentVO, infoGluePrincipal, db);
 			}
+			processBean.updateProcess("Deleted repo contents...");
 			
 			SiteNodeVO siteNodeVO = SiteNodeController.getController().getRootSiteNodeVO(repositoryVO.getRepositoryId());
 			if(siteNodeVO != null)
@@ -271,8 +289,11 @@ public class RepositoryController extends BaseController
 				else
 					SiteNodeController.getController().delete(siteNodeVO, db, true, infoGluePrincipal);
 			}
+			processBean.updateProcess("Deleted repo pages...");
+
 			
 			deleteEntity(RepositoryImpl.class, repositoryVO.getRepositoryId(), db);
+			processBean.updateProcess("Deleted repo...");
 	
 			//If any of the validations or setMethods reported an error, we throw them up now before create.
 			ceb.throwIfNotEmpty();

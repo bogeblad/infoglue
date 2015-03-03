@@ -389,6 +389,9 @@
 		-->
 		<view name="successChooseMethod">/cms/managementtool/chooseMethodForRepositoryDelete.vm</view>
 		<view name="input">/cms/managementtool/showConstraintExceptionForRepositoryDelete.vm</view>
+		<view name="successShowProcesses">/cms/managementtool/viewDeleteRepositoryProcesses.vm</view>
+		<view name="successRedirectToProcesses">org.infoglue.cms.applications.common.actions.ExtendedRedirect.action?url=DeleteRepository!showProcesses.action</view>
+		<view name="successShowProcessesAsJSON">/cms/managementtool/viewExportRepositoryProcessesAsJson.vm</view>
 		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
 	</action>
 	<action name="org.infoglue.cms.applications.managementtool.actions.CreateRepositoryAction" alias="CreateRepository">
@@ -1906,6 +1909,9 @@
 	<!--  InfoGlue Trashcan -->
 	<action name="org.infoglue.cms.applications.common.actions.TrashcanAction" alias="Trashcan">
 		<view name="success">/cms/common/viewTrashcan.vm</view>
+		<view name="successShowProcesses">/cms/managementtool/viewTrashcanProcesses.vm</view>
+		<view name="successRedirectToProcesses">org.infoglue.cms.applications.common.actions.ExtendedRedirect.action?url=Trashcan!showProcesses.action</view>
+		<view name="successShowProcessesAsJSON">/cms/managementtool/viewExportRepositoryProcessesAsJson.vm</view>
 		<view name="error">/cms/common/error.vm</view>
 	</action>
 

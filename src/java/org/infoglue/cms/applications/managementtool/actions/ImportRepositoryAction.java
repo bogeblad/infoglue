@@ -103,9 +103,11 @@ public class ImportRepositoryAction extends InfoGlueAbstractAction
 
 	public String doDeleteProcessBean() throws Exception
 	{
+		//System.out.println("this.processId:" + this.processId);
 		if(this.processId != null)
 		{
 			ProcessBean pb = ProcessBean.getProcessBean(ImportRepositoryAction.class.getName(), processId);
+			//System.out.println("pb:" + pb);
 			if(pb != null)
 				pb.removeProcess();
 		}

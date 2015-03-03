@@ -3787,7 +3787,7 @@ public class SiteNodeController extends BaseController
 	        ContentVersionController.getContentVersionController().getMediumContentVersionWithId(version.getId(), db).setVersionValue(contentVersionValue);
     	}
     }
-    
+
     public void markForDeletion(SiteNodeVO siteNodeVO, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException
     {
     	markForDeletion(siteNodeVO, infogluePrincipal, false);
@@ -3801,7 +3801,7 @@ public class SiteNodeController extends BaseController
         beginTransaction(db);
 		try
         {
-			markForDeletion(siteNodeVO, db, forceDelete, infogluePrincipal, contactPersons);
+			markForDeletion(siteNodeVO, db, forceDelete, infogluePrincipal, contactPersons, ProcessBean.createProcessBean("Dummy", "DeleteContent"));
 
 	    	commitTransaction(db);
         }
@@ -3838,39 +3838,39 @@ public class SiteNodeController extends BaseController
 		}
     }
 
-	/**
-	 * This method deletes a siteNode and also erases all the children and all versions.
-	 * 
-	 * This method does not notify contact persons about the removal. Use {@link #markForDeletion(SiteNodeVO, InfoGluePrincipal, boolean)} if you want to notify people.
-	 */
-	public void markForDeletion(SiteNodeVO siteNodeVO, Database db, boolean forceDelete, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Exception
+	public void markForDeletion(SiteNodeVO siteNodeVO, Database db, boolean forceDelete, InfoGluePrincipal infogluePrincipal, ProcessBean processBean) throws ConstraintException, SystemException, Exception
 	{
-		markForDeletion(siteNodeVO, db, forceDelete, infogluePrincipal, new HashMap<SiteNodeVO, List<ReferenceBean>>());
+		markForDeletion(siteNodeVO, db, forceDelete, infogluePrincipal, new HashMap<SiteNodeVO, List<ReferenceBean>>(), processBean);
 	}
 
-	/**
-	 * This method deletes a siteNode and also erases all the children and all versions.
-	 * 
-	 * This method does not notify contact persons about the removal. Use {@link #markForDeletion(SiteNodeVO, InfoGluePrincipal, boolean)} if you want to notify people.
-	 */
-	public void markForDeletion(SiteNodeVO siteNodeVO, Database db, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Exception
+	public void markForDeletion(SiteNodeVO siteNodeVO, Database db, InfoGluePrincipal infogluePrincipal, ProcessBean processBean) throws ConstraintException, SystemException, Exception
 	{
-		markForDeletion(siteNodeVO, db, false, infogluePrincipal, new HashMap<SiteNodeVO, List<ReferenceBean>>());
+		markForDeletion(siteNodeVO, db, false, infogluePrincipal, new HashMap<SiteNodeVO, List<ReferenceBean>>(), processBean);
 	}
 
 	/**
 	 * This method deletes a siteNode and also erases all the children and all versions.
 	 */
-	public void markForDeletion(SiteNodeVO siteNodeVO, Database db, boolean forceDelete, InfoGluePrincipal infogluePrincipal, Map<SiteNodeVO, List<ReferenceBean>> contactPersons) throws ConstraintException, SystemException, Exception
+	public void markForDeletion(SiteNodeVO siteNodeVO, Database db, boolean forceDelete, InfoGluePrincipal infogluePrincipal, Map<SiteNodeVO, List<ReferenceBean>> contactPersons, ProcessBean processBean) throws ConstraintException, SystemException, Exception
 	{
 		boolean notifyResponsibleOnReferenceChange = CmsPropertyHandler.getNotifyResponsibleOnReferenceChange();
 
 		List<Integer> siteNodeIds = getSiteNodeIdsForAllChildren(siteNodeVO.getId(), db);
 		siteNodeIds.add(siteNodeVO.getId());
-		 if(logger.isDebugEnabled())
-	        	logger.info("siteNodeIds:" + siteNodeIds.size());
+		if(logger.isDebugEnabled())
+        	logger.info("siteNodeIds:" + siteNodeIds.size());
+
+		processBean.updateProcess("Moving " + siteNodeIds.size() + " pages to trashcan");
+
+		int i = 0;
 		for(Integer childSiteNodeId : siteNodeIds)
 		{
+			i++;
+			if(i % 1000 == 0)
+			{
+				processBean.updateProcess("Moved " + i + " pages to trashcan");
+			}
+
 			try
 			{
 				SmallSiteNodeImpl siteNode = getSmallSiteNodeWithId(childSiteNodeId, db);
@@ -3956,7 +3956,7 @@ public class SiteNodeController extends BaseController
 	 * @param infoGluePrincipal 
 	 */
 	
-	public List<SiteNodeVO> getSiteNodeVOListMarkedForDeletion(Integer repositoryId, InfoGluePrincipal infoGluePrincipal) throws SystemException, Bug
+	public List<SiteNodeVO> getSiteNodeVOListMarkedForDeletion(Integer repositoryId, InfoGluePrincipal infoGluePrincipal, List<RepositoryVO> excludeReposVOList) throws SystemException, Bug
 	{
 		Database db = CastorDatabaseService.getDatabase();
 		
@@ -3966,15 +3966,31 @@ public class SiteNodeController extends BaseController
 		{
 			beginTransaction(db);
 		
-			String sql = "SELECT sn FROM org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl sn WHERE sn.isDeleted = $1 ORDER BY sn.siteNodeId";
+			int startIndex = 2;
 			if(repositoryId != null && repositoryId != -1)
-				sql = "SELECT sn FROM org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl sn WHERE sn.isDeleted = $1 AND sn.repositoryId = $2 ORDER BY sn.siteNodeId";
+				startIndex++;
+			
+			StringBuffer excludeReposWithIdSQL = new StringBuffer("");
+			if(excludeReposVOList != null && excludeReposVOList.size() > 0)
+			{
+				excludeReposWithIdSQL.append(" AND NOT (sn.repositoryId IN LIST (");
+				for(int i=0; i<excludeReposVOList.size(); i++)
+					excludeReposWithIdSQL.append("" + (i>0 ? "," : "") + "$"+(startIndex+i));
+				excludeReposWithIdSQL.append("))");
+			}
+
+			String sql = "SELECT sn FROM org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl sn WHERE sn.isDeleted = $1 " + excludeReposWithIdSQL + " ORDER BY sn.siteNodeId";
+			if(repositoryId != null && repositoryId != -1)
+				sql = "SELECT sn FROM org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl sn WHERE sn.isDeleted = $1 AND sn.repositoryId = $2 " + excludeReposWithIdSQL + " ORDER BY sn.siteNodeId";
 			
 			OQLQuery oql = db.getOQLQuery(sql);
 			oql.bind(true);
 			if(repositoryId != null && repositoryId != -1)
 				oql.bind(repositoryId);
 				
+			for(RepositoryVO excludedRepoVO : excludeReposVOList)
+				oql.bind(excludedRepoVO.getId());
+
 			QueryResults results = oql.execute(Database.READONLY);
 			while(results.hasMore()) 
             {

@@ -23,13 +23,27 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
+import org.infoglue.cms.applications.databeans.ProcessBean;
+import org.infoglue.cms.controllers.kernel.impl.simple.DeleteRepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.exception.AccessConstraintException;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
-import org.infoglue.cms.util.CmsPropertyHandler;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * This action removes a repository from the system.
@@ -41,8 +55,13 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 {
 	private RepositoryVO repositoryVO;
 	private String returnAddress = null;
+	private String message = null;
 	private Boolean byPassTrashcan = false;
-	
+
+	private String processId = null;
+
+	private VisualFormatter visualFormatter = new VisualFormatter();
+
 	public DeleteRepositoryAction()
 	{
 		this(new RepositoryVO());
@@ -57,7 +76,12 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 	{
 		return "successChooseMethod";
 	}
-	
+
+	public String doInput() throws ConstraintException, Exception 
+	{
+		return "input";
+	}
+
 	public String doMarkForDelete() throws ConstraintException, Exception 
 	{
 		boolean hasAccessToManagementTool = hasAccessTo("ManagementTool.Read");
@@ -69,12 +93,14 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 		this.repositoryVO.setRepositoryId(this.getRepositoryId());
 		try
 		{
-			RepositoryController.getController().markForDelete(this.repositoryVO, this.getInfoGluePrincipal().getName(), this.getInfoGluePrincipal());
-			
-			if(CmsPropertyHandler.getDoNotUseTrashcanForRepositories() || this.byPassTrashcan)
-				RepositoryController.getController().delete(this.repositoryVO, true, getInfoGluePrincipal());
-				
-			return "success";
+			RepositoryVO repoVO = RepositoryController.getController().getRepositoryVOWithId(this.repositoryVO.getId());
+			String exportId = "Deleting_" + visualFormatter.escapeForAdvancedJavascripts(repoVO.getName()).replaceAll("\\.", "_") + "_" + visualFormatter.formatDate(new Date(), "yyyy-MM-dd_HHmm");
+			ProcessBean processBean = ProcessBean.createProcessBean(DeleteRepositoryAction.class.getName(), exportId, getLocalizedString(getLocale(), "tool.common.delete.label") + " '" + repoVO.getName() + "'");
+			//processBean.setRedirectUrl("Redirecting...", "" + "DeleteRepository!input.action?repositoryId=" + this.repositoryVO.getId());
+
+			DeleteRepositoryController.deleteRepositories(this.repositoryVO, this.getInfoGluePrincipal(), this.byPassTrashcan, false, processBean);
+
+			return "successRedirectToProcesses";
 		}
 		catch(ConstraintException ce)
 		{
@@ -99,12 +125,12 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 		this.repositoryVO.setRepositoryId(this.getRepositoryId());
 		try
 		{
-			RepositoryController.getController().markForDelete(this.repositoryVO, this.getInfoGluePrincipal().getName(), true, this.getInfoGluePrincipal());
+			RepositoryVO repoVO = RepositoryController.getController().getRepositoryVOWithId(this.repositoryVO.getId());
+			String exportId = "Deleting_" + visualFormatter.escapeForAdvancedJavascripts(repoVO.getName()).replaceAll("\\.", "_") + "_" + visualFormatter.formatDate(new Date(), "yyyy-MM-dd_HHmm");
+			ProcessBean processBean = ProcessBean.createProcessBean(DeleteRepositoryAction.class.getName(), exportId, getLocalizedString(getLocale(), "tool.common.delete.label") + " '" + repoVO.getName() + "'");
+			DeleteRepositoryController.deleteRepositories(this.repositoryVO, this.getInfoGluePrincipal(), this.byPassTrashcan, true, processBean);
 
-			if(CmsPropertyHandler.getDoNotUseTrashcanForRepositories())
-				RepositoryController.getController().delete(this.repositoryVO, true, getInfoGluePrincipal());
-			
-			return "success";
+			return "successRedirectToProcesses";			
 		}
 		catch(ConstraintException ce)
 		{
@@ -129,7 +155,7 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 		this.repositoryVO.setRepositoryId(this.getRepositoryId());
 		try
 		{
-			RepositoryController.getController().delete(this.repositoryVO, this.getInfoGluePrincipal());
+			RepositoryController.getController().delete(this.repositoryVO, this.getInfoGluePrincipal(), null);
 
 		    ViewMessageCenterAction.addSystemMessage(this.getInfoGluePrincipal().getName(), ViewMessageCenterAction.SYSTEM_MESSAGE_TYPE, "refreshRepositoryList();");
 
@@ -158,7 +184,7 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 	    this.repositoryVO.setRepositoryId(this.getRepositoryId());
 		try
 		{
-			RepositoryController.getController().delete(this.repositoryVO, true, this.getInfoGluePrincipal());
+			RepositoryController.getController().delete(this.repositoryVO, true, this.getInfoGluePrincipal(), null);
 
 			ViewMessageCenterAction.addSystemMessage(this.getInfoGluePrincipal().getName(), ViewMessageCenterAction.SYSTEM_MESSAGE_TYPE, "refreshRepositoryList();");
 			
@@ -201,4 +227,93 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 	{
 		return this.returnAddress;
 	}
+	
+	public String doShowProcesses() throws Exception
+	{
+		return "successShowProcesses";
+	}
+
+	public String doShowProcessesAsJSON() throws Exception
+	{
+		// TODO it would be nice we could write JSON to the OutputStream but we get a content already transmitted exception then.
+		return "successShowProcessesAsJSON";
+	}
+
+
+	public String getStatusAsJSON()
+	{
+		Gson gson = new GsonBuilder()
+			.excludeFieldsWithModifiers(Modifier.TRANSIENT, Modifier.STATIC)
+			.setDateFormat("dd MMM HH:mm:ss").create();
+		JsonObject object = new JsonObject();
+
+		try
+		{
+			List<ProcessBean> processes = getProcessBeans();
+			Type processBeanListType = new TypeToken<List<ProcessBean>>() {}.getType();
+			JsonElement list = gson.toJsonTree(processes, processBeanListType);
+			object.add("processes", list);
+			object.addProperty("memoryMessage", getMemoryUsageAsText());
+			 
+			Iterator<ProcessBean> beanIterator = processes.iterator();
+			while(beanIterator.hasNext())
+			{
+				ProcessBean bean = beanIterator.next();
+				if(bean.getStatus() == ProcessBean.REDIRECTED || bean.getStatus() == ProcessBean.FINISHED)
+				{	
+					bean.setStatus(ProcessBean.FINISHED);
+					bean.removeProcess();
+				}
+			}
+		}
+		catch (Throwable t)
+		{
+			JsonObject error = new JsonObject(); 
+			error.addProperty("message", t.getMessage());
+			error.addProperty("type", t.getClass().getSimpleName());
+			object.add("error", error);
+		}
+
+		return gson.toJson(object);
+	}
+	
+	public List<ProcessBean> getProcessBeans()
+	{
+		return ProcessBean.getProcessBeans(DeleteRepositoryAction.class.getName());
+	}
+	
+	/**
+	 * This deletes a process info bean and related files etc.
+	 * @return
+	 * @throws Exception
+	 */	
+
+	public String doDeleteProcessBean() throws Exception
+	{
+		System.out.println("this.processId:" + this.processId);
+		if(this.processId != null)
+		{
+			ProcessBean pb = ProcessBean.getProcessBean(DeleteRepositoryAction.class.getName(), processId);
+			System.out.println("pb:" + pb);
+			if(pb != null)
+				pb.removeProcess();
+		}
+		
+		return "successRedirectToProcesses";
+	}
+
+	public void setProcessId(String processId) 
+	{
+		this.processId = processId;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+
 }

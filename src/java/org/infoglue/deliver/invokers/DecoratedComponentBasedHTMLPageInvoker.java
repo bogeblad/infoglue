@@ -911,7 +911,6 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 				String subComponentString = "";
 			
 				
-				System.out.println("IGComp:" + component.getId());
 				//TODO - test
 				if(component.getIsInherited() && !disableSlotDecoration) {
 				    subComponentString += "<div id=\"Comp" + component.getId() + "_" + id + "\" class=\"inheritedComponentDiv\");\">";

@@ -380,6 +380,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			StringBuffer path = getPagePathAsCommaseparatedIds(templateController);
 			
 			extraHeader = extraHeader.replaceAll("\\$\\{focusElementId\\}", "" + this.getRequest().getParameter("focusElementId"));
+
 			extraHeader = extraHeader.replaceAll("\\$\\{cmsBaseUrl\\}", cmsBaseUrl);
 			extraHeader = extraHeader.replaceAll("\\$\\{contextName\\}", this.getRequest().getContextPath());
 			extraHeader = extraHeader.replaceAll("\\$\\{componentEditorUrl\\}", componentEditorUrl);
@@ -666,19 +667,23 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			if(indexOfHeadEndTag > -1)
 			{
 				modifiedTemplate = modifiedTemplate.replace(indexOfHeadEndTag, modifiedTemplate.indexOf(">", indexOfHeadEndTag) + 1, extraHeader);
+
 			}
 			else
 			{
 				int indexOfHTMLStartTag = modifiedTemplate.indexOf("<html");
-				if(indexOfHTMLStartTag == -1)
+				if(indexOfHTMLStartTag == -1){
 					indexOfHTMLStartTag = modifiedTemplate.indexOf("<HTML");
-		
+
+				}
 				if(indexOfHTMLStartTag > -1)
 				{
+
 					modifiedTemplate = modifiedTemplate.insert(modifiedTemplate.indexOf(">", indexOfHTMLStartTag) + 1, "<head>" + extraHeader);
 				}
 				else
 				{
+	
 					logger.info("The current template is not a valid document. It does not comply with the simplest standards such as having a correct header.");
 				}
 			}
@@ -1026,7 +1031,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 								    String extraClass = "clearFix";
 								    if(childComponentsString.contains("noclearfix"))
 								    	extraClass = "clearFixNoBreak";
-								    subComponentString += "<div style=\"position: relative;\" style=\"display:inline;\" id=\""+ id + index + "_" + subComponent.getId() + "Comp\" componentElementId=\""+ subComponent.getId() + "\" class=\"moveZone sortableComponent " + extraClass + "\">" + childComponentsString + "<script type=\"text/javascript\">initializeComponentEventHandler('" + id + index + "_" + subComponent.getId() + "Comp', '" + subComponent.getId() + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + (contentId == null ? "-1" : contentId) + "&amp;parentComponentId=" + component.getId() + "&amp;slotId=" + id + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + ((allowedComponentNamesAsEncodedString != null) ? "&amp;" + allowedComponentNamesAsEncodedString : "") + ((disallowedComponentNamesAsEncodedString != null) ? "&amp;" + disallowedComponentNamesAsEncodedString : "") + ((allowedComponentGroupNamesAsEncodedString != null) ? "&amp;" + allowedComponentGroupNamesAsEncodedString : "") + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponent.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + contentId + "&amp;componentId=" + subComponent.getId() + "&amp;slotId=" + id + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "','" + changeUrl + "');</script></div>";
+								    subComponentString += "<div style=\"position: relative;\" style=\"display:inline;\" id=\""+ subComponent.getId() + "Comp\" componentElementId=\""+ subComponent.getId() + "\" class=\"moveZone sortableComponent " + extraClass + "\">" + childComponentsString + "<script type=\"text/javascript\">initializeComponentEventHandler('" + subComponent.getId() + "Comp', '" + subComponent.getId() + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + (contentId == null ? "-1" : contentId) + "&amp;parentComponentId=" + component.getId() + "&amp;slotId=" + id + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + ((allowedComponentNamesAsEncodedString != null) ? "&amp;" + allowedComponentNamesAsEncodedString : "") + ((disallowedComponentNamesAsEncodedString != null) ? "&amp;" + disallowedComponentNamesAsEncodedString : "") + ((allowedComponentGroupNamesAsEncodedString != null) ? "&amp;" + allowedComponentGroupNamesAsEncodedString : "") + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponent.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + contentId + "&amp;componentId=" + subComponent.getId() + "&amp;slotId=" + id + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "','" + changeUrl + "');</script></div>";
 								} 
 								else
 								{
@@ -2030,11 +2035,12 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		
 		sb.append("			componentId = \"" + componentId + "\";\n");
 		sb.append("			activatedComponentId = QueryString(\"activatedComponentId\");\n");
-		sb.append("			if(activatedComponentId && activatedComponentId == componentId){\n"); 
+		sb.append("			hideComponentPropertiesOnLoad = QueryString(\"hideComponentPropertiesOnLoad\");\n");
+		sb.append("			if(activatedComponentId && activatedComponentId == componentId && hideComponentPropertiesOnLoad != 'true'){\n"); 
 		if(accessablePropertyIndex > 4)
 			sb.append("				showComponentProperties(\"component\" + componentId + \"Properties\");}\n"); 
 		sb.append("			$('#component" + componentId + "PropertiesHandle').css('cursor', 'move');\n");
-		sb.append("			try {$('#component" + componentId + "Properties').draggable({handle: theHandle, cursor: 'move', distance: 10});}catch(err) {}\n");
+		sb.append("			try {$('#component" + componentId + "Properties').draggable({handle: theHandle, cursor: 'move', distance: 10});}catch(err) {} \n");
 		sb.append("		});\n");
 		
 		sb.append("	--></script>\n");

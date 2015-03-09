@@ -4817,23 +4817,26 @@ public class SiteNodeController extends BaseController
 	    args.put("globalKey", "infoglue");
 	    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
 	    List<LanguageVO> enabledPageLanguages = new ArrayList<LanguageVO>();
-
 	   
 	    String enabledLanguages = "" + ps.getString("siteNode_" + siteNodeId + "_enabledLanguages");
     	
     	SiteNodeVO siteNodeVO = getSiteNodeVOWithId(siteNodeId);
 		String[] enabledLanguageIdStringList = enabledLanguages.split(",");
-		 System.out.println("Enabled siteNodeVO.getRepositoryId() siteNodeId:" + siteNodeVO.getRepositoryId());
+		//System.out.println("Enabled siteNodeVO.getRepositoryId() siteNodeId:" + siteNodeVO.getRepositoryId());
 		List<LanguageVO> repositoryLanguageVOList = LanguageController.getController().getLanguageVOList(siteNodeVO.getRepositoryId());
-		 System.out.println("Enabled repositoryLanguageVOList siteNodeId:" + repositoryLanguageVOList);
+		//System.out.println("Enabled repositoryLanguageVOList siteNodeId:" + repositoryLanguageVOList);
 		Integer enabledLanguageId = null;
 		LanguageVO enabledLanguageVO;
 		
-		if (enabledLanguageIdStringList[0].equalsIgnoreCase("")) {
+		if (enabledLanguageIdStringList[0].equalsIgnoreCase("")) 
+		{
 			enabledPageLanguages.addAll(repositoryLanguageVOList);
-		} else {
-			for (String enabledLanguageIdString : enabledLanguageIdStringList) {
-				 System.out.println("Enabled enabledLanguageIdString:" + enabledLanguageIdString);
+		} 
+		else 
+		{
+			for (String enabledLanguageIdString : enabledLanguageIdStringList) 
+			{
+				//System.out.println("Enabled enabledLanguageIdString:" + enabledLanguageIdString);
 				enabledLanguageId = Integer.parseInt(enabledLanguageIdString);
 				enabledLanguageVO = (LanguageVO) LanguageController.getController().getLanguageVOWithId(enabledLanguageId);
 				enabledPageLanguages.add(enabledLanguageVO);
@@ -4848,12 +4851,11 @@ public class SiteNodeController extends BaseController
     	List<LanguageVO> enabledLanguageVOList = getEnabledLanguageVOListForSiteNode(siteNodeId);
     	SiteNodeVO siteNodeVO = getSiteNodeVOWithId(siteNodeId);
     	List<LanguageVO> repositoryLanguageVOList = LanguageController.getController().getLanguageVOList(siteNodeVO.getRepositoryId());
-
-    	repositoryLanguageVOList.removeAll(enabledLanguageVOList);
     	
-		for (LanguageVO langVO : repositoryLanguageVOList) {
-			System.out.println("disabled langageVOList:" + langVO.getLanguageCode());
-		}
+    	List<LanguageVO> filteredRepositoryLanguageVOList = new ArrayList<LanguageVO>();
+    	filteredRepositoryLanguageVOList.addAll(repositoryLanguageVOList);
+    	filteredRepositoryLanguageVOList.removeAll(enabledLanguageVOList);
+    	
 		return repositoryLanguageVOList;
 	}
 

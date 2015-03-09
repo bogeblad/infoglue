@@ -17,7 +17,7 @@
 			//alert("componentId:" + componentId);
 			if(!isClicked){
 				isClicked = true;
-				url = "ViewSiteNodePageComponents!addComponent.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&parentComponentId=$!parentComponentId&componentId=" + componentId + "&slotId=$slotId&specifyBaseTemplate=$!specifyBaseTemplate&showSimple=$showSimple";
+				url = "ViewSiteNodePageComponents!addComponent.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&parentComponentId=$!parentComponentId&componentId=" + componentId + "&slotId=$slotId&specifyBaseTemplate=$!specifyBaseTemplate&slotPositionComponentId=$slotPositionComponentId&showSimple=$showSimple";
 				//alert("url" + url);
 				parent.document.location.href = url;
 			}
@@ -26,7 +26,7 @@
 		function changeRepository(selectBox)
 		{
 			var repositoryId = selectBox.value;
-			var url = "ViewSiteNodePageComponents!listComponents.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&parentComponentId=$!parentComponentId&slotId=$slotId&specifyBaseTemplate=$!specifyBaseTemplate&showSimple=$showSimple&$allowedComponentNamesAsUrlEncodedString&$disallowedComponentNamesAsUrlEncodedString&$allowedComponentGroupNamesAsUrlEncodedString&filterRepositoryId=" + repositoryId;
+			var url = "ViewSiteNodePageComponents!listComponents.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&parentComponentId=$!parentComponentId&slotId=$slotId&specifyBaseTemplate=$!specifyBaseTemplate&slotPositionComponentId=$slotPositionComponentId&showSimple=$showSimple&$allowedComponentNamesAsUrlEncodedString&$disallowedComponentNamesAsUrlEncodedString&$allowedComponentGroupNamesAsUrlEncodedString&filterRepositoryId=" + repositoryId;
 			//alert("url:" + url);
 			document.location.href = url;
 		}

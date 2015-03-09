@@ -758,7 +758,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		{
 			String componentString = getComponentString(templateController, component.getContentId(), component); 
 			//System.out.println("componentString:" + componentString);
-			
+	
 			if(component.getParentComponent() == null && templateController.getDeliveryContext().getShowSimple())
 			{
 			    templateController.getDeliveryContext().setContentType("text/html");
@@ -909,13 +909,14 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 				component.setContainerSlot(slotBean);
 				
 				String subComponentString = "";
+			
 				
 				//TODO - test
-				if(component.getIsInherited() && !disableSlotDecoration)
+				if(component.getIsInherited() && !disableSlotDecoration) {
 				    subComponentString += "<div id=\"Comp" + component.getId() + "_" + id + "\" class=\"inheritedComponentDiv\");\">";
-				else if(!disableSlotDecoration)
-				    subComponentString += "<div id=\"Comp" + component.getId() + "_" + id + "\" class=\"componentDiv " + slotBean.getLimitationClasses() + "\" onmouseup=\"javascript:assignComponent('" + siteNodeId + "', '" + languageId + "', '" + contentId + "', '" + component.getId() + "', '" + id + "', '" + false + "', '" + slotBean.getAllowedComponentsArrayAsUrlEncodedString() + "', '" + slotBean.getDisallowedComponentsArrayAsUrlEncodedString() + "', '" + slotBean.getAllowedComponentGroupsArrayAsUrlEncodedString() + "', '');\">";
-				    
+				} else if(!disableSlotDecoration) {
+					subComponentString += "<div id=\"Comp" + component.getId() + "_" + id + "\" class=\"componentDiv " + slotBean.getLimitationClasses() + "\" onmouseup=\"javascript:assignComponent('" + siteNodeId + "', '" + languageId + "', '" + contentId + "', '" + component.getId() + "', '" + id + "', '" + false + "', '" + slotBean.getAllowedComponentsArrayAsUrlEncodedString() + "', '" + slotBean.getDisallowedComponentsArrayAsUrlEncodedString() + "', '" + slotBean.getAllowedComponentGroupsArrayAsUrlEncodedString() + "', '');\">";
+				}
 				List subComponents = getInheritedComponents(getDatabase(), templateController, component, templateController.getSiteNodeId(), id, inherit);
 
 			    InfoGluePrincipal principal = templateController.getPrincipal();
@@ -971,7 +972,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 					while(subComponentsIterator.hasNext())
 					{
 						InfoGlueComponent subComponent = (InfoGlueComponent)subComponentsIterator.next();
-						
+
 						if(subComponent != null)
 						{
 							if(handledComponents.contains(subComponent.getId()))
@@ -1025,7 +1026,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 								    String extraClass = "clearFix";
 								    if(childComponentsString.contains("noclearfix"))
 								    	extraClass = "clearFixNoBreak";
-								    subComponentString += "<div style=\"position: relative;\" style=\"display:inline;\" id=\""+ id + index + "_" + subComponent.getId() + "Comp\" class=\"moveZone sortableComponent " + extraClass + "\">" + childComponentsString + "<script type=\"text/javascript\">initializeComponentEventHandler('" + id + index + "_" + subComponent.getId() + "Comp', '" + subComponent.getId() + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + (contentId == null ? "-1" : contentId) + "&amp;parentComponentId=" + component.getId() + "&amp;slotId=" + id + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + ((allowedComponentNamesAsEncodedString != null) ? "&amp;" + allowedComponentNamesAsEncodedString : "") + ((disallowedComponentNamesAsEncodedString != null) ? "&amp;" + disallowedComponentNamesAsEncodedString : "") + ((allowedComponentGroupNamesAsEncodedString != null) ? "&amp;" + allowedComponentGroupNamesAsEncodedString : "") + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponent.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + contentId + "&amp;componentId=" + subComponent.getId() + "&amp;slotId=" + id + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "','" + changeUrl + "');</script></div>";
+								    subComponentString += "<div style=\"position: relative;\" style=\"display:inline;\" id=\""+ id + index + "_" + subComponent.getId() + "Comp\" componentElementId=\""+ subComponent.getId() + "\" class=\"moveZone sortableComponent " + extraClass + "\">" + childComponentsString + "<script type=\"text/javascript\">initializeComponentEventHandler('" + id + index + "_" + subComponent.getId() + "Comp', '" + subComponent.getId() + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + (contentId == null ? "-1" : contentId) + "&amp;parentComponentId=" + component.getId() + "&amp;slotId=" + id + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + ((allowedComponentNamesAsEncodedString != null) ? "&amp;" + allowedComponentNamesAsEncodedString : "") + ((disallowedComponentNamesAsEncodedString != null) ? "&amp;" + disallowedComponentNamesAsEncodedString : "") + ((allowedComponentGroupNamesAsEncodedString != null) ? "&amp;" + allowedComponentGroupNamesAsEncodedString : "") + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponent.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + contentId + "&amp;componentId=" + subComponent.getId() + "&amp;slotId=" + id + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "','" + changeUrl + "');</script></div>";
 								} 
 								else
 								{

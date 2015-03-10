@@ -3629,7 +3629,7 @@ public class ContentController extends BaseController
 			if(repositoryId != null && repositoryId != -1)
 				sql = "SELECT c FROM org.infoglue.cms.entities.content.impl.simple.SmallContentImpl c WHERE c.isDeleted = $1 AND is_defined(c.repositoryId) AND c.repositoryId = $2 " + excludeReposWithIdSQL + " ORDER BY c.contentId";
 			
-			System.out.println("sql:" + sql);
+			//logger.info("sql:" + sql);
 			OQLQuery oql = db.getOQLQuery(sql);
 			oql.bind(true);
 			if(repositoryId != null && repositoryId != -1)
@@ -3643,13 +3643,23 @@ public class ContentController extends BaseController
             {
 				SmallContentImpl content = (SmallContentImpl)results.next();
 				Integer contentRepositoryId = content.getValueObject().getRepositoryId();
-				RepositoryVO repoVO = RepositoryController.getController().getRepositoryVOWithId(contentRepositoryId, db);
-				Integer contentId = content.getValueObject().getContentId();
 
+				Integer contentId = content.getValueObject().getContentId();
+				RepositoryVO repositoryVO = null;
+				try
+				{
+					repositoryVO = RepositoryController.getController().getRepositoryVOWithId(contentRepositoryId, db);
+				}
+				catch(Exception e)
+				{
+					logger.warn("There was a repo referenced that is allready deleted. Skipping rights deletion.");
+				}
+	
 				if((AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Read", contentRepositoryId.toString()) && AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Write", contentRepositoryId.toString()))
 					&& (AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Content.Read", contentId.toString()) && AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Content.Write", contentId.toString())))
 				{
-					content.getValueObject().getExtraProperties().put("repositoryMarkedForDeletion", repoVO.getIsDeleted());
+					if(repositoryVO != null)
+						content.getValueObject().getExtraProperties().put("repositoryMarkedForDeletion", repositoryVO.getIsDeleted());
 					contentVOListMarkedForDeletion.add(content.getValueObject());
 				}
 			}

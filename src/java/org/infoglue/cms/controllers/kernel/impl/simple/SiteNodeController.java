@@ -3996,13 +3996,23 @@ public class SiteNodeController extends BaseController
             {
 				SmallSiteNodeImpl siteNode = (SmallSiteNodeImpl)results.next();
 				Integer siteNodeRepositoryId = siteNode.getValueObject().getRepositoryId();
-				RepositoryVO repoVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeRepositoryId, db);
+				RepositoryVO repositoryVO = null;
+				
+				try
+				{
+					repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeRepositoryId, db);
+				}
+				catch(Exception e)
+				{
+					logger.warn("There was a repo referenced that is allready deleted. Skipping rights deletion.");
+				}
 				Integer siteNodeId = siteNode.getId();
 
 				if((AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Read", siteNodeRepositoryId.toString()) && AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Write", siteNodeRepositoryId.toString()))
 					&& (AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "SiteNodeVersion.Read", siteNodeId.toString()) && AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "SiteNodeVersion.Write", siteNodeId.toString())))
 				{
-					siteNode.getValueObject().getExtraProperties().put("repositoryMarkedForDeletion", repoVO.getIsDeleted());
+					if(repositoryVO != null)
+						siteNode.getValueObject().getExtraProperties().put("repositoryMarkedForDeletion", repositoryVO.getIsDeleted());
 					siteNodeVOListMarkedForDeletion.add(siteNode.getValueObject());
 				}
             }

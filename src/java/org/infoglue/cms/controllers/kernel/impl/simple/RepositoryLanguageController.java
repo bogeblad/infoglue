@@ -637,7 +637,7 @@ public class RepositoryLanguageController extends BaseController
 			{
 				for (int i=0; i < languageValues.length; i++)
 	            {
-	            	Language language = LanguageController.getController().getLanguageWithId(new Integer(languageValues[i]), db);
+	            	//Language language = LanguageController.getController().getLanguageWithId(new Integer(languageValues[i]), db);
 	            	RepositoryLanguage repositoryLanguage = create(repository.getId(), new Integer(languageValues[i]), new Integer(i), db);
 	            	repositoryLanguageList.add(repositoryLanguage);
 	            }

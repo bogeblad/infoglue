@@ -263,14 +263,6 @@ public class RepositoryController extends BaseController
 
 		try
 		{
-			NotificationMessage copyMessage = new NotificationMessage("Repository " + repositoryVO.getName() + " was deleted", Repository.class.getName(), "SYSTEM", NotificationMessage.TRANS_DELETE, "n/a", "" + repositoryVO.getName());
-			TransactionHistoryController.getController().create(copyMessage);
-
-			repository = getRepositoryWithId(repositoryVO.getRepositoryId(), db);
-			
-			RepositoryLanguageController.getController().deleteRepositoryLanguages(repository, db);
-			processBean.updateProcess("Deleted repo languages...");
-			
 			ContentVO contentVO = ContentControllerProxy.getController().getRootContentVO(repositoryVO.getRepositoryId(), infoGluePrincipal.getName(), false);
 			if(contentVO != null)
 			{
@@ -291,13 +283,25 @@ public class RepositoryController extends BaseController
 			}
 			processBean.updateProcess("Deleted repo pages...");
 
-			
-			deleteEntity(RepositoryImpl.class, repositoryVO.getRepositoryId(), db);
-			processBean.updateProcess("Deleted repo...");
-	
 			//If any of the validations or setMethods reported an error, we throw them up now before create.
 			ceb.throwIfNotEmpty();
     
+			db.commit();
+			processBean.updateProcess("Pages and contents deleted - now let's delete repo entity");
+
+			db.begin();
+
+			NotificationMessage copyMessage = new NotificationMessage("Repository " + repositoryVO.getName() + " was deleted", Repository.class.getName(), "SYSTEM", NotificationMessage.TRANS_DELETE, "n/a", "" + repositoryVO.getName());
+			TransactionHistoryController.getController().create(copyMessage);
+
+			repository = getRepositoryWithId(repositoryVO.getRepositoryId(), db);
+			
+			RepositoryLanguageController.getController().deleteRepositoryLanguages(repository, db);
+			processBean.updateProcess("Deleted repo languages...");
+			
+			deleteEntity(RepositoryImpl.class, repositoryVO.getRepositoryId(), db);
+			processBean.updateProcess("Deleted repo...");
+
 			commitTransaction(db);
 		}
 		catch(ConstraintException ce)

@@ -74,7 +74,7 @@ public class StructureToolbarController
 	    ToolbarButton previewPage = new ToolbarButton("previewMediumScreenPage",
 				  getLocalizedString(locale, "tool.structuretool.toolbarV3.previewMediumScreenPageLabel"), 
 				  getLocalizedString(locale, "tool.structuretool.toolbarV3.previewMediumScreenPageLabel"),
-				  "javascript:openInlineDiv('" + workingUrl + "?siteNodeId=" + siteNodeId + (siteNodeVersionId != null ? "&siteNodeVersionId=" + siteNodeVersionId : "") + "', 1010, 660, false, true,'Tablet (660 pixels width)'); return false;",
+				  "javascript:openInlineDiv('" + workingUrl + "?siteNodeId=" + siteNodeId + (siteNodeVersionId != null ? "&siteNodeVersionId=" + siteNodeVersionId : "") + "', 690, 1024, false, true,'Tablet (660 pixels width)'); return false;",
 				  "",
 				  "left",
 				  "preview",

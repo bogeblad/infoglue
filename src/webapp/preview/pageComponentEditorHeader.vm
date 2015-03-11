@@ -55,6 +55,7 @@
 
 	setTimeout("keepSession()", 60000);
 -->	
+
 </script>
 
 <script type="text/javascript" src="${contextName}/script/componentEditor.js"></script>
@@ -82,7 +83,16 @@ ${skinDeliveryCSS}
 		CKEDITOR.config.minHeight = 200;
 	    CKEDITOR.config.maxHeight = maxAutogrowHeight;
 	}    
--->
+	-->
+ 	$( document ).ready(function() {
+		var $activeElement = $('#${focusElementId}Comp');
+
+		if($activeElement != null && $activeElement.offset())
+		{
+			$(window)[0].scrollTo(0, $activeElement.offset().top - 300);
+		}
+	});
+
 </script>
 #end
 

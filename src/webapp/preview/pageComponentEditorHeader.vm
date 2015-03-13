@@ -1,4 +1,6 @@
+
 <script type="text/javascript">
+
 <!--
 	var cmsBaseUrl = "${cmsBaseUrl}";
 	var componentEditorUrl = "${componentEditorUrl}";
@@ -85,7 +87,8 @@ ${skinDeliveryCSS}
 	}    
 	-->
  	$( document ).ready(function() {
-		var $activeElement = $('#${focusElementId}Comp');
+
+		var $activeElement = $('div[data-componentelementid="${focusElementId}"]');
 
 		if($activeElement != null && $activeElement.offset())
 		{

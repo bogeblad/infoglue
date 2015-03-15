@@ -175,7 +175,7 @@ public class CopyRepositoryController extends BaseController implements Runnable
 				RepositoryVO repo = RepositoryController.getController().create(repositoryVO);
 				logger.info("repo: " + repo.getId());
 				
-				List<LanguageVO> languages = RepositoryLanguageController.getController().getLanguageVOListForRepositoryId(repository.getId());
+				List<LanguageVO> languages = LanguageController.getController().getLanguageVOList(repository.getId());
 		    	String[] values = new String[languages.size()];
 		    	int index = 0;
 		    	for(LanguageVO languageVO : languages)

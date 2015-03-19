@@ -739,7 +739,7 @@ function showComponentInTreeMenu(event, element, compId, anInsertUrl, anDeleteUr
 function convertName(val)
 {
   	var regexp = new RegExp("[^0-9,a-z,A-Z]", "g");
-  	return val.replace(regexp, "_");
+  	return val.replace(regexp, "");
 }
 
 function showEmptySlotMenu(slotId, event, compId, anInsertUrl, slotContentIdVar) 
@@ -747,7 +747,6 @@ function showEmptySlotMenu(slotId, event, compId, anInsertUrl, slotContentIdVar)
 	hidepreviousmenues();
 	
 	activeMenuId = "emptySlotMenu";
-	
 	slotName = slotId;
 	slotContentId = slotContentIdVar;
 	
@@ -2183,7 +2182,6 @@ function viewSource()
 		deleteUrl = deleteUrl.replace(/\&amp;/g,'&');
 		changeUrl = changeUrl.replace(/\&amp;/g,'&');
 
-		//alert("initializeSlotEventHandler:" + id + ":" + slotId);
 		var object = new emptySlotEventHandler(id, id, insertUrl, deleteUrl, changeUrl, slotId, slotContentIdVar);
 	}
 
@@ -2256,8 +2254,7 @@ function viewSource()
 		deleteUrl = deleteUrl.replace(/\&amp;/g,'&');
 		changeUrl = changeUrl.replace(/\&amp;/g,'&');
 		//if(insertUrl == "")
-		//	alert("insertUrl:" + insertUrl + " for " + id + ":" + compId);
-		//console.log("initializeComponentEventHandler " + compId);
+
 		var object = new componentEventHandler(id, id, compId, insertUrl, deleteUrl, changeUrl);
 		componentHandlers["" + compId] = object;
 	}
@@ -2270,10 +2267,7 @@ function viewSource()
 		this.insertUrl = insertUrl;
 		this.deleteUrl = deleteUrl;
 		this.changeUrl = changeUrl;
-		//alert("eleId:" + eleId);
-		//alert("this.insertUrl:" + this.insertUrl);
-		//alert("insertUrl:" + insertUrl);
-		//alert("this.deleteUrl:" + this.deleteUrl);
+
 		var ele = xGetElementById(eleId); // ele points to our related Element
 		ele.thisObj = this;              // Add a property to ele which points
 		                                    // to our myObject4 'this'.

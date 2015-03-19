@@ -91,7 +91,7 @@ import org.infoglue.deliver.util.Timer;
 import org.infoglue.deliver.util.VelocityTemplateProcessor;
 import org.xmlpull.v1.builder.XmlDocument;
 import org.xmlpull.v1.builder.XmlInfosetBuilder;
-
+	
 /**
 * @author Mattias Bogeblad
 *
@@ -342,11 +342,11 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		    }
 		    
 		    Locale locale = templateController.getLocaleAvailableInTool(principal);
-
+			String cleanedSlotName = component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "");
 		    boolean hasAccessToAccessRights 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ChangeSlotAccess", "");
-			boolean hasAccessToAddComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.AddComponent", "" + component.getContentId() + "_" + component.getSlotName());
-			boolean hasAccessToDeleteComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.DeleteComponent", "" + component.getContentId() + "_" + component.getSlotName());
-			boolean hasAccessToChangeComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ChangeComponent", "" + component.getContentId() + "_" + component.getSlotName());
+			boolean hasAccessToAddComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.AddComponent","");
+			boolean hasAccessToDeleteComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.DeleteComponent", "" + component.getContentId() + "_" + cleanedSlotName);
+			boolean hasAccessToChangeComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ChangeComponent", "" + component.getContentId() + "_" + cleanedSlotName);
 			boolean hasSaveTemplateAccess 		= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.SavePageTemplate", true, false, true);
 		    boolean hasSubmitToPublishAccess 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.SubmitToPublish", true, false, true);
 		    boolean hasPageStructureAccess 		= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.PageStructure", true, false, true);
@@ -579,9 +579,9 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			}
 			extraBody = extraBody.replaceAll("\\$\\{languageList\\}", languagesSB.toString());
 
-		    extraBody = extraBody.replaceAll("\\$addComponentJavascript", "window.hasAccessToAddComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToAddComponent + ";");
-		    extraBody = extraBody.replaceAll("\\$deleteComponentJavascript", "window.hasAccessToDeleteComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToDeleteComponent + ";");
-		    extraBody = extraBody.replaceAll("\\$changeComponentJavascript", "window.hasAccessToChangeComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToChangeComponent + ";");
+		    extraBody = extraBody.replaceAll("\\$addComponentJavascript", "window.hasAccessToAddComponent" + component.getId() + "_" + cleanedSlotName + " = " + hasAccessToAddComponent + ";");
+		    extraBody = extraBody.replaceAll("\\$deleteComponentJavascript", "window.hasAccessToDeleteComponent" + component.getId() + "_" + cleanedSlotName + " = " + hasAccessToDeleteComponent + ";");
+		    extraBody = extraBody.replaceAll("\\$changeComponentJavascript", "window.hasAccessToChangeComponent" + component.getId() + "_" + cleanedSlotName + " = " + hasAccessToChangeComponent + ";");
 		    extraBody = extraBody.replaceAll("\\$changeAccessJavascript", "window.hasAccessToAccessRights" + " = " + hasAccessToAccessRights + ";");
 		    
 		    extraBody = extraBody.replaceAll("\\$submitToPublishJavascript", "window.hasAccessToSubmitToPublish = " + hasSubmitToPublishAccess + ";");
@@ -934,7 +934,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			    }
 			    
 				String clickToAddHTML = "";
-				boolean hasAccessToAddComponent = AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.AddComponent", "" + component.getContentId() + "_" + id);
+				boolean hasAccessToAddComponent = AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.AddComponent", "");
 				if(slotBean.getDisableAccessControl())
 					hasAccessToAddComponent = true;
 				
@@ -962,7 +962,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 					else
 					{
 						Locale locale = templateController.getLocaleAvailableInTool(principal);
-						clickToAddHTML = getLocalizedString(locale, "deliver.editOnSight.slotInstructionHTML", slotBean.getId(), slotBean.getDisplayName());
+						clickToAddHTML = getLocalizedString(locale, "deliver.editOnSight.slotInstructionHTML", slotBean.getId().replaceAll("[^0-9,a-z,A-Z]", ""), slotBean.getDisplayName());
 					}
 				}
 				
@@ -985,7 +985,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 
 							handledComponents.add(subComponent.getId());
 							
-							component.getComponents().put(subComponent.getSlotName(), subComponent);
+							component.getComponents().put(subComponent.getSlotName().replaceAll("[^0-9,a-z,A-Z]", ""), subComponent);
 							if(subComponent.getIsInherited())
 							{
 								//logger.info("Inherited..." + contentId);
@@ -1018,7 +1018,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 								    {
 								        Slot subSlotBean = (Slot)subComponent.getParentComponent().getSlotList().get(i);
 								        
-								        if(subSlotBean.getId() != null && subSlotBean.getId().equals(subComponent.getSlotName()))
+								        if(subSlotBean.getId() != null && subSlotBean.getId().equals(subComponent.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "")))
 								        {
 								            allowedComponentNamesAsEncodedString = subSlotBean.getAllowedComponentsArrayAsUrlEncodedString();
 								            disallowedComponentNamesAsEncodedString = subSlotBean.getDisallowedComponentsArrayAsUrlEncodedString();
@@ -1215,7 +1215,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		if(componentName.length() > 20) 
 			componentName = componentName.substring(0, 20) + "...";
 		
-		String slotName = component.getSlotName();
+		String slotName = component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "");
 		if(slotName.length() > 10) 
 			slotName = slotName.substring(0, 10) + "...";
 		
@@ -2130,13 +2130,14 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 	    	if(newPrincipal != null)
 	    		principal = newPrincipal;
 	    }
+	    String cleanedSlotName = component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "");
 	    
 		boolean hasAccessToAccessRights 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ChangeSlotAccess", "");
-		boolean hasAccessToAddComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.AddComponent", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + component.getSlotName());
-		boolean hasAccessToDeleteComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.DeleteComponent", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + component.getSlotName());
-		boolean hasMoveComponentUpAccess 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.hasMoveComponentUpAccess", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + component.getSlotName());
-		boolean hasMoveComponentDownAccess 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.hasMoveComponentDownAccess", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + component.getSlotName());
-		boolean hasAccessToChangeComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ChangeComponent", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + component.getSlotName());
+		boolean hasAccessToAddComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.AddComponent", "");
+		boolean hasAccessToDeleteComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.DeleteComponent", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + cleanedSlotName);
+		boolean hasMoveComponentUpAccess 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.hasMoveComponentUpAccess", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + cleanedSlotName);
+		boolean hasMoveComponentDownAccess 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.hasMoveComponentDownAccess", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + cleanedSlotName);
+		boolean hasAccessToChangeComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ChangeComponent", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + cleanedSlotName);
 	    boolean hasSaveTemplateAccess 		= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.SavePageTemplate", true, false, true);
 	    boolean hasSubmitToPublishAccess 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.SubmitToPublish", true, false, true);
 	    boolean hasPageStructureAccess 		= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.PageStructure", true, false, true);
@@ -2160,7 +2161,8 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			while(slotListIterator.hasNext())
 			{
 				Slot slot = (Slot)slotListIterator.next();
-				if(slot.getId().equalsIgnoreCase(component.getSlotName()))
+				String cleanedSlotNameInIteration = slot.getId().replaceAll("[^0-9,a-z,A-Z]", "");
+				if(cleanedSlotNameInIteration.equalsIgnoreCase(cleanedSlotName))
 				{
 					if(slot.getAllowedNumberOfComponents() != -1 && slot.getComponents().size() >= slot.getAllowedNumberOfComponents())
 					{
@@ -2183,10 +2185,10 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		{
 		    StringBuffer sb = new StringBuffer();
 		    sb.append("<script type=\"text/javascript\">");
-		    sb.append("window.hasAccessToAddComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToAddComponent + ";");
-			sb.append("window.hasAccessToDeleteComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToDeleteComponent + ";");
-			sb.append("window.hasAccessToChangeComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToChangeComponent + ";");
-			sb.append("window.hasAccessToEditProperties" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToEditProperties + ";");
+		    sb.append("window.hasAccessToAddComponent" + component.getId() + "_" + cleanedSlotName + " = " + hasAccessToAddComponent + ";");
+			sb.append("window.hasAccessToDeleteComponent" + component.getId() + "_" + cleanedSlotName + " = " + hasAccessToDeleteComponent + ";");
+			sb.append("window.hasAccessToChangeComponent" + component.getId() + "_" + cleanedSlotName + " = " + hasAccessToChangeComponent + ";");
+			sb.append("window.hasAccessToEditProperties" + component.getId() + "_" + cleanedSlotName + " = " + hasAccessToEditProperties + ";");
 			sb.append("window.hasAccessToAccessRights = " + hasAccessToAccessRights + ";");
 			sb.append("</script>");
 			return sb.toString();
@@ -2328,13 +2330,14 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		
     	
 		sb.append("<script type=\"text/javascript\">");
-		sb.append("window.hasAccessToAddComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToAddComponent + ";\n");
-		sb.append("window.hasAccessToDeleteComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToDeleteComponent + ";\n");
-		sb.append("window.hasAccessToChangeComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToChangeComponent + ";\n");
-		sb.append("window.hasAccessToEditProperties" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToEditProperties + ";\n");
+		
+		sb.append("window.hasAccessToAddComponent" + component.getId() + "_" + cleanedSlotName + " = " + hasAccessToAddComponent + ";\n");
+		sb.append("window.hasAccessToDeleteComponent" + component.getId() + "_" + cleanedSlotName + " = " + hasAccessToDeleteComponent + ";\n");
+		sb.append("window.hasAccessToChangeComponent" + component.getId() + "_" + cleanedSlotName + " = " + hasAccessToChangeComponent + ";\n");
+		sb.append("window.hasAccessToEditProperties" + component.getId() + "_" + cleanedSlotName + " = " + hasAccessToEditProperties + ";\n");
 		sb.append("window.hasAccessToAccessRights = " + hasAccessToAccessRights + ";\n");
 		if(hasMoveComponentUpAccess || hasMoveComponentDownAccess)
-			sb.append("enableComponentSort(" + component.getId() + ", '" + component.getSlotName() + "', " + (component.getParentComponent() != null ? component.getParentComponent().getId() : "-1") + ");\n");
+			sb.append("enableComponentSort(" + component.getId() + ", '" + cleanedSlotName + "', " + (component.getParentComponent() != null ? component.getParentComponent().getId() : "-1") + ");\n");
 		sb.append("</script>");
 		
 		return sb.toString();
@@ -2350,7 +2353,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 	        return "";
 	    
 		StringBuffer sb = new StringBuffer();
-		
+		String cleanedSlotName =  component.getSlotName().replaceAll("[^a-zA-Z0-9]+","");
 		String componentEditorUrl = CmsPropertyHandler.getComponentEditorUrl();
 
 		sb.append("<div id=\"pageComponents\" class=\"igDialog ui-draggable\" style=\"right:5px; top:5px; visibility:hidden; display: none;\">");
@@ -2359,7 +2362,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		sb.append("		<div class=\"igDialogBody\"><table class=\"igtable\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">");
 
 		sb.append("		<tr class=\"igtr\">");
-	    sb.append("			<td class=\"igtd\" colspan=\"20\"><img src=\"" + this.getRequest().getContextPath() + "/css/images/tcross.png\" width=\"19\" height=\"16\" alt=\"Cross\"/><span id=\"ClickableDiv" + component.getId() + component.getSlotName() + "\" class=\"iglabel\"><img src=\"" + this.getRequest().getContextPath() + "/css/images/slotIcon.gif\" width=\"16\" height=\"16\" alt=\"Slot\"/><img src=\"" + this.getRequest().getContextPath() + "/css/images/trans.gif\" width=\"5\" height=\"1\" alt=\"trans\"/>" + component.getName() + "</span><script type=\"text/javascript\">$(function() { initializeSlotEventHandler('ClickableDiv" + component.getId() + component.getSlotName() + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + templateController.getSiteNodeId() + "&amp;languageId=" + templateController.getLanguageId() + "&amp;contentId=" + templateController.getContentId() + "&amp;parentComponentId=" + component.getId() + "&amp;slotId=base&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "', '', '', 'base', '" + component.getContentId() + "'); });</script></td>");
+	    sb.append("			<td class=\"igtd\" colspan=\"20\"><img src=\"" + this.getRequest().getContextPath() + "/css/images/tcross.png\" width=\"19\" height=\"16\" alt=\"Cross\"/><span id=\"ClickableDiv" + component.getId() + cleanedSlotName + "\" class=\"iglabel\"><img src=\"" + this.getRequest().getContextPath() + "/css/images/slotIcon.gif\" width=\"16\" height=\"16\" alt=\"Slot\"/><img src=\"" + this.getRequest().getContextPath() + "/css/images/trans.gif\" width=\"5\" height=\"1\" alt=\"trans\"/>" + component.getName() + "</span><script type=\"text/javascript\">$(function() { initializeSlotEventHandler('ClickableDiv" + component.getId() + cleanedSlotName + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + templateController.getSiteNodeId() + "&amp;languageId=" + templateController.getLanguageId() + "&amp;contentId=" + templateController.getContentId() + "&amp;parentComponentId=" + component.getId() + "&amp;slotId=base&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "', '', '', 'base', '" + component.getContentId() + "'); });</script></td>");
 		sb.append("		</tr>");
 		
 		renderComponentTree(templateController, sb, component, 0, 0, 1);
@@ -2392,6 +2395,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		String componentEditorUrl = CmsPropertyHandler.getComponentEditorUrl();
 
 		ContentVO componentContentVO = templateController.getContent(component.getContentId());
+		String cleanedSlotId =  component.getSlotName().replaceAll("[^a-zA-Z0-9]+","");
 		
 		int colspan = 20 - level;
 		
@@ -2416,7 +2420,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 	    }
 
 		String changeUrl = componentEditorUrl + "ViewSiteNodePageComponents!listComponentsForChange.action?siteNodeId=" + templateController.getSiteNodeId() + "&amp;languageId=" + templateController.getLanguageId() + "&amp;contentId=" + templateController.getContentId() + "&amp;componentId=" + component.getId() + "&amp;slotId=" + component.getId() + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + ((changeAllowedComponentNamesAsEncodedString != null) ? "&amp;" + changeAllowedComponentNamesAsEncodedString : "")  + ((changeDisallowedComponentNamesAsEncodedString != null) ? "&amp;" + changeDisallowedComponentNamesAsEncodedString : "") + ((changeAllowedComponentGroupNamesAsEncodedString != null) ? "&amp;" + changeAllowedComponentGroupNamesAsEncodedString : "");
-		sb.append("<td class=\"igtd\" width=\"19\"><img src=\"" + this.getRequest().getContextPath() + "/css/images/tcross.png\" width=\"19\" height=\"16\" alt=\"Cross\"/></td><td class=\"igtd\"><img src=\"" + this.getRequest().getContextPath() + "/css/images/componentIcon.gif\" width=\"16\" height=\"16\" alt=\"Cross\"/></td><td class=\"igtd\" colspan=\"" + (colspan - 2) + "\"><span id=\"Comp" + component.getId() + "\" class=\"igLabel\">" + componentContentVO.getName() + "</span><script type=\"text/javascript\">$(function() { initializeComponentInTreeEventHandler('Comp" + component.getId() + "', '" + component.getId() + "', '', '" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponent.action?siteNodeId=" + templateController.getSiteNodeId() + "&amp;languageId=" + templateController.getLanguageId() + "&amp;contentId=" + templateController.getContentId() + "&amp;componentId=" + component.getId() + "&amp;slotId=" + component.getId() + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "', '" + changeUrl + "', '" + component.getSlotName() + "', 'APA', '" + component.getName() + "'); });</script>");
+		sb.append("<td class=\"igtd\" width=\"19\"><img src=\"" + this.getRequest().getContextPath() + "/css/images/tcross.png\" width=\"19\" height=\"16\" alt=\"Cross\"/></td><td class=\"igtd\"><img src=\"" + this.getRequest().getContextPath() + "/css/images/componentIcon.gif\" width=\"16\" height=\"16\" alt=\"Cross\"/></td><td class=\"igtd\" colspan=\"" + (colspan - 2) + "\"><span id=\"Comp" + component.getId() + "\" class=\"igLabel\">" + componentContentVO.getName() + "</span><script type=\"text/javascript\">$(function() { initializeComponentInTreeEventHandler('Comp" + component.getId() + "', '" + component.getId() + "', '', '" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponent.action?siteNodeId=" + templateController.getSiteNodeId() + "&amp;languageId=" + templateController.getLanguageId() + "&amp;contentId=" + templateController.getContentId() + "&amp;componentId=" + component.getId() + "&amp;slotId=" + component.getId() + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "', '" + changeUrl + "', '" + cleanedSlotId + "', 'APA', '" + component.getName() + "'); });</script>");
 		
 		String upUrl = componentEditorUrl + "ViewSiteNodePageComponents!moveComponent.action?siteNodeId=" + templateController.getSiteNodeId() + "&amp;languageId=" + templateController.getLanguageId() + "&amp;contentId=" + templateController.getContentId() + "&amp;componentId=" + component.getId() + "&amp;direction=0&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "";
 		String downUrl = componentEditorUrl + "ViewSiteNodePageComponents!moveComponent.action?siteNodeId=" + templateController.getSiteNodeId() + "&amp;languageId=" + templateController.getLanguageId() + "&amp;contentId=" + templateController.getContentId() + "&amp;componentId=" + component.getId() + "&amp;direction=1&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "";
@@ -2436,7 +2440,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		while(slotIterator.hasNext())
 		{
 			Slot slot = (Slot)slotIterator.next();
-			String escapedSlotId = slot.getId().replaceAll("[^a-zA-Z0-9]+","");
+			String cleanedSlotName = slot.getId().replaceAll("[^a-zA-Z0-9]+","");
 			sb.append("		<tr class=\"igtr\">");
 			sb.append("			<td class=\"igtd\" width=\"19\"><img src=\"" + this.getRequest().getContextPath() + "/css/images/trans.gif\" width=\"19\" height=\"16\" alt=\"transparent\"/></td><td class=\"igtd\" width=\"19\"><img src=\"" + this.getRequest().getContextPath() + "/css/images/vline.png\" width=\"19\" height=\"16\" alt=\"Vertical line\"/></td>");
 			for(int i=0; i<level; i++)
@@ -2455,7 +2459,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		    //logger.info("disallowedComponentNamesAsEncodedString:" + disallowedComponentNamesAsEncodedString);
 		    //logger.info("allowedComponentGroupNamesAsEncodedString:" + allowedComponentGroupNamesAsEncodedString);
 		    
-		    sb.append("<td class=\"igtd\" colspan=\"" + (colspan - 4) + "\"><span id=\"ClickableDiv" + component.getId() + escapedSlotId + "\" class=\"iglabel\">" + escapedSlotId + "</span><script type=\"text/javascript\">$(function() { initializeSlotEventHandler('ClickableDiv" + component.getId() + escapedSlotId + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + templateController.getSiteNodeId() + "&amp;languageId=" + templateController.getLanguageId() + "&amp;contentId=" + templateController.getContentId() + "&amp;parentComponentId=" + component.getId() + "&amp;slotId=" + escapedSlotId + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + ((allowedComponentNamesAsEncodedString != null) ? "&amp;" + allowedComponentNamesAsEncodedString : "") + ((disallowedComponentNamesAsEncodedString != null) ? "&amp;" + disallowedComponentNamesAsEncodedString : "") + ((allowedComponentGroupNamesAsEncodedString != null) ? "&amp;" + allowedComponentGroupNamesAsEncodedString : "") + "', '', '', '" + escapedSlotId + "', '" + component.getContentId() + "'); });</script></td>");
+		    sb.append("<td class=\"igtd\" colspan=\"" + (colspan - 4) + "\"><span id=\"ClickableDiv" + component.getId() + cleanedSlotName + "\" class=\"iglabel\">" + cleanedSlotName + "</span><script type=\"text/javascript\">$(function() { initializeSlotEventHandler('ClickableDiv" + component.getId() + cleanedSlotName + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + templateController.getSiteNodeId() + "&amp;languageId=" + templateController.getLanguageId() + "&amp;contentId=" + templateController.getContentId() + "&amp;parentComponentId=" + component.getId() + "&amp;slotId=" + cleanedSlotName + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + ((allowedComponentNamesAsEncodedString != null) ? "&amp;" + allowedComponentNamesAsEncodedString : "") + ((disallowedComponentNamesAsEncodedString != null) ? "&amp;" + disallowedComponentNamesAsEncodedString : "") + ((allowedComponentGroupNamesAsEncodedString != null) ? "&amp;" + allowedComponentGroupNamesAsEncodedString : "") + "', '', '', '" + cleanedSlotName + "', '" + component.getContentId() + "'); });</script></td>");
 			
 			sb.append("		</tr>");
 

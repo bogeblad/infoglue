@@ -516,6 +516,12 @@ public class PageCacheHelper implements Runnable
 		return matchingPageKeysForGroups;
 	}
 
+	public void clearPageCacheASAP(String pageKey) 
+	{
+		logger.info("Clearing file cache for pageKey:" + pageKey);
+		clearPageCache(pageKey);
+	}
+	
 	public void clearPageCacheInThread(String pageKey) 
 	{
 		logger.warn("Clearing file cache for pageKey:" + pageKey);

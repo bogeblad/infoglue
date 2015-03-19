@@ -739,7 +739,7 @@ function showComponentInTreeMenu(event, element, compId, anInsertUrl, anDeleteUr
 function convertName(val)
 {
   	var regexp = new RegExp("[^0-9,a-z,A-Z]", "g");
-  	return val.replace(regexp, "");
+  	return val.replace(regexp, "_");
 }
 
 function showEmptySlotMenu(slotId, event, compId, anInsertUrl, slotContentIdVar) 

@@ -423,8 +423,9 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 	
 			List<Integer> siteNodeVersionIdList = new ArrayList<Integer>();
 			for(int i=0; i < siteNodeIds.length; i++)
+			{
 				siteNodeVersionIdList.add(new Integer(siteNodeIds[i]));
-	
+			}
 			Map<Integer,SiteNodeVO> siteNodeMap = SiteNodeController.getController().getSiteNodeVOMapWithNoStateCheck(siteNodeVersionIdList);
 			Map<Integer,ContentVO> contentMap = new HashMap<Integer,ContentVO>();
 	
@@ -433,65 +434,67 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 			
 	        for(int i=0; i < siteNodeIds.length; i++)
 			{
-	        	if (i % 10 == 0)
+	        	if (i % 10 == 0) 
+	        	{
 	        		processBean.updateLastDescription("Unpublished " + i + " pages");
-
+	        	}
 	            String siteNodeIdString = siteNodeIds[i];
+	            logger.info("Unpublishing sitenode with id:" + siteNodeIdString);
 	            SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestPublishedSiteNodeVersionVO(new Integer(siteNodeIdString));
+	            if (siteNodeVersionVO != null && siteNodeVersionVO.getSiteNodeId() != null) 
+	            { 
+		            SiteNodeVersionVO latestSiteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(siteNodeVersionVO.getSiteNodeId());
 
-	            SiteNodeVersionVO latestSiteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(siteNodeVersionVO.getSiteNodeId());
-				//SiteNodeVO siteNodeVO = siteNodeMap.get(siteNodeVersionVO.getId());
-				//if(siteNodeVO == null)
-				SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersionVO.getSiteNodeId());
-				
-				if(attemptDirectPublishing.equals("true"))
-				{
-					if(siteNodeVersionVO.getId().equals(latestSiteNodeVersionVO.getId()))
-					{
-						logger.info("Creating a new working version as there was no active working version left...");
-						SiteNodeVersionVO newSiteNodeVersionVO = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), siteNodeVO, SiteNodeVersionVO.WORKING_STATE, "new working version", false, this.getInfoGluePrincipal(), events);
-						siteNodeMap.put(newSiteNodeVersionVO.getId(), siteNodeVO);
-					}
-				}
-				
-				EventVO eventVO = new EventVO();
-				eventVO.setDescription(this.versionComment);
-				eventVO.setEntityClass(SiteNodeVersion.class.getName());
-				eventVO.setEntityId(siteNodeVersionVO.getId());
-				eventVO.setName(siteNodeVO.getName());
-				eventVO.setTypeId(EventVO.UNPUBLISH_LATEST);
-				eventVO = EventController.create(eventVO, this.repositoryId, this.getInfoGluePrincipal());
-				events.add(eventVO);
-				
-				List contentVersionVOList = SiteNodeVersionController.getController().getMetaInfoContentVersionVOList(siteNodeVersionVO, siteNodeVO, this.getInfoGluePrincipal());
-				Iterator contentVersionVOListIterator = contentVersionVOList.iterator();
-				while(contentVersionVOListIterator.hasNext())
-				{
-				    ContentVersionVO currentContentVersionVO = (ContentVersionVO)contentVersionVOListIterator.next();
-				    
-					ContentVersionVO latestContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(currentContentVersionVO.getContentId(), currentContentVersionVO.getLanguageId());
-					ContentVO contentVO = ContentController.getContentController().getContentVOWithId(currentContentVersionVO.getContentId());
-					contentMap.put(currentContentVersionVO.getId(), contentVO);
+					SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersionVO.getSiteNodeId());
+					
 					if(attemptDirectPublishing.equals("true"))
 					{
-						if(currentContentVersionVO.getId().equals(latestContentVersionVO.getId()))
+						if(siteNodeVersionVO.getId().equals(latestSiteNodeVersionVO.getId()))
 						{
-							logger.info("Creating a new working version as there was no active working version left...:" + currentContentVersionVO.getLanguageName());
-							ContentStateController.changeState(currentContentVersionVO.getId(), contentVO, ContentVersionVO.WORKING_STATE, "new working version", false, null, this.getInfoGluePrincipal(), currentContentVersionVO.getContentId(), events);
+							logger.info("Creating a new working version as there was no active working version left...");
+							SiteNodeVersionVO newSiteNodeVersionVO = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), siteNodeVO, SiteNodeVersionVO.WORKING_STATE, "Unpublish latest version action", false, this.getInfoGluePrincipal(), events);
+							siteNodeMap.put(newSiteNodeVersionVO.getId(), siteNodeVO);                       
 						}
-						
-						EventVO versionEventVO = new EventVO();
-						versionEventVO.setDescription(this.versionComment);
-						versionEventVO.setEntityClass(ContentVersion.class.getName());
-						versionEventVO.setEntityId(currentContentVersionVO.getId());
-						versionEventVO.setName(contentVO.getName());
-						versionEventVO.setTypeId(EventVO.UNPUBLISH_LATEST);
-						versionEventVO = EventController.create(versionEventVO, this.repositoryId, this.getInfoGluePrincipal());
-						events.add(versionEventVO);			    
+					}
+					
+					EventVO eventVO = new EventVO();
+					eventVO.setDescription(this.versionComment);
+					eventVO.setEntityClass(SiteNodeVersion.class.getName());
+					eventVO.setEntityId(siteNodeVersionVO.getId());
+					eventVO.setName(siteNodeVO.getName());
+					eventVO.setTypeId(EventVO.UNPUBLISH_LATEST);
+					eventVO = EventController.create(eventVO, this.repositoryId, this.getInfoGluePrincipal());
+					events.add(eventVO);
+					
+					List contentVersionVOList = SiteNodeVersionController.getController().getMetaInfoContentVersionVOList(siteNodeVersionVO, siteNodeVO, this.getInfoGluePrincipal());
+					Iterator contentVersionVOListIterator = contentVersionVOList.iterator();
+					while(contentVersionVOListIterator.hasNext())
+					{
+					    ContentVersionVO currentContentVersionVO = (ContentVersionVO)contentVersionVOListIterator.next();
+					    
+						ContentVersionVO latestContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(currentContentVersionVO.getContentId(), currentContentVersionVO.getLanguageId());
+						ContentVO contentVO = ContentController.getContentController().getContentVOWithId(currentContentVersionVO.getContentId());
+						contentMap.put(currentContentVersionVO.getId(), contentVO);
+						if(attemptDirectPublishing.equals("true"))
+						{
+							if(currentContentVersionVO.getId().equals(latestContentVersionVO.getId()))
+							{
+								logger.info("Creating a new working version as there was no active working version left...:" + currentContentVersionVO.getLanguageName());
+								ContentStateController.changeState(currentContentVersionVO.getId(), contentVO, ContentVersionVO.WORKING_STATE, "new working version", false, null, this.getInfoGluePrincipal(), currentContentVersionVO.getContentId(), events);
+							}
+							
+							EventVO versionEventVO = new EventVO();
+							versionEventVO.setDescription(this.versionComment);
+							versionEventVO.setEntityClass(ContentVersion.class.getName());
+							versionEventVO.setEntityId(currentContentVersionVO.getId());
+							versionEventVO.setName(contentVO.getName());
+							versionEventVO.setTypeId(EventVO.UNPUBLISH_LATEST);
+							versionEventVO = EventController.create(versionEventVO, this.repositoryId, this.getInfoGluePrincipal());
+							events.add(versionEventVO);			    
+						}
 					}
 				}
 			}
-
 			
 			if(!attemptDirectPublishing.equalsIgnoreCase("true"))
 			{

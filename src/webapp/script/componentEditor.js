@@ -13,11 +13,7 @@ function enableComponentSort(componentId, slotName, parentComponentId)
 	if(parentComponentId > -1)
 	{
 		//$(".componentDiv").sortable("destroy");
-		try {
-			$(".componentDiv").draggable("destroy");
-		} catch (err) {
-			
-		}
+		$(".componentDiv").draggable("destroy");
 		var id = $('div[id$="' + componentId + 'Comp"]').attr("id");
 		//alert("id:" + id);
 		
@@ -25,74 +21,70 @@ function enableComponentSort(componentId, slotName, parentComponentId)
 		$('div[id^="' + slotName + '"]').each(function (i) {
 			if($(this).hasClass("sortableComponent"))
 			{
-				try {
-					$(this).draggable({ 
-						handle: '.propertiesButton',
-						cursorAt: { left: 10, top: 10 },
-						cursor: 'move',
-						helper: function(event, el) { return $("<div id='" + $(this).attr("id") + "Helper' class='dropObject'>ID:" + $(this).attr("id") + "</div>").height(30); },
-						stop: function(event, ui) {
-							$(".componentDropArea").remove();
-						},
-						start: function(event, ui) {
-							$(".componentDropArea").remove();
-							$('div[id^="' + slotName + '"]').each(function (i) {
-								var helperId = ui.helper.attr("id").replace("Helper","");
-								//alert("" + $(this).attr("id") + "=="  + id + "==" + ui.helper.attr("id") + "==" + helperId);
-								if($(this).attr("id") != helperId && $(this).attr("id") != ui.helper.attr("id"))
+				$(this).draggable({ 
+					handle: '.propertiesButton',
+					cursorAt: { left: 10, top: 10 },
+					cursor: 'move',
+					helper: function(event, el) { return $("<div id='" + $(this).attr("id") + "Helper' class='dropObject'>ID:" + $(this).attr("id") + "</div>").height(30); },
+					stop: function(event, ui) {
+						$(".componentDropArea").remove();
+					},
+					start: function(event, ui) {
+						$(".componentDropArea").remove();
+						$('div[id^="' + slotName + '"]').each(function (i) {
+							var helperId = ui.helper.attr("id").replace("Helper","");
+							//alert("" + $(this).attr("id") + "=="  + id + "==" + ui.helper.attr("id") + "==" + helperId);
+							if($(this).attr("id") != helperId && $(this).attr("id") != ui.helper.attr("id"))
+							{
+								//alert("Making droppable on:" + $(this).attr("id"));
+								//alert("The target is located on:" + $(this).children().first().offset().top + ", " + $(this).children().first().offset().left + " - " + $(this).children().first().position().top + ", " + $(this).children().first().position().left);
+								//$(this).text("Move component here");
+								if ($(this).children(":visible").length > 0)
 								{
-									//alert("Making droppable on:" + $(this).attr("id"));
-									//alert("The target is located on:" + $(this).children().first().offset().top + ", " + $(this).children().first().offset().left + " - " + $(this).children().first().position().top + ", " + $(this).children().first().position().left);
-									//$(this).text("Move component here");
-									if ($(this).children(":visible").length > 0)
-									{
-										var positionLeft = "" + ($(this).children(":visible").first().position().left + 20) + "px";
-										var positionTop = "" + ($(this).children(":visible").first().position().top + 10) + "px";
-										var dropTargetWidth = "" + $(this).children(":visible").first().width();
-										
-										$(this).append("<div id='dropArea" + $(this).attr("id") + "' class='componentDropArea'>Move here <!--" + positionLeft + ", " + positionTop + "--></div>");
-										$("#dropArea" + $(this).attr("id")).css("left", positionLeft);
-										$("#dropArea" + $(this).attr("id")).css("top", positionTop);
-										$("#dropArea" + $(this).attr("id")).width(dropTargetWidth - 40);
-										
-										//alert($(".componentDropArea").size());
-										$(".componentDropArea").each(function (i) {
-											$(this).droppable({			
-												hoverClass: "movezone-hover",
-												/*activeClass: "movezone",*/
-												/*activeClass: "movezone",*/
-												tolerance: "pointer",
-												greedy: true,
-												drop: function( event, ui ) {
-													//alert("Droppen " + ui.draggable.attr("id") + " on me: " + $(this).attr("id"));
-													
-													var position = $(this).attr("id").replace("dropArea" + slotName, "");
-													position = position.substring(0,position.indexOf("_"));
-													//alert("position:" + position);
-													
-													//alert("Moved:" + $(this).attr("id") + ":" + ui.position + ":" + ui.item.attr("id") + ":" + ui.item.index());
-													var componentId = ui.draggable.attr("id").substring(ui.draggable.attr("id").lastIndexOf("_") + 1).replace("Comp","");
-													var moveUrl = "" + sortBaseUrl + "&componentId=" + componentId + "&newPosition=" + position;
-													//alert("moveUrl:" + moveUrl);
-													
-													$("#genericDialog").dialog("destroy");
-													$("#genericDialog").dialog({
-														modal: true
-													});
-													
-													//alert("111:" + $("#genericDialog").size());
-													document.location.href = moveUrl;
-												}
-											});
+									var positionLeft = "" + ($(this).children(":visible").first().position().left + 20) + "px";
+									var positionTop = "" + ($(this).children(":visible").first().position().top + 10) + "px";
+									var dropTargetWidth = "" + $(this).children(":visible").first().width();
+									
+									$(this).append("<div id='dropArea" + $(this).attr("id") + "' class='componentDropArea'>Move here <!--" + positionLeft + ", " + positionTop + "--></div>");
+									$("#dropArea" + $(this).attr("id")).css("left", positionLeft);
+									$("#dropArea" + $(this).attr("id")).css("top", positionTop);
+									$("#dropArea" + $(this).attr("id")).width(dropTargetWidth - 40);
+									
+									//alert($(".componentDropArea").size());
+									$(".componentDropArea").each(function (i) {
+										$(this).droppable({			
+											hoverClass: "movezone-hover",
+											/*activeClass: "movezone",*/
+											/*activeClass: "movezone",*/
+											tolerance: "pointer",
+											greedy: true,
+											drop: function( event, ui ) {
+												//alert("Droppen " + ui.draggable.attr("id") + " on me: " + $(this).attr("id"));
+												
+												var position = $(this).attr("id").replace("dropArea" + slotName, "");
+												position = position.substring(0,position.indexOf("_"));
+												//alert("position:" + position);
+												
+												//alert("Moved:" + $(this).attr("id") + ":" + ui.position + ":" + ui.item.attr("id") + ":" + ui.item.index());
+												var componentId = ui.draggable.attr("id").substring(ui.draggable.attr("id").lastIndexOf("_") + 1).replace("Comp","");
+												var moveUrl = "" + sortBaseUrl + "&componentId=" + componentId + "&newPosition=" + position;
+												//alert("moveUrl:" + moveUrl);
+												
+												$("#genericDialog").dialog("destroy");
+												$("#genericDialog").dialog({
+													modal: true
+												});
+												
+												//alert("111:" + $("#genericDialog").size());
+												document.location.href = moveUrl;
+											}
 										});
-									}
+									});
 								}
-							});
-						}
-					});
-				} catch(err) {
-					
-				}
+							}
+						});
+					}
+				});
 			}
 		});
 	}
@@ -747,6 +739,7 @@ function showEmptySlotMenu(slotId, event, compId, anInsertUrl, slotContentIdVar)
 	hidepreviousmenues();
 	
 	activeMenuId = "emptySlotMenu";
+	
 	slotName = slotId;
 	slotContentId = slotContentIdVar;
 	
@@ -2182,6 +2175,7 @@ function viewSource()
 		deleteUrl = deleteUrl.replace(/\&amp;/g,'&');
 		changeUrl = changeUrl.replace(/\&amp;/g,'&');
 
+		//alert("initializeSlotEventHandler:" + id + ":" + slotId);
 		var object = new emptySlotEventHandler(id, id, insertUrl, deleteUrl, changeUrl, slotId, slotContentIdVar);
 	}
 
@@ -2254,20 +2248,23 @@ function viewSource()
 		deleteUrl = deleteUrl.replace(/\&amp;/g,'&');
 		changeUrl = changeUrl.replace(/\&amp;/g,'&');
 		//if(insertUrl == "")
-
+		//	alert("insertUrl:" + insertUrl + " for " + id + ":" + compId);
+		//console.log("initializeComponentEventHandler " + compId);
 		var object = new componentEventHandler(id, id, compId, insertUrl, deleteUrl, changeUrl);
 		componentHandlers["" + compId] = object;
 	}
 		
 	function componentEventHandler(eleId, objName, objId, insertUrl, deleteUrl, changeUrl)
 	{
-
 		this.objName = objName;           // objName is a property of myObject4
 		this.objId = objId;
 		this.insertUrl = insertUrl;
 		this.deleteUrl = deleteUrl;
 		this.changeUrl = changeUrl;
-
+		//alert("eleId:" + eleId);
+		//alert("this.insertUrl:" + this.insertUrl);
+		//alert("insertUrl:" + insertUrl);
+		//alert("this.deleteUrl:" + this.deleteUrl);
 		var ele = xGetElementById(eleId); // ele points to our related Element
 		ele.thisObj = this;              // Add a property to ele which points
 		                                    // to our myObject4 'this'.

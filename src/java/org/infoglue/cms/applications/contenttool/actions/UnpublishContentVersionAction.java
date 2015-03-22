@@ -102,7 +102,7 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 			
 			ceb.throwIfNotEmpty();
 
-			contentVersionVOList = ContentVersionController.getContentVersionController().getContentVersionVOWithParentRecursive(contentId, ContentVersionVO.PUBLISHED_STATE, false);
+			contentVersionVOList = ContentVersionController.getContentVersionController().getContentVersionVOListWithParentRecursive(contentId, ContentVersionVO.PUBLISHED_STATE, false);
 		}
 
 	    return "input";
@@ -207,14 +207,16 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 		while(it.hasNext())
 		{
 			Integer contentVersionId = (Integer)it.next();
-			ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getFullContentVersionVOWithId(contentVersionId);
+			ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId);
 			
+			LanguageVO languageVO = LanguageController.getController().getLanguageVOWithId(contentVersionVO.getLanguageId());
+
 			ContentVersionVO latestContentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentVersionVO.getContentId(), contentVersionVO.getLanguageId());
-				if(attemptDirectPublishing.equalsIgnoreCase("true"))
-				{
+			if(attemptDirectPublishing.equalsIgnoreCase("true"))
+			{
 				if(latestContentVersionVO != null && !latestContentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
 				{
-					logger.info("Creating a new working version as there was no active working version left...:" + contentVersionVO.getLanguageName());
+					logger.info("Creating a new working version as there was no active working version left...:" + languageVO.getName());
 					ContentStateController.changeState(latestContentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "new working version", false, null, this.getInfoGluePrincipal(), contentVersionVO.getContentId(), events);
 				}
 			}
@@ -223,7 +225,7 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 			eventVO.setDescription(this.versionComment);
 			eventVO.setEntityClass(ContentVersion.class.getName());
 			eventVO.setEntityId(contentVersionId);
-			eventVO.setName(contentVersionVO.getContentName() + "(" + contentVersionVO.getLanguageName() + ")");
+			eventVO.setName(contentVersionVO.getContentName() + "(" + languageVO.getName() + ")");
 			eventVO.setTypeId(EventVO.UNPUBLISH_LATEST);
 			eventVO = EventController.create(eventVO, this.repositoryId, this.getInfoGluePrincipal());
 			events.add(eventVO);

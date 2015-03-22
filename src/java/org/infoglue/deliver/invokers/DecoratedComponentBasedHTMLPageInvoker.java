@@ -344,9 +344,9 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		    Locale locale = templateController.getLocaleAvailableInTool(principal);
 
 		    boolean hasAccessToAccessRights 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ChangeSlotAccess", "");
-			boolean hasAccessToAddComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.AddComponent", "" + component.getContentId() + "_" + component.getSlotName());
-			boolean hasAccessToDeleteComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.DeleteComponent", "" + component.getContentId() + "_" + component.getSlotName());
-			boolean hasAccessToChangeComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ChangeComponent", "" + component.getContentId() + "_" + component.getSlotName());
+			boolean hasAccessToAddComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.AddComponent", "" + component.getContentId() + "_" + component.getCleanedSlotName());
+			boolean hasAccessToDeleteComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.DeleteComponent", "" + component.getContentId() + "_" + component.getCleanedSlotName());
+			boolean hasAccessToChangeComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ChangeComponent", "" + component.getContentId() + "_" + component.getCleanedSlotName());
 			boolean hasSaveTemplateAccess 		= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.SavePageTemplate", true, false, true);
 		    boolean hasSubmitToPublishAccess 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.SubmitToPublish", true, false, true);
 		    boolean hasPageStructureAccess 		= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.PageStructure", true, false, true);
@@ -380,7 +380,6 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			StringBuffer path = getPagePathAsCommaseparatedIds(templateController);
 			
 			extraHeader = extraHeader.replaceAll("\\$\\{focusElementId\\}", "" + this.getRequest().getParameter("focusElementId"));
-
 			extraHeader = extraHeader.replaceAll("\\$\\{cmsBaseUrl\\}", cmsBaseUrl);
 			extraHeader = extraHeader.replaceAll("\\$\\{contextName\\}", this.getRequest().getContextPath());
 			extraHeader = extraHeader.replaceAll("\\$\\{componentEditorUrl\\}", componentEditorUrl);
@@ -579,9 +578,9 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			}
 			extraBody = extraBody.replaceAll("\\$\\{languageList\\}", languagesSB.toString());
 
-		    extraBody = extraBody.replaceAll("\\$addComponentJavascript", "window.hasAccessToAddComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToAddComponent + ";");
-		    extraBody = extraBody.replaceAll("\\$deleteComponentJavascript", "window.hasAccessToDeleteComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToDeleteComponent + ";");
-		    extraBody = extraBody.replaceAll("\\$changeComponentJavascript", "window.hasAccessToChangeComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToChangeComponent + ";");
+		    extraBody = extraBody.replaceAll("\\$addComponentJavascript", "window.hasAccessToAddComponent" + component.getId() + "_" + component.getCleanedSlotName() + " = " + hasAccessToAddComponent + ";");
+		    extraBody = extraBody.replaceAll("\\$deleteComponentJavascript", "window.hasAccessToDeleteComponent" + component.getId() + "_" + component.getCleanedSlotName() + " = " + hasAccessToDeleteComponent + ";");
+		    extraBody = extraBody.replaceAll("\\$changeComponentJavascript", "window.hasAccessToChangeComponent" + component.getId() + "_" + component.getCleanedSlotName() + " = " + hasAccessToChangeComponent + ";");
 		    extraBody = extraBody.replaceAll("\\$changeAccessJavascript", "window.hasAccessToAccessRights" + " = " + hasAccessToAccessRights + ";");
 		    
 		    extraBody = extraBody.replaceAll("\\$submitToPublishJavascript", "window.hasAccessToSubmitToPublish = " + hasSubmitToPublishAccess + ";");
@@ -667,23 +666,20 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			if(indexOfHeadEndTag > -1)
 			{
 				modifiedTemplate = modifiedTemplate.replace(indexOfHeadEndTag, modifiedTemplate.indexOf(">", indexOfHeadEndTag) + 1, extraHeader);
-
 			}
 			else
 			{
 				int indexOfHTMLStartTag = modifiedTemplate.indexOf("<html");
-				if(indexOfHTMLStartTag == -1){
+				if(indexOfHTMLStartTag == -1)
+				{
 					indexOfHTMLStartTag = modifiedTemplate.indexOf("<HTML");
-
 				}
 				if(indexOfHTMLStartTag > -1)
 				{
-
 					modifiedTemplate = modifiedTemplate.insert(modifiedTemplate.indexOf(">", indexOfHTMLStartTag) + 1, "<head>" + extraHeader);
 				}
 				else
 				{
-	
 					logger.info("The current template is not a valid document. It does not comply with the simplest standards such as having a correct header.");
 				}
 			}
@@ -914,14 +910,17 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 				component.setContainerSlot(slotBean);
 				
 				String subComponentString = "";
-			
 				
 				//TODO - test
-				if(component.getIsInherited() && !disableSlotDecoration) {
-				    subComponentString += "<div id=\"Comp" + component.getId() + "_" + id + "\" class=\"inheritedComponentDiv\");\">";
-				} else if(!disableSlotDecoration) {
-					subComponentString += "<div id=\"Comp" + component.getId() + "_" + id + "\" class=\"componentDiv " + slotBean.getLimitationClasses() + "\" onmouseup=\"javascript:assignComponent('" + siteNodeId + "', '" + languageId + "', '" + contentId + "', '" + component.getId() + "', '" + id + "', '" + false + "', '" + slotBean.getAllowedComponentsArrayAsUrlEncodedString() + "', '" + slotBean.getDisallowedComponentsArrayAsUrlEncodedString() + "', '" + slotBean.getAllowedComponentGroupsArrayAsUrlEncodedString() + "', '');\">";
+				if(component.getIsInherited() && !disableSlotDecoration) 
+				{
+				    subComponentString += "<div id=\"Comp" + component.getId() + "_" + id.replaceAll("[^0-9,a-z,A-Z]", "_") + "\" class=\"inheritedComponentDiv\");\">";
+				} 
+				else if(!disableSlotDecoration) 
+				{
+					subComponentString += "<div id=\"Comp" + component.getId() + "_" + id.replaceAll("[^0-9,a-z,A-Z]", "_") + "\" class=\"componentDiv " + slotBean.getLimitationClasses() + "\" onmouseup=\"javascript:assignComponent('" + siteNodeId + "', '" + languageId + "', '" + contentId + "', '" + component.getId() + "', '" + id + "', '" + false + "', '" + slotBean.getAllowedComponentsArrayAsUrlEncodedString() + "', '" + slotBean.getDisallowedComponentsArrayAsUrlEncodedString() + "', '" + slotBean.getAllowedComponentGroupsArrayAsUrlEncodedString() + "', '');\">";
 				}
+				
 				List subComponents = getInheritedComponents(getDatabase(), templateController, component, templateController.getSiteNodeId(), id, inherit);
 
 			    InfoGluePrincipal principal = templateController.getPrincipal();
@@ -1029,11 +1028,12 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 								    //<div id=\"dropZone"+ id + index + "_" + subComponent.getId() + "Comp\" class=\"moveDropZone\"></div>
 								    String changeUrl = componentEditorUrl + "ViewSiteNodePageComponents!listComponentsForChange.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + (contentId == null ? "-1" : contentId) + "&amp;componentId=" + subComponent.getId() + "&amp;slotId=" + id + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + ((allowedComponentNamesAsEncodedString != null) ? "&amp;" + allowedComponentNamesAsEncodedString : "")  + ((disallowedComponentNamesAsEncodedString != null) ? "&amp;" + disallowedComponentNamesAsEncodedString : "") + ((allowedComponentGroupNamesAsEncodedString != null) ? "&amp;" + allowedComponentGroupNamesAsEncodedString : "");
 								    String extraClass = "clearFix";
-								    if(childComponentsString.contains("noclearfix")) {
+								    if(childComponentsString.contains("noclearfix")) 
+								    {
 								    	extraClass = "clearFixNoBreak";
 								    }
 								    /* The poor souls that has illegal characters in their ig:slot names, we have to remove them in order for the html to br correct */
-								    String escapedDivId  = id.replaceAll("[^a-zA-Z0-9]+","");
+								    String escapedDivId  = id.replaceAll("[^a-zA-Z0-9]+","_");
 								    subComponentString += "<div style=\"position: relative;\" style=\"display:inline;\" id=\""+ escapedDivId + "_" + index + "_" + subComponent.getId() + "Comp\" data-componentelementid=\"" + subComponent.getId() + "\" class=\"moveZone sortableComponent " + extraClass + "\">" + childComponentsString + "<script type=\"text/javascript\">initializeComponentEventHandler('" + escapedDivId + "_" + index + "_" + subComponent.getId() + "Comp', '" + subComponent.getId() + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + (contentId == null ? "-1" : contentId) + "&amp;parentComponentId=" + component.getId() + "&amp;slotId=" + id + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + ((allowedComponentNamesAsEncodedString != null) ? "&amp;" + allowedComponentNamesAsEncodedString : "") + ((disallowedComponentNamesAsEncodedString != null) ? "&amp;" + disallowedComponentNamesAsEncodedString : "") + ((allowedComponentGroupNamesAsEncodedString != null) ? "&amp;" + allowedComponentGroupNamesAsEncodedString : "") + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponent.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + contentId + "&amp;componentId=" + subComponent.getId() + "&amp;slotId=" + id + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "','" + changeUrl + "');</script></div>";
 								} 
 								else
@@ -1123,7 +1123,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 					        }
 					    }
 	
-					    subComponentString += "<script type=\"text/javascript\">setTimeout(function() {initializeSlotEventHandler('Comp" + component.getId() + "_" + id + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + (contentId == null ? "-1" : contentId) + "&amp;parentComponentId=" + component.getId() + "&amp;slotId=" + id + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + ((allowedComponentNamesAsEncodedString != null) ? "&amp;" + allowedComponentNamesAsEncodedString : "") + ((disallowedComponentNamesAsEncodedString != null) ? "&amp;" + disallowedComponentNamesAsEncodedString : "") + ((allowedComponentGroupNamesAsEncodedString != null) ? "&amp;" + allowedComponentGroupNamesAsEncodedString : "") + "', '', '', '" + id + "', '" + component.getContentId() + "'); }, 100);</script></div>";
+					    subComponentString += "<script type=\"text/javascript\">setTimeout(function() {initializeSlotEventHandler('Comp" + component.getId() + "_" + id.replaceAll("[^0-9,a-z,A-Z]", "_") + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + (contentId == null ? "-1" : contentId) + "&amp;parentComponentId=" + component.getId() + "&amp;slotId=" + id + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + ((allowedComponentNamesAsEncodedString != null) ? "&amp;" + allowedComponentNamesAsEncodedString : "") + ((disallowedComponentNamesAsEncodedString != null) ? "&amp;" + disallowedComponentNamesAsEncodedString : "") + ((allowedComponentGroupNamesAsEncodedString != null) ? "&amp;" + allowedComponentGroupNamesAsEncodedString : "") + "', '', '', '" + id + "', '" + component.getContentId() + "'); }, 100);</script></div>";
 					}
 					else
 					    subComponentString += "</div>";
@@ -2035,10 +2035,9 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		sb.append("	<script type=\"text/javascript\"><!--\n");
 		sb.append("		$(function() {\n");
 		sb.append("			var theHandle = document.getElementById('component" + componentId + "PropertiesHandle'\n);");
-		
-		sb.append("			componentId = \"" + componentId + "\";\n");
-		sb.append("			activatedComponentId = QueryString(\"activatedComponentId\");\n");
-		sb.append("			hideComponentPropertiesOnLoad = QueryString(\"hideComponentPropertiesOnLoad\");\n");
+		sb.append("			var componentId = \"" + componentId + "\";\n");
+		sb.append("			var activatedComponentId = QueryString(\"activatedComponentId\");\n");
+		sb.append("			var hideComponentPropertiesOnLoad = QueryString(\"hideComponentPropertiesOnLoad\");\n");
 		sb.append("			if(activatedComponentId && activatedComponentId == componentId && hideComponentPropertiesOnLoad != 'true'){\n"); 
 		if(accessablePropertyIndex > 4)
 			sb.append("				showComponentProperties(\"component\" + componentId + \"Properties\");}\n"); 
@@ -2132,11 +2131,11 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 	    }
 	    
 		boolean hasAccessToAccessRights 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ChangeSlotAccess", "");
-		boolean hasAccessToAddComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.AddComponent", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + component.getSlotName());
-		boolean hasAccessToDeleteComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.DeleteComponent", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + component.getSlotName());
-		boolean hasMoveComponentUpAccess 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.hasMoveComponentUpAccess", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + component.getSlotName());
-		boolean hasMoveComponentDownAccess 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.hasMoveComponentDownAccess", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + component.getSlotName());
-		boolean hasAccessToChangeComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ChangeComponent", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + component.getSlotName());
+		boolean hasAccessToAddComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.AddComponent", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + component.getCleanedSlotName());
+		boolean hasAccessToDeleteComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.DeleteComponent", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + component.getCleanedSlotName());
+		boolean hasMoveComponentUpAccess 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.hasMoveComponentUpAccess", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + component.getCleanedSlotName());
+		boolean hasMoveComponentDownAccess 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.hasMoveComponentDownAccess", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + component.getCleanedSlotName());
+		boolean hasAccessToChangeComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ChangeComponent", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + component.getCleanedSlotName());
 	    boolean hasSaveTemplateAccess 		= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.SavePageTemplate", true, false, true);
 	    boolean hasSubmitToPublishAccess 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.SubmitToPublish", true, false, true);
 	    boolean hasPageStructureAccess 		= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.PageStructure", true, false, true);
@@ -2183,10 +2182,10 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		{
 		    StringBuffer sb = new StringBuffer();
 		    sb.append("<script type=\"text/javascript\">");
-		    sb.append("window.hasAccessToAddComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToAddComponent + ";");
-			sb.append("window.hasAccessToDeleteComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToDeleteComponent + ";");
-			sb.append("window.hasAccessToChangeComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToChangeComponent + ";");
-			sb.append("window.hasAccessToEditProperties" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToEditProperties + ";");
+		    sb.append("window.hasAccessToAddComponent" + component.getId() + "_" + component.getCleanedSlotName() + " = " + hasAccessToAddComponent + ";");
+			sb.append("window.hasAccessToDeleteComponent" + component.getId() + "_" + component.getCleanedSlotName() + " = " + hasAccessToDeleteComponent + ";");
+			sb.append("window.hasAccessToChangeComponent" + component.getId() + "_" + component.getCleanedSlotName() + " = " + hasAccessToChangeComponent + ";");
+			sb.append("window.hasAccessToEditProperties" + component.getId() + "_" + component.getCleanedSlotName() + " = " + hasAccessToEditProperties + ";");
 			sb.append("window.hasAccessToAccessRights = " + hasAccessToAccessRights + ";");
 			sb.append("</script>");
 			return sb.toString();
@@ -2328,13 +2327,13 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		
     	
 		sb.append("<script type=\"text/javascript\">");
-		sb.append("window.hasAccessToAddComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToAddComponent + ";\n");
-		sb.append("window.hasAccessToDeleteComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToDeleteComponent + ";\n");
-		sb.append("window.hasAccessToChangeComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToChangeComponent + ";\n");
-		sb.append("window.hasAccessToEditProperties" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToEditProperties + ";\n");
+		sb.append("window.hasAccessToAddComponent" + component.getId() + "_" + component.getCleanedSlotName() + " = " + hasAccessToAddComponent + ";\n");
+		sb.append("window.hasAccessToDeleteComponent" + component.getId() + "_" + component.getCleanedSlotName() + " = " + hasAccessToDeleteComponent + ";\n");
+		sb.append("window.hasAccessToChangeComponent" + component.getId() + "_" + component.getCleanedSlotName() + " = " + hasAccessToChangeComponent + ";\n");
+		sb.append("window.hasAccessToEditProperties" + component.getId() + "_" + component.getCleanedSlotName() + " = " + hasAccessToEditProperties + ";\n");
 		sb.append("window.hasAccessToAccessRights = " + hasAccessToAccessRights + ";\n");
 		if(hasMoveComponentUpAccess || hasMoveComponentDownAccess)
-			sb.append("enableComponentSort(" + component.getId() + ", '" + component.getSlotName() + "', " + (component.getParentComponent() != null ? component.getParentComponent().getId() : "-1") + ");\n");
+			sb.append("enableComponentSort(" + component.getId() + ", '" + component.getCleanedSlotName() + "', " + (component.getParentComponent() != null ? component.getParentComponent().getId() : "-1") + ");\n");
 		sb.append("</script>");
 		
 		return sb.toString();
@@ -2359,7 +2358,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		sb.append("		<div class=\"igDialogBody\"><table class=\"igtable\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">");
 
 		sb.append("		<tr class=\"igtr\">");
-	    sb.append("			<td class=\"igtd\" colspan=\"20\"><img src=\"" + this.getRequest().getContextPath() + "/css/images/tcross.png\" width=\"19\" height=\"16\" alt=\"Cross\"/><span id=\"ClickableDiv" + component.getId() + component.getSlotName() + "\" class=\"iglabel\"><img src=\"" + this.getRequest().getContextPath() + "/css/images/slotIcon.gif\" width=\"16\" height=\"16\" alt=\"Slot\"/><img src=\"" + this.getRequest().getContextPath() + "/css/images/trans.gif\" width=\"5\" height=\"1\" alt=\"trans\"/>" + component.getName() + "</span><script type=\"text/javascript\">$(function() { initializeSlotEventHandler('ClickableDiv" + component.getId() + component.getSlotName() + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + templateController.getSiteNodeId() + "&amp;languageId=" + templateController.getLanguageId() + "&amp;contentId=" + templateController.getContentId() + "&amp;parentComponentId=" + component.getId() + "&amp;slotId=base&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "', '', '', 'base', '" + component.getContentId() + "'); });</script></td>");
+	    sb.append("			<td class=\"igtd\" colspan=\"20\"><img src=\"" + this.getRequest().getContextPath() + "/css/images/tcross.png\" width=\"19\" height=\"16\" alt=\"Cross\"/><span id=\"ClickableDiv" + component.getId() + component.getCleanedSlotName() + "\" class=\"iglabel\"><img src=\"" + this.getRequest().getContextPath() + "/css/images/slotIcon.gif\" width=\"16\" height=\"16\" alt=\"Slot\"/><img src=\"" + this.getRequest().getContextPath() + "/css/images/trans.gif\" width=\"5\" height=\"1\" alt=\"trans\"/>" + component.getName() + "</span><script type=\"text/javascript\">$(function() { initializeSlotEventHandler('ClickableDiv" + component.getId() + component.getCleanedSlotName() + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + templateController.getSiteNodeId() + "&amp;languageId=" + templateController.getLanguageId() + "&amp;contentId=" + templateController.getContentId() + "&amp;parentComponentId=" + component.getId() + "&amp;slotId=base&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "', '', '', 'base', '" + component.getContentId() + "'); });</script></td>");
 		sb.append("		</tr>");
 		
 		renderComponentTree(templateController, sb, component, 0, 0, 1);
@@ -2436,7 +2435,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		while(slotIterator.hasNext())
 		{
 			Slot slot = (Slot)slotIterator.next();
-			String escapedSlotId = slot.getId().replaceAll("[^a-zA-Z0-9]+","");
+			String escapedSlotId = slot.getId().replaceAll("[^a-zA-Z0-9]+","_");
 			sb.append("		<tr class=\"igtr\">");
 			sb.append("			<td class=\"igtd\" width=\"19\"><img src=\"" + this.getRequest().getContextPath() + "/css/images/trans.gif\" width=\"19\" height=\"16\" alt=\"transparent\"/></td><td class=\"igtd\" width=\"19\"><img src=\"" + this.getRequest().getContextPath() + "/css/images/vline.png\" width=\"19\" height=\"16\" alt=\"Vertical line\"/></td>");
 			for(int i=0; i<level; i++)
@@ -2455,7 +2454,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		    //logger.info("disallowedComponentNamesAsEncodedString:" + disallowedComponentNamesAsEncodedString);
 		    //logger.info("allowedComponentGroupNamesAsEncodedString:" + allowedComponentGroupNamesAsEncodedString);
 		    
-		    sb.append("<td class=\"igtd\" colspan=\"" + (colspan - 4) + "\"><span id=\"ClickableDiv" + component.getId() + escapedSlotId + "\" class=\"iglabel\">" + escapedSlotId + "</span><script type=\"text/javascript\">$(function() { initializeSlotEventHandler('ClickableDiv" + component.getId() + escapedSlotId + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + templateController.getSiteNodeId() + "&amp;languageId=" + templateController.getLanguageId() + "&amp;contentId=" + templateController.getContentId() + "&amp;parentComponentId=" + component.getId() + "&amp;slotId=" + escapedSlotId + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + ((allowedComponentNamesAsEncodedString != null) ? "&amp;" + allowedComponentNamesAsEncodedString : "") + ((disallowedComponentNamesAsEncodedString != null) ? "&amp;" + disallowedComponentNamesAsEncodedString : "") + ((allowedComponentGroupNamesAsEncodedString != null) ? "&amp;" + allowedComponentGroupNamesAsEncodedString : "") + "', '', '', '" + escapedSlotId + "', '" + component.getContentId() + "'); });</script></td>");
+		    sb.append("<td class=\"igtd\" colspan=\"" + (colspan - 4) + "\"><span id=\"ClickableDiv" + component.getId() + escapedSlotId + "\" class=\"iglabel\">" + escapedSlotId + "</span><script type=\"text/javascript\">$(function() { initializeSlotEventHandler('ClickableDiv" + component.getId() + escapedSlotId + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + templateController.getSiteNodeId() + "&amp;languageId=" + templateController.getLanguageId() + "&amp;contentId=" + templateController.getContentId() + "&amp;parentComponentId=" + component.getId() + "&amp;slotId=" + slot.getId() + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + ((allowedComponentNamesAsEncodedString != null) ? "&amp;" + allowedComponentNamesAsEncodedString : "") + ((disallowedComponentNamesAsEncodedString != null) ? "&amp;" + disallowedComponentNamesAsEncodedString : "") + ((allowedComponentGroupNamesAsEncodedString != null) ? "&amp;" + allowedComponentGroupNamesAsEncodedString : "") + "', '', '', '" + escapedSlotId + "', '" + component.getContentId() + "'); });</script></td>");
 			
 			sb.append("		</tr>");
 

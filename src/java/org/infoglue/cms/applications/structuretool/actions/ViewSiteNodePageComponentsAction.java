@@ -1069,7 +1069,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 				}
 				
 			}
-			else if(this.direction.intValue() == 0) //Up
+			else if(this.direction != null && this.direction.intValue() == 0) //Up
 			{
 			    Node previousNode = component.getPreviousSibling();
 		        
@@ -1098,7 +1098,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 				    hasChanged = true;
 				}
 			}
-			else if(this.direction.intValue() == 1) //Down
+			else if(this.direction != null && this.direction.intValue() == 1) //Down
 			{
 			    Node nextNode = component.getNextSibling();
 			    

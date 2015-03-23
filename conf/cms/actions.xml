@@ -387,7 +387,11 @@
 		<!--
 		<view name="error">/cms/contenttool/error.vm</view>
 		-->
+		<view name="successChooseMethod">/cms/managementtool/chooseMethodForRepositoryDelete.vm</view>
 		<view name="input">/cms/managementtool/showConstraintExceptionForRepositoryDelete.vm</view>
+		<view name="successShowProcesses">/cms/managementtool/viewDeleteRepositoryProcesses.vm</view>
+		<view name="successRedirectToProcesses">org.infoglue.cms.applications.common.actions.ExtendedRedirect.action?url=DeleteRepository!showProcesses.action</view>
+		<view name="successShowProcessesAsJSON">/cms/managementtool/viewExportRepositoryProcessesAsJson.vm</view>
 		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
 	</action>
 	<action name="org.infoglue.cms.applications.managementtool.actions.CreateRepositoryAction" alias="CreateRepository">
@@ -955,6 +959,9 @@
 	<action name="org.infoglue.cms.applications.contenttool.actions.CopyContentAction" alias="CopyContent">
 		<view name="input">/cms/contenttool/viewCopyContentChooseDestination.vm</view>
 		<view name="success">ViewInlineOperationMessages.action</view>
+		<view name="successRedirectToProcesses">org.infoglue.cms.applications.common.actions.ExtendedRedirect.action?url=CopyContent!showProcesses.action</view>
+		<view name="successShowProcesses">/cms/managementtool/viewImportRepositoryProcesses.vm</view>
+		<view name="successShowProcessesAsJSON">/cms/managementtool/viewExportRepositoryProcessesAsJson.vm</view>
 		<view name="error">/cms/contenttool/error.vm</view>
 		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
 	</action>
@@ -989,6 +996,8 @@
 		<view name="successForFCKEditor">/cms/contenttool/viewContentVersionForFCKEditor.vm</view>
 		<view name="successForFCKEditorV3">/cms/contenttool/v3/viewContentVersionForFCKEditor.vm</view>
 		<view name="standaloneForFCKEditor">/cms/contenttool/v3/viewContentVersionStandaloneForFCKEditor.vm</view>
+		<view name="successVersionEditor">/cms/contenttool/v3/viewContentVersionEditor.vm</view>
+		<view name="successStandaloneVersionEditor">/cms/contenttool/v3/viewContentVersionStandaloneEditor.vm</view>
 		<view name="background">/cms/contenttool/viewContentVersionBackground.vm</view>
 		<view name="viewAssetsDialog">/cms/contenttool/viewContentAssets.vm</view>
 		<view name="viewAssetsDialogForFCKEditor">/cms/contenttool/viewContentAssetsForFCKEditor.vm</view>
@@ -1900,6 +1909,9 @@
 	<!--  InfoGlue Trashcan -->
 	<action name="org.infoglue.cms.applications.common.actions.TrashcanAction" alias="Trashcan">
 		<view name="success">/cms/common/viewTrashcan.vm</view>
+		<view name="successShowProcesses">/cms/managementtool/viewTrashcanProcesses.vm</view>
+		<view name="successRedirectToProcesses">org.infoglue.cms.applications.common.actions.ExtendedRedirect.action?url=Trashcan!showProcesses.action</view>
+		<view name="successShowProcessesAsJSON">/cms/managementtool/viewExportRepositoryProcessesAsJson.vm</view>
 		<view name="error">/cms/common/error.vm</view>
 	</action>
 

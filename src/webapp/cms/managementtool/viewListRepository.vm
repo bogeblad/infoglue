@@ -41,7 +41,7 @@
 			
 				#foreach($repositoryVO in $repositories)
 					<tr>
-						<td><a class="deleteCross" title="$ui.getString("tool.common.delete.label") $repositoryVO.name" href="DeleteRepository!markForDelete.action?repositoryId=$repositoryVO.id&igSecurityCode=$securityCode">&nbsp;#*$ui.getString("tool.common.delete.label")*#</a></td>
+						<td><a class="deleteCross" title="$ui.getString("tool.common.delete.label") $repositoryVO.name" href="DeleteRepository!markForDeleteChooseMethod.action?repositoryId=$repositoryVO.id&igSecurityCode=$securityCode">&nbsp;#*$ui.getString("tool.common.delete.label")*#</a></td>
 						<td>
 							<a href="ViewRepository.action?repositoryId=$repositoryVO.repositoryId&title=Repository%20details" class="group">$repositoryVO.name</a>
 						</td>

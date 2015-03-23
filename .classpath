@@ -100,9 +100,6 @@
 	<classpathentry kind="lib" path="lib/core/PDFBox-0.7.3.jar"/>
 	<classpathentry kind="lib" path="lib/core/poi-3.1-FINAL.jar"/>
 	<classpathentry kind="lib" path="lib/core/poi-scratchpad-3.1-FINAL.jar"/>
-	<classpathentry kind="lib" path="lib/build/castor-1.3.1-core.jar"/>
-	<classpathentry kind="lib" path="lib/build/castor-1.3.1-jdo.jar"/>
-	<classpathentry kind="lib" path="lib/build/castor-1.3.1-xml.jar"/>
 	<classpathentry kind="lib" path="lib/core/jta1.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/jdbc/jtds-1.2.5.jar"/>
 	<classpathentry kind="lib" path="lib/jdbc/mysql-connector-java-5.1.11-bin.jar"/>
@@ -118,9 +115,43 @@
 	<classpathentry kind="lib" path="lib/build/jfreechart-1.0.13.jar"/>
 	<classpathentry kind="lib" path="lib/jdbc/commons-dbcp-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/jdbc/commons-pool-1.5.5.jar"/>
-	<classpathentry kind="lib" path="lib/jdbc/ojdbc14.jar"/>
 	<classpathentry kind="lib" path="lib/build/imgscalr-lib-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/build/lucene-core-3.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/core/gson-1.7.1.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/selma-client"/>
+	<classpathentry kind="lib" path="lib/build/castor-1.3.3-anttasks.jar"/>
+	<classpathentry kind="lib" path="lib/build/castor-1.3.3-codegen.jar"/>
+	<classpathentry kind="lib" path="lib/build/castor-1.3.3-core.jar"/>
+	<classpathentry kind="lib" path="lib/build/castor-1.3.3-ddlgen.jar"/>
+	<classpathentry kind="lib" path="lib/build/castor-1.3.3-jdo.jar"/>
+	<classpathentry kind="lib" path="lib/build/castor-1.3.3-xml-schema.jar"/>
+	<classpathentry kind="lib" path="lib/build/castor-1.3.3-xml.jar"/>
+	<classpathentry kind="lib" path="lib/build/castor-1.3.3.jar"/>
+	<classpathentry kind="lib" path="lib/shared/saxon9-ant.jar"/>
+	<classpathentry kind="lib" path="lib/shared/saxon9-dom.jar"/>
+	<classpathentry kind="lib" path="lib/shared/saxon9-dom4j.jar"/>
+	<classpathentry kind="lib" path="lib/shared/saxon9-jdom.jar"/>
+	<classpathentry kind="lib" path="lib/shared/saxon9-s9api.jar"/>
+	<classpathentry kind="lib" path="lib/shared/saxon9-sql.jar"/>
+	<classpathentry kind="lib" path="lib/shared/saxon9-xom.jar"/>
+	<classpathentry kind="lib" path="lib/shared/saxon9-xpath.jar"/>
+	<classpathentry kind="lib" path="lib/shared/saxon9-xqj.jar"/>
+	<classpathentry kind="lib" path="lib/core/json-simple-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/core/mime-util-2.1.3.jar"/>
+	<classpathentry kind="lib" path="lib/core/persistence-api-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/build/quercus.jar"/>
+	<classpathentry kind="lib" path="lib/jdbc/cglib-full-2.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/jdbc/db2jcc_javax.jar"/>
+	<classpathentry kind="lib" path="lib/jdbc/db2jcc_license_cu.jar"/>
+	<classpathentry kind="lib" path="lib/jdbc/db2jcc.jar"/>
+	<classpathentry kind="lib" path="lib/jdbc/jdbc-se2.0.jar"/>
+	<classpathentry kind="lib" path="lib/jdbc/jdbc2_0-stdext.jar"/>
+	<classpathentry kind="lib" path="lib/jdbc/jdbc3_0-ext.jar"/>
+	<classpathentry kind="lib" path="lib/jdbc/ojdbc6.jar"/>
+	<classpathentry kind="lib" path="lib/jdbc/sqlj.jar"/>
+	<classpathentry kind="lib" path="lib/jdbc/sqlj.zip"/>
+	<classpathentry kind="lib" path="lib/core/uusearch-indexer-api-1.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/core/uusearch-indexer-httpclient-1.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/core/uuCMS.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

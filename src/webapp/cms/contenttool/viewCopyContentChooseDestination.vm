@@ -18,6 +18,7 @@
 		}
 	    
 	    $(document).ready(function() {
+	    	setTimeout(function(){
 		    jQuery.get("ViewCommonAjaxServices!assetWeight.action?contentId=$contentId", function(data) {
 				//alert("Count:" + data + " on $contentId");
 				if(data != "0")
@@ -26,6 +27,7 @@
 					$('#weightList').empty().append("<b>Contents over 100Kb</b>" + data.substring(data.indexOf(":")+1) + "");
 				}
 			});
+			}, 2000);
 		});
 		
 	    function save()

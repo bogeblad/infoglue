@@ -4,7 +4,7 @@
   
 #beginManagementTool("tool.managementtool.importRepositoryCopy.header" "tool.managementtool.importRepositoryCopy.header" "")
 
-<script language="JavaScript">
+<script type="text/javascript">
 <!--
 	
 	/**
@@ -15,6 +15,21 @@
 	{
 		document.editForm.submit();
 	}
+	
+	function showWeight()
+	{
+		$('#weightText').empty().append("Loading...");
+		jQuery.get("ViewCommonAjaxServices!assetWeight.action?contentId=$this.getRepositoryRootContent($repositoryId).id", function(data) {
+			if(data != "0")
+			{
+				$('#weightText').empty().append("<b><a href='javascript:showWeightList();'>" + data.substring(0,data.indexOf(":")) + "</a></b>");
+				$('#weightList').empty().append("<b>Contents over 100Kb</b>" + data.substring(data.indexOf(":")+1) + "");
+			}
+		});
+		
+	}
+
+	showWeight();
 
 -->
 </script>
@@ -33,6 +48,7 @@
 	<tr>
 		<td>
 			$ui.getString("tool.managementtool.importRepositoryCopy.introduction")<br/><br/>
+			Repository size: <span id="weightText" style="color: blue;"><b>Analyzing size...</b></span><br/><br/>
 		</td>
 	</tr>	
 	<tr>

@@ -305,7 +305,8 @@ public abstract class ViewRelationEditorAction extends InfoGlueAbstractAction
 
 	public String doUpdateQualifyerV3() throws Exception
 	{
-		updateAttributeValue();
+		if(!this.getCallbackMethod().startsWith("updateAttribute"))
+			updateAttributeValue();
 		
 		initialize();
 		
@@ -386,6 +387,8 @@ public abstract class ViewRelationEditorAction extends InfoGlueAbstractAction
 	
 	public String getXML()
 	{
+		if(this.getCallbackMethod().startsWith("updateAttribute") && this.qualifyerXML != null && !this.qualifyerXML.equals(""))
+			return this.qualifyerXML;
 		try
 		{
 	        if(this.entityName.equalsIgnoreCase(UserProperties.class.getName()))

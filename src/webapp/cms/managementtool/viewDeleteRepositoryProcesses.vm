@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>$ui.getString("tool.managementtool.exportRepository.header")</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<link rel="stylesheet" type="text/css" href="css/infogluecommons.css" />
+
+	<script type="text/javascript" src="script/jquery/jquery-1.2.6.min.js"></script>
+	<script language="JavaScript" src="script/listview.js"></script>
+	<script type="text/javascript" src="script/infogluecommons.js"></script>
+
+	<meta http-equiv="pragma" CONTENT="no-cache" />
+	<meta http-equiv="expires" CONTENT="-1" />
+	##<meta http-equiv="refresh" content="5">
+	
+	<style type="text/css">
+		#memoryMessage {
+			position: absolute; 
+			top: 30px; 
+			right: 24px;
+			border: 1px solid #ccc;
+			background-color: white;
+			padding: 6px;
+		}
+		.processDetails {
+		}
+		.processDetails .label {
+			font-weight: bold;
+			display: none; ## Overriden by script
+		}
+		.processDetails .label:after {
+			margin-right:5px;
+			content: ":";
+		}
+		p.errorMessage {
+			color: red;
+			font-weight: bold;
+		}
+		ul.actions {
+			list-style-type: none;
+		}
+		ul.actions li {
+			display: inline-block;
+		}
+		ul.actions li::after {
+			content: "|";
+			margin: 0 10px;
+		}
+		ul.actions li:last-child::after {
+			content: "";
+			margin: 0;
+		}
+
+		ol.processEvents {
+			display: none; ## Overriden by script
+		}
+
+		.container {
+			padding: 8px;
+			border: 1px solid #C3D0E1;
+			margin: 0 0 16px 0;
+		}
+		.container.error {
+			border-left-color: red;
+		}
+		#finishedMessageArea.error, .processError {
+			color:red;
+		}
+		.container h4 {
+			margin: 0;
+		}
+
+		.container .actions {
+			margin: 0;
+			padding: 0;
+		}
+
+		.container .processEvents {
+			margin-bottom: 0;
+		}
+
+		.activate::before {
+			content: " ";
+			background: transparent url("css/images/workinganim.gif") no-repeat center center;
+			width: 12px;
+			height: 12px;
+			display: block;
+			background-size: 10px 10px;
+			margin: 1px 0 0 0;
+		}
+
+		.template {display: none;}
+	</style>
+</head>
+
+<body class="managementtooledit">
+
+<div class="fullymarginalized">
+<div id="memoryMessage"></div>
+
+<h1>$ui.getString("tool.managementtool.deleteRepository.header")</h1>
+
+## Will be filled with content from JavaScript below
+##<h3>Ongoing deletions</h2>
+<p id="ongoingMessageArea"></p>
+<div id="ongoingList"></div>
+
+## The template below will be used by the JavaScript to create process objects. Both ongoing and finished exports share the same template.
+## The classes will be used to select containers for process information. Therefore changes here needs to be reflected in the JavaSCript below.
+<div id="template" class="template container">
+	<h4></h4>
+	<div class="processDetails">
+		<p class="processInfo">
+			<span class="label labelStarted">$ui.getString("tool.managementtool.exportRepository.status.label.started")</span><span class="valueStarted"></span>
+			<span class="label labelEnded">$ui.getString("tool.managementtool.exportRepository.status.label.ended")</span><span class="valueEnded"></span>
+		</p>
+		<p class="processError"></p>
+		<ul class="actions">
+			<li class="downloadProcessAction"></li>
+			<li class="deleteProcessAction"><a href="javascript:void(0)" onclick="deleteProcess(this)"><img src="css/images/delete.gif" width="12" height="12" border="0"> $ui.getString("tool.managementtool.exportRepository.removeProcess.label")</a></li>
+			<li class="toggleEventsAction"><a href="javascript:void(0)" onclick="toggleProcessEventList(this)">$ui.getString("tool.managementtool.exportRepository.status.showProcessEvents")</a></li>
+		</ul>
+		<ol class="processEvents"></ol>
+	</div>
+</div>
+
+<p>
+	<input type="button" onclick="document.location.href ='ViewListRepository.action';" value="$ui.getString("tool.contenttool.close")">
+</p>
+
+</div>
+
+	<script type="text/javascript">
+		var Updater = function() {
+			this.poller = null;
+
+			var megabyte = 1024 * 1024;
+			function formatFileSize(bytes) {
+				if (bytes) {
+					return (bytes / megabyte).toFixed(3);
+				} else {
+					return "";
+				}
+			}
+
+			this.updateView = function()
+			{
+				jQuery.getJSON('DeleteRepository!showProcessesAsJSON.action', function(data) {
+					console.log(data);
+					if (data)
+					{
+						if (data.error)
+						{
+							jQuery("#ongoingMessageArea").attr("class", "error").text(data.error.message + "(" + data.error.type + ")");
+							jQuery("#finishedMessageArea").attr("class", "error").text(data.error.message + "(" + data.error.type + ")");
+						}
+						else ## Assumes valid response
+						{
+							if (data.memoryMessage)
+							{
+								jQuery("#memoryMessage").text("Memory: " + data.memoryMessage);
+							}
+							##
+							## Generate process list
+							var ongoingIds = new Array();
+							var finishedIds = new Array();
+							for (var processListId in data.processes) {
+								var process = data.processes[processListId];
+
+								## Get first selected element. List with zero elements otherwise
+								var container = jQuery("#container_" + process.processId).eq(0);
+								## Generate new container
+								if (container.length === 0)
+								{
+									container = jQuery("#template").clone();
+									container.removeClass("template");
+									container.attr("id", "container_" + process.processId);
+
+									container.find("h4").text(process.processDisplayName);
+									container.show();
+									if (process.status === 0 || process.status === 1)
+									{
+										container.find(".processEvents").show();
+										jQuery("#ongoingList").append(container);
+									}
+									else
+									{
+										container.find(".processEvents").hide();
+										jQuery("#finishedList").append(container);
+									}
+								}
+
+								## Status specific stuff
+								// Not started processes are listed with running ones
+								console.log("redirectUrl:", process.redirectUrl);
+								if(process.status === 4)
+								{
+									setTimeout(function(){
+										document.location.href = process.redirectUrl;
+										}, 2000);
+								}
+								else if (process.status === 0 || process.status === 1)
+								{
+									ongoingIds.push(process.processId);
+
+									## Move process container if its status has changed and a list move is needed
+									## This should be impossible but for completeness it is included
+									if (container.parent("#finishedList").length)
+									{
+										container.appendTo("#ongoingList");
+										container.find(".processEvents").show();
+									}
+
+									## Ongoing events does not have actions
+									container.find(".actions").hide();
+								}
+								// Erroneous proccesses are listed with completed ones
+								else if (process.status === 2 || process.status === 3)
+								{
+									finishedIds.push(process.processId);
+
+									## Move process container if its status has changed and a list move is needed
+									if (container.parent("#ongoingList").length)
+									{
+										container.appendTo("#finishedList");
+										container.find(".processEvents").hide();
+									}
+
+									##
+									## Handle process actions
+									var processActions = container.find(".actions").eq(0);
+									processActions.show();
+
+									## Download action
+									var downloadAction = processActions.find(".downloadProcessAction").eq(0);
+									var file = null;
+									var downloadActionString = "";
+									if (process.artifacts && process.artifacts.file)
+									{
+										file = process.artifacts.file;
+									}
+									if (file && file.url)
+									{
+										downloadActionString += '<li><a class="download" href="' + file.url + '">';
+										downloadActionString += '<img src="css/images/v3/saveInlineIcon.gif" width="16" height="16" border="0" style="margin-bottom: -2px;">';
+
+										var size = "$ui.getString("tool.managementtool.exportRepository.status.file.no")";
+										if (file.fileSize)
+										{
+											size = formatFileSize(file.fileSize) + " MB";
+										}
+										var downloadString = '$ui.getString("tool.managementtool.exportRepository.status.file.downloadButton")'.replace("-size-", size);
+										downloadActionString += ' ' + downloadString + '</a></li>';
+									}
+									else
+									{
+										downloadActionString += '<li><span class="missingFile">$ui.getString("tool.managementtool.exportRepository.status.file.no")</span></li>';
+									}
+									downloadAction.html(downloadActionString);
+								}
+
+								## Handle general actions stuff
+								container.find('.actions').data('processId', process.processId);
+
+								## Handle process information
+								var processInfo = container.find(".processInfo").eq(0);
+								if (process.status === 0) // not started
+								{
+									processInfo.find(".labelStarted").hide();
+									processInfo.find(".valueStarted").text("$ui.getString("tool.managementtool.exportRepository.status.processNotStarted")");
+								}
+								else
+								{
+									##ongoingHtmlList += '<p><span class="label">Started: </span>' + process.started + "</p>";
+									processInfo.find(".labelStarted").show();
+									processInfo.find(".valueStarted").text(process.started);
+									if(process.started !== process.finished)
+									{
+										processInfo.find(".labelEnded").show();
+										processInfo.find(".valueEnded").text(process.finished);
+									}
+								}
+
+								## Handle process errors
+								var processError = container.find(".processError").eq(0);
+								if (process.errorMessage)
+								{
+									processError.text("$ui.getString("tool.managementtool.exportRepository.status.errorMessage") " + process.errorMessage);
+									container.addClass("error");
+								}
+								else
+								{
+									processError.text("");
+									container.removeClass("error");
+								}
+
+								## Handle process events
+								var processEvents = container.find(".processEvents").eq(0);
+								processEvents.attr("id", "processEvents_" + process.processId);
+
+								var numberOfEvents = process.processEvents.length + (process.status === 1 ? 1 : 0); ## Add one for the loading 
+								if (processEvents.children("li").length !== numberOfEvents)
+								{
+									processEvents.empty();
+									for (var processEventListId in process.processEvents) {
+										##ongoingHtmlList += "<li>" + process.processEvents[processEventListId] + "</li>";
+										processEvents.append('<li>' + process.processEvents[processEventListId] + '</li>');
+									}
+									if (process.status === 1)
+									{
+										processEvents.append('<li><img class="loadingSmall" src="css/images/v3/loadingAnimation.gif"/></li>');
+									}
+								}
+							}
+
+							## TODO: Remove removed processes
+
+							if (ongoingIds.length === 0)
+							{
+								jQuery("#ongoingMessageArea").addClass("message").text("");
+							}
+							else
+							{
+								jQuery("#ongoingMessageArea").removeClass("message").text("");
+							}
+							if (finishedIds.length === 0)
+							{
+								jQuery("#finishedMessageArea").addClass("message").text("$ui.getString("tool.managementtool.exportRepository.status.noFinishedExport")");
+							}
+							else
+							{
+								jQuery("#finishedMessageArea").removeClass("class", "").text("");
+							}
+						}
+					}
+				});
+			};
+			this.start = function(interval)
+			{
+				if (!interval)
+				{
+					interval = 5000;
+				}
+				this.updateView();
+				this.poller = setInterval(this.updateView, interval);
+			};
+			this.stop = function()
+			{
+				if (this.poller)
+				{
+					clearInterval(this.poller);
+					this.poller = null;
+				}
+			};
+			return this;
+		};
+
+		updater = Updater();
+		updater.start(5000);
+
+		function deleteProcess(link)
+		{
+			alert("delete");
+			var obj = jQuery(link);
+			var actions = obj.parents('.actions');
+			if (actions && actions.data("processId"))
+			{
+				var container = jQuery('#container_' + actions.data("processId"));
+				if (container)
+				{
+					var link = 'DeleteRepository!deleteProcessBean.action?processId=' + actions.data("processId");
+					container.addClass("deleting");
+					obj.css("visibility", "hidden");
+					jQuery.ajax({
+						  type: "GET"
+						, url: link
+						, error: function(request, error) {
+							jQuery('#processError').text("$ui.getString("tool.managementtool.exportRepository.status.errorRemovingProcess")");
+							container.removeClass("deleting");
+							obj.css("visibility", "visible");
+						  }
+						, success: function() {
+							container.removeClass("deleting");
+							obj.css("visibility", "visible");
+							container.remove();
+						  }
+					});
+				}
+				else
+				{
+					alert("$ui.getString("tool.managementtool.exportRepository.status.couldNotRemoveProcess")");
+				}
+			}
+			else
+			{
+				alert("$ui.getString("tool.managementtool.exportRepository.status.couldNotRemoveProcess")");
+			}
+		}
+		function toggleProcessEventList(link)
+		{
+			var obj = jQuery(link);
+			var actions = obj.parents('.actions');
+			if (actions && actions.data("processId"))
+			{
+				var list = "processEvents_" + actions.data("processId");
+				jQuery("#" + list).slideToggle(400, function() {
+					if (jQuery(this).is(":visible"))
+					{
+						obj.text("$ui.getString("tool.managementtool.exportRepository.status.showProcessEvents")");
+					}
+					else
+					{
+						obj.text("$ui.getString("tool.managementtool.exportRepository.status.hideProcessEvents")");
+					}
+				});
+			}
+		}
+	</script>
+</body>
+</html>

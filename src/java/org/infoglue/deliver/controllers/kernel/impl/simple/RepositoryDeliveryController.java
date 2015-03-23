@@ -156,7 +156,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
 		{
 		    cachedRepositories = new ArrayList();
 
-	        OQLQuery oql = db.getOQLQuery( "SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RepositoryImpl r WHERE is_defined(r.dnsName) ORDER BY r.repositoryId");
+	        OQLQuery oql = db.getOQLQuery( "SELECT r FROM org.infoglue.cms.entities.management.impl.simple.SmallRepositoryImpl r WHERE is_defined(r.dnsName) ORDER BY r.repositoryId");
 	        QueryResults results = oql.execute(Database.READONLY);
 		
 	        while (results.hasMore()) 

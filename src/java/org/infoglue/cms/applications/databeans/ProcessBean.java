@@ -88,7 +88,14 @@ public class ProcessBean
     }
     public static ProcessBean createProcessBean(String processName, String processId)
     {
-    	ProcessBean processBean = new ProcessBean(processName, processId);
+    	ProcessBean processBean = new ProcessBean(processName, processId, processId);
+    	getProcessBeans().add(processBean);
+    	
+    	return processBean;
+    }
+    public static ProcessBean createProcessBean(String processName, String processId, String processDisplayName)
+    {
+    	ProcessBean processBean = new ProcessBean(processName, processId, processDisplayName);
     	getProcessBeans().add(processBean);
     	
     	return processBean;
@@ -101,10 +108,13 @@ public class ProcessBean
     public static final int FINISHED = 2;
     /** Indicates that the process has entered an unrecoverable error state. */
     public static final int ERROR = 3;
+    public static final int REDIRECTED = 4;
     
 	//ID can be any string the process decides while processName is a general name for all instances of a certain process.
+    //processDisplayName is a visually appealing name of the unique process.
     private String processName;
     private String processId;
+    private String processDisplayName;
     private int status = NOT_STARTED;
     // TODO should the dates really be initiated here? getFinished() will say that the process has finished even though it has not
     private Date started = new Date();
@@ -112,6 +122,7 @@ public class ProcessBean
     
 	private String errorMessage;
 	private Throwable exception;
+	private String redirectUrl;
     
     private transient List<ProcessBeanListener> listeners = new ArrayList<ProcessBeanListener>();
     private List<String> processEvents = new ArrayList<String>();
@@ -122,10 +133,11 @@ public class ProcessBean
     {
     }
 
-    private ProcessBean(String processName, String processId)
+    private ProcessBean(String processName, String processId, String processDisplayName)
     {
     	this.processName = processName;
     	this.processId = processId;
+    	this.processDisplayName = processDisplayName;
     }
     
     /**
@@ -241,7 +253,20 @@ public class ProcessBean
 		this.exception = exception;
 		setStatus(ERROR);
 	}
-	
+
+	/**
+	 * Marks the process as an erroneous processes. Calling this method means that the process has
+	 * terminated but was not successful. This method also sets the state of the process to {@link #ERROR}.
+	 * @param errorMessage
+	 * @param exception The exception that caused the process to fail. May be null if the error was not related to an exception.
+	 */
+	public void setRedirectUrl(String message, String redirectUrl)
+	{
+		updateProcess(message);
+		this.redirectUrl = redirectUrl;
+		setStatus(REDIRECTED);
+	}
+
 	public String getErrorMessage()
 	{
 		return this.errorMessage;
@@ -260,6 +285,11 @@ public class ProcessBean
 	public String getProcessId()
 	{
 		return processId;
+	}
+
+	public String getProcessDisplayName()
+	{
+		return processDisplayName;
 	}
 
     public int getStatus()
@@ -314,4 +344,10 @@ public class ProcessBean
     {
     	return this.artifacts;
     }
+    
+	public String getRedirectUrl()
+	{
+		return this.redirectUrl;
+	}
+
 }

@@ -102,7 +102,7 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 			
 			ceb.throwIfNotEmpty();
 
-			contentVersionVOList = ContentVersionController.getContentVersionController().getContentVersionVOWithParentRecursive(contentId, ContentVersionVO.PUBLISHED_STATE, false);
+			contentVersionVOList = ContentVersionController.getContentVersionController().getContentVersionVOListWithParentRecursive(contentId, ContentVersionVO.PUBLISHED_STATE, false);
 		}
 
 	    return "input";
@@ -202,71 +202,51 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
     {   
 		setContentVersionId( getRequest().getParameterValues("sel") );
 		Iterator it = getContentVersionId().iterator();
-		ProcessBean processBean = ProcessBean.createProcessBean(UnpublishContentVersionAction.class.getName(), "" + getInfoGluePrincipal().getName());
-		processBean.setStatus(ProcessBean.RUNNING);
 		
 		List events = new ArrayList();
 		while(it.hasNext())
 		{
 			Integer contentVersionId = (Integer)it.next();
-			Database db = CastorDatabaseService.getDatabase();
-
-	        beginTransaction(db);
-
-	        try
-	        {
-
-				ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getFullContentVersionVOWithId(contentVersionId, db);
-				ContentVersionVO latestContentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentVersionVO.getContentId(), contentVersionVO.getLanguageId());
-					if(attemptDirectPublishing.equalsIgnoreCase("true"))
-					{
-					if(latestContentVersionVO != null && !latestContentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
-					{
-						logger.info("Creating a new working version as there was no active working version left...:" + contentVersionVO.getLanguageName());
-						ContentStateController.changeState(latestContentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "new working version", false, null, this.getInfoGluePrincipal(), contentVersionVO.getContentId(), events);
-					}
-				}
+			ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId);
 			
-				EventVO eventVO = new EventVO();
-				eventVO.setDescription(this.versionComment);
-				eventVO.setEntityClass(ContentVersion.class.getName());
-				eventVO.setEntityId(contentVersionId);
-				eventVO.setName(contentVersionVO.getContentName() + "(" + contentVersionVO.getLanguageName() + ")");
-				eventVO.setTypeId(EventVO.UNPUBLISH_LATEST);
-				eventVO = EventController.create(eventVO, this.repositoryId, this.getInfoGluePrincipal());
-				events.add(eventVO);
-			
-			
-				if(!attemptDirectPublishing.equalsIgnoreCase("true"))
-				{
-					if(recipientFilter != null && !recipientFilter.equals("") && events != null && events.size() > 0)
-						PublicationController.mailPublishNotification(events, repositoryId, getInfoGluePrincipal(), recipientFilter, true);
-				}
-		
-				if(attemptDirectPublishing.equalsIgnoreCase("true"))
-				{
-				    PublicationVO publicationVO = new PublicationVO();
-				    publicationVO.setName("Direct publication by " + this.getInfoGluePrincipal().getName());
-				    publicationVO.setDescription(getVersionComment());
-				    //publicationVO.setPublisher(this.getInfoGluePrincipal().getName());
-				    publicationVO.setRepositoryId(repositoryId);
-				    publicationVO = PublicationController.getController().createAndPublish(publicationVO, events, this.overrideVersionModifyer, this.getInfoGluePrincipal());
-				}
-				commitTransaction(db);
-	        }
-	        catch(Exception e)
-	        {
-				logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
-				logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
-	            rollbackTransaction(db);
-	            throw new SystemException(e.getMessage());
-	        }
-	        finally
+			LanguageVO languageVO = LanguageController.getController().getLanguageVOWithId(contentVersionVO.getLanguageId());
+
+			ContentVersionVO latestContentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentVersionVO.getContentId(), contentVersionVO.getLanguageId());
+			if(attemptDirectPublishing.equalsIgnoreCase("true"))
 			{
-				processBean.setStatus(ProcessBean.FINISHED);
-				processBean.removeProcess();
+				if(latestContentVersionVO != null && !latestContentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
+				{
+					logger.info("Creating a new working version as there was no active working version left...:" + languageVO.getName());
+					ContentStateController.changeState(latestContentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "new working version", false, null, this.getInfoGluePrincipal(), contentVersionVO.getContentId(), events);
+				}
 			}
+		
+			EventVO eventVO = new EventVO();
+			eventVO.setDescription(this.versionComment);
+			eventVO.setEntityClass(ContentVersion.class.getName());
+			eventVO.setEntityId(contentVersionId);
+			eventVO.setName(contentVersionVO.getContentName() + "(" + languageVO.getName() + ")");
+			eventVO.setTypeId(EventVO.UNPUBLISH_LATEST);
+			eventVO = EventController.create(eventVO, this.repositoryId, this.getInfoGluePrincipal());
+			events.add(eventVO);
 		}
+		
+		if(!attemptDirectPublishing.equalsIgnoreCase("true"))
+		{
+			if(recipientFilter != null && !recipientFilter.equals("") && events != null && events.size() > 0)
+				PublicationController.mailPublishNotification(events, repositoryId, getInfoGluePrincipal(), recipientFilter, true);
+		}
+
+		if(attemptDirectPublishing.equalsIgnoreCase("true"))
+		{
+		    PublicationVO publicationVO = new PublicationVO();
+		    publicationVO.setName("Direct publication by " + this.getInfoGluePrincipal().getName());
+		    publicationVO.setDescription(getVersionComment());
+		    //publicationVO.setPublisher(this.getInfoGluePrincipal().getName());
+		    publicationVO.setRepositoryId(repositoryId);
+		    publicationVO = PublicationController.getController().createAndPublish(publicationVO, events, this.overrideVersionModifyer, this.getInfoGluePrincipal());
+		}
+		
        	return "success";
     }
 

@@ -586,7 +586,7 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
 			    	extraInfo.put("repositoryId", repositoryId);
 
 			    Integer publicationId = -1;
-			    if(className.indexOf(PublicationImpl.class.getName()) > -1)
+			    if(className != null && className.indexOf(PublicationImpl.class.getName()) > -1)
 			    	publicationId = Integer.parseInt(objectId);
 
 			    boolean skip = false;

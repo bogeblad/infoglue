@@ -1,35 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="UTF-8"?> 
 
-<html>
-  <head>
-    <link rel="stylesheet" type="text/css" href="css/cms.css"/>
-    <title>$error.getName()</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-  </head>
-  <body class="managementtool">
-    <table>
-      <tr>
-        <td>
-          <table class="managementtool">
-            <tr>
-              <td class="smalllabel">
-		          <table class="outer">
-			      #foreach($errorList in $errors.allErrors)
-			      #foreach($error in $errorList)
-			      <tr>
-			        <td>$error</td>
-			      </tr>
-			      #end
-			      #end
-			    </table>
-			    <br><br>
-			    <a href="$returnAddress">Back</a> | <a href="DeleteRepository!markForDeleteByForce.action?repositoryId=$repositoryId&igSecurityCode=$!securityCode">Force deletion</a>
-  			  </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
-</table>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("tool.managementtool.deleteRepository.header" "tool.managementtool.deleteRepository.header" "")
+
+<div class="fullymarginalized">
+
+<h1>$ui.getString("tool.managementtool.deleteRepository.header")</h1>
+
+<p>
+    $ui.getString("tool.common.constraintsOnRepositoryDelete.header")
+
+	<br><br>
+    <input type="button" onclick="document.location.href='ViewListRepository.action?title=Repositories';" value="$ui.getString("tool.common.cancelButton.label")"/> | <input type="button" onclick="document.location.href='DeleteRepository!markForDeleteByForce.action?repositoryId=$repositoryId&byPassTrashcan=$byPassTrashcan&igSecurityCode=$!securityCode';" value="$ui.getString("tool.common.nextButton.label")"/>
+</p>
+</div>
+
+#endManagementTool()

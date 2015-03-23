@@ -260,19 +260,16 @@ public class TransactionHistoryController extends BaseController
 	/**
 	 * This method is a bit different from other creates as it does not use the common base-class-method.
 	 * Using it would result in a recursive loop of new notificationMessages.
-	 */
-	
+	 */    
 	public Integer create(NotificationMessage notificationMessage) throws SystemException
 	{
-		logger.info("Creating a transactionHistory object...");
         Database db = CastorDatabaseService.getDatabase();
         TransactionHistory transactionHistory = null;
 
         try
         {
 	        beginTransaction(db);
-			logger.info("Began transaction...");
-	        
+			
           	TransactionHistoryVO transVO = new TransactionHistoryVO();  
             transactionHistory = new TransactionHistoryImpl();
 
@@ -298,10 +295,8 @@ public class TransactionHistoryController extends BaseController
 			}
 			
 			db.create(transactionHistory);
-			logger.info("Created the transaction object in the database..");
-            
+			
             commitTransaction(db);
-            logger.info("Committed the transaction..");
         }
         catch(Exception e)
         {
@@ -310,9 +305,7 @@ public class TransactionHistoryController extends BaseController
 			return null;
         }
 
-		logger.info("TransactionHistory object all done..");
-
-        return transactionHistory.getValueObject().getTransactionHistoryId();
+		return transactionHistory.getValueObject().getTransactionHistoryId();
 	}
 	
 	/**

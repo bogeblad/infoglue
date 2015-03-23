@@ -626,7 +626,7 @@
 <!--  Mapping for SmallSiteNode  -->
   <class name="org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl" identity="siteNodeId" key-generator="IDENTITY">
     <description>SmallSiteNode</description>
-    <cache-type type="count-limited" capacity="10000"/>
+    <cache-type type="none"/>
     <map-to table="cmSiteNode"/>
     <field name="siteNodeId" type="java.lang.Integer">
       <sql name="siteNodeId" type="integer" dirty="check" />
@@ -858,6 +858,29 @@
       <sql many-key="repositoryId"/>
     </field>
   </class>
+  
+  <!--  Mapping for SmallRepository  -->
+  <class name="org.infoglue.cms.entities.management.impl.simple.SmallRepositoryImpl" identity="repositoryId" key-generator="IDENTITY">
+    <description>Repository</description>
+    <cache-type type="none"/>
+    <map-to table="cmRepository"/>
+    <field name="repositoryId" type="java.lang.Integer">
+      	<sql name="repositoryId" type="integer" dirty="check" />
+    </field>
+    <field name="name" type="java.lang.String">
+      	<sql name="name" type="varchar" dirty="check" />
+    </field>
+    <field name="description" type="java.lang.String">
+      	<sql name="description" type="varchar" dirty="check" />
+    </field>
+    <field name="dnsName" type="java.lang.String">
+    	<sql name="dnsName" type="varchar" dirty="check" />
+    </field>
+    <field name="isDeleted" type="java.lang.Boolean">
+      <sql name="isDeleted" type="integer" dirty="check" />
+    </field>
+  </class>
+  
 
 <!--  Mapping for RepositoryLanguage  -->
   <class name="org.infoglue.cms.entities.management.impl.simple.RepositoryLanguageImpl" identity="repositoryLanguageId" key-generator="IDENTITY">
@@ -1103,7 +1126,7 @@
 <!--  Mapping for SmallContent  -->
   <class name="org.infoglue.cms.entities.content.impl.simple.SmallContentImpl" identity="contentId" key-generator="IDENTITY">
     <description>SmallContent</description>
-    <cache-type type="count-limited" capacity="10000"/>
+    <cache-type type="none"/>
     <map-to table="cmContent"/>
     <field name="contentId" type="java.lang.Integer">
       <sql name="contentId" type="integer" dirty="check" />

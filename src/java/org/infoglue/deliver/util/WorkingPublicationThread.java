@@ -160,7 +160,7 @@ public class WorkingPublicationThread extends Thread
 					List<Map<String,String>> allIGCacheCalls = new ArrayList<Map<String,String>>();
 
 					logger.info("className:" + className + " objectId:" + objectId + " objectName: " + objectName + " typeId: " + typeId + ":" + extraInformation);
-				    if(className.indexOf("AccessRight") > -1)
+				    if(className != null && className.indexOf("AccessRight") > -1)
 				    {
 				    	logger.info("Special handling of access rights..");
 				    	if(!accessRightsFlushed)
@@ -499,7 +499,7 @@ public class WorkingPublicationThread extends Thread
 					
 				    RequestAnalyser.getRequestAnalyser().removeOngoingPublications(cacheEvictionBean);
 				    cacheEvictionBean.setProcessed();
-				    //if(cacheEvictionBean.getPublicationId() > -1)
+				    if(cacheEvictionBean.getClassName() != null)
 				    	RequestAnalyser.getRequestAnalyser().addPublication(cacheEvictionBean);
 				}
 				

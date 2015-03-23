@@ -210,48 +210,26 @@ public abstract class PageInvoker
 			if(pageCacheTimeout == null)
 				pageCacheTimeout = this.getTemplateController().getPageCacheTimeout();
 			
-			if(pageCacheTimeout == null)
+			if(pageCacheTimeout != null && pageCacheTimeout > 0)
 			{
-			    //cachedCompressedData = (byte[])CacheController.getCachedObjectFromAdvancedCache(pageCacheName, this.getDeliveryContext().getPageKey());
-				Class[] argsClasses = new Class[2];
-				argsClasses[0] = String.class;
-				argsClasses[1] = String.class;
-				
-				Object[] args = new Object[]{pageCacheName, pageCacheExtraName};
-				
-				this.pageString = (String)CacheController.getCachedObjectFromAdvancedCache(pageCacheName, this.getDeliveryContext().getPageKey(), true, "utf-8", true, this, this.getClass().getMethod("invokeAndDecoratePage", argsClasses), args, this);
-			    cachedExtraData = (Map)CacheController.getCachedObjectFromAdvancedCache(pageCacheExtraName, this.getDeliveryContext().getPageKey());
-			    
-			    if(this.pageString != null)
-			    	this.getDeliveryContext().setIsCachedResponse(true);
+				Object pageCacheFileName = CacheController.getCachedObjectFromAdvancedCache(pageCacheName, this.getDeliveryContext().getPageKey(), pageCacheTimeout.intValue(), false, "utf-8", false);
+				if(pageCacheFileName == null || pageCacheFileName.equals(""))
+				{
+					PageCacheHelper.getInstance().clearPageCacheASAP(this.getDeliveryContext().getPageKey());
+				}
 			}
-			else
-			{
-			    //cachedCompressedData = (byte[])CacheController.getCachedObjectFromAdvancedCache(pageCacheName, this.getDeliveryContext().getPageKey(), pageCacheTimeout.intValue());
-				//this.pageString = (String)CacheController.getCachedObjectFromAdvancedCache(pageCacheName, this.getDeliveryContext().getPageKey(), pageCacheTimeout.intValue(), true, "utf-8", false);
-				Object pageCacheFileName = CacheController.getCachedObjectFromAdvancedCache(pageCacheName, this.getDeliveryContext().getPageKey(), pageCacheTimeout.intValue(), true, "utf-8", false);
-			    if(pageCacheFileName != null && !pageCacheFileName.equals(""))
-			    	 this.pageString = PageCacheHelper.getInstance().getCachedPageString(this.getDeliveryContext().getPageKey(), new File(pageCacheFileName.toString()));
-			    else
-			    	logger.info("No page file name in memory cache:" + this.getDeliveryContext().getPageKey());
-			    cachedExtraData = (Map)CacheController.getCachedObjectFromAdvancedCache(pageCacheExtraName, this.getDeliveryContext().getPageKey(), pageCacheTimeout.intValue());
 
-			    this.getDeliveryContext().setPageCacheTimeout(pageCacheTimeout.intValue());
-			    
-			    if(this.pageString == null)
-			    {
-			    	invokePage();
-					this.pageString = getPageString();
-					
-					getLastModifiedDateTime(false);
-					
-					pageString = decorateHeadAndPageWithVarsFromComponents(pageString);
-
-					this.getDeliveryContext().setPagePath(this.templateController.getCurrentPagePath());
-			    }
-			    else
-			    	this.getDeliveryContext().setIsCachedResponse(true);
-			}
+			Class[] argsClasses = new Class[2];
+			argsClasses[0] = String.class;
+			argsClasses[1] = String.class;
+			
+			Object[] args = new Object[]{pageCacheName, pageCacheExtraName};
+			
+			this.pageString = (String)CacheController.getCachedObjectFromAdvancedCache(pageCacheName, this.getDeliveryContext().getPageKey(), true, "utf-8", true, this, this.getClass().getMethod("invokeAndDecoratePage", argsClasses), args, this);
+		    cachedExtraData = (Map)CacheController.getCachedObjectFromAdvancedCache(pageCacheExtraName, this.getDeliveryContext().getPageKey());
+		    
+		    if(this.pageString != null)
+		    	this.getDeliveryContext().setIsCachedResponse(true);
 						
 			logger.info("this.getDeliveryContext().getIsCachedResponse():" + this.getDeliveryContext().getIsCachedResponse());
 			if(this.getDeliveryContext().getIsCachedResponse())
@@ -512,6 +490,8 @@ public abstract class PageInvoker
 		logger.info("useContentLookup:" + useContentLookup);
 		logger.info("UsedContentVersions:" + this.deliveryContext.getUsedContentVersions().size());
 		logger.info("UsedContents:" + this.deliveryContext.getUsedContents().size());
+		if(this.deliveryContext.getUsedContents().size() > 1000 && CmsPropertyHandler.getOperatingMode().equals("0"))
+			logger.warn("The page " + this.deliveryContext.getSiteNodeId() + "(" + this.deliveryContext.getOriginalFullURL() + ") has unhealthy number of relations");
 		Timer t = new Timer();
 		if(this.deliveryContext.getUsedContentVersions().size() > 0 || (useContentLookup && this.deliveryContext.getUsedContents().size() > 0))
 		{

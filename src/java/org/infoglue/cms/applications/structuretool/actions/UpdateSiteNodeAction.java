@@ -59,6 +59,7 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
     private Boolean isBranch;
     
 	private Integer isProtected;
+	private Boolean wasProtectedSet = false; 
 	private Boolean isHidden;
 	private Integer disablePageCache;
 	private Integer disableEditOnSight;
@@ -117,6 +118,8 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 				SiteNodeVersionVO siteNodeVersionVO = null;
 				if(this.advanced != null && this.advanced.equals("true"))
 				{
+					SiteNodeVersionVO currentSiteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(getSiteNodeId());
+
 					siteNodeVersionVO = new SiteNodeVersionVO();
 					siteNodeVersionVO.setContentType(this.getContentType());
 					siteNodeVersionVO.setPageCacheKey(this.getPageCacheKey());
@@ -126,7 +129,11 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 					siteNodeVersionVO.setDisablePageCache(this.getDisablePageCache());
 					siteNodeVersionVO.setDisableForceIdentityCheck(this.disableForceIdentityCheck);
 					siteNodeVersionVO.setForceProtocolChange(this.forceProtocolChange);
-					siteNodeVersionVO.setIsProtected(this.getIsProtected());
+					if(wasProtectedSet)
+						siteNodeVersionVO.setIsProtected(this.getIsProtected());
+					else
+						siteNodeVersionVO.setIsProtected(currentSiteNodeVersionVO.getIsProtected());
+
 					siteNodeVersionVO.setIsHidden(this.getIsHidden());
 					siteNodeVersionVO.setVersionModifier(this.getInfoGluePrincipal().getName());
 				}
@@ -383,6 +390,7 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 	public void setIsProtected(Integer isProtected)
 	{
 		this.isProtected = isProtected;
+		this.wasProtectedSet = true;
 	}
 
 	public Boolean getIsHidden()

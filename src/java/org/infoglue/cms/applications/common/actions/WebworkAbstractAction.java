@@ -268,6 +268,8 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 	{
 		String urlBase = getRequest().getRequestURL().toString();
 		String urlParameters = getRequest().getQueryString();
+		if(urlBase.contains("/cms/common/viewAccessRights.vm"))
+			urlBase = urlBase.replaceFirst("/cms/common/viewAccessRights.vm", "/ViewAccessRights!V3.action");
 		
 		return urlBase + (urlParameters != null ? "?" + urlParameters : "");
 	}

@@ -93,6 +93,7 @@ import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.mail.MailServiceFactory;
 import org.infoglue.deliver.applications.databeans.DeliveryContext;
 import org.infoglue.deliver.util.CacheController;
+import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Timer;
 
 import com.opensymphony.module.propertyset.PropertySet;
@@ -435,6 +436,11 @@ public class ContentController extends BaseController
     	return (ContentVO) getVOWithId(SmallContentImpl.class, contentId, db);
     } 
 
+    public SmallContentImpl getSmallContentWithId(Integer contentId, Database db) throws SystemException, Bug
+    {
+		return (SmallContentImpl) getObjectWithId(SmallContentImpl.class, contentId, db);
+    }
+
     public Content getContentWithId(Integer contentId, Database db) throws SystemException, Bug
     {
 		return (Content) getObjectWithId(ContentImpl.class, contentId, db);
@@ -681,123 +687,79 @@ public class ContentController extends BaseController
 	    
 	public void delete(ContentVO contentVO, Database db, boolean skipRelationCheck, boolean skipServiceBindings, boolean forceDelete, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Exception
 	{
-		Content content = null;
-		try
-		{
-			content = getContentWithId(contentVO.getContentId(), db);
-		}
-		catch(SystemException e)
-		{
-			return;
-		}
-		
-		Content parent = content.getParentContent();
-		if(parent != null)
-		{
-			/*
-			synchronized (controller)
-			{
-				//db.lock(controller);
-			*/	
-				Iterator childContentIterator = parent.getChildren().iterator();
-				while(childContentIterator.hasNext())
-				{
-				    Content candidate = (Content)childContentIterator.next();
-				    if(candidate.getId().equals(contentVO.getContentId()))
-				    {
-				        deleteRecursive(content, childContentIterator, db, skipRelationCheck, skipServiceBindings, forceDelete, infogluePrincipal);
-				    }
-				}
-			/*
-			}
-			*/
-		}
-		else
-		{
-		    deleteRecursive(content, null, db, skipRelationCheck, skipServiceBindings, forceDelete, infogluePrincipal);
-		}
-	}        
-
-	/**
-	 * Recursively deletes all contents and their versions. Also updates related entities about the change.
-	 */
-	
-    private static void deleteRecursive(Content content, Iterator parentIterator, Database db, boolean skipRelationCheck, boolean skipServiceBindings, boolean forceDelete, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Exception
-    {
         if(!skipRelationCheck)
         {
-	        List referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(content.getId(), -1, false, false, db);
+	        List referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(contentVO.getId(), -1, false, false, db);
 			if(referenceBeanList != null && referenceBeanList.size() > 0)
 				throw new ConstraintException("ContentVersion.stateId", "3305");
         }
         
-        Collection children = content.getChildren();
-		Iterator childrenIterator = children.iterator();
-		while(childrenIterator.hasNext())
-		{
-			Content childContent = (Content)childrenIterator.next();
-			deleteRecursive(childContent, childrenIterator, db, skipRelationCheck, skipServiceBindings, forceDelete, infogluePrincipal);   			
-   		}
-		content.setChildren(new ArrayList());
-		
-		boolean isDeletable = getIsDeletable(content, infogluePrincipal, db);
+        List<ContentVO> children = getContentChildrenVOList(contentVO.getId(), null, db);
+        for(ContentVO child : children)
+        {
+        	delete(child, db, skipRelationCheck, skipServiceBindings, forceDelete, infogluePrincipal);
+        }
+       
+		boolean isDeletable = getIsDeletable(contentVO, infogluePrincipal, db);
    		if(forceDelete || isDeletable)
 	    {
-			ContentVersionController.getContentVersionController().deleteVersionsForContent(content, db, forceDelete, infogluePrincipal);    	
+			ContentVersionController.getContentVersionController().deleteVersionsForContent(contentVO, db, forceDelete, infogluePrincipal);    	
 			
-			if(!skipServiceBindings)
-			    ServiceBindingController.deleteServiceBindingsReferencingContent(content, db);
+			//if(!skipServiceBindings)
+			//    ServiceBindingController.deleteServiceBindingsReferencingContent(content, db);
 			
-			if(parentIterator != null) 
-			    parentIterator.remove();
+			//if(parentIterator != null) 
+			//    parentIterator.remove();
 	    	
+			SmallContentImpl content = getSmallContentWithId(contentVO.getId(), db);
 	    	db.remove(content);
             
-            Map args = new HashMap();
-            args.put("globalKey", "infoglue");
-            PropertySet ps = PropertySetManager.getInstance("jdbc", args);
-
-            ps.remove( "content_" + content.getContentId() + "_allowedContentTypeNames");
-            ps.remove( "content_" + content.getContentId() + "_defaultContentTypeName");
-            ps.remove( "content_" + content.getContentId() + "_initialLanguageId");
-
+	    	if(content.getIsBranch())
+	    	{
+	    		Timer t = new Timer();
+	            Map args = new HashMap();
+	            args.put("globalKey", "infoglue");
+	            PropertySet ps = PropertySetManager.getInstance("jdbc", args);
+	            RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Getting propertyset", t.getElapsedTime());
+	            //Collection keys = ps.getKeys(null);
+	            //RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Getting propertyset keys", t.getElapsedTime());
+	            
+	            ps.remove( "content_" + contentVO.getId() + "_allowedContentTypeNames");
+	            ps.remove( "content_" + contentVO.getId() + "_defaultContentTypeName");
+	            ps.remove( "content_" + contentVO.getId() + "_initialLanguageId");
+	            RequestAnalyser.getRequestAnalyser().registerComponentStatistics("remove in PS", t.getElapsedTime());
+	    	}
 	    }
 	    else
     	{
-    		throw new ConstraintException("ContentVersion.stateId", "3300", content.getName());
-    	}			
-    }        
+    		throw new ConstraintException("ContentVersion.stateId", "3300", contentVO.getName());
+    	}	
 
-	
+	}        
+
 	/**
 	 * This method returns true if the content does not have any published contentversions or 
 	 * are restricted in any other way.
 	 */
 	
-	private static boolean getIsDeletable(Content content, InfoGluePrincipal infogluePrincipal, Database db) throws SystemException
+	private static boolean getIsDeletable(ContentVO contentVO, InfoGluePrincipal infogluePrincipal, Database db) throws SystemException, Exception
 	{
 		boolean isDeletable = true;
 	
-		if(content.getIsProtected().equals(ContentVO.YES))
+		if(contentVO.getIsProtected().equals(ContentVO.YES))
 		{
-			boolean hasAccess = AccessRightController.getController().getIsPrincipalAuthorized(db, infogluePrincipal, "Content.Delete", "" + content.getId());
+			boolean hasAccess = AccessRightController.getController().getIsPrincipalAuthorized(db, infogluePrincipal, "Content.Delete", "" + contentVO.getId());
 			if(!hasAccess)
 				return false;
 		}
-		
-        Collection contentVersions = content.getContentVersions();
-    	Iterator versionIterator = contentVersions.iterator();
-		while (versionIterator.hasNext()) 
-        {
-        	ContentVersion contentVersion = (ContentVersion)versionIterator.next();
-        	if(contentVersion.getStateId().intValue() == ContentVersionVO.PUBLISHED_STATE.intValue() && contentVersion.getIsActive().booleanValue() == true)
-        	{
-        		logger.info("The content had a published version so we cannot delete it..");
-				isDeletable = false;
-        		break;
-        	}
-	    }		
-			
+
+		ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVOInState(contentVO.getId(), ContentVersionVO.PUBLISHED_STATE, db);
+		if(cvVO != null)
+		{
+			logger.info("The content had a published version so we cannot delete it..");
+			isDeletable = false;
+		}
+
 		return isDeletable;	
 	}
 
@@ -1415,9 +1377,9 @@ public class ContentController extends BaseController
 	 * @param contentId
 	 * @param newParentContentId
 	 */
-	public void copyContent(Integer contentId, Integer newParentContentId, Integer assetMaxSize, String onlyLatestVersions) throws Exception
+	public void copyContent(Integer contentId, Integer newParentContentId, Integer assetMaxSize, String onlyLatestVersions, ProcessBean processBean) throws Exception
 	{
-		ExportImportController.getController().exportContents(contentId, newParentContentId, assetMaxSize, onlyLatestVersions);
+		ExportImportController.getController().exportContents(contentId, newParentContentId, assetMaxSize, onlyLatestVersions, processBean);
 	}
 	
 	/**
@@ -2016,7 +1978,17 @@ public class ContentController extends BaseController
 				rootContentVO.setCreatorName(userName);
 				rootContentVO.setName(repositoryVO.getName());
 				rootContentVO.setIsBranch(new Boolean(true));
-				contentVO = create(db, null, null, repositoryId, rootContentVO).getValueObject();
+				
+				Map args = new HashMap();
+			    args.put("globalKey", "infoglue");
+			    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
+
+			    String defaultFolderContentTypeName = ps.getString("repository_" + repositoryId + "_defaultFolderContentTypeName");
+				if(defaultFolderContentTypeName == null || defaultFolderContentTypeName.equals(""))
+					defaultFolderContentTypeName = "Folder";
+				ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(defaultFolderContentTypeName, db);
+				
+				contentVO = create(db, null, (ctdVO == null ? null : ctdVO.getId()), repositoryId, rootContentVO).getValueObject();
 			}
 		}
 		
@@ -2059,7 +2031,17 @@ public class ContentController extends BaseController
 				rootContentVO.setCreatorName(userName);
 				rootContentVO.setName(repositoryVO.getName());
 				rootContentVO.setIsBranch(new Boolean(true));
-				content = create(db, null, null, repositoryId, rootContentVO);
+				
+				Map args = new HashMap();
+			    args.put("globalKey", "infoglue");
+			    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
+
+			    String defaultFolderContentTypeName = ps.getString("repository_" + repositoryId + "_defaultFolderContentTypeName");
+				if(defaultFolderContentTypeName == null || defaultFolderContentTypeName.equals(""))
+					defaultFolderContentTypeName = "Folder";
+				ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(defaultFolderContentTypeName, db);
+
+				content = create(db, null, (ctdVO == null ? null : ctdVO.getId()), repositoryId, rootContentVO);
 			}
 		}
 		
@@ -2285,7 +2267,7 @@ public class ContentController extends BaseController
 	    	sb.append("CALL SQL select c.contentId, c.name, c.publishDateTime, c.expireDateTime, c.isBranch, c.isProtected, c.isDeleted, ");
 	    	sb.append("c.creator, c.contentTypeDefinitionId, c.repositoryId, c.parentContentId, ");
 	    	sb.append("(");
-	    	sb.append("  select stateId from cmContentVersion cv2 where  ");
+	    	sb.append("  select min(stateId) from cmContentVersion cv2 where  ");
 			sb.append("  cv2.contentId = c.contentId ");
 			if(languageVOList.size() > 0)
 			{
@@ -2739,12 +2721,38 @@ public class ContentController extends BaseController
 		OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.content.impl.simple.MediumContentImpl c WHERE c.repositoryId = $1 ORDER BY c.contentId");
     	oql.bind(repositoryId);
     	
-    	QueryResults results = oql.execute(Database.READONLY);
+    	QueryResults results = oql.execute();
 		
 		while(results.hasMore()) 
         {
         	MediumContentImpl content = (MediumContentImpl)results.next();
 			contents.add(content);
+        }
+
+		results.close();
+		oql.close();
+
+		return contents;    	
+	}
+	
+	
+	/**
+	 * This method returns the contents belonging to a certain repository.
+	 */
+	
+	public List<ContentVO> getRepositoryContentVOList(Integer repositoryId, Database db) throws SystemException, Exception
+	{
+		List<ContentVO> contents = new ArrayList<ContentVO>();
+		
+		OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.content.impl.simple.SmallContentImpl c WHERE c.repositoryId = $1 ORDER BY c.contentId");
+    	oql.bind(repositoryId);
+    	
+    	QueryResults results = oql.execute(Database.READONLY);
+		
+		while(results.hasMore()) 
+        {
+        	SmallContentImpl content = (SmallContentImpl)results.next();
+			contents.add(content.getValueObject());
         }
 
 		results.close();
@@ -2802,6 +2810,12 @@ public class ContentController extends BaseController
 		return contentVO;
 	}
 	
+	
+	public ContentVO getContentVOWithPath(Integer repositoryId, String path, boolean forceFolders, InfoGluePrincipal creator, Database db) throws SystemException, Exception 
+	{
+		return getContentVOWithPath(repositoryId, path, forceFolders, false, creator, db);
+	}
+	
 	/**
 	 * Returns the content belonging to the specified repository and with the specified path.
 	 * Note! If a folder contains more than one child with a requested name, then one of the children
@@ -2825,7 +2839,7 @@ public class ContentController extends BaseController
 	 * @param forceFolders if true then non-existing folders will be created; otherwise an exception will be thrown
 	 * @param db the database to use
 	 */
-	public ContentVO getContentVOWithPath(Integer repositoryId, String path, boolean forceFolders, InfoGluePrincipal creator, Database db) throws SystemException, Exception 
+	public ContentVO getContentVOWithPath(Integer repositoryId, String path, boolean forceFolders, boolean forceDuplicates, InfoGluePrincipal creator, Database db) throws SystemException, Exception 
 	{
 		ContentVO content = getRootContentVO(db, repositoryId, creator.getName(), false);
 		final String paths[] = path.split("/");
@@ -2839,7 +2853,20 @@ public class ContentController extends BaseController
 			{
 				final ContentVO childContent = getChildVOWithName(content.getContentId(), name, db);
 				if(childContent != null)
-					content = childContent;
+				{
+					if((i == paths.length-1) && forceDuplicates)
+					{
+						ContentVO contentVO = new ContentVO();
+						contentVO.setIsBranch(Boolean.FALSE);
+						contentVO.setCreatorName(creator.getName());
+						contentVO.setName(name);
+						Content newContent = create(db, content.getId(), null, repositoryId, contentVO);
+						if(newContent != null)
+							content = newContent.getValueObject();
+					}
+					else
+						content = childContent;
+				}
 				else if(childContent == null && !forceFolders)
 					throw new SystemException("There exists no content with the path [" + path + "].");
 				else 
@@ -2848,7 +2875,17 @@ public class ContentController extends BaseController
 					contentVO.setIsBranch(Boolean.TRUE);
 					contentVO.setCreatorName(creator.getName());
 					contentVO.setName(name);
-					Content newContent = create(db, content.getId(), null, repositoryId, contentVO);
+
+					Map args = new HashMap();
+				    args.put("globalKey", "infoglue");
+				    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
+
+				    String defaultFolderContentTypeName = ps.getString("repository_" + repositoryId + "_defaultFolderContentTypeName");
+					if(defaultFolderContentTypeName == null || defaultFolderContentTypeName.equals(""))
+						defaultFolderContentTypeName = "Folder";
+					ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(defaultFolderContentTypeName, db);
+
+					Content newContent = create(db, content.getId(), (ctdVO == null ? null : ctdVO.getId()), repositoryId, contentVO);
 					if(newContent != null)
 						content = newContent.getValueObject();
 				}
@@ -3385,17 +3422,24 @@ public class ContentController extends BaseController
 	/**
 	 * This method deletes a content and also erases all the children and all versions.
 	 */
-	    
-    public void markForDeletion(ContentVO contentVO, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException
+	public void markForDeletion(ContentVO contentVO, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException
     {
-    	markForDeletion(contentVO, infogluePrincipal, false);
+    	markForDeletion(contentVO, infogluePrincipal, false, ProcessBean.createProcessBean("Dummy", "DeleteContent"));
     }
-    
+
+	/**
+	 * This method deletes a content and also erases all the children and all versions.
+	 */
+	public void markForDeletion(ContentVO contentVO, InfoGluePrincipal infogluePrincipal, boolean forceDelete) throws ConstraintException, SystemException
+    {
+    	markForDeletion(contentVO, infogluePrincipal, forceDelete, ProcessBean.createProcessBean("Dummy", "DeleteContent"));
+    }
+
 	/**
 	 * This method deletes a content and also erases all the children and all versions.
 	 */
 	    
-    public void markForDeletion(ContentVO contentVO, InfoGluePrincipal infogluePrincipal, boolean forceDelete) throws ConstraintException, SystemException
+    public void markForDeletion(ContentVO contentVO, InfoGluePrincipal infogluePrincipal, boolean forceDelete, ProcessBean processBean) throws ConstraintException, SystemException
     {
     	Map<ContentVO, List<ReferenceBean>> contactPersons = new HashMap<ContentVO, List<ReferenceBean>>();
     	
@@ -3403,7 +3447,7 @@ public class ContentController extends BaseController
         beginTransaction(db);
 		try
         {		
-			markForDeletion(contentVO, db, false, false, forceDelete, infogluePrincipal, contactPersons);
+			markForDeletion(contentVO, db, false, false, forceDelete, infogluePrincipal, contactPersons, processBean);
 	    	
 	    	commitTransaction(db);
             
@@ -3457,87 +3501,66 @@ public class ContentController extends BaseController
 	 * This method deletes a content and also erases all the children and all versions.
 	 */
 	    
-	public void markForDeletion(ContentVO contentVO, Database db, boolean skipRelationCheck, boolean skipServiceBindings, boolean forceDelete, InfoGluePrincipal infogluePrincipal, Map<ContentVO, List<ReferenceBean>> contactPersons) throws ConstraintException, SystemException, Exception
+	public void markForDeletion(ContentVO contentVO, Database db, boolean skipRelationCheck, boolean skipServiceBindings, boolean forceDelete, InfoGluePrincipal infogluePrincipal, Map<ContentVO, List<ReferenceBean>> contactPersons, ProcessBean processBean) throws ConstraintException, SystemException, Exception
 	{
-		Content content = null;
-		try
-		{
-			content = getContentWithId(contentVO.getContentId(), db);
-		}
-		catch(SystemException e)
-		{
-			return;
-		}
-		
 		boolean notifyResponsibleOnReferenceChange = CmsPropertyHandler.getNotifyResponsibleOnReferenceChange();
-		
-		Content parent = content.getParentContent();
-		if(parent != null)
+
+		List<Integer> contentIds = getContentIdsForAllChildren(contentVO.getId(), db);
+		contentIds.add(contentVO.getId());
+		if(logger.isDebugEnabled())
+			logger.info("contentIds:" + contentIds.size());
+		 
+		processBean.updateProcess("Moving " + contentIds.size() + " contents to trashcan");
+
+		int i = 0;
+		for(Integer childContentId : contentIds)
 		{
-			Iterator childContentIterator = parent.getChildren().iterator();
-			while(childContentIterator.hasNext())
+			i++;
+			if(i % 1000 == 0)
 			{
-				Content candidate = (Content)childContentIterator.next();
-			    if(candidate.getId().equals(contentVO.getContentId()))
-			    {
-					markForDeletionRecursive(content, childContentIterator, db, skipRelationCheck, skipServiceBindings, forceDelete, infogluePrincipal, contactPersons, notifyResponsibleOnReferenceChange);
-			    }
+				processBean.updateProcess("Moved " + i + " contents to trashcan");
 			}
-		}
-		else
-		{
-			markForDeletionRecursive(content, null, db, skipRelationCheck, skipServiceBindings, forceDelete, infogluePrincipal, contactPersons, notifyResponsibleOnReferenceChange);
+			try
+			{
+		        SmallContentImpl smallContent = getSmallContentWithId(childContentId, db);
+		        if(logger.isDebugEnabled())
+		        	logger.info("Marking " + smallContent.getName() + " for delete");
+
+		        if(!skipRelationCheck && !smallContent.getIsDeleted())
+		        {
+			        List referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(smallContent.getId(), -1, true, false, db);
+					if(referenceBeanList != null && referenceBeanList.size() > 0 && !forceDelete)
+						throw new ConstraintException("ContentVersion.stateId", "3305", "<br/><br/>" + smallContent.getName() + " (" + smallContent.getId() + ")");
+		        }
+
+		        boolean isDeletable = true;
+		        if(!forceDelete)
+		        	isDeletable = getIsDeletable(smallContent.getValueObject(), infogluePrincipal, db);
+
+		   		if(forceDelete || isDeletable)
+			    {
+		   			List<ReferenceBean> contactList = RegistryController.getController().getReferencingObjectsForContent(smallContent.getId(), 100, true, true);
+		 			if (notifyResponsibleOnReferenceChange)
+					{
+						if (contactList != null)
+						{
+							contactPersons.put(smallContent.getValueObject(), contactList);
+						}
+					}
+			    	smallContent.setIsDeleted(true);
+			    }
+			    else
+		    	{
+		    		throw new ConstraintException("ContentVersion.stateId", "3300", smallContent.getName());
+		    	}			
+			}
+			catch(SystemException e)
+			{
+				e.printStackTrace();
+				logger.warn("Problem marking content: " + childContentId + " as deleted. Message: " + e.getMessage(), e);
+			}
 		}
 	}        
-
-	/**
-	 * Recursively deletes all contents and their versions. Also updates related entities about the change.
-	 */
-	
-    private static void markForDeletionRecursive(Content content, Iterator parentIterator, Database db, boolean skipRelationCheck, boolean skipServiceBindings, boolean forceDelete, InfoGluePrincipal infogluePrincipal, Map<ContentVO, List<ReferenceBean>> contactPersons, boolean notifyResponsibleOnReferenceChange) throws ConstraintException, SystemException, Exception
-    {
-        if(!skipRelationCheck && !content.getIsDeleted())
-        {
-	        List referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(content.getId(), -1, true, false, db);
-			if(referenceBeanList != null && referenceBeanList.size() > 0 && !forceDelete)
-				throw new ConstraintException("ContentVersion.stateId", "3305", "<br/><br/>" + content.getName() + " (" + content.getId() + ")");
-        }
-        
-        Collection children = content.getChildren();
-		Iterator childrenIterator = children.iterator();
-		while(childrenIterator.hasNext())
-		{
-			Content childContent = (Content)childrenIterator.next();
-			markForDeletionRecursive(childContent, childrenIterator, db, skipRelationCheck, skipServiceBindings, forceDelete, infogluePrincipal, contactPersons, notifyResponsibleOnReferenceChange);   			
-   		}
-		
-		boolean isDeletable = getIsDeletable(content, infogluePrincipal, db);
-   		if(forceDelete || isDeletable)
-	    {
-   			List<ReferenceBean> contactList = RegistryController.getController().getReferencingObjectsForContent(content.getId(), 100, true, true);
-   			//List<ReferenceBean> contactList = RegistryController.getController().deleteAllForContent(content.getId(), infoGluePrincipal, clean, CmsPropertyHandler.getOnlyShowReferenceIfLatestVersion(), db);
-			if (notifyResponsibleOnReferenceChange)
-			{
-				if (contactList != null)
-				{
-					contactPersons.put(content.getValueObject(), contactList);
-				}
-			}
-			//ContentVersionController.getContentVersionController().deleteVersionsForContent(content, db, forceDelete, infogluePrincipal);    	
-			
-			//if(!skipServiceBindings)
-   			//    ServiceBindingController.deleteServiceBindingsReferencingContent(content, db);
-			
-   			//if(parentIterator != null) 
-			//    parentIterator.remove();
-	    	
-	    	content.setIsDeleted(true);
-	    }
-	    else
-    	{
-    		throw new ConstraintException("ContentVersion.stateId", "3300", content.getName());
-    	}			
-    }        
 
     /**
 	 * This method restored a content.
@@ -3579,7 +3602,7 @@ public class ContentController extends BaseController
         }
     }  
 
-	public List<ContentVO> getContentVOListMarkedForDeletion(Integer repositoryId, InfoGluePrincipal infoGluePrincipal) throws SystemException, Bug
+	public List<ContentVO> getContentVOListMarkedForDeletion(Integer repositoryId, InfoGluePrincipal infoGluePrincipal, List<RepositoryVO> excludeReposVOList) throws SystemException, Bug
 	{
 		Database db = CastorDatabaseService.getDatabase();
 		
@@ -3589,26 +3612,54 @@ public class ContentController extends BaseController
 		{
 			beginTransaction(db);
 
-			String sql = "SELECT c FROM org.infoglue.cms.entities.content.impl.simple.ContentImpl c WHERE c.isDeleted = $1 AND is_defined(c.repository.name) ORDER BY c.contentId";
+			int startIndex = 2;
 			if(repositoryId != null && repositoryId != -1)
-				sql = "SELECT c FROM org.infoglue.cms.entities.content.impl.simple.ContentImpl c WHERE c.isDeleted = $1 AND is_defined(c.repository.name) AND c.repository = $2 ORDER BY c.contentId";
+				startIndex++;
 			
+			StringBuffer excludeReposWithIdSQL = new StringBuffer("");
+			if(excludeReposVOList != null && excludeReposVOList.size() > 0)
+			{
+				excludeReposWithIdSQL.append(" AND NOT (c.repositoryId IN LIST (");
+				for(int i=0; i<excludeReposVOList.size(); i++)
+					excludeReposWithIdSQL.append("" + (i>0 ? "," : "") + "$"+(startIndex+i));
+				excludeReposWithIdSQL.append("))");
+			}
+			
+			String sql = "SELECT c FROM org.infoglue.cms.entities.content.impl.simple.SmallContentImpl c WHERE c.isDeleted = $1 AND is_defined(c.repositoryId) " + excludeReposWithIdSQL + " ORDER BY c.contentId";
+			if(repositoryId != null && repositoryId != -1)
+				sql = "SELECT c FROM org.infoglue.cms.entities.content.impl.simple.SmallContentImpl c WHERE c.isDeleted = $1 AND is_defined(c.repositoryId) AND c.repositoryId = $2 " + excludeReposWithIdSQL + " ORDER BY c.contentId";
+			
+			//logger.info("sql:" + sql);
 			OQLQuery oql = db.getOQLQuery(sql);
 			oql.bind(true);
 			if(repositoryId != null && repositoryId != -1)
 				oql.bind(repositoryId);
-			
+
+			for(RepositoryVO excludedRepoVO : excludeReposVOList)
+				oql.bind(excludedRepoVO.getId());
+
 			QueryResults results = oql.execute(Database.READONLY);
 			while(results.hasMore()) 
             {
-				Content content = (Content)results.next();
-				Integer contentRepositoryId = content.getRepositoryId();
-				Integer contentId = content.getContentId();
+				SmallContentImpl content = (SmallContentImpl)results.next();
+				Integer contentRepositoryId = content.getValueObject().getRepositoryId();
 
+				Integer contentId = content.getValueObject().getContentId();
+				RepositoryVO repositoryVO = null;
+				try
+				{
+					repositoryVO = RepositoryController.getController().getRepositoryVOWithId(contentRepositoryId, db);
+				}
+				catch(Exception e)
+				{
+					logger.warn("There was a repo referenced that is allready deleted. Skipping rights deletion.");
+				}
+	
 				if((AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Read", contentRepositoryId.toString()) && AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Write", contentRepositoryId.toString()))
 					&& (AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Content.Read", contentId.toString()) && AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Content.Write", contentId.toString())))
 				{
-					content.getValueObject().getExtraProperties().put("repositoryMarkedForDeletion", content.getRepository().getIsDeleted());
+					if(repositoryVO != null)
+						content.getValueObject().getExtraProperties().put("repositoryMarkedForDeletion", repositoryVO.getIsDeleted());
 					contentVOListMarkedForDeletion.add(content.getValueObject());
 				}
 			}
@@ -4232,5 +4283,23 @@ public class ContentController extends BaseController
 		psmt.close();
 
 		return sizes;		
+	}
+	
+	public void copyContentProperties(PropertySet ps, Integer contentId, Integer destinationContentId) throws Exception
+	{
+		if ( ps.exists("content_" + contentId + "_allowedContentTypeNames" ) )
+	    {
+			String allowedContentTypeNames = ps.getString("content_" + contentId + "_allowedContentTypeNames");
+		    if(allowedContentTypeNames != null)
+		    	ps.setString("content_" + destinationContentId + "_allowedContentTypeNames", allowedContentTypeNames);
+        }
+		
+		String defaultContentTypeName 	= ps.getString("content_" + contentId + "_defaultContentTypeName");
+	    if(defaultContentTypeName != null)
+	    	ps.setString("content_" + destinationContentId + "_defaultContentTypeName", defaultContentTypeName);
+
+	    String initialLanguageId		= ps.getString("content_" + contentId + "_initialLanguageId");
+	    if(initialLanguageId != null)
+	    	ps.setString("content_" + destinationContentId + "_initialLanguageId", initialLanguageId);
 	}
 }

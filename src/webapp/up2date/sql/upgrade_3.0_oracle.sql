@@ -119,6 +119,21 @@ CREATE INDEX contVerContVerIdIndex ON cmContVerDigAsset(contVerId);
 ALTER TABLE cmSiNoVer MODIFY MODIFIEDDATETIME TIMESTAMP;
 ALTER TABLE cmContVer MODIFY MODIFIEDDATETIME TIMESTAMP;
 
-
-
+CREATE INDEX "contentVersionStateIndex" ON cmContVer(stateId);
+CREATE INDEX "contentVersionIsActiveIndex" ON cmContVer(isActive);
+CREATE INDEX "contentVersionLangIndex" ON cmContVer(languageId);
+CREATE INDEX "contentPublIndex" ON cmCont(publishDateTime);
+CREATE INDEX "contentExpIndex" ON cmCont(expireDateTime);
+CREATE INDEX "contentREPOSITORYIndex" ON cmCont(REPOSITORYID);
+CREATE INDEX "categoryActiveIndex" ON cmCategory(active);
+CREATE INDEX "parentIdIndex" ON cmCategory(parentId);
+CREATE INDEX "contCONTENTTYPEDEFIDIndex" ON cmCont(CONTENTTYPEDEFID);
+CREATE INDEX "siteNodeVersionStateIndex" ON cmSiNoVer(stateId);
+CREATE INDEX "siteNodeVersionIsActiveIndex" ON cmSiNoVer(isActive);
+CREATE INDEX "siteNodePublIndex" ON cmSiNo(publishDateTime);
+CREATE INDEX "siteNodeExpIndex" ON cmSiNo(expireDateTime);
+CREATE INDEX "siteNodeREPOSITORYIndex" ON cmSiNo(repositoryId);
+CREATE INDEX "siteNodeMetaContentIdIndex" ON cmSiNo(metaInfoContentId);
+CREATE INDEX "siteNodeParentSiteNodeIdIndex" ON cmSiNo(parentSiNoId);
+CREATE INDEX "siteNodeIsDeletedIndex" ON cmSiNo(isDeleted);
 

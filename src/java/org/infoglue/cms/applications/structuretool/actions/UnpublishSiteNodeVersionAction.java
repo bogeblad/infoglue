@@ -423,9 +423,8 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 	
 			List<Integer> siteNodeVersionIdList = new ArrayList<Integer>();
 			for(int i=0; i < siteNodeIds.length; i++)
-			{
 				siteNodeVersionIdList.add(new Integer(siteNodeIds[i]));
-			}
+	
 			Map<Integer,SiteNodeVO> siteNodeMap = SiteNodeController.getController().getSiteNodeVOMapWithNoStateCheck(siteNodeVersionIdList);
 			Map<Integer,ContentVO> contentMap = new HashMap<Integer,ContentVO>();
 	
@@ -434,17 +433,17 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 			
 	        for(int i=0; i < siteNodeIds.length; i++)
 			{
-	        	if (i % 10 == 0) 
-	        	{
+	        	if (i % 10 == 0)
 	        		processBean.updateLastDescription("Unpublished " + i + " pages");
-	        	}
-	            String siteNodeIdString = siteNodeIds[i];
-	            logger.info("Unpublishing sitenode with id:" + siteNodeIdString);
-	            SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestPublishedSiteNodeVersionVO(new Integer(siteNodeIdString));
-	            if (siteNodeVersionVO != null && siteNodeVersionVO.getSiteNodeId() != null) 
-	            { 
-		            SiteNodeVersionVO latestSiteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(siteNodeVersionVO.getSiteNodeId());
 
+	            String siteNodeIdString = siteNodeIds[i];
+	            SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestPublishedSiteNodeVersionVO(new Integer(siteNodeIdString));
+	            
+	            if(siteNodeVersionVO != null)
+		        {
+		            SiteNodeVersionVO latestSiteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(siteNodeVersionVO.getSiteNodeId());
+					//SiteNodeVO siteNodeVO = siteNodeMap.get(siteNodeVersionVO.getId());
+					//if(siteNodeVO == null)
 					SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersionVO.getSiteNodeId());
 					
 					if(attemptDirectPublishing.equals("true"))
@@ -452,8 +451,8 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 						if(siteNodeVersionVO.getId().equals(latestSiteNodeVersionVO.getId()))
 						{
 							logger.info("Creating a new working version as there was no active working version left...");
-							SiteNodeVersionVO newSiteNodeVersionVO = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), siteNodeVO, SiteNodeVersionVO.WORKING_STATE, "Unpublish latest version action", false, this.getInfoGluePrincipal(), events);
-							siteNodeMap.put(newSiteNodeVersionVO.getId(), siteNodeVO);                       
+							SiteNodeVersionVO newSiteNodeVersionVO = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), siteNodeVO, SiteNodeVersionVO.WORKING_STATE, "new working version", false, this.getInfoGluePrincipal(), events);
+							siteNodeMap.put(newSiteNodeVersionVO.getId(), siteNodeVO);
 						}
 					}
 					
@@ -479,7 +478,7 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 						{
 							if(currentContentVersionVO.getId().equals(latestContentVersionVO.getId()))
 							{
-								logger.info("Creating a new working version as there was no active working version left...:" + currentContentVersionVO.getLanguageName());
+								logger.info("Creating a new working version as there was no active working version left...:" + currentContentVersionVO.getLanguageId());
 								ContentStateController.changeState(currentContentVersionVO.getId(), contentVO, ContentVersionVO.WORKING_STATE, "new working version", false, null, this.getInfoGluePrincipal(), currentContentVersionVO.getContentId(), events);
 							}
 							
@@ -493,8 +492,9 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 							events.add(versionEventVO);			    
 						}
 					}
-				}
+		        }
 			}
+
 			
 			if(!attemptDirectPublishing.equalsIgnoreCase("true"))
 			{

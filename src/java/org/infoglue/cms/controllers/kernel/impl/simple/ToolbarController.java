@@ -680,6 +680,11 @@ public class ToolbarController implements ToolbarProvider
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		
+		if(request.getParameter("contentId") == null)
+		{
+			logger.warn("A request was made to getContentButtons but without contentId: " + request.getRequestURI() + ":" + request.getQueryString());
+			return buttons;
+		}
 		Integer contentId = new Integer(request.getParameter("contentId"));
 		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId);
 		
@@ -3100,7 +3105,7 @@ public class ToolbarController implements ToolbarProvider
 		buttons.add(new ToolbarButton("",
 				  getLocalizedString(locale, "tool.managementtool.deleteRepository.header"), 
 				  getLocalizedString(locale, "tool.managementtool.deleteRepository.header"),
-				  "DeleteRepository!markForDelete.action?repositoryId=" + repositoryId + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
+				  "DeleteRepository!markForDeleteChooseMethod.action?repositoryId=" + repositoryId + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
 				  "css/images/v3/createBackgroundPenPaper.gif",
 				  "left",
 				  "create",

@@ -1931,6 +1931,11 @@ public class CmsPropertyHandler
 		return Boolean.parseBoolean(useContextBasedHelp);
 	}
 
+	public static String getContentVersionEditorFlavour() 
+	{
+		return getServerNodeProperty("contentVersionEditorFlavour", true, "v3default");
+	}
+
 	public static String getHeaderHTML()
 	{
 	    return getServerNodeDataProperty(null, "headerHTML", true, "");
@@ -2220,6 +2225,21 @@ public class CmsPropertyHandler
 		return max;
 	}
 
+	public static Boolean getDoNotUseTrashcanForRepositories()
+	{
+		boolean doNotUseTrashcanForRepositories = true;
+		try
+		{
+			doNotUseTrashcanForRepositories = Boolean.parseBoolean(getServerNodeProperty("doNotUseTrashcanForRepositories", true, "false"));
+		}
+		catch(Exception e)
+		{
+			logger.warn("Error parsing doNotUseTrashcanForRepositories:" + e.getMessage());
+		}
+		
+		return doNotUseTrashcanForRepositories;
+	}
+	
 	public static boolean getDuplicateAssetsBetweenVersions()
 	{
 		String duplicateAssetsBetweenVersions = getServerNodeProperty("duplicateAssetsBetweenVersions", true, "false");
@@ -2531,6 +2551,28 @@ public class CmsPropertyHandler
 		}
 	    
 	    return customContentTypeIcons;
+	}
+
+	public static Map<String,String> getCasCookiesBeforeRedirect()
+	{
+		Map casCookiesBeforeRedirect = new HashMap();
+		
+	    String customContentTypeIconsString = CmsPropertyHandler.getServerNodeDataProperty(null, "casCookiesBeforeRedirect", true, null);
+	    if(customContentTypeIconsString != null && !customContentTypeIconsString.equals(""))
+		{
+	    	try
+			{
+	    		Properties properties = new Properties();
+				properties.load(new ByteArrayInputStream(customContentTypeIconsString.getBytes("UTF-8")));
+				casCookiesBeforeRedirect.putAll(properties);
+			}	
+			catch(Exception e)
+			{
+			    logger.error("Error loading properties from string. Reason:" + e.getMessage());
+			}
+		}
+	    
+	    return casCookiesBeforeRedirect;
 	}
 
 	public static String getAllowedFolderContentTypeNames()

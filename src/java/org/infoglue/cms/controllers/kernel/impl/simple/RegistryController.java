@@ -457,23 +457,36 @@ public class RegistryController extends BaseController
 	    // OPTIMIZ
 //	    Content oldContent = oldContentVersion.getOwningContent();
 	    ContentVO oldContentVO = ContentController.getContentController().getSmallContentVOWithId(contentVersion.getContentId(), db);
-	    ContentTypeDefinition ctd = ContentTypeDefinitionController.getController().getContentTypeDefinitionWithId(oldContentVO.getContentTypeDefinitionId(), db);
+	    ContentTypeDefinition ctd = null;
+	    if(oldContentVO.getContentTypeDefinitionId() != null)
+	    	ctd = ContentTypeDefinitionController.getController().getContentTypeDefinitionWithId(oldContentVO.getContentTypeDefinitionId(), db);
+	    
 	    if(ctd != null && ctd.getName().equalsIgnoreCase("Meta info"))
 	    {
-	        logger.info("It was a meta info so lets check it for other stuff as well");
+	    	logger.info("It was a meta info so lets check it for other stuff as well");
 
 	        SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(db, oldContentVO.getContentId());
 //	        SiteNodeVersion siteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersion(db, siteNodeVO.getId());
-	        SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, siteNodeVO.getId());
-	        //SiteNodeVersion siteNodeVersion = getLatestActiveSiteNodeVersionWhichUsesContentVersionAsMetaInfo(oldContentVersion, db);
-		    if(siteNodeVersionVO != null)
-		    {
-		        logger.info("Going to use " + siteNodeVersionVO.getId() + " as reference");
-		        clearRegistryVOList(SiteNodeVersion.class.getName(), siteNodeVersionVO.getId().toString(), db);
-
-			    getComponents(siteNodeVersionVO, versionValue, db);
-			    getComponentBindings(siteNodeVersionVO, versionValue, db);
-			    getPageBindings(siteNodeVersionVO, db);
+	        if(siteNodeVO != null)
+	        {
+	        	LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId(), db);
+	        	if(contentVersion.getLanguageId().equals(masterLanguageVO.getId()))
+	        	{
+	        		logger.info("It was master language - we will clear registry and reindex: " + contentVersion.getId());
+		        	SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, siteNodeVO.getId());
+			        //SiteNodeVersion siteNodeVersion = getLatestActiveSiteNodeVersionWhichUsesContentVersionAsMetaInfo(oldContentVersion, db);
+				    if(siteNodeVersionVO != null)
+				    {
+				        logger.info("Going to use " + siteNodeVersionVO.getId() + " as reference");
+				        clearRegistryVOList(SiteNodeVersion.class.getName(), siteNodeVersionVO.getId().toString(), db);
+		
+					    getComponents(siteNodeVersionVO, versionValue, db);
+					    getComponentBindings(siteNodeVersionVO, versionValue, db);
+					    getPageBindings(siteNodeVersionVO, db);
+				    }
+	        	}
+	        	else
+	        		logger.info("It was NOT master language - we will NOT clear registry and reindex: " + contentVersion.getId());
 		    }
 
 		    getInlineSiteNodes(oldContentVersion, versionValue, db);
@@ -3301,5 +3314,45 @@ public class RegistryController extends BaseController
 	public void clearRegistryForReferencingEntityNameThreaded(String entityName, String entityId) throws Exception
 	{
 		clearRegistryForReferencingEntityNameQueue.get().add(new String[]{entityName, entityName});
+	}
+	
+	
+	public void rebuildRepositoryRegistry(Database db, Integer repositoryId) throws Exception 
+	{
+		//Checks the relations from sitenodes
+		List<SiteNodeVO> siteNodeVOList = SiteNodeController.getController().getRepositorySiteNodeVOList(repositoryId, db);
+		
+		Iterator<SiteNodeVO> siteNodesIterator = siteNodeVOList.iterator();
+		while(siteNodesIterator.hasNext())
+		{
+		    SiteNodeVO siteNodeVO = (SiteNodeVO)siteNodesIterator.next();
+		    logger.info("Going to index all versions of " + siteNodeVO.getName());
+		    
+		    List<SiteNodeVersionVO> versions = SiteNodeVersionController.getController().getSiteNodeVersionVOList(db, siteNodeVO.getId());
+		    Iterator<SiteNodeVersionVO> siteNodeVersionsIterator = versions.iterator();
+			while(siteNodeVersionsIterator.hasNext())
+			{
+			    SiteNodeVersionVO siteNodeVersionVO = siteNodeVersionsIterator.next();
+			    updateSiteNodeVersion(siteNodeVersionVO, db);
+			}
+		}
+
+		//Checks the relations from contents
+		List<ContentVO> contents = ContentController.getContentController().getRepositoryContentVOList(repositoryId, db);
+		
+		Iterator<ContentVO> iterator = contents.iterator();
+		while(iterator.hasNext())
+		{
+		    ContentVO content = iterator.next();
+		    logger.info("Going to index all version of " + content.getName());
+		    
+		    List<ContentVersionVO> versions = ContentVersionController.getContentVersionController().getContentVersionVOList(content.getId(), db);
+		    Iterator<ContentVersionVO> versionsIterator = versions.iterator();
+			while(versionsIterator.hasNext())
+			{
+			    ContentVersionVO contentVersionVO = versionsIterator.next();
+			    updateContentVersion(contentVersionVO, db);
+			}
+		}
 	}
 }

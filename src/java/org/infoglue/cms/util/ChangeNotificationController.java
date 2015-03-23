@@ -284,7 +284,8 @@ public class ChangeNotificationController
 	 */
 	public void addNotificationMessage(NotificationMessage notificationMessage)
 	{
-		logger.info("Got a new notification:" + notificationMessage.getName() + ":" + notificationMessage.getType() + ":" + notificationMessage.getObjectId() + ":" + notificationMessage.getObjectName());
+		if(logger.isInfoEnabled())
+			logger.info("Got a new notification:" + notificationMessage.getName() + ":" + notificationMessage.getType() + ":" + notificationMessage.getObjectId() + ":" + notificationMessage.getObjectName());
 		synchronized (listeners)
 		{
 			Iterator i = listeners.iterator();
@@ -295,7 +296,8 @@ public class ChangeNotificationController
 					NotificationListener nl = (NotificationListener)i.next();
 					if(!unregisteredlisteners.contains(nl))
 					{
-						logger.info("Notifying the listener:" + nl.getClass().getName());
+						if(logger.isInfoEnabled())
+							logger.info("Notifying the listener:" + nl.getClass().getName());
 						nl.notify(notificationMessage);
 					}
 				}

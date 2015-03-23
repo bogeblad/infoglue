@@ -142,11 +142,14 @@ public class SiteNodeControllerProxy extends SiteNodeController
 
 	public SiteNode acCreate(InfoGluePrincipal infogluePrincipal, Integer parentSiteNodeId, Integer siteNodeTypeDefinitionId, Integer repositoryId, SiteNodeVO siteNodeVO, Database db) throws ConstraintException, SystemException, Bug, Exception
 	{
-		Map hashMap = new HashMap();
-		hashMap.put("siteNodeId", parentSiteNodeId);
-    	
-		intercept(hashMap, "SiteNodeVersion.CreateSiteNode", infogluePrincipal, db);
-
+		if(parentSiteNodeId != null && parentSiteNodeId != -1 && infogluePrincipal != null)
+		{
+			Map hashMap = new HashMap();
+			hashMap.put("siteNodeId", parentSiteNodeId);
+	    	
+			intercept(hashMap, "SiteNodeVersion.CreateSiteNode", infogluePrincipal, db);
+		}
+		
 		return SiteNodeController.getController().create(db, parentSiteNodeId, siteNodeTypeDefinitionId, infogluePrincipal, repositoryId, siteNodeVO);
 	}   
     
@@ -201,7 +204,7 @@ public class SiteNodeControllerProxy extends SiteNodeController
 		boolean doesObjectExist = SiteNodeController.getController().getDoesSiteNodeExist(siteNodeVO.getId());
 		if(!doesObjectExist)
 		{
-			System.out.println("The page: " + siteNodeVO.getName() + " was allready deleted. Why?");
+			//logger.info("The page: " + siteNodeVO.getName() + " was allready deleted. Why?");
 			return;
 		}
 

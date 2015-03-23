@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("tool.managementtool.deleteRepository.header" "tool.managementtool.deleteRepository.header" "")
+
+<script type="text/javascript">
+
+function toggleBlock(id)
+{
+	div = document.getElementById(id);
+	if(div.style.display == 'none')
+		div.style.display = 'block';
+	else
+		div.style.display = 'none';
+}
+
+</script>
+
+<div class="fullymarginalized">
+
+<h1>$ui.getString("tool.managementtool.deleteRepository.header")</h1>
+<p>$ui.getString("tool.managementtool.deleteRepository.skipTrashcanIntro")</p>
+
+<form method="POST" name="editForm" action="DeleteRepository!markForDelete.action">
+	<input type="hidden" name="repositoryId" value="$!repositoryId"/>
+	<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+	<input type="checkbox" name="byPassTrashcan" value="true"/> $ui.getString("tool.managementtool.deleteRepository.skipTrashcan")
+	<br/><br/>
+	<input type="submit" value="$ui.getString("tool.common.nextButton.label")"/>
+	<input type="button" value="$ui.getString("tool.common.cancelButton.label")" onclick="document.location.href='ViewListRepository.action?title=Repositories';"/>
+</form>
+
+</div>
+
+#endManagementTool()

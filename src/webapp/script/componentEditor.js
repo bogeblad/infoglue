@@ -67,6 +67,7 @@ function enableComponentSort(componentId, slotName, parentComponentId)
 													//alert("Droppen " + ui.draggable.attr("id") + " on me: " + $(this).attr("id"));
 													
 													var position = $(this).attr("id").replace("dropArea" + slotName, "");
+													position = position.substring(1);
 													position = position.substring(0,position.indexOf("_"));
 													//alert("position:" + position);
 													

@@ -30,6 +30,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryLanguageController;
 import org.infoglue.cms.entities.management.LanguageVO;
+import org.infoglue.cms.entities.management.RepositoryLanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 
 /**
@@ -43,15 +44,15 @@ public class ViewListRepositoryLanguageAction extends InfoGlueAbstractAction
 	private static final long serialVersionUID = 1L;
 
 	private RepositoryVO repositoryVO;
-	private List repositoryLanguageVOList;
-	private List allRemainingLanguageVOList;
+	private List<RepositoryLanguageVO> repositoryLanguageVOList;
+	private List<LanguageVO> allRemainingLanguageVOList;
 	private Integer repositoryId;
 
 	protected String doExecute() throws Exception 
 	{
 		this.repositoryVO = RepositoryController.getController().getRepositoryVOWithId(this.repositoryId);
 		this.repositoryLanguageVOList = RepositoryLanguageController.getController().getRepositoryLanguageVOListWithRepositoryId(repositoryId);
-		this.allRemainingLanguageVOList = RepositoryLanguageController.getController().getRemainingLanguages(repositoryId);
+		this.allRemainingLanguageVOList = LanguageController.getController().getRemainingLanguages(repositoryId);
 		
         return "success";
 	}

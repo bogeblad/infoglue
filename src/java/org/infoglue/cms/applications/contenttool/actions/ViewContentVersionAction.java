@@ -441,13 +441,20 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
     {
     	doExecute();
     	
-    	return "successForFCKEditorV3";
+    	if(CmsPropertyHandler.getContentVersionEditorFlavour().equalsIgnoreCase("v3TabbedLanguages"))
+    		return "successVersionEditor"; 	
+    	else
+    		return "successForFCKEditorV3";
     }
 
 	public String doStandalone() throws Exception
 	{
 	    this.initialize(getContentVersionId(), getContentId(), this.languageId);
-	    return "standaloneForFCKEditor";
+
+    	if(CmsPropertyHandler.getContentVersionEditorFlavour().equalsIgnoreCase("v3TabbedLanguages"))
+    		return "successStandaloneVersionEditor"; 	
+    	else
+    		return "standaloneForFCKEditor";
 	}
 
 	public String doBackground() throws Exception

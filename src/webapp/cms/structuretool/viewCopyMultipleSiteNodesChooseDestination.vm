@@ -53,10 +53,18 @@
 		 
 		function finish()
 		{
-			if (confirm('$ui.getString("tool.structuretool.copySiteNode.areYouSureWarning")'))
-		    {
-		    	document.inputForm.submit();
-			}
+			var parentSiteNodeId =  document.inputForm.newParentSiteNodeId.value;
+		   	if (parentSiteNodeId != null && parentSiteNodeId != "" && parentSiteNodeId != "-1") 
+		   	{
+				if (confirm('$ui.getString("tool.structuretool.copySiteNode.areYouSureWarning")')) 
+				{
+				 	document.inputForm.submit();
+				}
+			} 
+			else 
+			{
+				alert("$ui.getString("tool.structuretool.moveSiteNode.mustSelectSiteNodeWarning")");
+		   	}
 		}
 	
 		/**

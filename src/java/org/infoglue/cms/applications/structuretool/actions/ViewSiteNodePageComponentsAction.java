@@ -1999,7 +1999,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 						toEncoding = "utf-8";
 					
 
-					- String[] controlChars = new String[]{"�","�","�","�","�","�","�","�","�","�","�","�"};
+					String[] controlChars = new String[]{"�","�","�","�","�","�","�","�","�","�","�","�"};
 					boolean convert = true;
 					for(String charToTest : controlChars)
 					{

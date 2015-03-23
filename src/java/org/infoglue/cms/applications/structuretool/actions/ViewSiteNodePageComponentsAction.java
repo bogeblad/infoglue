@@ -593,7 +593,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 		if(this.specifyBaseTemplate.equalsIgnoreCase("true"))
 		{
 			String componentXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><components><component contentId=\"" + componentId + "\" id=\"" + newComponentId + "\" name=\"base\"><properties></properties><bindings></bindings><components></components></component></components>";
-			ContentVO templateContentVO = nodeDeliveryController.getBoundCont	ent(this.getInfoGluePrincipal(), siteNodeId, languageId, true, "Meta information", DeliveryContext.getDeliveryContext());
+			ContentVO templateContentVO = nodeDeliveryController.getBoundContent(this.getInfoGluePrincipal(), siteNodeId, languageId, true, "Meta information", DeliveryContext.getDeliveryContext());
 			
 			ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(templateContentVO.getId(), this.masterLanguageVO.getId());
 			if(contentVersionVO == null)
@@ -1999,7 +1999,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 						toEncoding = "utf-8";
 					
 
-					String[] controlChars = new String[]{"ï¿½","ï¿½","ï¿½","ï¿½","ï¿½","ï¿½","ï¿½","ï¿½","ï¿½","ï¿½","ï¿½","ï¿½"};
+					- String[] controlChars = new String[]{"�","�","�","�","�","�","�","�","�","�","�","�"};
 					boolean convert = true;
 					for(String charToTest : controlChars)
 					{

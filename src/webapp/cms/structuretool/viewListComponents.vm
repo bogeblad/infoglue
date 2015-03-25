@@ -14,10 +14,10 @@
 			//alert("parentComponentId: $!parentComponentId");
 			//alert("contentId: $!contentId");
 			//alert("$slotId: $slotId");
-			//alert("componentId:" + componentId);
+			//alert("hideComponent:" + $!hideComponentPropertiesOnLoad);
 			if(!isClicked){
 				isClicked = true;
-				url = "ViewSiteNodePageComponents!addComponent.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&parentComponentId=$!parentComponentId&componentId=" + componentId + "&slotId=$slotId&specifyBaseTemplate=$!specifyBaseTemplate&slotPositionComponentId=$!slotPositionComponentId&showSimple=$showSimple";
+				url = "ViewSiteNodePageComponents!addComponent.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&hideComponentPropertiesOnLoad=$!hideComponentPropertiesOnLoad&parentComponentId=$!parentComponentId&componentId=" + componentId + "&slotId=$slotId&specifyBaseTemplate=$!specifyBaseTemplate&slotPositionComponentId=$!slotPositionComponentId&showSimple=$showSimple";
 				//alert("url" + url);
 				parent.document.location.href = url;
 			}

@@ -85,14 +85,14 @@ ${skinDeliveryCSS}
 		CKEDITOR.config.minHeight = 200;
 	    CKEDITOR.config.maxHeight = maxAutogrowHeight;
 	}    
-	-->
+-->
  	$( document ).ready(function() {
 
-		var $activeElement = $('div[data-componentelementid="${focusElementId}"]');
+		var activeElement = $('div[data-componentelementid="${focusElementId}"]');
 
-		if($activeElement != null && $activeElement.offset())
+		if(activeElement != null && activeElement.offset())
 		{
-			$(window)[0].scrollTo(0, $activeElement.offset().top - 300);
+			$(window)[0].scrollTo(0, activeElement.offset().top - 300);
 		}
 	});
 

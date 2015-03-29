@@ -250,8 +250,9 @@ public class InconsistenciesController extends BaseController
 			contentVersionVO.setVersionModifier(infoGluePrincipal.getName());
 			contentVersionVO.setModifiedDateTime(DateHelper.getSecondPreciseDate());
 			contentVersionVO.setVersionValue(versionValue);
-
-			ContentVersionController.getContentVersionController().update(contentVersionVO.getContentId(), contentVersionVO.getLanguageId(), contentVersionVO, db);
+			
+			//ContentVersionController.getContentVersionController().update(contentVersionVO.getContentId(), contentVersionVO.getLanguageId(), contentVersionVO, db);
+			ContentVersionController.getContentVersionController().update(contentVersionVO.getContentId(), contentVersionVO.getLanguageId(), contentVersionVO, infoGluePrincipal, true, db, false);
 		}
 	}
 

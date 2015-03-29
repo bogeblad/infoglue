@@ -98,7 +98,7 @@ import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl;
-import org.infoglue.cms.exception.Bug;
+import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.NotificationListener;
@@ -827,6 +827,7 @@ public class LuceneController extends BaseController implements NotificationList
 		if(notificationMessage.getClassName().equals(ContentImpl.class.getName()) ||
 		   notificationMessage.getClassName().equals(ContentVersionImpl.class.getName()) ||
 		   notificationMessage.getClassName().equals(SiteNodeImpl.class.getName()) ||
+		   notificationMessage.getClassName().equals(SmallSiteNodeImpl.class.getName()) ||
 		   notificationMessage.getClassName().equals(SiteNodeVersionImpl.class.getName()) ||
 		   notificationMessage.getClassName().equals(DigitalAssetImpl.class.getName()) ||
 		   notificationMessage.getClassName().equals(MediumDigitalAssetImpl.class.getName()))
@@ -1031,6 +1032,7 @@ public class LuceneController extends BaseController implements NotificationList
 						notificationMessage.getClassName().equals(MediumDigitalAssetImpl.class.getName()) || 
 						notificationMessage.getClassName().equals(DigitalAsset.class.getName()) || 
 						notificationMessage.getClassName().equals(SiteNodeImpl.class.getName()) || 
+						notificationMessage.getClassName().equals(SmallSiteNodeImpl.class.getName()) || 
 						notificationMessage.getClassName().equals(SiteNode.class.getName()) || 
 						notificationMessage.getClassName().equals(SiteNodeVersionImpl.class.getName()) || 
 						notificationMessage.getClassName().equals(SiteNodeVersion.class.getName()))
@@ -1064,7 +1066,7 @@ public class LuceneController extends BaseController implements NotificationList
 							logger.warn("Got an error handling SiteNodeVersion with ID: " + notificationMessage.getObjectId() + ":" + e.getMessage());
 						}
 					}
-					else if(notificationMessage.getClassName().equals(SiteNodeImpl.class.getName()) || notificationMessage.getClassName().equals(SiteNode.class.getName()))
+					else if(notificationMessage.getClassName().equals(SiteNodeImpl.class.getName()) || notificationMessage.getClassName().equals(SiteNode.class.getName()) || notificationMessage.getClassName().equals(SmallSiteNodeImpl.class.getName()))
 					{
 						if(!existingSignatures.contains(key))
 						{
@@ -1845,7 +1847,7 @@ public class LuceneController extends BaseController implements NotificationList
 				throw new SystemException(e.getMessage());
 			}
 		}
-		else if(notificationMessage.getClassName().equals(SiteNodeImpl.class.getName()) || notificationMessage.getClassName().equals(SiteNode.class.getName()))
+		else if(notificationMessage.getClassName().equals(SiteNodeImpl.class.getName()) || notificationMessage.getClassName().equals(SiteNode.class.getName()) || notificationMessage.getClassName().equals(SmallSiteNodeImpl.class.getName()))
 		{
 			SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId((Integer)notificationMessage.getObjectId(), db);
 			if (siteNodeVO == null)

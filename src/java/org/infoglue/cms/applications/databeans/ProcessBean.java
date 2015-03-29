@@ -328,7 +328,7 @@ public class ProcessBean
     	this.status = status;
     	if(status == RUNNING)
     		this.started = new Date();
-    	else if(status == FINISHED || status == ERROR)
+    	else if(status == FINISHED || status == ERROR || status == REDIRECTED)
     	{
     		this.finished = new Date();
     		ChangeNotificationController.getInstance().notifyListeners();

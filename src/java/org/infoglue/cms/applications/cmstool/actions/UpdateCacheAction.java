@@ -169,6 +169,12 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
 					Object[] idsExtra = {new Integer(objectId)};
 					CacheController.clearCache(typesExtra, idsExtra);
 				}
+				else if(Class.forName(className).getName().equals(SmallSiteNodeImpl.class.getName()))
+				{
+				    Class typesExtra = SiteNodeImpl.class;
+					Object[] idsExtra = {new Integer(objectId)};
+					CacheController.clearCache(typesExtra, idsExtra);
+				}
 				else if(Class.forName(className).getName().equals(SiteNodeVersionImpl.class.getName()))
 				{
 				    Class typesExtra = SmallSiteNodeVersionImpl.class;

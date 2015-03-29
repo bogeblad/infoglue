@@ -26,10 +26,12 @@ package org.infoglue.cms.controllers.kernel.impl.simple;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
@@ -244,7 +246,7 @@ public class ComponentController extends BaseController
 	        	{
 	        		Thread.sleep(1000);
 		        	Timer t = new Timer();
-		        	List<Integer> localComponentIdsList = new ArrayList<Integer>();
+		        	Set<Integer> localComponentIdsList = new HashSet<Integer>();
 		        	localComponentIdsList.addAll(componentIdsToRecache);
 		        	componentIdsToRecache.clear();
 		        	for(Integer localComponentContentId : localComponentIdsList)

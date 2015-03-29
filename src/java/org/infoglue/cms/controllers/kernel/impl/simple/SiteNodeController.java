@@ -3933,15 +3933,20 @@ public class SiteNodeController extends BaseController
 		
         try
         {
-        	SiteNode siteNode = getSiteNodeWithId(siteNodeId, db);
+        	SmallSiteNodeImpl siteNode = getSmallSiteNodeWithId(siteNodeId, db);
+        	//SiteNode siteNode = getSiteNodeWithId(siteNodeId, db);
         	siteNode.setIsDeleted(false);
 	    	
-			while(siteNode.getParentSiteNode() != null && siteNode.getParentSiteNode().getIsDeleted())
-			{
-				siteNode = siteNode.getParentSiteNode();
-				siteNode.setIsDeleted(false);
-			}
-
+        	if(siteNode.getParentSiteNodeId() != null)
+	        {
+	        	SmallSiteNodeImpl parentSiteNode = getSmallSiteNodeWithId(siteNode.getParentSiteNodeId(), db);
+				while(parentSiteNode != null && parentSiteNode.getIsDeleted())
+				{
+					parentSiteNode.setIsDeleted(false);
+					parentSiteNode = getSmallSiteNodeWithId(siteNode.getParentSiteNodeId(), db);
+				}
+	        }
+        	
 	    	commitTransaction(db);
         }
         catch(Exception e)

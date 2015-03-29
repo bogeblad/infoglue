@@ -155,7 +155,7 @@ public class WorkingPublicationThread extends Thread
 					logger.info("typeId:" + typeId);
 					logger.info("changedAttributeNames:" + changedAttributeNames);
 
-				    boolean skipOriginalEntity = false;
+					boolean skipOriginalEntity = false;
 
 					List<Map<String,String>> allIGCacheCalls = new ArrayList<Map<String,String>>();
 
@@ -334,6 +334,12 @@ public class WorkingPublicationThread extends Thread
 							else if(Class.forName(className).getName().equals(SiteNodeImpl.class.getName()))
 							{
 							    Class typesExtra = SmallSiteNodeImpl.class;
+								Object[] idsExtra = {new Integer(objectId)};
+								CacheController.clearCache(typesExtra, idsExtra);
+							}
+							else if(Class.forName(className).getName().equals(SmallSiteNodeImpl.class.getName()))
+							{
+							    Class typesExtra = SiteNodeImpl.class;
 								Object[] idsExtra = {new Integer(objectId)};
 								CacheController.clearCache(typesExtra, idsExtra);
 							}

@@ -376,6 +376,12 @@ public class SelectiveLivePublicationThread extends PublicationThread
 								Object[] idsExtra = {new Integer(objectId)};
 								CacheController.clearCache(typesExtra, idsExtra);
 							}
+							else if(Class.forName(className).getName().equals(SmallSiteNodeImpl.class.getName()))
+							{
+							    Class typesExtra = SiteNodeImpl.class;
+								Object[] idsExtra = {new Integer(objectId)};
+								CacheController.clearCache(typesExtra, idsExtra);
+							}
 							else if(Class.forName(className).getName().equals(SiteNodeVersionImpl.class.getName()))
 							{
 							    Class typesExtra = SmallSiteNodeVersionImpl.class;
@@ -1041,6 +1047,27 @@ public class SelectiveLivePublicationThread extends PublicationThread
 				}
 				*/
 			}
+			else if(Class.forName(className).getName().equals(SmallSiteNodeImpl.class.getName()))
+			{
+				SmallSiteNodeImpl siteNode = (SmallSiteNodeImpl)getObjectWithId(SmallSiteNodeImpl.class, new Integer(objectId), db);
+				getObjectWithId(SmallSiteNodeImpl.class, new Integer(objectId), db);
+				
+				/*
+				NodeDeliveryController ndc = NodeDeliveryController.getNodeDeliveryController(new Integer(objectId), new Integer(-1), new Integer(-1));
+				Repository repository = siteNode.getRepository();
+		    	if(repository != null)
+				{
+					Collection languages = repository.getRepositoryLanguages();
+					Iterator languageIterator = languages.iterator();
+					while(languageIterator.hasNext())
+					{
+						RepositoryLanguage repositoryLanguage = (RepositoryLanguage)languageIterator.next();
+						Language currentLanguage = repositoryLanguage.getLanguage();
+						LanguageDeliveryController.getLanguageDeliveryController().getLanguageIfSiteNodeSupportsIt(db, currentLanguage.getId(), siteNode.getId());
+					}
+				}
+				*/
+			}
 			else if(Class.forName(className).getName().equals(SiteNodeVersionImpl.class.getName()))
 			{
 				getObjectWithId(SiteNodeVersionImpl.class, new Integer(objectId), db);
@@ -1081,6 +1108,27 @@ public class SelectiveLivePublicationThread extends PublicationThread
 					else if(Class.forName(publicationDetailVO.getEntityClass()).getName().equals(SiteNodeImpl.class.getName()))
 					{
 						SiteNodeImpl siteNode = (SiteNodeImpl)getObjectWithId(SiteNodeImpl.class, new Integer(objectId), db);
+						getObjectWithId(SmallSiteNodeImpl.class, new Integer(objectId), db);
+						
+						/*
+						NodeDeliveryController ndc = NodeDeliveryController.getNodeDeliveryController(new Integer(objectId), new Integer(-1), new Integer(-1));
+						Repository repository = siteNode.getRepository();
+				    	if(repository != null)
+						{
+							Collection languages = repository.getRepositoryLanguages();
+							Iterator languageIterator = languages.iterator();
+							while(languageIterator.hasNext())
+							{
+								RepositoryLanguage repositoryLanguage = (RepositoryLanguage)languageIterator.next();
+								Language currentLanguage = repositoryLanguage.getLanguage();
+								LanguageDeliveryController.getLanguageDeliveryController().getLanguageIfSiteNodeSupportsIt(db, currentLanguage.getId(), siteNode.getId());
+							}
+						}
+						*/
+					}
+					else if(Class.forName(publicationDetailVO.getEntityClass()).getName().equals(SmallSiteNodeImpl.class.getName()))
+					{
+						SmallSiteNodeImpl siteNode = (SmallSiteNodeImpl)getObjectWithId(SmallSiteNodeImpl.class, new Integer(objectId), db);
 						getObjectWithId(SmallSiteNodeImpl.class, new Integer(objectId), db);
 						
 						/*

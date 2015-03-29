@@ -131,7 +131,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 	{
 		//System.out.println("Loaded 2" + arg0.getClass().getName());
     	//if(arg0.getClass().getName().contains("RegistryImpl"))
-    	//	Thread.dumpStack();
+		//	Thread.dumpStack();
 		//System.out.println("Loaded 2" + arg0.getClass().getName());
 		
 		//if(arg1.getId() == AccessMode.Shared.getId() && arg0.getClass().getName().indexOf(".CategoryImpl") > -1)
@@ -164,7 +164,8 @@ public class CmsJDOCallback implements CallbackInterceptor
     		PageDeliveryMetaDataImpl.class.getName().indexOf(object.getClass().getName()) == -1 &&
     		PageDeliveryMetaDataEntityImpl.class.getName().indexOf(object.getClass().getName()) == -1 && modified)
 	    {
-	    	logger.info("Actually stored it:" + object + ":" + modified);
+    		if(logger.isInfoEnabled())
+    			logger.info("Actually stored it:" + object + ":" + modified);
     	    
 			String userName = "SYSTEM";
 			try
@@ -442,6 +443,33 @@ public class CmsJDOCallback implements CallbackInterceptor
 				CacheController.clearCacheForGroup("latestSiteNodeVersionCache", "siteNode_" + (Integer)getObjectIdentity(object));
 				CacheController.clearCache("siteNodeCache","" + (Integer)getObjectIdentity(object));
 			}
+			else if(object.getClass().getName().equals(SmallSiteNodeImpl.class.getName()))
+			{
+				clearCache(SiteNodeImpl.class);
+				clearCache(SmallestSiteNodeImpl.class);
+				
+				try
+				{
+					SmallSiteNodeImpl siteNode = (SmallSiteNodeImpl)object;
+					CacheController.clearCache("siteNodeCache", "" + siteNode.getId());
+					CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNode.getId());
+					CacheController.clearCacheForGroup("childPagesCache", "siteNode_" + siteNode.getId());
+					if(siteNode.getParentSiteNodeId() != null)
+					{
+						CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNode.getParentSiteNodeId());					
+						CacheController.clearCacheForGroup("childPagesCache", "siteNode_" + siteNode.getParentSiteNodeId());					
+					}
+				}
+				catch (Exception e) 
+				{
+					logger.warn("Error in JDOCallback:" + e.getMessage(), e);
+				}
+
+				//CacheController.clearCache("childSiteNodesCache");
+				CacheController.clearCache("parentSiteNodeCache");
+				CacheController.clearCacheForGroup("latestSiteNodeVersionCache", "siteNode_" + (Integer)getObjectIdentity(object));
+				CacheController.clearCache("siteNodeCache","" + (Integer)getObjectIdentity(object));
+			}
 			else if(object.getClass().getName().equals(SiteNodeVersionImpl.class.getName()) || object.getClass().getName().equals(MediumSiteNodeVersionImpl.class.getName()))
 			{
 				CacheController.clearCacheForGroup("registryCache", "" + ("org.infoglue.cms.entities.structure.SiteNodeVersion_" + getObjectIdentity(object)).hashCode());						
@@ -664,6 +692,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 		if(c.getName().contains(".SiteNodeVersionImpl") || 
 		   c.getName().contains(".MediumSiteNodeVersionImpl") || 
 		   c.getName().contains(".SiteNodeImpl") || 
+		   c.getName().contains(".SmallSiteNodeImpl") || 
 		   c.getName().contains(".LanguageImpl") || 
 		   c.getName().contains(".RepositoryImpl") || 
 		   c.getName().contains(".RepositoryLanguageImpl") || 
@@ -705,6 +734,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 		if(c.getName().contains(".SiteNodeVersionImpl") || 
 		   c.getName().contains(".MediumSiteNodeVersionImpl") || 
 		   c.getName().contains(".SiteNodeImpl") || 
+		   c.getName().contains(".SmallSiteNodeImpl") || 
 		   c.getName().contains(".LanguageImpl") || 
 		   c.getName().contains(".RepositoryImpl") || 
 		   c.getName().contains(".RepositoryLanguageImpl") || 
@@ -1306,6 +1336,36 @@ public class CmsJDOCallback implements CallbackInterceptor
 					{
 						CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNode.getParentSiteNode().getId());					
 						CacheController.clearCacheForGroup("childPagesCache", "siteNode_" + siteNode.getParentSiteNode().getId());					
+					}
+				}
+				catch (Exception e) 
+				{
+					logger.warn("Error in JDOCallback:" + e.getMessage(), e);
+				}
+
+				//CacheController.clearCache("childSiteNodesCache");
+				CacheController.clearCache("parentSiteNodeCache");
+				CacheController.clearCache("repositoryRootNodesCache");
+				CacheController.clearCacheForGroup("latestSiteNodeVersionCache", "siteNode_" + (Integer)getObjectIdentity(object));
+				CacheController.clearCacheForGroup("siteNodeCache","" + (Integer)getObjectIdentity(object));
+
+			}
+			else if(object.getClass().getName().equals(SmallSiteNodeImpl.class.getName()))
+			{
+			    RegistryController.getController().clearRegistryForReferencedEntity(SiteNode.class.getName(), getObjectIdentity(object).toString());
+				RegistryController.getController().clearRegistryForReferencingEntityCompletingName(SiteNode.class.getName(), getObjectIdentity(object).toString());
+				clearCache(SiteNodeImpl.class);
+				
+				try
+				{
+					SmallSiteNodeImpl siteNode = (SmallSiteNodeImpl)object;
+					CacheController.clearCache("siteNodeCache", "" + siteNode.getId());
+					CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNode.getId());
+					CacheController.clearCacheForGroup("childPagesCache", "siteNode_" + siteNode.getId());
+					if(siteNode.getParentSiteNodeId() != null)
+					{
+						CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNode.getParentSiteNodeId());					
+						CacheController.clearCacheForGroup("childPagesCache", "siteNode_" + siteNode.getParentSiteNodeId());					
 					}
 				}
 				catch (Exception e) 

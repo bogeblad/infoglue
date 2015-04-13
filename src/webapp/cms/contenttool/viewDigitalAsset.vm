@@ -27,6 +27,7 @@
 			window.parent.OnUploadCompleted(0, 'DownloadAsset.action?contentId=$!contentVersionVO.contentId&languageId=$!contentVersionVO.languageId&assetKey=$!digitalAssetKey', 'DownloadAsset.action?contentId=$!contentVersionVO.contentId&languageId=$!contentVersionVO.languageId&assetKey=$!digitalAssetKey', 'Upload was successful');
 		#end
 	-->
+
 	</script>
 	#end
 
@@ -261,18 +262,19 @@
 		//*******************************************
 		//This method refreshes the caller
 		//*******************************************
-	
+
 		function refreshCaller()
 		{
+
 			if(parent.refreshView)
 			{
 				#if($!refreshAll)
 					if(parent.refreshAll)
 						parent.refreshAll();
-					//alert("selecting");
+					alert("selecting");
 					if(parent.refreshView)
 						parent.refreshView("contentVersionAssets");
-					//alert("selected");
+					alert("selected");
 				#else
 					if(parent.refreshView)
 						parent.refreshView("contentVersionAssets");
@@ -281,11 +283,15 @@
 			else
 			{
 				var parentLocation = "";
+				
 				try
 				{
 					parentLocation = "" + window.opener.parent.document.location.href;
-					if(parentLocation.indexOf("ViewContentVersion!standalone.action") > -1)
+					var cleanAnchors = "$cleanAnchors";
+				
+					if(parentLocation.indexOf("ViewContentVersion!standalone.action") > -1 && !cleanAnchors)
 					{
+				
 						var stopWordIndex = parentLocation.indexOf("#");
 						if(stopWordIndex > -1)
 							var newLocation = parentLocation.substring(0, stopWordIndex) + "&anchor=digitalAssetsBlock" + parentLocation.substring(stopWordIndex);
@@ -300,6 +306,7 @@
 					}
 					else
 					{
+					
 						if(window.opener && window.opener.parent && window.opener.parent.frames['main'])
 						{
 							var agt=navigator.userAgent.toLowerCase();
@@ -310,6 +317,7 @@
 						}
 						else
 						{
+				
 							window.opener.location.reload();	
 						}
 					}
@@ -428,7 +436,7 @@
 #beginLightCommonToolV3Impl("tool.contenttool.uploadDigitalAsset.header" "" "" false true $!disableCloseButton $headerMarkup false "highGreyBackground")
 
 <div onfocus="this.blur();">
-
+	
 	#lightMenuToolbar("" $buttons $rightButtons) 
 
 	<div style="clear: both;"></div>

@@ -4863,15 +4863,17 @@ public class SiteNodeController extends BaseController
 
 	public List<LanguageVO> getDisabledLanguageVOListForSiteNode(Integer siteNodeId) throws SystemException, Exception
 	{ 
+
     	List<LanguageVO> enabledLanguageVOList = getEnabledLanguageVOListForSiteNode(siteNodeId);
+
     	SiteNodeVO siteNodeVO = getSiteNodeVOWithId(siteNodeId);
     	List<LanguageVO> repositoryLanguageVOList = LanguageController.getController().getLanguageVOList(siteNodeVO.getRepositoryId());
-    	
+
     	List<LanguageVO> filteredRepositoryLanguageVOList = new ArrayList<LanguageVO>();
     	filteredRepositoryLanguageVOList.addAll(repositoryLanguageVOList);
     	filteredRepositoryLanguageVOList.removeAll(enabledLanguageVOList);
-    	
-		return repositoryLanguageVOList;
+
+		return filteredRepositoryLanguageVOList;
 	}
 
 	public SiteNodeVO getBaseForLanguageSiteNodeVO(Integer siteNodeId, Database db) throws Bug, Exception 

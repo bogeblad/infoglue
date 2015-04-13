@@ -89,6 +89,7 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
    	private String userSessionKey;
    	private Integer changeTypeId = new Integer(0);
    	private List<LanguageVO> availablePageLanguages = new ArrayList<LanguageVO>();
+	private List<LanguageVO> disabledPageLanguages = new ArrayList<LanguageVO>();
    	
    	private List<ContentTypeAttribute> specialMetaAttributes = new ArrayList<ContentTypeAttribute>();
    	
@@ -427,9 +428,10 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
         userSessionKey = "" + System.currentTimeMillis();
 
 		parentSiteNodeVO = SiteNodeControllerProxy.getController().getSiteNodeVOWithId(parentSiteNodeId);
-
-		this.availablePageLanguages = RepositoryLanguageController.getController().getAvailableLanguageVOListForRepositoryId(parentSiteNodeVO.getRepositoryId());
 		
+		this.availablePageLanguages = RepositoryLanguageController.getController().getAvailableLanguageVOListForRepositoryId(parentSiteNodeVO.getRepositoryId());
+		this.disabledPageLanguages = SiteNodeController.getController().getDisabledLanguageVOListForSiteNode(parentSiteNodeId);
+		System.out.println("Rasmus , disabledPageLanguages:" + disabledPageLanguages);
 		String createSiteNodeInlineOperationDoneHeader = getLocalizedString(getLocale(), "tool.structuretool.createSiteNodeInlineOperationDoneHeader", parentSiteNodeVO.getName());
 		String createSiteNodeInlineOperationBackToCurrentPageLinkText = getLocalizedString(getLocale(), "tool.structuretool.createSiteNodeInlineOperationBackToCurrentPageLinkText");
 		String createSiteNodeInlineOperationBackToCurrentPageTitleText = getLocalizedString(getLocale(), "tool.structuretool.createSiteNodeInlineOperationBackToCurrentPageTitleText");
@@ -561,6 +563,10 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 	public List<LanguageVO> getAvailablePageLanguages()
 	{
 		return availablePageLanguages;
+	}
+	public List<LanguageVO> getDisabledLanguages()
+	{
+		return disabledPageLanguages;
 	}
 
 }

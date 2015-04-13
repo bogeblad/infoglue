@@ -37,6 +37,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
+import org.infoglue.cms.applications.databeans.AssetKeyDefinition;
 import org.infoglue.cms.applications.databeans.ReferenceBean;
 import org.infoglue.cms.controllers.kernel.impl.simple.CategoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ComponentPropertyDefinitionController;
@@ -97,6 +98,8 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	private Integer digitalAssetId = null;
 	public ContentTypeDefinitionVO contentTypeDefinitionVO;
 	public List availableLanguages = null;
+	public List<LanguageVO> availableLanguagesForThisSite = null;
+	public List<LanguageVO> disabledLanguagesForThisSite = null;
 	
 	private Integer languageId;
 	private Integer repositoryId;
@@ -104,7 +107,8 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	private String attributeName = "";
 	private String textAreaId = "";
 	private boolean forceWorkingChange = false;
-			
+	public boolean hasMandatoryAssets = false;
+	
     private ContentVO contentVO;
     protected ContentVersionVO contentVersionVO;
     protected ContentVersionVO originalLanguageContentVersionVO;
@@ -343,6 +347,8 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
         if(contentId != null)
         {
 	        this.contentTypeDefinitionVO = ContentController.getContentController().getContentTypeDefinition(contentId);
+	       
+	        this.hasMandatoryAssets = getHasMandatoryAssets(this.contentTypeDefinitionVO);
 	        this.availableLanguages = ContentController.getContentController().getRepositoryLanguages(this.contentVO.getId());
         }
         
@@ -406,6 +412,11 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 				try
 				{
 					SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(this.getContentId());
+					
+					this.availableLanguagesForThisSite = SiteNodeController.getController().getEnabledLanguageVOListForSiteNode(siteNodeVO.getId());
+					
+					this.disabledLanguagesForThisSite = SiteNodeController.getController().getDisabledLanguageVOListForSiteNode(siteNodeVO.getId());
+
 					this.siteNodeName = siteNodeVO.getName();
 					this.siteNodeId = siteNodeVO.getId();
 				}
@@ -416,8 +427,9 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 			}
 		}
 
-        if(this.fromLanguageId != null)
+        if(this.fromLanguageId != null) {
 			this.originalLanguageContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, fromLanguageId);
+        }
         
         if(this.toLanguageId != null)
 			this.currentLanguageVO = LanguageController.getController().getLanguageVOWithId(toLanguageId);
@@ -714,18 +726,33 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 			{
 				logger.info("cvVO1:" + cvVO.getId());
 				cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(cvVO.getContentId(), cvVO.getLanguageId());
+	
 				logger.info("cvVO2:" + cvVO.getId());
 				this.setContentVersionId(cvVO.getId());
+
+			}
+		} else if (getContentId() != null && getLanguageId() != null && getContentVersionId() == null){
+			ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(getContentId(), getLanguageId());
+			if(cvVO != null)
+			{
+				logger.info("cvVO1:" + cvVO.getId());
+				cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(cvVO.getContentId(), cvVO.getLanguageId());
+				logger.info("cvVO2:" + cvVO.getId());
+				this.setContentVersionId(cvVO.getId());
+
 			}
 		}
-
-		if(getContentId() != null && getContentId().intValue() != -1)
+		
+		if(getContentId() != null && getContentId().intValue() != -1 && getLanguageId() == null)
 		{
+
+			
 		    this.initialize(getContentVersionId(), getContentId(), this.languageId, true, false);
 		}
 
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), true);
-		
+		logger.info("Asset key was: " + this.assetKey);
+
 		if(this.assetKey != null)
 		{
 			String fromEncoding = CmsPropertyHandler.getAssetKeyFromEncoding();
@@ -940,7 +967,9 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
     {
         return this.contentVO.getName();
     }
+    
 
+    
     public Integer getParentContentId()
     {
         return this.contentVO.getParentContentId();
@@ -958,7 +987,24 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	{
 		return this.availableLanguages;
 	}	
-
+	
+	public boolean getHasMandatoryAssets()
+	{
+		return this.hasMandatoryAssets;
+	}	
+	
+    public List<LanguageVO> getAvailableLanguagesForThisSite()
+    {
+    	
+        return this.availableLanguagesForThisSite;
+    }
+    
+    public List<LanguageVO> getDisabledLanguagesForThisSite()
+    {
+    	
+        return this.disabledLanguagesForThisSite;
+    }
+    
 	/**
 	 * Returns a list of digital assets available for this content version.
 	 */
@@ -989,15 +1035,15 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	public List getInheritedDigitalAssets()
 	{
 		List filteredDigitalAssets = new ArrayList();
-		
 		try
 		{
+
 			if(this.contentVO != null && this.contentVO.getContentId() != null && this.contentVO.getContentId().intValue() != -1)
 	       	{
 				List digitalAssets = DigitalAssetController.getDigitalAssetVOList(this.contentVO.getContentId(), this.languageId, true);
-
+			
 				filteredDigitalAssets.addAll(digitalAssets);
-	    		
+
 	       		if(filteredDigitalAssets != null && filteredDigitalAssets.size() > 0)
 	       		{
 	       			Iterator digitalAssetsIterator = filteredDigitalAssets.iterator();
@@ -1005,7 +1051,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	       			{
 	       				DigitalAssetVO assetVO = (DigitalAssetVO)digitalAssetsIterator.next();
 	       				//if(!assetVO.getAssetContentType().matches(this.assetTypeFilter))
-		       			if(!this.assetTypeFilter.equals("*") && this.assetTypeFilter.indexOf(assetVO.getAssetContentType()) == -1)
+		       			if(!this.assetTypeFilter.equals("*") && !this.assetTypeFilter.equals(".*") && this.assetTypeFilter.indexOf(assetVO.getAssetContentType()) == -1)
 	       				{
 	       					digitalAssetsIterator.remove();
 	       					//logger.info("Removed file from asset list:" + this.assetTypeFilter);
@@ -1016,15 +1062,15 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 			else if(this.contentVersionVO != null && this.contentVersionVO.getContentVersionId() != null)
 	       	{
 				this.contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(this.contentVersionVO.getId());
-				
 				filteredDigitalAssets = DigitalAssetController.getDigitalAssetVOList(this.contentVersionVO.getContentVersionId());
 	       	}
 
 			Iterator digitalAssetsIterator = filteredDigitalAssets.iterator();
+
    			while(digitalAssetsIterator.hasNext())
    			{
    				DigitalAssetVO assetVO = (DigitalAssetVO)digitalAssetsIterator.next();
-   				
+
    				List<ReferenceBean> referenceBeans = RegistryController.getController().getReferencingObjectsForContentAsset(this.contentVersionVO.getContentId(), assetVO.getAssetKey(), 100, false, true, true);
    				assetVO.setReferencingNumberOfObjects(referenceBeans.size());
    			}
@@ -1695,7 +1741,19 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 		
 		return bindings;
 	}
-
+	
+	private boolean getHasMandatoryAssets(ContentTypeDefinitionVO contentTypeDefinitionVO) {
+		boolean result = false;
+		
+		List<AssetKeyDefinition> assetKeyDefinitionList = ContentTypeDefinitionController.getController().getDefinedAssetKeys(contentTypeDefinitionVO, false);
+		for (AssetKeyDefinition assetKeyDefinition : assetKeyDefinitionList) {
+			if (!result) {
+				result = assetKeyDefinition.getIsMandatory();
+			}
+		}
+		
+		return result;
+	}
 	/**
 	 * This method fetches the template-string.
 	 */

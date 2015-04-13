@@ -63,7 +63,7 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 	private Boolean isHidden;
 	private Integer disablePageCache;
 	private Integer disableEditOnSight;
-	private Integer disableLanguages;
+	private Integer disableLanguages = 1;
 	private Integer disableForceIdentityCheck;
 	private Integer forceProtocolChange;
 	private String contentType;

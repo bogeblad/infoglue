@@ -69,7 +69,7 @@
 		}
 		resizeScrollArea();
 	}
-	
+
 	/*
 	 * This method acts as a proxy to the frame that has the view in the tabbed world we live in.
 	 */	
@@ -120,6 +120,7 @@
 	
 	function submitLanguageLimitations(select)
 	{
+
 		document.editForm.submit();
 	}
 	
@@ -282,32 +283,37 @@
 	*#
 						
 		#elseif($showPageLanguages == "true")
-			
+
 			<p>	
-				<label for="disableLanguages">$ui.getString("entity.SiteNode.disableLanguages.label")</label>
-				<select name="disableLanguages" style="width: 115px;" onchange="submitLanguageLimitations(this);">
-					<option value="0" #if($!disableLanguages == 0) selected="1" #end> $ui.getString("tool.common.no")</option>	
-					<option value="1" #if($!disableLanguages == 1) selected="1" #end> $ui.getString("tool.common.yes")</option>	
-					<option value="2" #if($!disableLanguages == 2) selected="1" #end> $ui.getString("tool.common.inherit")</option>	
-				</select>
+				<label for="disableLanguages">
+		
+				#if($!disableLanguages != 2)
+					#set($disableLanguageCheckBoxValue = 2)
+				#else
+					#set($disableLanguageCheckBoxValue = 1)
+					
+				#end
+				<input type="checkbox" name="disableLanguages"  onchange="submitLanguageLimitations(this);" value="$disableLanguageCheckBoxValue" #if($!disableLanguages == 2)checked="1"#end>
+				$ui.getString("tool.common.toggleLangaugeInheritanceLabel")</label>
 			</p>
-			#if($disableLanguages == 1)
-				<h4>$ui.getString("tool.structuretool.disableLanguages.header")</h4>
-				<p>
+
+			<p style="display:none;">
 				#foreach ($language in $availableLanguages)
-					<input type="checkbox" name="disabledLanguageId" value="$language.id" #if($disabledLanguages.contains($language))checked="1"#end>$language.displayLanguage
+					<input type="checkbox" name="disabledLanguageId" value="$language.id" #if(!$enabledLanguages.contains($language))checked="1"#end>$language.displayLanguage
 				#end
-				</p>
+			</p>
+			
+			<h4>$ui.getString("tool.structuretool.enableLanguages.header")</h4>
+			<p>
+			#foreach ($language in $availableLanguages)
+				<label for="enabledLanguageId">
+					<input type="checkbox" name="enabledLanguageId" value="$language.id" #if($enabledLanguages.contains($language) || $enabledLanguages.size() == 0)checked="1"#end #if($!disableLanguages == 2) disabled #end >$language.displayLanguage
+				</label>
 				
-				<h4>$ui.getString("tool.structuretool.enableLanguages.header")</h4>
-				<p>
-				#foreach ($language in $availableLanguages)
-					<input type="checkbox" name="enabledLanguageId" value="$language.id" #if($enabledLanguages.contains($language))checked="1"#end>$language.displayLanguage
-				#end
-				</p>
 			#end
+			</p>
+
     	
-							
 		#else
 			
 			#if($publicationMessage != "")

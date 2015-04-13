@@ -67,14 +67,15 @@ public class ViewDigitalAssetAction extends InfoGlueAbstractAction
 
 	private String entity;
 	private Integer entityId;
-
+	private boolean cleanAnchors;
+	
 	private Integer contentId = null;
 	private Integer languageId = null;
 
 	private Integer contentVersionId = null;
 	private Integer digitalAssetId   = null;
 	private Integer uploadedFilesCounter = new Integer(0);
-
+	
 	private ContentVersionVO contentVersionVO;
 	protected ContentTypeDefinitionVO contentTypeDefinitionVO;
 	private DigitalAssetVO digitalAssetVO;
@@ -248,7 +249,17 @@ public class ViewDigitalAssetAction extends InfoGlueAbstractAction
 	{
 		this.entity = entity;
 	}
+	
+	public boolean getCleanAnchors()
+	{
+		return cleanAnchors;
+	}
 
+	public void setCleanAnchors(boolean cleanAnchors)
+	{
+		this.cleanAnchors = cleanAnchors;
+	}
+	
 	public Integer getEntityId()
 	{
 		return entityId;

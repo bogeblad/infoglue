@@ -63,6 +63,7 @@
 			*/
 		}
 	
+
 		//*******************************************
 		//This method submits the content to publishing dialog
 		//*******************************************
@@ -181,10 +182,9 @@
 		//*******************************************
 
 		var originalIndex;
-		function changeLanguage(contentId, select)
+		function changeLanguage(contentId, languageId)
 		{
-			var languageId = $(select).val();
-			
+				
 			attributeName = document.editForm.attributeName.value;
 			
 			if (document.editForm.saveAndExitURL) {
@@ -199,10 +199,34 @@
 			}
 			else
 			{
-				document.getElementById("languageSelect").selectedIndex = originalIndex;
+				document.getElementById("level-2").selectedIndex = originalIndex;
 			}
 		}
-	
+		
+		function changeLanguageForVersionAccess(contentId, languageId)
+		{
+
+			
+			var versionAccessSrcUrl = "ViewContentVersion!viewContentAssetsForFCKEditorV3.action?contentId=$!contentId&languageId=" + languageId + "&assetTypeFilter=.*";
+			$(".versionAccess-list-items li").removeClass("ui-tabs-selected");
+			$("#languageVersionAccessTab_" + languageId).addClass("ui-tabs-selected");
+
+			$("#contentVersionAccessRightsFrame").attr("src", versionAccessSrcUrl);
+			$("input.attachAsset").show();
+
+		}	
+		
+		function changeLanguageForAssets(contentId, languageId)
+		{
+		
+			var assetSrcUrl = "ViewContentVersion!viewContentAssetsForFCKEditorV3.action?contentId=$!contentId&languageId=" + languageId + "&assetTypeFilter=.*";
+			$(".asset-list-items li").removeClass("ui-tabs-selected");
+			$("#languageAssetTab_" + languageId).addClass("ui-tabs-selected");
+
+			$("#contentVersionAssetsFrame").attr("src", assetSrcUrl);
+			$("input.attachAsset").show();
+
+		}	
 		//*******************************************
 		// This function opens up the form editor
 		//*******************************************
@@ -404,14 +428,17 @@
 
 		function refreshView(viewName)
 		{
+			//alert("viewName:" + viewName);
 			if(viewName == "contentVersionAssets")
 			{
-				loadFrame("contentVersionAssetsDiv");
-				#if($this.hasAccessTo("ContentVersionEditor.Categories", true, false))
-					$("#tabsContainer").tabs("select", 2);
-				#else
-					$("#tabsContainer").tabs("select", 1);
-				#end
+		
+					window.location.href = window.location.href + '&anchor=digitalAssetsBlock';
+
+					#if($this.hasAccessTo($categoriesInterceptionPoint, true, false))
+						$("#level-3").tabs("select", 2);
+					#else
+						$("#level-3").tabs("select", 1);
+					#end
 			}
 		}
 
@@ -489,37 +516,42 @@
 			
 			//alert("$anchor");
 			#if($anchor)
-		    	#if($!anchor == "contentVersionBlock")
-			    	$("#tabsContainer").tabs({ selected: 0, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
-			    #elseif($!anchor == "categoriesBlock")
-			    	$("#tabsContainer").tabs({ selected: 1, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
-			    #elseif($!anchor == "digitalAssetsBlock")
-			    	#set($selectedIndex = 1)
-			    	#if($this.hasAccessTo("ContentVersionEditor.Categories", true, false))
-				    	#set($selectedIndex = 2)
-			    	#end
-			    	$("#tabsContainer").tabs({ selected: $selectedIndex, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
-			    	loadFrame("contentVersionAssetsDiv");
-			    	##loadFrame("#");
-			    #else 
-		  			$("#tabsContainer").tabs({ cache: false, show:function(event, ui) { 
-						if(ui.tab.href.indexOf("contentVersionDiv") > -1) { $(".reset").show(); }
-						else { $(".reset").hide(); } 
-						
-						if(ui.tab.href.indexOf("contentVersionAssetsDiv") > -1) 
-						{
-							$(".attachAsset").show();
-						}
-						else
-						{
-							$(".attachAsset").hide();
-						} 
-						resizeScrollArea(); 
-					}, 
-					select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+				#if($!anchor == "contentVersionBlock")
+					$("#level-1").tabs({ selected: 0, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					$("#level-3").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+				#elseif($!anchor == "categoriesBlock")
+					$("#level-1").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					$("#level-3").tabs({ selected: 1, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+				#elseif($!anchor == "digitalAssetsBlock")
+					#set( $selectedIndex = 1 )
+					#if($this.hasAccessTo($categoriesInterceptionPoint, true, false))
+						#set( $selectedIndex = 2 )
+					#end
+					$("#level-1").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					$("#level-3").tabs({ selected: 2, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					loadFrame("contentVersionAssetsDiv");		
+				#elseif($!anchor == "pageDetailsBlock")
+					$("#level-1").tabs({ selected: 3, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					$("#level-3").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					loadFrame("pageDetailsDiv");
+				#elseif($!anchor == "pageDetailsAdvancedBlock")
+					$("#level-1").tabs({ selected: 4, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					$("#level-3").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					loadFrame("pageDetailsAdvancedDiv");
+				#elseif($!anchor == "pageLanguagesBlock")
+					#set( $selectedIndex = 4 )
+					#if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false, false))
+						#set( $selectedIndex = 5 )
+					#end
+					$("#level-1").tabs({ selected: $selectedIndex, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					$("#level-3").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					loadFrame("pageLanguagesDiv");
+				#else
+					$("#level-1").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					$("#level-3").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					##alert("Anchor: $anchor");
 					
-			    	##alert("Anchor: $anchor");
-		  		#end
+				#end	
 		  	#else
 		  		$("#tabsContainer").tabs(
 		  			{ 
@@ -578,20 +610,20 @@
 				jQuery.get("ViewCommonAjaxServices!referenceCount.action?contentId=$contentId", function(data) {
 					//alert("Count:" + data + " on $contentId");
 					if(data != "0")
-						$('a[href="#contentReferencesDiv"] > span').append("(" + data + ")");
+						$('a[href="#contentReferencesDiv"] > span').append(" (" + data + ")");
 				});
 
 				#if($contentVersionId)
 					jQuery.get("ViewCommonAjaxServices!assetCount.action?contentVersionId=$contentVersionId", function(data) {
 						//alert("Count:" + data + " on $contentId");
 						if(data != "0")
-							$('a[href="#contentVersionAssetsDiv"] > span').append("(" + data + ")");
+							$('a[href="#contentVersionAssetsDiv"] > span').append(" (" + data + ")");
 					});
 					
 					jQuery.get("ViewCommonAjaxServices!categoryCount.action?contentVersionId=$contentVersionId", function(data) {
 						//alert("Count:" + data + " on $contentId");
 						if(data != "0")
-							$('a[href="#contentVersionCategoriesDiv"] > span').append("(" + data + ")");
+							$('a[href="#contentVersionCategoriesDiv"] > span').append(" (" + data + ")");
 					});
 				#end
 			}
@@ -840,243 +872,329 @@
 
 #beginLightCommonToolV3Impl("tool.contenttool.contentVersionHeader" "$!contentVersionId" "contentId=$contentId&languageId=$languageId#if($contentVersionId > -1)&contentVersionId=$!contentVersionId#end" false true $!disableCloseButton $headerMarkup false "smallGreyBackground")
 	
-<div style="z-index: 3;">
-    
-	<div class="#stateAsClass($contentVersionVO.stateId)">#stateInText($contentVersionVO.stateId)</div>
-    #if(!$translate && $availableLanguages.size() > 1)
-	<div style="position: relative; float: right; margin-top: 20px; margin-right: 40px;">
-		<label for="languageSelect">$ui.getString("tool.contenttool.languageVersionsLabel")</label>
-		<select id="languageSelect" name="languageSelect" onchange="changeLanguage($contentId, this);">
-			#foreach($languageVO in $availableLanguages)
-				<option value="$languageVO.id" #if($languageId == $languageVO.id)selected="selected"#end>$languageVO.name</option>
+<div class="dialog-wrapper clearfix" style="z-index: 3;">
+	<div style="clear: both;"></div>
+	#if($isMetainfoContent)
+
+		<h3>$ui.getString("tool.structuretool.pageProperties.header", $localizedContentName)</h3>
+		#if($contentVersionVO)
+			<div class="#stateAsClass($contentVersionVO.stateId)">#stateInText($contentVersionVO.stateId)</div>
+		#end
+
+	#else
+		<h3>$contentVO.name 
+			#if($currentLanguageVO.languageCode == "sv")
+				($ui.getString('tool.contenttool.swedishLabel'))
+			#elseif($currentLanguageVO.languageCode == "en")
+				($ui.getString('tool.contenttool.englishLabel'))
+			#else
+				($currentLanguageVO.name)
 			#end
-		</select>
-	</div>
-	<script type="text/javascript">
-		<!--
-		originalIndex = document.getElementById("languageSelect").selectedIndex;
-		-->
-	</script>
+		</h3>
+		
+		#if($contentVersionVO)
+			<div class="#stateAsClass($contentVersionVO.stateId)">#stateInText($contentVersionVO.stateId).
+				$ui.getString("tool.contenttool.versionLastUpdatedByLabel") $contentVersionVO.versionModifier ($formatter.formatDate($contentVersionVO.modifiedDateTime, "yyyy-MM-dd HH:mm") - $contentVersionVO.versionComment).
+			</div>
+		#end
 	#end
 
-	<div>
-		<div style="float: left;">
-			<h3>#if($translate)$ui.getString('tool.contenttool.translationViewLabel') #else $ui.getString('tool.contenttool.editingViewLabel') #end $ui.getString('tool.contenttool.contentLabel') "$contentVO.name" - $currentLanguageVO.name</h3>
-			#if($contentVersionVO)
-				<p>$ui.getString("tool.contenttool.versionLastUpdatedByLabel") $contentVersionVO.versionModifier ($formatter.formatDate($contentVersionVO.modifiedDateTime, "yyyy-MM-dd HH:mm") - $contentVersionVO.versionComment)</p>
-			#else
-				<p>$ui.getString('tool.contenttool.createVersionFirst')</p>
-			#end
-		</div>
-	</div>
-	
+
 	<div id="allDivs">
-		
-    	<div id="tabsContainer" class="cleanTopDiv" style="#if($translate == false)width: 100%;#else width: 550px; #end float:left; #if(!$contentVersionVO)display:none; #end">
-    	
-    	<ul>
-            <li><a href="#contentVersionDiv"><span>$ui.getString('tool.contenttool.textContentTab')</span></a></li>
-			#if($this.hasAccessTo("ContentVersionEditor.Categories", true, false))
-            	<li><a href="#contentVersionCategoriesDiv"><span>$ui.getString('tool.contenttool.categoriesTab')</span></a></li>
-            #end
-			#if($this.hasAccessTo("ContentVersionEditor.Attachments", true, false))
-            	<li><a href="#contentVersionAssetsDiv"><span>$ui.getString('tool.contenttool.assetsTab')</span></a></li>
-            #end
-            <li><a href="#contentCoverDiv"><span>$ui.getString('tool.contenttool.coverTab')</span></a></li>
-			#if($this.hasAccessTo("ContentVersionEditor.History", true, false))
-            	<li><a href="#contentHistoryDiv"><span>$ui.getString('tool.contenttool.contentHistoryTab')</span></a></li>
-            #end
-			#if($this.hasAccessTo("ContentVersionEditor.References", true, false))
-            	<li><a href="#contentReferencesDiv"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a></li>
-			#end
-			#if($this.hasAccessTo("ContentVersionEditor.AccessRights", true, false) && $this.hasAccessTo("Common.ManageAccessRights", true, false, true))
-				#if($contentTypeDefinitionVO.name != "Meta info")
-		            <li><a href="#contentAccessRightsDiv"><span>$ui.getString('tool.contenttool.contentAccessRightsTab')</span></a></li>
-		            <li><a href="#contentVersionAccessRightsDiv"><span>$ui.getString('tool.contenttool.contentVersionAccessRightsTab')</span></a></li>
-	        	#end
-        	#end
-        </ul>
-    	
-    	<div id="contentVersionDiv" class="inlineTabDiv">
-    		
-    		<form method="post" name="editForm" id="editForm" action="UpdateContentVersion!V3.action" style="float:left; width: 95%">
-    			<input type="hidden" name="contentId" value="$!contentId"/>
-    			<input type="hidden" name="languageId" value="$!languageId"/>
-    			#if("$!contentVersionId" != "")
-				<input type="hidden" name="contentVersionId" value="$!contentVersionId"/>
-    			#end
-				<input type="hidden" name="repositoryId" value="$!repositoryId"/>
-    		
-    			<input type="hidden" id="versionValue" name="versionValue" value=""/>
-				<input type="hidden" id="currentEditorId" name="currentEditorId" value=""/>
-				<input type="hidden" id="attributeName" name="attributeName" value="$attributeName"/>
-				<input type="hidden" name="inline" value="$inline"/>
-				<input type="hidden" name="closeOnLoad" value="false"/>
-				<input type="hidden" name="publishOnLoad" value="false"/>
-				<input type="hidden" id="contentId" name="contentId" value="$!contentId"/>
-				<input type="hidden" name="repositoryId" value="$!repositoryId"/>
-				#if($contentVersionId > -1)
-					<input type="hidden" name="contentVersionId" value="$!contentVersionId"/>
-					#if("$oldModifiedDateTime" == "-1")
-						<input type="hidden" name="oldModifiedDateTime" value="$!contentVersionVO.modifiedDateTime.time"/>
-					#else
-						<input type="hidden" name="oldModifiedDateTime" value="$!oldModifiedDateTime"/>
+	
+		<div id="tabsContainer" class="cleanTopDiv" style="#if($translate == false)width: 100%;#else width: 550px; #end float:left;#if(!$contentVersionVO)display:none; #end"">
+			<div id="level-1">
+				<ul class="level-1">
+					<li><a href="#contentVersionDiv"><span>$ui.getString('tool.contenttool.editContentTab')</span></a></li>
+
+					#if($isMetainfoContent == false)
+						<li><a href="#contentCoverDiv"><span>$ui.getString('tool.contenttool.coverTab')</span></a></li>
+					#end
+					#if($isMetainfoContent == false)
+						#if($this.hasAccessTo("ContentVersionEditor.History", true, false))
+							<li><a href="#contentHistoryDiv"><span>$ui.getString('tool.contenttool.contentHistoryTab')</span></a></li>
+						#end
+					#end
+					#if($isMetainfoContent == false)
+						#if($this.hasAccessTo("ContentVersionEditor.References", true, false))
+							<li><a href="#contentReferencesDiv"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a></li>
+						#end
+					#end
+					#if($isMetainfoContent == false)
+						#if($this.hasAccessTo("ContentVersionEditor.AccessRights", true, false))
+							<li><a href="#contentAccessRightsDiv"><span>$ui.getString('tool.contenttool.contentAccessRightsTab')</span></a></li>
+						#end
+					#end
+					
+					#if($isMetainfoContent == true)
+						#if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false, false))
+							<li><a href="#pageDetailsDiv"><span>$ui.getString("tool.structuretool.toolbarV3.pageDetailLabel")</span></a></li>
+						#else
+							<li><a href="#pageDetailsDiv"><span>$ui.getString("tool.structuretool.toolbarV3.pageDetailWithoutNameLabel")</span></a></li>
+						#end
+						#if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false, false))
+							<li><a href="#pageDetailsAdvancedDiv"><span>$ui.getString("tool.common.advanced.label")</span></a></li>	        
+						#end
+						#if($this.hasAccessTo("ToolTabsAndButtons.PageLanguagesTab", true, false, false))
+							<li><a href="#pageLanguagesDiv"><span>$ui.getString("tool.common.languages.label")</span></a></li>	        
+						#end
+						<li><a href="#pageHistoryDiv"><span>$ui.getString('tool.contenttool.contentHistoryTab')</span></a></li>
+						<li><a href="#pageReferencesDiv"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a></li>
+						#if($this.hasAccessTo("ToolTabsAndButtons.PageSimpleModeButton", true, false))
+							<li><a href="#pageSimpleComponentModeDiv"><span>Dev</span></a></li>
+						#end
+					#end
+				</ul>
+						
+
+				#if($isMetainfoContent == false)
+					<div id="contentCoverDiv" class="inlineTabDiv">
+						<iframe id="contentCoverFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+					</div>
+				#end
+			
+				#if($isMetainfoContent == false)
+					#if($this.hasAccessTo("ContentVersionEditor.History", true, false))
+					<div id="contentHistoryDiv" class="inlineTabDiv">
+						<iframe id="contentHistoryFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+					</div>
 					#end
 				#end
-			    		
-    			#set($event = $this.getEvent($contentVersionId) )					
-    			#if($event.id > 0)
 
-    			<table border="0">
-    			<tr>
-    				<td colspan="3">
-    					<span class="warningText">
-    						#set($close = "<a href='DeleteEvent.action?eventId=$event.id&url=$currentUrl'>$ui.getString('tool.contenttool.close')</a>")
-    						#if($event.typeId == 2)
-    							$ui.getString("tool.contenttool.publishRejectedText") $close
-    						#elseif($event.typeId == 4)
-    							$ui.getString("tool.contenttool.unblishRejectedText") $close
-    						#end
-    					</span> 
-    				</td>
-    			</tr>
-    			</table>	
-    			#end
-	    		
-				#if($tabbedContentTypeAttributes.size() > 1)
-				
-					<script type="text/javascript">
-					<!--
-						$(document).ready(function(){
-							$("#attributeTabsContainer").tabs({ show:function(e, ui) { 
-								resizeScrollArea(); 
-								if(ui.index == 2) 
-									$(".attachAsset").hide();
-								else
-									$(".attachAsset").show();
-							}, select: function(event, ui) { resizeScrollArea(); $("#activeDivId").val(ui.panel.id); $("#deleteActiveDivId").val(ui.panel.id) } });
-						});
-					-->
-					</script>
+				#if($isMetainfoContent == false)
+					#if($this.hasAccessTo("ContentVersionEditor.References", true, false))
+						<div id="contentReferencesDiv" class="inlineTabDiv">
+							<iframe id="contentReferencesFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+						</div>
+					#end
+				#end
+
+				#if($isMetainfoContent == false)
+					#if($this.hasAccessTo("ContentVersionEditor.AccessRights", true, false))
+						<div id="contentAccessRightsDiv" class="inlineTabDiv">
+							<iframe id="contentAccessRightsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+						</div>
+					#end
+				#end
+
+				#if($isMetainfoContent == true)
+					<div id="pageDetailsDiv" class="inlineTabDiv">
+						<iframe id="pageDetailsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+					</div>
+					#if($this.hasAccessTo("ToolTabsAndButtons.PageLanguagesTab", true, false, false))
+						<div id="pageLanguagesDiv" class="inlineTabDiv">
+							<iframe id="pageLanguagesFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+						</div>
+					#end
+					#if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false, false))
+						<div id="pageDetailsAdvancedDiv" class="inlineTabDiv">
+							<iframe id="pageDetailsAdvancedFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+						</div>
+					#end
+					<div id="pageHistoryDiv" class="inlineTabDiv">
+						<iframe id="pageHistoryFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+					</div>
 					
-					<div id="attributeTabsContainer" class="flora" style="margin-top: 10px; width: 100%">
-		
-						<ul>
-							#foreach($tabbedContentTypeAttribute in $tabbedContentTypeAttributes.keySet())
-								<li><a href="#$tabbedContentTypeAttribute.name">$tabbedContentTypeAttribute.name</a></li>
+					<div id="pageReferencesDiv" class="inlineTabDiv">
+						<iframe id="pageReferencesFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+					</div>
+					
+					#if($this.hasAccessTo("ToolTabsAndButtons.PageSimpleModeButton", true, false))
+					<div id="pageSimpleComponentModeDiv" class="inlineTabDiv">
+						<iframe id="pageReferencesFrame" src="$componentRendererUrl/ViewPage!renderDecoratedPage.action?siteNodeId=$siteNodeId&languageId=1&contentId=-1&showSimple=true" border="0" width="100%" height="500px" frameborder="0"></iframe>
+					</div>
+					#end
+				#end	
+
+
+				<div id="contentVersionDiv" class="inlineTabDiv ui-tabs">
+					<div id="level-2" class="language-tabs">
+						<ul class="level-2 ui-tabs-nav ui-helper-clearfix">
+							#if(!$translate && $availableLanguages.size() > 1)
+								#foreach($languageVO in $availableLanguages)
+									<li class="ui-state-default #if($languageId == $languageVO.id)ui-tabs-selected#end" ><a href="#" onclick="changeLanguage($contentId, $languageVO.id);" >
+									#if($languageVO.languageCode == "sv")
+										$ui.getString('tool.contenttool.swedishLabel')
+									#elseif($languageVO.languageCode == "en")
+										$ui.getString('tool.contenttool.englishLabel')
+									#else
+										$languageVO.name
+									#end
+								#end
 							#end
 						</ul>
-
-						#foreach($tabbedContentTypeAttribute in $tabbedContentTypeAttributes.keySet())
-							<div class="inlineTabDiv" id="$tabbedContentTypeAttribute.name">
-								#set($attributesToRender = $tabbedContentTypeAttributes.get($tabbedContentTypeAttribute))
-									
-								#renderAttributes($attributesToRender)
-							</div>
-						#end
 					</div>
-				#else
-					#set($attributesToRender = $contentTypeAttributes)
-					#renderAttributes($attributesToRender)
-				#end
-				
-	    		</form>
-	    					
-	    	</div>
-	    	
-	    	#if($this.hasAccessTo("ContentVersionEditor.Categories", true, false))
-		    	<div id="contentVersionCategoriesDiv" class="inlineTabDiv">
-	    			    			
-	    			#set($allCategoryKeys = $definedCategoryKeys)
-	    			#if($allCategoryKeys.size() > 0)
-	    				#foreach($categoryKey in $allCategoryKeys)
-	    					#if($velocityCount > 1)
-	    					<br>
-	    					#end
-	    					
-	    					#set($keyAttribute = $categoryKey.value)
-	    					#set($dropdownName = "${keyAttribute}${velocityCount}categoryId")
-	    					#set($availableCategories = $this.getAvailableCategories($categoryKey.categoryId))
-	    					<div style="margin: 10px 0px 0px 0px; border-bottom: 1px solid #ccc; float: left; width: 100%;">
-	    						<div style="float: left; padding: 20px 0 4px 16px;"><span class="attributeTitle" title="("$keyAttribute")">$categoryKey.title:</span> $categoryKey.description</h4></div>
-								<div style="float: right;">
-									#if($contentVersionId)
-	    								#addCategorySelect($dropdownName $availableCategories "")
-	    								<input type="button" class="add" onclick="addCategory('${keyAttribute}', '${dropdownName}');" value="$ui.getString("tool.common.addButton.label")">
-	    							#end
-	    						</div>
-	    					</div>
-	    					<div style="clear: both;"></div>
-							<ul class="assignedEntities">
-								#set($relatedCategories = $this.getRelatedCategories($keyAttribute))
-		    					#foreach($relation in $relatedCategories)
-		                    	<li style="border-bottom: 1px solid #ccc;">
-		                           	<a href="javascript:deleteCategory('$relation.contentCategoryId', '$contentId', '$languageId');"><img src="css/images/v3/cross.png" border="0"/></a>
-		    						$relation.category.getLocalizedDisplayName($this.languageCode, "none") ($relation.category.name)
-		    					</li>
-		    					#end
-		    					#if($relatedCategories.size() == 0)
-		    					<li>
-									#if(!$contentVersionId)
-										$ui.getString("tool.contenttool.saveToRelateCategoriesPrefix") $keyAttribute
-									#else
-										$ui.getString("tool.contenttool.noCategoriesPrefix") $keyAttribute
-									#end
-								</li>
-		    					#end
-							</ul>    					
-	    				#end
-	    			#else
-	    				<h4>There are no category attributes defined in this content type</h4>
-	    			#end
-	    			
-	    			<form id="catForm" name="catForm" action="${root}/ContentCategory!add.action" method="post">
-	    				<input type="hidden" id="model/attributeName" name="model/attributeName" value="">
-	    				<input type="hidden" id="model/category/categoryId" name="model/category/categoryId" value="">
-	    				<input type="hidden" name="model/contentVersionId" value="$contentVersionId">
-	    				<input type="hidden" name="contentId" value="$contentId">
-	    				<input type="hidden" name="languageId" value="$languageId">
-	    			</form>
-	
-	    		</div>
-    		#end
-    		        	
-    		#if($this.hasAccessTo("ContentVersionEditor.Attachments", true, false))
-	    		<div id="contentVersionAssetsDiv" class="inlineTabDiv">
-	    			<iframe id="contentVersionAssetsFrame" name="contentVersionAssetsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
-	    		</div>
-			#end
-			    		
-    		<div id="contentCoverDiv" class="inlineTabDiv">
-    			<iframe id="contentCoverFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
-    		</div>
-    		
-			#if($this.hasAccessTo("ContentVersionEditor.History", true, false))
-	    		<div id="contentHistoryDiv" class="inlineTabDiv">
-	    			<iframe id="contentHistoryFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
-	    		</div>
-			#end
+					#if(!$contentVersionVO)
+						<p class="create-version-first">$ui.getString('tool.contenttool.createVersionFirst')</p>
+					#end
+					<div id="level-3" class="ui-helper-clearfix" style="#if(!$contentVersionVO)display:none; #end">
+						<ul class="level-3 ui-helper-clearfix">
+							<li><a href="#contentVersionText"><span>#if($isMetainfoContent == false)$ui.getString('tool.contenttool.textContentTab')#else $ui.getString('tool.structuretool.createSiteNode.metaFields')#end</span></a></li>
 
-			#if($this.hasAccessTo("ContentVersionEditor.References", true, false))
-				<div id="contentReferencesDiv" class="inlineTabDiv">
-					<iframe id="contentReferencesFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
-	    		</div>
-			#end
+							#if($this.hasAccessTo($categoriesInterceptionPoint, true, false))
+								<li><a href="#contentVersionCategoriesDiv"><span>$ui.getString('tool.contenttool.categoriesTab')</span></a></li>
+							#end
+							#if($this.hasAccessTo($attachmentsInterceptionPoint, true, false))
+								<li><a href="#contentVersionAssetsDiv"><span>$ui.getString('tool.contenttool.assetsTab')</span></a></li>
+							#end
+							#if($isMetainfoContent == false)
+								#if($this.hasAccessTo("ContentVersionEditor.AccessRights", true, false))
+									<li><a href="#contentVersionAccessRightsDiv"><span>$ui.getString('tool.contenttool.contentVersionAccessRightsTab')</span></a></li>
+								#end
+							#end
+						</ul>
+						<div id="contentVersionText">
+							<form method="post" name="editForm" id="editForm" action="UpdateContentVersion!standalone.action" style="float:left; width: 95%">
+								#if($isMetainfoContent && $!siteNodeId)
+									<input type="hidden" name="anchor" value=""/>
+									<input type="hidden" name="siteNodeId" value="$!siteNodeId"/>
+								#end				
+									<input type="hidden" name="contentId" value="$!contentId"/>
+									<input type="hidden" name="languageId" value="$!languageId"/>
+								#if("$!contentVersionId" != "")
+									<input type="hidden" name="contentVersionId" value="$!contentVersionId"/>
+								#end
+									<input type="hidden" name="repositoryId" value="$!repositoryId"/>
+								
+									<input type="hidden" id="versionValue" name="versionValue" value=""/>
+									<input type="hidden" id="currentEditorId" name="currentEditorId" value=""/>
+									<input type="hidden" id="attributeName" name="attributeName" value="$attributeName"/>
+									<input type="hidden" name="saveAndExitURL" value="$!saveAndExitURL"/>
+									<input type="hidden" name="closeOnLoad" value="false"/>
+									<input type="hidden" name="publishOnLoad" value="false"/>
+									<input type="hidden" id="contentId" name="contentId" value="$!contentId"/>
+									<input type="hidden" name="repositoryId" value="$!repositoryId"/>
+								#if($contentVersionId > -1)
+									<input type="hidden" name="contentVersionId" value="$!contentVersionId"/>
+									#if("$oldModifiedDateTime" == "-1")
+										<input type="hidden" name="oldModifiedDateTime" value="$!contentVersionVO.modifiedDateTime.time"/>
+									#else
+										<input type="hidden" name="oldModifiedDateTime" value="$!oldModifiedDateTime"/>
+									#end
+								#end
+
+								#set($event = $this.getEvent($contentVersionId) )					
+								#if($event.id > 0)
+									<table border="0">
+										<tr>
+											<td colspan="3">
+												<span class="warningText">
+													#set($close = "<a href='DeleteEvent.action?eventId=$event.id&url=$currentUrl'>$ui.getString('tool.contenttool.close')</a>")
+													#if($event.typeId == 2)
+														$ui.getString("tool.contenttool.publishRejectedText") $close
+													#elseif($event.typeId == 4)
+														$ui.getString("tool.contenttool.unblishRejectedText") $close
+													#end
+												</span> 
+											</td>
+										</tr>
+									</table>	
+								#end
+							
+								#if($tabbedContentTypeAttributes.size() > 1)
+									
+									<script type="text/javascript">
+									<!--
+										$(document).ready(function(){
+											$("#attributeTabsContainer").tabs({ show:function() { resizeScrollArea(); }, select: function(event, ui) { resizeScrollArea(); $("#activeDivId").val(ui.panel.id); $("#deleteActiveDivId").val(ui.panel.id) } });
+										});
+									-->
+									</script>
+									
+									<div id="attributeTabsContainer" class="flora" style="margin-top: 10px; width: 100%">
 						
-			#if($contentTypeDefinitionVO.name != "Meta info")
-				
-				#if($this.hasAccessTo("ContentVersionEditor.AccessRights", true, false))
-		    		<div id="contentAccessRightsDiv" class="inlineTabDiv">
-		   				<iframe id="contentAccessRightsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
-		    		</div>
-		
-		    		<div id="contentVersionAccessRightsDiv" class="inlineTabDiv">
-		   				<iframe id="contentVersionAccessRightsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
-		    		</div>
-		    	#end
-			#end
-    		
-    	</div><!-- End first tabs collection -->
+										<ul>
+											#foreach($tabbedContentTypeAttribute in $tabbedContentTypeAttributes.keySet())
+											
+												<li><a href="#$tabbedContentTypeAttribute.name">$tabbedContentTypeAttribute.name</a></li>
+											#end
+										</ul>
+
+										#foreach($tabbedContentTypeAttribute in $tabbedContentTypeAttributes.keySet())
+										
+											<div class="inlineTabDiv" id="$tabbedContentTypeAttribute.name">
+											
+												#set($attributesToRender = $tabbedContentTypeAttributes.get($tabbedContentTypeAttribute))
+													
+												#renderAttributes($attributesToRender)
+											</div>
+										#end
+									</div>
+								#else
+									
+									#set($attributesToRender = $contentTypeAttributes)
+									#renderAttributes($attributesToRender)
+								#end
+							</form>
+						</div>	<!-- End contentVersionText -->
+						<div id="contentVersionAssetsDiv" class="inlineTabDiv">
+							<iframe id="contentVersionAssetsFrame" name="contentVersionAssetsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+						</div>
+						<div id="contentVersionCategoriesDiv" class="inlineTabDiv">
+									
+							#set($allCategoryKeys = $definedCategoryKeys)
+							#if($allCategoryKeys.size() > 0)
+								#foreach($categoryKey in $allCategoryKeys)
+									#if($velocityCount > 1)
+									<br>
+									#end
+									
+									#set($keyAttribute = $categoryKey.value)
+									#set($dropdownName = "${keyAttribute}${velocityCount}categoryId")
+									#set($availableCategories = $this.getAvailableCategories($categoryKey.categoryId))
+									<div style="margin: 10px 0px 0px 0px; border-bottom: 1px solid #ccc; float: left; width: 100%;">
+										<div style="float: left;"><h4>$categoryKey.title ("$keyAttribute") - $categoryKey.description</h4></div>
+										<div style="float: right;">
+											#if($contentVersionId)
+												#addCategorySelect($dropdownName $availableCategories "")
+												<input type="button" class="add" onclick="addCategory('${keyAttribute}', '${dropdownName}');" value="$ui.getString("tool.common.addButton.label")">
+											#end
+										</div>
+									</div>
+									<div style="clear: both;"></div>
+									<ul class="assignedEntities">
+										#set($relatedCategories = $this.getRelatedCategories($keyAttribute))
+										#foreach($relation in $relatedCategories)
+										<li style="border-bottom: 1px solid #ccc;">
+											<a href="javascript:deleteCategory('$relation.contentCategoryId', '$contentId', '$languageId');"><img src="css/images/v3/cross.png" border="0"/></a>
+											$relation.category.getLocalizedDisplayName($this.languageCode, "none") ($relation.category.name)
+										</li>
+										#end
+										#if($relatedCategories.size() == 0)
+										<li>
+											#if(!$contentVersionId)
+												$ui.getString("tool.contenttool.saveToRelateCategoriesPrefix") $keyAttribute
+											#else
+												$ui.getString("tool.contenttool.noCategoriesPrefix") $keyAttribute
+											#end
+										</li>
+										#end
+									</ul>
+								#end
+							#else
+								<h4>There are no category attributes defined in this content type</h4>
+							#end
+							
+							<form id="catForm" name="catForm" action="${root}/ContentCategory!addStandalone.action" method="post">
+								<input type="hidden" id="model/attributeName" name="model/attributeName" value="">
+								<input type="hidden" id="model/category/categoryId" name="model/category/categoryId" value="">
+								<input type="hidden" name="model/contentVersionId" value="$contentVersionId">
+								<input type="hidden" name="contentId" value="$contentId">
+								<input type="hidden" name="languageId" value="$languageId">
+							</form>
+						</div><!-- end contentVersionCategoriesDiv -->
+						#if($isMetainfoContent == false)
+							#if($this.hasAccessTo("ContentVersionEditor.AccessRights", true, false))
+									
+								<div id="contentVersionAccessRightsDiv" class="inlineTabDiv">
+									<iframe id="contentVersionAccessRightsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+								</div>
+							#end
+						#end
+					</div><!-- end level-3 div -->
+				</div><!-- end contentVersionDiv -->
+			</div><!--  end level-1 div -->
+		</div><!-- end tabs container -->
     	
     	#if($translate)
     	<div id="otherLanguageTabsContainer" style="float: right; aborder: 1px solid green; width: 450px;">

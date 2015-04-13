@@ -154,7 +154,7 @@
 		//This method refreshes the caller
 		//*******************************************
 	
-	
+
 		function refreshCaller()
 		{
 			parent.closeDialog();
@@ -1163,7 +1163,8 @@
 					#if($currentSiteVersionIsDisabled) 
 						<p class="disabled-language-content-message">$ui.getString('tool.structuretool.createSiteNode.languageIsDisabled'),  <a href="#" onclick="javascript:openAnchorUrl('pageLanguagesBlock');">$ui.getString('tool.structuretool.createSiteNode.changeLanguageSettings')</a></p>
 					#end
-					<div id="level-3" class="ui-helper-clearfix #if($currentSiteVersionIsDisabled) disabled-language-content#end" style="#if(!$contentVersionVO)display:none; #end">
+
+					<div id="level-3" class="ui-helper-clearfix #if($currentSiteVersionIsDisabled) disabled-language-content#end #if($!extraClasses) $extraClasses#end" style="#if(!$contentVersionVO)display:none; #end">
 					
 						<ul class="level-3 ui-helper-clearfix">
 

@@ -33,7 +33,6 @@
 	}
 </style>
 	
-
 #if($enableDateTimeDirectEditing == "true")
 	#set($dateReadonly = "")
 #else
@@ -42,7 +41,7 @@
 
 #set($selectedCode = ", selected: 0")
 
-<div onfocus="this.blur();">
+<div class="dialog-wrapper dialog-create-new" onfocus="this.blur();">
     
 	#lightMenuToolbar("" $buttons $rightButtons) 
 
@@ -61,11 +60,13 @@
 	
 			<div id="basicTab" class="inlineTabDiv">
 				<p>#editTextField("SiteNode.name" "name" $!name "30" "normaltextfield" "")</p>
-
+				
 				<p>					
 					<div id="languageTabsContainer" class="flora">      
 						<ul style="background-color: white;">
+						
 							#foreach($languageVO in $availablePageLanguages)
+				
 								#if("$languageId" == "$languageVO.id")
 									#set($index = $velocityCount - 1)
 									<script type="text/javascript">
@@ -73,13 +74,19 @@
 									</script>
 									#set($selectedCode = ", selected: $index ")
 								#end
-						        <li><a href="#${languageVO.languageCode}Tab"><span>$languageVO.getLocalizedDisplayLanguage($locale)</span></a></li>
+									<li  class="ui-state-default #if($languageId == $languageVO.id)ui-tabs-selected#end #foreach($disabledLanguageVO in $disabledLanguages) #if ($disabledLanguageVO.id == $languageVO.id) disabled-language-tab#end#end" ><a href="#${languageVO.languageCode}Tab" #foreach($disabledLanguageVO in $disabledLanguages) #if ($disabledLanguageVO.id == $languageVO.id) title="$ui.getString('tool.structuretool.createSiteNode.languageIsDisabled')"#end#end><span>$languageVO.getLocalizedDisplayLanguage($locale)</span></a></li>
+								
 					       #end
 						   <li><a href="#publishingTab"><span>$ui.getString("tool.common.publicationSpan.label")</span></a></li>
 					    </ul>
 										
 						#foreach($languageVO in $availablePageLanguages)
-							<div id="${languageVO.languageCode}Tab" class="inlineMinimalTabDiv">
+							<div id="${languageVO.languageCode}Tab" class="inlineMinimalTabDiv#foreach($disabledLanguageVO in $disabledLanguages) #if ($disabledLanguageVO.id == $languageVO.id) disabled-language-content#end#end">
+								#foreach($disabledLanguageVO in $disabledLanguages) 
+									#if ($disabledLanguageVO.id == $languageVO.id) 
+										<p class="disabled-language-content-message">$ui.getString('tool.structuretool.createSiteNode.languageIsDisabled'). $ui.getString('tool.structuretool.createSiteNode.languageIsDisabledAtCreateSiteNode')</p>
+									#end
+								#end
 								#foreach($attribute in $specialMetaAttributes)
 			
 									#set($attributeTitle = "")

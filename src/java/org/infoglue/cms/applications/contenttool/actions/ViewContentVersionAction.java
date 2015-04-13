@@ -145,6 +145,8 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	private Integer assignedContentId;
 	private String assignedAssetKey;
 	
+	private String extraClasses = null;
+	
 	private String anchor = null;
 	private String anchorName = null;
 	
@@ -2212,6 +2214,16 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	public void setSaveAndExitURL(String saveAndExitURL)
 	{
 		this.saveAndExitURL = saveAndExitURL;
+	}
+	
+	public String getExtraClasses()
+	{
+		return extraClasses;
+	}
+
+	public void setExtraClasses(String extraClasses)
+	{
+		this.extraClasses = extraClasses;
 	}
 	
 	public Boolean getStateChanged()

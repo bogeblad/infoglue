@@ -81,7 +81,8 @@ public class CreateContentWizardAction extends InfoGlueAbstractAction implements
 	private ConstraintExceptionBuffer ceb;
 	private ContentVO contentVO;
 	private ContentVO newContentVO;
-
+	private String extraClasses;
+	
 	protected void initialize(Integer contentVersionId, Integer contentId, Integer languageId) throws Exception
 	{
 		this.contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), contentId);
@@ -443,7 +444,12 @@ public class CreateContentWizardAction extends InfoGlueAbstractAction implements
 	{
 		return languageId;
 	}
-
+	
+	public String getExtraClasses()
+	{
+		return this.extraClasses;
+	}
+	
 	public ContentVO getNewContentVO()
 	{
 		return newContentVO;
@@ -458,7 +464,10 @@ public class CreateContentWizardAction extends InfoGlueAbstractAction implements
 	{
 		attributes = list;
 	}
-
+	
+	public void setExtraClasses(String string) {
+		this.extraClasses = string;
+	}
 	/**
 	 * This method returns the attributes in the content type definition for generation.
 	 */

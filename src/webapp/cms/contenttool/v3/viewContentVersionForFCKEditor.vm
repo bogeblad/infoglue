@@ -14,15 +14,17 @@
 		<script type="text/javascript" src="${root}/script/editorForFCKEditor.js"></script>
 	
 	#end
-	
+
 	<script type="text/javascript" src="${root}/script/listview.js"></script>
 	<script type="text/javascript" src="${root}/script/calendar1.js"></script>
-	
+
+
 	<link rel="stylesheet" type="text/css" href="applications/jscalendar/skins/aqua/theme.css" />
 	<script type="text/javascript" src="${root}/applications/jscalendar/calendar.js"></script>
 	<script type="text/javascript" src="${root}/applications/jscalendar/lang/calendar-en.js"></script>
 	<script type="text/javascript" src="${root}/applications/jscalendar/calendar-setup.js"></script>
-	
+
+
 	#if($contentTypeDefinitionVO.name == "Meta info")
 		#set($masterContentVersionVO = $this.getMasterContentVersionVO($contentId, $repositoryId))
 		#if($masterContentVersionVO.stateId == 1 || $masterContentVersionVO.stateId == 2 || $masterContentVersionVO.stateId == 3)
@@ -38,7 +40,7 @@
 			#set($readonly = "")
 		#end	
 	#end
-	
+
 	<script type="text/javascript">
 	//<![CDATA[	
 		
@@ -47,8 +49,6 @@
 		//*******************************************
 		//This method refreshes the caller
 		//*******************************************
-		
-		
 		function refreshCaller()
 		{
 			parent.closeDialog();
@@ -186,12 +186,14 @@
 		{
 				
 			attributeName = document.editForm.attributeName.value;
+
 			
 			if (document.editForm.saveAndExitURL) {
 				saveAndExitURL = document.editForm.saveAndExitURL.value;
 			} else {
 				saveAndExitURL = "";
 			}
+
 			
 			if ((!getDirty() && !checkWYSIWYGDirty()) || confirm('$ui.getString("tool.contenttool.languageVersionChangeWarning")'))
 			{
@@ -227,6 +229,7 @@
 			$("input.attachAsset").show();
 
 		}	
+
 		//*******************************************
 		// This function opens up the form editor
 		//*******************************************
@@ -434,9 +437,11 @@
 		
 					window.location.href = window.location.href + '&anchor=digitalAssetsBlock';
 
+
 					#if($this.hasAccessTo($categoriesInterceptionPoint, true, false))
 						$("#level-3").tabs("select", 2);
 					#else
+
 						$("#level-3").tabs("select", 1);
 					#end
 			}
@@ -480,6 +485,7 @@
 			{
 				selectedBlock = "digitalAssetsBlock";
 				$("#contentVersionAssetsFrame").attr("src", assetSrcUrl);
+				$("input.attachAsset").show();
 			}
 			else if(tabHref.indexOf("contentCoverDiv") > -1) 
 			{
@@ -546,11 +552,27 @@
 					$("#level-1").tabs({ selected: $selectedIndex, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
 					$("#level-3").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
 					loadFrame("pageLanguagesDiv");
+
+
+
+
+
+
+
+
+
+
 				#else
 					$("#level-1").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+
+
+
+
+
 					$("#level-3").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
 					##alert("Anchor: $anchor");
 					
+
 				#end	
 		  	#else
 		  		$("#tabsContainer").tabs(
@@ -878,17 +900,23 @@
 
 		<h3>$ui.getString("tool.structuretool.pageProperties.header", $localizedContentName)</h3>
 		#if($contentVersionVO)
+
 			<div class="#stateAsClass($contentVersionVO.stateId)">#stateInText($contentVersionVO.stateId)</div>
 		#end
 
 	#else
 		<h3>$contentVO.name 
 			#if($currentLanguageVO.languageCode == "sv")
+
+
 				($ui.getString('tool.contenttool.swedishLabel'))
 			#elseif($currentLanguageVO.languageCode == "en")
 				($ui.getString('tool.contenttool.englishLabel'))
 			#else
 				($currentLanguageVO.name)
+
+
+
 			#end
 		</h3>
 		
@@ -899,15 +927,17 @@
 		#end
 	#end
 
-
 	<div id="allDivs">
-	
-		<div id="tabsContainer" class="cleanTopDiv" style="#if($translate == false)width: 100%;#else width: 550px; #end float:left;#if(!$contentVersionVO)display:none; #end"">
+
+		<div id="tabsContainer" class="cleanTopDiv" style="#if($translate == false)width: 100%;#else width: 550px; #end float:left;">
 			<div id="level-1">
 				<ul class="level-1">
+
+
 					<li><a href="#contentVersionDiv"><span>$ui.getString('tool.contenttool.editContentTab')</span></a></li>
 
 					#if($isMetainfoContent == false)
+
 						<li><a href="#contentCoverDiv"><span>$ui.getString('tool.contenttool.coverTab')</span></a></li>
 					#end
 					#if($isMetainfoContent == false)
@@ -938,6 +968,7 @@
 						#if($this.hasAccessTo("ToolTabsAndButtons.PageLanguagesTab", true, false, false))
 							<li><a href="#pageLanguagesDiv"><span>$ui.getString("tool.common.languages.label")</span></a></li>	        
 						#end
+
 						<li><a href="#pageHistoryDiv"><span>$ui.getString('tool.contenttool.contentHistoryTab')</span></a></li>
 						<li><a href="#pageReferencesDiv"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a></li>
 						#if($this.hasAccessTo("ToolTabsAndButtons.PageSimpleModeButton", true, false))
@@ -948,6 +979,7 @@
 						
 
 				#if($isMetainfoContent == false)
+
 					<div id="contentCoverDiv" class="inlineTabDiv">
 						<iframe id="contentCoverFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
 					</div>
@@ -985,6 +1017,7 @@
 						<div id="pageLanguagesDiv" class="inlineTabDiv">
 							<iframe id="pageLanguagesFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
 						</div>
+
 					#end
 					#if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false, false))
 						<div id="pageDetailsAdvancedDiv" class="inlineTabDiv">
@@ -998,21 +1031,20 @@
 					<div id="pageReferencesDiv" class="inlineTabDiv">
 						<iframe id="pageReferencesFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
 					</div>
-					
+
 					#if($this.hasAccessTo("ToolTabsAndButtons.PageSimpleModeButton", true, false))
 					<div id="pageSimpleComponentModeDiv" class="inlineTabDiv">
 						<iframe id="pageReferencesFrame" src="$componentRendererUrl/ViewPage!renderDecoratedPage.action?siteNodeId=$siteNodeId&languageId=1&contentId=-1&showSimple=true" border="0" width="100%" height="500px" frameborder="0"></iframe>
 					</div>
 					#end
 				#end	
-
-
 				<div id="contentVersionDiv" class="inlineTabDiv ui-tabs">
 					<div id="level-2" class="language-tabs">
 						<ul class="level-2 ui-tabs-nav ui-helper-clearfix">
 							#if(!$translate && $availableLanguages.size() > 1)
+
 								#foreach($languageVO in $availableLanguages)
-									<li class="ui-state-default #if($languageId == $languageVO.id)ui-tabs-selected#end" ><a href="#" onclick="changeLanguage($contentId, $languageVO.id);" >
+									<li class="ui-state-default #if($languageId == $languageVO.id)ui-tabs-selected#end #foreach($disabledLanguageVO in $disabledLanguagesForThisSite) #if ($disabledLanguageVO.id == $languageVO.id) disabled-language-tab#end#end" ><a href="#" onclick="changeLanguage($contentId, $languageVO.id);" >
 									#if($languageVO.languageCode == "sv")
 										$ui.getString('tool.contenttool.swedishLabel')
 									#elseif($languageVO.languageCode == "en")
@@ -1020,6 +1052,8 @@
 									#else
 										$languageVO.name
 									#end
+
+									</a></li>
 								#end
 							#end
 						</ul>
@@ -1027,8 +1061,20 @@
 					#if(!$contentVersionVO)
 						<p class="create-version-first">$ui.getString('tool.contenttool.createVersionFirst')</p>
 					#end
-					<div id="level-3" class="ui-helper-clearfix" style="#if(!$contentVersionVO)display:none; #end">
+						
+					#foreach($disabledLanguageVO in $disabledLanguagesForThisSite)
+						#if ($disabledLanguageVO.id == $currentLanguageVO.id) 
+							#set($currentSiteVersionIsDisabled = true)	
+						#end
+					#end
+
+					#if($currentSiteVersionIsDisabled) 
+						<p class="disabled-language-content-message">$ui.getString('tool.structuretool.createSiteNode.languageIsDisabled'),  <a href="#" onclick="javascript:openAnchorUrl('pageLanguagesBlock');">$ui.getString('tool.structuretool.createSiteNode.changeLanguageSettings')</a></p>
+					#end
+					<div id="level-3" class="ui-helper-clearfix #if($currentSiteVersionIsDisabled) disabled-language-content#end" style="#if(!$contentVersionVO)display:none; #end">
+					
 						<ul class="level-3 ui-helper-clearfix">
+
 							<li><a href="#contentVersionText"><span>#if($isMetainfoContent == false)$ui.getString('tool.contenttool.textContentTab')#else $ui.getString('tool.structuretool.createSiteNode.metaFields')#end</span></a></li>
 
 							#if($this.hasAccessTo($categoriesInterceptionPoint, true, false))
@@ -1044,34 +1090,85 @@
 							#end
 						</ul>
 						<div id="contentVersionText">
-							<form method="post" name="editForm" id="editForm" action="UpdateContentVersion!standalone.action" style="float:left; width: 95%">
-								#if($isMetainfoContent && $!siteNodeId)
-									<input type="hidden" name="anchor" value=""/>
-									<input type="hidden" name="siteNodeId" value="$!siteNodeId"/>
-								#end				
-									<input type="hidden" name="contentId" value="$!contentId"/>
-									<input type="hidden" name="languageId" value="$!languageId"/>
-								#if("$!contentVersionId" != "")
-									<input type="hidden" name="contentVersionId" value="$!contentVersionId"/>
-								#end
-									<input type="hidden" name="repositoryId" value="$!repositoryId"/>
-								
-									<input type="hidden" id="versionValue" name="versionValue" value=""/>
-									<input type="hidden" id="currentEditorId" name="currentEditorId" value=""/>
-									<input type="hidden" id="attributeName" name="attributeName" value="$attributeName"/>
-									<input type="hidden" name="saveAndExitURL" value="$!saveAndExitURL"/>
-									<input type="hidden" name="closeOnLoad" value="false"/>
-									<input type="hidden" name="publishOnLoad" value="false"/>
-									<input type="hidden" id="contentId" name="contentId" value="$!contentId"/>
-									<input type="hidden" name="repositoryId" value="$!repositoryId"/>
-								#if($contentVersionId > -1)
-									<input type="hidden" name="contentVersionId" value="$!contentVersionId"/>
-									#if("$oldModifiedDateTime" == "-1")
-										<input type="hidden" name="oldModifiedDateTime" value="$!contentVersionVO.modifiedDateTime.time"/>
-									#else
-										<input type="hidden" name="oldModifiedDateTime" value="$!oldModifiedDateTime"/>
+							#if($hasMandatoryAssets)
+								<div class="mandatory-assets">
+									<span class="attributeTitle">$ui.getString('tool.contenttool.assetsTab')</span><br  />
+									#if($inheritedDigitalAssets.size() < 1)
+										#if($contentVersionVO.id)
+											<a href="#" onclick="openPopup('ViewDigitalAsset.action?contentVersionId=$contentVersionVO.id', 'DigitalAsset', 'width=400,height=350,resizable=no');">$ui.getString("tool.contenttool.uploadNewAttachment")</a>
+										#end
 									#end
-								#end
+									#set($counter = 0)
+									#foreach($digitalAsset in $inheritedDigitalAssets)
+										#set($digitalAssetUrl = $this.getDigitalAssetUrl($digitalAsset.digitalAssetId))
+										
+										<div class="imgBox">
+
+											<div class="imgBoxTop" id="digitalAsset$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')" #if($assetKey == '$digitalAsset.assetKey')"  #end>
+												<div id="imgBoxTopInner">
+													<input type="hidden" id="digitalAsset$formatter.encodeURI($formatter.encodeURI($digitalAsset.assetKey, 'utf-8'), 'utf-8')" value="$digitalAssetUrl">
+													#set($singleEncodedAssetKey = "$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')")
+													#set($doubleEncodedAssetKey = "$formatter.encodeURI($formatter.encodeURI($digitalAsset.assetKey, 'utf-8'), 'utf-8')")
+													#set($thumbnailImageUrl = "$this.getDigitalAssetThumbnailUrl($digitalAsset.digitalAssetId, 100, 60, 'ffffff', 'center', 'middle', 100, 60, 75)")
+													
+														<img #if($contentId)ondblclick="onOk();" onclick="markAsset(this, $!contentId, '$singleEncodedAssetKey', '$singleEncodedAssetKey', '$thumbnailImageUrl');"#end src="$thumbnailImageUrl" alt="$digitalAsset.assetKey ($digitalAsset.assetContentType - $formatter.formatFileSize($digitalAsset.assetFileSize))" />
+													
+													#if($showSelectButtonByEachImage && $contentId)<a href="javascript:markAsset(this, $!contentId, '$doubleEncodedAssetKey', '$doubleEncodedAssetKey', '$thumbnailImageUrl');onOk();"><b>Add asset to selection</b></a>#end
+													#if($assetKey == $digitalAsset.assetKey)
+														<script type="text/javascript">
+														<!--
+															var firstAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
+														-->
+														</script>	
+													#else
+														#if($counter == 0 && (!$assetKey || $!assetKey == ''))
+															<script type="text/javascript">
+															<!--
+																var firstAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
+															-->
+															</script>
+														#end
+													#end
+													<script type="text/javascript">
+													<!--
+														var lastAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
+													-->
+													</script>	
+													#set($counter = $counter + 1)
+												</div>
+											</div>
+											<div class="imgBoxBottom">
+												<a  href="#" onclick="parent.openInlineDiv('ViewDigitalAsset!update.action?contentVersionId=$!contentVersionId&digitalAssetId=$digitalAsset.digitalAssetId', 600, 800, true, true, '');" title="$ui.getString("tool.contenttool.updateAttachment")">$ui.getString("tool.contenttool.updateAttachment")</a>
+												
+											</div>
+										</div>
+									#end
+								</div>
+							#end
+    		<form method="post" name="editForm" id="editForm" action="UpdateContentVersion!V3.action" style="float:left; width: 95%">
+    			<input type="hidden" name="contentId" value="$!contentId"/>
+    			<input type="hidden" name="languageId" value="$!languageId"/>
+    			#if("$!contentVersionId" != "")
+				<input type="hidden" name="contentVersionId" value="$!contentVersionId"/>
+    			#end
+				<input type="hidden" name="repositoryId" value="$!repositoryId"/>
+    		
+    			<input type="hidden" id="versionValue" name="versionValue" value=""/>
+				<input type="hidden" id="currentEditorId" name="currentEditorId" value=""/>
+				<input type="hidden" id="attributeName" name="attributeName" value="$attributeName"/>
+				<input type="hidden" name="inline" value="$inline"/>
+				<input type="hidden" name="closeOnLoad" value="false"/>
+				<input type="hidden" name="publishOnLoad" value="false"/>
+				<input type="hidden" id="contentId" name="contentId" value="$!contentId"/>
+				<input type="hidden" name="repositoryId" value="$!repositoryId"/>
+				#if($contentVersionId > -1)
+					<input type="hidden" name="contentVersionId" value="$!contentVersionId"/>
+					#if("$oldModifiedDateTime" == "-1")
+						<input type="hidden" name="oldModifiedDateTime" value="$!contentVersionVO.modifiedDateTime.time"/>
+					#else
+						<input type="hidden" name="oldModifiedDateTime" value="$!oldModifiedDateTime"/>
+					#end
+				#end
 
 								#set($event = $this.getEvent($contentVersionId) )					
 								#if($event.id > 0)
@@ -1102,7 +1199,6 @@
 									</script>
 									
 									<div id="attributeTabsContainer" class="flora" style="margin-top: 10px; width: 100%">
-						
 										<ul>
 											#foreach($tabbedContentTypeAttribute in $tabbedContentTypeAttributes.keySet())
 											
@@ -1127,6 +1223,7 @@
 								#end
 							</form>
 						</div>	<!-- End contentVersionText -->
+
 						<div id="contentVersionAssetsDiv" class="inlineTabDiv">
 							<iframe id="contentVersionAssetsFrame" name="contentVersionAssetsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
 						</div>
@@ -1186,6 +1283,8 @@
 						#if($isMetainfoContent == false)
 							#if($this.hasAccessTo("ContentVersionEditor.AccessRights", true, false))
 									
+
+
 								<div id="contentVersionAccessRightsDiv" class="inlineTabDiv">
 									<iframe id="contentVersionAccessRightsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
 								</div>
@@ -1195,6 +1294,8 @@
 				</div><!-- end contentVersionDiv -->
 			</div><!--  end level-1 div -->
 		</div><!-- end tabs container -->
+
+
     	
     	#if($translate)
     	<div id="otherLanguageTabsContainer" style="float: right; aborder: 1px solid green; width: 450px;">

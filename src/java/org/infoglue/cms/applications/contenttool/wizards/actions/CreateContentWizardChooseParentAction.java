@@ -48,6 +48,7 @@ public class CreateContentWizardChooseParentAction extends CreateContentWizardAb
 	private String componentId;
 	private String propertyName;
 	private String showSimple;
+	private String extraClasses;
 	
 	private Integer parentContentId;
 	private Integer repositoryId;
@@ -113,7 +114,17 @@ public class CreateContentWizardChooseParentAction extends CreateContentWizardAb
 	{
 		this.repositoryId = repositoryId;
 	}
+	
+	public String getExtraClasses()
+	{
+		return this.extraClasses;
+	}
 
+	public void setExtraClasses(String string)
+	{
+		this.extraClasses = string;
+	}
+	
 	public Integer getRepositoryId() 
 	{
 		try

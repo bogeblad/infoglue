@@ -15,7 +15,7 @@
 			document.editForm.action = "CreateContentWizardFinish!cancel.action";
 			document.editForm.submit();
 		}	
-	
+
 		function next()
 		{
 			document.editForm.submit()
@@ -42,9 +42,8 @@
 #beginLightCommonToolV3Impl("tool.contenttool.createContentWizardInputContent.title" "" "" false true $!disableCloseButton $headerMarkup false "")
 
 	#lightMenuToolbar("" $buttons $rightButtons) 
-
 	<div style="clear: both;"></div>
-
+	
 	<form name="editForm" method="post" action="CreateContentWizardInputContent.action">
 		<input type="hidden" name="isBranch" value="false" />
 		<input type="hidden" name="parentContentId" value="$!parentContentId">
@@ -52,6 +51,7 @@
 		<input type="hidden" name="unrefreshedContentId" value="$!parentContentId" />
 		<input type="hidden" name="changeTypeId" value="2" />
 		<input type="hidden" name="userSessionKey" value="$!userSessionKey"/>
+		<input type="hidden" name="extraClasses" value="$!extraClasses"/>
 		<input type="hidden" name="returnAddress" value="$returnAddress"/>
 		<input type="hidden" name="disableCloseButton" value="$!disableCloseButton"/>
 	

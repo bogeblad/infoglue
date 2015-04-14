@@ -101,6 +101,8 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	public List<LanguageVO> availableLanguagesForThisSite = null;
 	public List<LanguageVO> disabledLanguagesForThisSite = null;
 	
+	public boolean hasRelatedSiteNodes = false;
+	
 	private Integer languageId;
 	private Integer repositoryId;
 	private Integer currentEditorId;
@@ -316,8 +318,9 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
     		contentId = contentVersionVO.getContentId();
     		languageId = contentVersionVO.getLanguageId();
     		this.languageId = contentVersionVO.getLanguageId();
+    	
     	}   
-
+  
     	if(contentId != null)
     	{
 	        this.contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), contentId);
@@ -428,8 +431,22 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 				}
 			}
 		}
-
-        if(this.fromLanguageId != null) {
+		if (contentId != null) {
+			List<ReferenceBean> referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(contentId, 100, true, true);
+			int i = 0;
+			for (ReferenceBean referenceBean : referenceBeanList) {
+	
+	        	if (referenceBean.getReferencingCompletingObject().getClass().equals(SiteNodeVO.class)) {
+	        		 
+	        		i++;
+	        	}
+	        }
+			if (i > 1) {
+				this.hasRelatedSiteNodes = true;
+			}
+			
+		}
+		if(this.fromLanguageId != null) {
 			this.originalLanguageContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, fromLanguageId);
         }
         
@@ -1007,6 +1024,11 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
         return this.disabledLanguagesForThisSite;
     }
     
+    public boolean getHasRelatedSiteNodes()
+    {    	
+        return this.hasRelatedSiteNodes;
+    }  
+    
 	/**
 	 * Returns a list of digital assets available for this content version.
 	 */
@@ -1075,6 +1097,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
    				List<ReferenceBean> referenceBeans = RegistryController.getController().getReferencingObjectsForContentAsset(this.contentVersionVO.getContentId(), assetVO.getAssetKey(), 100, false, true, true);
    				assetVO.setReferencingNumberOfObjects(referenceBeans.size());
+   				
    			}
 		}
 		catch(Exception e)

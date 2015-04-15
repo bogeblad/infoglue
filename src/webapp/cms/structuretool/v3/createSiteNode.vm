@@ -18,7 +18,6 @@
 	#languageTabsContainer ul li {
 		text-transform:capitalize;
 	}
-	
 	.inlineMinimalTabDiv {
 		border-right: 1px solid #ccc !important;
 		border-left: 1px solid #ccc !important;
@@ -32,7 +31,6 @@
 		padding-top: 10px;
 	}
 </style>
-	
 #if($enableDateTimeDirectEditing == "true")
 	#set($dateReadonly = "")
 #else
@@ -47,17 +45,17 @@
 
 	<div style="clear: both;"></div>
 	
-	<h3>$ui.getString("tool.structuretool.createSiteNodeHeadline") "$this.getLocalizedNameForSiteNode($parentSiteNodeVO, $languageId)"</h3>
+	
 
 	<form name="editForm" method="POST" action="CreateSiteNode!executeV3.action">
 		<div id="tabsContainer" class="flora">      
-			<ul>
+			<ul class="level-1">
 		        <li><a href="#basicTab"><span>$ui.getString("tool.common.basic.label")</span></a></li>
 		        #if($this.hasAccessTo("ToolTabsAndButtons.CreatePageAdvancedTab", true, false, false))
 		        <li><a href="#advancedTab"><span>$ui.getString("tool.common.advanced.label")</span></a></li>	        
 		    	#end
 		    </ul>
-	
+			<h3>$ui.getString("tool.structuretool.createSiteNodeHeadline") "$this.getLocalizedNameForSiteNode($parentSiteNodeVO, $languageId)"</h3>
 			<div id="basicTab" class="inlineTabDiv">
 				<p>#editTextField("SiteNode.name" "name" $!name "30" "normaltextfield" "")</p>
 				

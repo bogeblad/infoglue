@@ -1,8 +1,9 @@
+
 #if(($closeOnLoad == "true" && !$errors.hasErrors()) || $publishOnLoad == "true" && !$errors.hasErrors())
 <html>
 <head>
 	<script type="text/javascript">
-			
+
 		function refreshCaller()
 		{
 			if(window.opener)
@@ -29,7 +30,7 @@
 				parent.location.reload();
 			}
 		}
-		
+	
 		function refreshCallerWindow()
 		{
 			try 
@@ -49,7 +50,7 @@
 			var returnAddress = "$formatter.encodeURI("ViewContentVersion!standalone.action?contentId=$contentId&languageId=$languageId&closeOnLoad=true", 'UTF-8')";
 			document.location.href = "ViewListContentVersion.action?contentId=$contentId&returnAddress=" + returnAddress;
 	}
-	
+
 	</script>
 	<style type="text/css">
 	#processDiv {  
@@ -82,6 +83,7 @@
 	</div>
 
 	<script type="text/javascript">
+	
 		#if($saveAndExitURL && $saveAndExitURL != "")
 			if(parent && parent.document.location.href.indexOf("ViewStructureTool") == -1)
 			{
@@ -120,7 +122,7 @@
 		<script type="text/javascript" src="${root}/script/editorForFCKEditor.js"></script>
 	
 	#end
-
+	
 	<script type="text/javascript" src="${root}/script/listview.js"></script>
 	<script type="text/javascript" src="${root}/script/calendar1.js"></script>
 
@@ -157,6 +159,7 @@
 
 		function refreshCaller()
 		{
+	
 			parent.closeDialog();
 			parent.location.reload();
 			/*
@@ -693,7 +696,6 @@
 			catch(e) {console.log("e:" + e);}	
 		});
 
-
 	    /*
 	     * This method acts as a proxy to the frame that has the view in the tabbed world we live in.
 	 	 */	
@@ -705,13 +707,16 @@
 		    		$("#pageHistoryFrame").get(0).contentWindow.reactivate();
 		    #end
 	    }
-		
+		function closeDivById(divToClose)
+	    {
+			 document.getElementById(divToClose).style.display = 'none';
+	    }	
 	    function openAnchorUrl(anchorValue)
 	    {
 			var anchorUrl = window.location.href + "&anchor=" + anchorValue;
 			window.location.href  = anchorUrl;
 	    }
-
+				
 	    /*
 	     * This method acts as a proxy to the frame that has the view in the tabbed world we live in.
 	 	 */	
@@ -739,13 +744,14 @@
 		    		$("#contentHistoryFrame").get(0).contentWindow.compare();
 		    #end
 	    }
-
+	
 		/*
 		 * This method is a hook
 		 */	
 		 	
 		function save()
 		{
+		
 			if($("#contentCoverFrame").size() > 0 && $("#contentCoverFrame").get(0).contentWindow.save)
 				$("#contentCoverFrame").get(0).contentWindow.save();
 			if($("#contentAccessRightsFrame").size() > 0 && $("#contentAccessRightsFrame").get(0).contentWindow.save)
@@ -767,6 +773,7 @@
 		
 		function saveAndExit(url)
 		{
+	
 			if($("#contentCoverFrame").size() > 0 && $("#contentCoverFrame").get(0).contentWindow.save)
 				$("#contentCoverFrame").get(0).contentWindow.save();
 			if($("#contentAccessRightsFrame").size() > 0 && $("#contentAccessRightsFrame").get(0).contentWindow.save)
@@ -979,7 +986,7 @@
 		
 #end
 
-#beginLightCommonToolV3Impl("tool.contenttool.contentVersionStandaloneHeader" "$!contentVersionId" "contentVersionId=$!contentVersionId&contentId=$!contentId&languageId=$languageId&saveAndExitURL=$saveAndExitURL" false true $!disableCloseButton $headerMarkup false "highGreyBackground")
+#beginLightCommonToolV3Impl("tool.contenttool.contentVersionStandaloneHeader" "$!contentVersionId" "contentVersionId=$!contentVersionId&contentId=$!contentId&languageId=$languageId&saveAndExitURL=$!saveAndExitURL" false true $!disableCloseButton $headerMarkup false "highGreyBackground")
 
 #*
 #if($contentTypeDefinitionVO.name == "Meta info")
@@ -1003,31 +1010,9 @@
 
 	#lightMenuToolbar("" $buttons $rightButtons) 
 	<div style="clear: both;"></div>
-	#if($isMetainfoContent)
-		<h3>$ui.getString("tool.structuretool.pageProperties.header", $localizedContentName)</h3>
-		#if($contentVersionVO)
-			<div class="#stateAsClass($contentVersionVO.stateId)">#stateInText($contentVersionVO.stateId)</div>
-		#end
-
-	#else
-		<h3>$contentVO.name 
-			#if($currentLanguageVO.languageCode == "sv")
-				($ui.getString('tool.contenttool.swedishLabel'))
-			#elseif($currentLanguageVO.languageCode == "en")
-				($ui.getString('tool.contenttool.englishLabel'))
-			#else
-				($currentLanguageVO.name)
-			#end
-		</h3>
-		#if($contentVersionVO)
-		<div class="#stateAsClass($contentVersionVO.stateId)">#stateInText($contentVersionVO.stateId).
-			$ui.getString("tool.contenttool.versionLastUpdatedByLabel") $contentVersionVO.versionModifier ($formatter.formatDate($contentVersionVO.modifiedDateTime, "yyyy-MM-dd HH:mm") - $contentVersionVO.versionComment).
-		</div>
-		#end
-	#end
 
 	<div id="allDivs">
-	
+
 		<div id="tabsContainer" class="cleanTopDiv" style="#if($translate == false)width: 100%;#else width: 550px; #end float:left;">
 			<div id="level-1">
 				<ul class="level-1">
@@ -1043,7 +1028,12 @@
 					#end
 					#if($isMetainfoContent == false)
 						#if($this.hasAccessTo("ContentVersionEditor.References", true, false))
-							<li><a href="#contentReferencesDiv"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a></li>
+							<li><a href="#contentReferencesDiv"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a>
+								#if($hasRelatedSiteNodes)
+									<p class="has-references" id="has-references">$ui.getString('tool.contenttool.contentVersionHasReferencePopup')<a href="#" id="contentversion-has-reference-popup-link" onclick="closeDivById('has-references');">$ui.getString('tool.contenttool.close')</a></p>	
+																		
+								#end
+							</li>
 						#end
 					#end
 					#if($isMetainfoContent == false)
@@ -1066,12 +1056,18 @@
 						#end
 						<li><a href="#pageHistoryDiv"><span>$ui.getString('tool.contenttool.contentHistoryTab')</span></a></li>
 						<li><a href="#pageReferencesDiv"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a></li>
+
 						#if($this.hasAccessTo("ToolTabsAndButtons.PageSimpleModeButton", true, false))
 							<li><a href="#pageSimpleComponentModeDiv"><span>Dev</span></a></li>
 						#end
 					#end
 				</ul>
-						
+				
+				#if($isMetainfoContent)
+					<h3>$ui.getString("tool.structuretool.pageProperties.header", $localizedContentName)</h3>
+				#else
+					<h3>$contentVO.name</h3>
+				#end
 
 				#if($isMetainfoContent == false)
 					<div id="contentCoverDiv" class="inlineTabDiv">
@@ -1137,7 +1133,11 @@
 							#if(!$translate && $availableLanguages.size() > 1)
 
 								#foreach($languageVO in $availableLanguages)
-									<li class="ui-state-default #if($languageId == $languageVO.id)ui-tabs-selected#end #foreach($disabledLanguageVO in $disabledLanguagesForThisSite) #if ($disabledLanguageVO.id == $languageVO.id) disabled-language-tab#end#end" ><a href="#" onclick="changeLanguage($contentId, $languageVO.id);" >
+									#foreach($disabledLanguageVO in $disabledLanguagesForThisSite) #if ($disabledLanguageVO.id == $languageVO.id) 
+											#set($currentSiteVersionTabIsDisabled = true)	
+										#end
+									#end
+									<li class="ui-state-default #if($languageId == $languageVO.id)ui-tabs-selected#end #if ($currentSiteVersionTabIsDisabled) disabled-language-tab#end" ><a href="#" #if ($currentSiteVersionTabIsDisabled) title='$ui.getString('tool.structuretool.createSiteNode.languageIsDisabled')' #end onclick="changeLanguage($contentId, $languageVO.id);" >
 									#if($languageVO.languageCode == "sv")
 										$ui.getString('tool.contenttool.swedishLabel')
 									#elseif($languageVO.languageCode == "en")
@@ -1165,9 +1165,10 @@
 					#end
 
 					<div id="level-3" class="ui-helper-clearfix #if($currentSiteVersionIsDisabled) disabled-language-content#end #if($!extraClasses) $extraClasses#end" style="#if(!$contentVersionVO)display:none; #end">
-					
-						<ul class="level-3 ui-helper-clearfix">
 
+
+						<ul class="level-3 ui-helper-clearfix">
+							
 							<li><a href="#contentVersionText"><span>#if($isMetainfoContent == false)$ui.getString('tool.contenttool.textContentTab')#else $ui.getString('tool.structuretool.createSiteNode.metaFields')#end</span></a></li>
 
 							#if($this.hasAccessTo($categoriesInterceptionPoint, true, false))
@@ -1182,60 +1183,86 @@
 								#end
 							#end
 						</ul>
+						
+						#if($isMetainfoContent)
+							#if($contentVersionVO)
+								<div class="#stateAsClass($contentVersionVO.stateId)">#stateInText($contentVersionVO.stateId)</div>
+							#end
+
+						#else
+							#if($contentVersionVO)
+								<div class="#stateAsClass($contentVersionVO.stateId)">
+									#stateInText($contentVersionVO.stateId)
+								</div>
+								<p class="version-comment">
+									$ui.getString("tool.contenttool.versionLastUpdatedByLabel") $contentVersionVO.versionModifier ($formatter.formatDate($contentVersionVO.modifiedDateTime, "yyyy-MM-dd HH:mm") - $contentVersionVO.versionComment).
+								</p>
+							#end
+						#end
+
 						<div id="contentVersionText">
 							#if($hasMandatoryAssets)
-								<span class="attributeTitle">$ui.getString('tool.contenttool.assetsTab')</span><br  />
-								
-								#if($inheritedDigitalAssets.size() < 1)
-									#if($contentVersionVO.id)
-										<a href="#" onclick="openPopup('../infoglueCMS/ViewDigitalAsset.action?contentVersionId=$contentVersionVO.id', 'DigitalAsset', 'width=400,height=350,resizable=no');">$ui.getString("tool.contenttool.uploadNewAttachment")</a>
-									#end
-								#end
-								#set($counter = 0)
-								#foreach($digitalAsset in $inheritedDigitalAssets)
-									#set($digitalAssetUrl = $this.getDigitalAssetUrl($digitalAsset.digitalAssetId))
-									<div class="imgBox">
-										
+							<table>
+							<tbody>
+							<tr>
+							<td>
+
+									<span class="attributeTitle">$ui.getString('tool.contenttool.assetsTab')</span><br  />
 									
-										<div class="imgBoxTop" id="digitalAsset$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')" #if($assetKey == '$digitalAsset.assetKey')"  #end>
-											<div id="imgBoxTopInner">
-												<input type="hidden" id="digitalAsset$formatter.encodeURI($formatter.encodeURI($digitalAsset.assetKey, 'utf-8'), 'utf-8')" value="$digitalAssetUrl">
-												#set($singleEncodedAssetKey = "$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')")
-												#set($doubleEncodedAssetKey = "$formatter.encodeURI($formatter.encodeURI($digitalAsset.assetKey, 'utf-8'), 'utf-8')")
-												#set($thumbnailImageUrl = "$this.getDigitalAssetThumbnailUrl($digitalAsset.digitalAssetId, 100, 60, 'ffffff', 'center', 'middle', 100, 60, 75)")
-												
-													<img #if($contentId)ondblclick="onOk();" onclick="markAsset(this, $!contentId, '$singleEncodedAssetKey', '$singleEncodedAssetKey', '$thumbnailImageUrl');"#end src="$thumbnailImageUrl" alt="$digitalAsset.assetKey ($digitalAsset.assetContentType - $formatter.formatFileSize($digitalAsset.assetFileSize))" />
-												
-												#if($showSelectButtonByEachImage && $contentId)<a href="javascript:markAsset(this, $!contentId, '$doubleEncodedAssetKey', '$doubleEncodedAssetKey', '$thumbnailImageUrl');onOk();"><b>Add asset to selection</b></a>#end
-												#if($assetKey == $digitalAsset.assetKey)
-													<script type="text/javascript">
-													<!--
-														var firstAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
-													-->
-													</script>	
-												#else
-													#if($counter == 0 && (!$assetKey || $!assetKey == ''))
+									#if($inheritedDigitalAssets.size() < 1)
+										#if($contentVersionVO.id)
+											<a href="#" onclick="openPopup('../infoglueCMS/ViewDigitalAsset.action?contentVersionId=$contentVersionVO.id', 'DigitalAsset', 'width=400,height=350,resizable=no');">$ui.getString("tool.contenttool.uploadNewAttachment")</a>
+										#end
+									#end
+									#set($counter = 0)
+									#foreach($digitalAsset in $inheritedDigitalAssets)
+										#set($digitalAssetUrl = $this.getDigitalAssetUrl($digitalAsset.digitalAssetId))
+										<div class="imgBox">
+											
+										
+											<div class="imgBoxTop" id="digitalAsset$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')" #if($assetKey == '$digitalAsset.assetKey')"  #end>
+												<div id="imgBoxTopInner">
+													<input type="hidden" id="digitalAsset$formatter.encodeURI($formatter.encodeURI($digitalAsset.assetKey, 'utf-8'), 'utf-8')" value="$digitalAssetUrl">
+													#set($singleEncodedAssetKey = "$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')")
+													#set($doubleEncodedAssetKey = "$formatter.encodeURI($formatter.encodeURI($digitalAsset.assetKey, 'utf-8'), 'utf-8')")
+													#set($thumbnailImageUrl = "$this.getDigitalAssetThumbnailUrl($digitalAsset.digitalAssetId, 100, 60, 'ffffff', 'center', 'middle', 100, 60, 75)")
+													
+														<img #if($contentId)ondblclick="onOk();" onclick="markAsset(this, $!contentId, '$singleEncodedAssetKey', '$singleEncodedAssetKey', '$thumbnailImageUrl');"#end src="$thumbnailImageUrl" alt="$digitalAsset.assetKey ($digitalAsset.assetContentType - $formatter.formatFileSize($digitalAsset.assetFileSize))" />
+													
+													#if($showSelectButtonByEachImage && $contentId)<a href="javascript:markAsset(this, $!contentId, '$doubleEncodedAssetKey', '$doubleEncodedAssetKey', '$thumbnailImageUrl');onOk();"><b>Add asset to selection</b></a>#end
+													#if($assetKey == $digitalAsset.assetKey)
 														<script type="text/javascript">
 														<!--
 															var firstAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
 														-->
-														</script>
+														</script>	
+													#else
+														#if($counter == 0 && (!$assetKey || $!assetKey == ''))
+															<script type="text/javascript">
+															<!--
+																var firstAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
+															-->
+															</script>
+														#end
 													#end
-												#end
-												<script type="text/javascript">
-												<!--
-													var lastAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
-												-->
-												</script>	
-												#set($counter = $counter + 1)
+													<script type="text/javascript">
+													<!--
+														var lastAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
+													-->
+													</script>	
+													#set($counter = $counter + 1)
+												</div>
+											</div>
+											<div class="imgBoxBottom">
+												<a  href="#" onclick="openInlineDiv('../infoglueCMS/ViewDigitalAsset!update.action?contentVersionId=$!contentVersionId&digitalAssetId=$digitalAsset.digitalAssetId', 600, 800, true, true, '');" title="$ui.getString("tool.contenttool.updateAttachment")">$ui.getString("tool.contenttool.updateAttachment")</a>
+												
 											</div>
 										</div>
-										<div class="imgBoxBottom">
-											<a  href="#" onclick="openInlineDiv('../infoglueCMS/ViewDigitalAsset!update.action?contentVersionId=$!contentVersionId&digitalAssetId=$digitalAsset.digitalAssetId', 600, 800, true, true, '');" title="$ui.getString("tool.contenttool.updateAttachment")">$ui.getString("tool.contenttool.updateAttachment")</a>
-											
-										</div>
-									</div>
-								#end
+									#end
+								</td>
+								</tr>
+								</tbody>
+								</table>
 							#end
 							<form method="post" name="editForm" id="editForm" action="UpdateContentVersion!standalone.action" style="float:left; width: 95%">
 								#if($isMetainfoContent && $!siteNodeId)

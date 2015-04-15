@@ -4,7 +4,7 @@
 	    function notifyIsLoaded()
 	    {
 	    }
-	    
+	   
 	    function notifyExp(v)
 	    {
 	    }
@@ -12,7 +12,7 @@
 		function changeRepository(selectBox)
 		{
 			var repositoryId = selectBox.value;
-			var url = "CreateContentWizardFinish!V3.action?repositoryId=" + repositoryId + "&siteNodeId=$siteNodeId&languageId=$languageId&contentId=-1&componentId=$componentId&propertyName=$propertyName&$allowedContentTypeIdsAsUrlEncodedString&refreshAddress=$encodedRefreshAddress&showSimple=$showSimple&showDecorated=$!showDecorated";
+			var url = "CreateContentWizardFinish!V3.action?repositoryId=" + repositoryId + "&siteNodeId=$siteNodeId&languageId=$languageId&contentId=-1&componentId=$componentId&extraClasses=$!extraClasses&propertyName=$propertyName&$allowedContentTypeIdsAsUrlEncodedString&refreshAddress=$encodedRefreshAddress&showSimple=$showSimple&showDecorated=$!showDecorated";
 			document.location.href = url;
 		}
 
@@ -27,13 +27,13 @@
 		{
 		    document.inputForm.newParentContentId.value = contentId;
 		}
-	    
+	   
 	    function createFolder()
 	    { 
 	    	var parentContentId = document.inputForm.parentContentId.value;
 			if(parentContentId != "")
 			{
-				var returnUrl = "$formatter.encode("CreateContentWizardFinish!V3.action?repositoryId=$repositoryId&siteNodeId=$siteNodeId&languageId=$languageId&contentId=-1&componentId=$componentId&propertyName=$propertyName&$allowedContentTypeIdsAsUrlEncodedString&refreshAddress=$encodedRefreshAddress&showSimple=$showSimple&showDecorated=$!showDecorated")";
+				var returnUrl = "$formatter.encode("CreateContentWizardFinish!V3.action?repositoryId=$repositoryId&siteNodeId=$siteNodeId&extraClasses=$!extraClasses&languageId=$languageId&contentId=-1&componentId=$componentId&propertyName=$propertyName&$allowedContentTypeIdsAsUrlEncodedString&refreshAddress=$encodedRefreshAddress&showSimple=$showSimple&showDecorated=$!showDecorated")";
 		    	var url = "CreateContent!inputV3.action?isBranch=true&repositoryId=$repositoryId&parentContentId=" + parentContentId + "&returnAddress=" + returnUrl;
 				//alert("url:" + url);
 				document.location.href = url;
@@ -50,7 +50,7 @@
 			document.inputForm.action = "CreateContentWizardFinish!cancel.action";
 			document.inputForm.submit();
 		}	
-	    
+	 
 	    function next()
 		{
 			var parentContentId = document.inputForm.parentContentId.value;
@@ -77,6 +77,7 @@
 		<input type="hidden" name="userSessionKey" value="$userSessionKey"/>
 		<input type="hidden" name="returnAddress" value="$returnAddress">
 		<input type="hidden" name="originalAddress" value="$originalAddress">
+		<input type="hidden" name="extraClasses" value="$!extraClasses">
 		#foreach($allowedContentTypeId in $allowedContentTypeIds)
 		<input type="hidden" name="allowedContentTypeIds" value="$allowedContentTypeId">
 		#end

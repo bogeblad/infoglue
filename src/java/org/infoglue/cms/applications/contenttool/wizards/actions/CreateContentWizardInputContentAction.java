@@ -44,7 +44,7 @@ public class CreateContentWizardInputContentAction extends InfoGlueAbstractActio
 	private ContentVO contentVO;
 	private Integer contentTypeDefinitionId;
 	private ConstraintExceptionBuffer ceb;
-
+	private String extraClasses;
 	private String[] allowedContentTypeIds	 = null;
 
 
@@ -172,7 +172,14 @@ public class CreateContentWizardInputContentAction extends InfoGlueAbstractActio
 	{
 		return this.contentTypeDefinitionId;
 	}
-
+	public String getExtraClasses()
+	{
+		return this.extraClasses;
+	}
+	public void setExtraClasses(String string) {
+		this.extraClasses = string;
+	}
+	
 	public void setContentTypeDefinitionId(Integer contentTypeDefinitionId)
 	{
 		this.contentTypeDefinitionId = contentTypeDefinitionId;

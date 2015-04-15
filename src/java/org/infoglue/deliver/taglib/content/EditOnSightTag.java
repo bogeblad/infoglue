@@ -42,6 +42,7 @@ public class EditOnSightTag extends ComponentLogicTag
 	private Integer languageId;
     private String attributeName;
     private String html;
+    private String extraClasses;
     private boolean showInPublishedMode = false;
     
     public EditOnSightTag()
@@ -51,16 +52,17 @@ public class EditOnSightTag extends ComponentLogicTag
     
     public int doEndTag() throws JspException
     {
-        if(languageId == null)
+        if(languageId == null) {
             this.languageId = getController().getLanguageId();
-        
-        produceResult(this.getController().getEditOnSightTag(contentId, languageId, attributeName, html, showInPublishedMode));
+        }
+        produceResult(this.getController().getEditOnSightTag(contentId, languageId, attributeName, html, showInPublishedMode, extraClasses));
         
         this.contentId = null;
         this.languageId = null;
         this.attributeName = null;
         this.html = null;
         this.showInPublishedMode = false;
+        this.extraClasses = null;
         
         return EVAL_PAGE;
     }    
@@ -88,5 +90,10 @@ public class EditOnSightTag extends ComponentLogicTag
     public void setShowInPublishedMode(boolean showInPublishedMode)
     {
         this.showInPublishedMode = showInPublishedMode;
+    }
+    
+    public void setExtraClasses(String extraClasses) throws JspException
+    {
+    	this.extraClasses = evaluateString("EditOnSightTag", "extraClasses", extraClasses);
     }
 }

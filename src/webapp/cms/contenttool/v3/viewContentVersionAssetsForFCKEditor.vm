@@ -19,7 +19,7 @@
 				selectedAssetElement.style.background = "url(css/images/v3/imgbox_bg.gif) repeat";
 				selectedAssetElement.style.backgroundImage = "url(css/images/v3/imgbox_bg.gif)";
 			}
-			
+		
 			contentId = aContentId;	
 			if(actualAssetKey)
 				assetKey = actualAssetKey;
@@ -38,7 +38,7 @@
 				selectedAssetElement.style.backgroundImage = "url(css/images/v3/imgboxselected_bg.gif)";
 			}
 		}
-
+	
 		function onOk()
 		{
 			if(assetKey == "")
@@ -129,6 +129,7 @@
 </head>
 	<body class="generaltooledit">
 
+
 		#if($enableInlineButtons)<div id="assets" class="imgBoxContainer resizableDiv">#end
 
 		#set($counter = 0)
@@ -195,7 +196,7 @@
 			$ui.getString("tool.contenttool.noAssetsOrNoContentSelectedLabel")
 		</p>
 		#end
-		$enableInlineButtons
+
 		#if($enableInlineButtons)</div>#end
 
 		#if($enableInlineButtons)

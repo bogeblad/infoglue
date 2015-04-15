@@ -8466,9 +8466,9 @@ public class BasicTemplateController implements TemplateController
 	 * is not set to true. Otherwise it shows the htnl you sent in within a clickable tag.
 	 */	
 	
-	public String getEditOnSightTag(Integer contentId, String attributeName, String html, boolean showInPublishedMode)
+	public String getEditOnSightTag(Integer contentId, String attributeName, String html, boolean showInPublishedMode, String extraClasses)
 	{
-        return getEditOnSightTag(contentId, this.getLanguageId(), attributeName, html, showInPublishedMode);
+        return getEditOnSightTag(contentId, this.getLanguageId(), attributeName, html, showInPublishedMode, extraClasses);
 	} 
 
 	/**
@@ -8477,14 +8477,14 @@ public class BasicTemplateController implements TemplateController
 	 * is not set to true. Otherwise it shows the htnl you sent in within a clickable tag.
 	 */	
 	
-	public String getEditOnSightTag(Integer contentId, Integer languageId, String attributeName, String html, boolean showInPublishedMode)
+	public String getEditOnSightTag(Integer contentId, Integer languageId, String attributeName, String html, boolean showInPublishedMode, String extraClasses)
 	{
 	    if(showInPublishedMode == false && this.getOperatingMode().intValue() == 3)
 	        return "";
 	    else
 	    {
 	    	String editOnSiteUrl = CmsPropertyHandler.getEditOnSiteUrl();
-			String decoratedAttributeValue = "<a href=\"#\" onclick=\"openInlineDivImpl('" + editOnSiteUrl + "?contentId=" + contentId + "&amp;languageId=" + languageId + "&amp;attributeName=" + attributeName + "&amp;forceWorkingChange=true#" + attributeName + "Anchor" + "', 900, 850, true, true); return false;\">" + html + "</a>";
+			String decoratedAttributeValue = "<a href=\"#\" onclick=\"openInlineDivImpl('" + editOnSiteUrl + "?contentId=" + contentId + "&amp;languageId=" + languageId + "&amp;extraClasses=" + extraClasses +"&amp;attributeName=" + attributeName + "&amp;forceWorkingChange=true#" + attributeName + "Anchor" + "', 900, 850, true, true); return false;\">" + html + "</a>";
 			return decoratedAttributeValue;
 	    }
 	} 

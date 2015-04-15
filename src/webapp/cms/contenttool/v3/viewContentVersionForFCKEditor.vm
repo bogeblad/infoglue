@@ -552,27 +552,10 @@
 					$("#level-1").tabs({ selected: $selectedIndex, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
 					$("#level-3").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
 					loadFrame("pageLanguagesDiv");
-
-
-
-
-
-
-
-
-
-
 				#else
 					$("#level-1").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
-
-
-
-
-
 					$("#level-3").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
 					##alert("Anchor: $anchor");
-					
-
 				#end	
 		  	#else
 		  		$("#tabsContainer").tabs(
@@ -703,6 +686,11 @@
 		{
 			validateAndSubmitContentForm();
 		}
+		
+		function closeDivById(divToClose)
+	    {
+			 document.getElementById(divToClose).style.display = 'none';
+	    }	
 		
 		function validateAndSubmitContentForm()
 		{
@@ -896,43 +884,12 @@
 	
 <div class="dialog-wrapper clearfix" style="z-index: 3;">
 	<div style="clear: both;"></div>
-	#if($isMetainfoContent)
-
-		<h3>$ui.getString("tool.structuretool.pageProperties.header", $localizedContentName)</h3>
-		#if($contentVersionVO)
-
-			<div class="#stateAsClass($contentVersionVO.stateId)">#stateInText($contentVersionVO.stateId)</div>
-		#end
-
-	#else
-		<h3>$contentVO.name 
-			#if($currentLanguageVO.languageCode == "sv")
-
-
-				($ui.getString('tool.contenttool.swedishLabel'))
-			#elseif($currentLanguageVO.languageCode == "en")
-				($ui.getString('tool.contenttool.englishLabel'))
-			#else
-				($currentLanguageVO.name)
-
-
-
-			#end
-		</h3>
-		
-		#if($contentVersionVO)
-			<div class="#stateAsClass($contentVersionVO.stateId)">#stateInText($contentVersionVO.stateId).
-				$ui.getString("tool.contenttool.versionLastUpdatedByLabel") $contentVersionVO.versionModifier ($formatter.formatDate($contentVersionVO.modifiedDateTime, "yyyy-MM-dd HH:mm") - $contentVersionVO.versionComment).
-			</div>
-		#end
-	#end
 
 	<div id="allDivs">
 
 		<div id="tabsContainer" class="cleanTopDiv" style="#if($translate == false)width: 100%;#else width: 550px; #end float:left;">
 			<div id="level-1">
 				<ul class="level-1">
-
 
 					<li><a href="#contentVersionDiv"><span>$ui.getString('tool.contenttool.editContentTab')</span></a></li>
 
@@ -945,9 +902,15 @@
 							<li><a href="#contentHistoryDiv"><span>$ui.getString('tool.contenttool.contentHistoryTab')</span></a></li>
 						#end
 					#end
+
 					#if($isMetainfoContent == false)
 						#if($this.hasAccessTo("ContentVersionEditor.References", true, false))
-							<li><a href="#contentReferencesDiv"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a></li>
+							<li><a href="#contentReferencesDiv"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a>
+								#if($hasRelatedSiteNodes)
+									<p class="has-references" id="has-references">$ui.getString('tool.contenttool.contentVersionHasReferencePopup')<a href="#" id="contentversion-has-reference-popup-link" onclick="closeDivById('has-references');">$ui.getString('tool.contenttool.close')</a></p>	
+																		
+								#end
+							</li>
 						#end
 					#end
 					#if($isMetainfoContent == false)
@@ -976,8 +939,11 @@
 						#end
 					#end
 				</ul>
-						
-
+					#if($isMetainfoContent)
+						<h3>$ui.getString("tool.structuretool.pageProperties.header", $localizedContentName)</h3>		
+					#else
+						<h3>$contentVO.name</h3>
+					#end
 				#if($isMetainfoContent == false)
 
 					<div id="contentCoverDiv" class="inlineTabDiv">
@@ -1089,6 +1055,13 @@
 								#end
 							#end
 						</ul>
+							
+						#if($contentVersionVO)
+							<div class="#stateAsClass($contentVersionVO.stateId)">#stateInText($contentVersionVO.stateId).
+								$ui.getString("tool.contenttool.versionLastUpdatedByLabel") $contentVersionVO.versionModifier ($formatter.formatDate($contentVersionVO.modifiedDateTime, "yyyy-MM-dd HH:mm") - $contentVersionVO.versionComment).
+							</div>
+						#end
+							
 						<div id="contentVersionText">
 							#if($hasMandatoryAssets)
 								<div class="mandatory-assets">

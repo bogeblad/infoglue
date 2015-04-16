@@ -74,6 +74,7 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 	private long oldModifiedDateTime = -1;
 	private boolean concurrentModification = false;
 	private String saveAndExitURL = null;
+	private String extraClasses;
 	
 	//Set to true if version was a state change
 	private Boolean stateChanged = false;
@@ -600,7 +601,16 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 	{
 		return oldModifiedDateTime;
 	}
+	public void setExtraClasses(String extraClasses)
+	{
+		this.extraClasses = extraClasses;
+	}
 
+	public String getExtraClasses() 
+	{
+		return extraClasses;
+	}
+	
 	public void setOldModifiedDateTime(long oldModifiedDateTime) 
 	{
 		this.oldModifiedDateTime = oldModifiedDateTime;

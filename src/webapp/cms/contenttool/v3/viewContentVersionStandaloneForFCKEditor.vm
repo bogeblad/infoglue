@@ -300,7 +300,7 @@
 			
 			if ((!getDirty() && !checkWYSIWYGDirty()) || confirm('$ui.getString("tool.contenttool.languageVersionChangeWarning")'))
 			{
-				window.location.href="ViewContentVersion!standalone.action?contentId=" + contentId + "&languageId=" + languageId + "&attributeName=" + attributeName;
+				window.location.href="ViewContentVersion!standalone.action?contentId=" + contentId +  "&extraClasses=$!extraClasses&languageId=" + languageId + "&attributeName=" + attributeName ;
 			}
 			else
 			{
@@ -312,7 +312,7 @@
 		{
 
 			
-			var versionAccessSrcUrl = "ViewContentVersion!viewContentAssetsForFCKEditorV3.action?contentId=$!contentId&languageId=" + languageId + "&assetTypeFilter=.*";
+			var versionAccessSrcUrl = "ViewContentVersion!viewContentAssetsForFCKEditorV3.action?contentId=$!contentId&languageId=" + languageId + "&extraClasses=$extraClasses&assetTypeFilter=.*";
 			$(".versionAccess-list-items li").removeClass("ui-tabs-selected");
 			$("#languageVersionAccessTab_" + languageId).addClass("ui-tabs-selected");
 
@@ -324,7 +324,7 @@
 		function changeLanguageForAssets(contentId, languageId)
 		{
 		
-			var assetSrcUrl = "ViewContentVersion!viewContentAssetsForFCKEditorV3.action?contentId=$!contentId&languageId=" + languageId + "&assetTypeFilter=.*";
+			var assetSrcUrl = "ViewContentVersion!viewContentAssetsForFCKEditorV3.action?contentId=$!contentId&extraClasses=$!extraClasses&languageId=" + languageId + "&assetTypeFilter=.*";
 			$(".asset-list-items li").removeClass("ui-tabs-selected");
 			$("#languageAssetTab_" + languageId).addClass("ui-tabs-selected");
 
@@ -1133,6 +1133,7 @@
 					#end
 				#end	
 				<div id="contentVersionDiv" class="inlineTabDiv ui-tabs">
+			
 					<div id="level-2" class="language-tabs">
 						<ul class="level-2 ui-tabs-nav ui-helper-clearfix">
 							#if(!$translate && $availableLanguages.size() > 1)
@@ -1224,7 +1225,6 @@
 										#set($digitalAssetUrl = $this.getDigitalAssetUrl($digitalAsset.digitalAssetId))
 										<div class="imgBox">
 											
-										
 											<div class="imgBoxTop" id="digitalAsset$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')" #if($assetKey == '$digitalAsset.assetKey')"  #end>
 												<div id="imgBoxTopInner">
 													<input type="hidden" id="digitalAsset$formatter.encodeURI($formatter.encodeURI($digitalAsset.assetKey, 'utf-8'), 'utf-8')" value="$digitalAssetUrl">

@@ -31,10 +31,76 @@
 
 	<div id="tabsContainer" class="flora cleanTopDiv">      
 		<ul>
-	        <li><a href="#contentReferencesTab"><span>$ui.getString("tool.contenttool.contentVersionReferences.header")</span></a></li>
-	        <li><a href="#pageReferencesTab"><span>$ui.getString("tool.contenttool.siteNodeReferences.header")</span></a></li>
+			<li><a href="#pageReferencesTab"><span>$ui.getString("tool.contenttool.siteNodeReferences.header")</span></a></li>
+	        <li><a href="#contentReferencesTab"><span>$ui.getString("tool.contenttool.contentVersionReferences.header")</span></a></li> 
 	    </ul>
+		<div id="pageReferencesTab" class="inlineTabDiv">
+	
+			<table cellpadding="0" cellspacing="0" border="1" class="display" id="siteNodeVersions" width="100%">
+				<thead>
+					<tr>
+						<th>$ui.getString("tool.contenttool.searchResultPageHeader")</th>
+						<th>$ui.getString("tool.contenttool.contentVersionReferencesAssets.header")</th>
+						##<th>$ui.getString("tool.structuretool.deleteReferences.referencesFound")</th>
+						<th>$ui.getString("tool.structuretool.contactPersonEmail.label")</th>
+						##<th>&nbsp;</th>
+					</tr>
+				</thead>
+				<tbody>
+				
+					#set($hasPageReferences = false)
+					#set($count = 0)	
+					#foreach ($referenceBean in $referenceBeanList)
+						#if($referenceBean.referencingCompletingObject.class.name.indexOf("SiteNode") > -1)
+							#if($count < $referenceLimit)
+								#set($hasPageReferences = true)
+								#set($lastIndex = $referenceBean.versions.size() - 1)
 
+								<tr>
+									<td>
+										<img src='css/images/v3/pageIcon.gif'> <a href="#" class="page" onclick="top.openUrlInWorkArea('ViewSiteNode.action?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1', '$referenceBean.referencingCompletingObject.name', 'structure', '$ui.getString("tool.common.pageTabLabelPrefix")', 'StructureTool'); return false;">$this.getSiteNodePath($referenceBean.referencingCompletingObject.siteNodeId, false, true)</a><br/>
+										##<img src='css/images/v3/pageIcon.gif'> <a href="${componentRendererUrl}${componentRendererAction}?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1" target="_blank">$this.getSiteNodePath($referenceBean.referencingCompletingObject.siteNodeId)</a>
+					 				</td>
+					 				<td>
+					 					$referenceBean.versions[0].referencingExtraInfo
+					 				</td>
+					 				#*
+					 				<td>
+										$referenceBean.versions.get($lastIndex).registryVOList.size()
+					 				</td>
+					 				*#
+									<td>
+					 					$!referenceBean.contactPersonEmail
+					 				</td>
+									##<td><a href="${componentRendererUrl}${componentRendererAction}?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1" target="_blank">$ui.getString("tool.common.edit.label")</a></td>
+								</tr>	
+							#end
+							#set($count = $count + 1)
+						#end
+					#end
+					#if($count > $referenceLimit)
+						<tr>
+							<td>$ui.getString("tool.contenttool.morePageReferencesFound") $count</td>		
+							<td>&nbsp;</td>		
+							<td>&nbsp;</td>		
+							##<td>&nbsp;</td>
+							##<td>&nbsp;</td>			
+						</tr>	
+					#end
+					
+					#if(!$hasPageReferences)
+						<tr>
+							<td>$ui.getString("tool.contenttool.noPageReferencesFound")</td>		
+							<td>&nbsp;</td>		
+							<td>&nbsp;</td>		
+							##<td>&nbsp;</td>	
+							##<td>&nbsp;</td>		
+						</tr>	
+					#end
+					
+				</tbody>
+			</table>
+		</div>
 		<div id="contentReferencesTab" class="inlineTabDiv">
 
 			<table cellpadding="0" cellspacing="0" border="1" class="display" id="contentVersions" width="100%">
@@ -105,77 +171,6 @@
 			</table>
 
 		</div>
-
-		<div id="pageReferencesTab" class="inlineTabDiv">
-	
-			<table cellpadding="0" cellspacing="0" border="1" class="display" id="siteNodeVersions" width="100%">
-				<thead>
-					<tr>
-						<th>$ui.getString("tool.contenttool.searchResultPageHeader")</th>
-						<th>$ui.getString("tool.contenttool.contentVersionReferencesAssets.header")</th>
-						##<th>$ui.getString("tool.structuretool.deleteReferences.referencesFound")</th>
-						<th>$ui.getString("tool.structuretool.contactPersonEmail.label")</th>
-						##<th>&nbsp;</th>
-					</tr>
-				</thead>
-				<tbody>
-				
-					#set($hasPageReferences = false)
-					#set($count = 0)	
-					#foreach ($referenceBean in $referenceBeanList)
-						#if($referenceBean.referencingCompletingObject.class.name.indexOf("SiteNode") > -1)
-							#if($count < $referenceLimit)
-								#set($hasPageReferences = true)
-								#set($lastIndex = $referenceBean.versions.size() - 1)
-
-								<tr>
-									<td>
-										<img src='css/images/v3/pageIcon.gif'> <a href="#" class="page" onclick="top.openUrlInWorkArea('ViewSiteNode.action?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1', '$referenceBean.referencingCompletingObject.name', 'structure', '$ui.getString("tool.common.pageTabLabelPrefix")', 'StructureTool'); return false;">$this.getSiteNodePath($referenceBean.referencingCompletingObject.siteNodeId, false, true)</a><br/>
-										##<img src='css/images/v3/pageIcon.gif'> <a href="${componentRendererUrl}${componentRendererAction}?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1" target="_blank">$this.getSiteNodePath($referenceBean.referencingCompletingObject.siteNodeId)</a>
-					 				</td>
-					 				<td>
-					 					$referenceBean.versions[0].referencingExtraInfo
-					 				</td>
-					 				#*
-					 				<td>
-										$referenceBean.versions.get($lastIndex).registryVOList.size()
-					 				</td>
-					 				*#
-									<td>
-					 					$!referenceBean.contactPersonEmail
-					 				</td>
-									##<td><a href="${componentRendererUrl}${componentRendererAction}?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1" target="_blank">$ui.getString("tool.common.edit.label")</a></td>
-								</tr>	
-							#end
-							#set($count = $count + 1)
-						#end
-					#end
-					#if($count > $referenceLimit)
-						<tr>
-							<td>$ui.getString("tool.contenttool.morePageReferencesFound") $count</td>		
-							<td>&nbsp;</td>		
-							<td>&nbsp;</td>		
-							##<td>&nbsp;</td>
-							##<td>&nbsp;</td>			
-						</tr>	
-					#end
-					
-					#if(!$hasPageReferences)
-						<tr>
-							<td>$ui.getString("tool.contenttool.noPageReferencesFound")</td>		
-							<td>&nbsp;</td>		
-							<td>&nbsp;</td>		
-							##<td>&nbsp;</td>	
-							##<td>&nbsp;</td>		
-						</tr>	
-					#end
-					
-				</tbody>
-			</table>
-
-		</div>
-
-
 	</div>
 		
 #endLightCommonToolV3()

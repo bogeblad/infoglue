@@ -893,117 +893,51 @@
 
 					<li><a href="#contentVersionDiv"><span>$ui.getString('tool.contenttool.editContentTab')</span></a></li>
 
-					#if($isMetainfoContent == false)
+					<li><a href="#contentCoverDiv"><span>$ui.getString('tool.contenttool.coverTab')</span></a></li>
 
-						<li><a href="#contentCoverDiv"><span>$ui.getString('tool.contenttool.coverTab')</span></a></li>
-					#end
-					#if($isMetainfoContent == false)
-						#if($this.hasAccessTo("ContentVersionEditor.History", true, false))
-							<li><a href="#contentHistoryDiv"><span>$ui.getString('tool.contenttool.contentHistoryTab')</span></a></li>
-						#end
-					#end
-
-					#if($isMetainfoContent == false)
-						#if($this.hasAccessTo("ContentVersionEditor.References", true, false))
-							<li><a href="#contentReferencesDiv"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a>
-								#if($hasRelatedSiteNodes)
-									<p class="has-references" id="has-references">$ui.getString('tool.contenttool.contentVersionHasReferencePopup')<a href="#" id="contentversion-has-reference-popup-link" onclick="closeDivById('has-references');">$ui.getString('tool.contenttool.close')</a></p>	
-																		
-								#end
-							</li>
-						#end
-					#end
-					#if($isMetainfoContent == false)
-						#if($this.hasAccessTo("ContentVersionEditor.AccessRights", true, false))
-							<li><a href="#contentAccessRightsDiv"><span>$ui.getString('tool.contenttool.contentAccessRightsTab')</span></a></li>
-						#end
-					#end
-					
-					#if($isMetainfoContent == true)
-						#if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false, false))
-							<li><a href="#pageDetailsDiv"><span>$ui.getString("tool.structuretool.toolbarV3.pageDetailLabel")</span></a></li>
-						#else
-							<li><a href="#pageDetailsDiv"><span>$ui.getString("tool.structuretool.toolbarV3.pageDetailWithoutNameLabel")</span></a></li>
-						#end
-						#if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false, false))
-							<li><a href="#pageDetailsAdvancedDiv"><span>$ui.getString("tool.common.advanced.label")</span></a></li>	        
-						#end
-						#if($this.hasAccessTo("ToolTabsAndButtons.PageLanguagesTab", true, false, false))
-							<li><a href="#pageLanguagesDiv"><span>$ui.getString("tool.common.languages.label")</span></a></li>	        
-						#end
-
-						<li><a href="#pageHistoryDiv"><span>$ui.getString('tool.contenttool.contentHistoryTab')</span></a></li>
-						<li><a href="#pageReferencesDiv"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a></li>
-						#if($this.hasAccessTo("ToolTabsAndButtons.PageSimpleModeButton", true, false))
-							<li><a href="#pageSimpleComponentModeDiv"><span>Dev</span></a></li>
-						#end
-					#end
-				</ul>
-					#if($isMetainfoContent)
-						<h3>$ui.getString("tool.structuretool.pageProperties.header", $localizedContentName)</h3>		
-					#else
-						<h3>$contentVO.name</h3>
-					#end
-				#if($isMetainfoContent == false)
-
-					<div id="contentCoverDiv" class="inlineTabDiv">
-						<iframe id="contentCoverFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
-					</div>
-				#end
-			
-				#if($isMetainfoContent == false)
 					#if($this.hasAccessTo("ContentVersionEditor.History", true, false))
-					<div id="contentHistoryDiv" class="inlineTabDiv">
-						<iframe id="contentHistoryFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
-					</div>
+						<li><a href="#contentHistoryDiv"><span>$ui.getString('tool.contenttool.contentHistoryTab')</span></a></li>
 					#end
-				#end
-
-				#if($isMetainfoContent == false)
 					#if($this.hasAccessTo("ContentVersionEditor.References", true, false))
-						<div id="contentReferencesDiv" class="inlineTabDiv">
-							<iframe id="contentReferencesFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
-						</div>
+						<li><a href="#contentReferencesDiv"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a>
+							#if($hasRelatedSiteNodes)
+								<p class="has-references" id="has-references">$ui.getString('tool.contenttool.contentVersionHasReferencePopup')<a href="#" id="contentversion-has-reference-popup-link" onclick="closeDivById('has-references');">$ui.getString('tool.contenttool.close')</a></p>	
+																	
+							#end
+						</li>
 					#end
-				#end
-
-				#if($isMetainfoContent == false)
-					#if($this.hasAccessTo("ContentVersionEditor.AccessRights", true, false))
-						<div id="contentAccessRightsDiv" class="inlineTabDiv">
-							<iframe id="contentAccessRightsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
-						</div>
-					#end
-				#end
-
-				#if($isMetainfoContent == true)
-					<div id="pageDetailsDiv" class="inlineTabDiv">
-						<iframe id="pageDetailsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
-					</div>
-					#if($this.hasAccessTo("ToolTabsAndButtons.PageLanguagesTab", true, false, false))
-						<div id="pageLanguagesDiv" class="inlineTabDiv">
-							<iframe id="pageLanguagesFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
-						</div>
-
-					#end
-					#if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false, false))
-						<div id="pageDetailsAdvancedDiv" class="inlineTabDiv">
-							<iframe id="pageDetailsAdvancedFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
-						</div>
-					#end
-					<div id="pageHistoryDiv" class="inlineTabDiv">
-						<iframe id="pageHistoryFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
-					</div>
 					
-					<div id="pageReferencesDiv" class="inlineTabDiv">
-						<iframe id="pageReferencesFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
-					</div>
-
-					#if($this.hasAccessTo("ToolTabsAndButtons.PageSimpleModeButton", true, false))
-					<div id="pageSimpleComponentModeDiv" class="inlineTabDiv">
-						<iframe id="pageReferencesFrame" src="$componentRendererUrl/ViewPage!renderDecoratedPage.action?siteNodeId=$siteNodeId&languageId=1&contentId=-1&showSimple=true" border="0" width="100%" height="500px" frameborder="0"></iframe>
-					</div>
+		
+					#if($this.hasAccessTo("ContentVersionEditor.AccessRights", true, false))
+						<li><a href="#contentAccessRightsDiv"><span>$ui.getString('tool.contenttool.contentAccessRightsTab')</span></a></li>
 					#end
-				#end	
+					
+				</ul>
+
+				<h3>$contentVO.name</h3>
+			
+				<div id="contentCoverDiv" class="inlineTabDiv">
+					<iframe id="contentCoverFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+				</div>
+
+				#if($this.hasAccessTo("ContentVersionEditor.History", true, false))
+				<div id="contentHistoryDiv" class="inlineTabDiv">
+					<iframe id="contentHistoryFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+				</div>
+				#end
+
+				#if($this.hasAccessTo("ContentVersionEditor.References", true, false))
+					<div id="contentReferencesDiv" class="inlineTabDiv">
+						<iframe id="contentReferencesFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+					</div>
+				#end
+
+				#if($this.hasAccessTo("ContentVersionEditor.AccessRights", true, false))
+					<div id="contentAccessRightsDiv" class="inlineTabDiv">
+						<iframe id="contentAccessRightsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+					</div>
+				#end
+
 				<div id="contentVersionDiv" class="inlineTabDiv ui-tabs">
 					<div id="level-2" class="language-tabs">
 						<ul class="level-2 ui-tabs-nav ui-helper-clearfix">
@@ -1057,14 +991,20 @@
 						</ul>
 							
 						#if($contentVersionVO)
-							<div class="#stateAsClass($contentVersionVO.stateId)">#stateInText($contentVersionVO.stateId).
-								$ui.getString("tool.contenttool.versionLastUpdatedByLabel") $contentVersionVO.versionModifier ($formatter.formatDate($contentVersionVO.modifiedDateTime, "yyyy-MM-dd HH:mm") - $contentVersionVO.versionComment).
+							<div class="#stateAsClass($contentVersionVO.stateId)">
+								#stateInText($contentVersionVO.stateId)
 							</div>
+							<p class="version-comment">
+								$ui.getString("tool.contenttool.versionLastUpdatedByLabel") $contentVersionVO.versionModifier ($formatter.formatDate($contentVersionVO.modifiedDateTime, "yyyy-MM-dd HH:mm") - $contentVersionVO.versionComment).
+							</p>
 						#end
 							
 						<div id="contentVersionText">
 							#if($hasMandatoryAssets)
-								<div class="mandatory-assets">
+								<table class="mandatory-assets">
+								<tbody>
+								<tr>
+								<td>
 									<span class="attributeTitle">$ui.getString('tool.contenttool.assetsTab')</span><br  />
 									#if($inheritedDigitalAssets.size() < 1)
 										#if($contentVersionVO.id)
@@ -1116,7 +1056,10 @@
 											</div>
 										</div>
 									#end
-								</div>
+								</td>
+								</tr>
+								</tbody>
+								</table>
 							#end
     		<form method="post" name="editForm" id="editForm" action="UpdateContentVersion!V3.action" style="float:left; width: 95%">
     			<input type="hidden" name="contentId" value="$!contentId"/>

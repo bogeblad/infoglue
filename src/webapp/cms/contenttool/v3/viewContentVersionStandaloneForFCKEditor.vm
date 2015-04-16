@@ -710,6 +710,7 @@
 		function closeDivById(divToClose)
 	    {
 			 document.getElementById(divToClose).style.display = 'none';
+			 
 	    }	
 	    function openAnchorUrl(anchorValue)
 	    {
@@ -773,7 +774,7 @@
 		
 		function saveAndExit(url)
 		{
-	
+			
 			if($("#contentCoverFrame").size() > 0 && $("#contentCoverFrame").get(0).contentWindow.save)
 				$("#contentCoverFrame").get(0).contentWindow.save();
 			if($("#contentAccessRightsFrame").size() > 0 && $("#contentAccessRightsFrame").get(0).contentWindow.save)
@@ -856,6 +857,7 @@
 				{
 					$(".optionListWidget option").attr('selected', 'selected');
 					buildVersionValue(); 
+
 					document.editForm.submit();
 				}
 			}
@@ -863,12 +865,14 @@
 	
 		function validateAndSubmitContentFormThenExit()
 		{
+			
 			document.editForm.action = "UpdateContentVersion!saveAndExitStandalone.action";
 			validateAndSubmitContentForm();		
 		}
 		
 		function validateAndSubmitContentFormThenClose()
 		{
+			
 			//alert("Action:" + document.editForm.action);
 			document.editForm.closeOnLoad.value = "true";
 			//document.editForm.action = "UpdateContentVersion!saveAndExitStandalone.action";
@@ -986,7 +990,7 @@
 		
 #end
 
-#beginLightCommonToolV3Impl("tool.contenttool.contentVersionStandaloneHeader" "$!contentVersionId" "contentVersionId=$!contentVersionId&contentId=$!contentId&languageId=$languageId&saveAndExitURL=$!saveAndExitURL" false true $!disableCloseButton $headerMarkup false "highGreyBackground")
+#beginLightCommonToolV3Impl("tool.contenttool.contentVersionStandaloneHeader" "$!contentVersionId" "contentVersionId=$!contentVersionId&contentId=$!contentId&languageId=$languageId&saveAndExitURL=$saveAndExitURL" false true $!disableCloseButton $headerMarkup false "highGreyBackground")
 
 #*
 #if($contentTypeDefinitionVO.name == "Meta info")
@@ -1030,7 +1034,8 @@
 						#if($this.hasAccessTo("ContentVersionEditor.References", true, false))
 							<li><a href="#contentReferencesDiv"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a>
 								#if($hasRelatedSiteNodes)
-									<p class="has-references" id="has-references">$ui.getString('tool.contenttool.contentVersionHasReferencePopup')<a href="#" id="contentversion-has-reference-popup-link" onclick="closeDivById('has-references');">$ui.getString('tool.contenttool.close')</a></p>	
+
+									<p class="has-references" id="has-references">$ui.getString('tool.contenttool.contentVersionHasReferencePopup')<a href="#" id="contentversion-has-reference-popup-link" onclick="closeDivById('has-references'); return false;">$ui.getString('tool.contenttool.close')</a></p>	
 																		
 								#end
 							</li>
@@ -1202,7 +1207,7 @@
 
 						<div id="contentVersionText">
 							#if($hasMandatoryAssets)
-							<table>
+							<table class="mandatory-assets">
 							<tbody>
 							<tr>
 							<td>
@@ -1275,7 +1280,7 @@
 									<input type="hidden" name="contentVersionId" value="$!contentVersionId"/>
 								#end
 									<input type="hidden" name="repositoryId" value="$!repositoryId"/>
-								
+									<input type="hidden" id="extraClasses" name="extraClasses" value="$!extraClasses"/>
 									<input type="hidden" id="versionValue" name="versionValue" value=""/>
 									<input type="hidden" id="currentEditorId" name="currentEditorId" value=""/>
 									<input type="hidden" id="attributeName" name="attributeName" value="$attributeName"/>

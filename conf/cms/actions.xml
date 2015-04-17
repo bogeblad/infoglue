@@ -1627,22 +1627,22 @@
 		<view name="error">/cms/contenttool/error.vm</view>
 
 		<command name="add" alias="ContentCategory!add">
-			<view name="success">ViewContentVersion!V3.action?contentId=${contentId}&amp;languageId=${languageId}&amp;anchor=categoriesBlock</view>
+			<view name="success">ExtendedRedirect.action?url=ViewContentVersion!V3.action#contentId#languageId#anchor</view>
 		</command>
 		<command name="delete" alias="ContentCategory!delete">
-			<view name="success">ViewContentVersion!V3.action?contentId=${contentId}&amp;languageId=${languageId}&amp;anchor=categoriesBlock</view>
+			<view name="success">ExtendedRedirect.action?url=ViewContentVersion!V3.action#contentId#languageId#anchor</view>
 		</command>
 		<command name="addStandalone" alias="ContentCategory!addStandalone">
-			<view name="success">ViewContentVersion!standalone.action?contentId=${contentId}&amp;languageId=${languageId}&amp;anchor=categoriesBlock</view>
+			<view name="success">ExtendedRedirect.action?url=ViewContentVersion!standalone.action?contentId=${contentId}&amp;languageId=${languageId}&amp;anchor=categoriesBlock</view>
 		</command>
 		<command name="deleteStandalone" alias="ContentCategory!deleteStandalone">
-			<view name="success">ViewContentVersion!standalone.action?contentId=${contentId}&amp;languageId=${languageId}&amp;anchor=categoriesBlock</view>
+			<view name="success">ExtendedRedirect.action?url=ViewContentVersion!standalone.action?contentId=${contentId}&amp;languageId=${languageId}&amp;anchor=categoriesBlock</view>
 		</command>
 		<command name="addContentWizard" alias="ContentCategory!addWizard">
-			<view name="success">CreateContentWizardFinish.action?inputMoreAssets=false&amp;anchor=categoriesBlock</view>
+			<view name="success">ExtendedRedirect.action?url=CreateContentWizardFinish.action?inputMoreAssets=false&amp;anchor=categoriesBlock</view>
 		</command>
 		<command name="deleteWizard" alias="ContentCategory!deleteWizard">
-			<view name="success">CreateContentWizardFinish.action?inputMoreAssets=false&amp;anchor=categoriesBlock</view>
+			<view name="success">ExtendedRedirect.action?url=CreateContentWizardFinish.action?inputMoreAssets=false&amp;anchor=categoriesBlock</view>
 		</command>
 
 	</action>

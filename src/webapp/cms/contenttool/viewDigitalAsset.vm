@@ -271,10 +271,8 @@
 				#if($!refreshAll)
 					if(parent.refreshAll)
 						parent.refreshAll();
-					alert("selecting");
 					if(parent.refreshView)
 						parent.refreshView("contentVersionAssets");
-					alert("selected");
 				#else
 					if(parent.refreshView)
 						parent.refreshView("contentVersionAssets");

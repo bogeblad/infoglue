@@ -122,6 +122,7 @@ ALTER TABLE cmContVer MODIFY MODIFIEDDATETIME TIMESTAMP;
 CREATE INDEX "contentVersionStateIndex" ON cmContVer(stateId);
 CREATE INDEX "contentVersionIsActiveIndex" ON cmContVer(isActive);
 CREATE INDEX "contentVersionLangIndex" ON cmContVer(languageId);
+
 CREATE INDEX "contentPublIndex" ON cmCont(publishDateTime);
 CREATE INDEX "contentExpIndex" ON cmCont(expireDateTime);
 CREATE INDEX "contentREPOSITORYIndex" ON cmCont(REPOSITORYID);
@@ -137,3 +138,6 @@ CREATE INDEX "siteNodeMetaContentIdIndex" ON cmSiNo(metaInfoContentId);
 CREATE INDEX "siteNodeParentSiteNodeIdIndex" ON cmSiNo(parentSiNoId);
 CREATE INDEX "siteNodeIsDeletedIndex" ON cmSiNo(isDeleted);
 
+create index "cmARRARIDIDX" ON cmAccessRightRole(accessRightId);
+create index "cmARGARIDIDX" ON cmAccessRightGroup(accessRightId);
+create index "cmARUARIDIDX" ON cmAccessRightUser(accessRightId);

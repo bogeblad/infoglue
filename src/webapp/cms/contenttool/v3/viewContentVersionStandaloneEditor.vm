@@ -1,4 +1,3 @@
-
 #if(($closeOnLoad == "true" && !$errors.hasErrors()) || $publishOnLoad == "true" && !$errors.hasErrors())
 <html>
 <head>
@@ -554,7 +553,9 @@
 			}
 			else if(tabHref.indexOf("pageDetailsDiv") > -1) 
 			{
-				document.editForm.anchor.value = "pageDetailsBlock";
+				if (document.editForm.anchor) {
+					document.editForm.anchor.value = "pageDetailsBlock";
+				}
 				if($("#pageDetailsFrame").attr("src") == "")
 					$("#pageDetailsFrame").attr("src", pageDetailsSrcUrl);
 			}

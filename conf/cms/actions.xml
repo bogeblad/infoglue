@@ -1037,7 +1037,7 @@
 		<view name="successXMLV3">ExtendedRedirect.action?url=ViewContentVersion!asXMLV3.action?#contentVersionId#contentId#repositoryId</view>
 		<!--<view name="success">ViewContentVersion.action</view>-->
 		<view name="background">ViewContentVersion!background.action</view>
-		<view name="standalone">ExtendedRedirect.action?url=ViewContentVersion!standalone.action#contentVersionId#contentId#languageId#attributeName#currentEditorId#concurrentModification#oldModifiedDateTime#closeOnLoad#publishOnLoad#saveAndExitURL#anchor</view>
+		<view name="standalone">ExtendedRedirect.action?url=ViewContentVersion!standalone.action#contentVersionId#contentId#languageId#attributeName#currentEditorId#concurrentModification#oldModifiedDateTime#closeOnLoad#publishOnLoad#saveAndExitURL#anchor#extraClasses</view>
 		<!--<view name="standalone">ViewContentVersion!standalone.action</view>-->
 		<view name="saveAndExit">ViewContent.action?stay=true</view>
 		<view name="saveAndExitStandalone">ViewContent!standalone.action</view>

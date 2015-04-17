@@ -325,6 +325,9 @@ function transformAttribute(plainAttribute)
 		assetKey = assetKey.substring(1, assetKey.length - 1);
 		//alert("assetKey:" + assetKey);
 		
+		//if(!contentId || contentId == "" || !assetKey || assetKey == "" || !languageId || languageId == "")
+		//	alert("There was a problem with an image which would render the content broken. Please revise and send a screenshot of this to your cms-admin: " + plainAttribute);
+		
 		//newAttribute = newAttribute + "DownloadAsset.action?contentId=" + contentId +"&languageId=" + languageId + "&assetKey=" + assetKey + "\"";
 		newAttribute = newAttribute + "DownloadAsset.action?contentId=" + contentId +"&languageId=" + languageId + "&assetKey=" + assetKey + "";
 		
@@ -352,7 +355,7 @@ function untransformAttribute(plainAttribute)
 	var remainingAttribute = plainAttribute;
 	var startPosition;
 	var endPosition;
-
+	
 	startPosition = remainingAttribute.indexOf("DownloadAsset.action?contentId=");
 	while(startPosition > -1)
 	{
@@ -360,19 +363,26 @@ function untransformAttribute(plainAttribute)
 		//alert("newAttribute:" + newAttribute);
 		remainingAttribute = remainingAttribute.substring(startPosition + 31);
 		
-		seperatorCharIndex = remainingAttribute.indexOf("&amp;");
-		contentId = remainingAttribute.substring(0, seperatorCharIndex);
-		assetKey = remainingAttribute.substring(seperatorCharIndex + 1, remainingAttribute.indexOf("\""));
+		var seperatorCharIndex = remainingAttribute.indexOf("&amp;");
+		if(seperatorCharIndex == -1 && remainingAttribute.indexOf("&languageId") > -1)
+		{
+			seperatorCharIndex = remainingAttribute.indexOf("&");
+		}
+		var contentId = remainingAttribute.substring(0, seperatorCharIndex);
+		var assetKey = remainingAttribute.substring(seperatorCharIndex + 1, remainingAttribute.indexOf("\""));
 		//alert("assetKey:" + assetKey);
-		assetStartIndex = assetKey.indexOf("assetKey=") + 9;
+		var assetStartIndex = assetKey.indexOf("assetKey=") + 9;
 		//alert("assetStartIndex:" + assetStartIndex);
 		assetKey = assetKey.substring(assetStartIndex);
 		//alert("assetKey:" + assetKey);
-		
+
+		if(!contentId || contentId == "" || !assetKey || assetKey == "")
+			console.log("There was a problem with an image which would render the content broken. Please revise and send a screenshot of this to your cms-admin: " + plainAttribute);
+
 		newAttribute = newAttribute + "$templateLogic.getInlineAssetUrl(" + contentId + ", \"" + assetKey + "\")\"";
 		
 		//alert("remainingAttribute:" + remainingAttribute);
-		endIndex = remainingAttribute.indexOf("\"");
+		var endIndex = remainingAttribute.indexOf("\"");
 		//alert("endIndex:" + endIndex);
 		
 		remainingAttribute = remainingAttribute.substring(endIndex + 1);

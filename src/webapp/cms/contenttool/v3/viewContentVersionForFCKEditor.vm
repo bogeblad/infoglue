@@ -186,13 +186,7 @@
 			var languageId = $(select).val();
 			
 			attributeName = document.editForm.attributeName.value;
-			
-			if (document.editForm.saveAndExitURL) {
-				saveAndExitURL = document.editForm.saveAndExitURL.value;
-			} else {
-				saveAndExitURL = "";
-			}
-			
+			saveAndExitURL = document.editForm.saveAndExitURL.value;
 			if ((!getDirty() && !checkWYSIWYGDirty()) || confirm('$ui.getString("tool.contenttool.languageVersionChangeWarning")'))
 			{
 				window.location.href="ViewContentVersion!V3.action?contentId=" + contentId + "&languageId=" + languageId + "&attributeName=" + attributeName + "&saveAndExitURL=" + saveAndExitURL;
@@ -246,6 +240,8 @@
 		var beenWarned = false;
 		var inaktiveTime = 0;
 		var timeout = ($sessionTimeout / 60) * 60 * 1000;
+		window.waitingForInstances = 0;	
+		
 	    function warnForTimeout()
 	    {
 	       	alert("Please save your work often to avoid loosing it due to the security timeout. If you suspect you might not have saved for " + ($sessionTimeout / 60) + " minutes or so we recommend you copy all of your text before you press save so you don't risk loosing it.");
@@ -277,13 +273,12 @@
 		//*******************************************
 		// This is the method that generates the wysiwygs when the page is loaded
 		//*******************************************
-	
 		function generateWYSIWYGS()
 		{
 			#if($readonly == "")
 				
 				#if($prefferedWYSIWYG == "ckeditor4")
-
+										
 					for(var i in plainEditors)
 					{
 						var plainTextAreaName = plainEditors[i];
@@ -296,7 +291,50 @@
 			 				configString = "{'customConfig': '${root}/WYSIWYGProperties.action?repositoryId=$!repositoryId&contentId=$!contentId&languageId=$languageId&contentVersionId=$!contentVersionId','language': '$languageCode', 'toolbar': '" + WYSIWYGToolbar + "', 'width':'" + $("#" + plainTextAreaName).width() + "px', 'height':'" + $("#" + plainTextAreaName).height() + "px'," + WYSIWYGExtraConfig + "}";
 			 			var configObject = eval('(' + configString + ')');
 			
-						CKEDITOR.replace( plainTextAreaName, configObject);
+						//CKEDITOR.replace( plainTextAreaName, configObject);
+						var editorInstance = CKEDITOR.replace( plainTextAreaName, configObject);
+						
+						if(!window.plainEditorsLastGoodText)
+							window.plainEditorsLastGoodText = new Array();
+						window.plainEditorsLastGoodText[editorInstance.name] = editorInstance.getData();
+						window.plainEditorsLastGoodText[editorInstance.name + "_raw"] = editorInstance.getSnapshot();
+
+						window.isUndoed = false;
+
+						window.waitingForInstances++;
+						$(".save").prop('disabled', true);
+						$(".save").css("opacity", "0.4");
+						editorInstance.on("instanceReady", function(event)
+						{
+						    window.waitingForInstances--;
+						    if(window.waitingForInstances < 1)
+						    {
+								$(".save").prop('disabled', false);
+								$(".save").css("opacity", "1");
+							}
+						});
+						
+						editorInstance.on( 'change', function( evt ) {
+							if(evt.editor.getData().indexOf("templateLogic.getInlineAssetUrl") > -1 || evt.editor.getData().indexOf("?contentId=&") > -1)
+							{
+								if(!isUndoed)
+								{
+									var messageDebug = "User: $userName\n" + "UserAgent: " + navigator.userAgent + "\n" + "Content: $contentId\n" + "\n*****Last good text raw*****\n" + window.plainEditorsLastGoodText[evt.editor.name + "_raw"] + "\n\n****Last good text****\n" + window.plainEditorsLastGoodText[evt.editor.name] + "\n\n**** Last good text ****\n" + window.plainEditorsLastGoodText[evt.editor.name] + "\n\n**** Last faulty text raw ****\n" + evt.editor.getSnapshot() + "\n\n***** Last faulty text ****\n" + evt.editor.getData() + "";
+									$.post("CreateEmail!executeV3.action", { "igSecurityCode": "$SecurityCode", "recipients": "losalo@unavarra.es", "from": "losalo@unavarra.es", "subject": "Infoglue WYSIWYG Debug", "message": messageDebug}, function(data) {  } );
+									
+									alert("ALERT! There was a problem in the WYSIWYG with an internal image or a link so we reverted to the state before the error. This version of the content is not saved so if you want to keep it please do. To help us fix this problem we have sent the administrators an email with debug information. Please direct all questions to them.");
+									window.isUndoed = true;
+									evt.editor.setData(window.plainEditorsLastGoodText[evt.editor.name]);
+									window.isUndoed = false;
+								}
+							}
+							else
+							{
+								window.plainEditorsLastGoodText[evt.editor.name] = evt.editor.getData();
+								window.plainEditorsLastGoodText[evt.editor.name + "_raw"] = evt.editor.getSnapshot();
+							}
+						});
+						
 					}
 					
 				#else
@@ -349,6 +387,15 @@
 				alert("$ui.getString("tool.contenttool.concurrentModificationLabel")");
 			#end
 			
+			#if($prefferedWYSIWYG == "ckeditor4")
+				setTimeout(function(){
+					if(window.waitingForInstances > 0)
+				    {
+				    	alert("Loading the WYSIWYGS took over 30 seconds. Saving could lead to problems.");
+						$(".save").prop('disabled', false);
+						$(".save").css("opacity", "1");
+					}}, 30000);
+			#end		
 		}	
 	
 		function addCategory(attributeName, selectName)
@@ -544,6 +591,8 @@
 		  		);
 			#end	
 			
+			window.wysiwygsAreLoaded = false;
+			
 			//alert("$stateChanged");
 			#if($stateChanged)
 			try
@@ -567,6 +616,9 @@
 		    });
 						
 			$("#editForm").submit(function () { return false; });			
+			
+			
+			window.wysiwygsAreLoaded = true;
 			
 			try
 			{
@@ -612,9 +664,9 @@
 		/*
 		 * This method is a hook
 		 */	
-		 	
+		 
 		function save()
-		{
+		{				
 			var selected = $("#tabsContainer").tabs( "option", "selected" );
 			//alert("selected:" + selected);
 			
@@ -671,7 +723,7 @@
 				isValid = true;
 				
 				#foreach($attribute in $contentTypeAttributes)
-	   				currentEditorId = currentEditorIdHash["${attribute.name}CurrentEditorId"];
+	   				var currentEditorId = currentEditorIdHash["${attribute.name}CurrentEditorId"];
 	   				if(currentEditorId)
 	   					document.getElementById("currentEditorId").value = currentEditorId;
 	   				
@@ -815,14 +867,11 @@
 		}
 
 		window.onbeforeunload = confirmExit;
-		var knownAction = true;
+		var knownAction = false;
 		function confirmExit()
 		{	
-			//alert(getDirty() + ":" + checkWYSIWYGDirty() + ":" + knownAction);
 			if ((getDirty() || checkWYSIWYGDirty()) && !knownAction)
 				return "$ui.getString("tool.contenttool.formIsDirtyWarning")";
-			else
-				return;
 		}
 		
 		function isFormDirty()

@@ -8542,9 +8542,9 @@ public class BasicTemplateController implements TemplateController
 	 * @param showInPublishedMode
 	 * @return
 	 */
-	public String getAssignPropertyBindingTag(String propertyName, boolean createNew, String html, boolean showInPublishedMode, boolean showDecorated, boolean keepExisting)
+	public String getAssignPropertyBindingTag(String propertyName, boolean createNew, String html, boolean showInPublishedMode, boolean showDecorated, boolean keepExisting, String extraClasses)
 	{
-		return getAssignPropertyBindingTag(propertyName, createNew, html, showInPublishedMode, showDecorated, null, true, keepExisting);
+		return getAssignPropertyBindingTag(propertyName, createNew, html, showInPublishedMode, showDecorated, null, true, keepExisting, extraClasses);
 	}
 
 	/**
@@ -8555,7 +8555,7 @@ public class BasicTemplateController implements TemplateController
 	 * @param showInPublishedMode
 	 * @return
 	 */
-	public String getAssignPropertyBindingTag(String propertyName, boolean createNew, String html, boolean showInPublishedMode, boolean showDecorated, String extraParameters, boolean hideComponentPropertiesOnLoad, boolean keepExisting)
+	public String getAssignPropertyBindingTag(String propertyName, boolean createNew, String html, boolean showInPublishedMode, boolean showDecorated, String extraParameters, boolean hideComponentPropertiesOnLoad, boolean keepExisting, String extraClasses)
 	{
 		String result = "";
 		
@@ -8726,13 +8726,18 @@ public class BasicTemplateController implements TemplateController
 		    else
 		    {
 			    String editOnSiteUrl = CmsPropertyHandler.getEditOnSiteUrl();
-
+			    
 			    String url = assignUrl;
-			    if(!createNew)
+			    if(!createNew) {
 			    	result = "<a href=\"#\" onclick=\"openInlineDivImpl('" + assignUrl + "', 900, 850, true, true); return false;\">" + html + "</a>";
-			    else
+			    } else {
+			    	if (extraClasses != null && !extraClasses.equalsIgnoreCase("")) {
+			    		createUrl = createUrl + "&extraClasses=" + extraClasses;
+			    		
+			    	}
 			    	result = "<a href=\"#\" onclick=\"openInlineDivImpl('" + createUrl + "', 900, 850, true, true); return false;\">" + html + "</a>";
-		    }
+			    }
+			}
 		}
 		catch(Exception e)
 		{

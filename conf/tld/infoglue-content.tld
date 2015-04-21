@@ -1304,9 +1304,13 @@
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
+        <attribute>
+            <name>extraClasses</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
     
-	
 	<tag>
 	    <name>remoteContentService</name>
 	    <tagclass>org.infoglue.deliver.taglib.content.RemoteContentServiceTag</tagclass>

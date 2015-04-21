@@ -273,51 +273,9 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 		    e.printStackTrace();
 		}
 		
-		this.availableLanguages = LanguageController.getController().getLanguageVOList(this.repositoryId);
-		
-        Map args = new HashMap();
-	    args.put("globalKey", "infoglue");
-	    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
-
-	    String disabledLanguagesString = ps.getString("siteNode_" + siteNodeId + "_disabledLanguages");
-	    logger.info("disabledLanguagesString:" + disabledLanguagesString);
-	    if(disabledLanguagesString != null && !disabledLanguagesString.equalsIgnoreCase(""))
-	    {
-	        String[] disabledLanguagesStringArray = disabledLanguagesString.split(",");
-	        for(int i=0; i<disabledLanguagesStringArray.length; i++)
-	        {
-	            try
-	            {
-		            LanguageVO languageVO = LanguageController.getController().getLanguageVOWithId(new Integer(disabledLanguagesStringArray[i]));
-		            logger.info("Adding languageVO to disabledLanguages:" + languageVO.getName());
-		    	    this.disabledLanguages.add(languageVO);
-	            }
-	            catch(Exception e)
-	            {
-	                logger.warn("An error occurred when we tried to get disabled language:" + e.getMessage(), e);
-	            }
-	        }
-	    }
-
-	    String enabledLanguagesString = ps.getString("siteNode_" + siteNodeId + "_enabledLanguages");
-	    logger.info("enabledLanguagesString:" + enabledLanguagesString);
-	    if(enabledLanguagesString != null && !enabledLanguagesString.equalsIgnoreCase(""))
-	    {
-	        String[] enabledLanguagesStringArray = enabledLanguagesString.split(",");
-	        for(int i=0; i<enabledLanguagesStringArray.length; i++)
-	        {
-	            try
-	            {
-		            LanguageVO languageVO = LanguageController.getController().getLanguageVOWithId(new Integer(enabledLanguagesStringArray[i]));
-		            logger.info("Adding languageVO to enabledLanguages:" + languageVO.getName());
-		    	    this.enabledLanguages.add(languageVO);
-	            }
-	            catch(Exception e)
-	            {
-	                logger.warn("An error occurred when we tried to get enabled language:" + e.getMessage(), e);
-	            }
-	        }
-	    }
+	 
+		this.disabledLanguages = SiteNodeController.getController().getDisabledLanguageVOListForSiteNode(siteNodeId);
+	    this.enabledLanguages = SiteNodeController.getController().getEnabledLanguageVOListForSiteNode(siteNodeId);
 	} 
 
 	protected void initializeSiteNodeCover(Integer siteNodeId, Database db) throws Exception
@@ -335,50 +293,10 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 		}
 		
 		this.availableLanguages = LanguageController.getController().getLanguageVOList(this.repositoryId, db);
-		
-        Map args = new HashMap();
-	    args.put("globalKey", "infoglue");
-	    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
+		this.disabledLanguages = SiteNodeController.getController().getDisabledLanguageVOListForSiteNode(siteNodeId);
+	    this.enabledLanguages = SiteNodeController.getController().getEnabledLanguageVOListForSiteNode(siteNodeId);
 
-	    String disabledLanguagesString = ps.getString("siteNode_" + siteNodeId + "_disabledLanguages");
-	    logger.info("disabledLanguagesString:" + disabledLanguagesString);
-	    if(disabledLanguagesString != null && !disabledLanguagesString.equalsIgnoreCase(""))
-	    {
-	        String[] disabledLanguagesStringArray = disabledLanguagesString.split(",");
-	        for(int i=0; i<disabledLanguagesStringArray.length; i++)
-	        {
-	            try
-	            {
-		            LanguageVO languageVO = LanguageController.getController().getLanguageVOWithId(new Integer(disabledLanguagesStringArray[i]), db);
-		            logger.info("Adding languageVO to disabledLanguages:" + languageVO.getName());
-		    	    this.disabledLanguages.add(languageVO);
-	            }
-	            catch(Exception e)
-	            {
-	                logger.warn("An error occurred when we tried to get disabled language:" + e.getMessage(), e);
-	            }
-	        }
-	    }
-
-	    String enabledLanguagesString = ps.getString("siteNode_" + siteNodeId + "_enabledLanguages");
-	    logger.info("enabledLanguagesString:" + enabledLanguagesString);
-	    if(enabledLanguagesString != null && !enabledLanguagesString.equalsIgnoreCase(""))
-	    {
-	        String[] enabledLanguagesStringArray = enabledLanguagesString.split(",");
-	        for(int i=0; i<enabledLanguagesStringArray.length; i++)
-	        {
-	            try
-	            {
-		            LanguageVO languageVO = LanguageController.getController().getLanguageVOWithId(new Integer(enabledLanguagesStringArray[i]), db);
-		            logger.info("Adding languageVO to enabledLanguages:" + languageVO.getName());
-		    	    this.enabledLanguages.add(languageVO);
-	            }
-	            catch(Exception e)
-	            {
-	                logger.warn("An error occurred when we tried to get enabled language:" + e.getMessage(), e);
-	            }
-	        }
-	    }
+	
 	} 
 
 /*    

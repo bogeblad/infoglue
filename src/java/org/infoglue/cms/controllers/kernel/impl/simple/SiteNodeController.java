@@ -4828,17 +4828,31 @@ public class SiteNodeController extends BaseController
 	
 	public List<LanguageVO> getEnabledLanguageVOListForSiteNode(Integer siteNodeId) throws SystemException, Exception
 	{ 
+		SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestSiteNodeVersionVO(siteNodeId);
+	
+		SiteNodeVO parentSiteNodeVO;
+		/*recursiv search for enabled languages*/
+		while (siteNodeVersionVO != null && siteNodeVersionVO.getDisableLanguages() == 2) {
+			parentSiteNodeVO = getParentSiteNode(siteNodeId);
+			siteNodeVersionVO  = SiteNodeVersionController.getController().getLatestSiteNodeVersionVO(parentSiteNodeVO.getId());
+		}
+		logger.info("Disabled languages for siteNodeVersion:" + siteNodeVersionVO.getDisableLanguages());
+		logger.info("The chosen sitenodeId:" + siteNodeVersionVO.getSiteNodeId());
+		
+		List<LanguageVO> enabledPageLanguages = new ArrayList<LanguageVO>();
+
     	Map args = new HashMap();
 	    args.put("globalKey", "infoglue");
 	    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
-	    List<LanguageVO> enabledPageLanguages = new ArrayList<LanguageVO>();
+	    
 	   
-	    String enabledLanguages = "" + ps.getString("siteNode_" + siteNodeId + "_enabledLanguages");
+	    String enabledLanguages = "" + ps.getString("siteNode_" + siteNodeVersionVO.getSiteNodeId() + "_enabledLanguages");
     	
-    	SiteNodeVO siteNodeVO = getSiteNodeVOWithId(siteNodeId);
+    	SiteNodeVO siteNodeVO = getSiteNodeVOWithId(siteNodeVersionVO.getSiteNodeId());
 		String[] enabledLanguageIdStringList = enabledLanguages.split(",");
 		//System.out.println("Enabled siteNodeVO.getRepositoryId() siteNodeId:" + siteNodeVO.getRepositoryId());
 		List<LanguageVO> repositoryLanguageVOList = LanguageController.getController().getLanguageVOList(siteNodeVO.getRepositoryId());
+
 		//System.out.println("Enabled repositoryLanguageVOList siteNodeId:" + repositoryLanguageVOList);
 		Integer enabledLanguageId = null;
 		LanguageVO enabledLanguageVO;
@@ -4858,7 +4872,7 @@ public class SiteNodeController extends BaseController
 			}
 		}
 	
-		return enabledPageLanguages;	
+		return enabledPageLanguages;
 	}
 
 	public List<LanguageVO> getDisabledLanguageVOListForSiteNode(Integer siteNodeId) throws SystemException, Exception

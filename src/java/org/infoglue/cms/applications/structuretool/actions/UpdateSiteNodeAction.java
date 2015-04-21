@@ -63,7 +63,7 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 	private Boolean isHidden;
 	private Integer disablePageCache;
 	private Integer disableEditOnSight;
-	private Integer disableLanguages = 1;
+	private Integer disableLanguages;
 	private Integer disableForceIdentityCheck;
 	private Integer forceProtocolChange;
 	private String contentType;
@@ -114,7 +114,7 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 				}	
 				
 				ceb.throwIfNotEmpty();
-	
+	System.out.println("AAAAAAAAAA:" + this.advanced);
 				SiteNodeVersionVO siteNodeVersionVO = null;
 				if(this.advanced != null && this.advanced.equals("true"))
 				{
@@ -146,7 +146,9 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 					siteNodeVersionVO.setPageCacheKey(currentSiteNodeVersionVO.getPageCacheKey());
 					siteNodeVersionVO.setPageCacheTimeout(currentSiteNodeVersionVO.getPageCacheTimeout());
 					siteNodeVersionVO.setDisableEditOnSight(currentSiteNodeVersionVO.getDisableEditOnSight());
-					siteNodeVersionVO.setDisableLanguages(this.disableLanguages);
+					System.out.println(this.disableLanguages);
+					if(disableLanguages != null)
+						siteNodeVersionVO.setDisableLanguages(this.disableLanguages);
 					siteNodeVersionVO.setDisablePageCache(currentSiteNodeVersionVO.getDisablePageCache());
 					siteNodeVersionVO.setDisableForceIdentityCheck(currentSiteNodeVersionVO.getDisableForceIdentityCheck());
 					siteNodeVersionVO.setForceProtocolChange(currentSiteNodeVersionVO.getForceProtocolChange());
@@ -369,6 +371,7 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 
 	public void setDisableLanguages(Integer disableLanguages)
 	{
+		System.out.println("disableLanguages:" + disableLanguages);
 		this.disableLanguages = disableLanguages;
 	}
 

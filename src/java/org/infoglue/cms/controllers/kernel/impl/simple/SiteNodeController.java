@@ -4830,11 +4830,15 @@ public class SiteNodeController extends BaseController
 	{ 
 		SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestSiteNodeVersionVO(siteNodeId);
 	
-		SiteNodeVO parentSiteNodeVO;
+		SiteNodeVO parentSiteNodeVO = null;
 		/*recursiv search for enabled languages*/
-		while (siteNodeVersionVO != null && siteNodeVersionVO.getDisableLanguages() == 2) {
-			parentSiteNodeVO = getParentSiteNode(siteNodeId);
-			siteNodeVersionVO  = SiteNodeVersionController.getController().getLatestSiteNodeVersionVO(parentSiteNodeVO.getId());
+		while (siteNodeVersionVO != null && siteNodeVersionVO.getDisableLanguages() == 2) 
+		{
+			parentSiteNodeVO = getParentSiteNode(siteNodeVersionVO.getSiteNodeId());
+			if(parentSiteNodeVO == null)
+				break;
+			
+			siteNodeVersionVO = SiteNodeVersionController.getController().getLatestSiteNodeVersionVO(parentSiteNodeVO.getId());
 		}
 		logger.info("Disabled languages for siteNodeVersion:" + siteNodeVersionVO.getDisableLanguages());
 		logger.info("The chosen sitenodeId:" + siteNodeVersionVO.getSiteNodeId());
@@ -4845,33 +4849,39 @@ public class SiteNodeController extends BaseController
 	    args.put("globalKey", "infoglue");
 	    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
 	    
-	   
-	    String enabledLanguages = "" + ps.getString("siteNode_" + siteNodeVersionVO.getSiteNodeId() + "_enabledLanguages");
-    	
-    	SiteNodeVO siteNodeVO = getSiteNodeVOWithId(siteNodeVersionVO.getSiteNodeId());
-		String[] enabledLanguageIdStringList = enabledLanguages.split(",");
-		//System.out.println("Enabled siteNodeVO.getRepositoryId() siteNodeId:" + siteNodeVO.getRepositoryId());
-		List<LanguageVO> repositoryLanguageVOList = LanguageController.getController().getLanguageVOList(siteNodeVO.getRepositoryId());
-
-		//System.out.println("Enabled repositoryLanguageVOList siteNodeId:" + repositoryLanguageVOList);
-		Integer enabledLanguageId = null;
-		LanguageVO enabledLanguageVO;
-		
-		if (enabledLanguageIdStringList[0].equalsIgnoreCase("")) 
-		{
-			enabledPageLanguages.addAll(repositoryLanguageVOList);
-		} 
-		else 
-		{
-			for (String enabledLanguageIdString : enabledLanguageIdStringList) 
-			{
-				//System.out.println("Enabled enabledLanguageIdString:" + enabledLanguageIdString);
-				enabledLanguageId = Integer.parseInt(enabledLanguageIdString);
-				enabledLanguageVO = (LanguageVO) LanguageController.getController().getLanguageVOWithId(enabledLanguageId);
-				enabledPageLanguages.add(enabledLanguageVO);
-			}
-		}
+	    String enabledLanguages = ps.getString("siteNode_" + siteNodeVersionVO.getSiteNodeId() + "_enabledLanguages");
+    	if(enabledLanguages != null)
+    	{
+	    	SiteNodeVO siteNodeVO = getSiteNodeVOWithId(siteNodeVersionVO.getSiteNodeId());
+			String[] enabledLanguageIdStringList = enabledLanguages.split(",");
+			//System.out.println("Enabled siteNodeVO.getRepositoryId() siteNodeId:" + siteNodeVO.getRepositoryId());
+			List<LanguageVO> repositoryLanguageVOList = LanguageController.getController().getLanguageVOList(siteNodeVO.getRepositoryId());
 	
+			//System.out.println("Enabled repositoryLanguageVOList siteNodeId:" + repositoryLanguageVOList);
+			Integer enabledLanguageId = null;
+			LanguageVO enabledLanguageVO;
+			
+			if (enabledLanguageIdStringList[0].equalsIgnoreCase("")) 
+			{
+				enabledPageLanguages.addAll(repositoryLanguageVOList);
+			} 
+			else 
+			{
+				for (String enabledLanguageIdString : enabledLanguageIdStringList) 
+				{
+					//System.out.println("Enabled enabledLanguageIdString:" + enabledLanguageIdString);
+					enabledLanguageId = Integer.parseInt(enabledLanguageIdString);
+					enabledLanguageVO = (LanguageVO) LanguageController.getController().getLanguageVOWithId(enabledLanguageId);
+					enabledPageLanguages.add(enabledLanguageVO);
+				}
+			}
+    	}
+    	else if(siteNodeVersionVO != null && siteNodeVersionVO.getDisableLanguages() == 2) //
+    	{
+	    	SiteNodeVO siteNodeVO = getSiteNodeVOWithId(siteNodeVersionVO.getSiteNodeId());
+    		enabledPageLanguages = LanguageController.getController().getLanguageVOList(siteNodeVO.getRepositoryId());
+    	}
+    	
 		return enabledPageLanguages;
 	}
 

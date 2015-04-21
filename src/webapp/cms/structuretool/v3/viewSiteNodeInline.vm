@@ -120,7 +120,13 @@
 	
 	function submitLanguageLimitations(select)
 	{
-
+		//alert($("#disableLanguagesCheckbox").prop('checked'));
+		if($("#disableLanguagesCheckbox").prop('checked'))
+			document.editForm.disableLanguages.value = "2";
+		else
+			document.editForm.disableLanguages.value = "1";
+		//alert($("#disableLanguages").val());
+		
 		document.editForm.submit();
 	}
 
@@ -287,13 +293,15 @@
 			<p>	
 				<label for="disableLanguages">
 		
+				##set($disableLanguageCheckBoxValue = 2)
+				
 				#if($!disableLanguages != 2)
 					#set($disableLanguageCheckBoxValue = 2)
 				#else
 					#set($disableLanguageCheckBoxValue = 1)
-					
 				#end
-				<input type="checkbox" name="disableLanguages"  onchange="submitLanguageLimitations(this);" value="$disableLanguageCheckBoxValue" #if($!disableLanguages == 2)checked="1"#end>
+				
+				<input type="checkbox" id="disableLanguagesCheckbox" name="disableLanguagesCheckbox" onchange="submitLanguageLimitations(this);" value="$disableLanguageCheckBoxValue" #if($!disableLanguages == 2)checked="1"#end>
 				$ui.getString("tool.common.toggleLangaugeInheritanceLabel")</label>
 			</p>
 
@@ -354,6 +362,7 @@
 
     	#end
 		
+		<input type="hidden" name="disableLanguages" value="$!disableLanguages">
 		<input type="hidden" name="siteNodeId" value="$!siteNodeId">
 		<input type="hidden" name="isBranch" value="$!isBranch">
 		<input type="hidden" name="repositoryId" value="$!repositoryId">

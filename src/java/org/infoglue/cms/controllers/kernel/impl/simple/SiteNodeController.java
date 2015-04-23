@@ -4882,10 +4882,10 @@ public class SiteNodeController extends BaseController
 		return siteNodeVersionVO;
 	}
 	
-	public String getInheritedLanguageSiteNodePath(Integer siteNodeId, Database db) throws SystemException, Exception
+	public String getInheritedLanguageSiteNodePath(Integer siteNodeId) throws SystemException, Exception
 	{ 
 		SiteNodeVersionVO siteNodeVersionVO = getInheritedLanguageSitenodeVersionVO(siteNodeId);
-		String path = SiteNodeController.getController().getSiteNodePath(siteNodeVersionVO.getSiteNodeId(), db);
+		String path = SiteNodeController.getController().getSiteNodePath(siteNodeVersionVO.getSiteNodeId(), true, false);
 
 		return path;
 	}

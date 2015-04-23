@@ -274,10 +274,10 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 		    e.printStackTrace();
 		}
 		
-		Database db = CastorDatabaseService.getDatabase();
+		
 		this.disabledLanguages = SiteNodeController.getController().getDisabledLanguageVOListForSiteNode(siteNodeId);
 	    this.enabledLanguages = SiteNodeController.getController().getEnabledLanguageVOListForSiteNode(siteNodeId);
-	    this.inheritedLanguageSiteNodePath = SiteNodeController.getController().getInheritedLanguageSiteNodePath(siteNodeId, db);
+	    this.inheritedLanguageSiteNodePath = SiteNodeController.getController().getInheritedLanguageSiteNodePath(siteNodeId);
 	   
 	  
 	} 
@@ -299,7 +299,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 		this.availableLanguages = LanguageController.getController().getLanguageVOList(this.repositoryId, db);
 		this.disabledLanguages = SiteNodeController.getController().getDisabledLanguageVOListForSiteNode(siteNodeId);
 	    this.enabledLanguages = SiteNodeController.getController().getEnabledLanguageVOListForSiteNode(siteNodeId);
-	    this.inheritedLanguageSiteNodePath = SiteNodeController.getController().getInheritedLanguageSiteNodePath(siteNodeId, db);
+	    this.inheritedLanguageSiteNodePath = SiteNodeController.getController().getInheritedLanguageSiteNodePath(siteNodeId);
 	
 	} 
 

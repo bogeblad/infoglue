@@ -397,7 +397,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
   	
   	private String invokeCommand() throws Exception 
   	{
-  		Timer t = new Timer();
+  		//Timer t = new Timer();
   		
         //ThreadMonitor tm = null;
   		//if(getRequest().getParameter("trackThread") != null && getRequest().getParameter("trackThread").equals("true"))

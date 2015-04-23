@@ -24,6 +24,7 @@
 package org.infoglue.cms.applications.structuretool.actions;
 
 import org.infoglue.cms.applications.cmstool.actions.ViewCMSAbstractToolAction;
+import org.infoglue.cms.util.CmsPropertyHandler;
 
 /**
  * This class implements the action class for the framed page in the siteNode tool.
@@ -52,6 +53,8 @@ public class ViewStructureToolAction extends ViewCMSAbstractToolAction
 		if(repositoryId != null)
 		{
 	   		getHttpSession().setAttribute("structureRepositoryId", repositoryId);
+	   		if(CmsPropertyHandler.getUseGlobalRepositoryChange())
+		   		getHttpSession().setAttribute("contentRepositoryId", repositoryId);
 		}
     }
 

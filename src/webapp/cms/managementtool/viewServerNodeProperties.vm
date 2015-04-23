@@ -437,6 +437,8 @@
 	
 				#selectFieldCSS("ServerNode.property.defaultSystemTheme" "defaultSystemTheme" $this.getPropertyValue('defaultSystemTheme') $!cmsPH.availableThemesAsMap "$!cmsPH.defaultSystemTheme")
 	
+				#yesNoDropDownWithInheritCSS("ServerNode.property.useGlobalRepositoryChange" "useGlobalRepositoryChange" "$this.getPropertyValue('useGlobalRepositoryChange')" "$!cmsPH.useGlobalRepositoryChange")
+	
 				#set($customContentTypeIcons = $this.getDataPropertyValue("customContentTypeIcons"))
 				#set($customContentTypeIcons = $customContentTypeIcons.replaceAll("&amp;", "&amp;amp;"))
 				#editPropertyTextAreaCSS("ServerNode.property.customContentTypeIcons" "customContentTypeIcons" "$customContentTypeIcons" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.customContentTypeIcons")

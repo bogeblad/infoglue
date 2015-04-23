@@ -3002,6 +3002,13 @@ public class CmsPropertyHandler
 		return Boolean.parseBoolean(allowInternalCallsBasedOnIP);
 	}
 
+	public static boolean getUseGlobalRepositoryChange() 
+	{
+		String useGlobalRepositoryChange = getServerNodeProperty("useGlobalRepositoryChange", true, "false");
+		
+		return Boolean.parseBoolean(useGlobalRepositoryChange);
+	}
+	
 	private static Boolean useSQLServerDialect = null;
 	public static boolean getUseSQLServerDialect()
 	{

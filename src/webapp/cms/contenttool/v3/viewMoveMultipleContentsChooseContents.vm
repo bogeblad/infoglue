@@ -235,10 +235,9 @@
       	}
 	
 		$(document).ready(function() {
-			window.resizeTo(900,800);
 			init();
 		});
-	    
+	-->    
 	</script>
 	
 #end

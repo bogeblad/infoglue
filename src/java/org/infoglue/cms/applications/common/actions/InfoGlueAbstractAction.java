@@ -1667,7 +1667,12 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	{
 		return RepositoryController.getController().getRepositoryVOWithId(getRepositoryIdImpl()).getName();
 	}
-	
+
+	public Boolean getUseGlobalRepositoryChange() throws Exception
+	{
+		return CmsPropertyHandler.getUseGlobalRepositoryChange();
+	}
+
 	/**
 	 * This method gets a property from the extra properties in the repository currently active
 	 */

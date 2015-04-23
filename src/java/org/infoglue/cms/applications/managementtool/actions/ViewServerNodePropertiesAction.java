@@ -401,6 +401,8 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 
 	    populate(ps, "doNotUseTrashcanForRepositories");
 
+	    populate(ps, "useGlobalRepositoryChange");
+
 	    try
 	    {
 	    	UserControllerProxy.getController().updateAnonymousUserPassword();

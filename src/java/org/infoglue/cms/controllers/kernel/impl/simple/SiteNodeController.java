@@ -107,6 +107,7 @@ import org.infoglue.cms.util.XMLHelper;
 import org.infoglue.cms.util.mail.MailServiceFactory;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
 import org.infoglue.deliver.controllers.kernel.impl.simple.LanguageDeliveryController;
+import org.infoglue.deliver.controllers.kernel.impl.simple.NodeDeliveryController;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Timer;
@@ -4828,18 +4829,8 @@ public class SiteNodeController extends BaseController
 	
 	public List<LanguageVO> getEnabledLanguageVOListForSiteNode(Integer siteNodeId) throws SystemException, Exception
 	{ 
-		SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestSiteNodeVersionVO(siteNodeId);
-	
-		SiteNodeVO parentSiteNodeVO = null;
-		/*recursiv search for enabled languages*/
-		while (siteNodeVersionVO != null && siteNodeVersionVO.getDisableLanguages() == 2) 
-		{
-			parentSiteNodeVO = getParentSiteNode(siteNodeVersionVO.getSiteNodeId());
-			if(parentSiteNodeVO == null)
-				break;
-			
-			siteNodeVersionVO = SiteNodeVersionController.getController().getLatestSiteNodeVersionVO(parentSiteNodeVO.getId());
-		}
+		SiteNodeVersionVO siteNodeVersionVO = getInheritedLanguageSitenodeVersionVO(siteNodeId);
+
 		logger.info("Disabled languages for siteNodeVersion:" + siteNodeVersionVO.getDisableLanguages());
 		logger.info("The chosen sitenodeId:" + siteNodeVersionVO.getSiteNodeId());
 		
@@ -4884,7 +4875,40 @@ public class SiteNodeController extends BaseController
     	
 		return enabledPageLanguages;
 	}
+	public SiteNodeVersionVO getInheritedLanguageSitenodeVersionVO(Integer siteNodeId) throws SystemException, Exception
+	{ 
+		SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestSiteNodeVersionVO(siteNodeId);
+		
+		SiteNodeVO parentSiteNodeVO = null;
+		/*recursiv search for enabled languages*/
+		while (siteNodeVersionVO != null && siteNodeVersionVO.getDisableLanguages() == 2) 
+		{
+			parentSiteNodeVO = getParentSiteNode(siteNodeVersionVO.getSiteNodeId());
+			if(parentSiteNodeVO == null)
+				break;
+			
+			siteNodeVersionVO = SiteNodeVersionController.getController().getLatestSiteNodeVersionVO(parentSiteNodeVO.getId());
+		}
+		/*
+		SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestSiteNodeVersionVO(siteNodeId);
+		SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersionVO.getSiteNodeId());
+		
+		while (siteNodeVersionVO != null && siteNodeVersionVO.getDisableLanguages() == 2) {
+			siteNodeVO = getParentSiteNode(siteNodeVO.getSiteNodeId());
+			siteNodeVersionVO  = SiteNodeVersionController.getController().getLatestSiteNodeVersionVO(siteNodeVO.getId());
+		}
+		*/
+		return siteNodeVersionVO;
+	}
+	
+	public String getInheritedLanguageSiteNodePath(Integer siteNodeId) throws SystemException, Exception
+	{ 
+		SiteNodeVersionVO siteNodeVersionVO = getInheritedLanguageSitenodeVersionVO(siteNodeId);
+		String path = SiteNodeController.getController().getSiteNodePath(siteNodeVersionVO.getSiteNodeId(), true, false);
 
+		return path;
+	}
+	
 	public List<LanguageVO> getDisabledLanguageVOListForSiteNode(Integer siteNodeId) throws SystemException, Exception
 	{ 
 

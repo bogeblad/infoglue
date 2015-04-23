@@ -281,9 +281,8 @@
 				</p>
 			#end
 	*#
-						
+				
 		#elseif($showPageLanguages == "true")
-
 			<p>	
 				<label for="disableLanguages">
 		
@@ -294,7 +293,7 @@
 					
 				#end
 				<input type="checkbox" name="disableLanguages"  onchange="submitLanguageLimitations(this);" value="$disableLanguageCheckBoxValue" #if($!disableLanguages == 2)checked="1"#end>
-				$ui.getString("tool.common.toggleLangaugeInheritanceLabel")</label>
+				#if($!disableLanguages != 2)$ui.getString("tool.common.toggleLangaugeInheritanceLabel") #else$ui.getString("tool.common.toggleLangaugeInheritanceFromLabel") $inheritedLanguageSiteNodePath#end</label>
 			</p>
 
 			<p style="display:none;">
@@ -317,7 +316,7 @@
 			#if($publicationMessage != "")
 				<p><font color='red'>$publicationMessage</font></p>
 			#end
-			
+		
 			#if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false, false))
 			<p>					
 				#editTextFieldCSS("SiteNode.name" "name" $!name "30" true false false "normaltextfield")
@@ -351,9 +350,8 @@
 			#end
 		
 			<p>$ui.getString("tool.contenttool.versionLastUpdatedByLabel") $siteNodeVersionVO.versionModifier</p>
-
     	#end
-		
+	
 		<input type="hidden" name="siteNodeId" value="$!siteNodeId">
 		<input type="hidden" name="isBranch" value="$!isBranch">
 		<input type="hidden" name="repositoryId" value="$!repositoryId">

@@ -2,6 +2,7 @@
 <html>
 <head>
 	<script type="text/javascript">
+
 		function refreshCaller()
 		{
 			if(window.opener)
@@ -28,6 +29,7 @@
 				parent.location.reload();
 			}
 		}
+	
 		function refreshCallerWindow()
 		{
 			try 
@@ -214,7 +216,7 @@
 			}
 			catch(e) {console.log("e:" + e);}
 		}
-	
+		
 		function denyPublication(eventId)
 		{
 			try
@@ -397,8 +399,8 @@
 			 			var configObject = eval('(' + configString + ')');
 				
 						CKEDITOR.replace( plainTextAreaName, configObject);
-					}			
-					
+					}
+						
 				#else
 					for (var i in plainEditors) 
 					{
@@ -1312,6 +1314,7 @@
 	<div style="clear: both;"></div>
 
 	<div id="allDivs">
+
 		<div id="tabsContainer" class="cleanTopDiv" style="#if($translate == false)width: 100%;#else width: 550px; #end float:left;">
 			<div id="level-1">
 				<ul class="level-1">
@@ -1331,7 +1334,7 @@
 								#if($hasRelatedSiteNodes)
 
 									<p class="has-references" id="has-references">$ui.getString('tool.contenttool.contentVersionHasReferencePopup')<a href="#" id="contentversion-has-reference-popup-link" onclick="closeDivById('has-references'); return false;">$ui.getString('tool.contenttool.close')</a></p>	
-							
+																		
 								#end
 							</li>
 						#end
@@ -1434,11 +1437,8 @@
 							#if(!$translate && $availableLanguages.size() > 1)
 
 								#foreach($languageVO in $availableLanguages)
-									#foreach($disabledLanguageVO in $disabledLanguagesForThisSite) 
-										#if ($disabledLanguageVO.id == $languageVO.id) 
+									#foreach($disabledLanguageVO in $disabledLanguagesForThisSite) #if ($disabledLanguageVO.id == $languageVO.id) 
 											#set($currentSiteVersionTabIsDisabled = true)	
-										#else
-											#set($currentSiteVersionTabIsDisabled = false)	
 										#end
 									#end
 									<li class="ui-state-default #if($languageId == $languageVO.id)ui-tabs-selected#end #if ($currentSiteVersionTabIsDisabled) disabled-language-tab#end" ><a href="#" #if ($currentSiteVersionTabIsDisabled) title='$ui.getString('tool.structuretool.createSiteNode.languageIsDisabled')' #end onclick="changeLanguage($contentId, $languageVO.id);" >
@@ -1503,68 +1503,67 @@
 								</p>
 							#end
 						#end
-
+					
+		
 						<div id="contentVersionText">
 							#if($hasMandatoryAssets)
 							<table class="mandatory-assets">
-							<tbody>
-							<tr>
-							<td>
-
-									<span class="attributeTitle">$ui.getString('tool.contenttool.assetsTab')</span><br  />
-									
-									#if($inheritedDigitalAssets.size() < 1)
-										#if($contentVersionVO.id)
-											<a href="#" onclick="openInlineDiv('ViewDigitalAsset.action?contentVersionId=$contentVersionVO.id', 550, 500, true, true,'');">$ui.getString("tool.contenttool.uploadNewAttachment")</a>
-										#end
-									#end
-									#set($counter = 0)
-									#foreach($digitalAsset in $inheritedDigitalAssets)
-										#set($digitalAssetUrl = $this.getDigitalAssetUrl($digitalAsset.digitalAssetId))
-										<div class="imgBox">
-											
-											<div class="imgBoxTop" id="digitalAsset$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')" #if($assetKey == '$digitalAsset.assetKey')"  #end>
-												<div id="imgBoxTopInner">
-													<input type="hidden" id="digitalAsset$formatter.encodeURI($formatter.encodeURI($digitalAsset.assetKey, 'utf-8'), 'utf-8')" value="$digitalAssetUrl">
-													#set($singleEncodedAssetKey = "$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')")
-													#set($doubleEncodedAssetKey = "$formatter.encodeURI($formatter.encodeURI($digitalAsset.assetKey, 'utf-8'), 'utf-8')")
-													#set($thumbnailImageUrl = "$this.getDigitalAssetThumbnailUrl($digitalAsset.digitalAssetId, 100, 60, 'ffffff', 'center', 'middle', 100, 60, 75)")
-													
-														<img #if($contentId)ondblclick="onOk();" onclick="markAsset(this, $!contentId, '$singleEncodedAssetKey', '$singleEncodedAssetKey', '$thumbnailImageUrl');"#end src="$thumbnailImageUrl" alt="$digitalAsset.assetKey ($digitalAsset.assetContentType - $formatter.formatFileSize($digitalAsset.assetFileSize))" />
-													
-													#if($showSelectButtonByEachImage && $contentId)<a href="javascript:markAsset(this, $!contentId, '$doubleEncodedAssetKey', '$doubleEncodedAssetKey', '$thumbnailImageUrl');onOk();"><b>Add asset to selection</b></a>#end
-													#if($assetKey == $digitalAsset.assetKey)
-														<script type="text/javascript">
-														<!--
-															var firstAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
-														-->
-														</script>	
-													#else
-														#if($counter == 0 && (!$assetKey || $!assetKey == ''))
-															<script type="text/javascript">
-															<!--
-																var firstAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
-															-->
-															</script>
-														#end
+								<tbody>
+									<tr>
+										<td>
+												<span class="attributeTitle">$ui.getString('tool.contenttool.assetsTab')</span><br  />
+							
+												#if($inheritedDigitalAssets.size() < 1)
+													#if($contentVersionVO.id)
+														<a href="#" onclick="openInlineDiv('ViewDigitalAsset.action?contentVersionId=$contentVersionVO.id', 550, 500, true, true,'');">$ui.getString("tool.contenttool.uploadNewAttachment")</a>
 													#end
-													<script type="text/javascript">
-													<!--
-														var lastAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
-													-->
-													</script>	
-													#set($counter = $counter + 1)
-												</div>
-											</div>
-											<div class="imgBoxBottom">
-												<a  href="#" onclick="openInlineDiv('../infoglueCMS/ViewDigitalAsset!update.action?contentVersionId=$!contentVersionId&digitalAssetId=$digitalAsset.digitalAssetId', 600, 800, true, true, '');" title="$ui.getString("tool.contenttool.updateAttachment")">$ui.getString("tool.contenttool.updateAttachment")</a>
-												
-											</div>
-										</div>
-									#end
-								</td>
-								</tr>
-								</tbody>
+												#end
+												#set($counter = 0)
+												#foreach($digitalAsset in $inheritedDigitalAssets)
+													#set($digitalAssetUrl = $this.getDigitalAssetUrl($digitalAsset.digitalAssetId))
+													<div class="imgBox">
+											
+														<div class="imgBoxTop" id="digitalAsset$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')" #if($assetKey == '$digitalAsset.assetKey')"  #end>
+															<div id="imgBoxTopInner">
+																<input type="hidden" id="digitalAsset$formatter.encodeURI($formatter.encodeURI($digitalAsset.assetKey, 'utf-8'), 'utf-8')" value="$digitalAssetUrl">
+																#set($singleEncodedAssetKey = "$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')")
+																#set($doubleEncodedAssetKey = "$formatter.encodeURI($formatter.encodeURI($digitalAsset.assetKey, 'utf-8'), 'utf-8')")
+																#set($thumbnailImageUrl = "$this.getDigitalAssetThumbnailUrl($digitalAsset.digitalAssetId, 100, 60, 'ffffff', 'center', 'middle', 100, 60, 75)")
+																
+																	<img #if($contentId)ondblclick="onOk();" onclick="markAsset(this, $!contentId, '$singleEncodedAssetKey', '$singleEncodedAssetKey', '$thumbnailImageUrl');"#end src="$thumbnailImageUrl" alt="$digitalAsset.assetKey ($digitalAsset.assetContentType - $formatter.formatFileSize($digitalAsset.assetFileSize))" />
+																
+																#if($showSelectButtonByEachImage && $contentId)<a href="javascript:markAsset(this, $!contentId, '$doubleEncodedAssetKey', '$doubleEncodedAssetKey', '$thumbnailImageUrl');onOk();"><b>Add asset to selection</b></a>#end
+																#if($assetKey == $digitalAsset.assetKey)
+																	<script type="text/javascript">
+																	<!--
+																		var firstAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
+																	-->
+																	</script>	
+																#else
+																	#if($counter == 0 && (!$assetKey || $!assetKey == ''))
+																		<script type="text/javascript">
+																		<!--
+																			var firstAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
+																		-->
+																		</script>
+																	#end
+																#end
+																<script type="text/javascript">
+																<!--
+																	var lastAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
+																-->
+																</script>	
+																#set($counter = $counter + 1)
+															</div>
+														</div>
+														<div class="imgBoxBottom">
+															<a  href="#" onclick="openInlineDiv('../infoglueCMS/ViewDigitalAsset!update.action?contentVersionId=$!contentVersionId&digitalAssetId=$digitalAsset.digitalAssetId', 600, 800, true, true, '');" title="$ui.getString("tool.contenttool.updateAttachment")">$ui.getString("tool.contenttool.updateAttachment")</a>
+														</div>
+													</div>
+												#end
+											</td>
+										</tr>
+									</tbody>
 								</table>
 							#end
 							<form method="post" name="editForm" id="editForm" action="UpdateContentVersion!standalone.action" style="float:left; width: 95%">

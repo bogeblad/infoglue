@@ -96,6 +96,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	private List disabledLanguages 			= new ArrayList();
 	private List enabledLanguages 			= new ArrayList();
 	private List referencingBeanList 		= new ArrayList();
+	private String inheritedLanguageSiteNodePath;
 	
 	private SiteNodeVO siteNodeVO;
 	private SiteNodeVersionVO siteNodeVersionVO;
@@ -273,9 +274,12 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 		    e.printStackTrace();
 		}
 		
-	 
+		
 		this.disabledLanguages = SiteNodeController.getController().getDisabledLanguageVOListForSiteNode(siteNodeId);
 	    this.enabledLanguages = SiteNodeController.getController().getEnabledLanguageVOListForSiteNode(siteNodeId);
+	    this.inheritedLanguageSiteNodePath = SiteNodeController.getController().getInheritedLanguageSiteNodePath(siteNodeId);
+	   
+	  
 	} 
 
 	protected void initializeSiteNodeCover(Integer siteNodeId, Database db) throws Exception
@@ -295,7 +299,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 		this.availableLanguages = LanguageController.getController().getLanguageVOList(this.repositoryId, db);
 		this.disabledLanguages = SiteNodeController.getController().getDisabledLanguageVOListForSiteNode(siteNodeId);
 	    this.enabledLanguages = SiteNodeController.getController().getEnabledLanguageVOListForSiteNode(siteNodeId);
-
+	    this.inheritedLanguageSiteNodePath = SiteNodeController.getController().getInheritedLanguageSiteNodePath(siteNodeId);
 	
 	} 
 
@@ -1097,7 +1101,10 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
     {
         return dest;
     }
-    
+    public String getInheritedLanguageSiteNodePath()
+    {
+        return inheritedLanguageSiteNodePath;
+    }
     public List getReferenceBeanList()
     {
         return referenceBeanList;

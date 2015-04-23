@@ -41,7 +41,7 @@
 	
 			window.close();
 		}
-		
+	
 		function submitToPublish()
 		{
 			var returnAddress = "$formatter.encodeURI("ViewContentVersion!standalone.action?contentId=$contentId&languageId=$languageId&closeOnLoad=true", 'UTF-8')";
@@ -285,7 +285,7 @@
 			
 			return isDirty;
 		}
-		
+	
 		//*******************************************
 		// This function changes language version
 		//*******************************************
@@ -398,7 +398,7 @@
 				
 						CKEDITOR.replace( plainTextAreaName, configObject);
 					}			
-					
+				
 				#else
 					for (var i in plainEditors) 
 					{
@@ -1522,7 +1522,7 @@
 									#foreach($digitalAsset in $inheritedDigitalAssets)
 										#set($digitalAssetUrl = $this.getDigitalAssetUrl($digitalAsset.digitalAssetId))
 										<div class="imgBox">
-											
+										
 											<div class="imgBoxTop" id="digitalAsset$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')" #if($assetKey == '$digitalAsset.assetKey')"  #end>
 												<div id="imgBoxTopInner">
 													<input type="hidden" id="digitalAsset$formatter.encodeURI($formatter.encodeURI($digitalAsset.assetKey, 'utf-8'), 'utf-8')" value="$digitalAssetUrl">
@@ -1557,8 +1557,11 @@
 												</div>
 											</div>
 											<div class="imgBoxBottom">
+											#if ($contentVersionVO) 
 												<a  href="#" onclick="openInlineDiv('../infoglueCMS/ViewDigitalAsset!update.action?contentVersionId=$!contentVersionId&digitalAssetId=$digitalAsset.digitalAssetId', 600, 800, true, true, '');" title="$ui.getString("tool.contenttool.updateAttachment")">$ui.getString("tool.contenttool.updateAttachment")</a>
-												
+											#else
+												<p>$ui.getString('tool.contenttool.saveToAddAttachment')</p>
+											#end
 											</div>
 										</div>
 									#end

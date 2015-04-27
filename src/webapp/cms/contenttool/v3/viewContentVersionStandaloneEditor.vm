@@ -706,11 +706,7 @@
 		    		$("#pageHistoryFrame").get(0).contentWindow.reactivate();
 		    #end
 	    }
-		function closeDivById(divToClose)
-	    {
-			 document.getElementById(divToClose).style.display = 'none';
-			 
-	    }	
+
 	    function openAnchorUrl(anchorValue)
 	    {
 			var anchorUrl = window.location.href + "&anchor=" + anchorValue;
@@ -1032,7 +1028,7 @@
 							<li><a href="#contentReferencesDiv"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a>
 								#if($hasRelatedSiteNodes)
 
-									<p class="has-references" id="has-references">$ui.getString('tool.contenttool.contentVersionHasReferencePopup')<a href="#" id="contentversion-has-reference-popup-link" onclick="closeDivById('has-references'); return false;">$ui.getString('tool.contenttool.close')</a></p>	
+									<p class="has-references" id="has-references">$ui.getString('tool.contenttool.contentVersionHasReferencePopup')</p>	
 							
 								#end
 							</li>

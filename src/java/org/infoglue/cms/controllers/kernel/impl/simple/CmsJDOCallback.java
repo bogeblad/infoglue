@@ -368,7 +368,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 					ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentVersion.getContentId(), true);
 					if(contentVO.getContentTypeDefinitionId() == null || (
 					   contentVO.getContentTypeDefinitionId().equals(htmlTemplateMetaInfoCTDVO.getId()) ||
-					   contentVO.getContentTypeDefinitionId().equals(pagePartTemplateMetaInfoCTDVO.getId())))
+					   (pagePartTemplateMetaInfoCTDVO != null && contentVO.getContentTypeDefinitionId().equals(pagePartTemplateMetaInfoCTDVO.getId()))))
 					{
 						ComponentController.getController().reIndexComponentContentsDelayed(contentVersion.getContentId());
 					}
@@ -1280,7 +1280,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 					ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentVersion.getContentId(), true);
 					if(contentVO.getContentTypeDefinitionId() == null || (
 					   contentVO.getContentTypeDefinitionId().equals(htmlTemplateMetaInfoCTDVO.getId()) ||
-					   contentVO.getContentTypeDefinitionId().equals(pagePartTemplateMetaInfoCTDVO.getId())))
+					   (pagePartTemplateMetaInfoCTDVO != null && contentVO.getContentTypeDefinitionId().equals(pagePartTemplateMetaInfoCTDVO.getId()))))
 					{
 						ComponentController.getController().reIndexComponentContentsDelayed(contentVersion.getContentId());
 					}

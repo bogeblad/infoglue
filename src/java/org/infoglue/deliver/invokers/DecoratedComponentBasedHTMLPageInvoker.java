@@ -2040,7 +2040,8 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		sb.append("			var hideComponentPropertiesOnLoad = QueryString(\"hideComponentPropertiesOnLoad\");\n");
 		sb.append("			if(activatedComponentId && activatedComponentId == componentId && hideComponentPropertiesOnLoad != 'true'){\n"); 
 		if(accessablePropertyIndex > 4)
-			sb.append("				showComponentProperties(\"component\" + componentId + \"Properties\");}\n"); 
+			sb.append("				showComponentProperties(\"component\" + componentId + \"Properties\");\n"); 
+		sb.append("			}");
 		sb.append("			$('#component" + componentId + "PropertiesHandle').css('cursor', 'move');\n");
 		sb.append("			try {$('#component" + componentId + "Properties').draggable({handle: theHandle, cursor: 'move', distance: 10});}catch(err) {} \n");
 		sb.append("		});\n");

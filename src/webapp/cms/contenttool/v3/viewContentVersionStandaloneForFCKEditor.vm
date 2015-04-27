@@ -1067,7 +1067,7 @@
 			<input type="hidden" name="contentVersionId" value="$!contentVersionId"/>
 			#end
 			<input type="hidden" name="repositoryId" value="$!repositoryId"/>
-		
+			<input type="hidden" id="extraClasses" name="extraClasses" value="$!extraClasses"/>
 			<input type="hidden" id="versionValue" name="versionValue" value=""/>
 			<input type="hidden" id="currentEditorId" name="currentEditorId" value=""/>
 			<input type="hidden" id="attributeName" name="attributeName" value="$attributeName"/>

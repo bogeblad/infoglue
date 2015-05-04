@@ -297,7 +297,7 @@
 			
 			if ((!getDirty() && !checkWYSIWYGDirty()) || confirm('$ui.getString("tool.contenttool.languageVersionChangeWarning")'))
 			{
-				window.location.href="ViewContentVersion!standalone.action?contentId=" + contentId +  "&extraClasses=$!extraClasses&languageId=" + languageId + "&attributeName=" + attributeName ;
+				window.location.href="ViewContentVersion!standalone.action?contentId=" + contentId +  "&extraClasses=$!extraClasses&saveAndExitURL=$!saveAndExitURL&languageId=" + languageId + "&attributeName=" + attributeName;
 			}
 			else
 			{

@@ -163,7 +163,6 @@ public class VelocityTemplateProcessor
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
 			logger.error("Error rendering template[" + componentName + "]. You should fix this. Find more information in the warning log.");
 			logger.warn("Error rendering template:" + e.getMessage(), e);
 			logger.info("templateAsString: \n" + (templateAsString.length() > 500 ? templateAsString.substring(0, 500) + "... (template truncated)." : templateAsString));

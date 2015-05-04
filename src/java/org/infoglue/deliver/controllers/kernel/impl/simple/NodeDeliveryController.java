@@ -44,6 +44,7 @@ import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
@@ -2983,7 +2984,9 @@ public class NodeDeliveryController extends BaseDeliveryController
 							{
 								String localizedIsHidden = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, siteNode.getMetaInfoContentId(), languageId, "HideInNavigation", siteNode.getId(), true, deliveryContext, UserControllerProxy.getController().getUser(CmsPropertyHandler.getAnonymousUser()), false, true);
 								String localizedSortOrder = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, siteNode.getMetaInfoContentId(), languageId, "SortOrder", siteNode.getId(), true, deliveryContext, UserControllerProxy.getController().getUser(CmsPropertyHandler.getAnonymousUser()), false, true);
-
+								if(localizedSortOrder == null || localizedSortOrder.equals(""))
+									localizedSortOrder = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, siteNode.getMetaInfoContentId(), languageId, "sortOrder", siteNode.getId(), true, deliveryContext, UserControllerProxy.getController().getUser(CmsPropertyHandler.getAnonymousUser()), false, true);
+								
 					        	if(localizedIsHidden != null/* && !localizedIsHidden.equals("")*/)
 								{
 									if(localizedIsHidden.equals("true"))

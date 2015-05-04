@@ -1473,7 +1473,9 @@ public class SiteNodeController extends BaseController
 				{
 					String localizedIsHidden = ContentVersionController.getContentVersionController().getAttributeValue(latestVersionVO, "HideInNavigation", false);
 					String localizedSortOrder = ContentVersionController.getContentVersionController().getAttributeValue(latestVersionVO, "SortOrder", false);
-		
+					if(localizedSortOrder == null || localizedSortOrder.equals(""))
+						localizedSortOrder = ContentVersionController.getContentVersionController().getAttributeValue(latestVersionVO, "sortOrder", false);
+					
 					//System.out.println("localizedIsHidden:" + localizedIsHidden);
 					//System.out.println("localizedSortOrder:" + localizedSortOrder);
 					if(localizedIsHidden != null/* && !localizedIsHidden.equals("")*/)
@@ -4198,7 +4200,10 @@ public class SiteNodeController extends BaseController
 					{
 						ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(childSiteNodeVO.getMetaInfoContentId(), sortLanguageId, db);	
 						if(cvVO != null)
+						{
 							ContentVersionController.getContentVersionController().updateAttributeValue(cvVO.getContentVersionId(), "SortOrder", "" + index, infoGluePrincipal, db, true);
+							ContentVersionController.getContentVersionController().updateAttributeValue(cvVO.getContentVersionId(), "sortOrder", "" + index, infoGluePrincipal, db, true);
+						}
 					}
 					//}
 				}
@@ -4286,6 +4291,9 @@ public class SiteNodeController extends BaseController
     						if(cvVO != null)
     						{
     							String localizedSortOrderString = ContentVersionController.getContentVersionController().getAttributeValue(cvVO.getId(), "SortOrder", false);
+    							if(localizedSortOrderString == null || localizedSortOrderString.equals(""))
+    								localizedSortOrderString = ContentVersionController.getContentVersionController().getAttributeValue(cvVO.getId(), "sortOrder", false);
+    							
     							if(localizedSortOrderString != null && !localizedSortOrderString.equals(""))
     								localizedSortOrder = new Integer(localizedSortOrderString);
     						}
@@ -4304,8 +4312,11 @@ public class SiteNodeController extends BaseController
     						{
 	    						ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(orderedSiteNodeVO.getMetaInfoContentId(), sortLanguageId, db);	
 	    						if(cvVO != null)
+	    						{
 	    							ContentVersionController.getContentVersionController().updateAttributeValue(cvVO.getContentVersionId(), "SortOrder", "" + i, infoGluePrincipal, db, true);
-    						}
+	    							ContentVersionController.getContentVersionController().updateAttributeValue(cvVO.getContentVersionId(), "sortOrder", "" + i, infoGluePrincipal, db, true);
+	    						}
+	    					}
 
     						SiteNodeVersionController.getController().update(siteNodeVersionVO);
     					}
@@ -4368,7 +4379,10 @@ public class SiteNodeController extends BaseController
 						{
 							ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(childSiteNodeVO.getMetaInfoContentId(), sortLanguageId, db);	
 							if(cvVO != null)
+							{
 								ContentVersionController.getContentVersionController().updateAttributeValue(cvVO.getContentVersionId(), "SortOrder", "" + newSortOrder, infoGluePrincipal, db, true);
+								ContentVersionController.getContentVersionController().updateAttributeValue(cvVO.getContentVersionId(), "sortOrder", "" + newSortOrder, infoGluePrincipal, db, true);
+							}
 						}
 					}
 					else if(currentSortOrder.equals(newSortOrder))
@@ -4381,7 +4395,10 @@ public class SiteNodeController extends BaseController
 						{
 							ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(childSiteNodeVO.getMetaInfoContentId(), sortLanguageId, db);	
 							if(cvVO != null)
+							{
 								ContentVersionController.getContentVersionController().updateAttributeValue(cvVO.getContentVersionId(), "SortOrder", "" + oldSortOrder, infoGluePrincipal, db, true);
+								ContentVersionController.getContentVersionController().updateAttributeValue(cvVO.getContentVersionId(), "sortOrder", "" + oldSortOrder, infoGluePrincipal, db, true);
+							}
 						}
 					}
 				}

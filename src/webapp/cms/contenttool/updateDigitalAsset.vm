@@ -214,7 +214,11 @@
 		
 		var assetSizeArray = new Array();
 		#foreach($assetKeyDefinition in $definedAssetKeys)
-			assetSizeArray["$assetKeyDefinition.assetKey"] = "$formatter.formatFileSize($assetKeyDefinition.maximumSize)";
+			#if("$assetKeyDefinition.maximumSize" != "-1")
+				assetSizeArray["$assetKeyDefinition.assetKey"] = "$formatter.formatFileSize($assetKeyDefinition.maximumSize)";
+			#else
+				assetSizeArray["$assetKeyDefinition.assetKey"] = "$formatter.formatFileSize($this.userUploadMaxSize)";	
+			#end
 		#end
 	
 		#if($closeOnLoad == "true")
@@ -302,10 +306,12 @@
 				 	#foreach($assetKeyDefinition in $definedAssetKeys)
 				 		//"$digitalAssetKey" == "$assetKeyDefinition.assetKey"
 				 		#if($velocityCount == 1 || "$digitalAssetKey" == "$assetKeyDefinition.assetKey")
-					 		maxSize = "$formatter.formatFileSize($assetKeyDefinition.maximumSize)";
+				 			#if($assetKeyDefinition.maximumSize != "-1")
+				 				maxSize = "$formatter.formatFileSize($assetKeyDefinition.maximumSize)";
+								document.getElementById("maxSize").innerHTML = "(Max " + maxSize + ")";
+							#end
 				 		#end
 				  	#end
-					document.getElementById("maxSize").innerHTML = "(Max " + maxSize + ")";
 				  -->
 				  </script>
 			</td>

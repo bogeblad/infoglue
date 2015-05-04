@@ -418,7 +418,11 @@
 		
 		var assetSizeArray = new Array();
 		#foreach($assetKeyDefinition in $definedAssetKeys)
-			assetSizeArray["$assetKeyDefinition.assetKey"] = "$formatter.formatFileSize($assetKeyDefinition.maximumSize)";
+			#if("$assetKeyDefinition.maximumSize" != "-1")
+				assetSizeArray["$assetKeyDefinition.assetKey"] = "$formatter.formatFileSize($assetKeyDefinition.maximumSize)";
+			#else
+				assetSizeArray["$assetKeyDefinition.assetKey"] = "$formatter.formatFileSize($this.userUploadMaxSize)";	
+			#end
 		#end
 		
 		function close()
@@ -523,11 +527,12 @@
 							var maxSize = "$formatter.formatFileSize($this.userUploadMaxSize)";
 						 	#foreach($assetKeyDefinition in $definedAssetKeys)
 						 		#if($velocityCount == 1)
-							 		maxSize = "$formatter.formatFileSize($assetKeyDefinition.maximumSize)";
+						 			#if($assetKeyDefinition.maximumSize != "-1")
+								 		maxSize = "$formatter.formatFileSize($assetKeyDefinition.maximumSize)";
+										document.getElementById("maxSize").innerHTML = "$ui.getString("tool.contenttool.myFileUploadLimit", $formatter.formatFileSize($this.userUploadMaxSize))";
+							 		#end
 						 		#end
 						  	#end
-							//document.getElementById("maxSize").innerHTML = "(Max " + maxSize + ")";
-							document.getElementById("maxSize").innerHTML = "$ui.getString("tool.contenttool.myFileUploadLimit", $formatter.formatFileSize($this.userUploadMaxSize))";
 						  -->
 						  </script>
 						</div>

@@ -1658,6 +1658,8 @@ public class RegistryController extends BaseController
         return referenceBeanList;
     }
 	
+
+	
 	public List<ReferenceBean> getReferencingObjectsForContentAsset(Integer contentId, String assetKey, int maxRows, boolean excludeInternalContentReferences, boolean onlyOneVersionPerLanguage, boolean discardMiss) throws SystemException
     {
 		List<ReferenceBean> referenceBeanList = new ArrayList<ReferenceBean>();
@@ -2840,9 +2842,11 @@ public class RegistryController extends BaseController
 		
 		return contentSiteNodeVOListMap;		
 	}
+	public List getReferencedObjects(String referencingEntityName, String referencingEntityId) throws SystemException, Exception {
+		return getReferencedObjects(referencingEntityName, referencingEntityId, false);
+	}	
 	
-	
-	public List getReferencedObjects(String referencingEntityName, String referencingEntityId) throws SystemException, Exception
+	public List getReferencedObjects(String referencingEntityName, String referencingEntityId, boolean excludeComponents) throws SystemException, Exception
 	{
 	    List result = new ArrayList();
 	    
@@ -2864,7 +2868,15 @@ public class RegistryController extends BaseController
 	                {
 	                    Content content = ContentController.getContentController().getContentWithId(new Integer(registryVO.getEntityId()), db);
 			    		logger.info("contentVersion:" + content.getContentId());
-			    		result.add(content.getValueObject());
+			    		
+			    		if (excludeComponents) {
+			    			ContentTypeDefinitionVO componentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("HTMLTemplate");
+			    			if (componentTypeDefinitionVO.getContentTypeDefinitionId() != content.getValueObject().getContentTypeDefinitionId()) {
+			    				result.add(content.getValueObject());
+			    			}
+			    		} else {
+			    			result.add(content.getValueObject());
+			    		}
 	                }
 	                catch(Exception e)
 	                {
@@ -2896,8 +2908,12 @@ public class RegistryController extends BaseController
 		
 		return result;
 	}
-
-	public List getReferencedObjects(String referencingEntityName, String referencingEntityId, Database db) throws SystemException, Exception
+	
+	public List getReferencedObjects(String referencingEntityName, String referencingEntityId, Database db) throws SystemException, Exception {
+		return getReferencedObjects(referencingEntityName, referencingEntityId, db, false);
+	}
+	
+	public List getReferencedObjects(String referencingEntityName, String referencingEntityId, Database db, boolean excludeComponents) throws SystemException, Exception
 	{
 	    List result = new ArrayList();
 	    
@@ -2913,7 +2929,14 @@ public class RegistryController extends BaseController
                 {
                     ContentVO contentVO = ContentController.getContentController().getContentVOWithId(new Integer(registryVO.getEntityId()), db);
 		    		logger.info("contentVO:" + contentVO.getId());
-		    		result.add(contentVO);
+		    		if (excludeComponents) {
+		    			ContentTypeDefinitionVO componentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("HTMLTemplate");
+		    			if (componentTypeDefinitionVO.getContentTypeDefinitionId() != contentVO.getContentTypeDefinitionId()) {
+		    				result.add(contentVO);
+		    			}
+		    		} else {
+		    			result.add(contentVO);
+		    		}
                 }
                 catch(Exception e)
                 {

@@ -153,7 +153,6 @@
 			</table>
 
 		</div>
-
 		<div id="contentAndSiteNodesReferencedTab" class="inlineTabDiv">
 			
 			<table cellpadding="0" cellspacing="0" border="1" class="display" id="contentAndSiteNodes" width="100%">
@@ -167,7 +166,7 @@
 				
 					#set($isOdd = true)
 					#set($count = 0)
-					#foreach ($referencingEntity in $referencingBeanList)
+					#foreach ($referencingEntity in $referencingBeanListWithoutComponents)
 						#if($count < $referenceLimit)
 							#if($referencingEntity.class.name.indexOf("Content") > -1)
 								#set($lastIndex = $referencingBeanList.size() - 1)

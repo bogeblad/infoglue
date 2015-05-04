@@ -309,7 +309,7 @@ function initWYSIWYGInstance(key, isTextField)
 	{
 		config["toolbar"] = WYSIWYGToolbar;
 		config["customConfig"] = cmsBaseUrl + "/WYSIWYGProperties.action?" + configParameters;
-		config["language"] = ckTextLanguageId;
+		config["language"] = userPrefferredLanguageCode; //ckTextLanguageId;
 	}
 	
 	config["on"] = {

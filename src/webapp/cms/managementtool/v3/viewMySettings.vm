@@ -151,6 +151,14 @@
 					</select>	
 				</p>
 
+				<p style="clear: both;">
+					<label for="defaultToolName">$ui.getString("tool.managementtool.mysettings.defaultTreeTitleField.label")</label>
+					<select class="sitedropbox" id="defaultTreeTitleField" name="defaultTreeTitleField">
+						<option value="NavigationTitle" #if($defaultTreeTitleField == "NavigationTitle")selected="1"#end>NavigationTitle</option>
+						<option value="NiceURIName" #if($defaultTreeTitleField == "NiceURIName")selected="1"#end>NiceURIName</option>
+					</select>	
+				</p>
+
 				#if($this.hasAccessTo("ToolTabsAndButtons.MySettingsExtendedGUIFields", true, false))
 				
 				<p style="clear: both; display: none;">	

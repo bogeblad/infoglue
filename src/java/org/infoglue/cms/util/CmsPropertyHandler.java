@@ -2070,6 +2070,13 @@ public class CmsPropertyHandler
 		return (defaultGUI == null ? "default" : defaultGUI);
 	}
 
+	public static String getDefaultTreeTitleField(String userName)
+	{
+		String defaultGUI = getPropertySet().getString("principal_" + userName + "_defaultTreeTitleField");
+	    
+		return (defaultGUI == null ? "NavigationTitle" : defaultGUI);
+	}
+
 	public static String getToolbarVariant(String userName)
 	{
 		String toolbarVariant = getPropertySet().getString("principal_" + userName + "_toolbarVariant");

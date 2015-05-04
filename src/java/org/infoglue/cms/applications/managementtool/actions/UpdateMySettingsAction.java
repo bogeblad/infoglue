@@ -48,6 +48,7 @@ public class UpdateMySettingsAction extends InfoGlueAbstractAction
 	private String defaultToolName				= null;
 	private String defaultRepositoryId			= null;
 	private String defaultGUI					= null;
+	private String defaultTreeTitleField 		= null;
 	private String theme						= null;
 	private String toolbarVariant 				= null;
 	
@@ -71,6 +72,8 @@ public class UpdateMySettingsAction extends InfoGlueAbstractAction
 	    	ps.setString("principal_" + this.getInfoGluePrincipal().getName() + "_theme", theme);
 	    if(toolbarVariant != null)
 	    	ps.setString("principal_" + this.getInfoGluePrincipal().getName() + "_toolbarVariant", toolbarVariant);
+	    if(defaultTreeTitleField != null)
+	    	ps.setString("principal_" + this.getInfoGluePrincipal().getName() + "_defaultTreeTitleField", defaultTreeTitleField);
 	    
 		NotificationMessage notificationMessage = new NotificationMessage("UpdateMySettingsAction.doExecute():", "ServerNodeProperties", this.getInfoGluePrincipal().getName(), NotificationMessage.SYSTEM, "0", "MySettings");
 		ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
@@ -97,6 +100,11 @@ public class UpdateMySettingsAction extends InfoGlueAbstractAction
     public void setDefaultGUI(String defaultGUI)
     {
         this.defaultGUI = defaultGUI;
+    }
+
+    public void setDefaultTreeTitleField(String defaultTreeTitleField)
+    {
+        this.defaultTreeTitleField = defaultTreeTitleField;
     }
 
     public void setTheme(String theme)

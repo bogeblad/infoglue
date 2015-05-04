@@ -72,11 +72,14 @@ public class SiteNodeNodeSupplier extends BaseNodeSupplier
 	private ArrayList cacheLeafs;
 	private InfoGluePrincipal infogluePrincipal = null;
 	private Integer sortLanguageId;
+	private String pageTreeNameAttribute = null;
+	
 	
 	public SiteNodeNodeSupplier(Integer repositoryId, InfoGluePrincipal infoGluePrincipal, Integer sortLanguageId) throws SystemException
 	{
 	    this.infogluePrincipal = infoGluePrincipal;
 	    this.sortLanguageId = sortLanguageId;
+	    this.pageTreeNameAttribute = CmsPropertyHandler.getDefaultTreeTitleField(this.infogluePrincipal.getName());
 	    
 		SiteNodeVO vo =null;
 		ucc = ViewSiteNodeTreeUCCFactory.newViewSiteNodeTreeUCC();	
@@ -287,7 +290,11 @@ public class SiteNodeNodeSupplier extends BaseNodeSupplier
 					if(cvVO != null)
 					{
 						node.getParameters().put("isLocalized", "true");
-						String navigationTitle = ContentVersionController.getContentVersionController().getAttributeValue(cvVO, "NavigationTitle", true);
+						String navigationTitle = ContentVersionController.getContentVersionController().getAttributeValue(cvVO, this.pageTreeNameAttribute, true);
+						//String navigationTitle = ContentVersionController.getContentVersionController().getAttributeValue(cvVO, "NavigationTitle", true);
+						if(navigationTitle == null || navigationTitle.equals(""))
+							navigationTitle = ContentVersionController.getContentVersionController().getAttributeValue(cvVO, "NavigationTitle", true);
+						
 						node.setLocalizedTitle(navigationTitle);
 					}
 					else
@@ -298,7 +305,10 @@ public class SiteNodeNodeSupplier extends BaseNodeSupplier
 							ContentVersionVO masterCVVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(vo.getMetaInfoContentId(), masterLanguageVO.getId(), db);
 							if(masterCVVO != null)
 							{
-								String navigationTitle = ContentVersionController.getContentVersionController().getAttributeValue(masterCVVO, "NavigationTitle", true);
+								String navigationTitle = ContentVersionController.getContentVersionController().getAttributeValue(masterCVVO, this.pageTreeNameAttribute, true);
+								//String navigationTitle = ContentVersionController.getContentVersionController().getAttributeValue(masterCVVO, "NavigationTitle", true);
+								if(navigationTitle == null || navigationTitle.equals(""))
+									navigationTitle = ContentVersionController.getContentVersionController().getAttributeValue(masterCVVO, "NavigationTitle", true);
 								node.setLocalizedTitle(navigationTitle);
 							}
 						}

@@ -64,7 +64,6 @@
 						<ul style="background-color: white;">
 						
 							#foreach($languageVO in $availablePageLanguages)
-				
 								#if("$languageId" == "$languageVO.id")
 									#set($index = $velocityCount - 1)
 									<script type="text/javascript">
@@ -72,8 +71,7 @@
 									</script>
 									#set($selectedCode = ", selected: $index ")
 								#end
-									<li  class="ui-state-default #if($languageId == $languageVO.id)ui-tabs-selected#end #foreach($disabledLanguageVO in $disabledLanguages) #if ($disabledLanguageVO.id == $languageVO.id) disabled-language-tab#end#end" ><a href="#${languageVO.languageCode}Tab" #foreach($disabledLanguageVO in $disabledLanguages) #if ($disabledLanguageVO.id == $languageVO.id) title="$ui.getString('tool.structuretool.createSiteNode.languageIsDisabled')"#end#end><span>$languageVO.getLocalizedDisplayLanguage($locale)</span></a></li>
-								
+								<li  class="ui-state-default #if($languageId == $languageVO.id)ui-tabs-selected#end #foreach($disabledLanguageVO in $disabledLanguages) #if ($disabledLanguageVO.id == $languageVO.id) disabled-language-tab#end#end" ><a href="#${languageVO.languageCode}Tab" #foreach($disabledLanguageVO in $disabledLanguages) #if ($disabledLanguageVO.id == $languageVO.id) title="$ui.getString('tool.structuretool.createSiteNode.languageIsDisabled')"#end#end><span>$languageVO.getLocalizedDisplayLanguage($locale)</span></a></li>
 					       #end
 						   <li><a href="#publishingTab"><span>$ui.getString("tool.common.publicationSpan.label")</span></a></li>
 					    </ul>

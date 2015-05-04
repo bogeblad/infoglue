@@ -431,7 +431,10 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 		
 		this.availablePageLanguages = RepositoryLanguageController.getController().getAvailableLanguageVOListForRepositoryId(parentSiteNodeVO.getRepositoryId());
 		this.disabledPageLanguages = SiteNodeController.getController().getDisabledLanguageVOListForSiteNode(parentSiteNodeId);
-		System.out.println("Rasmus , disabledPageLanguages:" + disabledPageLanguages);
+		
+    	if(this.languageId == null)
+    		this.languageId = LanguageController.getController().getMasterLanguage(parentSiteNodeVO.getRepositoryId()).getId();
+    	
 		String createSiteNodeInlineOperationDoneHeader = getLocalizedString(getLocale(), "tool.structuretool.createSiteNodeInlineOperationDoneHeader", parentSiteNodeVO.getName());
 		String createSiteNodeInlineOperationBackToCurrentPageLinkText = getLocalizedString(getLocale(), "tool.structuretool.createSiteNodeInlineOperationBackToCurrentPageLinkText");
 		String createSiteNodeInlineOperationBackToCurrentPageTitleText = getLocalizedString(getLocale(), "tool.structuretool.createSiteNodeInlineOperationBackToCurrentPageTitleText");
@@ -502,7 +505,7 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 
     public Integer getLanguageId()
     {
-        return languageId;
+    	return languageId;
     }
     
     public void setLanguageId(Integer languageId)

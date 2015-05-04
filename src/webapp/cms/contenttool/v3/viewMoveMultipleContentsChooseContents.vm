@@ -26,17 +26,7 @@
 
 		function next()
 		{
-			var entityId = document.inputForm.entityId.value;
-
-			if(entityId != "" && entityId != "-1")
-			{
-				submitQualifyer();
-			}
-		    else
-		    {
-				alert("$ui.getString("tool.structuretool.moveSiteNode.mustSelectSiteNodeWarning")");
-			}
-			
+			submitQualifyer();
 		}
 
 		/**

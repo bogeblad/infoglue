@@ -45,13 +45,15 @@ public class ViewSiteNodeReferencesAction extends InfoGlueAbstractAction
 	private Integer siteNodeId = null;
 	private List<ReferenceBean> referenceBeanList = new ArrayList<ReferenceBean>();
 	private List<ReferenceBean> referencingBeanList = new ArrayList<ReferenceBean>();
-
+	private List<ReferenceBean> referencingBeanListWithoutComponents = new ArrayList<ReferenceBean>();
+	
     public String doExecute() throws Exception
     {
 		this.referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(siteNodeId, 200, false, true);
 		SiteNodeVersionVO latestSiteNodeVersion = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getLatestActiveSiteNodeVersionVO(siteNodeId);
 	    this.referencingBeanList = RegistryController.getController().getReferencedObjects(SiteNodeVersion.class.getName(), latestSiteNodeVersion.getSiteNodeVersionId().toString());
-
+	    
+	    this.referencingBeanListWithoutComponents = RegistryController.getController().getReferencedObjects(SiteNodeVersion.class.getName(), latestSiteNodeVersion.getSiteNodeVersionId().toString(), true);
         return Action.SUCCESS;
     }
 
@@ -73,5 +75,10 @@ public class ViewSiteNodeReferencesAction extends InfoGlueAbstractAction
     public List<ReferenceBean> getReferencingBeanList()
     {
         return referencingBeanList;
+    }
+    
+    public List<ReferenceBean> getReferencingBeanListWithoutComponents()
+    {
+    	return referencingBeanListWithoutComponents;
     }
 }

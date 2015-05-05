@@ -3139,4 +3139,9 @@ public class CmsPropertyHandler
 		return getServerNodeProperty("metaDataContentTypeDefinitionName", true, "Meta info");
 	}
 
+	public static String getExpectFormPostToBeUnicodeAllready() 
+	{
+		return getServerNodeProperty("expectFormPostToBeUnicodeAllready", true, "true");
+	}
+
 }

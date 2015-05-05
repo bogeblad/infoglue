@@ -639,12 +639,12 @@ public class SiteNodeStateController extends BaseController
 	 * This method assigns the same access rights as the old content-version has.
 	 */
 	
-	public void copyAccessRights(String interceptionPointCategory, Integer originalSiteNodeVersionId, Integer newSiteNodeVersionId, Map<String,String> replaceMap, Database db) throws ConstraintException, SystemException, Exception
+	public void copyAccessRights(String interceptionPointCategory, Integer originalEntityId, Integer newEntityId, Map<String,String> replaceMap, Database db) throws ConstraintException, SystemException, Exception
 	{
 		Timer t = new Timer();
 		
 		List<InterceptionPoint> interceptionPointList = InterceptionPointController.getController().getInterceptionPointList(interceptionPointCategory, db);
-		List accessRightList = AccessRightController.getController().getAccessRightListForEntity(interceptionPointList, originalSiteNodeVersionId.toString(), db, true);
+		List accessRightList = AccessRightController.getController().getAccessRightListForEntity(interceptionPointList, originalEntityId.toString(), db, true);
 
 		logger.info("accessRightList:" + accessRightList.size());
 		Iterator accessRightListIterator = accessRightList.iterator();
@@ -654,7 +654,7 @@ public class SiteNodeStateController extends BaseController
 			logger.info("accessRight:" + accessRight.getId());
 			
 			AccessRightVO copiedAccessRight = accessRight.getValueObject().createCopy();
-			copiedAccessRight.setParameters(newSiteNodeVersionId.toString());
+			copiedAccessRight.setParameters(newEntityId.toString());
 			
 			InterceptionPoint icp = null;
 			for(InterceptionPoint currentICP : interceptionPointList)
@@ -685,7 +685,11 @@ public class SiteNodeStateController extends BaseController
 				{
 				    AccessRightRole accessRightRole = (AccessRightRole)rolesIterator.next();
 				    AccessRightRoleVO newAccessRightRoleVO = new AccessRightRoleVO();
-				    newAccessRightRoleVO.setRoleName(accessRightRole.getRoleName());
+				    String roleName = accessRightRole.getRoleName();
+				    String newRoleName = visualFormatter.replaceAccordingToMappings(replaceMap, roleName);
+				    if(RoleControllerProxy.getController().roleExists(newRoleName))
+				    	roleName = newRoleName;
+				    newAccessRightRoleVO.setRoleName(roleName);
 				    AccessRightRole newAccessRightRole = AccessRightController.getController().createAccessRightRole(db, newAccessRightRoleVO, newAccessRight);
 				    newAccessRight.getRoles().add(newAccessRightRole);
 				}

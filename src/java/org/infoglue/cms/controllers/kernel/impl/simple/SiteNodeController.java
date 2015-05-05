@@ -3153,7 +3153,7 @@ public class SiteNodeController extends BaseController
 
 			String newNameSuffix = getNewNameSuffixForCopy(principal, db, newParentSiteNode);
 
-			copySiteNodeRecursive(siteNode, newParentSiteNode, principal, siteNodeIdsMapping, contentIdsMapping, contentIdsToCopy, newCreatedContentVersions, newNameSuffix, db, processBean);
+			copySiteNodeRecursive(siteNode, newParentSiteNode, principal, siteNodeIdsMapping, contentIdsMapping, contentIdsToCopy, newCreatedContentVersions, newNameSuffix, db, processBean, new HashMap<String,String>());
 			//After this all sitenodes main should be copied but then we have to round up some related nodes later
 			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("copySiteNodeRecursive", t.getElapsedTime());
 			
@@ -3161,7 +3161,7 @@ public class SiteNodeController extends BaseController
 			//Now let's go through all contents
 			for(ContentVersion version : newCreatedContentVersions)
 	        {
-				getRelatedEntities(newParentSiteNode, principal, version.getVersionValue(), siteNodeVO.getRepositoryId(), newParentSiteNode.getRepositoryId(), siteNodeIdsMapping, contentIdsMapping, siteNodeIdsToCopy, contentIdsToCopy, newCreatedContentVersions, 0, 3, newNameSuffix, db, processBean);
+				getRelatedEntities(newParentSiteNode, principal, version.getVersionValue(), siteNodeVO.getRepositoryId(), newParentSiteNode.getRepositoryId(), siteNodeIdsMapping, contentIdsMapping, siteNodeIdsToCopy, contentIdsToCopy, newCreatedContentVersions, 0, 3, newNameSuffix, db, processBean, new HashMap<String,String>());
 	        	//getContentRelationsChain(siteNodesIdsMapping, contentIdsMapping, newParentSiteNode.getRepository().getId(), oldSiteNodeVO.getRepositoryId(), principal, versions, 0, 3, db);
 	        }
 			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getRelatedEntities", t.getElapsedTime());
@@ -3169,7 +3169,7 @@ public class SiteNodeController extends BaseController
 			processBean.updateProcess("Copying " + contentIdsToCopy.size() + " contents");
 
 			//After this all related sitenodes should have been created and all related contents accounted for
-			copyContents(newParentSiteNode, principal, contentIdsToCopy, siteNodeVO.getRepositoryId(), newParentSiteNode.getRepositoryId(), contentIdsMapping, newCreatedContentVersions, db, ps);
+			copyContents(newParentSiteNode, principal, contentIdsToCopy, siteNodeVO.getRepositoryId(), newParentSiteNode.getRepositoryId(), contentIdsMapping, newCreatedContentVersions, db, ps, new HashMap());
 			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("copyContents", t.getElapsedTime());
 
 			processBean.updateProcess("Remapping relations");
@@ -3220,7 +3220,7 @@ public class SiteNodeController extends BaseController
 		return "";
 	}
 
-	private void copySiteNodeRecursive(SiteNodeVO siteNode, SiteNodeVO newParentSiteNode, InfoGluePrincipal principal, Map<Integer,Integer> siteNodesIdsMapping, Map<Integer,Integer> contentIdsMapping, Set<Integer> contentIdsToCopy, List<ContentVersion> newCreatedContentVersions, String newNameSuffix, Database db, ProcessBean processBean) throws Exception
+	private void copySiteNodeRecursive(SiteNodeVO siteNode, SiteNodeVO newParentSiteNode, InfoGluePrincipal principal, Map<Integer,Integer> siteNodesIdsMapping, Map<Integer,Integer> contentIdsMapping, Set<Integer> contentIdsToCopy, List<ContentVersion> newCreatedContentVersions, String newNameSuffix, Database db, ProcessBean processBean, Map<String,String> replaceMap) throws Exception
     {
 	   	processBean.updateLastDescription("Copied " + siteNodesIdsMapping.size() + "...");
 
@@ -3232,6 +3232,12 @@ public class SiteNodeController extends BaseController
 		}
 		
 		SiteNodeVO oldSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNode.getId(), db);
+		if(oldSiteNodeVO.getMetaInfoContentId() == null || oldSiteNodeVO.getMetaInfoContentId().intValue() == -1)
+		{
+			logger.warn("The page " + oldSiteNodeVO.getName() + " had a missing meta info");
+			return;
+		}
+		
         ContentVO oldMetaInfoContentVO = ContentController.getContentController().getContentVOWithId(oldSiteNodeVO.getMetaInfoContentId(), db);
 
         LanguageVO masterLanguage = LanguageController.getController().getMasterLanguage(siteNode.getRepositoryId(), db);
@@ -3239,7 +3245,7 @@ public class SiteNodeController extends BaseController
         if(oldCVVO == null)
         	logger.warn("No meta info version on: " + oldSiteNodeVO.getName() + ":" + oldMetaInfoContentVO.getId());
         RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getLatestActiveContentVersionVO", t.getElapsedTime());
-
+		
 		SiteNodeVO newSiteNodeVO = new SiteNodeVO();
 		newSiteNodeVO.setName(oldSiteNodeVO.getName() + newNameSuffix);
 		newSiteNodeVO.setIsBranch(oldSiteNodeVO.getIsBranch());
@@ -3296,7 +3302,7 @@ public class SiteNodeController extends BaseController
 		    RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ps", t.getElapsedTime());
 
 		    //Copy all access rights...
-		    SiteNodeStateController.getController().copyAccessRights("SiteNodeVersion", oldSiteNodeVersionId, siteNodeVersion.getId(), db);
+		    SiteNodeStateController.getController().copyAccessRights("SiteNodeVersion", oldSiteNodeVersionId, siteNodeVersion.getId(), replaceMap, db);
 		    RequestAnalyser.getRequestAnalyser().registerComponentStatistics("copyAccessRights", t.getElapsedTime());
 		    //t.printElapsedTime("copy access");
 		}
@@ -3329,11 +3335,11 @@ public class SiteNodeController extends BaseController
 
         for(SiteNodeVO childNode : (Collection<SiteNodeVO>)getChildSiteNodeVOList(siteNode.getId(), false, db, null))
         {
-        	copySiteNodeRecursive(childNode, newSiteNode, principal, siteNodesIdsMapping, contentIdsMapping, contentIdsToCopy, newCreatedContentVersions, newNameSuffix, db, processBean);
+        	copySiteNodeRecursive(childNode, newSiteNode, principal, siteNodesIdsMapping, contentIdsMapping, contentIdsToCopy, newCreatedContentVersions, newNameSuffix, db, processBean, replaceMap);
         }
     }
  	
-	private void getRelatedEntities(SiteNodeVO newParentSiteNode, InfoGluePrincipal principal, String versionValue, Integer oldRepositoryId, Integer newRepositoryId, Map<Integer,Integer> siteNodeIdsMapping, Map<Integer,Integer> contentIdsMapping, Set<Integer> siteNodeIdsToCopy, Set<Integer> contentIdsToCopy, List<ContentVersion> versions, int depth, int maxDepth, String newNameSuffix, Database db, ProcessBean processBean) throws Exception
+	private void getRelatedEntities(SiteNodeVO newParentSiteNode, InfoGluePrincipal principal, String versionValue, Integer oldRepositoryId, Integer newRepositoryId, Map<Integer,Integer> siteNodeIdsMapping, Map<Integer,Integer> contentIdsMapping, Set<Integer> siteNodeIdsToCopy, Set<Integer> contentIdsToCopy, List<ContentVersion> versions, int depth, int maxDepth, String newNameSuffix, Database db, ProcessBean processBean, Map<String,String> replaceMap) throws Exception
 	{
 		if(depth > maxDepth)
 			return;
@@ -3379,7 +3385,7 @@ public class SiteNodeController extends BaseController
 						List<ContentVersionVO> latestContentVersionVOListAllLanguages = ContentVersionController.getContentVersionController().getLatestContentVersionVOListPerLanguage(contentId, db);
 						for(ContentVersionVO contentVersionVO : latestContentVersionVOListAllLanguages)
 						{
-							getRelatedEntities(newParentSiteNode, principal, contentVersionVO.getVersionValue(), oldRepositoryId, newRepositoryId, siteNodeIdsMapping, contentIdsMapping, siteNodeIdsToCopy, contentIdsToCopy, versions, depth+1, maxDepth, newNameSuffix, db, processBean);
+							getRelatedEntities(newParentSiteNode, principal, contentVersionVO.getVersionValue(), oldRepositoryId, newRepositoryId, siteNodeIdsMapping, contentIdsMapping, siteNodeIdsToCopy, contentIdsToCopy, versions, depth+1, maxDepth, newNameSuffix, db, processBean, replaceMap);
 						}
 					}
 					else
@@ -3417,7 +3423,7 @@ public class SiteNodeController extends BaseController
 		            SiteNodeVO oldParentSiteNode = getSiteNodeVOWithId(siteNode.getParentSiteNodeId(), db);
 		            //SiteNode oldParentSiteNode = siteNode.getParentSiteNode();
 		            
-					copySiteNodeRecursive(siteNode, newParentSiteNode, principal, siteNodeIdsMapping, contentIdsMapping, contentIdsToCopy, versions, newNameSuffix, db, processBean);
+					copySiteNodeRecursive(siteNode, newParentSiteNode, principal, siteNodeIdsMapping, contentIdsMapping, contentIdsToCopy, versions, newNameSuffix, db, processBean, replaceMap);
 				}
 				else
 					logger.info("The related content was outside the old repo so we skip it");
@@ -3428,13 +3434,15 @@ public class SiteNodeController extends BaseController
 	}
 
 	
-	private void copyContents(SiteNodeVO newParentSiteNode, InfoGluePrincipal principal, Set<Integer> contentIdsToCopy, /*String versionValue, */Integer oldRepositoryId, Integer newRepositoryId, Map<Integer,Integer> contentIdsMapping, List<ContentVersion> versions, Database db, PropertySet ps) throws Exception
+	private void copyContents(SiteNodeVO newParentSiteNode, InfoGluePrincipal principal, Set<Integer> contentIdsToCopy, /*String versionValue, */Integer oldRepositoryId, Integer newRepositoryId, Map<Integer,Integer> contentIdsMapping, List<ContentVersion> versions, Database db, PropertySet ps, Map<String,String> replaceMap) throws Exception
 	{
-		copyContents(newParentSiteNode, principal, contentIdsToCopy, oldRepositoryId, newRepositoryId, contentIdsMapping, versions, true, "false", null, db, ps);
+		copyContents(newParentSiteNode, principal, contentIdsToCopy, oldRepositoryId, newRepositoryId, contentIdsMapping, versions, true, "false", null, db, ps, replaceMap);
 	}
 	
-	private void copyContents(SiteNodeVO newParentSiteNode, InfoGluePrincipal principal, Set<Integer> contentIdsToCopy, /*String versionValue, */Integer oldRepositoryId, Integer newRepositoryId, Map<Integer,Integer> contentIdsMapping, List<ContentVersion> versions, boolean includeRootContentInPath, String onlyLatestVersions, ProcessBean processBean, Database db, PropertySet ps) throws Exception
+	private void copyContents(SiteNodeVO newParentSiteNode, InfoGluePrincipal principal, Set<Integer> contentIdsToCopy, /*String versionValue, */Integer oldRepositoryId, Integer newRepositoryId, Map<Integer,Integer> contentIdsMapping, List<ContentVersion> versions, boolean includeRootContentInPath, String onlyLatestVersions, ProcessBean processBean, Database db, PropertySet ps, Map<String,String> replaceMap) throws Exception
 	{
+		VisualFormatter visualFormatter = new VisualFormatter();
+		
 		logger.info("contentIdsToCopy:" + contentIdsToCopy.size());
 		int totalCount = 0;
 		int count = 0;
@@ -3466,14 +3474,27 @@ public class SiteNodeController extends BaseController
 							continue;
 						}
 						
-						String path = ContentController.getContentController().getContentPath(contentId, includeRootContentInPath, false, db);
-						logger.info("path:" + path);
-						ContentVO copiedContent = ContentController.getContentController().getContentVOWithPath(newRepositoryId, path, true, !contentVO.getIsBranch(), principal, db);
+						ContentVO copiedContent = null;
+						if(contentVO.getParentContentId() == null)
+						{
+							ContentVO rootContentNewRepo = ContentController.getContentController().getRootContentVO(newRepositoryId, principal.getName(), false);
+							if(rootContentNewRepo != null)
+							{
+								ContentController.getContentController().copyContentProperties(ps, contentVO.getId(), rootContentNewRepo.getId());								
+								copiedContent = rootContentNewRepo;
+							}
+						}
+						else
+						{
+							String path = ContentController.getContentController().getContentPath(contentId, includeRootContentInPath, false, db);
+							logger.info("path:" + path);
+							copiedContent = ContentController.getContentController().getContentVOWithPath(newRepositoryId, path, true, !contentVO.getIsBranch(), principal, db);	
+						}
 						
 			            logger.info("Mapping content " + contentVO.getId() + " to " + copiedContent.getId());
 			            contentIdsMapping.put(contentVO.getId(), copiedContent.getId());
 						
-						copiedContent.setName(contentVO.getName());
+			            copiedContent.setName(visualFormatter.replaceAccordingToMappings(replaceMap, contentVO.getName()));
 						copiedContent.setExpireDateTime(contentVO.getExpireDateTime());
 						copiedContent.setIsBranch(contentVO.getIsBranch());
 						copiedContent.setIsProtected(contentVO.getIsProtected());
@@ -3482,9 +3503,11 @@ public class SiteNodeController extends BaseController
 						copiedContent.setContentTypeDefinitionId(contentVO.getContentTypeDefinitionId());
 						
 						if(contentVO.getIsBranch())
+						{
 							ContentController.getContentController().copyContentProperties(ps, contentVO.getId(), copiedContent.getId());
+						}
 						
-					    SiteNodeStateController.getController().copyAccessRights("Content", contentVO.getId(), copiedContent.getId(), db);
+					    SiteNodeStateController.getController().copyAccessRights("Content", contentVO.getId(), copiedContent.getId(), replaceMap, db);
 
 					    Map<Integer,Integer> assetIdMap = new HashMap<Integer,Integer>();
 					    //Map<Integer,Integer> assetIdMap = new HashMap<Integer,Integer>();
@@ -4800,7 +4823,7 @@ public class SiteNodeController extends BaseController
 
 		String newNameSuffix = ""; //getNewNameSuffixForCopy(principal, db, newParentSiteNode);
 		
-		copySiteNodeRecursive(siteNode, newParentSiteNode, principal, siteNodeIdsMapping, contentIdsMapping, contentIdsToCopy, newCreatedContentVersions, newNameSuffix, db, processBean);
+		copySiteNodeRecursive(siteNode, newParentSiteNode, principal, siteNodeIdsMapping, contentIdsMapping, contentIdsToCopy, newCreatedContentVersions, newNameSuffix, db, processBean, replaceMap);
 		//After this all sitenodes main should be copied but then we have to round up some related nodes later
 		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("copySiteNodeRecursive", t.getElapsedTime());
 		
@@ -4811,7 +4834,7 @@ public class SiteNodeController extends BaseController
 		//Now let's go through all contents
 		for(ContentVersion version : newCreatedContentVersions)
         {
-			getRelatedEntities(newParentSiteNode, principal, version.getVersionValue(), oldRepositoryVO.getId(), newParentSiteNode.getRepositoryId(), siteNodeIdsMapping, contentIdsMapping, siteNodeIdsToCopy, contentIdsToCopy, newCreatedContentVersions, 0, 3, newNameSuffix, db, processBean);
+			getRelatedEntities(newParentSiteNode, principal, version.getVersionValue(), oldRepositoryVO.getId(), newParentSiteNode.getRepositoryId(), siteNodeIdsMapping, contentIdsMapping, siteNodeIdsToCopy, contentIdsToCopy, newCreatedContentVersions, 0, 3, newNameSuffix, db, processBean, replaceMap);
         	//getContentRelationsChain(siteNodesIdsMapping, contentIdsMapping, newParentSiteNode.getRepository().getId(), oldSiteNodeVO.getRepositoryId(), principal, versions, 0, 3, db);
         }
 		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getRelatedEntities", t.getElapsedTime());
@@ -4833,12 +4856,12 @@ public class SiteNodeController extends BaseController
 		db.begin();
 
 		//After this all related sitenodes should have been created and all related contents accounted for
-		copyContents(newParentSiteNode, principal, contentIdsToCopy, oldRepositoryVO.getId(), newParentSiteNode.getRepositoryId(), contentIdsMapping, newCreatedContentVersions, false, onlyLatestVersions, processBean, db, ps);
+		copyContents(newParentSiteNode, principal, contentIdsToCopy, oldRepositoryVO.getId(), newParentSiteNode.getRepositoryId(), contentIdsMapping, newCreatedContentVersions, false, onlyLatestVersions, processBean, db, ps, replaceMap);
 		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("copyContents", t.getElapsedTime());
 
 		db.commit();
 		db.begin();
-		
+				
 		processBean.updateProcess("Remapping relations");
 		rewireBindingsAndRelationsInTransaction(siteNodeIdsMapping, contentIdsMapping, newCreatedContentVersions, replaceMap, db);
 		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("rewireBindingsAndRelations", t.getElapsedTime());

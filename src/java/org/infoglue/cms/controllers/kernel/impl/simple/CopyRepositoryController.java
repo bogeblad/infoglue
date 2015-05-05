@@ -24,6 +24,7 @@
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import java.io.ByteArrayInputStream;
+import java.io.StringReader;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -97,62 +98,87 @@ public class CopyRepositoryController extends BaseController implements Runnable
 			try 
 			{
 				Map<String,String> replaceMap = new HashMap<String,String>();
-				try
+				
+				String expectNormalString = CmsPropertyHandler.getExpectFormPostToBeUnicodeAllready();
+				
+				if(expectNormalString.equals("true"))
 				{
-					boolean isUTF8 = false;
-					boolean hasUnicodeChars = false;
-					if(replacements.indexOf((char)65533) > -1)
-						isUTF8 = true;
-					
-					for(int i=0; i<replacements.length(); i++)
+					Properties properties = new Properties();
+					try
 					{
-						int c = (int)replacements.charAt(i);
-						if(c > 255 && c < 65533)
-							hasUnicodeChars = true;
-					}
-
-					if(!isUTF8 && !hasUnicodeChars)
-					{
-						String fromEncoding = CmsPropertyHandler.getUploadFromEncoding();
-						if(fromEncoding == null)
-							fromEncoding = "iso-8859-1";
-						
-						String toEncoding = CmsPropertyHandler.getUploadToEncoding();
-						if(toEncoding == null)
-							toEncoding = "utf-8";
-						
-						if(replacements.indexOf("å") == -1 && 
-						   replacements.indexOf("ä") == -1 && 
-						   replacements.indexOf("ö") == -1 && 
-						   replacements.indexOf("Å") == -1 && 
-						   replacements.indexOf("Ä") == -1 && 
-						   replacements.indexOf("Ö") == -1)
+						properties.load(new StringReader(replacements));
+						Iterator propertySetIterator = properties.keySet().iterator();
+						while(propertySetIterator.hasNext())
 						{
-							replacements = new String(replacements.getBytes(fromEncoding), toEncoding);
+							String key = (String)propertySetIterator.next();
+							String value = properties.getProperty(key);
+							replaceMap.put(key, value);
+						}
+					}	
+					catch(Exception e)
+					{
+					    logger.error("Error loading properties from string. Reason:" + e.getMessage());
+					}
+				}
+				else
+				{
+					try
+					{
+						boolean isUTF8 = false;
+						boolean hasUnicodeChars = false;
+						if(replacements.indexOf((char)65533) > -1)
+							isUTF8 = true;
+						
+						for(int i=0; i<replacements.length(); i++)
+						{
+							int c = (int)replacements.charAt(i);
+							if(c > 255 && c < 65533)
+								hasUnicodeChars = true;
+						}
+	
+						if(!isUTF8 && !hasUnicodeChars)
+						{
+							String fromEncoding = CmsPropertyHandler.getUploadFromEncoding();
+							if(fromEncoding == null)
+								fromEncoding = "iso-8859-1";
+							
+							String toEncoding = CmsPropertyHandler.getUploadToEncoding();
+							if(toEncoding == null)
+								toEncoding = "utf-8";
+							
+							if(replacements.indexOf("å") == -1 && 
+							   replacements.indexOf("ä") == -1 && 
+							   replacements.indexOf("ö") == -1 && 
+							   replacements.indexOf("Å") == -1 && 
+							   replacements.indexOf("Ä") == -1 && 
+							   replacements.indexOf("Ö") == -1)
+							{
+								replacements = new String(replacements.getBytes(fromEncoding), toEncoding);
+							}
 						}
 					}
-				}
-				catch(Exception e)
-				{
-					e.printStackTrace();
-				}
-				
-				Properties properties = new Properties();
-				try
-				{
-					properties.load(new ByteArrayInputStream(replacements.getBytes("ISO-8859-1")));
-					Iterator propertySetIterator = properties.keySet().iterator();
-					while(propertySetIterator.hasNext())
+					catch(Exception e)
 					{
-						String key = (String)propertySetIterator.next();
-						String value = properties.getProperty(key);
-						replaceMap.put(key, value);
+						e.printStackTrace();
 					}
-				}	
-				catch(Exception e)
-				{
-				    logger.error("Error loading properties from string. Reason:" + e.getMessage());
-					e.printStackTrace();
+					
+					Properties properties = new Properties();
+					try
+					{
+						properties.load(new ByteArrayInputStream(replacements.getBytes("ISO-8859-1")));
+						Iterator propertySetIterator = properties.keySet().iterator();
+						while(propertySetIterator.hasNext())
+						{
+							String key = (String)propertySetIterator.next();
+							String value = properties.getProperty(key);
+							replaceMap.put(key, value);
+						}
+					}	
+					catch(Exception e)
+					{
+					    logger.error("Error loading properties from string. Reason:" + e.getMessage());
+						e.printStackTrace();
+					}
 				}
 
 				String exportId = "Copy_Repository_" + visualFormatter.formatDate(new Date(), "yyyy-MM-dd_HHmm");

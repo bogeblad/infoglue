@@ -99,12 +99,12 @@
 		    #end
 		</select>
 		
-		<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!bindingViewV3.action?repositoryId=${repositoryId}&sortLanguageId=${sortLanguageId}" width="90%" height="450" ></iframe>
+		<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!bindingViewV3.action?repositoryId=${repositoryId}&sortLanguageId=$!{sortLanguageId}" width="90%" height="450" ></iframe>
 	
 		<form name="inputForm" action="CopyMultipleSiteNodes.action">
 			<input type="hidden" name="userSessionKey" value="$userSessionKey"/>
 			<input type="hidden" name="repositoryId" value="$repositoryId"/>
-			<input type="hidden" name="sortLanguageId" value="$sortLanguageId"/>
+			<input type="hidden" name="sortLanguageId" value="$!sortLanguageId"/>
 			<input type="hidden" name="siteNodeId" value="$siteNodeId"/>
 			<input type="hidden" name="entityId" value="">
 			<input type="hidden" name="path" value="">

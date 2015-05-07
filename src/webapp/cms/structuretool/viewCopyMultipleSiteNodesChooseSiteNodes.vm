@@ -209,7 +209,7 @@
 			#foreach($content in $qualifyers)
 				//alert("$qualifyer");
 				#set( $contentName = $!content.extraProperties.displayName )
-				#if("$!contentName" == "")
+				#if("$!contentName" == "" || "$!contentName" == "Undefined")
 					#set( $contentName = $content.name )
 				#end
 				qualifyer = new Qualifyer("Content", "$content.id", "$contentName");
@@ -325,7 +325,7 @@
 		<input type="hidden" name="qualifyerXML" value="">
 		<input type="hidden" name="returnAddress" value="$returnAddress">
 		<input type="hidden" name="originalAddress" value="$originalAddress">
-		<input type="hidden" name="sortLanguageId" value="$sortLanguageId">
+		<input type="hidden" name="sortLanguageId" value="$!sortLanguageId">
 	</form>
 		
 	#lightFooterToolbar($footerButtons)

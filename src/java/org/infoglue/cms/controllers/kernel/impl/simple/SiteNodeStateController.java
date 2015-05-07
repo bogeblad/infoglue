@@ -673,8 +673,29 @@ public class SiteNodeStateController extends BaseController
 				    AccessRightGroupVO newAccessRightGroupVO = new AccessRightGroupVO();
 				    String groupName = accessRightGroup.getGroupName();
 				    String newGroupName = visualFormatter.replaceAccordingToMappings(replaceMap, groupName);
-				    if(GroupControllerProxy.getController().groupExists(newGroupName))
-				    	groupName = newGroupName;
+				    logger.info("groupName:" + groupName + "-->" + newGroupName);
+				    if(newGroupName != null && !groupName.equals(newGroupName))
+				    {
+				    	if(GroupControllerProxy.getController().groupExists(newGroupName))
+					    {
+					    	groupName = newGroupName;
+					    }
+					    else
+					    {
+					    	logger.info("newGroupName " + newGroupName + " was not found in GroupControllerProxy.getController().groupExists. Lets try getGroup.");
+					    	try
+					    	{
+						    	if(GroupControllerProxy.getController().getGroup(newGroupName) != null)
+						    	{
+						    		groupName = newGroupName;
+						    	}
+					    	}
+					    	catch(Exception e)
+					    	{
+					    		logger.info("Did not find group: " + e.getMessage());
+					    	}
+					    }
+				    }
 				    newAccessRightGroupVO.setGroupName(groupName);
 				    AccessRightGroup newAccessRightGroup = AccessRightController.getController().createAccessRightGroup(db, newAccessRightGroupVO, newAccessRight);
 				    newAccessRight.getGroups().add(newAccessRightGroup);
@@ -687,8 +708,30 @@ public class SiteNodeStateController extends BaseController
 				    AccessRightRoleVO newAccessRightRoleVO = new AccessRightRoleVO();
 				    String roleName = accessRightRole.getRoleName();
 				    String newRoleName = visualFormatter.replaceAccordingToMappings(replaceMap, roleName);
-				    if(RoleControllerProxy.getController().roleExists(newRoleName))
-				    	roleName = newRoleName;
+				    logger.info("roleName:" + roleName + "-->" + newRoleName);
+				    if(newRoleName != null && !roleName.equals(newRoleName))
+				    {
+				    	if(RoleControllerProxy.getController().roleExists(newRoleName))
+					    {
+				    		roleName = newRoleName;
+					    }
+					    else
+					    {
+					    	logger.info("newRoleName " + newRoleName + " was not found in RoleControllerProxy.getController().roleExists. Lets try getRole.");
+							try
+							{
+						    	if(RoleControllerProxy.getController().getRole(newRoleName) != null)
+						    	{
+						    		roleName = newRoleName;
+						    	}
+					    	}
+					    	catch(Exception e)
+					    	{
+					    		logger.info("Did not find role: " + e.getMessage());
+					    	}
+					    }
+				    }
+
 				    newAccessRightRoleVO.setRoleName(roleName);
 				    AccessRightRole newAccessRightRole = AccessRightController.getController().createAccessRightRole(db, newAccessRightRoleVO, newAccessRight);
 				    newAccessRight.getRoles().add(newAccessRightRole);

@@ -3222,6 +3222,8 @@ public class SiteNodeController extends BaseController
 
 	private void copySiteNodeRecursive(SiteNodeVO siteNode, SiteNodeVO newParentSiteNode, InfoGluePrincipal principal, Map<Integer,Integer> siteNodesIdsMapping, Map<Integer,Integer> contentIdsMapping, Set<Integer> contentIdsToCopy, List<ContentVersion> newCreatedContentVersions, String newNameSuffix, Database db, ProcessBean processBean, Map<String,String> replaceMap) throws Exception
     {
+		VisualFormatter visualFormatter = new VisualFormatter();
+		
 	   	processBean.updateLastDescription("Copied " + siteNodesIdsMapping.size() + "...");
 
 		Timer t = new Timer();
@@ -3247,12 +3249,13 @@ public class SiteNodeController extends BaseController
         RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getLatestActiveContentVersionVO", t.getElapsedTime());
 		
 		SiteNodeVO newSiteNodeVO = new SiteNodeVO();
-		newSiteNodeVO.setName(oldSiteNodeVO.getName() + newNameSuffix);
+		newSiteNodeVO.setName(visualFormatter.replaceAccordingToMappings(replaceMap, oldSiteNodeVO.getName()));
+		//newSiteNodeVO.setName(oldSiteNodeVO.getName() + newNameSuffix);
 		newSiteNodeVO.setIsBranch(oldSiteNodeVO.getIsBranch());
         newSiteNodeVO.setCreatorName(oldSiteNodeVO.getCreatorName());
         newSiteNodeVO.setExpireDateTime(oldSiteNodeVO.getExpireDateTime());
         newSiteNodeVO.setIsProtected(oldSiteNodeVO.getIsProtected());
-        newSiteNodeVO.setPublishDateTime(oldSiteNodeVO.getPublishDateTime());
+        //newSiteNodeVO.setPublishDateTime(oldSiteNodeVO.getPublishDateTime()); //This should reflect the date of the copy instead.
         newSiteNodeVO.setStateId(oldSiteNodeVO.getStateId());
         
         SiteNodeVO newSiteNode = SiteNodeControllerProxy.getSiteNodeControllerProxy().acCreate(principal, newParentSiteNode.getId(), siteNode.getSiteNodeTypeDefinitionId(), newParentSiteNode.getRepositoryId(), newSiteNodeVO, db).getValueObject();
@@ -3278,7 +3281,7 @@ public class SiteNodeController extends BaseController
 			newSiteNodeVersionVO.setVersionModifier(principal.getName());
 			newSiteNodeVersionVO.setStateId(0);
 			newSiteNodeVersionVO.setIsActive(true);
-			newSiteNodeVersionVO.setModifiedDateTime(siteNodeVersionVO.getModifiedDateTime());
+			newSiteNodeVersionVO.setModifiedDateTime(new Date()/*siteNodeVersionVO.getModifiedDateTime()*/);
 			newSiteNodeVersionVO.setIsHidden(siteNodeVersionVO.getIsHidden());
 			newSiteNodeVersionVO.setSortOrder(siteNodeVersionVO.getSortOrder());
 			
@@ -3488,6 +3491,8 @@ public class SiteNodeController extends BaseController
 						{
 							String path = ContentController.getContentController().getContentPath(contentId, includeRootContentInPath, false, db);
 							logger.info("path:" + path);
+							path = visualFormatter.replaceAccordingToMappings(replaceMap, path);
+							logger.info("path:" + path);
 							copiedContent = ContentController.getContentController().getContentVOWithPath(newRepositoryId, path, true, !contentVO.getIsBranch(), principal, db);	
 						}
 						
@@ -3498,7 +3503,7 @@ public class SiteNodeController extends BaseController
 						copiedContent.setExpireDateTime(contentVO.getExpireDateTime());
 						copiedContent.setIsBranch(contentVO.getIsBranch());
 						copiedContent.setIsProtected(contentVO.getIsProtected());
-						copiedContent.setPublishDateTime(contentVO.getPublishDateTime());
+						//copiedContent.setPublishDateTime(contentVO.getPublishDateTime()); /Should be repo copy date
 						copiedContent.setCreatorName(principal.getName());
 						copiedContent.setContentTypeDefinitionId(contentVO.getContentTypeDefinitionId());
 						
@@ -3548,7 +3553,7 @@ public class SiteNodeController extends BaseController
 							ContentVersionVO newContentVersionVO = new ContentVersionVO();
 							newContentVersionVO.setStateId(0);
 							newContentVersionVO.setVersionModifier(contentVersionVO.getVersionModifier());
-							newContentVersionVO.setModifiedDateTime(contentVersionVO.getModifiedDateTime());
+							newContentVersionVO.setModifiedDateTime(new Date()/*contentVersionVO.getModifiedDateTime()*/);
 							newContentVersionVO.setVersionValue(contentVersionVO.getVersionValue());
 
 							ContentVersion contentVersion = ContentVersionController.getContentVersionController().createMedium(copiedContent.getId(), contentVersionVO.getLanguageId(), contentVersionVO, db);
@@ -4808,6 +4813,7 @@ public class SiteNodeController extends BaseController
     	logger.info("principal:" + principal);
         logger.info("oldRepositoryVO:" + oldRepositoryVO);
         SiteNodeVO siteNode = SiteNodeController.getController().getRootSiteNodeVO(oldRepositoryVO.getId(), db);
+        
         logger.info("siteNode:" + siteNode);
 		SiteNodeVO newParentSiteNode = new SiteNodeVO();
 		newParentSiteNode.setRepositoryId(repositoryVO.getId());

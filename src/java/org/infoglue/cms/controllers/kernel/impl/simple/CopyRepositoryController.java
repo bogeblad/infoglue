@@ -101,6 +101,9 @@ public class CopyRepositoryController extends BaseController implements Runnable
 				
 				String expectNormalString = CmsPropertyHandler.getExpectFormPostToBeUnicodeAllready();
 				
+				replacements = replacements.replaceAll(":", "\\\\:");
+				replacements = replacements.replaceAll("#", "\\\\#");
+				replacements = replacements.replaceAll("!", "\\\\!");
 				if(expectNormalString.equals("true"))
 				{
 					Properties properties = new Properties();

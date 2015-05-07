@@ -210,7 +210,9 @@
 			#foreach($siteNode in $qualifyers)
 				//alert("$qualifyer");
 				#set( $siteNodeName = $!siteNode.extraProperties.displayName )
-				#if("$!siteNodeName" == "")
+				
+				#if("$!siteNodeName" == "" || "$!siteNodeName" == "Undefined")
+				
 					#set( $siteNodeName = $siteNode.name )
 				#end
 				qualifyer = new Qualifyer("SiteNode", "$siteNode.id", "$siteNodeName");
@@ -269,7 +271,7 @@
 				</tr>
 				<tr>
 					<td class="menu" style="border: 1px solid #C7D1B3;">    
-						<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!bindingViewV3.action?repositoryId=${repositoryId}&sortLanguageId=${sortLanguageId}" width="100%" height="500" align="baseline"></iframe>
+						<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!bindingViewV3.action?repositoryId=${repositoryId}&sortLanguageId=$!{sortLanguageId}" width="100%" height="500" align="baseline"></iframe>
 					</td>
 				</tr>	
 				</table>
@@ -308,7 +310,7 @@
 		<input type="hidden" name="qualifyerXML" value="">
 		<input type="hidden" name="returnAddress" value="$returnAddress">
 		<input type="hidden" name="originalAddress" value="$originalAddress">
-		<input type="hidden" name="sortLanguageId" value="$sortLanguageId">
+		<input type="hidden" name="sortLanguageId" value="$!sortLanguageId">
 	</form>
 	
 	#lightFooterToolbar($footerButtons)

@@ -682,11 +682,6 @@
 			validateAndSubmitContentForm();
 		}
 		
-		function closeDivById(divToClose)
-	    {
-			 document.getElementById(divToClose).style.display = 'none';
-	    }	
-		
 		function validateAndSubmitContentForm()
 		{
 			if(allowSave == false)
@@ -895,7 +890,7 @@
 					#if($this.hasAccessTo("ContentVersionEditor.References", true, false))
 						<li><a href="#contentReferencesDiv"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a>
 							#if($hasRelatedSiteNodes)
-								<p class="has-references" id="has-references">$ui.getString('tool.contenttool.contentVersionHasReferencePopup')<a href="#" id="contentversion-has-reference-popup-link" onclick="closeDivById('has-references');">$ui.getString('tool.contenttool.close')</a></p>	
+								<p class="has-references" id="has-references">$ui.getString('tool.contenttool.contentVersionHasReferencePopup')</p>	
 																	
 							#end
 						</li>

@@ -109,7 +109,7 @@
 			<input type="hidden" name="changeTypeId" value="3">
 			<input type="hidden" name="returnAddress" value="$returnAddress">
 			<input type="hidden" name="originalAddress" value="$originalAddress">
-			<input type="hidden" name="sortLanguageId" value="$sortLanguageId">
+			<input type="hidden" name="sortLanguageId" value="$!sortLanguageId">
 		</form>
 		<br/><br/><br/><br/><br/><br/>
 	</div>

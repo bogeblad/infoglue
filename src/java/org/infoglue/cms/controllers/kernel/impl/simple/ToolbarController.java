@@ -1914,11 +1914,15 @@ public class ToolbarController implements ToolbarProvider
 
 		String siteNodeId = request.getParameter("siteNodeId");
 		String languageId = request.getParameter("languageId");
-
-		if(languageId != null && !languageId.equals(""))
-			request.getSession().setAttribute("structureLanguageId", new Integer(languageId));
 		
 		SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(siteNodeId));
+
+		if(languageId != null && !languageId.equals("")) {
+			request.getSession().setAttribute("structureLanguageId", new Integer(languageId));
+		} else if (languageId == null){
+			LanguageVO languageVO =  LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId());
+			languageId = languageVO.getLanguageId().toString();
+		}
 		
 		SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(new Integer(siteNodeId));
 

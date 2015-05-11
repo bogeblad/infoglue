@@ -751,10 +751,20 @@ public class ComponentController extends BaseController
 						//logger.info("masterLanguageVO for " + contentVO.getRepositoryId() + " is " + masterLanguageVO);
 			        	ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentVO.getContentId(), masterLanguageVO.getId(), db);
 			        	String groupName = null;
+			        	String description = null;
 			        	if(contentVersionVO != null)
+			        	{
+				        	String groupNameDefault = "Unknown";
+							String descriptionDefault = "Unknown"; 
+
 			        		groupName = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO, "GroupName", false);
-		
-				        for(int i=0; i<allowedComponentGroups.length; i++)
+			        		description = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO, "Description", false);
+			        	
+			        		contentVO.getExtraProperties().put("GroupName", (groupName == null ? groupNameDefault : groupName));
+							contentVO.getExtraProperties().put("Description", (description == null ? descriptionDefault : description));
+			        	}
+				        
+			        	for(int i=0; i<allowedComponentGroups.length; i++)
 				        {
 				        	String allowedComponentGroup = allowedComponentGroups[i];
 				        	if(groupName != null && groupName.indexOf(allowedComponentGroup) > -1)

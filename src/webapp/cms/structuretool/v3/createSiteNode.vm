@@ -198,7 +198,7 @@
 	{
 		var data = "text=" + text;
 		$.ajax({
-			type: "GET",
+			type: "POST",
 		   	url: "ViewCommonAjaxServices!replaceNiceURINonAsciiWithSpecifiedChars.action",
 		   	data: data,
 		   	dataType: "html", 

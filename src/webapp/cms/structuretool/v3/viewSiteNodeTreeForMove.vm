@@ -58,7 +58,7 @@
 		<input type="hidden" name="changeTypeId" value="3">
 		<input type="hidden" name="returnAddress" value="$returnAddress">
 		<input type="hidden" name="originalAddress" value="$originalAddress">
-		<input type="hidden" name="sortLanguageId" value="#if($sortLanguageId)$sortLanguageId#else1#end">
+		<input type="hidden" name="sortLanguageId" value="$!sortLanguageId">
 	
 		<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
 	

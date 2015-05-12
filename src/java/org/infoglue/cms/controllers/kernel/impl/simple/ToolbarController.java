@@ -2228,7 +2228,7 @@ public class ToolbarController implements ToolbarProvider
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
-		buttons.add(getCommonFooterSaveButton(toolbarKey, principal, locale, request, disableCloseButton));
+		buttons.add(getCreateFooterButton(toolbarKey, principal, locale, request, disableCloseButton));
 		buttons.add(getCommonFooterCancelButton(toolbarKey, principal, locale, request, disableCloseButton));
 
 		return buttons;
@@ -4416,7 +4416,28 @@ public class ToolbarController implements ToolbarProvider
 	{
 		return getCommonFooterSaveButton(toolbarKey, principal, locale, request, disableCloseButton, null, null, null);
 	}
-
+	private ToolbarButton getCreateFooterButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
+	{
+		return getCreateFooterButton(toolbarKey, principal, locale, request, disableCloseButton, null, null, null);
+	}
+	private ToolbarButton getCreateFooterButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton, String javascriptCode, String label, String title)
+	{
+		if(javascriptCode == null)
+			javascriptCode = "save();";
+		if(label == null)
+			label = getLocalizedString(locale, "tool.structuretool.toolbarV3.createPageLabel");
+		if(title == null)
+			title = getLocalizedString(locale, "tool.structuretool.toolbarV3.createPageLabel");
+			
+		return new ToolbarButton("",
+				  label,
+				  title,
+				  javascriptCode,
+				  "css/images/v3/saveInlineIcon.gif",
+				  "left",
+				  "save",
+				  true);
+	}
 	private ToolbarButton getCommonFooterSaveButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton, String javascriptCode, String label, String title)
 	{
 		if(javascriptCode == null)

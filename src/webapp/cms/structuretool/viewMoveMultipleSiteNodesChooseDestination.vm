@@ -70,7 +70,7 @@
 		function submitQualifyerWhenRepositoryChanges(repositoryId)
 		{
 		   	document.inputForm.repositoryId.value = repositoryId;
-			
+			document.inputForm.newParentSiteNodeId.value = "";
 			document.inputForm.action = 'MoveMultipleSiteNodes.action';
 			document.inputForm.submit();
 		}

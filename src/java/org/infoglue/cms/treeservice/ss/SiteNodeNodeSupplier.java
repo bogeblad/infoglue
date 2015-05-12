@@ -291,8 +291,9 @@ public class SiteNodeNodeSupplier extends BaseNodeSupplier
 					{
 						node.getParameters().put("isLocalized", "true");
 						String navigationTitle = ContentVersionController.getContentVersionController().getAttributeValue(cvVO, this.pageTreeNameAttribute, true);
-						//String navigationTitle = ContentVersionController.getContentVersionController().getAttributeValue(cvVO, "NavigationTitle", true);
-						if(navigationTitle == null || navigationTitle.equals(""))
+						if(this.pageTreeNameAttribute.equalsIgnoreCase("NiceURIName") && (navigationTitle == null || navigationTitle.equals("")))
+							navigationTitle = vo.getName();
+						else if(navigationTitle == null || navigationTitle.equals(""))
 							navigationTitle = ContentVersionController.getContentVersionController().getAttributeValue(cvVO, "NavigationTitle", true);
 						
 						node.setLocalizedTitle(navigationTitle);
@@ -306,8 +307,9 @@ public class SiteNodeNodeSupplier extends BaseNodeSupplier
 							if(masterCVVO != null)
 							{
 								String navigationTitle = ContentVersionController.getContentVersionController().getAttributeValue(masterCVVO, this.pageTreeNameAttribute, true);
-								//String navigationTitle = ContentVersionController.getContentVersionController().getAttributeValue(masterCVVO, "NavigationTitle", true);
-								if(navigationTitle == null || navigationTitle.equals(""))
+								if(this.pageTreeNameAttribute.equalsIgnoreCase("NiceURIName") && (navigationTitle == null || navigationTitle.equals("")))
+									navigationTitle = vo.getName();
+								else if(navigationTitle == null || navigationTitle.equals(""))
 									navigationTitle = ContentVersionController.getContentVersionController().getAttributeValue(masterCVVO, "NavigationTitle", true);
 								node.setLocalizedTitle(navigationTitle);
 							}

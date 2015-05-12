@@ -3480,7 +3480,7 @@ public class SiteNodeController extends BaseController
 						ContentVO copiedContent = null;
 						if(contentVO.getParentContentId() == null)
 						{
-							ContentVO rootContentNewRepo = ContentController.getContentController().getRootContentVO(newRepositoryId, principal.getName(), false);
+							ContentVO rootContentNewRepo = ContentController.getContentController().getWritableRootContentVO(db, newRepositoryId, principal.getName(), false);
 							if(rootContentNewRepo != null)
 							{
 								ContentController.getContentController().copyContentProperties(ps, contentVO.getId(), rootContentNewRepo.getId());								

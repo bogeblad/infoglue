@@ -1898,7 +1898,7 @@ public class ContentController extends BaseController
 	 * This method fetches the root content for a particular repository.
 	 * If there is no such content we create one as all repositories need one to work.
 	 */
-	        
+
 	public ContentVO getRootContentVO(Integer repositoryId, String userName, boolean createIfNonExisting) throws ConstraintException, SystemException
 	{
 		String key = "root_" + repositoryId;
@@ -2001,6 +2001,56 @@ public class ContentController extends BaseController
 		return contentVO;
 	}
 
+	
+	/**
+	 * This method fetches the root content for a particular repository within a transaction.
+	 * If there is no such content we create one as all repositories need one to work.
+	 */
+	        
+	public ContentVO getWritableRootContentVO(Database db, Integer repositoryId, String userName, boolean createIfNonExisting) throws ConstraintException, SystemException, Exception
+	{
+		ContentVO contentVO = null;
+		
+		logger.info("Fetching the root content for the repository " + repositoryId);
+		OQLQuery oql = db.getOQLQuery( "SELECT c FROM org.infoglue.cms.entities.content.impl.simple.MediumContentImpl c WHERE is_undefined(c.parentContentId) AND c.repositoryId = $1");
+		oql.bind(repositoryId);
+			
+		QueryResults results = oql.execute();			
+		if (results.hasMore()) 
+		{
+			MediumContentImpl contentImpl = (MediumContentImpl)results.next();
+			contentVO = contentImpl.getValueObject();
+		}
+		else
+		{
+			if(createIfNonExisting)
+			{
+				//None found - we create it and give it the name of the repository.
+				logger.info("Found no rootContent so we create a new....");
+				ContentVO rootContentVO = new ContentVO();
+				RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);
+				rootContentVO.setCreatorName(userName);
+				rootContentVO.setName(repositoryVO.getName());
+				rootContentVO.setIsBranch(new Boolean(true));
+				
+				Map args = new HashMap();
+			    args.put("globalKey", "infoglue");
+			    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
+
+			    String defaultFolderContentTypeName = ps.getString("repository_" + repositoryId + "_defaultFolderContentTypeName");
+				if(defaultFolderContentTypeName == null || defaultFolderContentTypeName.equals(""))
+					defaultFolderContentTypeName = "Folder";
+				ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(defaultFolderContentTypeName, db);
+				
+				contentVO = create(db, null, (ctdVO == null ? null : ctdVO.getId()), repositoryId, rootContentVO).getValueObject();
+			}
+		}
+		
+		results.close();
+		oql.close();
+		
+		return contentVO;
+	}
 	
 	/**
 	 * This method fetches the root content for a particular repository within a transaction.

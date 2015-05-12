@@ -426,19 +426,16 @@
 
 		function refreshView(viewName)
 		{
-			//alert("viewName:" + viewName);
 			if(viewName == "contentVersionAssets")
 			{
-		
-					window.location.href = window.location.href + '&anchor=digitalAssetsBlock';
+				document.location.href = document.location.href.replace(".action?", ".action?anchor=digitalAssetsBlock&");
+			
+				#if($this.hasAccessTo($categoriesInterceptionPoint, true, false))
+					$("#level-3").tabs("select", 2);
+				#else
 
-
-					#if($this.hasAccessTo($categoriesInterceptionPoint, true, false))
-						$("#level-3").tabs("select", 2);
-					#else
-
-						$("#level-3").tabs("select", 1);
-					#end
+					$("#level-3").tabs("select", 1);
+				#end
 			}
 		}
 

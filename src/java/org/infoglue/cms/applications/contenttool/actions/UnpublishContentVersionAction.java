@@ -321,20 +321,21 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
         	
         	processBean.updateProcess("Searching for all published versions.");
         	List<SmallestContentVersionVO> contentVersionsVOList = ContentVersionController.getContentVersionController().getPublishedActiveContentVersionVOList(contentIds, db);
-        	Map checkedLanguages = new HashMap();
+        	Map<String,Boolean> checkedLanguages = new HashMap<String,Boolean>();
         	processBean.updateProcess("Found " + contentVersionsVOList.size() + " versions");
         	
         	for(SmallestContentVersionVO contentVersionVO : contentVersionsVOList)
         	{
-				if(checkedLanguages.get(contentVersionVO.getLanguageId()) == null)
+        		String key = "" + contentVersionVO.getContentId() + "_" + contentVersionVO.getLanguageId();
+				if(checkedLanguages.get(key) == null)
 				{
-					checkedLanguages.put(contentVersionVO.getLanguageId(), new Boolean(true));
+					checkedLanguages.put(key, new Boolean(true));
 					ContentVersionVO latestContentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentVersionVO.getContentId(), contentVersionVO.getLanguageId());
 					if(attemptDirectPublishing.equalsIgnoreCase("true"))
 					{
 						if(latestContentVersionVO != null && !latestContentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
 						{
-							logger.info("Creating a new working version as there was no active working version left...:" + contentVersionVO.getLanguageName());
+							logger.info("Creating a new working version as there was no active working version left...:" + contentVersionVO.getLanguageName() + ":" + latestContentVersionVO.getId());
 							ContentStateController.changeState(latestContentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "new working version", false, null, this.getInfoGluePrincipal(), contentVersionVO.getContentId(), events);
 						}
 					}

@@ -1564,7 +1564,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 
 		try
 		{
-			Integer newComponentId = new Integer(0);
+			Integer newComponentId = this.componentId;
 			
 			Integer startNodeId = this.siteNodeId;
 			boolean recurseChildPages = false;

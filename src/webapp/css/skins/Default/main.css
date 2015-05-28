@@ -673,6 +673,24 @@ span.error {
 	border-color: #808080;
 }
 
+/* ------------------------------
+	CK-EDITOR 
+------------------------------- */
+
+/* Auto save - diff dialog window */
+.cke_dialog .diffContent {
+	height: 280px;
+}
+
+.diffContent .delete, 
+.diffContent .insert {
+	word-break: break-word !important;
+	width: 46% !important;
+}
+
+.diffContent .delete *, 
+.diffContent .insert * {
+	
 
 /* YAHOO classes */
 

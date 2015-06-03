@@ -1072,7 +1072,7 @@
 <!--  Mapping for Content  -->
   <class name="org.infoglue.cms.entities.content.impl.simple.ContentImpl" identity="contentId" key-generator="IDENTITY">
     <description>Content</description>
-    <cache-type type="count-limited" capacity="10000"/>
+    <cache-type type="none"/>
     <map-to table="cmContent"/>
     <field name="contentId" type="java.lang.Integer">
       <sql name="contentId" type="integer" dirty="check" />
@@ -1166,7 +1166,7 @@
 <!--  Mapping for SmallishContent  -->
   <class name="org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl" identity="contentId" key-generator="IDENTITY">
     <description>SmallishContent</description>
-    <cache-type type="count-limited" capacity="10000"/>
+    <cache-type type="none"/>
     <map-to table="cmContent"/>
     <field name="contentId" type="java.lang.Integer">
       <sql name="contentId" type="integer" dirty="check" />
@@ -1261,7 +1261,7 @@
   <!--  Mapping for MediumContent  -->
   <class name="org.infoglue.cms.entities.content.impl.simple.MediumContentImpl" identity="contentId" key-generator="IDENTITY">
     <description>MediumContent</description>
-    <cache-type type="count-limited" capacity="10000"/>
+    <cache-type type="none"/>
     <!--<cache-type type="none"/>-->
     <map-to table="cmContent"/>
     <field name="contentId" type="java.lang.Integer">
@@ -1349,7 +1349,7 @@
 <!--  Mapping for ContentVersion  -->
   <class name="org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl" identity="contentVersionId" key-generator="IDENTITY">
     <description>ContentVersion</description>
-    <cache-type type="count-limited" capacity="20000"/>
+    <cache-type type="none"/>
     <map-to table="cmContentVersion"/>
     <field name="contentVersionId" type="java.lang.Integer">
       <sql name="contentVersionId" type="integer" dirty="check" />
@@ -1439,7 +1439,7 @@
 
   <class name="org.infoglue.cms.entities.content.impl.simple.SmallContentVersionImpl" identity="contentVersionId" key-generator="IDENTITY">
     <description>SmallContentVersion</description>
-    <cache-type type="count-limited" capacity="20000"/>
+    <cache-type type="none"/>
     <map-to table="cmContentVersion"/>
     <field name="contentVersionId" type="java.lang.Integer">
       <sql name="contentVersionId" type="integer" dirty="check" />
@@ -1475,7 +1475,7 @@
   
   <class name="org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl" identity="contentVersionId" key-generator="IDENTITY">
     <description>SmallestContentVersion</description>
-    <cache-type type="count-limited" capacity="20000"/>
+    <cache-type type="none"/>
     <map-to table="cmContentVersion"/>
     <field name="contentVersionId" type="java.lang.Integer">
       <sql name="contentVersionId" type="integer" dirty="check" />

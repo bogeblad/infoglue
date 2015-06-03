@@ -26,6 +26,9 @@ package org.infoglue.cms.controllers.kernel.impl.simple;
 import java.awt.Color;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -2696,10 +2699,10 @@ public class RegistryController extends BaseController
 	/**
 	 * Gets matching references
 	 */
-
+	/*
 	public List<RegistryVO> getMatchingRegistryVOList(String entityName, String entityId, int maxRows, Database db) throws SystemException, Exception
 	{
-	    List<RegistryVO> matchingRegistryVOList = new ArrayList<RegistryVO>();
+		List<RegistryVO> matchingRegistryVOList = new ArrayList<RegistryVO>();
 
 		String SQL = "CALL SQL select registryId, entityName, entityid, referencetype, referencingentityname, referencingentityid, referencingentitycomplname, referencingentitycomplid from cmRegistry r where r.entityName = $1 AND r.entityId = $2 AS org.infoglue.cms.entities.management.impl.simple.RegistryImpl";
 		if(maxRows > 0)
@@ -2725,7 +2728,7 @@ public class RegistryController extends BaseController
             Registry registry = (Registry)results.next();
             RegistryVO registryVO = registry.getValueObject();
             matchingRegistryVOList.add(registryVO);
-
+            
             i++;
         }
 
@@ -2734,6 +2737,60 @@ public class RegistryController extends BaseController
 
 		return matchingRegistryVOList;
 	}
+	*/
+	
+	
+	/**
+	 * Gets matching references through downright JDBC
+	 */
+
+	public List<RegistryVO> getMatchingRegistryVOList(String entityName, String entityId, int maxRows, Database db) throws SystemException, Exception
+	{
+	    List<RegistryVO> matchingRegistryVOList = new ArrayList<RegistryVO>();
+
+		String SQL = "select registryId, entityName, entityId, referenceType, referencingEntityName, referencingEntityId, referencingEntityComplName, referencingEntityComplId from cmRegistry r where r.entityName = ? AND r.entityId = ?";
+		if(maxRows > 0)
+		{
+			if(CmsPropertyHandler.getDatabaseEngine().equalsIgnoreCase("mysql"))
+				SQL = "select registryId, entityName, entityId, referenceType, referencingEntityName, referencingEntityId, referencingEntityComplName, referencingEntityComplId from cmRegistry r where r.entityName = ? AND r.entityId = ? LIMIT " + maxRows + "";
+			else if(CmsPropertyHandler.getDatabaseEngine().equalsIgnoreCase("oracle"))
+				SQL = "select * from (select registryId, entityName, entityId, referenceType, referencingEntityName, referencingEntityId, referencingEntityComplName, referencingEntityComplId from cmRegistry r where r.entityName = ? AND r.entityId = ?) where rownum <= " + maxRows + "";
+			else if(CmsPropertyHandler.getDatabaseEngine().equalsIgnoreCase("sqlserver"))
+				SQL = "select top " + maxRows + " registryId, entityName, entityId, referenceType, referencingEntityName, referencingEntityId, referencingEntityComplName, referencingEntityComplId from cmRegistry r where r.entityName = ? AND r.entityId = ?";
+		}
+
+		Connection conn = (Connection) db.getJdbcConnection();
+		
+		PreparedStatement psmt = conn.prepareStatement(SQL.toString());
+		psmt.setString(1, entityName);
+		psmt.setString(2, entityId);
+		
+		ResultSet rs = psmt.executeQuery();
+		
+		int i = 0;
+		while (rs.next() && (maxRows == -1 || i < maxRows)) 
+        {
+			RegistryVO registryVO = new RegistryVO();
+			registryVO.setRegistryId(rs.getInt("registryId"));
+			registryVO.setEntityName(rs.getString("entityName"));
+			registryVO.setEntityId(rs.getString("entityId"));
+			registryVO.setReferenceType(rs.getInt("referenceType"));
+			registryVO.setReferencingEntityName(rs.getString("referencingEntityName"));
+			registryVO.setReferencingEntityId(rs.getString("referencingEntityId"));
+			registryVO.setReferencingEntityCompletingName(rs.getString("referencingEntityComplName"));
+			registryVO.setReferencingEntityCompletingId(rs.getString("referencingEntityComplId"));
+            matchingRegistryVOList.add(registryVO);
+
+            i++;
+        }
+		
+		rs.close();
+		psmt.close();
+	
+		return matchingRegistryVOList;
+	}
+	
+	
 
 	/**
 	 * Gets matching references

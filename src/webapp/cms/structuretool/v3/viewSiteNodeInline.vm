@@ -180,6 +180,7 @@
 			#if($isSiteNodeTypeDefinitionAssigned)
 			<p>The siteNode is of type $siteNodeTypeDefinition.name</p>
 			#end
+			<p>$ui.getString("entity.SiteNode.metaInfoContentId.label") $!metaMetaInfoContentId</p>
 			<p>
 				#set($hasAccessToChange = "true")
 				#set($protectedSiteNodeVersionId = $!this.getProtectedSiteNodeVersionId($siteNodeVersionId))

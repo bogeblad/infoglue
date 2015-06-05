@@ -68,7 +68,7 @@ public class ContentAttributeTag extends ComponentLogicTag
     private boolean useInheritance		= true;
 	private boolean useRepositoryInheritance = true;
     private boolean useStructureInheritance = true;
-    private boolean useAttributeLanguageFallback = true; 
+    private boolean useAttributeLanguageFallback = false; 
     private boolean parse				= false;
     private boolean escapeVelocityCode	= false;
     private boolean fullBaseUrl			= false;

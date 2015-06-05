@@ -68,7 +68,7 @@ public class ContentAttributeTag extends ComponentLogicTag
     private boolean useInheritance		= true;
 	private boolean useRepositoryInheritance = true;
     private boolean useStructureInheritance = true;
-    private boolean useAttributeLanguageFallback = false; 
+    private boolean useAttributeLanguageFallback = true; 
     private boolean parse				= false;
     private boolean escapeVelocityCode	= false;
     private boolean fullBaseUrl			= false;
@@ -99,6 +99,7 @@ public class ContentAttributeTag extends ComponentLogicTag
 	    	if(!parse)
             {
                 result = getController().getContentAttribute(contentVersionVO, attributeName, disableEditOnSight);
+            
                 if(escapeVelocityCode)
                 	result = result.replaceAll("\\$(?!(\\.|\\(|templateLogic\\.(getPageUrl|getInlineAssetUrl|languageId)))", "&#36;");
             }
@@ -110,19 +111,28 @@ public class ContentAttributeTag extends ComponentLogicTag
 	    else if(contentId != null)
         {
             if(!parse)
-            {
-                result = getController().getContentAttribute(contentId, languageId, attributeName, disableEditOnSight);
+            {	
+
+            	result = getController().getContentAttribute(contentId, languageId, useAttributeLanguageFallback, attributeName);
+            	
         	    //result = result.replaceAll("#", "&#35;");
-                if(escapeVelocityCode)
+                if(escapeVelocityCode) {
                 	result = result.replaceAll("\\$(?!(\\.|\\(|templateLogic\\.(getPageUrl|getInlineAssetUrl|languageId)))", "&#36;");
+                }
             }
 	        else
 	        {
-				if(!escapeVelocityCode)
-		            result = getController().getParsedContentAttribute(contentId, languageId, attributeName, disableEditOnSight);
-				else
-		            result = getController().getEscapedParsedContentAttribute(contentId, languageId, attributeName, disableEditOnSight);
-		    }
+				if(!escapeVelocityCode) {
+
+					result = getController().getContentAttribute(contentId, languageId, useAttributeLanguageFallback, attributeName);
+	          
+	            	
+				} else {
+					
+	            		result = getController().getContentAttribute(contentId, languageId, useAttributeLanguageFallback, attributeName);
+	            	
+				}
+	        }
         }
         else if(propertyName != null)
         {
@@ -167,15 +177,15 @@ public class ContentAttributeTag extends ComponentLogicTag
         {
             disableEditOnSight = true;
         }
-        
+
         result = getContentAttributeValue(this.languageId);
-        
+
         if((result == null || result.trim().equals("")) && useAttributeLanguageFallback)
 		{
 			try
 			{
-	            LanguageVO masteLanguageVO = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForSiteNode(this.getController().getDatabase(), this.getController().getSiteNodeId());
-			    result = getContentAttributeValue(masteLanguageVO.getLanguageId());
+				LanguageVO masterLanguageVO = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForSiteNode(this.getController().getDatabase(), this.getController().getSiteNodeId());
+				result = getContentAttributeValue(masterLanguageVO.getLanguageId());
 			}
 			catch(Exception e)
 			{

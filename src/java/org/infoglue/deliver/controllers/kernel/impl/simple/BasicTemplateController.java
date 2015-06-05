@@ -1904,6 +1904,24 @@ public class BasicTemplateController implements TemplateController
 		return attributeValue;
 	}
 	
+	public String getContentAttribute(Integer contentId, Integer languageId, boolean useAttributeLanguageFallback, String attributeName) 
+	{
+		String attributeValue = "";
+		this.deliveryContext.addUsedContent(CacheController.getPooledString(1, contentId));
+		this.deliveryContext.addUsedContent(CacheController.getPooledString(1, contentId) + "_" + attributeName);
+
+		try
+		{
+		    attributeValue = ContentDeliveryController.getContentDeliveryController().getContentAttribute(getDatabase(), contentId, languageId, attributeName, this.siteNodeId, useAttributeLanguageFallback, this.deliveryContext, this.infoGluePrincipal, false);
+		}
+		catch(Exception e)
+		{
+			logger.warn("\nError on url: " + this.getOriginalFullURL() + "\n    ComponentName=[ " + this.getComponentLogic().getInfoGlueComponent().getName() + " ]\nAn error occurred trying to get attributeName=" + attributeName + " on content " + this.contentId + "\nReason:" + e.getMessage());
+			//logger.error("\nError on url: " + this.getOriginalFullURL() + "\nAn error occurred trying to get attributeName=" + attributeName + " on content " + contentId + "\nReason:" + e.getMessage(), e);
+		}
+				
+		return attributeValue;
+	}
 
 	/**
 	 * This method deliveres a String with the content-attribute asked for in the language asked for.

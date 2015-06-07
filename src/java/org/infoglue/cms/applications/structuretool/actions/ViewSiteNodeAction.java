@@ -88,6 +88,8 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	private Integer changeTypeId 			= new Integer(0);
 	private Integer repositoryId 			= null;
 	private Integer languageId 				= null;
+	private Integer metaInfoContentId 		= null;
+	
 	private SiteNodeTypeDefinitionVO siteNodeTypeDefinitionVO;
 	private List availableServiceBindings 	= null;
 	private List serviceBindings 			= null;
@@ -149,6 +151,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 		
 		if(siteNodeVO.getSiteNodeTypeDefinitionId() != null)
 		{
+	
 			this.siteNodeTypeDefinitionVO = SiteNodeTypeDefinitionController.getController().getSiteNodeTypeDefinitionVOWithId(siteNodeVO.getSiteNodeTypeDefinitionId());
 			if(siteNodeTypeDefinitionVO.getName().equalsIgnoreCase("HTMLPage"))
 			{
@@ -156,6 +159,9 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 				this.serviceBindings = SiteNodeVersionController.getServiceBindningVOList(siteNodeVersionVO.getSiteNodeVersionId());
 			}
 		}
+	    if (siteNodeVO != null) {
+	    	this.metaInfoContentId = siteNodeVO.getMetaInfoContentId();	    	
+	    }
 	} 
 
 	protected void initialize(Integer siteNodeId, Database db) throws Exception
@@ -223,6 +229,9 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
     		    SiteNodeVO siteNode = SiteNodeController.getController().getSiteNodeVOWithId(this.siteNodeVO.getId(), db);
     		    SiteNodeController.getController().createSiteNodeMetaInfoContent(db, siteNode, siteNode.getRepositoryId(), this.getInfoGluePrincipal(), null, new ArrayList()).getValueObject();
     		}
+	    }
+	    if (siteNodeVO != null) {
+	    	this.metaInfoContentId = siteNodeVO.getMetaInfoContentId();	    	
 	    }
 
 		this.repositoryId = this.siteNodeVO.getRepositoryId();
@@ -1170,6 +1179,9 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 		this.languageId = languageId;
 	}
 	
-
+	public Integer getMetaMetaInfoContentId() 
+	{
+		return metaInfoContentId;
+	}
 
 }

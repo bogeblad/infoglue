@@ -436,7 +436,11 @@ public interface TemplateController
      */
     
     public abstract String getContentAttribute(ContentVersionVO contentVersionVO, String attributeName, boolean clean);
-
+    
+    /**
+     * Same as above but with boolean to use fallback function
+     */
+    public abstract String getContentAttribute(Integer contentId, Integer languageId, boolean useAttributeLanguageFallback, String attributeName);
     /**
      * This method is a method which gets attributes from a meta info.
      */

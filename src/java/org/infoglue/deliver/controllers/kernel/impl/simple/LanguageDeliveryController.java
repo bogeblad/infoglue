@@ -420,8 +420,8 @@ public class LanguageDeliveryController extends BaseDeliveryController
 		}
 		else
 		{
-			SiteNode siteNode = (SiteNode)getObjectWithId(SiteNodeImpl.class, siteNodeId, db);
-			Integer repositoryId = siteNode.getRepository().getRepositoryId();
+			SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
+			Integer repositoryId = siteNodeVO.getRepositoryId();
          	
 			OQLQuery oql = db.getOQLQuery( "SELECT l FROM org.infoglue.cms.entities.management.impl.simple.LanguageImpl l WHERE l.repositoryLanguages.repository.repositoryId = $1 ORDER BY l.repositoryLanguages.sortOrder, l.languageId");
 			oql.bind(repositoryId);

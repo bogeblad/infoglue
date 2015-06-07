@@ -283,6 +283,8 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 
     	Timer t = new Timer();
 
+    	SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(parentSiteNodeId, false);
+
     	Database db = CastorDatabaseService.getDatabase();
 
         beginTransaction(db);
@@ -290,7 +292,8 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 
         try
         {
-            SiteNode newSiteNode = SiteNodeControllerProxy.getSiteNodeControllerProxy().acCreate(this.getInfoGluePrincipal(), this.parentSiteNodeId, this.siteNodeTypeDefinitionId, this.repositoryId, this.siteNodeVO, db);            
+            //SiteNode newSiteNode = SiteNodeControllerProxy.getSiteNodeControllerProxy().acCreate(this.getInfoGluePrincipal(), this.parentSiteNodeId, this.siteNodeTypeDefinitionId, this.repositoryId, this.siteNodeVO, db);            
+            SiteNode newSiteNode = SiteNodeControllerProxy.getSiteNodeControllerProxy().acCreatePure(this.getInfoGluePrincipal(), this.parentSiteNodeId, this.siteNodeTypeDefinitionId, this.repositoryId, this.siteNodeVO, siteNodeVO.getChildCount(), db);            
             newSiteNodeVO = newSiteNode.getValueObject();
             t.printElapsedTime("acCreate took");
             SiteNodeController.getController().createSiteNodeMetaInfoContent(db, newSiteNodeVO, this.repositoryId, this.getInfoGluePrincipal(), this.pageTemplateContentId, new ArrayList());
@@ -331,8 +334,10 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
     	logger.info("isBranch:" + this.siteNodeVO.getIsBranch());
     	
     	Timer t = new Timer();
-    	if(!logger.isInfoEnabled())
-    		t.setActive(false);
+    	//if(!logger.isInfoEnabled())
+    	//	t.setActive(false);
+    	
+    	SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(parentSiteNodeId, false);
     	
     	Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -344,8 +349,9 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
         {
         	ceb = this.siteNodeVO.validate();
         	ceb.throwIfNotEmpty();
-
-        	SiteNode newSiteNode = SiteNodeControllerProxy.getSiteNodeControllerProxy().acCreate(this.getInfoGluePrincipal(), this.parentSiteNodeId, this.siteNodeTypeDefinitionId, this.repositoryId, this.siteNodeVO, db);            
+        	
+        	//SiteNode newSiteNode = SiteNodeControllerProxy.getSiteNodeControllerProxy().acCreate(this.getInfoGluePrincipal(), this.parentSiteNodeId, this.siteNodeTypeDefinitionId, this.repositoryId, this.siteNodeVO, db);            
+        	SiteNode newSiteNode = SiteNodeControllerProxy.getSiteNodeControllerProxy().acCreatePure(this.getInfoGluePrincipal(), this.parentSiteNodeId, this.siteNodeTypeDefinitionId, this.repositoryId, this.siteNodeVO, siteNodeVO.getChildCount(), db);            
             newSiteNodeVO = newSiteNode.getValueObject();
             t.printElapsedTime("acCreate took");
 

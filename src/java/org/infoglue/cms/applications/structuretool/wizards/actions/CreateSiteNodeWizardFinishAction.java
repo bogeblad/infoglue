@@ -78,6 +78,13 @@ public class CreateSiteNodeWizardFinishAction extends CreateSiteNodeWizardAbstra
 			Integer repositoryId = createSiteNodeWizardInfoBean.getRepositoryId();
 			SiteNodeVO newSiteNodeVO = null;
 			
+			int childCount = 0;
+			if(createSiteNodeWizardInfoBean.getParentSiteNodeId() != null)
+			{
+				SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(createSiteNodeWizardInfoBean.getParentSiteNodeId(), false);
+				childCount = siteNodeVO.getChildCount();
+			}
+
 	    	Database db = CastorDatabaseService.getDatabase();
 	        ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 
@@ -86,7 +93,7 @@ public class CreateSiteNodeWizardFinishAction extends CreateSiteNodeWizardAbstra
 	        try
 	        {
 	        	createSiteNodeWizardInfoBean.getSiteNodeVO().setIsBranch(new Boolean(true));
-	            SiteNode newSiteNode = SiteNodeControllerProxy.getSiteNodeControllerProxy().acCreate(this.getInfoGluePrincipal(), createSiteNodeWizardInfoBean.getParentSiteNodeId(), createSiteNodeWizardInfoBean.getSiteNodeTypeDefinitionId(), repositoryId, createSiteNodeWizardInfoBean.getSiteNodeVO(), db);            
+	            SiteNode newSiteNode = SiteNodeControllerProxy.getSiteNodeControllerProxy().acCreatePure(this.getInfoGluePrincipal(), createSiteNodeWizardInfoBean.getParentSiteNodeId(), createSiteNodeWizardInfoBean.getSiteNodeTypeDefinitionId(), repositoryId, createSiteNodeWizardInfoBean.getSiteNodeVO(), childCount, db);            
 	            newSiteNodeVO = newSiteNode.getValueObject();
 	            SiteNodeController.getController().createSiteNodeMetaInfoContent(db, newSiteNodeVO, repositoryId, this.getInfoGluePrincipal(), createSiteNodeWizardInfoBean.getPageTemplateContentId(), new ArrayList());
 	            

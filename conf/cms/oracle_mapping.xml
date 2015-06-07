@@ -620,6 +620,46 @@
     </field>
     </class>
 
+<!--  Mapping for PureSiteNode  -->
+  <class name="org.infoglue.cms.entities.structure.impl.simple.PureSiteNodeImpl" identity="siteNodeId" key-generator="SEQUENCE">
+    <description>PureSiteNode</description>
+    <cache-type type="none"/>
+    <map-to table="cmSiNo"/>
+    <field name="siteNodeId" type="java.lang.Integer">
+      <sql name="SiNoId" type="integer" dirty="check" />
+    </field>
+    <field name="name" type="java.lang.String">
+      <sql name="name" type="varchar" dirty="check" />
+    </field>
+    <field name="publishDateTime" type="java.util.Date">
+      <sql name="publishDateTime" type="timestamp" dirty="ignore" />
+    </field>
+    <field name="expireDateTime" type="java.util.Date">
+      <sql name="expireDateTime" type="timestamp" dirty="ignore" />
+    </field>
+    <field name="isBranch" type="java.lang.Boolean">
+      <sql name="isBranch" type="integer" dirty="check" />
+    </field>
+    <field name="isDeleted" type="java.lang.Boolean">
+      <sql name="isDeleted" type="integer" dirty="check" />
+    </field>
+    <field name="parentSiteNodeId" type="java.lang.Integer">
+      <sql name="parentSiNoId" type="integer" dirty="check" />
+    </field>
+    <field name="metaInfoContentId" type="java.lang.Integer">
+      <sql name="metaInfoContentId" type="integer" dirty="check" />
+    </field>
+    <field name="repositoryId" type="java.lang.Integer">
+      <sql name="repositoryId" type="integer" dirty="check" />
+    </field>
+    <field name="siteNodeTypeDefinitionId" type="java.lang.Integer">
+      <sql name="SiNoTypeDefId" type="integer" dirty="check" />
+    </field>
+    <field name="creator" type="java.lang.String">
+      <sql name="creator" type="varchar" dirty="check" />
+    </field>
+  </class>
+  
 <!--  Mapping for SmallSiteNode  -->
   <class name="org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl" identity="siteNodeId" key-generator="SEQUENCE">
     <description>SmallSiteNode</description>

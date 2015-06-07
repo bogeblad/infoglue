@@ -64,6 +64,7 @@ import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.entities.structure.impl.simple.MediumSiteNodeVersionImpl;
+import org.infoglue.cms.entities.structure.impl.simple.PureSiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeVersionImpl;
@@ -496,6 +497,29 @@ public class SiteNodeVersionController extends BaseController
 			logger.error("An error occurred so we should not completes the transaction:" + e, e);
 			throw new SystemException(e.getMessage());
 		}
+    	
+		return siteNodeVersion;		
+	}
+	
+	/**
+	 * This method creates an initial siteNodeVersion for the siteNode sent in and within the transaction sent in.
+	 */
+	
+	public static MediumSiteNodeVersionImpl createInitialSiteNodeVersionPure(Database db, PureSiteNodeImpl siteNode, InfoGluePrincipal infoGluePrincipal, int maxSortOrder) throws SystemException, Bug, Exception
+	{
+		MediumSiteNodeVersionImpl siteNodeVersion = null;
+
+		siteNodeVersion = new MediumSiteNodeVersionImpl();
+		siteNodeVersion.setIsCheckedOut(new Boolean(false));
+		siteNodeVersion.setModifiedDateTime(DateHelper.getSecondPreciseDate());
+		siteNodeVersion.setSiteNodeId(siteNode.getId());
+		siteNodeVersion.setStateId(new Integer(0));
+		siteNodeVersion.setVersionComment("Initial version");
+		siteNodeVersion.setVersionModifier(infoGluePrincipal.getName());
+		siteNodeVersion.setVersionNumber(new Integer(1));
+		siteNodeVersion.setSortOrder(maxSortOrder);
+    	
+		db.create(siteNodeVersion);
     	
 		return siteNodeVersion;		
 	}

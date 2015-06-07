@@ -152,6 +152,23 @@ public class SiteNodeControllerProxy extends SiteNodeController
 		
 		return SiteNodeController.getController().create(db, parentSiteNodeId, siteNodeTypeDefinitionId, infogluePrincipal, repositoryId, siteNodeVO);
 	}   
+
+	/**
+	 * This method creates a siteNode after first checking that the user has rights to create it.
+	 */
+
+	public SiteNode acCreatePure(InfoGluePrincipal infogluePrincipal, Integer parentSiteNodeId, Integer siteNodeTypeDefinitionId, Integer repositoryId, SiteNodeVO siteNodeVO, int childCount, Database db) throws ConstraintException, SystemException, Bug, Exception
+	{
+		if(parentSiteNodeId != null && parentSiteNodeId != -1 && infogluePrincipal != null)
+		{
+			Map hashMap = new HashMap();
+			hashMap.put("siteNodeId", parentSiteNodeId);
+	    	
+			intercept(hashMap, "SiteNodeVersion.CreateSiteNode", infogluePrincipal, db);
+		}
+		
+		return SiteNodeController.getController().createPure(db, parentSiteNodeId, siteNodeTypeDefinitionId, infogluePrincipal, repositoryId, siteNodeVO, childCount);
+	}   
     
 	/**
 	 * This method updates a content after first checking that the user has rights to edit it.

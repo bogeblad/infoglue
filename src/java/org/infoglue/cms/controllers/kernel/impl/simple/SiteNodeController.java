@@ -89,6 +89,7 @@ import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.entities.structure.impl.simple.MediumSiteNodeVersionImpl;
+import org.infoglue.cms.entities.structure.impl.simple.PureSiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallQualifyerImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallServiceBindingImpl;
@@ -801,7 +802,6 @@ public class SiteNodeController extends BaseController
 		return isDeletable;	
 	}
 
-	
 	public SiteNodeVO create(Integer parentSiteNodeId, Integer siteNodeTypeDefinitionId, InfoGluePrincipal infoGluePrincipal, Integer repositoryId, SiteNodeVO siteNodeVO) throws ConstraintException, SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();
@@ -837,7 +837,7 @@ public class SiteNodeController extends BaseController
 
 		return siteNode.getValueObject();
 	}     
-    
+
     public SiteNode create(Database db, Integer parentSiteNodeId, Integer siteNodeTypeDefinitionId, InfoGluePrincipal infoGluePrincipal, Integer repositoryId, SiteNodeVO siteNodeVO) throws SystemException, Exception
     {
 	    SiteNode siteNode = null;
@@ -880,6 +880,38 @@ public class SiteNodeController extends BaseController
         
         //No siteNode is an island (humhum) so we also have to create an siteNodeVersion for it. 
         SiteNodeVersionController.createInitialSiteNodeVersion(db, siteNode, infoGluePrincipal);
+        
+        return siteNode;
+    }
+
+    
+    public PureSiteNodeImpl createPure(Database db, Integer parentSiteNodeId, Integer siteNodeTypeDefinitionId, InfoGluePrincipal infoGluePrincipal, Integer repositoryId, SiteNodeVO siteNodeVO, int childCount) throws SystemException, Exception
+    {
+    	logger.info("******************************************");
+        logger.info("parentSiteNode:" + parentSiteNodeId);
+        logger.info("siteNodeTypeDefinition:" + siteNodeTypeDefinitionId);
+        logger.info("repository:" + repositoryId);
+        logger.info("******************************************");
+        
+        if(parentSiteNodeId != null && parentSiteNodeId != -1 && repositoryId == null)
+        {
+        	System.out.println("When was repo null: " + parentSiteNodeId + ":" + infoGluePrincipal.getName());
+       		SiteNodeVO parentSiteNodeVO = getSiteNodeVOWithId(parentSiteNodeId, db);
+			if(parentSiteNodeVO != null && parentSiteNodeVO.getRepositoryId() != null)
+				repositoryId = parentSiteNodeVO.getRepositoryId();	
+        }		
+                
+        PureSiteNodeImpl siteNode = new PureSiteNodeImpl();
+        siteNode.setValueObject(siteNodeVO);
+        siteNode.setParentSiteNodeId(parentSiteNodeId);
+        siteNode.setRepositoryId(repositoryId);
+        siteNode.setSiteNodeTypeDefinitionId(siteNodeTypeDefinitionId);
+        siteNode.setCreator(infoGluePrincipal.getName());
+
+        db.create(siteNode);
+        
+        //No siteNode is an island (humhum) so we also have to create an siteNodeVersion for it. 
+        SiteNodeVersionController.createInitialSiteNodeVersionPure(db, siteNode, infoGluePrincipal, childCount);
         
         return siteNode;
     }
@@ -3258,7 +3290,7 @@ public class SiteNodeController extends BaseController
         //newSiteNodeVO.setPublishDateTime(oldSiteNodeVO.getPublishDateTime()); //This should reflect the date of the copy instead.
         newSiteNodeVO.setStateId(oldSiteNodeVO.getStateId());
         
-        SiteNodeVO newSiteNode = SiteNodeControllerProxy.getSiteNodeControllerProxy().acCreate(principal, newParentSiteNode.getId(), siteNode.getSiteNodeTypeDefinitionId(), newParentSiteNode.getRepositoryId(), newSiteNodeVO, db).getValueObject();
+        SiteNodeVO newSiteNode = SiteNodeControllerProxy.getSiteNodeControllerProxy().acCreatePure(principal, newParentSiteNode.getId(), siteNode.getSiteNodeTypeDefinitionId(), newParentSiteNode.getRepositoryId(), newSiteNodeVO, 0, db).getValueObject();
         
         RequestAnalyser.getRequestAnalyser().registerComponentStatistics("acCreate", t.getElapsedTime());
         

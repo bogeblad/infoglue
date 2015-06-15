@@ -26,6 +26,7 @@ package org.infoglue.cms.controllers.kernel.impl.simple;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -34,15 +35,18 @@ import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.QueryResults;
+import org.infoglue.cms.applications.databeans.ProcessBean;
 import org.infoglue.cms.applications.databeans.ReferenceBean;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
+import org.infoglue.cms.entities.management.InterceptionPointVO;
 import org.infoglue.cms.entities.management.Language;
 import org.infoglue.cms.entities.management.Repository;
 import org.infoglue.cms.entities.management.RepositoryLanguage;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.management.impl.simple.RepositoryImpl;
+import org.infoglue.cms.entities.management.impl.simple.SmallRepositoryImpl;
 import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.exception.Bug;
@@ -50,11 +54,14 @@ import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
+import org.infoglue.cms.util.NotificationMessage;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.NullObject;
 import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Timer;
+
+import com.opensymphony.module.propertyset.PropertySet;
 
 public class RepositoryController extends BaseController
 {
@@ -89,16 +96,16 @@ public class RepositoryController extends BaseController
 	 * This method removes a Repository from the system and also cleans out all depending repositoryLanguages.
 	 */
 	
-    public void markForDelete(RepositoryVO repositoryVO, String userName, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
+    public void markForDelete(RepositoryVO repositoryVO, String userName, InfoGluePrincipal infoGluePrincipal, ProcessBean processBean) throws ConstraintException, SystemException
     {
-    	markForDelete(repositoryVO, userName, false, infoGluePrincipal);
+    	markForDelete(repositoryVO, userName, false, infoGluePrincipal, processBean);
     }
     
 	/**
 	 * This method sets a Repository in markedForDelete mode.
 	 */
 	
-    public void markForDelete(RepositoryVO repositoryVO, String userName, boolean forceDelete, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
+    public void markForDelete(RepositoryVO repositoryVO, String userName, boolean forceDelete, InfoGluePrincipal infoGluePrincipal, ProcessBean processBean) throws ConstraintException, SystemException
     {
 		Database db = CastorDatabaseService.getDatabase();
 		ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -106,48 +113,34 @@ public class RepositoryController extends BaseController
 		Repository repository = null;
 	
 		beginTransaction(db);
-
 		try
 		{
-			repository = getRepositoryWithId(repositoryVO.getRepositoryId(), db);
+			NotificationMessage copyMessage = new NotificationMessage("Repository " + repositoryVO.getName() + " was put into trashcan", Repository.class.getName(), "SYSTEM", NotificationMessage.TRANS_UPDATE, "n/a", "" + repositoryVO.getName());
+			TransactionHistoryController.getController().create(copyMessage);
+
+			repository = getSmallRepositoryWithId(repositoryVO.getRepositoryId(), db);
 			repository.setIsDeleted(true);
 			
-			/*
-			List<Content> contentList = ContentControllerProxy.getContentController().getRepositoryContents(repositoryId, db);
-			Iterator<Content> contentListIterator = contentList.iterator();
-			while(contentListIterator.hasNext())
-			{
-				Content content = contentListIterator.next();
-				content.setIsDeleted(false);
-			}
-			
-			List<SiteNode> siteNodeList = SiteNodeControllerProxy.getController().getRepositorySiteNodes(repositoryId, db);
-			Iterator<SiteNode> siteNodeListIterator = siteNodeList.iterator();
-			while(siteNodeListIterator.hasNext())
-			{
-				SiteNode siteNode = siteNodeListIterator.next();
-				siteNode.setIsDeleted(false);
-			}
-			*/
-
 			ContentVO contentVO = ContentControllerProxy.getController().getRootContentVO(repositoryVO.getRepositoryId(), userName, false);
 			if(contentVO != null)
 			{
 				if(forceDelete)
-					ContentController.getContentController().markForDeletion(contentVO, db, true, true, true, infoGluePrincipal, new HashMap<ContentVO, List<ReferenceBean>>());
+					ContentController.getContentController().markForDeletion(contentVO, db, true, true, true, infoGluePrincipal, new HashMap<ContentVO, List<ReferenceBean>>(), processBean);
 				else
-					ContentController.getContentController().markForDeletion(contentVO, db, false, false, false, infoGluePrincipal, new HashMap<ContentVO, List<ReferenceBean>>());
+					ContentController.getContentController().markForDeletion(contentVO, db, false, false, false, infoGluePrincipal, new HashMap<ContentVO, List<ReferenceBean>>(), processBean);
 			}
+			processBean.updateProcess("Moved all contents to trashcan...");
 			
 			SiteNodeVO siteNodeVO = SiteNodeController.getController().getRootSiteNodeVO(repositoryVO.getRepositoryId());
 			if(siteNodeVO != null)
 			{
 				if(forceDelete)
-					SiteNodeController.getController().markForDeletion(siteNodeVO, db, true, infoGluePrincipal);
+					SiteNodeController.getController().markForDeletion(siteNodeVO, db, true, infoGluePrincipal, processBean);
 				else
-					SiteNodeController.getController().markForDeletion(siteNodeVO, db, infoGluePrincipal);
+					SiteNodeController.getController().markForDeletion(siteNodeVO, db, infoGluePrincipal, processBean);
 			}
-			
+			processBean.updateProcess("Moved all pages to trashcan...");
+
 			//If any of the validations or setMethods reported an error, we throw them up now before create.
 			ceb.throwIfNotEmpty();
     
@@ -183,7 +176,7 @@ public class RepositoryController extends BaseController
 
 		try
 		{
-			repository = getRepositoryWithId(repositoryId, db);
+			repository = getSmallRepositoryWithId(repositoryId, db);
 			repository.setIsDeleted(false);
 			
 			List<Content> contentList = ContentControllerProxy.getContentController().getRepositoryContents(repositoryId, db);
@@ -220,14 +213,17 @@ public class RepositoryController extends BaseController
 			throw new SystemException(e.getMessage());
 		}
     } 
-    
+
 	/**
 	 * This method removes a Repository from the system and also cleans out all depending repositoryLanguages.
 	 */
 	
     public void delete(RepositoryVO repositoryVO, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
     {
-    	delete(repositoryVO, false, infoGluePrincipal);
+    	String exportId = "" + System.currentTimeMillis();
+    	ProcessBean processBean = ProcessBean.createProcessBean(this.getClass().getName(), exportId);
+
+    	delete(repositoryVO, false, infoGluePrincipal, processBean);
     }
 
     
@@ -235,18 +231,28 @@ public class RepositoryController extends BaseController
 	 * This method removes a Repository from the system and also cleans out all depending repositoryLanguages.
 	 */
 	
-    public void delete(Integer repositoryId, boolean forceDelete, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
+    public void delete(RepositoryVO repositoryVO, InfoGluePrincipal infoGluePrincipal, ProcessBean processBean) throws ConstraintException, SystemException
+    {
+    	delete(repositoryVO, false, infoGluePrincipal, processBean);
+    }
+
+    
+	/**
+	 * This method removes a Repository from the system and also cleans out all depending repositoryLanguages.
+	 */
+	
+    public void delete(Integer repositoryId, boolean forceDelete, InfoGluePrincipal infoGluePrincipal, ProcessBean processBean) throws ConstraintException, SystemException
     {
     	RepositoryVO repositoryVO = getRepositoryVOWithId(repositoryId);
     	
-    	delete(repositoryVO, forceDelete, infoGluePrincipal);
+    	delete(repositoryVO, forceDelete, infoGluePrincipal, processBean);
     }
     
 	/**
 	 * This method removes a Repository from the system and also cleans out all depending repositoryLanguages.
 	 */
 	
-    public void delete(RepositoryVO repositoryVO, boolean forceDelete, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
+    public void delete(RepositoryVO repositoryVO, boolean forceDelete, InfoGluePrincipal infoGluePrincipal, ProcessBean processBean) throws ConstraintException, SystemException
     {
 		Database db = CastorDatabaseService.getDatabase();
 		ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -257,10 +263,6 @@ public class RepositoryController extends BaseController
 
 		try
 		{
-			repository = getRepositoryWithId(repositoryVO.getRepositoryId(), db);
-			
-			RepositoryLanguageController.getController().deleteRepositoryLanguages(repository, db);
-			
 			ContentVO contentVO = ContentControllerProxy.getController().getRootContentVO(repositoryVO.getRepositoryId(), infoGluePrincipal.getName(), false);
 			if(contentVO != null)
 			{
@@ -269,6 +271,7 @@ public class RepositoryController extends BaseController
 				else
 					ContentController.getContentController().delete(contentVO, infoGluePrincipal, db);
 			}
+			processBean.updateProcess("Deleted repo contents...");
 			
 			SiteNodeVO siteNodeVO = SiteNodeController.getController().getRootSiteNodeVO(repositoryVO.getRepositoryId());
 			if(siteNodeVO != null)
@@ -278,12 +281,27 @@ public class RepositoryController extends BaseController
 				else
 					SiteNodeController.getController().delete(siteNodeVO, db, true, infoGluePrincipal);
 			}
-			
-			deleteEntity(RepositoryImpl.class, repositoryVO.getRepositoryId(), db);
-	
+			processBean.updateProcess("Deleted repo pages...");
+
 			//If any of the validations or setMethods reported an error, we throw them up now before create.
 			ceb.throwIfNotEmpty();
     
+			db.commit();
+			processBean.updateProcess("Pages and contents deleted - now let's delete repo entity");
+
+			db.begin();
+
+			NotificationMessage copyMessage = new NotificationMessage("Repository " + repositoryVO.getName() + " was deleted", Repository.class.getName(), "SYSTEM", NotificationMessage.TRANS_DELETE, "n/a", "" + repositoryVO.getName());
+			TransactionHistoryController.getController().create(copyMessage);
+
+			repository = getRepositoryWithId(repositoryVO.getRepositoryId(), db);
+			
+			RepositoryLanguageController.getController().deleteRepositoryLanguages(repository, db);
+			processBean.updateProcess("Deleted repo languages...");
+			
+			deleteEntity(RepositoryImpl.class, repositoryVO.getRepositoryId(), db);
+			processBean.updateProcess("Deleted repo...");
+
 			commitTransaction(db);
 		}
 		catch(ConstraintException ce)
@@ -306,6 +324,53 @@ public class RepositoryController extends BaseController
     {
     	return (RepositoryVO) updateEntity(RepositoryImpl.class, (BaseEntityVO) vo);
     }        
+    
+    /*
+     * 
+     * */
+    public RepositoryVO update(RepositoryVO vo, String interceptionPointName, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
+    {
+    	Map hashMap = new HashMap();
+    	hashMap.put("repositoryId", vo.getRepositoryId());
+    	Database db = CastorDatabaseService.getDatabase();
+        ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
+
+        beginTransaction(db);
+        try
+        {
+			if(interceptionPointName.equals("Repository.UpdateProperties"))
+			{
+				InterceptionPointVO interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName(interceptionPointName, db);
+				if(interceptionPointVO != null)
+				{
+					try
+			    	{
+						intercept(hashMap, interceptionPointName, infoGluePrincipal, db);
+			    	}
+			    	catch(Exception e)
+			    	{
+			    		logger.info("Could not intercept Repository.UpdateProperties:" + e.getMessage());
+			    	}
+				}
+			}
+			ceb.throwIfNotEmpty();
+	        
+	        commitTransaction(db);
+        }
+        catch(ConstraintException ce)
+        {
+            logger.warn("An error occurred so we should not completes the transaction:" + ce, ce);
+            rollbackTransaction(db);
+            throw ce;
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+    	return (RepositoryVO) updateEntity(RepositoryImpl.class, (BaseEntityVO) vo);
+    }   
     
     public RepositoryVO update(RepositoryVO repositoryVO, String[] languageValues) throws ConstraintException, SystemException
     {
@@ -358,8 +423,14 @@ public class RepositoryController extends BaseController
 
         return repositoryVO;
     }        
-    
-	// Singe object
+
+	// Singel object
+    public SmallRepositoryImpl getSmallRepositoryWithId(Integer id, Database db) throws SystemException, Bug
+    {
+		return (SmallRepositoryImpl) getObjectWithId(SmallRepositoryImpl.class, id, db);
+    }
+
+	// Singel object
     public Repository getRepositoryWithId(Integer id, Database db) throws SystemException, Bug
     {
 		return (Repository) getObjectWithId(RepositoryImpl.class, id, db);
@@ -374,7 +445,7 @@ public class RepositoryController extends BaseController
 			return repositoryVO;
 		}
 
-		RepositoryVO rep = (RepositoryVO) getVOWithId(RepositoryImpl.class, repositoryId);
+		RepositoryVO rep = (RepositoryVO) getVOWithId(SmallRepositoryImpl.class, repositoryId);
 		
 		if(rep != null)
 			CacheController.cacheObject("repositoryCache", key, rep);
@@ -394,7 +465,7 @@ public class RepositoryController extends BaseController
 		{
 			try
 			{
-				repositoryVO = (RepositoryVO) getVOWithId(RepositoryImpl.class, repositoryId, db);        
+				repositoryVO = (RepositoryVO) getVOWithId(SmallRepositoryImpl.class, repositoryId, db);        
 			}
 			catch (SystemException e) 
 			{
@@ -406,7 +477,7 @@ public class RepositoryController extends BaseController
 						try
 						{
 							Thread.sleep(10);
-							repositoryVO = (RepositoryVO) getVOWithId(RepositoryImpl.class, repositoryId, db); 
+							repositoryVO = (RepositoryVO) getVOWithId(SmallRepositoryImpl.class, repositoryId, db); 
 							logger.warn("It worked out: " + repositoryId);
 							break;
 						}
@@ -489,7 +560,7 @@ public class RepositoryController extends BaseController
 		{
 			try
 			{
-				OQLQuery oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.RepositoryImpl f WHERE f.name = $1");
+				OQLQuery oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.SmallRepositoryImpl f WHERE f.name = $1");
 				oql.bind(name);
 				
 				QueryResults results = oql.execute(Database.READONLY);
@@ -572,7 +643,7 @@ public class RepositoryController extends BaseController
 			return cachedRepositoryVOList;
 		}
 				
-		List repositoryVOList = getAllVOObjects(RepositoryImpl.class, "repositoryId");
+		List repositoryVOList = getAllVOObjects(SmallRepositoryImpl.class, "repositoryId");
 
 		CacheController.cacheObject("repositoryCache", key, repositoryVOList);
 			
@@ -658,7 +729,7 @@ public class RepositoryController extends BaseController
 		{
 			beginTransaction(db);
 		
-			OQLQuery oql = db.getOQLQuery("SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RepositoryImpl r ORDER BY r.repositoryId");
+			OQLQuery oql = db.getOQLQuery("SELECT r FROM org.infoglue.cms.entities.management.impl.simple.SmallRepositoryImpl r ORDER BY r.repositoryId");
         	QueryResults results = oql.execute();
 			this.logger.info("Fetching entity in read/write mode");
 
@@ -721,7 +792,7 @@ public class RepositoryController extends BaseController
 		{
 			beginTransaction(db);
 		
-			OQLQuery oql = db.getOQLQuery("SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RepositoryImpl r WHERE r.isDeleted = $1 ORDER BY r.repositoryId");
+			OQLQuery oql = db.getOQLQuery("SELECT r FROM org.infoglue.cms.entities.management.impl.simple.SmallRepositoryImpl r WHERE r.isDeleted = $1 ORDER BY r.repositoryId");
 			oql.bind(false);
 			
 			QueryResults results = oql.execute(Database.READONLY);
@@ -730,7 +801,8 @@ public class RepositoryController extends BaseController
                 Repository repository = (Repository)results.next();
                 repositoryVOListNotMarkedForDeletion.add(repository.getValueObject());
             }
-            
+			CacheController.cacheObject("repositoryCache", key, repositoryVOListNotMarkedForDeletion);
+
 			results.close();
 			oql.close();
 
@@ -741,8 +813,6 @@ public class RepositoryController extends BaseController
 			throw new SystemException("An error occurred when we tried to fetch a list of deleted repositories. Reason:" + e.getMessage(), e);			
 		}
 
-		CacheController.cacheObject("repositoryCache", key, repositoryVOListNotMarkedForDeletion);
-			
 		return repositoryVOListNotMarkedForDeletion;
 	}
 
@@ -762,7 +832,7 @@ public class RepositoryController extends BaseController
 		{
 			beginTransaction(db);
 		
-			OQLQuery oql = db.getOQLQuery("SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RepositoryImpl r WHERE r.isDeleted = $1 ORDER BY r.repositoryId");
+			OQLQuery oql = db.getOQLQuery("SELECT r FROM org.infoglue.cms.entities.management.impl.simple.SmallRepositoryImpl r WHERE r.isDeleted = $1 ORDER BY r.repositoryId");
 			oql.bind(true);
 			
 			QueryResults results = oql.execute(Database.READONLY);
@@ -811,7 +881,52 @@ public class RepositoryController extends BaseController
 
 	    return hasAccess;
 	}	
+
+	public void copyRepositoryProperties(PropertySet ps, Integer repositoryId, Integer destinationRepositoryId) throws Exception
+	{
+		Hashtable<String, String> hashTable = RepositoryController.getController().getRepositoryProperties(ps, repositoryId);
+		
+	    if(hashTable.get("WYSIWYGConfig") != null)
+	    	ps.setData("repository_" + destinationRepositoryId + "_WYSIWYGConfig", hashTable.get("WYSIWYGConfig").getBytes("utf-8"));
+	    if(hashTable.get("stylesXML") != null)
+		    ps.setData("repository_" + destinationRepositoryId + "_StylesXML", hashTable.get("stylesXML").getBytes("utf-8"));
+	    if(hashTable.get("extraProperties") != null)
+		    ps.setData("repository_" + destinationRepositoryId + "_extraProperties", hashTable.get("extraProperties").getBytes("utf-8"));
+	    if(hashTable.get("defaultFolderContentTypeName") != null)
+		    ps.setString("repository_" + destinationRepositoryId + "_defaultFolderContentTypeName", hashTable.get("defaultFolderContentTypeName"));
+	    if(hashTable.get("defaultTemplateRepository") != null)
+		    ps.setString("repository_" + destinationRepositoryId + "_defaultTemplateRepository", hashTable.get("defaultTemplateRepository"));
+	    if(hashTable.get("parentRepository") != null)
+		    ps.setString("repository_" + destinationRepositoryId + "_parentRepository", hashTable.get("parentRepository"));
+	}
+
 	
+	public Hashtable<String,String> getRepositoryProperties(PropertySet ps, Integer repositoryId) throws Exception
+	{
+		Hashtable<String,String> properties = new Hashtable<String,String>();
+			    
+	    byte[] WYSIWYGConfigBytes = ps.getData("repository_" + repositoryId + "_WYSIWYGConfig");
+	    if(WYSIWYGConfigBytes != null)
+	    	properties.put("WYSIWYGConfig", new String(WYSIWYGConfigBytes, "utf-8"));
+
+	    byte[] StylesXMLBytes = ps.getData("repository_" + repositoryId + "_StylesXML");
+	    if(StylesXMLBytes != null)
+	    	properties.put("StylesXML", new String(StylesXMLBytes, "utf-8"));
+
+	    byte[] extraPropertiesBytes = ps.getData("repository_" + repositoryId + "_extraProperties");
+	    if(extraPropertiesBytes != null)
+	    	properties.put("extraProperties", new String(extraPropertiesBytes, "utf-8"));
+	    
+	    if(ps.exists("repository_" + repositoryId + "_defaultFolderContentTypeName"))
+	    	properties.put("defaultFolderContentTypeName", "" + ps.getString("repository_" + repositoryId + "_defaultFolderContentTypeName"));
+	    if(ps.exists("repository_" + repositoryId + "_defaultTemplateRepository"))
+		    properties.put("defaultTemplateRepository", "" + ps.getString("repository_" + repositoryId + "_defaultTemplateRepository"));
+	    if(ps.exists("repository_" + repositoryId + "_parentRepository"))
+		    properties.put("parentRepository", "" + ps.getString("repository_" + repositoryId + "_parentRepository"));
+
+		return properties;
+	}
+
 	
 	/**
 	 * This is a method that gives the user back an newly initialized ValueObject for this entity that the controller

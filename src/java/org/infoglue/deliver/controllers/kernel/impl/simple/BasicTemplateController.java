@@ -1904,6 +1904,24 @@ public class BasicTemplateController implements TemplateController
 		return attributeValue;
 	}
 	
+	public String getContentAttribute(Integer contentId, Integer languageId, boolean useAttributeLanguageFallback, String attributeName) 
+	{
+		String attributeValue = "";
+		this.deliveryContext.addUsedContent(CacheController.getPooledString(1, contentId));
+		this.deliveryContext.addUsedContent(CacheController.getPooledString(1, contentId) + "_" + attributeName);
+
+		try
+		{
+		    attributeValue = ContentDeliveryController.getContentDeliveryController().getContentAttribute(getDatabase(), contentId, languageId, attributeName, this.siteNodeId, useAttributeLanguageFallback, this.deliveryContext, this.infoGluePrincipal, false);
+		}
+		catch(Exception e)
+		{
+			logger.warn("\nError on url: " + this.getOriginalFullURL() + "\n    ComponentName=[ " + this.getComponentLogic().getInfoGlueComponent().getName() + " ]\nAn error occurred trying to get attributeName=" + attributeName + " on content " + this.contentId + "\nReason:" + e.getMessage());
+			//logger.error("\nError on url: " + this.getOriginalFullURL() + "\nAn error occurred trying to get attributeName=" + attributeName + " on content " + contentId + "\nReason:" + e.getMessage(), e);
+		}
+				
+		return attributeValue;
+	}
 
 	/**
 	 * This method deliveres a String with the content-attribute asked for in the language asked for.
@@ -8466,9 +8484,9 @@ public class BasicTemplateController implements TemplateController
 	 * is not set to true. Otherwise it shows the htnl you sent in within a clickable tag.
 	 */	
 	
-	public String getEditOnSightTag(Integer contentId, String attributeName, String html, boolean showInPublishedMode)
+	public String getEditOnSightTag(Integer contentId, String attributeName, String html, boolean showInPublishedMode, String extraClasses)
 	{
-        return getEditOnSightTag(contentId, this.getLanguageId(), attributeName, html, showInPublishedMode);
+        return getEditOnSightTag(contentId, this.getLanguageId(), attributeName, html, showInPublishedMode, extraClasses);
 	} 
 
 	/**
@@ -8477,14 +8495,14 @@ public class BasicTemplateController implements TemplateController
 	 * is not set to true. Otherwise it shows the htnl you sent in within a clickable tag.
 	 */	
 	
-	public String getEditOnSightTag(Integer contentId, Integer languageId, String attributeName, String html, boolean showInPublishedMode)
+	public String getEditOnSightTag(Integer contentId, Integer languageId, String attributeName, String html, boolean showInPublishedMode, String extraClasses)
 	{
 	    if(showInPublishedMode == false && this.getOperatingMode().intValue() == 3)
 	        return "";
 	    else
 	    {
 	    	String editOnSiteUrl = CmsPropertyHandler.getEditOnSiteUrl();
-			String decoratedAttributeValue = "<a href=\"#\" onclick=\"openInlineDivImpl('" + editOnSiteUrl + "?contentId=" + contentId + "&amp;languageId=" + languageId + "&amp;attributeName=" + attributeName + "&amp;forceWorkingChange=true#" + attributeName + "Anchor" + "', 900, 850, true, true); return false;\">" + html + "</a>";
+			String decoratedAttributeValue = "<a href=\"#\" onclick=\"openInlineDivImpl('" + editOnSiteUrl + "?contentId=" + contentId + "&amp;languageId=" + languageId + "&amp;extraClasses=" + extraClasses +"&amp;attributeName=" + attributeName + "&amp;forceWorkingChange=true#" + attributeName + "Anchor" + "', 900, 850, true, true); return false;\">" + html + "</a>";
 			return decoratedAttributeValue;
 	    }
 	} 
@@ -8542,9 +8560,9 @@ public class BasicTemplateController implements TemplateController
 	 * @param showInPublishedMode
 	 * @return
 	 */
-	public String getAssignPropertyBindingTag(String propertyName, boolean createNew, String html, boolean showInPublishedMode, boolean showDecorated, boolean keepExisting)
+	public String getAssignPropertyBindingTag(String propertyName, boolean createNew, String html, boolean showInPublishedMode, boolean showDecorated, boolean keepExisting, String extraClasses)
 	{
-		return getAssignPropertyBindingTag(propertyName, createNew, html, showInPublishedMode, showDecorated, null, true, keepExisting);
+		return getAssignPropertyBindingTag(propertyName, createNew, html, showInPublishedMode, showDecorated, null, true, keepExisting, extraClasses);
 	}
 
 	/**
@@ -8555,7 +8573,7 @@ public class BasicTemplateController implements TemplateController
 	 * @param showInPublishedMode
 	 * @return
 	 */
-	public String getAssignPropertyBindingTag(String propertyName, boolean createNew, String html, boolean showInPublishedMode, boolean showDecorated, String extraParameters, boolean hideComponentPropertiesOnLoad, boolean keepExisting)
+	public String getAssignPropertyBindingTag(String propertyName, boolean createNew, String html, boolean showInPublishedMode, boolean showDecorated, String extraParameters, boolean hideComponentPropertiesOnLoad, boolean keepExisting, String extraClasses)
 	{
 		String result = "";
 		
@@ -8726,13 +8744,18 @@ public class BasicTemplateController implements TemplateController
 		    else
 		    {
 			    String editOnSiteUrl = CmsPropertyHandler.getEditOnSiteUrl();
-
+			    
 			    String url = assignUrl;
-			    if(!createNew)
+			    if(!createNew) {
 			    	result = "<a href=\"#\" onclick=\"openInlineDivImpl('" + assignUrl + "', 900, 850, true, true); return false;\">" + html + "</a>";
-			    else
+			    } else {
+			    	if (extraClasses != null && !extraClasses.equalsIgnoreCase("")) {
+			    		createUrl = createUrl + "&extraClasses=" + extraClasses;
+			    		
+			    	}
 			    	result = "<a href=\"#\" onclick=\"openInlineDivImpl('" + createUrl + "', 900, 850, true, true); return false;\">" + html + "</a>";
-		    }
+			    }
+			}
 		}
 		catch(Exception e)
 		{

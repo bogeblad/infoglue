@@ -268,6 +268,8 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 	{
 		String urlBase = getRequest().getRequestURL().toString();
 		String urlParameters = getRequest().getQueryString();
+		if(urlBase.contains("/cms/common/viewAccessRights.vm"))
+			urlBase = urlBase.replaceFirst("/cms/common/viewAccessRights.vm", "/ViewAccessRights!V3.action");
 		
 		return urlBase + (urlParameters != null ? "?" + urlParameters : "");
 	}
@@ -395,7 +397,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
   	
   	private String invokeCommand() throws Exception 
   	{
-  		Timer t = new Timer();
+  		//Timer t = new Timer();
   		
         //ThreadMonitor tm = null;
   		//if(getRequest().getParameter("trackThread") != null && getRequest().getParameter("trackThread").equals("true"))

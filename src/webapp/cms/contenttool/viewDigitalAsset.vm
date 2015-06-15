@@ -27,6 +27,7 @@
 			window.parent.OnUploadCompleted(0, 'DownloadAsset.action?contentId=$!contentVersionVO.contentId&languageId=$!contentVersionVO.languageId&assetKey=$!digitalAssetKey', 'DownloadAsset.action?contentId=$!contentVersionVO.contentId&languageId=$!contentVersionVO.languageId&assetKey=$!digitalAssetKey', 'Upload was successful');
 		#end
 	-->
+
 	</script>
 	#end
 
@@ -261,18 +262,17 @@
 		//*******************************************
 		//This method refreshes the caller
 		//*******************************************
-	
+
 		function refreshCaller()
 		{
+
 			if(parent.refreshView)
 			{
 				#if($!refreshAll)
 					if(parent.refreshAll)
 						parent.refreshAll();
-					//alert("selecting");
 					if(parent.refreshView)
 						parent.refreshView("contentVersionAssets");
-					//alert("selected");
 				#else
 					if(parent.refreshView)
 						parent.refreshView("contentVersionAssets");
@@ -281,11 +281,15 @@
 			else
 			{
 				var parentLocation = "";
+				
 				try
 				{
 					parentLocation = "" + window.opener.parent.document.location.href;
-					if(parentLocation.indexOf("ViewContentVersion!standalone.action") > -1)
+					var cleanAnchors = "$cleanAnchors";
+				
+					if(parentLocation.indexOf("ViewContentVersion!standalone.action") > -1 && !cleanAnchors)
 					{
+				
 						var stopWordIndex = parentLocation.indexOf("#");
 						if(stopWordIndex > -1)
 							var newLocation = parentLocation.substring(0, stopWordIndex) + "&anchor=digitalAssetsBlock" + parentLocation.substring(stopWordIndex);
@@ -300,6 +304,7 @@
 					}
 					else
 					{
+					
 						if(window.opener && window.opener.parent && window.opener.parent.frames['main'])
 						{
 							var agt=navigator.userAgent.toLowerCase();
@@ -310,6 +315,7 @@
 						}
 						else
 						{
+				
 							window.opener.location.reload();	
 						}
 					}
@@ -412,7 +418,11 @@
 		
 		var assetSizeArray = new Array();
 		#foreach($assetKeyDefinition in $definedAssetKeys)
-			assetSizeArray["$assetKeyDefinition.assetKey"] = "$formatter.formatFileSize($assetKeyDefinition.maximumSize)";
+			#if("$assetKeyDefinition.maximumSize" != "-1")
+				assetSizeArray["$assetKeyDefinition.assetKey"] = "$formatter.formatFileSize($assetKeyDefinition.maximumSize)";
+			#else
+				assetSizeArray["$assetKeyDefinition.assetKey"] = "$formatter.formatFileSize($this.userUploadMaxSize)";	
+			#end
 		#end
 		
 		function close()
@@ -428,7 +438,7 @@
 #beginLightCommonToolV3Impl("tool.contenttool.uploadDigitalAsset.header" "" "" false true $!disableCloseButton $headerMarkup false "highGreyBackground")
 
 <div onfocus="this.blur();">
-
+	
 	#lightMenuToolbar("" $buttons $rightButtons) 
 
 	<div style="clear: both;"></div>
@@ -517,11 +527,12 @@
 							var maxSize = "$formatter.formatFileSize($this.userUploadMaxSize)";
 						 	#foreach($assetKeyDefinition in $definedAssetKeys)
 						 		#if($velocityCount == 1)
-							 		maxSize = "$formatter.formatFileSize($assetKeyDefinition.maximumSize)";
+						 			#if($assetKeyDefinition.maximumSize != "-1")
+								 		maxSize = "$formatter.formatFileSize($assetKeyDefinition.maximumSize)";
+										document.getElementById("maxSize").innerHTML = "$ui.getString("tool.contenttool.myFileUploadLimit", $formatter.formatFileSize($this.userUploadMaxSize))";
+							 		#end
 						 		#end
 						  	#end
-							//document.getElementById("maxSize").innerHTML = "(Max " + maxSize + ")";
-							document.getElementById("maxSize").innerHTML = "$ui.getString("tool.contenttool.myFileUploadLimit", $formatter.formatFileSize($this.userUploadMaxSize))";
 						  -->
 						  </script>
 						</div>

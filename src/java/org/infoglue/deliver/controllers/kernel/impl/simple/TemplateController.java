@@ -436,7 +436,11 @@ public interface TemplateController
      */
     
     public abstract String getContentAttribute(ContentVersionVO contentVersionVO, String attributeName, boolean clean);
-
+    
+    /**
+     * Same as above but with boolean to use fallback function
+     */
+    public abstract String getContentAttribute(Integer contentId, Integer languageId, boolean useAttributeLanguageFallback, String attributeName);
     /**
      * This method is a method which gets attributes from a meta info.
      */
@@ -1738,7 +1742,7 @@ public interface TemplateController
 	 * This method adds the neccessairy html to a output for it to be editable.
 	 */	
 
-	public String getEditOnSightTag(Integer contentId, Integer languageId, String attributeName, String html, boolean showInPublishedMode);
+	public String getEditOnSightTag(Integer contentId, Integer languageId, String attributeName, String html, boolean showInPublishedMode, String extraClasses);
 
 
 	public String getExportedContentsUrl(List contentIdList, String fileNamePrefix, boolean includeContentTypes, boolean includeCategories) throws Exception;
@@ -1750,7 +1754,7 @@ public interface TemplateController
 	 * @param showInPublishedMode
 	 * @return
 	 */
-	public String getAssignPropertyBindingTag(String propertyName, boolean createNew, String html, boolean showInPublishedMode, boolean showDecorated, boolean keepExisting);
+	public String getAssignPropertyBindingTag(String propertyName, boolean createNew, String html, boolean showInPublishedMode, boolean showDecorated, boolean keepExisting, String extraClasses);
 
 	/**
 	 * This method returns the neccessairy html to assign by klicking on a link.
@@ -1759,7 +1763,7 @@ public interface TemplateController
 	 * @param showInPublishedMode
 	 * @return
 	 */
-	public String getAssignPropertyBindingTag(String propertyName, boolean createNew, String html, boolean showInPublishedMode, boolean showDecorated, String extraParameters, boolean hideComponentPropertiesOnLoad, boolean keepExisting);
+	public String getAssignPropertyBindingTag(String propertyName, boolean createNew, String html, boolean showInPublishedMode, boolean showDecorated, String extraParameters, boolean hideComponentPropertiesOnLoad, boolean keepExisting, String extraClasses);
 
 	
     public boolean getThreatFoldersAsContents();

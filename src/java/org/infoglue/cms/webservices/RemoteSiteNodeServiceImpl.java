@@ -292,6 +292,13 @@ public class RemoteSiteNodeServiceImpl extends RemoteInfoGlueService
 	            if(siteNodeVO.getCreatorName() == null)
 	            	siteNodeVO.setCreatorName(this.principal.getName());
 	            
+				int childCount = 0;
+				if(siteNodeVO.getParentSiteNodeId() != null)
+				{
+					SiteNodeVO parentSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVO.getParentSiteNodeId(), false);
+					childCount = parentSiteNodeVO.getChildCount();
+				}
+
 	            Database db = CastorDatabaseService.getDatabase();
 	            ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 
@@ -299,7 +306,7 @@ public class RemoteSiteNodeServiceImpl extends RemoteInfoGlueService
 
 	            try
 	            {
-		            SiteNode newSiteNode = siteNodeControllerProxy.acCreate(this.principal, siteNodeVO.getParentSiteNodeId(), siteNodeVO.getSiteNodeTypeDefinitionId(), siteNodeVO.getRepositoryId(), siteNodeVO, db);
+		            SiteNode newSiteNode = siteNodeControllerProxy.acCreatePure(this.principal, siteNodeVO.getParentSiteNodeId(), siteNodeVO.getSiteNodeTypeDefinitionId(), siteNodeVO.getRepositoryId(), siteNodeVO, childCount, db);
 		            SiteNodeVO newSiteNodeVO = newSiteNode.getValueObject();
 	            	if(newSiteNode != null)
 	            		statusBean.getCreatedBeans().add(new CreatedEntityBean(SiteNodeVO.class.getName(), new Long(newSiteNodeVO.getId())));

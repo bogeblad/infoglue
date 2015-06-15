@@ -1,4 +1,6 @@
+
 <script type="text/javascript">
+
 <!--
 	var cmsBaseUrl = "${cmsBaseUrl}";
 	var componentEditorUrl = "${componentEditorUrl}";
@@ -55,6 +57,7 @@
 
 	setTimeout("keepSession()", 60000);
 -->	
+
 </script>
 
 <script type="text/javascript" src="${contextName}/script/componentEditor.js"></script>
@@ -83,6 +86,16 @@ ${skinDeliveryCSS}
 	    CKEDITOR.config.maxHeight = maxAutogrowHeight;
 	}    
 -->
+ 	$( document ).ready(function() {
+
+		var activeElement = $('div[data-componentelementid="${focusElementId}"]');
+
+		if(activeElement != null && activeElement.offset())
+		{
+			$(window)[0].scrollTo(0, activeElement.offset().top - 300);
+		}
+	});
+
 </script>
 #end
 

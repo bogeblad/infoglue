@@ -673,6 +673,24 @@ span.error {
 	border-color: #808080;
 }
 
+/* ------------------------------
+	CK-EDITOR 
+------------------------------- */
+
+/* Auto save - diff dialog window */
+.cke_dialog .diffContent {
+	height: 280px;
+}
+
+.diffContent .delete, 
+.diffContent .insert {
+	word-break: break-word !important;
+	width: 46% !important;
+}
+
+.diffContent .delete *, 
+.diffContent .insert * {
+	
 
 /* YAHOO classes */
 
@@ -833,4 +851,300 @@ span.error {
 
 .yui-skin-sam .yui-split-button-disabled button {
 	background-image: url(split-button-arrow-disabled.png);
+}
+
+/* The following is for new tabbed version editor*/
+.whiteBackground {
+	background-color: white;
+}
+
+.level-1 .ui-state-default, .level-1 .ui-widget-header .ui-state-default {
+	border: 0 !important;
+	background: none;
+}
+.level-1 .ui-state-default a {
+	text-decoration: none;
+}
+.level-1 .ui-state-active a {
+	text-decoration: underline;
+}
+ 
+#contentVersionDiv select, 
+#contentVersionDiv input {
+	border: 1px solid #CCC;
+	font-size: 12px;
+}
+
+.dialog-wrapper {
+	padding-bottom: 25px;
+}
+
+.dialog-wrapper h3 {
+	margin: 20px 0 10px 16px;
+}
+
+.dialog-wrapper .inlineTabDiv {
+	border: none;
+}
+
+.dialog-wrapper #tabsContainer {
+	margin-top: 0;
+	margin-left: 0;
+	margin-right: 0;
+}
+
+.dialog-wrapper #menutoolbar {
+	height: 0;
+	min-height: 0;
+	position: absolute;
+	top: 0px;
+	z-index: 1;
+}
+
+
+/* References message*/
+.has-references {
+	background: #f2f2f2;
+	box-shadow: #666 0px 1px 3px;
+	font-family: arial;
+	font-size: 13px;
+	padding: 5px 10px;
+	position: absolute;
+		top: 12px;
+		left: -41px;
+	width: auto;
+	z-index: 100;
+}
+
+.has-references:before {
+	content: '';
+	border-left: 10px solid rgba(0, 0, 0, 0);
+	border-right: 10px solid rgba(0, 0, 0, 0);
+	border-bottom: 10px solid #f2f2f2;
+	display: block;
+	height: 0;
+	position: absolute;
+		top: -10px;
+		left: 35px;
+	width: 0;
+ }
+ 
+a#contentversion-has-reference-popup-link {
+	border-right: none;
+	font-weight: normal;
+	padding: 5px 0;
+	text-decoration: underline;
+}
+
+/* Working or published state in dialog-wrapper */
+.dialog-wrapper .publishedState, 
+.dialog-wrapper .publishState, 
+.dialog-wrapper .workingState {
+	font-family: arial;
+	position: absolute;
+		top: 5px;
+		right: 10px;
+		left: auto;
+}
+
+/* No version created message */
+.create-version-first {
+	border: 1px solid #EEE;
+	font-size: 12px;
+	font-family: arial;
+	font-style: italic;
+	margin: 0 10px 10px;
+	max-width: none;
+	padding: 20px 10px;
+}
+
+/* Version comment */
+.version-comment {
+	border-radius: 3px;
+	color: #aaa;
+	font-family: arial;
+	font-size: 12px;
+	font-style: italic;
+	margin: 10px 0 10px 3px;
+	max-width: none;
+}
+
+/* Mandatory image file in edit content*/
+.dialog-wrapper .imgBoxTop {
+	margin: 10px 0;
+}
+
+.mandatory-assets .imgBox {
+	font-size: 12px;
+}
+
+/* Tabs/links in level 1 */
+#level-1.ui-tabs .ui-tabs-nav.level-1 {
+	border-top: 1px solid #E4E4E4;
+	padding: 6px 0 6px 2px;
+}
+
+.level-1.ui-widget-header {
+	border-bottom: none;
+}
+
+.ui-tabs .ui-tabs-nav.level-1 li {
+	background: rgba(0, 0, 0, 0);
+	border: none;
+	margin-left: 10px;
+	margin-top: 6px;
+}
+
+.ui-tabs .ui-tabs-nav.level-1 li.ui-tabs-selected {
+	background: transparent;
+	border: none;
+}
+
+.ui-tabs .ui-tabs-nav.level-1 li a {
+	border-right: 2px solid #e5e5e5;
+	background: rgba(0, 0, 0, 0);
+	color: #555;
+	font-size: 13px;
+	line-height: 100%;
+	padding: 0 10px 0 0;
+}
+
+/* Tabs in level 2 (language) */
+#level-2 {
+	padding: 0 10px; 
+}
+
+.ui-tabs .ui-tabs-nav.level-2 {
+	margin: 10px 0 0 !important;
+	padding: 0;
+}
+
+/* Disabled tabs */
+.ui-tabs .ui-tabs-nav li.disabled-language-tab a,
+.ui-tabs .ui-tabs-nav.level-2 li.disabled-language-tab a {
+	background: #f1f1f1;
+	color: #AAA;
+	text-decoration: line-through !important;
+}
+
+#level-3.disabled-language-content {
+	border-top: none;
+	padding: 0;
+}
+
+#level-3.disabled-language-content #contentVersionText {
+	padding: 0 8px;
+}
+#level-3.disabled-language-content .workingState,
+#level-3.disabled-language-content .publishState,
+#level-3.disabled-language-content .publishedState,
+.disabled-language-content ul.level-3 {
+	display: none;
+}
+
+.disabled-language-content::before {
+	background: rgba(229, 229, 229, 0.5);
+	content: '';
+	display: block;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	width: 100%;
+}
+
+p.disabled-language-content-message {
+	background: rgba(229, 229, 229, 0.5);
+	border: 1px solid #ccc;
+	border-bottom: none;	
+	border-bottom: none;
+	margin: 0 10px;
+	max-width: none;
+	padding: 30px 10px 10px;
+}
+
+p.disabled-language-content-message a {
+	color: #2B5681;
+}
+
+.ui-tabs .ui-tabs-nav.level-2 li.ui-tabs-selected {
+	background: #FFF;
+	border-color: #ccc;
+	z-index: 1;
+}
+
+.ui-tabs .ui-tabs-nav.level-2 li.disabled-language-tab.ui-tabs-selected {
+	background: #f1f1f1;
+}
+
+/* Create new sitenode dialog, overrides for disabled language*/
+.dialog-create-new .disabled-language-content::before {
+	height: calc(100% - 32px);
+	margin-top: -1px;
+	width: calc(100% - 32px);
+}
+
+.dialog-create-new p.disabled-language-content-message {
+	background: none;
+	border: none;
+}
+.dialog-wrapper #level-3 .inlineTabDiv {
+	border: none !important;
+}
+
+/* Tabs/links in level 3*/
+#level-3 {
+	border: 1px solid #ccc;
+	margin: 0 10px 10px;
+	padding: 0 10px 10px;
+}
+
+/* 	Tabs/links in level 1 and 3 */
+.ui-tabs .ui-tabs-nav.level-1 li a,
+.ui-tabs .ui-tabs-nav.level-3 li a {
+	text-decoration: underline;
+}
+
+.ui-tabs .ui-tabs-nav.level-1 li.ui-tabs-selected a,
+.ui-tabs .ui-tabs-nav.level-3 li.ui-tabs-selected a {
+	text-decoration: none;
+}
+
+.ui-tabs .ui-tabs-nav.level-1 li:last-child a,
+.ui-tabs .ui-tabs-nav.level-3 li:last-child {
+	border: none;
+}
+
+.ui-tabs .ui-tabs-nav.level-3 {
+	border: none;
+	margin: 15px 0 15px 2px;
+	padding: 0;
+}
+
+.ui-tabs .ui-tabs-nav.level-3 li {
+	font-size: 12px;
+	margin: 0 10px 0 0px;
+	padding: 0 10px 0 0;
+	border: none;
+	background: rgba(0, 0, 0, 0);
+	border-right: 2px solid #e5e5e5;
+	line-height: 100%;
+	color: #555;
+}
+
+.ui-tabs .ui-tabs-nav.level-3 li a {
+	background: rgba(0, 0, 0, 0);
+	color: #555;
+	padding: 0;
+}
+
+.ui-tabs .ui-tabs-nav.level-3 li a:hover,
+.ui-tabs .ui-tabs-nav.level-1 li a:hover {
+	background-color: rgba(0, 0, 0, 0);
+	text-decoration: underline;
+}
+
+.ui-tabs .ui-tabs-nav.level-3 li.ui-tabs-selected a,
+.ui-tabs .ui-tabs-nav.level-3 li.ui-tabs-selected a:hover {
+	text-decoration: none;
 }

@@ -57,6 +57,7 @@ public class ViewMySettingsAction extends InfoGlueAbstractAction
 	private String defaultGUI					= null;
 	private String theme						= null;
 	private String toolbarVariant 				= null;
+	private String defaultTreeTitleField		= null;
 	
 	private List repositories = null;
 	private List themes = null;
@@ -80,6 +81,7 @@ public class ViewMySettingsAction extends InfoGlueAbstractAction
 	    //this.theme 					= ps.getString("principal_" + this.getInfoGluePrincipal().getName() + "_theme");
 	    this.theme 					= CmsPropertyHandler.getTheme(this.getInfoGluePrincipal().getName());
 	    this.toolbarVariant			= ps.getString("principal_" + this.getInfoGluePrincipal().getName() + "_toolbarVariant");
+	    this.defaultTreeTitleField 	= ps.getString("principal_" + this.getInfoGluePrincipal().getName() + "_defaultTreeTitleField");
 
 	    /* Provide the list of repositories but do not include the system tool repositories */
 	    List<RepositoryVO> acceptedHomeRepositoryVOList = new ArrayList<RepositoryVO>();
@@ -118,7 +120,12 @@ public class ViewMySettingsAction extends InfoGlueAbstractAction
 	{
 		return defaultGUI;
 	}
-	
+
+	public String getDefaultTreeTitleField()
+	{
+		return this.defaultTreeTitleField;
+	}
+
 	public String getTheme()
 	{
 		return theme;

@@ -67,6 +67,7 @@ import org.infoglue.cms.entities.management.impl.simple.SystemUserGroupImpl;
 import org.infoglue.cms.entities.management.impl.simple.SystemUserImpl;
 import org.infoglue.cms.entities.management.impl.simple.SystemUserRoleImpl;
 import org.infoglue.cms.entities.publishing.impl.simple.PublicationDetailImpl;
+import org.infoglue.cms.entities.structure.impl.simple.PureSiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl;
@@ -155,12 +156,12 @@ public class WorkingPublicationThread extends Thread
 					logger.info("typeId:" + typeId);
 					logger.info("changedAttributeNames:" + changedAttributeNames);
 
-				    boolean skipOriginalEntity = false;
+					boolean skipOriginalEntity = false;
 
 					List<Map<String,String>> allIGCacheCalls = new ArrayList<Map<String,String>>();
 
 					logger.info("className:" + className + " objectId:" + objectId + " objectName: " + objectName + " typeId: " + typeId + ":" + extraInformation);
-				    if(className.indexOf("AccessRight") > -1)
+				    if(className != null && className.indexOf("AccessRight") > -1)
 				    {
 				    	logger.info("Special handling of access rights..");
 				    	if(!accessRightsFlushed)
@@ -337,6 +338,22 @@ public class WorkingPublicationThread extends Thread
 								Object[] idsExtra = {new Integer(objectId)};
 								CacheController.clearCache(typesExtra, idsExtra);
 							}
+							else if(Class.forName(className).getName().equals(PureSiteNodeImpl.class.getName()))
+							{
+							    Class typesExtra = SiteNodeImpl.class;
+								Object[] idsExtra = {new Integer(objectId)};
+								CacheController.clearCache(typesExtra, idsExtra);
+								
+							    Class typesExtra2 = SmallSiteNodeImpl.class;
+								Object[] idsExtra2 = {new Integer(objectId)};
+								CacheController.clearCache(typesExtra2, idsExtra2);
+							}
+							else if(Class.forName(className).getName().equals(SmallSiteNodeImpl.class.getName()))
+							{
+							    Class typesExtra = SiteNodeImpl.class;
+								Object[] idsExtra = {new Integer(objectId)};
+								CacheController.clearCache(typesExtra, idsExtra);
+							}
 							else if(Class.forName(className).getName().equals(SiteNodeVersionImpl.class.getName()))
 							{
 							    Class typesExtra = SmallSiteNodeVersionImpl.class;
@@ -499,7 +516,7 @@ public class WorkingPublicationThread extends Thread
 					
 				    RequestAnalyser.getRequestAnalyser().removeOngoingPublications(cacheEvictionBean);
 				    cacheEvictionBean.setProcessed();
-				    //if(cacheEvictionBean.getPublicationId() > -1)
+				    if(cacheEvictionBean.getClassName() != null)
 				    	RequestAnalyser.getRequestAnalyser().addPublication(cacheEvictionBean);
 				}
 				

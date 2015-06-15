@@ -26,7 +26,10 @@ package org.infoglue.cms.applications.structuretool.actions;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.applications.databeans.LinkBean;
+import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
+import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeControllerProxy;
+import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
@@ -285,9 +288,14 @@ public class MoveSiteNodeAction extends InfoGlueAbstractAction
 		return sortLanguageId;
 	}
 	
-	public void setSortLanguageId(Integer sortLanguageId) 
+	public void setSortLanguageId(Integer sortLanguageId) throws SystemException, Exception 
 	{
-		this.sortLanguageId = sortLanguageId;
+		if (sortLanguageId == null) {
+			LanguageVO languageVO = LanguageController.getController().getMasterLanguage(this.siteNodeVO.getRepositoryId());
+			this.sortLanguageId = languageVO.getLanguageId();
+		} else {
+			this.sortLanguageId = sortLanguageId;
+		}
 	}
 
 }

@@ -12,7 +12,10 @@
 			else if(top.refreshWorkSurface)
 			{
 				top.refreshWorkSurface("StructureTool");
-				parent.refreshTreeSurface();
+				if(parent.refreshTreeSurface)
+					parent.refreshTreeSurface();
+				else if(parent.parent.refreshTreeSurface)
+					parent.parent.refreshTreeSurface();
 				if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();
 			}
 			else if(top.getIsIGStandardTools && top.getIsIGStandardTools() == true)
@@ -293,10 +296,11 @@
 			var languageId = $(select).val();
 				
 			attributeName = document.editForm.attributeName.value;
+			saveAndExitURL = document.editForm.saveAndExitURL.value;
 			
 			if ((!getDirty() && !checkWYSIWYGDirty()) || confirm('$ui.getString("tool.contenttool.languageVersionChangeWarning")'))
 			{
-				window.location.href="ViewContentVersion!standalone.action?contentId=" + contentId + "&languageId=" + languageId + "&attributeName=" + attributeName;
+				window.location.href="ViewContentVersion!standalone.action?contentId=" + contentId + "&languageId=" + languageId + "&attributeName=" + attributeName + "&saveAndExitURL=" + saveAndExitURL;
 			}
 			else
 			{
@@ -957,7 +961,6 @@
 ##end
 
 <div style="z-index: 3;">
-
 	#lightMenuToolbar("" $buttons $rightButtons) 
 
 	<div style="clear: both;"></div>
@@ -978,23 +981,30 @@
 		-->
 	</script>
 	#end
-	
+
 	<div>
 		<div style="float: left;">
 		#if($isMetainfoContent)
-			<h3>$ui.getString("tool.structuretool.pageProperties.header", $localizedContentName)</h3>
+			#if($contentVersionVO)
+				<h3>$ui.getString("tool.structuretool.pageProperties.header", $localizedContentName)</h3>
+			   	<p>$ui.getString("tool.contenttool.versionLastUpdatedByLabel") $contentVersionVO.versionModifier ($formatter.formatDate($contentVersionVO.modifiedDateTime, "yyyy-MM-dd HH:mm") - $contentVersionVO.versionComment)</p>
+		   	#else
+				<h3>$ui.getString('tool.structuretool.createSiteNodeVersionFirst', $currentLanguageVO.name)<h3>
+			#end
 		#else
 			<h3>#if($translate)$ui.getString('tool.contenttool.translationViewLabel') #else $ui.getString('tool.contenttool.editingViewLabel') #end $ui.getString('tool.contenttool.contentLabel') "$contentVO.name" - $currentLanguageVO.name</h3>
 			#if($contentVersionVO)
 			   	<p>$ui.getString("tool.contenttool.versionLastUpdatedByLabel") $contentVersionVO.versionModifier ($formatter.formatDate($contentVersionVO.modifiedDateTime, "yyyy-MM-dd HH:mm") - $contentVersionVO.versionComment)</p>
-		   	#end
+		   	#else
+				<p>$ui.getString('tool.contenttool.createVersionFirst')</p>
+			#end
 		#end
 		</div>
 	</div>
 
 	<div id="allDivs">
 	
-	<div id="tabsContainer" class="cleanTopDiv" style="#if($translate == false)width: 100%;#else width: 550px; #end float:left;">
+	<div id="tabsContainer" class="cleanTopDiv" style="#if($translate == false)width: 100%;#else width: 550px; #end float:left; #if(!$contentVersionVO)display:none; #end">
 	<ul>
 		<li><a href="#contentVersionDiv"><span>#if($isMetainfoContent == false)$ui.getString('tool.contenttool.textContentTab')#else Metadata#end</span></a></li>
 
@@ -1057,7 +1067,7 @@
 			<input type="hidden" name="contentVersionId" value="$!contentVersionId"/>
 			#end
 			<input type="hidden" name="repositoryId" value="$!repositoryId"/>
-		
+			<input type="hidden" id="extraClasses" name="extraClasses" value="$!extraClasses"/>
 			<input type="hidden" id="versionValue" name="versionValue" value=""/>
 			<input type="hidden" id="currentEditorId" name="currentEditorId" value=""/>
 			<input type="hidden" id="attributeName" name="attributeName" value="$attributeName"/>

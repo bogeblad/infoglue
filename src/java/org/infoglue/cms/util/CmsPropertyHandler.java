@@ -1931,6 +1931,11 @@ public class CmsPropertyHandler
 		return Boolean.parseBoolean(useContextBasedHelp);
 	}
 
+	public static String getContentVersionEditorFlavour() 
+	{
+		return getServerNodeProperty("contentVersionEditorFlavour", true, "v3default");
+	}
+
 	public static String getHeaderHTML()
 	{
 	    return getServerNodeDataProperty(null, "headerHTML", true, "");
@@ -2063,6 +2068,13 @@ public class CmsPropertyHandler
 		String defaultGUI = getPropertySet().getString("principal_" + userName + "_defaultGUI");
 	    
 		return (defaultGUI == null ? "default" : defaultGUI);
+	}
+
+	public static String getDefaultTreeTitleField(String userName)
+	{
+		String defaultGUI = getPropertySet().getString("principal_" + userName + "_defaultTreeTitleField");
+	    
+		return (defaultGUI == null ? "NavigationTitle" : defaultGUI);
 	}
 
 	public static String getToolbarVariant(String userName)
@@ -2220,6 +2232,21 @@ public class CmsPropertyHandler
 		return max;
 	}
 
+	public static Boolean getDoNotUseTrashcanForRepositories()
+	{
+		boolean doNotUseTrashcanForRepositories = true;
+		try
+		{
+			doNotUseTrashcanForRepositories = Boolean.parseBoolean(getServerNodeProperty("doNotUseTrashcanForRepositories", true, "false"));
+		}
+		catch(Exception e)
+		{
+			logger.warn("Error parsing doNotUseTrashcanForRepositories:" + e.getMessage());
+		}
+		
+		return doNotUseTrashcanForRepositories;
+	}
+	
 	public static boolean getDuplicateAssetsBetweenVersions()
 	{
 		String duplicateAssetsBetweenVersions = getServerNodeProperty("duplicateAssetsBetweenVersions", true, "false");
@@ -2531,6 +2558,28 @@ public class CmsPropertyHandler
 		}
 	    
 	    return customContentTypeIcons;
+	}
+
+	public static Map<String,String> getCasCookiesBeforeRedirect()
+	{
+		Map casCookiesBeforeRedirect = new HashMap();
+		
+	    String customContentTypeIconsString = CmsPropertyHandler.getServerNodeDataProperty(null, "casCookiesBeforeRedirect", true, null);
+	    if(customContentTypeIconsString != null && !customContentTypeIconsString.equals(""))
+		{
+	    	try
+			{
+	    		Properties properties = new Properties();
+				properties.load(new ByteArrayInputStream(customContentTypeIconsString.getBytes("UTF-8")));
+				casCookiesBeforeRedirect.putAll(properties);
+			}	
+			catch(Exception e)
+			{
+			    logger.error("Error loading properties from string. Reason:" + e.getMessage());
+			}
+		}
+	    
+	    return casCookiesBeforeRedirect;
 	}
 
 	public static String getAllowedFolderContentTypeNames()
@@ -2960,6 +3009,13 @@ public class CmsPropertyHandler
 		return Boolean.parseBoolean(allowInternalCallsBasedOnIP);
 	}
 
+	public static boolean getUseGlobalRepositoryChange() 
+	{
+		String useGlobalRepositoryChange = getServerNodeProperty("useGlobalRepositoryChange", true, "false");
+		
+		return Boolean.parseBoolean(useGlobalRepositoryChange);
+	}
+	
 	private static Boolean useSQLServerDialect = null;
 	public static boolean getUseSQLServerDialect()
 	{
@@ -3081,6 +3137,11 @@ public class CmsPropertyHandler
 	public static String getMetaDataContentTypeDefinitionName()
 	{
 		return getServerNodeProperty("metaDataContentTypeDefinitionName", true, "Meta info");
+	}
+
+	public static String getExpectFormPostToBeUnicodeAllready() 
+	{
+		return getServerNodeProperty("expectFormPostToBeUnicodeAllready", true, "true");
 	}
 
 }

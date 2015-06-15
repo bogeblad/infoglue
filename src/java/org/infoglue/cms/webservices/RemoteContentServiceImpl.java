@@ -1152,7 +1152,8 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
             if(forceDelete.booleanValue())
             {
             	ContentVO currentContentVO = ContentControllerProxy.getContentController().getContentVOWithId(contentId);
-		        @SuppressWarnings("unchecked")
+            	contentVO.setRepositoryId(currentContentVO.getRepositoryId());
+            	@SuppressWarnings("unchecked")
 				List<ContentVersionVO> contentVersionsVOList = ContentVersionController.getContentVersionController().getPublishedActiveContentVersionVOList(contentId);
 
 				List<EventVO> events = new ArrayList<EventVO>();

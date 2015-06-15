@@ -46,6 +46,7 @@ import org.infoglue.cms.entities.management.impl.simple.SmallAvailableServiceBin
 import org.infoglue.cms.entities.management.impl.simple.SystemUserImpl;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.publishing.impl.simple.PublicationImpl;
+import org.infoglue.cms.entities.structure.impl.simple.PureSiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl;
@@ -166,6 +167,22 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
 				else if(Class.forName(className).getName().equals(SiteNodeImpl.class.getName()))
 				{
 				    Class typesExtra = SmallSiteNodeImpl.class;
+					Object[] idsExtra = {new Integer(objectId)};
+					CacheController.clearCache(typesExtra, idsExtra);
+				}
+				else if(Class.forName(className).getName().equals(PureSiteNodeImpl.class.getName()))
+				{
+				    Class typesExtra = SiteNodeImpl.class;
+					Object[] idsExtra = {new Integer(objectId)};
+					CacheController.clearCache(typesExtra, idsExtra);
+					
+				    Class typesExtra2 = SmallSiteNodeImpl.class;
+					Object[] idsExtra2 = {new Integer(objectId)};
+					CacheController.clearCache(typesExtra2, idsExtra2);
+				}
+				else if(Class.forName(className).getName().equals(SmallSiteNodeImpl.class.getName()))
+				{
+				    Class typesExtra = SiteNodeImpl.class;
 					Object[] idsExtra = {new Integer(objectId)};
 					CacheController.clearCache(typesExtra, idsExtra);
 				}

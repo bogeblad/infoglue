@@ -1,5 +1,6 @@
 #define( $headerMarkup )
 	<script type="text/javascript">
+	
 	<!-- 
 		var exp;
 		
@@ -31,19 +32,19 @@
 		function loadMainArea(siteNodeId, repositoryId, path)
 		{
 		    document.inputForm.newParentSiteNodeId.value = siteNodeId;
+	
 		}
 	    
 		/**
 		 * This method changes to another repository.
 		 */
 		 
-		function changeRepository(selectBox)
+		function changeRepository(selectBox, languageId)
 		{
-			//qualifyerXML = createXML();
+			
 			var repositoryId = selectBox.value;
-			submitQualifyerWhenRepositoryChanges(repositoryId);
-			//var url = "${changeRepositoryAction}?updateAction=$updateAction&repositoryId=" + repositoryId + "&entityName=$entityName&entityId=$entityId&attributeName=$attributeName&entityName=${currentEntity}&tree=$tree&qualifyerXML=" + escape(qualifyerXML);
-			//document.location.href = url;
+			submitQualifyerWhenRepositoryChanges(repositoryId, languageId);
+			
 		}
 		
 		/**
@@ -52,21 +53,29 @@
 		 
 		function finish()
 		{
-			if (confirm('$ui.getString("tool.structuretool.copySiteNode.areYouSureWarning")'))
-		    {
-		    	document.inputForm.submit();
-			}
+			var parentSiteNodeId =  document.inputForm.newParentSiteNodeId.value;
+		   	if (parentSiteNodeId != null && parentSiteNodeId != "" && parentSiteNodeId != "-1") 
+		   	{
+				if (confirm('$ui.getString("tool.structuretool.copySiteNode.areYouSureWarning")')) 
+				{
+				 	document.inputForm.submit();
+				}
+			} 
+			else 
+			{
+				alert("$ui.getString("tool.structuretool.moveSiteNode.mustSelectSiteNodeWarning")");
+		   	}
 		}
 	
 		/**
 		 * This submits the qalifyers.
 		 */
 		
-		function submitQualifyerWhenRepositoryChanges(repositoryId)
+		function submitQualifyerWhenRepositoryChanges(repositoryId, languageId)
 		{
 		   	document.inputForm.repositoryId.value = repositoryId;
-			
-			document.inputForm.action = 'CopyMultipleSiteNodes.action';
+			document.inputForm.newParentSiteNodeId.value = "";
+			document.inputForm.action = 'CopyMultipleSiteNodes.action?sortLanguageId=' + languageId;
 			document.inputForm.submit();
 		}
 	-->
@@ -80,21 +89,22 @@
 	<div style="clear: both;"></div>
 
 	<h3>$ui.getString("tool.structuretool.copyMultiplSiteNodesChooseDestination.header")</h3>
-		
+	
 	<div style="margin: 16px;">	
 	
-  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);">
+  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this, ${sortLanguageId});">
 		    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
 		    #foreach ($repositoryVO in $repositories)
-		    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+				<option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
 		    #end
 		</select>
 		
-		<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!bindingViewV3.action?repositoryId=${repositoryId}&sortLanguageId=${sortLanguageId}" width="90%" height="450" ></iframe>
+		<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!bindingViewV3.action?repositoryId=${repositoryId}&sortLanguageId=$!{sortLanguageId}" width="90%" height="450" ></iframe>
 	
 		<form name="inputForm" action="CopyMultipleSiteNodes.action">
 			<input type="hidden" name="userSessionKey" value="$userSessionKey"/>
 			<input type="hidden" name="repositoryId" value="$repositoryId"/>
+			<input type="hidden" name="sortLanguageId" value="$!sortLanguageId"/>
 			<input type="hidden" name="siteNodeId" value="$siteNodeId"/>
 			<input type="hidden" name="entityId" value="">
 			<input type="hidden" name="path" value="">

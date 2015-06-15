@@ -589,7 +589,7 @@ public class FileHelper
         	ZipEntry entry = (ZipEntry)entries.nextElement();
         	logger.info("entry:" + entry.getName());
         	
-	        if(entry.isDirectory() && allowedDirectories.contains(entry.getName().replaceFirst("/", ""))) 
+	        if(entry.isDirectory() && allowedDirectories.contains(entry.getName().replaceFirst("/.*", ""))) 
 	        {
 	          	(new File(targetFolder + File.separator + entry.getName())).mkdir();
 	          	continue;

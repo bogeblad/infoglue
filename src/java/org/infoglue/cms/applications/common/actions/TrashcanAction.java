@@ -23,19 +23,30 @@
 
 package org.infoglue.cms.applications.common.actions;
 
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.infoglue.cms.applications.common.VisualFormatter;
+import org.infoglue.cms.applications.databeans.ProcessBean;
+import org.infoglue.cms.applications.managementtool.actions.DeleteRepositoryAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
-import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeControllerProxy;
+import org.infoglue.cms.controllers.kernel.impl.simple.TrashcanController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
 import webwork.action.Action;
 
@@ -62,124 +73,51 @@ public class TrashcanAction extends InfoGlueAbstractAction
 	private Boolean updateParent = false;	
 	private Integer updateEntityId = -1;
 	
+	private String processId = null;
+
+	private VisualFormatter visualFormatter = new VisualFormatter();
+
 	protected String doExecute() throws Exception
     {
 		this.repositoriesMarkedForDeletion = RepositoryController.getController().getRepositoryVOListMarkedForDeletion(getInfoGluePrincipal());
-		this.contentsMarkedForDeletion = ContentController.getContentController().getContentVOListMarkedForDeletion(repositoryFilter, getInfoGluePrincipal());
-		this.siteNodesMarkedForDeletion = SiteNodeController.getController().getSiteNodeVOListMarkedForDeletion(repositoryFilter, getInfoGluePrincipal());
+		this.contentsMarkedForDeletion = ContentController.getContentController().getContentVOListMarkedForDeletion(repositoryFilter, getInfoGluePrincipal(), this.repositoriesMarkedForDeletion);
+		this.siteNodesMarkedForDeletion = SiteNodeController.getController().getSiteNodeVOListMarkedForDeletion(repositoryFilter, getInfoGluePrincipal(), this.repositoriesMarkedForDeletion);
 		
 		return Action.SUCCESS;
     }
 
 	public String doRestore() throws Exception
     {
-		if(entity != null && !entity.equals("") && entityId != null && !entityId.equals(""))
-		{
-			updateParent = true;
-			if(entity.equalsIgnoreCase("Repository"))
-			{
-				RepositoryController.getController().restoreRepository(new Integer(entityId), getInfoGluePrincipal());
-			}
-			else if(entity.equalsIgnoreCase("Content"))
-			{
-				ContentController.getContentController().restoreContent(new Integer(entityId), getInfoGluePrincipal());
-				try 
-				{
-					updateEntityId = ContentController.getContentController().getContentVOWithId(new Integer(entityId)).getParentContentId();
-				}
-				catch (Exception e) 
-				{
-					logger.error("Error getting parent content for update:" + e.getMessage());
-				}
-			}
-			else if(entity.equalsIgnoreCase("SiteNode"))
-			{
-				SiteNodeController.getController().restoreSiteNode(new Integer(entityId), getInfoGluePrincipal());
-				try 
-				{
-					updateEntityId = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(entityId)).getParentSiteNodeId();
-				}
-				catch (Exception e) 
-				{
-					logger.error("Error getting parent page for update:" + e.getMessage());
-				}
-			}
-		}
+		String exportId = "Empty_Trashcan_" + visualFormatter.formatDate(new Date(), "yyyy-MM-dd_HHmm");
+		ProcessBean processBean = ProcessBean.createProcessBean(TrashcanAction.class.getName(), exportId, "Restore items from trashcan");
 		
-		return doExecute();
+		TrashcanController.restoreEntity(entity, entityId, this.getInfoGluePrincipal(), processBean);
+		
+		return "successRedirectToProcesses";
     }
 
 	public String doDelete() throws Exception
     {
 		validateSecurityCode();
 		
-		if(entity != null && !entity.equals("") && entityId != null && !entityId.equals(""))
-		{
-			if(entity.equalsIgnoreCase("Repository"))
-				RepositoryController.getController().delete(new Integer(entityId), true, getInfoGluePrincipal());
-			else if(entity.equalsIgnoreCase("Content"))
-				ContentController.getContentController().delete(new Integer(entityId), true, getInfoGluePrincipal());
-			else if(entity.equalsIgnoreCase("SiteNode"))
-				SiteNodeController.getController().delete(new Integer(entityId), true, getInfoGluePrincipal());
-		}
+		String exportId = "Empty_Trashcan_" + visualFormatter.formatDate(new Date(), "yyyy-MM-dd_HHmm");
+		ProcessBean processBean = ProcessBean.createProcessBean(TrashcanAction.class.getName(), exportId, "Delete items from trashcan");
 		
-		return doExecute();
+		TrashcanController.deleteEntity(entity, entityId, this.getInfoGluePrincipal(), processBean);
+		
+		return "successRedirectToProcesses";
     }
 
 	public String doEmpty() throws Exception
     {
 		validateSecurityCode();
 
-		this.repositoriesMarkedForDeletion = RepositoryController.getController().getRepositoryVOListMarkedForDeletion(getInfoGluePrincipal());
-		this.contentsMarkedForDeletion = ContentController.getContentController().getContentVOListMarkedForDeletion(this.repositoryFilter, getInfoGluePrincipal());
-		this.siteNodesMarkedForDeletion = SiteNodeController.getController().getSiteNodeVOListMarkedForDeletion(this.repositoryFilter, getInfoGluePrincipal());
-
-		Iterator<SiteNodeVO> siteNodesMarkedForDeletionIterator = siteNodesMarkedForDeletion.iterator();
-		while(siteNodesMarkedForDeletionIterator.hasNext())
-		{
-			SiteNodeVO siteNodeVO = siteNodesMarkedForDeletionIterator.next();
-			try
-			{
-				SiteNodeControllerProxy.getSiteNodeControllerProxy().acDelete(getInfoGluePrincipal(), siteNodeVO, true);
-			}
-			catch (Exception e) 
-			{
-				logger.error("Could not delete page[" + siteNodeVO.getName() + "]:" + e.getMessage());
-				logger.warn("Could not delete page[" + siteNodeVO.getName() + "]:" + e.getMessage(), e);
-			}
-		}
-
-		Iterator<ContentVO> contentsMarkedForDeletionIterator = contentsMarkedForDeletion.iterator();
-		while(contentsMarkedForDeletionIterator.hasNext())
-		{
-			ContentVO contentVO = contentsMarkedForDeletionIterator.next();
-			try
-			{
-				ContentControllerProxy.getController().acDelete(getInfoGluePrincipal(), contentVO, true);
-			}
-			catch (Exception e) 
-			{
-				logger.error("Could not delete content[" + contentVO.getName() + "]:" + e.getMessage());
-				logger.warn("Could not delete content[" + contentVO.getName() + "]:" + e.getMessage(), e);
-			}
-		}
-
-		Iterator<RepositoryVO> repositoriesMarkedForDeletionIterator = repositoriesMarkedForDeletion.iterator();
-		while(repositoriesMarkedForDeletionIterator.hasNext())
-		{
-			RepositoryVO repositoryVO = repositoriesMarkedForDeletionIterator.next();
-			try
-			{
-				RepositoryController.getController().delete(repositoryVO, true, getInfoGluePrincipal());
-			}
-			catch (Exception e) 
-			{
-				logger.error("Could not delete repository[" + repositoryVO.getName() + "]:" + e.getMessage());
-				logger.warn("Could not delete repository[" + repositoryVO.getName() + "]:" + e.getMessage(), e);
-			}
-		}
+		String exportId = "Empty_Trashcan_" + visualFormatter.formatDate(new Date(), "yyyy-MM-dd_HHmm");
+		ProcessBean processBean = ProcessBean.createProcessBean(TrashcanAction.class.getName(), exportId, "Empty entire trashcan");
 		
-		return doExecute();
+		TrashcanController.emptyTrashcan(this.repositoryFilter, this.getInfoGluePrincipal(), processBean);
+		
+		return "successRedirectToProcesses";
     }
 
 	public List<RepositoryVO> getRepositoriesMarkedForDeletion()
@@ -235,6 +173,78 @@ public class TrashcanAction extends InfoGlueAbstractAction
 	public Integer getUpdateEntityId() 
 	{
 		return updateEntityId;
+	}
+	
+	public String doShowProcesses() throws Exception
+	{
+		return "successShowProcesses";
+	}
+
+	public String doShowProcessesAsJSON() throws Exception
+	{
+		// TODO it would be nice we could write JSON to the OutputStream but we get a content already transmitted exception then.
+		return "successShowProcessesAsJSON";
+	}
+
+
+	public String getStatusAsJSON()
+	{
+		Gson gson = new GsonBuilder()
+			.excludeFieldsWithModifiers(Modifier.TRANSIENT, Modifier.STATIC)
+			.setDateFormat("dd MMM HH:mm:ss").create();
+		JsonObject object = new JsonObject();
+
+		try
+		{
+			List<ProcessBean> processes = getProcessBeans();
+			Type processBeanListType = new TypeToken<List<ProcessBean>>() {}.getType();
+			JsonElement list = gson.toJsonTree(processes, processBeanListType);
+			object.add("processes", list);
+			object.addProperty("memoryMessage", getMemoryUsageAsText());
+			 
+			Iterator<ProcessBean> beanIterator = processes.iterator();
+			while(beanIterator.hasNext())
+			{
+				ProcessBean bean = beanIterator.next();
+				if(bean.getStatus() == ProcessBean.REDIRECTED || bean.getStatus() == ProcessBean.FINISHED)
+				{	
+					bean.setStatus(ProcessBean.FINISHED);
+					bean.removeProcess();
+				}
+			}
+		}
+		catch (Throwable t)
+		{
+			JsonObject error = new JsonObject(); 
+			error.addProperty("message", t.getMessage());
+			error.addProperty("type", t.getClass().getSimpleName());
+			object.add("error", error);
+		}
+
+		return gson.toJson(object);
+	}
+	
+	public List<ProcessBean> getProcessBeans()
+	{
+		return ProcessBean.getProcessBeans(TrashcanAction.class.getName());
+	}
+	
+	/**
+	 * This deletes a process info bean and related files etc.
+	 * @return
+	 * @throws Exception
+	 */	
+
+	public String doDeleteProcessBean() throws Exception
+	{
+		if(this.processId != null)
+		{
+			ProcessBean pb = ProcessBean.getProcessBean(DeleteRepositoryAction.class.getName(), processId);
+			if(pb != null)
+				pb.removeProcess();
+		}
+		
+		return "successRedirectToProcesses";
 	}
 
 }

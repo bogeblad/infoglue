@@ -1291,7 +1291,7 @@
 			}
 		</style>
 	
-		## Inget formul√§r om inget kan selectas
+		## Inget formul‰r om inget kan selectas
 		#if($!lvConstraint != 0)
 			<form name="listForm" action="Confirm.action" method="post">
 				<input type="hidden" name="header" value="$!header"/>
@@ -1342,7 +1342,7 @@
 		}
 	</style>
 	
-	## Inget formul√§r om inget kan selectas
+	## Inget formul‰r om inget kan selectas
 	#if($lvConstraint != 0)
 		<form name="listForm" action="Confirm.action" method="post">
 			<input type="hidden" name="header" value="$header"/>
@@ -3491,7 +3491,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 						    <tr>
 						    	<td colspan="2" bgcolor="white" valign="top">
 									#if($contentVersionId > -1)
-										$ui.getString("tool.contenttool.relatedPages") (<a href="javascript:if(top.openInlineDiv) top.openInlineDiv('ViewStructureRelationEditor!V3.action?updateAction=ViewStructureRelationEditor!updateQualifyerV3.action&entityName=ContentVersion&entityId=$!contentVersionId&attributeName=$!attribute.name&callbackMethod=updateAttribute${attribute.name}', 600, 800, true, true, 'Relation editor'); else openRelationEditor('ViewStructureRelationEditor!V3.action?updateAction=ViewStructureRelationEditor!updateQualifyerV3.action&entityName=ContentVersion&entityId=$!contentVersionId&attributeName=$!attribute.name&callbackMethod=updateAttribute${attribute.name}');"><strong>Edit relations</strong></a>)
+										$ui.getString("tool.contenttool.relatedPages") (<a href="javascript:if(top.openInlineDiv) top.openInlineDiv('ViewStructureRelationEditor!V3.action?updateAction=ViewStructureRelationEditor!updateQualifyerV3.action&entityName=ContentVersion&languageId=$!languageId&entityId=$!contentVersionId&attributeName=$!attribute.name&callbackMethod=updateAttribute${attribute.name}', 600, 800, true, true, 'Relation editor'); else openRelationEditor('ViewStructureRelationEditor!V3.action?updateAction=ViewStructureRelationEditor!updateQualifyerV3.action&entityName=ContentVersion&languageId=$languageId&entityId=$!contentVersionId&attributeName=$!attribute.name&callbackMethod=updateAttribute${attribute.name}');"><strong>Edit relations</strong></a>)
 									<hr noshade size="1">
 									#set($qualifyers = $this.getSiteNodeRelationQualifyers($this.getUnescapedAttributeValue($attribute.name)))
 									<table border="0" id="${attribute.name}RelationTable">

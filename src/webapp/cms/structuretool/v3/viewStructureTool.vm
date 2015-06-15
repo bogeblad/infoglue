@@ -201,6 +201,9 @@
 		{
 			window.parent.document.title = "StructureTool - " + $("#" + selectBox.id + " option:selected").text();
 			document.location.href = "ViewStructureTool!V3.action?repositoryId=" + selectBox.value;
+			#if($useGlobalRepositoryChange)
+				top.frames["ContentToolIframe"].location.href = "ViewContentTool!V3.action?repositoryId=" + selectBox.value;
+			#end
 		}	
 
 		function changeRepositoryById(repositoryId)

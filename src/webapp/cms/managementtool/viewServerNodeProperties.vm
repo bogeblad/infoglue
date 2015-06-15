@@ -75,6 +75,10 @@
 		padding:8px;
 	}
 	
+	.inlineTabDiv {
+		margin-bottom: 35px !important;
+	}
+	
 </style>
 <script type="text/javascript">
 <!--
@@ -327,6 +331,7 @@
 				#editPropertyFieldCSS("ServerNode.property.casProxyValidateUrl" "casProxyValidateUrl" "$this.getPropertyValue('casProxyValidateUrl')" "51" "$!serverNodeId" "$!cmsPH.casProxyValidateUrl")
 				#editPropertyFieldCSS("ServerNode.property.casServiceUrl" "casServiceUrl" "$this.getPropertyValue('casServiceUrl')" "51" "$!serverNodeId" "$!cmsPH.casServiceUrl")
 				#editPropertyFieldCSS("ServerNode.property.casLogoutUrl" "casLogoutUrl" "$this.getPropertyValue('casLogoutUrl')" "51" "$!serverNodeId" "$!cmsPH.casLogoutUrl")
+				#editPropertyFieldCSS("ServerNode.property.casCookiesBeforeRedirect" "casCookiesBeforeRedirect" "$this.getPropertyValue('casCookiesBeforeRedirect')" "51" "$!serverNodeId" "$!cmsPH.casCookiesBeforeRedirect")
 				#editPropertyFieldCSS("ServerNode.property.ipAddressesToFallbackToBasicAuth" "ipAddressesToFallbackToBasicAuth" "$this.getPropertyValue('ipAddressesToFallbackToBasicAuth')" "51" "$!serverNodeId" "$!cmsPH.ipAddressesToFallbackToBasicAuth")
 			</div>
 		
@@ -378,6 +383,8 @@
 
 				#yesNoDropDownWithInheritCSS("ServerNode.property.allowPublicationEventFilter" "allowPublicationEventFilter" "$this.getPropertyValue('allowPublicationEventFilter')" "$!cmsPH.allowPublicationEventFilter")
 
+				#yesNoDropDownWithInheritCSS("ServerNode.property.doNotUseTrashcanForRepositories" "doNotUseTrashcanForRepositories" "$this.getPropertyValue('doNotUseTrashcanForRepositories')" "$!cmsPH.doNotUseTrashcanForRepositories")
+
 				#set($option1 = ["inherit", "$ui.getString('tool.common.inherit')"])
 				#set($option2 = ["$ui.getString('entity.ServerNode.property.allPublicationEventFilter.value')", "$ui.getString('entity.ServerNode.property.allPublicationEventFilter.label')"])
 				#set($option3 = ["$ui.getString('entity.ServerNode.property.groupBasedPublicationEventFilter.value')", "$ui.getString('entity.ServerNode.property.groupBasedPublicationEventFilter.label')"])
@@ -390,6 +397,12 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.autoShowApprovalButtons" "autoShowApprovalButtons" "$this.getPropertyValue('autoShowApprovalButtons')" "$!cmsPH.autoShowApprovalButtons")
 
 				#editPropertyFieldCSS("ServerNode.property.metaInfoAttributesToShowInCreatePageDialog" "metaInfoAttributesToShowInCreatePageDialog" "$this.getPropertyValue('metaInfoAttributesToShowInCreatePageDialog')" "51" "$!serverNodeId" "$!cmsPH.metaInfoAttributesToShowInCreatePageDialog")
+
+				#set($option1 = ["default", "Default"])
+				#set($option2 = ["v3TabbedLanguages", "Tabbed language editor"])
+	
+				#set($versionEditorOptions = [$option1, $option2]) 
+				#selectFieldCSS("ServerNode.property.contentVersionEditorFlavour" "contentVersionEditorFlavour" $this.getPropertyValue('contentVersionEditorFlavour') $versionEditorOptions "$!cmsPH.contentVersionEditorFlavour")
 
 				#set($option1 = ["fckeditor2", "FCKEditor 2.x"])
 				#set($option2 = ["ckeditor4", "CKEditor 4.x"])
@@ -423,6 +436,8 @@
 				#editPropertyTextAreaCSS("ServerNode.property.toolLanguages" "toolLanguages" "$this.getDataPropertyValue('toolLanguages')" "50" "3" "normaltextarea" "$!serverNodeId" $!cmsPH.toolLanguages)
 	
 				#selectFieldCSS("ServerNode.property.defaultSystemTheme" "defaultSystemTheme" $this.getPropertyValue('defaultSystemTheme') $!cmsPH.availableThemesAsMap "$!cmsPH.defaultSystemTheme")
+	
+				#yesNoDropDownWithInheritCSS("ServerNode.property.useGlobalRepositoryChange" "useGlobalRepositoryChange" "$this.getPropertyValue('useGlobalRepositoryChange')" "$!cmsPH.useGlobalRepositoryChange")
 	
 				#set($customContentTypeIcons = $this.getDataPropertyValue("customContentTypeIcons"))
 				#set($customContentTypeIcons = $customContentTypeIcons.replaceAll("&amp;", "&amp;amp;"))

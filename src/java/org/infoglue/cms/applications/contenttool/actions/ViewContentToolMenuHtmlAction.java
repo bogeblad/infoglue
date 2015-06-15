@@ -29,6 +29,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.TreeViewAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
+import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryLanguageController;
 import org.infoglue.cms.entities.management.RepositoryVO;
@@ -163,7 +164,7 @@ public class ViewContentToolMenuHtmlAction extends TreeViewAbstractAction
 
 	public List getAvailableLanguages() throws Exception
 	{
-		return RepositoryLanguageController.getController().getRepositoryLanguageVOListWithRepositoryId(this.repositoryId);
+		return LanguageController.getController().getLanguageVOList(this.repositoryId);
 	}
 
 	public List getContentTypeDefinitions() throws Exception

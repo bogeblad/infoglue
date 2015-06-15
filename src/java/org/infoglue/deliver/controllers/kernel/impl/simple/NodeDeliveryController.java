@@ -44,6 +44,7 @@ import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
@@ -631,9 +632,10 @@ public class NodeDeliveryController extends BaseDeliveryController
 		else
 		{
 			//SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
+		
 			SiteNodeVO siteNode = getSiteNodeVO(db, siteNodeId);
 			//SiteNode parentSiteNode = siteNode.getParentSiteNode();
-            if(siteNode.getParentSiteNodeId() != null)		
+            if(siteNode != null  && siteNode.getParentSiteNodeId() != null)		
             {
                 parentSiteNodeVO = getSiteNodeVO(db, siteNode.getParentSiteNodeId());
             	CacheController.cacheObject("parentSiteNodeCache", key, parentSiteNodeVO);
@@ -1966,14 +1968,14 @@ public class NodeDeliveryController extends BaseDeliveryController
         if(attributeName.equals("SiteNode.name"))
         {
             SiteNodeVO siteNode = this.getSiteNodeVO(db, siteNodeId);
-            //SiteNode siteNode = this.getSiteNode(db, siteNodeId);
             pathPart = siteNode.getName();
         }
         else
         {
 	        pathPart = this.getPageNavigationTitle(db, infogluePrincipal, siteNodeId, languageId, null, META_INFO_BINDING_NAME, attributeName, true, deliveryContext, false);
-	        if((pathPart == null || pathPart.equals("")) && !attributeName.equals(NAV_TITLE_ATTRIBUTE_NAME))
+	        if((pathPart == null || pathPart.equals("")) && !attributeName.equals(NAV_TITLE_ATTRIBUTE_NAME)) {
 	            pathPart = this.getPageNavigationTitle(db, infogluePrincipal, siteNodeId, languageId, null, META_INFO_BINDING_NAME, NAV_TITLE_ATTRIBUTE_NAME, true, deliveryContext, false);
+	        }
         }
         
         String key = "" + pathPart + "_" + niceURIEncoding;
@@ -2983,7 +2985,9 @@ public class NodeDeliveryController extends BaseDeliveryController
 							{
 								String localizedIsHidden = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, siteNode.getMetaInfoContentId(), languageId, "HideInNavigation", siteNode.getId(), true, deliveryContext, UserControllerProxy.getController().getUser(CmsPropertyHandler.getAnonymousUser()), false, true);
 								String localizedSortOrder = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, siteNode.getMetaInfoContentId(), languageId, "SortOrder", siteNode.getId(), true, deliveryContext, UserControllerProxy.getController().getUser(CmsPropertyHandler.getAnonymousUser()), false, true);
-
+								if(localizedSortOrder == null || localizedSortOrder.equals(""))
+									localizedSortOrder = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, siteNode.getMetaInfoContentId(), languageId, "sortOrder", siteNode.getId(), true, deliveryContext, UserControllerProxy.getController().getUser(CmsPropertyHandler.getAnonymousUser()), false, true);
+								
 					        	if(localizedIsHidden != null/* && !localizedIsHidden.equals("")*/)
 								{
 									if(localizedIsHidden.equals("true"))

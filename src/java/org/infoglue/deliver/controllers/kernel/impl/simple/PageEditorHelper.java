@@ -903,9 +903,9 @@ public class PageEditorHelper extends BaseDeliveryController
 				component = getComponentWithId(component, componentId);
 
 			boolean hasAccessToAccessRights 	= AccessRightController.getController().getIsPrincipalAuthorized(db, principal, "ComponentEditor.ChangeSlotAccess", "");
-			boolean hasAccessToAddComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(db, principal, "ComponentEditor.AddComponent", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + component.getSlotName());
-			boolean hasAccessToDeleteComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(db, principal, "ComponentEditor.DeleteComponent", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + component.getSlotName());
-			boolean hasAccessToChangeComponent	= AccessRightController.getController().getIsPrincipalAuthorized(db, principal, "ComponentEditor.ChangeComponent", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + component.getSlotName());
+			boolean hasAccessToAddComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(db, principal, "ComponentEditor.AddComponent", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + component.getCleanedSlotName());
+			boolean hasAccessToDeleteComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(db, principal, "ComponentEditor.DeleteComponent", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + component.getCleanedSlotName());
+			boolean hasAccessToChangeComponent	= AccessRightController.getController().getIsPrincipalAuthorized(db, principal, "ComponentEditor.ChangeComponent", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + component.getCleanedSlotName());
 		    boolean hasSaveTemplateAccess 		= AccessRightController.getController().getIsPrincipalAuthorized(db, principal, "StructureTool.SaveTemplate", "");
 		    boolean hasSavePagePartTemplateAccess = hasSaveTemplateAccess;
 		    if(slotClicked != null && slotClicked.equalsIgnoreCase("true"))
@@ -1175,7 +1175,7 @@ public class PageEditorHelper extends BaseDeliveryController
 			sb.append("	 <div id=\"pageComponentsBody\" class=\"componentPropertiesBody\" style=\"height: 480px;\"><table class=\"igtable\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">");
 	
 			sb.append("	 <tr class=\"igtr\">");
-		    sb.append("		<td class=\"igtd\" colspan=\"20\"><img src=\"" + contextPath + "/css/images/tcross.png\" width=\"19\" height=\"16\"><span id=\"" + component.getId() + component.getSlotName() + "ClickableDiv\" class=\"iglabel\"><img src=\"" + contextPath + "/css/images/slotIcon.gif\" width=\"16\" height=\"16\"><img src=\"" + contextPath + "/css/images/trans.gif\" width=\"5\" height=\"1\">" + component.getName() + "</span><script type=\"text/javascript\">initializeSlotEventHandler('" + component.getId() + component.getSlotName() + "ClickableDiv', '" + contextPath + "ViewSiteNodePageComponents!listComponents.action?CCC=1&siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + (contentId == null ? "-1" : contentId) + "&parentComponentId=" + component.getId() + "&slotId=base&showSimple=" + showSimple + "', '', '', 'base', '" + component.getContentId() + "');</script></td>");
+		    sb.append("		<td class=\"igtd\" colspan=\"20\"><img src=\"" + contextPath + "/css/images/tcross.png\" width=\"19\" height=\"16\"><span id=\"" + component.getId() + component.getCleanedSlotName() + "ClickableDiv\" class=\"iglabel\"><img src=\"" + contextPath + "/css/images/slotIcon.gif\" width=\"16\" height=\"16\"><img src=\"" + contextPath + "/css/images/trans.gif\" width=\"5\" height=\"1\">" + component.getName() + "</span><script type=\"text/javascript\">initializeSlotEventHandler('" + component.getId() + component.getCleanedSlotName() + "ClickableDiv', '" + contextPath + "ViewSiteNodePageComponents!listComponents.action?CCC=1&siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + (contentId == null ? "-1" : contentId) + "&parentComponentId=" + component.getId() + "&slotId=base&showSimple=" + showSimple + "', '', '', 'base', '" + component.getContentId() + "');</script></td>");
 			sb.append("	 </tr>");
 			
 			renderComponentTree(db, sb, component, 0, 0, 1, contextPath, repositoryId, siteNodeId, languageId, contentId, showSimple, originalFullURL);
@@ -1431,8 +1431,14 @@ public class PageEditorHelper extends BaseDeliveryController
 					{		
 						String value = getComponentPropertyValue(componentId, name, siteNodeId, languageId, contentId, locale, db, principal, property);
 						String allowMultipleSelections = binding.attributeValue("allowMultipleSelections");
-						if(allowMultipleSelections != null && allowMultipleSelections.equalsIgnoreCase("true"))
+						
+						if(allowMultipleSelections != null && allowMultipleSelections.equalsIgnoreCase("true")) {
 							property.setAllowMultipleSelections(true);
+							String multipleSelectAreaSize = binding.attributeValue("multipleSelectAreaSize");
+							if (multipleSelectAreaSize != null && !multipleSelectAreaSize.equalsIgnoreCase("")) {
+								property.setMultipleSelectAreaSize(multipleSelectAreaSize);
+							}
+						}
 							
 						List optionList = binding.elements("option");
 						Iterator optionListIterator = optionList.iterator();

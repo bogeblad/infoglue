@@ -22,11 +22,11 @@
 		 * This method changes to another repository.
 		 */
 		 
- 		function changeRepository(selectBox)
+ 		function changeRepository(selectBox, languageId)
 		{
 			var repositoryId = selectBox.value;
 		   	qualifyerXML = createXML();
-		    var url = "$updateAction?updateAction=$updateAction&repositoryId=" + repositoryId + "&entityName=$entityName&entityId=$entityId&callbackMethod=$callbackMethod&attributeName=$attributeName&qualifyerXML=" + escape(qualifyerXML);
+		    var url = "$updateAction?updateAction=$updateAction&repositoryId=" + repositoryId + "&languageId=" + languageId + "&entityName=$entityName&entityId=$entityId&callbackMethod=$callbackMethod&attributeName=$attributeName&qualifyerXML=" + escape(qualifyerXML);
 			document.location.href = url;
 		}
 		 	    				
@@ -362,10 +362,10 @@
 				</tr>		
 				<tr>
 					<td>
-				  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);" class="contenttool">
+				  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this, $languageId);" class="contenttool">
 						    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
 						    #foreach ($repositoryVO in $repositories)
-						    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+								<option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
 						    #end
 						</select>
 					</td>
@@ -375,13 +375,14 @@
 				</tr>	
 				<tr>
 					<td class="menu" style="border: 0px solid #ccc;">    
-						<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!bindingViewV3.action?repositoryId=${repositoryId}" width="350" height="430" align="baseline"></IFRAME>
+						<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!bindingViewV3.action?repositoryId=${repositoryId}&sortLanguageId=$languageId" width="350" height="430" align="baseline"></iframe>
 					</td>
 				</tr>	
 				<tr>
 					<td>
 						<form name="inputForm" action="CreateServiceBinding.action">
 							<input type="hidden" name="entityId" value="">
+							<input type="hidden" name="languageId" value="$languageId"/>
 							<input type="hidden" name="repositoryId" value="">
 							<input type="hidden" name="path" value="">
 							<input type="hidden" name="qualifyerXML" value="">

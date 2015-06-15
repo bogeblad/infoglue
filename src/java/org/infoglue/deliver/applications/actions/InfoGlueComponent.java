@@ -197,7 +197,12 @@ public class InfoGlueComponent
     {
         return slotName;
     }
-    
+
+    public String getCleanedSlotName()
+    {
+        return slotName.replaceAll("[^0-9,a-z,A-Z]", "_");
+    }
+
     public void setSlotName(String slotName)
     {
         this.slotName = slotName;

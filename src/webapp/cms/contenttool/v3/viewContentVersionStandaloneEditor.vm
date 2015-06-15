@@ -1,0 +1,1551 @@
+#if(($closeOnLoad == "true" && !$errors.hasErrors()) || $publishOnLoad == "true" && !$errors.hasErrors())
+<html>
+<head>
+	<script type="text/javascript">
+		function refreshCaller()
+		{
+			if(window.opener)
+			{
+				refreshCallerWindow();
+			}
+			else if(top.refreshWorkSurface)
+			{
+				top.refreshWorkSurface("StructureTool");
+				parent.refreshTreeSurface();
+				if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();
+			}
+			else if(top.getIsIGStandardTools && top.getIsIGStandardTools() == true)
+			{
+				if(window.name.indexOf("TB_iframe") > -1)
+				{
+					top.refreshWorkArea("structure");
+				}
+				if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();
+			}
+			else
+			{
+				parent.closeDialog();
+				parent.location.reload();
+			}
+		}
+		function refreshCallerWindow()
+		{
+			try 
+        	{
+                if(window.opener && window.opener.parent && window.opener.parent.frames['main'])
+                	window.opener.parent.frames['main'].location.reload();
+                else
+                    window.opener.location.reload();
+            }
+            catch(err) {console.log("Could not update parent window: " + err);}	
+	
+			window.close();
+		}
+	
+		function submitToPublish()
+		{
+			var returnAddress = "$formatter.encodeURI("ViewContentVersion!standalone.action?contentId=$contentId&languageId=$languageId&closeOnLoad=true", 'UTF-8')";
+			document.location.href = "ViewListContentVersion.action?contentId=$contentId&returnAddress=" + returnAddress;
+	}
+
+	</script>
+	<style type="text/css">
+	#processDiv {  
+	    position:fixed;  
+	    width:300px;  
+	    top:150px;  
+	    left:50%;  
+	    height: 120px;
+	    margin-left:-150px;  
+	    text-align:center;  
+	    padding:40px 0 0 0;  
+	    color: black;
+	    font:bold 11px Arial, Helvetica, sans-serif;  
+	    -moz-border-radius: 10px;
+		border-radius: 10px;
+		border: 2px solid rgba(0,0,0,0.4);
+		background-color: rgba(255,255,255,1);
+		box-shadow: 3px 3px 50px rgba(0,0,0,0.7);
+		z-index: 10000;
+	}  
+</style>
+</head>
+
+<body>
+	<div id="processDiv">
+		<div style="float: left; left: 0px; width: 100%; text-align: center; margin-bottom: 10px;">
+			<font face="Verdana" size="-1" color="#006699"><strong>$ui.getString("tool.common.loading.label")</strong></font>
+		</div>
+		<div style="float: left; width: 100%; text-align: center;"><img alt="" src="css/images/v3/loadingAnimation.gif" /></div>
+	</div>
+
+	<script type="text/javascript">
+	
+		#if($saveAndExitURL && $saveAndExitURL != "")
+			if(parent && parent.document.location.href.indexOf("ViewStructureTool") == -1)
+			{
+				parent.document.location.href = "$saveAndExitURL";
+			}
+		
+			else
+			{
+				document.location.href = "$saveAndExitURL";
+			}
+		#elseif($closeOnLoad)
+			refreshCaller();
+		#elseif($publishOnLoad)
+			submitToPublish();
+		#end
+	</script>
+
+</body>
+</html>
+
+#else
+
+#define( $headerMarkup )
+
+	<script type="text/javascript" src="script/jqueryplugins-latest/thickbox/thickbox-compressed.js"></script>
+	<link rel="stylesheet" type="text/css" href="script/jqueryplugins-latest/thickbox/thickbox-ig.css" />
+
+ 	#if($prefferedWYSIWYG == "ckeditor4")
+
+ 		<script type="text/javascript" src="${root}/applications/ckeditor/ckeditor.js"></script>
+		<script type="text/javascript" src="${root}/script/editorForFCKEditor.js"></script>
+
+	#else
+	 	
+		<script type="text/javascript" src="${root}/applications/FCKEditor/fckeditor.js"></script>
+		<script type="text/javascript" src="${root}/script/editorForFCKEditor.js"></script>
+	
+	#end
+	
+	<script type="text/javascript" src="${root}/script/listview.js"></script>
+	<script type="text/javascript" src="${root}/script/calendar1.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="applications/jscalendar/skins/aqua/theme.css" />
+	<script type="text/javascript" src="${root}/applications/jscalendar/calendar.js"></script>
+	<script type="text/javascript" src="${root}/applications/jscalendar/lang/calendar-en.js"></script>
+	<script type="text/javascript" src="${root}/applications/jscalendar/calendar-setup.js"></script>
+	
+	#*
+	#if($contentTypeDefinitionVO.name == "Meta info")
+		#set($masterContentVersionVO = $this.getMasterContentVersionVO($contentId, $repositoryId))
+		#if($masterContentVersionVO.stateId == 1 || $masterContentVersionVO.stateId == 2 || $masterContentVersionVO.stateId == 3)
+			#set($readonly = "disabled") 
+		#else
+			#set($readonly = "")
+		#end
+	#else
+	*#
+		#set($latestContentVersionVO = $this.getLatestContentVersionVO($contentId, $languageId))
+		#if($latestContentVersionVO.id != $contentVersionId)
+			#set($readonly = "disabled") 
+		#else
+			#set($readonly = "")
+		#end	
+	##end
+	
+	<script type="text/javascript">
+	//<![CDATA[	
+	
+		//*******************************************
+		//This method refreshes the caller
+		//*******************************************
+	
+
+		function refreshCaller()
+		{
+	
+			parent.closeDialog();
+			parent.location.reload();
+			/*
+			if(window.opener && window.opener.parent && window.opener.parent.frames['main'])
+				window.opener.parent.frames['main'].location.reload();
+			else
+				window.opener.location.reload();	
+	
+			window.close();
+			*/
+		}
+	
+		function skipAndCancel()
+		{
+			document.editForm.target = "_parent";
+			document.editForm.action = "CreateContentWizardFinish!cancel.action";
+			document.editForm.submit();
+		}	
+	
+		//*******************************************
+		//This method submits the content to publishing dialog
+		//*******************************************
+	
+		function submitToPublish()
+		{
+			var returnAddress = "$formatter.encodeURI("ViewContentVersion!standalone.action?contentId=$contentId&languageId=$languageId&closeOnLoad=true", 'UTF-8')";
+			document.location.href = "ViewListContentVersion.action?contentId=$contentId&returnAddress=" + returnAddress;
+		}
+				
+		
+		function approvePublication(eventId)
+		{
+			try
+			{
+				var data = "eventId=" + eventId + "&repositoryId=$!repositoryId";
+				$.ajax({
+					type: "GET",
+				   	url: "ViewCommonAjaxServices!approvePublication.action",
+				   	data: data,
+				   	dataType: "html", 
+				   	cache: false,
+				   	success: function(msg, textStatus){
+						//alert("msg:" + msg);
+						//alert("textStatus:" + textStatus);
+						//alert("OK");
+						document.location.reload(true);
+				   },
+				   error: function (XMLHttpRequest, textStatus, errorThrown) {
+					   //alert("textStatus:" + textStatus);
+					   //alert("ResponseCode:" + XMLHttpRequest.status);
+					   //console.log(errorThrown);
+					   alert("Failed to approve: " + textStatus);
+				   }
+				});
+			}
+			catch(e) {console.log("e:" + e);}
+		}
+	
+		function denyPublication(eventId)
+		{
+			try
+			{
+				var data = "eventId=" + publishingEventId + "&repositoryId=$!repositoryId";
+				$.ajax({
+					type: "GET",
+				   	url: "ViewCommonAjaxServices!denyPublication.action",
+				   	data: data,
+				   	dataType: "html", 
+				   	cache: false,
+				   	success: function(msg, textStatus){
+						alert("msg:" + msg);
+						//alert("textStatus:" + textStatus);
+						//alert("OK");
+						document.location.reload(true);
+				   },
+				   error: function (XMLHttpRequest, textStatus, errorThrown) {
+					   //alert("textStatus:" + textStatus);
+					   //alert("ResponseCode:" + XMLHttpRequest.status);
+					   //console.log(errorThrown);
+					   alert("Failed to deny: " + textStatus);
+				   }
+				});
+			}
+			catch(e) {console.log("e:" + e);}
+		}
+		
+		var inlineImageDefaultRepositoryId = null;
+		#set($inlineImageDefaultRepositoryId = $map.get("inlineImageDefaultRepositoryId"))
+		#if($inlineImageDefaultRepositoryId && $inlineImageDefaultRepositoryId != "")
+			var inlineImageDefaultRepositoryId = $inlineImageDefaultRepositoryId;
+		#end
+ 
+ 
+		var allowSave = true;  //Sets to false if one does not close like one should
+		var currentEditorIdHash = new Array();
+		var attributesStatus = new Array();
+		var plainEditors = new Array();
+		var plainEditorsToolbars = new Array();
+		var plainEditorsExtraConfig = new Array();
+		var htmlEditors = new Array();
+	
+	
+		function getContentVersionId()
+		{
+			return "$!contentVersionId";
+		}
+	
+		function checkWYSIWYGDirty()
+		{
+			var isDirty = false;
+			for (var i in plainEditors) 
+			{
+				var plainTextAreaName = plainEditors[i];
+	
+				#if($prefferedWYSIWYG == "ckeditor4")
+					oEditor = CKEDITOR.instances["FullText"];
+					oEditor = CKEDITOR.instances[plainTextAreaName];
+					if(oEditor.checkDirty())
+						isDirty = true;
+				#else
+					oEditor = FCKeditorAPI.GetInstance(plainTextAreaName);
+					if(oEditor.IsDirty())
+						isDirty = true;
+				#end
+			}
+			
+			return isDirty;
+		}
+	
+		//*******************************************
+		// This function changes language version
+		//*******************************************
+
+		var originalIndex;
+		function changeLanguage(contentId, languageId)
+		{
+			attributeName = document.editForm.attributeName.value;
+			
+			if ((!getDirty() && !checkWYSIWYGDirty()) || confirm('$ui.getString("tool.contenttool.languageVersionChangeWarning")'))
+			{
+				window.location.href="ViewContentVersion!standalone.action?contentId=" + contentId +  "&extraClasses=$!extraClasses&saveAndExitURL=$!saveAndExitURL&languageId=" + languageId + "&attributeName=" + attributeName;
+			}
+			else
+			{
+				document.getElementById("level-2").selectedIndex = originalIndex;
+			}
+		}
+
+		function changeLanguageForVersionAccess(contentId, languageId)
+		{
+
+			
+			var versionAccessSrcUrl = "ViewContentVersion!viewContentAssetsForFCKEditorV3.action?contentId=$!contentId&languageId=" + languageId + "&extraClasses=$extraClasses&assetTypeFilter=.*";
+			$(".versionAccess-list-items li").removeClass("ui-tabs-selected");
+			$("#languageVersionAccessTab_" + languageId).addClass("ui-tabs-selected");
+
+			$("#contentVersionAccessRightsFrame").attr("src", versionAccessSrcUrl);
+			$("input.attachAsset").show();
+
+		}	
+		
+		function changeLanguageForAssets(contentId, languageId)
+		{
+		
+			var assetSrcUrl = "ViewContentVersion!viewContentAssetsForFCKEditorV3.action?contentId=$!contentId&extraClasses=$!extraClasses&languageId=" + languageId + "&assetTypeFilter=.*";
+			$(".asset-list-items li").removeClass("ui-tabs-selected");
+			$("#languageAssetTab_" + languageId).addClass("ui-tabs-selected");
+
+			$("#contentVersionAssetsFrame").attr("src", assetSrcUrl);
+			$("input.attachAsset").show();
+
+		}	
+			
+		//*******************************************
+		// This function opens up the form editor
+		//*******************************************
+		
+		function openFormEditor(url)
+		{
+			if ((!getDirty() && !checkWYSIWYGDirty()) || confirm('$ui.getString("tool.contenttool.formIsDirtyWarning")'))
+			{
+				allowSave = false;
+				openPopup(url, "FormEditor", "width=700,height=600,left=" + (document.body.clientWidth / 4) + ",top=50,toolbar=no,status=yes,scrollbars=yes,location=no,menubar=no,directories=no,resizable=yes");
+			}
+		}
+	
+		//*******************************************
+		// This function opens up the form editor
+		//*******************************************
+		
+		function openRelationEditor(url)
+		{
+			if ((!getDirty() && !checkWYSIWYGDirty()) || confirm('$ui.getString("tool.contenttool.formIsDirtyWarning")'))
+			{
+				allowSave = false;
+				openPopup(url, "RelationEditor", "width=700,height=600,left=" + (document.body.clientWidth / 4) + ",top=50,toolbar=no,status=yes,scrollbars=yes,location=no,menubar=no,directories=no,resizable=yes");
+			}
+		}
+		
+	
+		//*******************************************
+		// This is a timer that warns the user about saving his work once in a while so he does not
+		// get a new login-screen next time he saves.
+		//*******************************************
+		var beenWarned = false;
+		var inaktiveTime = 0;
+		var timeout = ($sessionTimeout / 60) * 60 * 1000;
+	    function warnForTimeout()
+	    {
+	       	alert("Please save your work often to avoid loosing it due to the security timeout. If you suspect you might not have saved for " + ($sessionTimeout / 60) + " minutes or so we recommend you copy all of your text before you press save so you don't risk loosing it.");
+			beenWarned = true;
+			inaktiveTime = inaktiveTime + timeout;
+			setTimeout("warnForTimeout()", timeout);
+		}
+		
+		
+		//*******************************************
+		// This is the method that generates the wysiwygs when the page is loaded
+		//*******************************************
+	
+		function generateWYSIWYGS()
+		{
+			#if($readonly == "")
+	
+				#if($prefferedWYSIWYG == "ckeditor4")
+	
+					for(var i in plainEditors)
+					{
+						var plainTextAreaName = plainEditors[i];
+						var WYSIWYGToolbar = plainEditorsToolbars[plainTextAreaName];
+						var WYSIWYGExtraConfig = plainEditorsExtraConfig[plainTextAreaName];
+						//alert("Creating a textarea for " + plainTextAreaName + " = " + i);
+						document.getElementById(plainTextAreaName).value = transformAttribute(document.getElementById(plainTextAreaName).value);
+	
+						var configString = "{'customConfig': '${root}/WYSIWYGProperties.action?repositoryId=$!repositoryId&contentId=$!contentId&languageId=$languageId&contentVersionId=$!contentVersionId','language': '$languageCode', 'toolbar': '" + WYSIWYGToolbar + "', 'width':'" + $("#" + plainTextAreaName).width() + "px', 'height':'" + $("#" + plainTextAreaName).height() + "px'}";
+			 			if(WYSIWYGExtraConfig && WYSIWYGExtraConfig != '')
+			 				configString = "{'customConfig': '${root}/WYSIWYGProperties.action?repositoryId=$!repositoryId&contentId=$!contentId&languageId=$languageId&contentVersionId=$!contentVersionId','language': '$languageCode', 'toolbar': '" + WYSIWYGToolbar + "', 'width':'" + $("#" + plainTextAreaName).width() + "px', 'height':'" + $("#" + plainTextAreaName).height() + "px'," + WYSIWYGExtraConfig + "}";
+			 			var configObject = eval('(' + configString + ')');
+				
+						CKEDITOR.replace( plainTextAreaName, configObject);
+					}			
+				
+				#else
+					for (var i in plainEditors) 
+					{
+						var plainTextAreaName = plainEditors[i];
+						var WYSIWYGToolbar = plainEditorsToolbars[plainTextAreaName];
+						var WYSIWYGExtraConfig = plainEditorsExtraConfig[plainTextAreaName];
+						//alert("Creating a textarea for " + plainTextAreaName + " = " + i);
+						document.getElementById(plainTextAreaName).value = transformAttribute(document.getElementById(plainTextAreaName).value);
+					
+						var oFCKeditor = new FCKeditor(plainTextAreaName);
+						oFCKeditor.Width = document.getElementById(plainTextAreaName).style.width;
+						oFCKeditor.Height = document.getElementById(plainTextAreaName).style.height;
+						oFCKeditor.BasePath = "${root}/applications/FCKEditor/";
+						oFCKeditor.Config["CustomConfigurationsPath"] = "${root}/WYSIWYGProperties.action?repositoryId=$!repositoryId&contentId=$!contentId&languageId=$languageId&contentVersionId=$!contentVersionId";
+						oFCKeditor.Config["AutoDetectLanguage"] = false ;
+						oFCKeditor.Config["DefaultLanguage"]    = '$languageCode' ;
+						oFCKeditor.ToolbarSet = WYSIWYGToolbar ;
+					
+						if(WYSIWYGExtraConfig && WYSIWYGExtraConfig != '')
+							eval(WYSIWYGExtraConfig);
+						
+						//oFCKeditor.Config["ToolbarStartExpanded"] = false;
+						//oFCKeditor.ToolbarStartExpanded = false ;
+						oFCKeditor.ReplaceTextarea();
+					
+						htmlEditors[plainTextAreaName + "WYSIWYGEditor"] = oFCKeditor;
+					}
+				#end
+			#end
+			
+			#if($readonly == "disabled")
+				alert("$ui.getString("tool.contenttool.readOnlyLabel")");
+				#*
+				#if($contentTypeDefinitionVO.name == "Meta info" && $closeOnLoad != true)
+					alert("$ui.getString("tool.contenttool.readOnlyFollowingSiteNodeVersionLabel")");
+				#else if($closeOnLoad != true)
+					alert("$ui.getString("tool.contenttool.readOnlyLabel")");
+				#end
+				*#
+			#end
+			
+			#if($concurrentModification && $closeOnLoad != true)
+				alert("$ui.getString("tool.contenttool.concurrentModificationLabel")");
+			#end
+			
+		}	
+	
+		function addCategory(attributeName, selectName)
+		{
+			if ((!getDirty() && !checkWYSIWYGDirty()) || confirm('$ui.getString("tool.contenttool.formIsDirtyWarning")'))
+			{
+				var categoryId = document.getElementById(selectName).value;
+				document.getElementById("model/attributeName").value = attributeName;
+				document.getElementById("model/category/categoryId").value = categoryId;
+				document.catForm.submit();
+			}
+		}
+	
+		function deleteCategory(contentCategoryId, contentId, languageId)
+		{
+			if ((!getDirty() && !checkWYSIWYGDirty()) || confirm('$ui.getString("tool.contenttool.formIsDirtyWarning")'))
+			{
+				var url = "ContentCategory!deleteStandalone.action?contentCategoryId=" + contentCategoryId;
+				url += "&contentId=" + contentId;
+				url += "&languageId=" + languageId;
+				window.location.href = url;
+			}
+		}
+		
+		//*******************************************
+		// This is a timer that keeps track of the number of minutes the user has been on the page without saving.
+		//*******************************************
+		var textArea;
+		var contentVersionId 	= "$contentVersionId";
+		var contentId 			= "$contentId";
+		var repositoryId 		= "$repositoryId";
+		var languageId 			= "$languageId";
+		
+		var count = 0;
+		var minute = 60000;
+		function doTimer()
+		{
+			count += 1;
+			setTimeout("doTimer();", minute);
+		}
+		
+		//doTimer();
+		//setTimeout("warnForTimeout()", timeout);
+
+		function refreshView(viewName)
+		{
+			if(viewName == "contentVersionAssets")
+			{
+				document.location.href = document.location.href.replace(".action?", ".action?anchor=digitalAssetsBlock&");
+
+				#if($this.hasAccessTo($categoriesInterceptionPoint, true, false))
+					$("#level-3").tabs("select", 2);
+				#else
+					$("#level-3").tabs("select", 1);
+				#end
+			}
+		}
+
+		function loadFrame(tabHref)
+		{
+			var assetSrcUrl 						= "ViewContentVersion!viewContentAssetsForFCKEditorV3.action?contentVersionId=$!contentVersionId&assetTypeFilter=.*";
+			var contentCoverSrcUrl 					= "ViewContent!V3.action?contentId=$!contentId&stay=true&inline=true";
+			var contentHistorySrcUrl 				= "ViewContentVersionHistory!V3.action?contentId=$!contentId&inline=true";
+			var contentReferencesSrcUrl 			= "ViewContentReferences.action?contentId=$!contentId&inline=true";
+			var contentAccessRightsSrcUrl 			= "ViewAccessRights!V3.action?interceptionPointCategory=Content&extraParameters=$!contentId&showInline=true";
+			var contentVersionAccessRightsSrcUrl 	= "ViewAccessRights!V3.action?interceptionPointCategory=ContentVersion&extraParameters=$!contentVersionId&showInline=true";
+			var pageDetailsSrcUrl 					= "ViewSiteNode!V3.action?siteNodeId=$siteNodeId&stay=true&inline=true";
+			var pageDetailsAdvancedSrcUrl 			= "ViewSiteNode!V3.action?siteNodeId=$siteNodeId&stay=true&inline=true&advanced=true";
+			var pageLanguagesSrcUrl 				= "ViewSiteNode!V3.action?siteNodeId=$siteNodeId&stay=true&inline=true&showPageLanguages=true";
+			var pageHistorySrcUrl 					= "ViewSiteNodeHistory.action?siteNodeId=$!siteNodeId&inline=true";
+			var pageReferencesSrcUrl 				= "ViewSiteNodeReferences.action?siteNodeId=$!siteNodeId&inline=true";
+			var pageAccessRightsSrcUrl 				= "ViewAccessRights!V3.action?interceptionPointCategory=SiteNodeVersion&extraParameters=$!siteNodeVersionId&showInline=true";
+			
+			$("input.compare").hide();
+			$("input.reset").hide();
+			$("input.preview").hide();
+			$("input.attachAsset").hide();
+			if(tabHref.indexOf("contentVersionAssetsDiv") > -1)
+			{
+				$("#contentVersionAssetsFrame").attr("src", assetSrcUrl);
+				$("input.attachAsset").show();
+			}
+			else if(tabHref.indexOf("contentCoverDiv") > -1) 
+			{
+				$("#contentCoverFrame").attr("src", contentCoverSrcUrl);
+			}
+			else if(tabHref.indexOf("contentHistoryDiv") > -1) 
+			{
+				$("#contentHistoryFrame").attr("src", contentHistorySrcUrl);
+				$("input.compare").show();
+			}
+			else if(tabHref.indexOf("contentReferencesDiv") > -1)
+			{
+				$("#contentReferencesFrame").attr("src", contentReferencesSrcUrl);
+			}
+			else if(tabHref.indexOf("contentAccessRightsDiv") > -1)
+			{
+				$("#contentAccessRightsFrame").attr("src", contentAccessRightsSrcUrl);
+			}
+			else if(tabHref.indexOf("contentVersionAccessRightsDiv") > -1)
+			{
+				$("#contentVersionAccessRightsFrame").attr("src", contentVersionAccessRightsSrcUrl);
+			}
+			else if(tabHref.indexOf("pageDetailsDiv") > -1) 
+			{
+				if (document.editForm.anchor) {
+					document.editForm.anchor.value = "pageDetailsBlock";
+				}
+				if($("#pageDetailsFrame").attr("src") == "")
+					$("#pageDetailsFrame").attr("src", pageDetailsSrcUrl);
+			}
+			else if(tabHref.indexOf("pageLanguagesDiv") > -1) 
+			{
+				document.editForm.anchor.value = "pageLanguagesBlock";
+				if($("#pageLanguagesFrame").attr("src") == "")  {
+				
+					$("#pageLanguagesFrame").attr("src", pageLanguagesSrcUrl);
+				}
+			}
+			else if(tabHref.indexOf("pageDetailsAdvancedDiv") > -1) 
+			{
+				document.editForm.anchor.value = "pageDetailsAdvancedBlock";
+				if($("#pageDetailsAdvancedFrame").attr("src") == "")
+					$("#pageDetailsAdvancedFrame").attr("src", pageDetailsAdvancedSrcUrl);
+			}
+			else if(tabHref.indexOf("pageHistoryDiv") > -1) 
+			{
+				$("#pageHistoryFrame").attr("src", pageHistorySrcUrl);
+				$("input.compare").show();
+				$("input.reset").show();
+				$("input.preview").show();
+			}
+			else if(tabHref.indexOf("pageReferencesDiv") > -1) 
+			{
+				$("#pageReferencesFrame").attr("src", pageReferencesSrcUrl);
+			}
+			else
+			{
+				$("#footertoolbar").show();
+			}
+			resizeScrollArea();	
+		}
+	
+		$(document).ready(function(){
+		
+			$("input.compare").hide();
+			$("input.reset").hide();
+			$("input.preview").hide();
+			$("input.attachAsset").hide();
+			
+			#if($anchor)
+				#if($!anchor == "contentVersionBlock")
+					$("#level-1").tabs({ selected: 0, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					$("#level-3").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+				#elseif($!anchor == "categoriesBlock")
+					$("#level-1").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					$("#level-3").tabs({ selected: 1, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+				#elseif($!anchor == "digitalAssetsBlock")
+					#set( $selectedIndex = 1 )
+					#if($this.hasAccessTo($categoriesInterceptionPoint, true, false))
+						#set( $selectedIndex = 2 )
+					#end
+					$("#level-1").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					$("#level-3").tabs({ selected: 2, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					loadFrame("contentVersionAssetsDiv");		
+				#elseif($!anchor == "pageDetailsBlock")
+					$("#level-1").tabs({ selected: 3, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					$("#level-3").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					loadFrame("pageDetailsDiv");
+				#elseif($!anchor == "pageDetailsAdvancedBlock")
+					$("#level-1").tabs({ selected: 4, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					$("#level-3").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					loadFrame("pageDetailsAdvancedDiv");
+				#elseif($!anchor == "pageLanguagesBlock")
+					#set( $selectedIndex = 2 )
+					#if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false, false))
+						#set( $selectedIndex = 3 )
+					#end
+					$("#level-1").tabs({ selected: $selectedIndex, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					$("#level-3").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					loadFrame("pageLanguagesDiv");
+				#else
+					$("#level-1").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					$("#level-3").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+					##alert("Anchor: $anchor");
+					
+				#end	
+			#else
+					
+				$("#level-1").tabs(
+					{
+						cache: false,
+						show:function(event, ui) { resizeScrollArea(); },
+						select: function(e, ui) { loadFrame(ui.tab.href); }
+					}
+				);
+			#end	
+
+			#if($translate)
+			  	$("#otherLanguageTabsContainer").tabs({ cache: false, show:function() { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+			#end
+
+			generateWYSIWYGS();
+	
+			$("#contentTypeAttributesTable :input").change(function () {
+				if($(this).attr("id").indexOf("categoryId") == -1)
+				{
+					setDirty();
+				}
+			});
+
+			$("#editForm").submit(function () { return false; });	
+			
+			try
+			{
+				jQuery.get("ViewCommonAjaxServices!referenceCount.action?contentId=$contentId&isMetaInfoContent=$isMetainfoContent", function(data) {
+					if(data != "0")
+					{
+						#if($isMetainfoContent == false)
+							$('a[href="#contentReferencesDiv"] > span').append(" (" + data + ")");
+						#else
+							$('a[href="#pageReferencesDiv"] > span').append(" (" + data + ")");
+						#end
+					}
+				});
+				//alert('$contentVersionId');
+				#if($contentVersionId)
+
+					#if($this.hasAccessTo($attachmentsInterceptionPoint, true, false))
+					jQuery.get("ViewCommonAjaxServices!assetCount.action?contentVersionId=$contentVersionId", function(data) {
+						//alert("Count:" + data + " on $contentId");
+						if(data != "0")
+							$('a[href="#contentVersionAssetsDiv"] > span').append(" (" + data + ")");
+					});
+					#end
+
+					#if($this.hasAccessTo($categoriesInterceptionPoint, true, false))
+					jQuery.get("ViewCommonAjaxServices!categoryCount.action?contentVersionId=$contentVersionId", function(data) {
+						//alert("Count:" + data + " on $contentId");
+						if(data != "0")
+							$('a[href="#contentVersionCategoriesDiv"] > span').append(" (" + data + ")");
+					});
+					#end
+
+				#end
+			}
+			catch(e) {console.log("e:" + e);}	
+		});
+
+	    /*
+	     * This method acts as a proxy to the frame that has the view in the tabbed world we live in.
+	 	 */	
+
+	    function reactivate()
+	    {
+	    	#if($isMetainfoContent)
+		    	if($("#pageHistoryFrame").get(0).contentWindow.reactivate)
+		    		$("#pageHistoryFrame").get(0).contentWindow.reactivate();
+		    #end
+	    }
+
+	    function openAnchorUrl(anchorValue)
+	    {
+			var anchorUrl = window.location.href + "&anchor=" + anchorValue;
+			window.location.href  = anchorUrl;
+	    }
+				
+	    /*
+	     * This method acts as a proxy to the frame that has the view in the tabbed world we live in.
+	 	 */	
+
+	    function previewPage(url)
+	    {
+	    	#if($isMetainfoContent)
+		    	if($("#pageHistoryFrame").get(0).contentWindow.previewPage)
+		    		$("#pageHistoryFrame").get(0).contentWindow.previewPage(url);
+		    #end
+	    }
+
+
+	    /*
+	     * This method acts as a proxy to the frame that has the view in the tabbed world we live in.
+	 	 */	
+
+	    function compare()
+	    {
+	    	#if($isMetainfoContent)
+		    	if($("#pageHistoryFrame").get(0).contentWindow.compare)
+		    		$("#pageHistoryFrame").get(0).contentWindow.compare();
+		    #else
+		    	if($("#contentHistoryFrame").get(0).contentWindow.compare)
+		    		$("#contentHistoryFrame").get(0).contentWindow.compare();
+		    #end
+	    }
+	
+		/*
+		 * This method is a hook
+		 */	
+		 	
+		function save()
+		{
+		
+			if($("#contentCoverFrame").size() > 0 && $("#contentCoverFrame").get(0).contentWindow.save)
+				$("#contentCoverFrame").get(0).contentWindow.save();
+			if($("#contentAccessRightsFrame").size() > 0 && $("#contentAccessRightsFrame").get(0).contentWindow.save)
+				$("#contentAccessRightsFrame").get(0).contentWindow.save();
+			if($("#contentVersionAccessRightsFrame").size() > 0 && $("#contentVersionAccessRightsFrame").get(0).contentWindow.save)
+				$("#contentVersionAccessRightsFrame").get(0).contentWindow.save();
+
+			if($("#pageDetailsFrame").size() > 0 && $("#pageDetailsFrame").get(0).contentWindow.save)
+				$("#pageDetailsFrame").get(0).contentWindow.save();
+			
+			if($("#pageDetailsAdvancedFrame").size() > 0 && $("#pageDetailsAdvancedFrame").get(0).contentWindow.save)
+				$("#pageDetailsAdvancedFrame").get(0).contentWindow.save();
+			
+			if($("#pageLanguagesFrame").size() > 0 && $("#pageLanguagesFrame").get(0).contentWindow.save)
+				$("#pageLanguagesFrame").get(0).contentWindow.save();
+			
+			setTimeout(function(){validateAndSubmitContentForm();}, 500);
+		}
+		
+		function saveAndExit(url)
+		{
+			
+			if($("#contentCoverFrame").size() > 0 && $("#contentCoverFrame").get(0).contentWindow.save)
+				$("#contentCoverFrame").get(0).contentWindow.save();
+			if($("#contentAccessRightsFrame").size() > 0 && $("#contentAccessRightsFrame").get(0).contentWindow.save)
+				$("#contentAccessRightsFrame").get(0).contentWindow.save();
+			if($("#contentVersionAccessRightsFrame").size() > 0 && $("#contentVersionAccessRightsFrame").get(0).contentWindow.save)
+				$("#contentVersionAccessRightsFrame").get(0).contentWindow.save();
+
+			if($("#pageDetailsFrame").size() > 0 && $("#pageDetailsFrame").get(0).contentWindow.save)
+				$("#pageDetailsFrame").get(0).contentWindow.save();
+			
+			if($("#pageDetailsAdvancedFrame").size() > 0 && $("#pageDetailsAdvancedFrame").get(0).contentWindow.save)
+				$("#pageDetailsAdvancedFrame").get(0).contentWindow.save();
+
+			if($("#pageLanguagesFrame").size() > 0 && $("#pageLanguagesFrame").get(0).contentWindow.save)
+				$("#pageLanguagesFrame").get(0).contentWindow.save();
+
+			document.editForm.closeOnLoad.value = "true";
+			setTimeout(function(){validateAndSubmitContentFormThenClose();}, 500);	
+		}
+					
+	    /*
+	     * This method is a hook
+	     */	
+	    					 	
+	    function validateAndSubmitForm()
+	    {
+	    	validateAndSubmitContentForm();
+	    }
+	    					
+		function validateAndSubmitContentForm()
+		{
+			if(allowSave == false)
+			{
+				alert("$ui.getString("tool.contenttool.cannotSaveBecauseInvalidClose")");
+				return;
+			}
+		
+			pastedTime = count; 
+			
+			if(beenWarned)
+			{
+				answer = confirm("You have not saved for " + pastedTime + " minutes. We strongly recommends you copy the text so you don't risk losing it if you have been inactive for to long. Do you want to save anyway?");
+			}
+			
+			if (!beenWarned || answer)
+			{
+				isValid = true;
+				
+				#foreach($attribute in $contentTypeAttributes)
+	   				currentEditorId = currentEditorIdHash["${attribute.name}CurrentEditorId"];
+	   				if(currentEditorId)
+	   					document.getElementById("currentEditorId").value = currentEditorId;
+	   				
+	   				//alert("currentEditorId:" + currentEditorId);
+					if(currentEditorId == 1)
+					{
+						#if($prefferedWYSIWYG == "ckeditor4")
+							var editor_data = CKEDITOR.instances.${attribute.name}.getData();
+							document.getElementById("$attribute.name").value = untransformAttribute(editor_data);
+						#else
+							var wysiwygEditor = htmlEditors["${attribute.name}WYSIWYGEditor"];
+							var oEditor = FCKeditorAPI.GetInstance('${attribute.name}') ;
+							//alert("untransformedAttribute:" + untransformedAttribute);
+							document.getElementById("$attribute.name").value = untransformAttribute(oEditor.GetXHTML(false));
+						#end
+					}
+					else if(currentEditorId == 2)
+					{
+						document.getElementById("$attribute.name").value = document.applets("${attribute.name}InfoGlueCodeEditor").getText();
+					}
+	
+	   				#if($attribute.inputType != "digitalAsset")
+						//isCurrentValid = validate${attribute.name}();
+						//if(isCurrentValid == false)
+						//	isValid = false;
+					#end
+				#end
+				
+				if(isValid)
+				{
+					$(".optionListWidget option").attr('selected', 'selected');
+					buildVersionValue(); 
+
+					document.editForm.submit();
+				}
+			}
+		}
+	
+		function validateAndSubmitContentFormThenExit()
+		{
+			
+			document.editForm.action = "UpdateContentVersion!saveAndExitStandalone.action";
+			validateAndSubmitContentForm();		
+		}
+		
+		function validateAndSubmitContentFormThenClose()
+		{
+			
+			//alert("Action:" + document.editForm.action);
+			document.editForm.closeOnLoad.value = "true";
+			//document.editForm.action = "UpdateContentVersion!saveAndExitStandalone.action";
+			validateAndSubmitContentForm();		
+		}
+
+		function validateAndSubmitContentFormThenSubmitToPublish()
+		{
+			//alert("Action:" + document.editForm.action);
+			document.editForm.publishOnLoad.value = "true";
+			//document.editForm.action = "UpdateContentVersion!saveAndExitStandalone.action";
+			validateAndSubmitContentForm();
+		}
+	
+		
+		function buildVersionValue()
+		{
+			var versionValue = "<?xml version='1.0' encoding='UTF-8'?>";
+			versionValue += "<article xmlns='x-schema:ArticleSchema.xml'>";
+			versionValue += "<attributes>";
+			
+			#foreach($attribute in $contentTypeAttributes)
+   				#if($attribute.inputType != "digitalAsset")
+					versionValue += "<$attribute.name>";
+					versionValue += "<![CDATA[" + getValue("${attribute.name}") + "]]>";
+					//versionValue += "<![CDATA[" + document.editForm.${attribute.name}.value + "]]>";
+					versionValue += "</$attribute.name>";
+				#end
+			#end
+
+			versionValue += "<IGAuthorFullName>";
+			versionValue += "<![CDATA[$infoGluePrincipal.firstName $infoGluePrincipal.lastName]]>";
+			versionValue += "</IGAuthorFullName>";
+
+			versionValue += "<IGAuthorEmail>";
+			versionValue += "<![CDATA[$infoGluePrincipal.email]]>";
+			versionValue += "</IGAuthorEmail>";
+			
+			versionValue += "</attributes>";
+			versionValue += "</article>";
+			
+			//alert("versionValue:" + versionValue);				
+			document.editForm.versionValue.value = versionValue;
+		}
+				
+		function getValue(elementId)
+		{
+			var value = "";
+			//alert(elementId);
+			
+			var allElem = document.editForm.elements;
+			//alert("allElem:" + allElem.length);
+		  	for(i=0;i<allElem.length;i++)
+			{
+			    var element = allElem[i];
+			    //alert("element.name:" + element.name);
+			    //alert("element.type:" + element.type);
+			    
+			    if(element.name == elementId)
+			    {
+			    	if(element.type=='checkbox' || element.type=='radio')
+			        {
+			        	//alert("element.checked:" + element.checked);
+			        	if(element.checked == true)
+			          	{
+			          		if(value == "")
+				          		value += element.value;
+							else
+								value += ',' + element.value;				
+			          	}
+			        }
+					else if(element.type=='select-multiple')
+			        {
+			        	//alert("element.selected:" + element.selected + ":" + element.value);
+			        	var arr = jQuery.map($("#" + element.id + " :selected"), function(e) { return $(e).val(); })
+						//alert("Val:" + arr.join(","));
+						value = arr.join(",");
+			        }
+					else
+					{
+						var hiddenField = document.getElementById(elementId + "Hidden");
+						if(hiddenField)
+							fieldName = "document.editForm." + elementId + "Hidden";
+						else
+							fieldName = "document.editForm." + elementId;
+							
+						//alert("elementId:" + elementId);
+						//alert(document.getElementById(elementId).value);
+						//alert(fieldName);
+						//alert(eval(fieldName).value);
+						value = eval(fieldName).value;
+						//value = document.getElementById(elementId).value;		
+					}
+			    }      
+			}	
+										
+			//alert("value:" + value);
+			return value;
+		}
+		
+		//$parentContentId
+		//$request.getParameter("parentContentId")
+		//$currentURL
+		#if($parentContentId)
+		try
+		{
+			if(typeof parent.parent.parent.refreshContent === 'function')
+				parent.parent.parent.refreshContent($!parentContentId, 1, $!parentContentId);
+		}
+		catch(e) {typeof console !== 'undefined' && console.log("AA e:" + e);}
+		#end
+		
+	//]]>
+	</script>
+#end
+
+#beginLightCommonToolV3Impl("tool.contenttool.contentVersionStandaloneHeader" "$!contentVersionId" "contentVersionId=$!contentVersionId&contentId=$!contentId&languageId=$languageId&saveAndExitURL=$saveAndExitURL" false true $!disableCloseButton $headerMarkup false "highGreyBackground")
+
+#*
+#if($contentTypeDefinitionVO.name == "Meta info")
+	#set($masterContentVersionVO = $this.getMasterContentVersionVO($contentId, $repositoryId))
+	#if($masterContentVersionVO.stateId == 1 || $masterContentVersionVO.stateId == 2 || $masterContentVersionVO.stateId == 3)
+		#set($readonly = "disabled") 
+	#else
+		#set($readonly = "")
+	#end
+#else
+*#
+	#set($latestContentVersionVO = $this.getLatestContentVersionVO($contentId, $languageId))
+	#if($latestContentVersionVO.id != $contentVersionId)
+		#set($readonly = "disabled") 
+	#else
+		#set($readonly = "")
+	#end	
+##end
+
+<div class="dialog-wrapper clearfix" style="z-index: 3;">
+
+	#lightMenuToolbar("" $buttons $rightButtons) 
+	<div style="clear: both;"></div>
+
+	<div id="allDivs">
+		<div id="tabsContainer" class="cleanTopDiv" style="#if($translate == false)width: 100%;#else width: 550px; #end float:left;">
+			<div id="level-1">
+				<ul class="level-1">
+					<li><a href="#contentVersionDiv"><span>$ui.getString('tool.contenttool.editContentTab')</span></a></li>
+
+					#if($isMetainfoContent == false)
+						<li><a href="#contentCoverDiv"><span>$ui.getString('tool.contenttool.coverTab')</span></a></li>
+					#end
+					#if($isMetainfoContent == false)
+						#if($this.hasAccessTo("ContentVersionEditor.History", true, false))
+							<li><a href="#contentHistoryDiv"><span>$ui.getString('tool.contenttool.contentHistoryTab')</span></a></li>
+						#end
+					#end
+					#if($isMetainfoContent == false)
+						#if($this.hasAccessTo("ContentVersionEditor.References", true, false))
+							<li><a href="#contentReferencesDiv"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a>
+								#if($hasRelatedSiteNodes)
+
+									<p class="has-references" id="has-references">$ui.getString('tool.contenttool.contentVersionHasReferencePopup')</p>	
+							
+								#end
+							</li>
+						#end
+					#end
+					#if($isMetainfoContent == false)
+						#if($this.hasAccessTo("ContentVersionEditor.AccessRights", true, false))
+							<li><a href="#contentAccessRightsDiv"><span>$ui.getString('tool.contenttool.contentAccessRightsTab')</span></a></li>
+						#end
+					#end
+					
+					#if($isMetainfoContent == true)
+						#if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false, false))
+							<li><a href="#pageDetailsDiv"><span>$ui.getString("tool.structuretool.toolbarV3.pageDetailLabel")</span></a></li>
+						#else
+							<li><a href="#pageDetailsDiv"><span>$ui.getString("tool.structuretool.toolbarV3.pageDetailWithoutNameLabel")</span></a></li>
+						#end
+						#if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false, false))
+							<li><a href="#pageDetailsAdvancedDiv"><span>$ui.getString("tool.common.advanced.label")</span></a></li>	        
+						#end
+						#if($this.hasAccessTo("ToolTabsAndButtons.PageLanguagesTab", true, false, false))
+							<li><a href="#pageLanguagesDiv"><span>$ui.getString("tool.common.languages.label")</span></a></li>	        
+						#end
+						<li><a href="#pageHistoryDiv"><span>$ui.getString('tool.contenttool.contentHistoryTab')</span></a></li>
+						<li><a href="#pageReferencesDiv"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a></li>
+
+						#if($this.hasAccessTo("ToolTabsAndButtons.PageSimpleModeButton", true, false))
+							<li><a href="#pageSimpleComponentModeDiv"><span>Dev</span></a></li>
+						#end
+					#end
+				</ul>
+				
+				#if($isMetainfoContent)
+					<h3>$ui.getString("tool.structuretool.pageProperties.header", $localizedContentName)</h3>
+				#else
+					<h3>$contentVO.name</h3>
+				#end
+
+				#if($isMetainfoContent == false)
+					<div id="contentCoverDiv" class="inlineTabDiv">
+						<iframe id="contentCoverFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+					</div>
+				#end
+			
+				#if($isMetainfoContent == false)
+					#if($this.hasAccessTo("ContentVersionEditor.History", true, false))
+					<div id="contentHistoryDiv" class="inlineTabDiv">
+						<iframe id="contentHistoryFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+					</div>
+					#end
+				#end
+
+				#if($isMetainfoContent == false)
+					#if($this.hasAccessTo("ContentVersionEditor.References", true, false))
+						<div id="contentReferencesDiv" class="inlineTabDiv">
+							<iframe id="contentReferencesFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+						</div>
+					#end
+				#end
+
+				#if($isMetainfoContent == false)
+					#if($this.hasAccessTo("ContentVersionEditor.AccessRights", true, false))
+						<div id="contentAccessRightsDiv" class="inlineTabDiv">
+							<iframe id="contentAccessRightsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+						</div>
+					#end
+				#end
+
+				#if($isMetainfoContent == true)
+					<div id="pageDetailsDiv" class="inlineTabDiv">
+						<iframe id="pageDetailsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+					</div>
+					#if($this.hasAccessTo("ToolTabsAndButtons.PageLanguagesTab", true, false, false))
+						<div id="pageLanguagesDiv" class="inlineTabDiv">
+							<iframe id="pageLanguagesFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+						</div>
+					#end
+					#if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false, false))
+						<div id="pageDetailsAdvancedDiv" class="inlineTabDiv">
+							<iframe id="pageDetailsAdvancedFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+						</div>
+					#end
+					<div id="pageHistoryDiv" class="inlineTabDiv">
+						<iframe id="pageHistoryFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+					</div>
+					
+					<div id="pageReferencesDiv" class="inlineTabDiv">
+						<iframe id="pageReferencesFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+					</div>
+					
+					#if($this.hasAccessTo("ToolTabsAndButtons.PageSimpleModeButton", true, false))
+					<div id="pageSimpleComponentModeDiv" class="inlineTabDiv">
+						<iframe id="pageReferencesFrame" src="$componentRendererUrl/ViewPage!renderDecoratedPage.action?siteNodeId=$siteNodeId&languageId=1&contentId=-1&showSimple=true" border="0" width="100%" height="500px" frameborder="0"></iframe>
+					</div>
+					#end
+				#end	
+				<div id="contentVersionDiv" class="inlineTabDiv ui-tabs">
+			
+					<div id="level-2" class="language-tabs">
+						<ul class="level-2 ui-tabs-nav ui-helper-clearfix">
+							#if(!$translate && $availableLanguages.size() > 1)
+
+								#foreach($languageVO in $availableLanguages)
+									#foreach($disabledLanguageVO in $disabledLanguagesForThisSite) 
+										#if ($disabledLanguageVO.id == $languageVO.id) 
+											#set($currentSiteVersionTabIsDisabled = true)	
+										#else
+											#set($currentSiteVersionTabIsDisabled = false)	
+										#end
+									#end
+									<li class="ui-state-default #if($languageId == $languageVO.id)ui-tabs-selected#end #if ($currentSiteVersionTabIsDisabled) disabled-language-tab#end" ><a href="#" #if ($currentSiteVersionTabIsDisabled) title='$ui.getString('tool.structuretool.createSiteNode.languageIsDisabled')' #end onclick="changeLanguage($contentId, $languageVO.id);" >
+									#if($languageVO.languageCode == "sv")
+										$ui.getString('tool.contenttool.swedishLabel')
+									#elseif($languageVO.languageCode == "en")
+										$ui.getString('tool.contenttool.englishLabel')
+									#else
+										$languageVO.name
+									#end
+									</a></li>
+								#end
+							#end
+						</ul>
+					</div>
+					#if(!$contentVersionVO)
+						<p class="create-version-first">$ui.getString('tool.contenttool.createVersionFirst')</p>
+					#end
+						
+					#foreach($disabledLanguageVO in $disabledLanguagesForThisSite)
+						#if ($disabledLanguageVO.id == $currentLanguageVO.id) 
+							#set($currentSiteVersionIsDisabled = true)	
+						#end
+					#end
+
+					#if($currentSiteVersionIsDisabled) 
+						<p class="disabled-language-content-message">$ui.getString('tool.structuretool.createSiteNode.languageIsDisabled'),  <a href="#" onclick="javascript:openAnchorUrl('pageLanguagesBlock');">$ui.getString('tool.structuretool.createSiteNode.changeLanguageSettings')</a></p>
+					#end
+
+					<div id="level-3" class="ui-helper-clearfix #if($currentSiteVersionIsDisabled) disabled-language-content#end #if($!extraClasses) $extraClasses#end" style="#if(!$contentVersionVO)display:none; #end">
+
+
+						<ul class="level-3 ui-helper-clearfix">
+							
+							<li><a href="#contentVersionText"><span>#if($isMetainfoContent == false)$ui.getString('tool.contenttool.textContentTab')#else $ui.getString('tool.structuretool.createSiteNode.metaFields')#end</span></a></li>
+
+							#if($this.hasAccessTo($categoriesInterceptionPoint, true, false))
+								<li><a href="#contentVersionCategoriesDiv"><span>$ui.getString('tool.contenttool.categoriesTab')</span></a></li>
+							#end
+							#if($this.hasAccessTo($attachmentsInterceptionPoint, true, false))
+								<li><a href="#contentVersionAssetsDiv"><span>$ui.getString('tool.contenttool.assetsTab')</span></a></li>
+							#end
+							#if($isMetainfoContent == false)
+								#if($this.hasAccessTo("ContentVersionEditor.AccessRights", true, false))
+									<li><a href="#contentVersionAccessRightsDiv"><span>$ui.getString('tool.contenttool.contentVersionAccessRightsTab')</span></a></li>
+								#end
+							#end
+						</ul>
+						
+						#if($isMetainfoContent)
+							#if($contentVersionVO)
+								<div class="#stateAsClass($contentVersionVO.stateId)">#stateInText($contentVersionVO.stateId)</div>
+							#end
+
+						#else
+							#if($contentVersionVO)
+								<div class="#stateAsClass($contentVersionVO.stateId)">
+									#stateInText($contentVersionVO.stateId)
+								</div>
+								<p class="version-comment">
+									$ui.getString("tool.contenttool.versionLastUpdatedByLabel") $contentVersionVO.versionModifier ($formatter.formatDate($contentVersionVO.modifiedDateTime, "yyyy-MM-dd HH:mm") - $contentVersionVO.versionComment).
+								</p>
+							#end
+						#end
+
+						<div id="contentVersionText">
+							#if($hasMandatoryAssets)
+							<table class="mandatory-assets">
+							<tbody>
+							<tr>
+							<td>
+
+									<span class="attributeTitle">$ui.getString('tool.contenttool.assetsTab')</span><br  />
+									
+									#if($inheritedDigitalAssets.size() < 1)
+										#if($contentVersionVO.id)
+											<a href="#" onclick="openInlineDiv('ViewDigitalAsset.action?contentVersionId=$contentVersionVO.id', 550, 500, true, true,'');">$ui.getString("tool.contenttool.uploadNewAttachment")</a>
+										#end
+									#end
+									#set($counter = 0)
+									#foreach($digitalAsset in $inheritedDigitalAssets)
+										#set($digitalAssetUrl = $this.getDigitalAssetUrl($digitalAsset.digitalAssetId))
+										<div class="imgBox">
+										
+											<div class="imgBoxTop" id="digitalAsset$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')" #if($assetKey == '$digitalAsset.assetKey')"  #end>
+												<div id="imgBoxTopInner">
+													<input type="hidden" id="digitalAsset$formatter.encodeURI($formatter.encodeURI($digitalAsset.assetKey, 'utf-8'), 'utf-8')" value="$digitalAssetUrl">
+													#set($singleEncodedAssetKey = "$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')")
+													#set($doubleEncodedAssetKey = "$formatter.encodeURI($formatter.encodeURI($digitalAsset.assetKey, 'utf-8'), 'utf-8')")
+													#set($thumbnailImageUrl = "$this.getDigitalAssetThumbnailUrl($digitalAsset.digitalAssetId, 100, 60, 'ffffff', 'center', 'middle', 100, 60, 75)")
+													
+														<img #if($contentId)ondblclick="onOk();" onclick="markAsset(this, $!contentId, '$singleEncodedAssetKey', '$singleEncodedAssetKey', '$thumbnailImageUrl');"#end src="$thumbnailImageUrl" alt="$digitalAsset.assetKey ($digitalAsset.assetContentType - $formatter.formatFileSize($digitalAsset.assetFileSize))" />
+													
+													#if($showSelectButtonByEachImage && $contentId)<a href="javascript:markAsset(this, $!contentId, '$doubleEncodedAssetKey', '$doubleEncodedAssetKey', '$thumbnailImageUrl');onOk();"><b>Add asset to selection</b></a>#end
+													#if($assetKey == $digitalAsset.assetKey)
+														<script type="text/javascript">
+														<!--
+															var firstAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
+														-->
+														</script>	
+													#else
+														#if($counter == 0 && (!$assetKey || $!assetKey == ''))
+															<script type="text/javascript">
+															<!--
+																var firstAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
+															-->
+															</script>
+														#end
+													#end
+													<script type="text/javascript">
+													<!--
+														var lastAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
+													-->
+													</script>	
+													#set($counter = $counter + 1)
+												</div>
+											</div>
+											<div class="imgBoxBottom">
+											#if ($contentVersionVO) 
+												<a  href="#" onclick="openInlineDiv('../infoglueCMS/ViewDigitalAsset!update.action?contentVersionId=$!contentVersionId&digitalAssetId=$digitalAsset.digitalAssetId', 600, 800, true, true, '');" title="$ui.getString("tool.contenttool.updateAttachment")">$ui.getString("tool.contenttool.updateAttachment")</a>
+											#else
+												<p>$ui.getString('tool.contenttool.saveToAddAttachment')</p>
+											#end
+											</div>
+										</div>
+									#end
+								</td>
+								</tr>
+								</tbody>
+								</table>
+							#end
+							<form method="post" name="editForm" id="editForm" action="UpdateContentVersion!standalone.action" style="float:left; width: 95%">
+								#if($isMetainfoContent && $!siteNodeId)
+									<input type="hidden" name="anchor" value=""/>
+									<input type="hidden" name="siteNodeId" value="$!siteNodeId"/>
+								#end				
+									<input type="hidden" name="contentId" value="$!contentId"/>
+									<input type="hidden" name="languageId" value="$!languageId"/>
+								#if("$!contentVersionId" != "")
+									<input type="hidden" name="contentVersionId" value="$!contentVersionId"/>
+								#end
+									<input type="hidden" name="repositoryId" value="$!repositoryId"/>
+									<input type="hidden" id="extraClasses" name="extraClasses" value="$!extraClasses"/>
+									<input type="hidden" id="versionValue" name="versionValue" value=""/>
+									<input type="hidden" id="currentEditorId" name="currentEditorId" value=""/>
+									<input type="hidden" id="attributeName" name="attributeName" value="$attributeName"/>
+									<input type="hidden" name="saveAndExitURL" value="$!saveAndExitURL"/>
+									<input type="hidden" name="closeOnLoad" value="false"/>
+									<input type="hidden" name="publishOnLoad" value="false"/>
+									<input type="hidden" id="contentId" name="contentId" value="$!contentId"/>
+									<input type="hidden" name="repositoryId" value="$!repositoryId"/>
+								#if($contentVersionId > -1)
+									<input type="hidden" name="contentVersionId" value="$!contentVersionId"/>
+									#if("$oldModifiedDateTime" == "-1")
+										<input type="hidden" name="oldModifiedDateTime" value="$!contentVersionVO.modifiedDateTime.time"/>
+									#else
+										<input type="hidden" name="oldModifiedDateTime" value="$!oldModifiedDateTime"/>
+									#end
+								#end
+
+								#set($event = $this.getEvent($contentVersionId) )					
+								#if($event.id > 0)
+									<table border="0">
+										<tr>
+											<td colspan="3">
+												<span class="warningText">
+													#set($close = "<a href='DeleteEvent.action?eventId=$event.id&url=$currentUrl'>$ui.getString('tool.contenttool.close')</a>")
+													#if($event.typeId == 2)
+														$ui.getString("tool.contenttool.publishRejectedText") $close
+													#elseif($event.typeId == 4)
+														$ui.getString("tool.contenttool.unblishRejectedText") $close
+													#end
+												</span> 
+											</td>
+										</tr>
+									</table>	
+								#end
+							
+								#if($tabbedContentTypeAttributes.size() > 1)
+									
+									<script type="text/javascript">
+									<!--
+										$(document).ready(function(){
+											$("#attributeTabsContainer").tabs({ show:function() { resizeScrollArea(); }, select: function(event, ui) { resizeScrollArea(); $("#activeDivId").val(ui.panel.id); $("#deleteActiveDivId").val(ui.panel.id) } });
+										});
+									-->
+									</script>
+									
+									<div id="attributeTabsContainer" class="flora" style="margin-top: 10px; width: 100%">
+						
+										<ul>
+											#foreach($tabbedContentTypeAttribute in $tabbedContentTypeAttributes.keySet())
+											
+												<li><a href="#$tabbedContentTypeAttribute.name">$tabbedContentTypeAttribute.name</a></li>
+											#end
+										</ul>
+
+										#foreach($tabbedContentTypeAttribute in $tabbedContentTypeAttributes.keySet())
+										
+											<div class="inlineTabDiv" id="$tabbedContentTypeAttribute.name">
+											
+												#set($attributesToRender = $tabbedContentTypeAttributes.get($tabbedContentTypeAttribute))
+													
+												#renderAttributes($attributesToRender)
+											</div>
+										#end
+									</div>
+								#else
+									
+									#set($attributesToRender = $contentTypeAttributes)
+									#renderAttributes($attributesToRender)
+								#end
+							</form>
+						</div>	<!-- End contentVersionText -->
+						<div id="contentVersionAssetsDiv" class="inlineTabDiv">
+							<iframe id="contentVersionAssetsFrame" name="contentVersionAssetsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+						</div>
+						<div id="contentVersionCategoriesDiv" class="inlineTabDiv">
+									
+							#set($allCategoryKeys = $definedCategoryKeys)
+							#if($allCategoryKeys.size() > 0)
+								#foreach($categoryKey in $allCategoryKeys)
+									#if($velocityCount > 1)
+									<br>
+									#end
+									
+									#set($keyAttribute = $categoryKey.value)
+									#set($dropdownName = "${keyAttribute}${velocityCount}categoryId")
+									#set($availableCategories = $this.getAvailableCategories($categoryKey.categoryId))
+									<div style="margin: 10px 0px 0px 0px; border-bottom: 1px solid #ccc; float: left; width: 100%;">
+										<div style="float: left;"><h4>$categoryKey.title ("$keyAttribute") - $categoryKey.description</h4></div>
+										<div style="float: right;">
+											#if($contentVersionId)
+												#addCategorySelect($dropdownName $availableCategories "")
+												<input type="button" class="add" onclick="addCategory('${keyAttribute}', '${dropdownName}');" value="$ui.getString("tool.common.addButton.label")">
+											#end
+										</div>
+									</div>
+									<div style="clear: both;"></div>
+									<ul class="assignedEntities">
+										#set($relatedCategories = $this.getRelatedCategories($keyAttribute))
+										#foreach($relation in $relatedCategories)
+										<li style="border-bottom: 1px solid #ccc;">
+											<a href="javascript:deleteCategory('$relation.contentCategoryId', '$contentId', '$languageId');"><img src="css/images/v3/cross.png" border="0"/></a>
+											$relation.category.getLocalizedDisplayName($this.languageCode, "none") ($relation.category.name)
+										</li>
+										#end
+										#if($relatedCategories.size() == 0)
+										<li>
+											#if(!$contentVersionId)
+												$ui.getString("tool.contenttool.saveToRelateCategoriesPrefix") $keyAttribute
+											#else
+												$ui.getString("tool.contenttool.noCategoriesPrefix") $keyAttribute
+											#end
+										</li>
+										#end
+									</ul>
+								#end
+							#else
+								<h4>There are no category attributes defined in this content type</h4>
+							#end
+							
+							<form id="catForm" name="catForm" action="${root}/ContentCategory!addStandalone.action" method="post">
+								<input type="hidden" id="model/attributeName" name="model/attributeName" value="">
+								<input type="hidden" id="model/category/categoryId" name="model/category/categoryId" value="">
+								<input type="hidden" name="model/contentVersionId" value="$contentVersionId">
+								<input type="hidden" name="contentId" value="$contentId">
+								<input type="hidden" name="languageId" value="$languageId">
+							</form>
+						</div><!-- end contentVersionCategoriesDiv -->
+						#if($isMetainfoContent == false)
+							#if($this.hasAccessTo("ContentVersionEditor.AccessRights", true, false))
+									
+								<div id="contentVersionAccessRightsDiv" class="inlineTabDiv">
+									<iframe id="contentVersionAccessRightsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+								</div>
+							#end
+						#end
+					</div><!-- end level-3 div -->
+				</div><!-- end contentVersionDiv -->
+			</div><!--  end level-1 div -->
+		</div><!-- end tabs container -->
+
+		#if($translate)
+		<div id="otherLanguageTabsContainer" style="float: right; aborder: 1px solid green; width: 450px;">
+			
+			<ul>
+				<li><a href="#otherContentVersionDiv"><span>$originalLanguageContentVersionVO.languageName</span></a></li>
+			</ul>
+			
+			<div id="otherContentVersionDiv" class="inlineTabDiv">
+				
+				<table width="100%">	
+						<!-- here goes the field generation -->
+									
+						#foreach($attribute in $contentTypeAttributes)
+							
+							## ANNOTATION ELEMENTS
+							#set($attributeTitle = "")
+							#set($attributeTitle = $!attribute.getContentTypeAttribute("title").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+							#if($attributeTitle == "")
+								#set($attributeTitle = "$attribute.name")
+							#end
+					
+							#set($attributeDescription = "")
+							#set($attributeDescription = $!attribute.getContentTypeAttribute("description").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+							#if($attributeDescription != "")
+								#set($attributeDescription = "- $attributeDescription")
+							#end
+						
+							#set($attributeInitialData = "")
+							#set($attributeInitialData = $!attribute.getContentTypeAttribute("initialData").getContentTypeAttributeParameterValue().getValue("label"))
+							#if($attributeInitialData != "")
+								#set($attributeInitialData = "$attributeInitialData")
+							#end
+						
+							#set($class = "")
+							#set($class = $!attribute.getContentTypeAttribute("class").getContentTypeAttributeParameterValue().getValue("label"))
+							#if($class == "")
+								#set($class = "longtextfield")
+							#end
+					
+							#set($rows = "")
+							#set($rows = $!attribute.getContentTypeAttribute("rows").getContentTypeAttributeParameterValue().getValue("label"))
+							#if($rows == "")
+								#set($rows = "5")
+							#end
+					
+							#set($cols = "")
+							#set($cols = $!attribute.getContentTypeAttribute("cols").getContentTypeAttributeParameterValue().getValue("label"))
+							#if($cols == "")
+								#set($cols = "75")
+							#end
+							
+							<tr>
+								<td colspan="3"><a id="${attribute.name}AnchorComp" name="${attribute.name}AnchorComp"/><img src="css/images/trans.gif" width="1" height="5"/></td>
+							</tr>
+							<tr>
+								<td colspan="3">
+									
+									#set($value = "$!this.getOriginalLanguageAttributeValue($attribute.name)")
+									#if("$!contentVersionId" == "" && "$value" == "")
+										#set($value = $attributeInitialData)
+									#end
+												
+									#if($attribute.inputType == "datefield")
+										$attributeTitle ("$attribute.name") $attributeDescription<br/>
+										<input readonly="readonly" style="max-width: 400px;" type="text" length="20" class="date" maxlength="20" id="${attribute.name}Comp" name="${attribute.name}Comp" value="$value"/>
+									#elseif($attribute.inputType == "textfield")
+										$attributeTitle ("$attribute.name") $attributeDescription<br/>
+										<input readonly="readonly" style="max-width: 400px;" type="text" length="40" class="$class" maxlength="" id="${attribute.name}Comp" name="${attribute.name}Comp" value="$value"/>
+									#elseif($attribute.inputType == "textarea")
+										
+										#set($unescapedValue = "$!this.getOriginalLanguageUnescapedAttributeValue($attribute.name)")
+										#if("$!contentVersionId" == "" && "$unescapedValue" == "")
+											#set($unescapedValue = $attributeInitialData)
+										#end
+		
+										#set($height = 0)
+										#set($height = $!attribute.getContentTypeAttribute("height").getContentTypeAttributeParameterValue().getLocalizedValueAsInt("label", $session.locale))
+										#if($height == 0)
+											#set($height = 150)
+										#end
+										
+										$attributeTitle ("$attribute.name") $attributeDescription
+										<div style="padding: 4px; visibility: visible; max-width:400px; height:${height}px; border: 1px solid #C2D0E2;font-family:verdana,arial,sans-serif;font-size:8pt;" id="${attribute.name}Comp" name="${attribute.name}Comp">
+											$unescapedValue
+										</div> 
+											
+									#elseif($attribute.inputType == "select")
+									<!-- Handles the input type select = dropbox -->
+										$attributeTitle ("$attribute.name") $attributeDescription <br/>
+										<select readonly="readonly" style="max-width: 400px;" size="1" id="${attribute.name}Comp" name="${attribute.name}Comp" class="$class">
+											#foreach($value in $attribute.getContentTypeAttribute("values").getContentTypeAttributeParameterValues())
+												<option value="$value.id" #checkSelected("$value.id" "$this.getAttributeValue($attribute.name)")>$value.getLocalizedValue("label", $session.locale)</option>
+											#end
+										</select>
+					
+									#elseif($attribute.inputType == "checkbox")
+									<!-- Handles the input type checkbox -->
+										$attributeTitle ("$attribute.name") $attributeDescription <br/>
+										#foreach($value in $attribute.getContentTypeAttribute("values").getContentTypeAttributeParameterValues())
+											<input readonly="readonly" style="max-width: 400px;" type="checkbox" id="${attribute.name}Comp" name="${attribute.name}Comp" value="$value.id" #checkCheckedBySplit("$value.id" "$this.getAttributeValue($attribute.name)")>$value.getLocalizedValue("label", $session.locale)
+										#end
+					
+									#elseif($attribute.inputType == "radiobutton")
+									<!-- Handles the input type radiobutton -->
+										$attributeTitle ("$attribute.name") $attributeDescription <br/>
+										#foreach($value in $attribute.getContentTypeAttribute("values").getContentTypeAttributeParameterValues())
+											<input readonly="readonly" style="max-width: 400px;" type="radio" id="${attribute.name}Comp" name="${attribute.name}Comp" value="$value.id" #checkCheckedBySplit("$value.id" "$this.getAttributeValue($attribute.name)")>$value.getLocalizedValue("label", $session.locale)
+										#end
+					
+									#elseif($attribute.inputType == "customfield")
+									<!-- Handles the input type customfield -->
+										#set($attributeMarkup = $!attribute.getContentTypeAttribute("Markup").getContentTypeAttributeParameterValue().getValue("label"))
+										$attributeTitle ("$attribute.name") $attributeDescription <br/>
+										$value	
+									#end
+								</td>
+							</tr>
+						#end
+						
+					</table>
+				##</div>
+			</div>
+		#end
+	
+	</div><!-- End double pane --> 
+	
+#lightFooterToolbar($footerButtons)
+
+#endCommonToolV3()
+
+#end

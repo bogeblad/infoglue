@@ -680,6 +680,11 @@ public class ToolbarController implements ToolbarProvider
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		
+		if(request.getParameter("contentId") == null)
+		{
+			logger.warn("A request was made to getContentButtons but without contentId: " + request.getRequestURI() + ":" + request.getQueryString());
+			return buttons;
+		}
 		Integer contentId = new Integer(request.getParameter("contentId"));
 		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId);
 		
@@ -1145,8 +1150,12 @@ public class ToolbarController implements ToolbarProvider
 		}
 		
 		SiteNodeVO rootSiteNodeVO = SiteNodeController.getController().getRootSiteNodeVO(contentVO.getRepositoryId());
-		buttons.add(StructureToolbarController.getPreviewButtons(contentVO.getRepositoryId(), rootSiteNodeVO.getId(), null, locale));
-
+		
+		ToolbarButton previewButton = StructureToolbarController.getPreviewButtons(contentVO.getRepositoryId(), rootSiteNodeVO.getId(), null, locale);
+		previewButton.getSubButtons().add(StructureToolbarController.getPreviewMediumScreenButtons(contentVO.getRepositoryId(), rootSiteNodeVO.getId(), null, locale));
+		previewButton.getSubButtons().add(StructureToolbarController.getPreviewSmallScreenButtons(contentVO.getRepositoryId(), rootSiteNodeVO.getId(), null, locale));
+		buttons.add(previewButton);
+		
 		ToolbarButton publishButton = new ToolbarButton("",
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.publishContentLabel"), 
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.publishContentTitle"),
@@ -1905,11 +1914,15 @@ public class ToolbarController implements ToolbarProvider
 
 		String siteNodeId = request.getParameter("siteNodeId");
 		String languageId = request.getParameter("languageId");
-
-		if(languageId != null && !languageId.equals(""))
-			request.getSession().setAttribute("structureLanguageId", new Integer(languageId));
 		
 		SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(siteNodeId));
+
+		if(languageId != null && !languageId.equals("")) {
+			request.getSession().setAttribute("structureLanguageId", new Integer(languageId));
+		} else if (languageId == null){
+			LanguageVO languageVO =  LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId());
+			languageId = languageVO.getLanguageId().toString();
+		}
 		
 		SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(new Integer(siteNodeId));
 
@@ -2013,8 +2026,10 @@ public class ToolbarController implements ToolbarProvider
 			ToolbarButton pageDetailSimpleButton = StructureToolbarController.getPageDetailSimpleButtons(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale, principal);
 			pageMetaDataButton.getSubButtons().add(pageDetailSimpleButton);
 		}*/
-		
-		buttons.add(StructureToolbarController.getPreviewButtons(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), null, locale));
+		ToolbarButton previewButton = StructureToolbarController.getPreviewButtons(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), null, locale);
+		previewButton.getSubButtons().add(StructureToolbarController.getPreviewMediumScreenButtons(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), null, locale));
+		previewButton.getSubButtons().add(StructureToolbarController.getPreviewSmallScreenButtons(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), null, locale));
+		buttons.add(previewButton);
 
 		ToolbarButton publishButton = StructureToolbarController.getPublishCurrentNodeButton(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale);
 		ToolbarButton publishStructureButton = StructureToolbarController.getPublishButtons(siteNodeVO.getRepositoryId(), new Integer(siteNodeId), locale);
@@ -2213,7 +2228,7 @@ public class ToolbarController implements ToolbarProvider
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
-		buttons.add(getCommonFooterSaveButton(toolbarKey, principal, locale, request, disableCloseButton));
+		buttons.add(getCreateFooterButton(toolbarKey, principal, locale, request, disableCloseButton));
 		buttons.add(getCommonFooterCancelButton(toolbarKey, principal, locale, request, disableCloseButton));
 
 		return buttons;
@@ -3094,7 +3109,7 @@ public class ToolbarController implements ToolbarProvider
 		buttons.add(new ToolbarButton("",
 				  getLocalizedString(locale, "tool.managementtool.deleteRepository.header"), 
 				  getLocalizedString(locale, "tool.managementtool.deleteRepository.header"),
-				  "DeleteRepository!markForDelete.action?repositoryId=" + repositoryId + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
+				  "DeleteRepository!markForDeleteChooseMethod.action?repositoryId=" + repositoryId + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
 				  "css/images/v3/createBackgroundPenPaper.gif",
 				  "left",
 				  "create",
@@ -4401,7 +4416,28 @@ public class ToolbarController implements ToolbarProvider
 	{
 		return getCommonFooterSaveButton(toolbarKey, principal, locale, request, disableCloseButton, null, null, null);
 	}
-
+	private ToolbarButton getCreateFooterButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
+	{
+		return getCreateFooterButton(toolbarKey, principal, locale, request, disableCloseButton, null, null, null);
+	}
+	private ToolbarButton getCreateFooterButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton, String javascriptCode, String label, String title)
+	{
+		if(javascriptCode == null)
+			javascriptCode = "save();";
+		if(label == null)
+			label = getLocalizedString(locale, "tool.structuretool.toolbarV3.createPageLabel");
+		if(title == null)
+			title = getLocalizedString(locale, "tool.structuretool.toolbarV3.createPageLabel");
+			
+		return new ToolbarButton("",
+				  label,
+				  title,
+				  javascriptCode,
+				  "css/images/v3/saveInlineIcon.gif",
+				  "left",
+				  "save",
+				  true);
+	}
 	private ToolbarButton getCommonFooterSaveButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton, String javascriptCode, String label, String title)
 	{
 		if(javascriptCode == null)

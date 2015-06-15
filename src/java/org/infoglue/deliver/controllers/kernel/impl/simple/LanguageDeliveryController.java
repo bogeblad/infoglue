@@ -23,6 +23,9 @@
 
 package org.infoglue.deliver.controllers.kernel.impl.simple;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -98,10 +101,11 @@ public class LanguageDeliveryController extends BaseDeliveryController
 		}
 		else
 		{
-			Language language = (Language)getObjectWithId(LanguageImpl.class, languageId, db);
+			languageVO = LanguageController.getController().getLanguageVOWithId(languageId, db);
+			//Language language = (Language)getObjectWithId(LanguageImpl.class, languageId, db);
 				
-			if(language != null)
-				languageVO = language.getValueObject();
+			//if(language != null)
+			//	languageVO = language.getValueObject();
             
 			CacheController.cacheObject("languageCache", key, languageVO);				
 		}
@@ -118,11 +122,11 @@ public class LanguageDeliveryController extends BaseDeliveryController
 	 * @throws Exception
 	 */
 
-	public List getAvailableLanguagesForRepository(Database db, Integer repositoryId) throws SystemException, Exception
+	public List<LanguageVO> getAvailableLanguagesForRepository(Database db, Integer repositoryId) throws SystemException, Exception
     {
 		String key = "" + repositoryId + "_allLanguages";
 		logger.info("key:" + key);
-		List list = (List)CacheController.getCachedObject("languageCache", key);
+		List<LanguageVO> list = (List<LanguageVO>)CacheController.getCachedObject("languageCache", key);
 		if(list != null)
 		{
 			logger.info("There was an cached list:" + list);
@@ -131,8 +135,36 @@ public class LanguageDeliveryController extends BaseDeliveryController
 		{
 			//Timer t = new Timer();
 		    
-			list = new ArrayList();
+			list = new ArrayList<LanguageVO>();
+			
+			Timer t = new Timer();
+			String SQL = "SELECT l.languageId, l.name, l.languageCode, l.charset from cmLanguage l, cmRepositoryLanguage rl where rl.languageId = l.languageId AND rl.repositoryId = ? ORDER BY rl.sortOrder, rl.languageId";
+			logger.info("SQL:" + SQL);
+			
+			Connection conn = (Connection) db.getJdbcConnection();
+			
+			PreparedStatement psmt = conn.prepareStatement(SQL.toString());
+    		psmt.setInt(1, repositoryId);
+
+			ResultSet rs = psmt.executeQuery();
+			while(rs.next())
+			{
+				LanguageVO languageVO = new LanguageVO();
+				languageVO.setLanguageId(new Integer(rs.getString(1)));
+				languageVO.setName(rs.getString(2));
+				languageVO.setLanguageCode(rs.getString(3));
+				languageVO.setCharset(rs.getString(4));
+				logger.info("Found:" + languageVO);
+				list.add(languageVO);
+			}
+			rs.close();
+			psmt.close();
+			
+			if(logger.isInfoEnabled())
+				t.printElapsedTime("Pure JDBC2 took...");
+			
 			/* */ 
+			/*
 			OQLQuery oql = db.getOQLQuery( "SELECT l FROM org.infoglue.cms.entities.management.impl.simple.LanguageImpl l WHERE l.repositoryLanguages.repository = $1 ORDER BY l.repositoryLanguages.sortOrder, l.languageId");
 			oql.bind(repositoryId);
 			
@@ -140,40 +172,14 @@ public class LanguageDeliveryController extends BaseDeliveryController
 			while(results.hasMore()) 
 	        {
 				Language language = (Language)results.next();
+				System.out.println("language 2:" + language.getName());
                 list.add(language.getValueObject());
 	        }
 	          
 			results.close();
 			oql.close();
-			/* */
-
-			/*
-			Repository repository = (Repository) getObjectWithId(RepositoryImpl.class, repositoryId, db);
-	        if(logger.isInfoEnabled())
-	        	logger.info("repository:" + repository);
-	        
-	        if (repository != null) 
-	        {
-	        	if(logger.isInfoEnabled())
-		        	logger.info("repository:" + repository);
-		        
-	        	Collection repositoryLanguages = repository.getRepositoryLanguages();
-	        	if(logger.isInfoEnabled())
-		        	logger.info("repositoryLanguages:" + repositoryLanguages.size());
-	        	
-	        	Iterator repositoryLanguagesIterator = repositoryLanguages.iterator();
-	        	while (repositoryLanguagesIterator.hasNext()) 
-	            {
-	                RepositoryLanguage repositoryLanguage = (RepositoryLanguage) repositoryLanguagesIterator.next();
-		        	if(logger.isInfoEnabled())
-			        	logger.info("repositoryLanguage:" + repositoryLanguage);
-
-		        	Language language = repositoryLanguage.getLanguage();
-	                if (language != null)
-	                    list.add(language.getValueObject());
-	            }
-	        }
-        	*/
+			t.printElapsedTime("CASTOR 2 took...");
+			*/
 			
 	        if(list.size() > 0)
 	            CacheController.cacheObject("languageCache", key, list);				
@@ -314,6 +320,8 @@ public class LanguageDeliveryController extends BaseDeliveryController
 	
 	public LanguageVO getMasterLanguageForRepository(Integer repositoryId, Database db) throws SystemException, Exception
 	{ 
+		return LanguageController.getController().getMasterLanguage(repositoryId, db);
+		/*
 		LanguageVO languageVO = null;
 
 		String languageKey = "" + repositoryId;
@@ -343,6 +351,7 @@ public class LanguageDeliveryController extends BaseDeliveryController
 		}
 
 		return languageVO;	
+		*/
 	}
 
 	/**
@@ -411,8 +420,8 @@ public class LanguageDeliveryController extends BaseDeliveryController
 		}
 		else
 		{
-			SiteNode siteNode = (SiteNode)getObjectWithId(SiteNodeImpl.class, siteNodeId, db);
-			Integer repositoryId = siteNode.getRepository().getRepositoryId();
+			SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
+			Integer repositoryId = siteNodeVO.getRepositoryId();
          	
 			OQLQuery oql = db.getOQLQuery( "SELECT l FROM org.infoglue.cms.entities.management.impl.simple.LanguageImpl l WHERE l.repositoryLanguages.repository.repositoryId = $1 ORDER BY l.repositoryLanguages.sortOrder, l.languageId");
 			oql.bind(repositoryId);
@@ -519,6 +528,8 @@ public class LanguageDeliveryController extends BaseDeliveryController
 	
 	public LanguageVO getLanguageWithCode(Database db, String languageCode) throws SystemException, Exception
 	{ 
+		return LanguageController.getController().getLanguageVOWithCode(languageCode, db);
+		/*
 		String key = "" + languageCode;
 		logger.info("key:" + key);
 		LanguageVO languageVO = (LanguageVO)CacheController.getCachedObject("languageCache", key);
@@ -548,6 +559,7 @@ public class LanguageDeliveryController extends BaseDeliveryController
 		}
 		
         return languageVO;	
+        */
 	}
 
 

@@ -88,6 +88,8 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	private Integer changeTypeId 			= new Integer(0);
 	private Integer repositoryId 			= null;
 	private Integer languageId 				= null;
+	private Integer metaInfoContentId 		= null;
+	
 	private SiteNodeTypeDefinitionVO siteNodeTypeDefinitionVO;
 	private List availableServiceBindings 	= null;
 	private List serviceBindings 			= null;
@@ -96,6 +98,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	private List disabledLanguages 			= new ArrayList();
 	private List enabledLanguages 			= new ArrayList();
 	private List referencingBeanList 		= new ArrayList();
+	private String inheritedLanguageSiteNodePath;
 	
 	private SiteNodeVO siteNodeVO;
 	private SiteNodeVersionVO siteNodeVersionVO;
@@ -148,6 +151,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 		
 		if(siteNodeVO.getSiteNodeTypeDefinitionId() != null)
 		{
+	
 			this.siteNodeTypeDefinitionVO = SiteNodeTypeDefinitionController.getController().getSiteNodeTypeDefinitionVOWithId(siteNodeVO.getSiteNodeTypeDefinitionId());
 			if(siteNodeTypeDefinitionVO.getName().equalsIgnoreCase("HTMLPage"))
 			{
@@ -155,6 +159,9 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 				this.serviceBindings = SiteNodeVersionController.getServiceBindningVOList(siteNodeVersionVO.getSiteNodeVersionId());
 			}
 		}
+	    if (siteNodeVO != null) {
+	    	this.metaInfoContentId = siteNodeVO.getMetaInfoContentId();	    	
+	    }
 	} 
 
 	protected void initialize(Integer siteNodeId, Database db) throws Exception
@@ -223,6 +230,9 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
     		    SiteNodeController.getController().createSiteNodeMetaInfoContent(db, siteNode, siteNode.getRepositoryId(), this.getInfoGluePrincipal(), null, new ArrayList()).getValueObject();
     		}
 	    }
+	    if (siteNodeVO != null) {
+	    	this.metaInfoContentId = siteNodeVO.getMetaInfoContentId();	    	
+	    }
 
 		this.repositoryId = this.siteNodeVO.getRepositoryId();
 		//SiteNodeControllerProxy.getController().getACSiteNodeVOWithId(this.getInfoGluePrincipal(), siteNodeId);
@@ -273,51 +283,12 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 		    e.printStackTrace();
 		}
 		
-		this.availableLanguages = LanguageController.getController().getLanguageVOList(this.repositoryId);
 		
-        Map args = new HashMap();
-	    args.put("globalKey", "infoglue");
-	    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
-
-	    String disabledLanguagesString = ps.getString("siteNode_" + siteNodeId + "_disabledLanguages");
-	    logger.info("disabledLanguagesString:" + disabledLanguagesString);
-	    if(disabledLanguagesString != null && !disabledLanguagesString.equalsIgnoreCase(""))
-	    {
-	        String[] disabledLanguagesStringArray = disabledLanguagesString.split(",");
-	        for(int i=0; i<disabledLanguagesStringArray.length; i++)
-	        {
-	            try
-	            {
-		            LanguageVO languageVO = LanguageController.getController().getLanguageVOWithId(new Integer(disabledLanguagesStringArray[i]));
-		            logger.info("Adding languageVO to disabledLanguages:" + languageVO.getName());
-		    	    this.disabledLanguages.add(languageVO);
-	            }
-	            catch(Exception e)
-	            {
-	                logger.warn("An error occurred when we tried to get disabled language:" + e.getMessage(), e);
-	            }
-	        }
-	    }
-
-	    String enabledLanguagesString = ps.getString("siteNode_" + siteNodeId + "_enabledLanguages");
-	    logger.info("enabledLanguagesString:" + enabledLanguagesString);
-	    if(enabledLanguagesString != null && !enabledLanguagesString.equalsIgnoreCase(""))
-	    {
-	        String[] enabledLanguagesStringArray = enabledLanguagesString.split(",");
-	        for(int i=0; i<enabledLanguagesStringArray.length; i++)
-	        {
-	            try
-	            {
-		            LanguageVO languageVO = LanguageController.getController().getLanguageVOWithId(new Integer(enabledLanguagesStringArray[i]));
-		            logger.info("Adding languageVO to enabledLanguages:" + languageVO.getName());
-		    	    this.enabledLanguages.add(languageVO);
-	            }
-	            catch(Exception e)
-	            {
-	                logger.warn("An error occurred when we tried to get enabled language:" + e.getMessage(), e);
-	            }
-	        }
-	    }
+		this.disabledLanguages = SiteNodeController.getController().getDisabledLanguageVOListForSiteNode(siteNodeId);
+	    this.enabledLanguages = SiteNodeController.getController().getEnabledLanguageVOListForSiteNode(siteNodeId);
+	    this.inheritedLanguageSiteNodePath = SiteNodeController.getController().getInheritedLanguageSiteNodePath(siteNodeId);
+	   
+	  
 	} 
 
 	protected void initializeSiteNodeCover(Integer siteNodeId, Database db) throws Exception
@@ -335,50 +306,10 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 		}
 		
 		this.availableLanguages = LanguageController.getController().getLanguageVOList(this.repositoryId, db);
-		
-        Map args = new HashMap();
-	    args.put("globalKey", "infoglue");
-	    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
-
-	    String disabledLanguagesString = ps.getString("siteNode_" + siteNodeId + "_disabledLanguages");
-	    logger.info("disabledLanguagesString:" + disabledLanguagesString);
-	    if(disabledLanguagesString != null && !disabledLanguagesString.equalsIgnoreCase(""))
-	    {
-	        String[] disabledLanguagesStringArray = disabledLanguagesString.split(",");
-	        for(int i=0; i<disabledLanguagesStringArray.length; i++)
-	        {
-	            try
-	            {
-		            LanguageVO languageVO = LanguageController.getController().getLanguageVOWithId(new Integer(disabledLanguagesStringArray[i]), db);
-		            logger.info("Adding languageVO to disabledLanguages:" + languageVO.getName());
-		    	    this.disabledLanguages.add(languageVO);
-	            }
-	            catch(Exception e)
-	            {
-	                logger.warn("An error occurred when we tried to get disabled language:" + e.getMessage(), e);
-	            }
-	        }
-	    }
-
-	    String enabledLanguagesString = ps.getString("siteNode_" + siteNodeId + "_enabledLanguages");
-	    logger.info("enabledLanguagesString:" + enabledLanguagesString);
-	    if(enabledLanguagesString != null && !enabledLanguagesString.equalsIgnoreCase(""))
-	    {
-	        String[] enabledLanguagesStringArray = enabledLanguagesString.split(",");
-	        for(int i=0; i<enabledLanguagesStringArray.length; i++)
-	        {
-	            try
-	            {
-		            LanguageVO languageVO = LanguageController.getController().getLanguageVOWithId(new Integer(enabledLanguagesStringArray[i]), db);
-		            logger.info("Adding languageVO to enabledLanguages:" + languageVO.getName());
-		    	    this.enabledLanguages.add(languageVO);
-	            }
-	            catch(Exception e)
-	            {
-	                logger.warn("An error occurred when we tried to get enabled language:" + e.getMessage(), e);
-	            }
-	        }
-	    }
+		this.disabledLanguages = SiteNodeController.getController().getDisabledLanguageVOListForSiteNode(siteNodeId);
+	    this.enabledLanguages = SiteNodeController.getController().getEnabledLanguageVOListForSiteNode(siteNodeId);
+	    this.inheritedLanguageSiteNodePath = SiteNodeController.getController().getInheritedLanguageSiteNodePath(siteNodeId);
+	
 	} 
 
 /*    
@@ -1179,7 +1110,10 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
     {
         return dest;
     }
-    
+    public String getInheritedLanguageSiteNodePath()
+    {
+        return inheritedLanguageSiteNodePath;
+    }
     public List getReferenceBeanList()
     {
         return referenceBeanList;
@@ -1245,6 +1179,9 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 		this.languageId = languageId;
 	}
 	
-
+	public Integer getMetaMetaInfoContentId() 
+	{
+		return metaInfoContentId;
+	}
 
 }

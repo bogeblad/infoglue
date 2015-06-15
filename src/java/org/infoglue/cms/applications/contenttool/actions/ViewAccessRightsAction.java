@@ -91,7 +91,7 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 	private Map<Integer,List<AccessRightGroupVO>> accessRightGroupsMap = new HashMap<Integer,List<AccessRightGroupVO>>();
 	private Map<String,Object> accessRightHasAccessMap = new HashMap<String,Object>();
 	private String extraAccessRightInfo = "";
-	private String unrefreshedNodeId = "";
+	private String unrefreshedNodeId = "-1";
 	
 	public String doV3() throws Exception
     {

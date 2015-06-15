@@ -23,20 +23,19 @@
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
-import org.exolab.castor.jdo.OQLQuery;
-import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.Language;
 import org.infoglue.cms.entities.management.LanguageVO;
-import org.infoglue.cms.entities.management.Repository;
 import org.infoglue.cms.entities.management.RepositoryLanguage;
 import org.infoglue.cms.entities.management.impl.simple.LanguageImpl;
 import org.infoglue.cms.entities.management.impl.simple.RepositoryLanguageImpl;
@@ -45,6 +44,7 @@ import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.deliver.util.CacheController;
+import org.infoglue.deliver.util.Timer;
 
 /**
  * This class handles all interaction with Languages and persistence of them.
@@ -90,22 +90,83 @@ public class LanguageController extends BaseController
 		}
 		else
 		{
-		    languageVO = (LanguageVO)getVOWithId(LanguageImpl.class, languageId);
-		    
-			CacheController.cacheObject("languageCache", key, languageVO);				
+			Database db = CastorDatabaseService.getDatabase();
+			ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
+	
+			beginTransaction(db);
+	
+			try
+			{
+				languageVO = getLanguageVOWithId(languageId, db);
+	            
+				//If any of the validations or setMethods reported an error, we throw them up now before create. 
+				ceb.throwIfNotEmpty();
+
+				if(languageVO != null)
+				{
+				    CacheController.cacheObject("languageCache", key, languageVO);
+				}
+				
+				commitTransaction(db);
+			}
+			catch(Exception e)
+			{
+				logger.error("An error occurred so we should not complete the transaction:" + e, e);
+				rollbackTransaction(db);
+				throw new SystemException(e.getMessage());
+			}
 		}
 				
 		return languageVO;
 	}
 
 	
+	
 	/**
 	 * This method returns a specific LanguageVO object
 	 */
 	
-	public LanguageVO getLanguageVOWithId(Integer languageId, Database db) throws SystemException, Bug
+	public LanguageVO getLanguageVOWithId(Integer languageId, Database db) throws SystemException, Bug, Exception
 	{
-		return (LanguageVO)getVOWithId(LanguageImpl.class, languageId, db);
+		String key = "" + languageId;
+		logger.info("key:" + key);
+		LanguageVO languageVO = (LanguageVO)CacheController.getCachedObject("languageCache", key);
+		if(languageVO != null)
+		{
+			logger.info("There was an cached languageVO:" + languageVO);
+		}
+		else
+		{
+			String SQL = "SELECT l.languageId, l.name, l.languageCode, l.charset from cmLanguage l where l.languageId = ?";
+			logger.info("SQL:" + SQL);
+			
+			Connection conn = (Connection) db.getJdbcConnection();
+			
+			PreparedStatement psmt = conn.prepareStatement(SQL.toString());
+			psmt.setInt(1, languageId);
+	
+			ResultSet rs = psmt.executeQuery();
+			if(rs.next())
+			{
+				languageVO = new LanguageVO();
+				languageVO.setLanguageId(new Integer(rs.getString(1)));
+				languageVO.setName(rs.getString(2));
+				languageVO.setLanguageCode(rs.getString(3));
+				languageVO.setCharset(rs.getString(4));
+				
+				logger.info("Found:" + languageVO);
+			}
+			rs.close();
+			psmt.close();
+		
+			if(languageVO != null)
+			{
+			    CacheController.cacheObject("languageCache", key, languageVO);
+			}
+		}
+		
+		return languageVO;
+		//return (LanguageVO)getVOWithId(LanguageImpl.class, languageId, db);
 	} 
 
 	/**
@@ -175,9 +236,7 @@ public class LanguageController extends BaseController
 		{
 			beginTransaction(db);
 
-			Language language = getLanguageWithName(name, db);
-			if(language != null)
-				languageVO = language.getValueObject();
+			languageVO = getLanguageVOWithName(name, db);
 			
 			commitTransaction(db);
 		} 
@@ -201,32 +260,33 @@ public class LanguageController extends BaseController
 	 * @throws Bug
 	 */
 
-	public Language getLanguageWithName(String name, Database db) throws SystemException, Bug
+	public LanguageVO getLanguageVOWithName(String name, Database db) throws SystemException, Bug, Exception
 	{
-		Language language = null;
+		LanguageVO languageVO = null;
 		
-		try
-		{
-			OQLQuery oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.LanguageImpl f WHERE f.name = $1");
-			oql.bind(name);
-			
-			QueryResults results = oql.execute();
-			this.logger.info("Fetching entity in read/write mode" + name);
+		String SQL = "SELECT l.languageId, l.name, l.languageCode, l.charset from cmLanguage l where l.name = ?";
+		logger.info("SQL:" + SQL);
+		
+		Connection conn = (Connection) db.getJdbcConnection();
+		
+		PreparedStatement psmt = conn.prepareStatement(SQL.toString());
+		psmt.setString(1, name);
 
-			if (results.hasMore()) 
-			{
-				language = (Language)results.next();
-			}
-			
-			results.close();
-			oql.close();
-		}
-		catch(Exception e)
+		ResultSet rs = psmt.executeQuery();
+		if(rs.next())
 		{
-			throw new SystemException("An error occurred when we tried to fetch a named language. Reason:" + e.getMessage(), e);    
+			languageVO = new LanguageVO();
+			languageVO.setLanguageId(new Integer(rs.getString(1)));
+			languageVO.setName(rs.getString(2));
+			languageVO.setLanguageCode(rs.getString(3));
+			languageVO.setCharset(rs.getString(4));
+			
+			logger.info("Found:" + languageVO);
 		}
+		rs.close();
+		psmt.close();
 		
-		return language;		
+		return languageVO;		
 	}
 
 	/**
@@ -238,16 +298,17 @@ public class LanguageController extends BaseController
 	 * @throws Bug
 	 */
 	
-	public LanguageVO getLanguageVOWithCode(String code, Database db) throws SystemException, Bug
+	public Language getLanguageWithCode(String code, Database db) throws SystemException, Bug, Exception
 	{
-		LanguageVO languageVO = null;
+		Language language = null;
 		
-		Language language = getLanguageWithCode(code, db);
-		if(language != null)
-			languageVO = language.getValueObject();
+		LanguageVO languageVO = getLanguageVOWithCode(code, db);
+		if(languageVO != null)
+			language = getLanguageWithId(languageVO.getId(), db);
 		
-		return languageVO;	
+		return language;	
 	}
+	
 
 	/**
 	 * Returns the LanguageVO with the given languageCode.
@@ -274,9 +335,7 @@ public class LanguageController extends BaseController
 			{
 				beginTransaction(db);
 
-				Language language = getLanguageWithCode(code, db);
-				if(language != null)
-					languageVO = language.getValueObject();
+				languageVO = getLanguageVOWithCode(code, db);
 				
 				commitTransaction(db);
 			} 
@@ -303,32 +362,44 @@ public class LanguageController extends BaseController
 	 * @throws Bug
 	 */
 
-	public Language getLanguageWithCode(String code, Database db) throws SystemException, Bug
+	public LanguageVO getLanguageVOWithCode(String code, Database db) throws SystemException, Bug, Exception
 	{
-		Language language = null;
-		
-		try
+		String key = "" + code;
+		LanguageVO languageVO = (LanguageVO)CacheController.getCachedObject("languageCache", key);
+		if(languageVO != null)
 		{
-			OQLQuery oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.LanguageImpl f WHERE f.languageCode = $1");
-			oql.bind(code);
+			logger.info("There was an cached languageVO:" + languageVO);
+		}
+		else
+		{
+			String SQL = "SELECT l.languageId, l.name, l.languageCode, l.charset from cmLanguage l where l.languageCode = ?";
+			logger.info("SQL:" + SQL);
 			
-			QueryResults results = oql.execute();
-			this.logger.info("Fetching entity in read/write mode" + code);
-
-			if (results.hasMore()) 
+			Connection conn = (Connection) db.getJdbcConnection();
+			
+			PreparedStatement psmt = conn.prepareStatement(SQL.toString());
+			psmt.setString(1, code);
+	
+			ResultSet rs = psmt.executeQuery();
+			if(rs.next())
 			{
-				language = (Language)results.next();
+				languageVO = new LanguageVO();
+				languageVO.setLanguageId(new Integer(rs.getString(1)));
+				languageVO.setName(rs.getString(2));
+				languageVO.setLanguageCode(rs.getString(3));
+				languageVO.setCharset(rs.getString(4));
+				
+				logger.info("Found:" + languageVO);
 			}
-			
-			results.close();
-			oql.close();
+			rs.close();
+			psmt.close();
+
+			if(languageVO != null)
+				CacheController.cacheObject("languageCache", key, languageVO);				
 		}
-		catch(Exception e)
-		{
-			throw new SystemException("An error occurred when we tried to fetch a named language. Reason:" + e.getMessage(), e);    
-		}
+
 		
-		return language;		
+		return languageVO;		
 	}
 	
     public LanguageVO create(LanguageVO languageVO) throws ConstraintException, SystemException
@@ -459,12 +530,12 @@ public class LanguageController extends BaseController
     }
 
     
-    public List getLanguageVOList(Integer repositoryId) throws ConstraintException, SystemException
+    public List<LanguageVO> getLanguageVOList(Integer repositoryId) throws ConstraintException, SystemException
     {
         Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 
-        List languageVOList = new ArrayList();
+        List<LanguageVO> languageVOList = new ArrayList<LanguageVO>();
 
         beginTransaction(db);
 
@@ -493,7 +564,7 @@ public class LanguageController extends BaseController
         return languageVOList;
     }
     
-    public List<LanguageVO> getLanguageVOList(Integer repositoryId, Database db) throws ConstraintException, SystemException
+    public List<LanguageVO> getLanguageVOList(Integer repositoryId, Database db) throws Exception
     {
 		String key = "" + repositoryId + "_allLanguages";
 		logger.info("key:" + key);
@@ -503,17 +574,9 @@ public class LanguageController extends BaseController
 			return list;
 		}
 
-		List<LanguageVO> languageVOList = new ArrayList<LanguageVO>();
-
-		Repository repository = RepositoryController.getController().getRepositoryWithId(repositoryId, db);
-		Collection<RepositoryLanguage> repositoryLanguageList = repository.getRepositoryLanguages();
-		Iterator<RepositoryLanguage> repositoryLanguageIterator = repositoryLanguageList.iterator();
-		while(repositoryLanguageIterator.hasNext())
-		{
-			RepositoryLanguage repositoryLanguage = repositoryLanguageIterator.next();
-			languageVOList.add(repositoryLanguage.getLanguage().getValueObject());
-		}
-
+		List<LanguageVO> languageVOList = getAvailableLanguageVOListForRepository(repositoryId, db); 
+		//RepositoryLanguageController.getController().getLanguageVOListForRepositoryId(repositoryId, db);
+		
     	if(languageVOList != null)
     		CacheController.cacheObject("languageCache", key, languageVOList);
 
@@ -541,53 +604,49 @@ public class LanguageController extends BaseController
 		}
 		else
 		{
-			list = new ArrayList();
+			list = new ArrayList<LanguageVO>();
 			
-			OQLQuery oql = db.getOQLQuery( "SELECT l FROM org.infoglue.cms.entities.management.impl.simple.LanguageImpl l WHERE l.repositoryLanguages.repository = $1 ORDER BY l.repositoryLanguages.sortOrder, l.languageId");
-			oql.bind(repositoryId);
+			Timer t = new Timer();
+			String SQL = "SELECT l.languageId, l.name, l.languageCode, l.charset from cmLanguage l, cmRepositoryLanguage rl where rl.languageId = l.languageId AND rl.repositoryId = ? ORDER BY rl.sortOrder, rl.languageId";
+			logger.info("SQL:" + SQL);
 			
-	    	QueryResults results = oql.execute(Database.READONLY);
-			while(results.hasMore()) 
-	        {
-				Language language = (Language)results.next();
-                list.add(language.getValueObject());
-	        }
-	          
-			results.close();
-			oql.close();
+			Connection conn = (Connection) db.getJdbcConnection();
 			
-	        if(list.size() > 0)
+			PreparedStatement psmt = conn.prepareStatement(SQL.toString());
+    		psmt.setInt(1, repositoryId);
+
+			ResultSet rs = psmt.executeQuery();
+			while(rs.next())
+			{
+				LanguageVO languageVO = new LanguageVO();
+				languageVO.setLanguageId(new Integer(rs.getString(1)));
+				languageVO.setName(rs.getString(2));
+				languageVO.setLanguageCode(rs.getString(3));
+				languageVO.setCharset(rs.getString(4));
+				
+				logger.info("Found:" + languageVO);
+				list.add(languageVO);
+			}
+			rs.close();
+			psmt.close();
+
+			if(list.size() > 0)
 	            CacheController.cacheObject("languageCache", key, list);				
 		}
 	        
         return list;
     } 
-	
-	private List<Language> getLanguageList(Integer repositoryId, Database db) throws ConstraintException, SystemException
-	{
-		List<Language> languageList = new ArrayList<Language>();
 
-		Repository repository = RepositoryController.getController().getRepositoryWithId(repositoryId, db);
-		Collection repositoryLanguageList = repository.getRepositoryLanguages();
-		Iterator repositoryLanguageIterator = repositoryLanguageList.iterator();
-		while(repositoryLanguageIterator.hasNext())
-		{
-			RepositoryLanguage repositoryLanguage = (RepositoryLanguage)repositoryLanguageIterator.next();
-			languageList.add(repositoryLanguage.getLanguage());
-		}
-
-		return languageList;
-	}
 
     public List getLanguageList(Database db) throws SystemException, Bug
     {
     	return getAllObjects(LanguageImpl.class, "languageId", db);
     }
 
-    public List getLanguageVOList(Database db) throws SystemException, Bug
+    public List<LanguageVO> getLanguageVOList(Database db) throws SystemException, Bug, Exception
     {
 		String key = "allLanguageVOList";
-		List languageVOList = (List)CacheController.getCachedObject("languageCache", key);
+		List<LanguageVO> languageVOList = (List<LanguageVO>)CacheController.getCachedObject("languageCache", key);
 		if(languageVOList != null)
 		{
 			if(logger.isInfoEnabled())
@@ -595,19 +654,42 @@ public class LanguageController extends BaseController
 		}
 		else
 		{
-			languageVOList = getAllVOObjects(LanguageImpl.class, "languageId", db);
-			CacheController.cacheObject("languageCache", key, languageVOList);				
+			languageVOList = new ArrayList<LanguageVO>();
+			
+			Timer t = new Timer();
+			String SQL = "SELECT l.languageId, l.name, l.languageCode, l.charset from cmLanguage l ORDER BY l.languageId";
+			logger.info("SQL:" + SQL);
+			
+			Connection conn = (Connection) db.getJdbcConnection();
+			
+			PreparedStatement psmt = conn.prepareStatement(SQL.toString());
+    		
+			ResultSet rs = psmt.executeQuery();
+			while(rs.next())
+			{
+				LanguageVO languageVO = new LanguageVO();
+				languageVO.setLanguageId(new Integer(rs.getString(1)));
+				languageVO.setName(rs.getString(2));
+				languageVO.setLanguageCode(rs.getString(3));
+				languageVO.setCharset(rs.getString(4));
+				
+				logger.info("Found:" + languageVO);
+				languageVOList.add(languageVO);
+			}
+			rs.close();
+			psmt.close();
+			
+			if(languageVOList.size() > 0)
+				CacheController.cacheObject("languageCache", key, languageVOList);				
 		}
 		
 		return languageVOList;
-		
-        //return getAllVOObjects(LanguageImpl.class, "languageId", db);
     }
 
-    public List getLanguageVOList() throws SystemException, Bug
+    public List<LanguageVO> getLanguageVOList() throws SystemException, Bug
     {
-		String key = "allLanguageVOList";
-		List languageVOList = (List)CacheController.getCachedObject("languageCache", key);
+    	String key = "allLanguageVOList";
+		List<LanguageVO> languageVOList = (List<LanguageVO>)CacheController.getCachedObject("languageCache", key);
 		if(languageVOList != null)
 		{
 			if(logger.isInfoEnabled())
@@ -615,8 +697,26 @@ public class LanguageController extends BaseController
 		}
 		else
 		{
-			languageVOList = getAllVOObjects(LanguageImpl.class, "languageId");
-			CacheController.cacheObject("languageCache", key, languageVOList);				
+			languageVOList = new ArrayList<LanguageVO>();
+	
+			Database db = CastorDatabaseService.getDatabase();
+			beginTransaction(db);
+	
+			try
+			{
+				languageVOList = getLanguageVOList(db);
+				
+				if(languageVOList.size() > 0)
+					CacheController.cacheObject("languageCache", key, languageVOList);				
+
+				commitTransaction(db);
+			}
+			catch(Exception e)
+			{
+				logger.error("An error occurred so we should not complete the transaction:" + e, e);
+				rollbackTransaction(db);
+				throw new SystemException(e.getMessage());
+			}
 		}
 		
 		return languageVOList;
@@ -643,20 +743,17 @@ public class LanguageController extends BaseController
 			Database db = CastorDatabaseService.getDatabase();
 			ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 	
-			Language language = null;
-	
 			beginTransaction(db);
 	
 			try
 			{
-				language = getMasterLanguage(db, repositoryId);
+				languageVO = getMasterLanguage(repositoryId, db);
 	            
 				//If any of the validations or setMethods reported an error, we throw them up now before create. 
 				ceb.throwIfNotEmpty();
 
-				if(language != null)
+				if(languageVO != null)
 				{
-				    languageVO = language.getValueObject();
 				    CacheController.cacheObject("masterLanguageCache", languageKey, languageVO);
 				}
 				
@@ -692,42 +789,40 @@ public class LanguageController extends BaseController
 		}
 		else
 		{
-			Language language = getMasterLanguage(db, repositoryId);
-	            
-			if(language != null)
+			Timer t = new Timer();
+			String SQL = "SELECT l.languageId, l.name, l.languageCode, l.charset from cmLanguage l, cmRepositoryLanguage rl where rl.languageId = l.languageId AND rl.repositoryId = ?";
+			logger.info("SQL:" + SQL);
+			
+			Connection conn = (Connection) db.getJdbcConnection();
+			
+			PreparedStatement psmt = conn.prepareStatement(SQL.toString());
+    		psmt.setInt(1, repositoryId);
+
+			ResultSet rs = psmt.executeQuery();
+			if(rs.next())
 			{
-			    languageVO = language.getValueObject();
+				languageVO = new LanguageVO();
+				languageVO.setLanguageId(new Integer(rs.getString(1)));
+				languageVO.setName(rs.getString(2));
+				languageVO.setLanguageCode(rs.getString(3));
+				languageVO.setCharset(rs.getString(4));
+				
+				logger.info("Found:" + languageVO);
+			}
+			rs.close();
+			psmt.close();
+			
+			if(logger.isInfoEnabled())
+				t.printElapsedTime("Pure JDBC took...");
+			if(languageVO != null)
+			{
 			    CacheController.cacheObject("masterLanguageCache", languageKey, languageVO);
-			}				
+			}						
 		}
 		
 		return languageVO;	
 	}
 
-	
-	/**
-	 * This method returns the master language within an transaction. 
-	 */
-	
-	private Language getMasterLanguage(Database db, Integer repositoryId) throws SystemException, Exception
-	{ 
-		Language language = null;
-
-		OQLQuery oql = db.getOQLQuery( "SELECT l FROM org.infoglue.cms.entities.management.impl.simple.LanguageImpl l WHERE l.repositoryLanguages.repository.repositoryId = $1 ORDER BY l.repositoryLanguages.sortOrder, l.languageId");
-		oql.bind(repositoryId);
-		
-		QueryResults results = oql.execute(Database.READONLY);
-		
-		if (results.hasMore()) 
-		{
-			language = (Language)results.next();
-		}
-        
-		results.close();
-		oql.close();
-
-		return language;	
-	}
 
 	/**
 	 * This method deletes the Repository sent in from the system.
@@ -781,6 +876,35 @@ public class LanguageController extends BaseController
 
         return language.getValueObject();
     }        
+	
+    
+	public List<LanguageVO> getRemainingLanguages(Integer repositoryId) throws ConstraintException, SystemException
+	{
+		List<LanguageVO> remainingLanguages = new ArrayList<LanguageVO>();
+
+		List<LanguageVO> repositoryLanguageList = LanguageController.getController().getLanguageVOList(repositoryId);
+		List<LanguageVO> languageList = LanguageController.getController().getLanguageVOList();
+		remainingLanguages.addAll(languageList);
+        	
+		Iterator<LanguageVO> languageIterator = languageList.iterator();
+		while(languageIterator.hasNext())
+		{
+			LanguageVO languageVO = (LanguageVO)languageIterator.next();
+			logger.info("Language:" + languageVO.getName());		
+			Iterator<LanguageVO> repositoryLanguageIterator = repositoryLanguageList.iterator();
+			while(repositoryLanguageIterator.hasNext())
+			{
+				LanguageVO repositoryLanguageVO = repositoryLanguageIterator.next();
+				logger.info("Comparing" + languageVO.getLanguageId().intValue() + " and " + repositoryLanguageVO.getId().intValue());
+				if(languageVO.getLanguageId().intValue() == repositoryLanguageVO.getLanguageId().intValue())
+				{
+					remainingLanguages.remove(languageVO);
+				}
+			}
+		}
+
+		return remainingLanguages;		
+	}
 	
 	/**
 	 * This is a method that gives the user back an newly initialized ValueObject for this entity that the controller

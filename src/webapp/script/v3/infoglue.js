@@ -348,10 +348,10 @@ function resizeScrollArea()
 	$(".inlineTabDiv").each(function(index) 
 	{
 	    var offset = $(this).offset().top;
-
+	    
 	    if($("#footertoolbar").size() == 0)
 	    	$(this).css("margin-bottom", "0px");
-	    
+
 	    var marginBottom = parseInt($(this).css("margin-bottom"));
 	    if($("#footertoolbar").size() == 0)
 	    	var inlineDivHeight = windowHeight - offset - $("#footertoolbar").height() - marginBottom;
@@ -361,7 +361,12 @@ function resizeScrollArea()
 	    //alert("inlineDivHeight:" + $(this).attr("id") + "="  + inlineDivHeight);
 		$(this).height(inlineDivHeight);
 		if(inlineDivHeight < 1)
-			$(this).css("margin-bottom", "0");
+		{
+			if($("#footertoolbar").size() == 0)
+				$(this).css("margin-bottom", "0");
+			else
+		    	$(this).css("margin-bottom", "43px");
+		}
 		
 		$("#" + $(this).attr("id") + " > iframe").each(function(index) {
 			$(this).height(inlineDivHeight-5);

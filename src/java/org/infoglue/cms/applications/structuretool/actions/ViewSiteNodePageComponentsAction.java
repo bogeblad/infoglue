@@ -580,7 +580,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 		logger.info("componentId:" + this.componentId);
 		logger.info("slotId:" + this.slotId);
 		logger.info("specifyBaseTemplate:" + this.specifyBaseTemplate);
-		
+		logger.info("hideComponentPropertiesOnLoad:" + this.hideComponentPropertiesOnLoad);
 		initialize();
 		logger.info("masterLanguageId:" + this.masterLanguageVO.getId());
 
@@ -673,7 +673,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 		
 		logger.info("newComponentId:" + newComponentId);
 		
-		this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + newComponentId + "&activatedComponentId=" + newComponentId + "&componentContentId=" + this.componentId + "&showSimple=" + this.showSimple + "&stateChanged=" + this.stateChanged;
+		this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + newComponentId + "&activatedComponentId=" + newComponentId + "&componentContentId=" + this.componentId + "&showSimple=" + this.showSimple + "&stateChanged=" + this.stateChanged + "&hideComponentPropertiesOnLoad=" + this.hideComponentPropertiesOnLoad;
 		//logger.info("this.url:" + this.url);
 		//this.getResponse().sendRedirect(url);		
 		
@@ -701,7 +701,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 		logger.info("slotId:" + this.slotId);
 		logger.info("specifyBaseTemplate:" + this.specifyBaseTemplate);
 		logger.info("pagePartContentId:" + this.pagePartContentId);
-
+		logger.info("hideComponentPropertiesOnLoad:" + this.hideComponentPropertiesOnLoad);
 		try
 		{
 			initialize();
@@ -774,7 +774,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 			
 			logger.info("newComponentId:" + newComponentId);
 			
-			this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + newComponentId + "&activatedComponentId=" + newComponentId + "&componentContentId=" + this.componentId + "&showSimple=" + this.showSimple + "&stateChanged=" + stateChanged;
+			this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + newComponentId + "&activatedComponentId=" + newComponentId + "&componentContentId=" + this.componentId + "&showSimple=" + this.showSimple + "&stateChanged=" + stateChanged  + "&hideComponentPropertiesOnLoad=" + this.hideComponentPropertiesOnLoad;
 			//this.getResponse().sendRedirect(url);		
 
 			this.url = this.getResponse().encodeURL(url);
@@ -805,6 +805,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 		logger.info("componentId:" + this.componentId);
 		logger.info("slotId:" + this.slotId);
 		logger.info("specifyBaseTemplate:" + this.specifyBaseTemplate);
+		logger.info("hideComponentPropertiesOnLoad:" + this.hideComponentPropertiesOnLoad);
 
 		initialize();
 
@@ -938,7 +939,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 					
 					ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal());
 
-					this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + componentId + "&componentContentId=" + componentContentVO.getId() + "&showSimple=" + this.showSimple + "&stateChanged=" + stateChanged;
+					this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + componentId + "&componentContentId=" + componentContentVO.getId() + "&showSimple=" + this.showSimple + "&stateChanged=" + stateChanged  + "&hideComponentPropertiesOnLoad=" + this.hideComponentPropertiesOnLoad;
 				}
 				else if(allowed && (component.getParentNode() != parentComponentComponentsElement || !slotId.equalsIgnoreCase(component.getAttribute("name"))))
 				{
@@ -1069,7 +1070,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 				}
 				
 			}
-			else if(this.direction.intValue() == 0) //Up
+			else if(this.direction != null && this.direction.intValue() == 0) //Up
 			{
 			    Node previousNode = component.getPreviousSibling();
 		        
@@ -1098,7 +1099,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 				    hasChanged = true;
 				}
 			}
-			else if(this.direction.intValue() == 1) //Down
+			else if(this.direction != null && this.direction.intValue() == 1) //Down
 			{
 			    Node nextNode = component.getNextSibling();
 			    
@@ -1143,7 +1144,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 			}
 		}
 				
-		this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + this.componentId + "&showSimple=" + this.showSimple + "&stateChanged=" + stateChanged;
+		this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + this.componentId + "&showSimple=" + this.showSimple + "&stateChanged=" + stateChanged + "&hideComponentPropertiesOnLoad=" + this.hideComponentPropertiesOnLoad;
 		//this.getResponse().sendRedirect(url);		
 		
 		this.url = this.getResponse().encodeURL(url);
@@ -1169,6 +1170,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 			logger.info("componentId:" + this.componentId);
 			logger.info("slotId:" + this.slotId);
 			logger.info("specifyBaseTemplate:" + this.specifyBaseTemplate);
+			logger.info("hideComponentPropertiesOnLoad:" + this.hideComponentPropertiesOnLoad);
 		}
 
 		try
@@ -1303,7 +1305,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 			}
 			else
 			{
-				this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + this.componentId + (!hideComponentPropertiesOnLoad ? "&activatedComponentId=" + this.componentId : "") + "&componentContentId=" + componentContentId + "&showSimple=" + this.showSimple + "&stateChanged=" + stateChanged;
+				this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + this.componentId + (!hideComponentPropertiesOnLoad ? "&activatedComponentId=" + this.componentId : "") + "&componentContentId=" + componentContentId + "&showSimple=" + this.showSimple + "&stateChanged=" + stateChanged + "&hideComponentPropertiesOnLoad=" + this.hideComponentPropertiesOnLoad;
 				//this.getResponse().sendRedirect(url);		
 	
 				this.url = this.getResponse().encodeURL(url);
@@ -1336,6 +1338,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 			logger.info("componentId:" + this.componentId);
 			logger.info("slotId:" + this.slotId);
 			logger.info("specifyBaseTemplate:" + this.specifyBaseTemplate);
+			logger.info("hideComponentPropertiesOnLoad:" + this.hideComponentPropertiesOnLoad);
 		}
 
 		try
@@ -1474,7 +1477,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 				
 			logger.info("contentVersionVO:" + contentVersionVO.getContentVersionId());
 			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal());
-			this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + this.componentId + (!hideComponentPropertiesOnLoad ? "&activatedComponentId=" + this.componentId : "") + "&componentContentId=" + componentContentId + "&showSimple=" + this.showSimple + "&stateChanged=" + stateChanged;
+			this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + this.componentId + (!hideComponentPropertiesOnLoad ? "&activatedComponentId=" + this.componentId : "") + "&componentContentId=" + componentContentId + "&showSimple=" + this.showSimple + "&stateChanged=" + stateChanged + "&hideComponentPropertiesOnLoad=" + this.hideComponentPropertiesOnLoad;
 			//this.getResponse().sendRedirect(url);		
 
 			this.url = this.getResponse().encodeURL(url);
@@ -1556,12 +1559,12 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 		logger.info("componentId:" + this.componentId);
 		logger.info("doChangeComponent:" + this.getRequest().getQueryString());
 		logger.info("masterLanguageId:" + this.masterLanguageVO.getId());
-
+		logger.info("hideComponentPropertiesOnLoad:" + this.hideComponentPropertiesOnLoad);
 		this.hasChangeComponentRecursivelyAccess = this.hasAccessTo("ComponentEditor.ChangeComponentRecursively", true);
 
 		try
 		{
-			Integer newComponentId = new Integer(0);
+			Integer newComponentId = this.componentId;
 			
 			Integer startNodeId = this.siteNodeId;
 			boolean recurseChildPages = false;
@@ -1600,7 +1603,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 			}
 			else
 			{
-				this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + this.componentId + "&activatedComponentId=" + newComponentId + "&showSimple=" + this.showSimple;
+				this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + this.componentId + "&activatedComponentId=" + newComponentId + "&showSimple=" + this.showSimple + "&hideComponentPropertiesOnLoad=" + this.hideComponentPropertiesOnLoad;
 				//this.getResponse().sendRedirect(url);
 	
 				this.url = this.getResponse().encodeURL(url);
@@ -1990,6 +1993,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 					if(toEncoding == null)
 						toEncoding = "utf-8";
 					
+
 					String[] controlChars = new String[]{"�","�","�","�","�","�","�","�","�","�","�","�"};
 					boolean convert = true;
 					for(String charToTest : controlChars)
@@ -2024,9 +2028,9 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 			getHttpSession().removeAttribute("" + siteNodeId + "_hideComponentPropertiesOnLoad");
 			
 		if(showDecorated == null || !showDecorated.equalsIgnoreCase("false"))
-			this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + this.componentId + (!hideComponentPropertiesOnLoad ? "&activatedComponentId=" + this.componentId : "") + "&showSimple=" + this.showSimple + "&stateChanged=" + stateChanged;
+			this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + this.componentId + (!hideComponentPropertiesOnLoad ? "&activatedComponentId=" + this.componentId : "") + "&showSimple=" + this.showSimple + "&stateChanged=" + stateChanged + "&hideComponentPropertiesOnLoad=" + this.hideComponentPropertiesOnLoad;
 		else
-			this.url = getComponentRendererUrl() + "ViewPage.action?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + this.componentId + (!hideComponentPropertiesOnLoad ? "&activatedComponentId=" + this.componentId : "") + "&showSimple=" + this.showSimple + "&stateChanged=" + stateChanged;
+			this.url = getComponentRendererUrl() + "ViewPage.action?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + this.componentId + (!hideComponentPropertiesOnLoad ? "&activatedComponentId=" + this.componentId : "") + "&showSimple=" + this.showSimple + "&stateChanged=" + stateChanged + "&hideComponentPropertiesOnLoad=" + this.hideComponentPropertiesOnLoad;
 		
 		this.url = this.getResponse().encodeURL(url);
 		this.getResponse().sendRedirect(url);
@@ -2166,7 +2170,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal());
 		}
 			
-		this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + this.componentId + "&activatedComponentId=" + this.componentId + "&showSimple=" + this.showSimple + "&stateChanged=" + stateChanged;
+		this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + this.componentId + "&activatedComponentId=" + this.componentId + "&showSimple=" + this.showSimple + "&stateChanged=" + stateChanged + "&hideComponentPropertiesOnLoad=" + this.hideComponentPropertiesOnLoad;
 		//this.getResponse().sendRedirect(url);		
 		
 		this.url = this.getResponse().encodeURL(url);

@@ -64,6 +64,7 @@ import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.entities.structure.impl.simple.MediumSiteNodeVersionImpl;
+import org.infoglue.cms.entities.structure.impl.simple.PureSiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeVersionImpl;
@@ -496,6 +497,29 @@ public class SiteNodeVersionController extends BaseController
 			logger.error("An error occurred so we should not completes the transaction:" + e, e);
 			throw new SystemException(e.getMessage());
 		}
+    	
+		return siteNodeVersion;		
+	}
+	
+	/**
+	 * This method creates an initial siteNodeVersion for the siteNode sent in and within the transaction sent in.
+	 */
+	
+	public static MediumSiteNodeVersionImpl createInitialSiteNodeVersionPure(Database db, PureSiteNodeImpl siteNode, InfoGluePrincipal infoGluePrincipal, int maxSortOrder) throws SystemException, Bug, Exception
+	{
+		MediumSiteNodeVersionImpl siteNodeVersion = null;
+
+		siteNodeVersion = new MediumSiteNodeVersionImpl();
+		siteNodeVersion.setIsCheckedOut(new Boolean(false));
+		siteNodeVersion.setModifiedDateTime(DateHelper.getSecondPreciseDate());
+		siteNodeVersion.setSiteNodeId(siteNode.getId());
+		siteNodeVersion.setStateId(new Integer(0));
+		siteNodeVersion.setVersionComment("Initial version");
+		siteNodeVersion.setVersionModifier(infoGluePrincipal.getName());
+		siteNodeVersion.setVersionNumber(new Integer(1));
+		siteNodeVersion.setSortOrder(maxSortOrder);
+    	
+		db.create(siteNodeVersion);
     	
 		return siteNodeVersion;		
 	}
@@ -994,6 +1018,44 @@ public class SiteNodeVersionController extends BaseController
 		return siteNodeVersion;
 	}
 
+	/**
+	 * This is a method used to get the latest site node version of a sitenode within a given transaction.
+	 */
+
+	public List<MediumSiteNodeVersionImpl> getLatestMediumSiteNodeVersionList(Database db, Integer siteNodeId, boolean ReadOnly) throws SystemException, Bug
+	{
+		List<MediumSiteNodeVersionImpl> versions = new ArrayList<MediumSiteNodeVersionImpl>();
+
+		try
+		{
+			OQLQuery oql = db.getOQLQuery( "SELECT cv FROM org.infoglue.cms.entities.structure.impl.simple.MediumSiteNodeVersionImpl cv WHERE cv.siteNodeId = $1 ORDER BY cv.siteNodeVersionId desc");
+			oql.bind(siteNodeId);
+        	
+			QueryResults results = null;
+			if(ReadOnly)
+			    results = oql.execute(Database.READONLY);
+			else
+			{
+				this.logger.info("Fetching entity in read/write mode");
+				results = oql.execute();
+			}
+			
+			while (results.hasMore()) 
+			{
+				versions.add((MediumSiteNodeVersionImpl)results.next());
+			}
+
+			results.close();
+			oql.close();
+		}
+		catch(Exception e)
+		{
+			logger.error("An error occurred so we should not completes the transaction:" + e, e);
+			throw new SystemException(e.getMessage());
+		}
+    	
+		return versions;
+	}
     
     public SiteNodeVersionVO updateStateId(Integer siteNodeVersionId, Integer stateId, String versionComment, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId) throws ConstraintException, SystemException
     {
@@ -1092,53 +1154,30 @@ public class SiteNodeVersionController extends BaseController
 	 * This methods deletes all versions for the siteNode sent in
 	 */
 
-	public static void deleteVersionsForSiteNode(SiteNode siteNode, Database db, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException, Bug, Exception
+	public static void deleteVersionsForSiteNode(SiteNodeVO siteNodeVO, Database db, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException, Bug, Exception
     {
-       	Collection siteNodeVersions = Collections.synchronizedCollection(siteNode.getSiteNodeVersions());
-       	Iterator siteNodeVersionIterator = siteNodeVersions.iterator();
-			
-       	boolean metaInfoContentDeleted = false;
-		while (siteNodeVersionIterator.hasNext()) 
-        {
-        	SiteNodeVersion siteNodeVersion = (SiteNodeVersion)siteNodeVersionIterator.next();
-			Collection serviceBindings = Collections.synchronizedCollection(siteNodeVersion.getServiceBindings());
-			Iterator serviceBindingIterator = serviceBindings.iterator();
-			while(serviceBindingIterator.hasNext())
-			{
-				ServiceBinding serviceBinding = (ServiceBinding)serviceBindingIterator.next();
-				if(serviceBinding.getAvailableServiceBinding().getName().equalsIgnoreCase("Meta information"))
-				{
-				    if(!metaInfoContentDeleted)
-				    {
-				    	try
-				    	{
-				    		if(siteNode.getMetaInfoContentId() != null)
-				    		{
-				    			ContentVO contentVO = ContentController.getContentController().getContentVOWithId(siteNode.getMetaInfoContentId(), db);
-				    			ContentController.getContentController().delete(contentVO, db, true, true, true, infoGluePrincipal);
-    				    	}
-				    		//deleteMetaInfoForSiteNodeVersion(db, serviceBinding, infoGluePrincipal);
-						}
-				    	catch(Exception e)
-				    	{
-				    		logger.error("An error was thrown when we tried to delete the meta info for the version. Could be deleted allready");
-				    	}
-				    	metaInfoContentDeleted = true;
-				    }
-				    serviceBindingIterator.remove();
-				    db.remove(serviceBinding);
+		List<MediumSiteNodeVersionImpl> versions = SiteNodeVersionController.getController().getLatestMediumSiteNodeVersionList(db, siteNodeVO.getId(), false);
+		boolean metaInfoContentDeleted = false;
+		for(MediumSiteNodeVersionImpl version : versions)
+		{
+		    if(!metaInfoContentDeleted)
+		    {
+		    	try
+		    	{
+		    		if(siteNodeVO.getMetaInfoContentId() != null)
+		    		{
+		    			ContentVO contentVO = ContentController.getContentController().getContentVOWithId(siteNodeVO.getMetaInfoContentId(), db);
+		    			ContentController.getContentController().delete(contentVO, db, true, true, true, infoGluePrincipal);
+			    	}
 				}
-				else
-				{			
-				    serviceBindingIterator.remove();
-				    db.remove(serviceBinding);
-				}
-			}
-	    	
-			logger.info("Deleting siteNodeVersion:" + siteNodeVersion.getSiteNodeVersionId());
-        	siteNodeVersionIterator.remove();
-			db.remove(siteNodeVersion);
-        }		    	
+		    	catch(Exception e)
+		    	{
+		    		logger.error("An error was thrown when we tried to delete the meta info for the version. Could be deleted allready");
+		    	}
+		    	metaInfoContentDeleted = true;
+		    }
+			db.remove(version);
+		}
     }
 
 	/**

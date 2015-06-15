@@ -31,8 +31,9 @@
 
 	<div id="tabsContainer" class="flora cleanTopDiv">      
 		<ul>
-	        <li><a href="#contentReferencesTab"><span>$ui.getString("tool.contenttool.contentVersionReferences.header")</span></a></li>
-	        <li><a href="#pageReferencesTab"><span>$ui.getString("tool.contenttool.siteNodeReferences.header")</span></a></li>
+			<li><a href="#pageReferencesTab"><span>$ui.getString("tool.contenttool.siteNodeReferences.header")</span></a></li>
+			<li><a href="#contentReferencesTab"><span>$ui.getString("tool.contenttool.contentVersionReferences.header")</span></a></li>
+	      
 	    </ul>
 
 		<div id="contentReferencesTab" class="inlineTabDiv">

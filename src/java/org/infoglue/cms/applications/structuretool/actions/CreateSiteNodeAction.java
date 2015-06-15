@@ -89,6 +89,7 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
    	private String userSessionKey;
    	private Integer changeTypeId = new Integer(0);
    	private List<LanguageVO> availablePageLanguages = new ArrayList<LanguageVO>();
+	private List<LanguageVO> disabledPageLanguages = new ArrayList<LanguageVO>();
    	
    	private List<ContentTypeAttribute> specialMetaAttributes = new ArrayList<ContentTypeAttribute>();
    	
@@ -282,6 +283,8 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 
     	Timer t = new Timer();
 
+    	SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(parentSiteNodeId, false);
+
     	Database db = CastorDatabaseService.getDatabase();
 
         beginTransaction(db);
@@ -289,7 +292,8 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 
         try
         {
-            SiteNode newSiteNode = SiteNodeControllerProxy.getSiteNodeControllerProxy().acCreate(this.getInfoGluePrincipal(), this.parentSiteNodeId, this.siteNodeTypeDefinitionId, this.repositoryId, this.siteNodeVO, db);            
+            //SiteNode newSiteNode = SiteNodeControllerProxy.getSiteNodeControllerProxy().acCreate(this.getInfoGluePrincipal(), this.parentSiteNodeId, this.siteNodeTypeDefinitionId, this.repositoryId, this.siteNodeVO, db);            
+            SiteNode newSiteNode = SiteNodeControllerProxy.getSiteNodeControllerProxy().acCreatePure(this.getInfoGluePrincipal(), this.parentSiteNodeId, this.siteNodeTypeDefinitionId, this.repositoryId, this.siteNodeVO, siteNodeVO.getChildCount(), db);            
             newSiteNodeVO = newSiteNode.getValueObject();
             t.printElapsedTime("acCreate took");
             SiteNodeController.getController().createSiteNodeMetaInfoContent(db, newSiteNodeVO, this.repositoryId, this.getInfoGluePrincipal(), this.pageTemplateContentId, new ArrayList());
@@ -330,8 +334,10 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
     	logger.info("isBranch:" + this.siteNodeVO.getIsBranch());
     	
     	Timer t = new Timer();
-    	if(!logger.isInfoEnabled())
-    		t.setActive(false);
+    	//if(!logger.isInfoEnabled())
+    	//	t.setActive(false);
+    	
+    	SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(parentSiteNodeId, false);
     	
     	Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -343,8 +349,9 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
         {
         	ceb = this.siteNodeVO.validate();
         	ceb.throwIfNotEmpty();
-
-        	SiteNode newSiteNode = SiteNodeControllerProxy.getSiteNodeControllerProxy().acCreate(this.getInfoGluePrincipal(), this.parentSiteNodeId, this.siteNodeTypeDefinitionId, this.repositoryId, this.siteNodeVO, db);            
+        	
+        	//SiteNode newSiteNode = SiteNodeControllerProxy.getSiteNodeControllerProxy().acCreate(this.getInfoGluePrincipal(), this.parentSiteNodeId, this.siteNodeTypeDefinitionId, this.repositoryId, this.siteNodeVO, db);            
+        	SiteNode newSiteNode = SiteNodeControllerProxy.getSiteNodeControllerProxy().acCreatePure(this.getInfoGluePrincipal(), this.parentSiteNodeId, this.siteNodeTypeDefinitionId, this.repositoryId, this.siteNodeVO, siteNodeVO.getChildCount(), db);            
             newSiteNodeVO = newSiteNode.getValueObject();
             t.printElapsedTime("acCreate took");
 
@@ -427,9 +434,13 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
         userSessionKey = "" + System.currentTimeMillis();
 
 		parentSiteNodeVO = SiteNodeControllerProxy.getController().getSiteNodeVOWithId(parentSiteNodeId);
-
-		this.availablePageLanguages = RepositoryLanguageController.getController().getAvailableLanguageVOListForRepositoryId(parentSiteNodeVO.getRepositoryId());
 		
+		this.availablePageLanguages = RepositoryLanguageController.getController().getAvailableLanguageVOListForRepositoryId(parentSiteNodeVO.getRepositoryId());
+		this.disabledPageLanguages = SiteNodeController.getController().getDisabledLanguageVOListForSiteNode(parentSiteNodeId);
+		
+    	if(this.languageId == null)
+    		this.languageId = LanguageController.getController().getMasterLanguage(parentSiteNodeVO.getRepositoryId()).getId();
+    	
 		String createSiteNodeInlineOperationDoneHeader = getLocalizedString(getLocale(), "tool.structuretool.createSiteNodeInlineOperationDoneHeader", parentSiteNodeVO.getName());
 		String createSiteNodeInlineOperationBackToCurrentPageLinkText = getLocalizedString(getLocale(), "tool.structuretool.createSiteNodeInlineOperationBackToCurrentPageLinkText");
 		String createSiteNodeInlineOperationBackToCurrentPageTitleText = getLocalizedString(getLocale(), "tool.structuretool.createSiteNodeInlineOperationBackToCurrentPageTitleText");
@@ -500,7 +511,7 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 
     public Integer getLanguageId()
     {
-        return languageId;
+    	return languageId;
     }
     
     public void setLanguageId(Integer languageId)
@@ -561,6 +572,10 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 	public List<LanguageVO> getAvailablePageLanguages()
 	{
 		return availablePageLanguages;
+	}
+	public List<LanguageVO> getDisabledLanguages()
+	{
+		return disabledPageLanguages;
 	}
 
 }

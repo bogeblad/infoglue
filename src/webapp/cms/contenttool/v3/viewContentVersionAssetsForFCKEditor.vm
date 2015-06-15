@@ -10,6 +10,7 @@
 			
 		function markAsset(object, aContentId, anAssetKey, actualAssetKey, anAssetUrl)
 		{			
+		
 			if(selectedAssetElement)
 			{
 				selectedAssetElement.parentNode.style.border = "1px solid #d8d8d8";
@@ -18,7 +19,7 @@
 				selectedAssetElement.style.background = "url(css/images/v3/imgbox_bg.gif) repeat";
 				selectedAssetElement.style.backgroundImage = "url(css/images/v3/imgbox_bg.gif)";
 			}
-			
+		
 			contentId = aContentId;	
 			if(actualAssetKey)
 				assetKey = actualAssetKey;
@@ -76,6 +77,7 @@
 			var returnAddress = document.location.href;  
 			if (confirm('$ui.getString("tool.contenttool.assetDialog.confirmAssetDeletionLabel") ' + assetKey))
 			{
+				//alert(url + "&returnAddress=" + escape(returnAddress));
 				window.location.href=url + "&returnAddress=" + escape(returnAddress);
 			}
 		}
@@ -93,6 +95,7 @@
 		$(document).ready(function(){
 			//alert("Loaded:" + document.location.href);
 			setTimeout("initSub()", 500);
+
 			if(parent && parent.getContentVersionId)
 			{
 				var parentContentVersionId = parent.getContentVersionId();
@@ -100,7 +103,7 @@
 				//alert("parentContentVersionId:" + parentContentVersionId + "=" + contentVersionId);
 				if(contentVersionId != parentContentVersionId)
 				{
-					alert("You have switched to a working version - we must reload the dialog.");
+					//alert("You have switched to a working version - we must reload the dialog.");
 					//alert("parent.location.href:" + parent.location.href + ":" + parentContentVersionId + "=" + contentVersionId);
 					//alert("parent.location.href:" + document.location.href + ":" + parentContentVersionId + "=" + contentVersionId);
 					parent.location.href = parent.location.href + "&anchor=digitalAssetsBlock";
@@ -124,91 +127,90 @@
 	<link rel="stylesheet" type="text/css" href="css/cms.css" />
 
 </head>
+	<body class="generaltooledit">
 
-<body class="generaltooledit">
 
-#if($enableInlineButtons)<div id="assets" class="imgBoxContainer resizableDiv">#end
+		#if($enableInlineButtons)<div id="assets" class="imgBoxContainer resizableDiv">#end
 
-#set($counter = 0)
-#foreach($digitalAsset in $inheritedDigitalAssets)
-	#set($digitalAssetUrl = $this.getDigitalAssetUrl($digitalAsset.digitalAssetId))
-	<div class="imgBox">
-		<div class="usageCounter #if($digitalAsset.referencingNumberOfObjects == 0)notUsed#end" title="$ui.getString("tool.contenttool.usageCounterText"): $digitalAsset.referencingNumberOfObjects">$digitalAsset.referencingNumberOfObjects</div>
-		<p title="$digitalAsset.assetKey ($digitalAsset.assetContentType - $formatter.formatFileSize($digitalAsset.assetFileSize))" class="assetKeyP">#if($digitalAsset.assetKey.length() > 18)$digitalAsset.assetKey.substring(0,18)..#else$digitalAsset.assetKey#end</p>
-    	<div class="imgBoxTop" id="digitalAsset$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')" #if($assetKey == "$digitalAsset.assetKey") style="background:url(css/images/v3/imgboxselected_bg.gif) repeat;" #else style="background:url(css/images/v3/imgbox_bg.gif) repeat;" #end>
-            <div id="imgBoxTopInner" class="imgBoxTopInner">
-            	<input type="hidden" id="digitalAsset$formatter.encodeURI($formatter.encodeURI($digitalAsset.assetKey, 'utf-8'), 'utf-8')" value="$digitalAssetUrl">
-				#set($singleEncodedAssetKey = "$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')")
-				#set($doubleEncodedAssetKey = "$formatter.encodeURI($formatter.encodeURI($digitalAsset.assetKey, 'utf-8'), 'utf-8')")
-				#set($thumbnailImageUrl = "$this.getDigitalAssetThumbnailUrl($digitalAsset.digitalAssetId, 100, 60, 'ffffff', 'center', 'middle', 100, 60, 75)")
-				<a class="assetKeyHref" #if($contentId)ondblclick="onOk();" href="javascript:markAsset(this, $!contentId, '$doubleEncodedAssetKey', '$doubleEncodedAssetKey', '$thumbnailImageUrl');"#else href="$digitalAssetUrl" target="_blank" #end>
-					<img #if($contentId)ondblclick="onOk();" onclick="markAsset(this, $!contentId, '$singleEncodedAssetKey', '$singleEncodedAssetKey', '$thumbnailImageUrl');"#end src="$thumbnailImageUrl" alt="$digitalAsset.assetKey ($digitalAsset.assetContentType - $formatter.formatFileSize($digitalAsset.assetFileSize))" />
-             	</a>
-                #if($showSelectButtonByEachImage && $contentId)<a href="javascript:markAsset(this, $!contentId, '$doubleEncodedAssetKey', '$doubleEncodedAssetKey', '$thumbnailImageUrl');onOk();"><b>Add asset to selection</b></a>#end
-				#if($assetKey == $digitalAsset.assetKey)
-					<script type="text/javascript">
-					<!--
-						var firstAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
-					-->
-					</script>	
-				#else
-					#if($counter == 0 && (!$assetKey || $!assetKey == ''))
+		#set($counter = 0)
+		#foreach($digitalAsset in $inheritedDigitalAssets)
+			#set($digitalAssetUrl = $this.getDigitalAssetUrl($digitalAsset.digitalAssetId))
+			<div class="imgBox">
+				<div class="usageCounter #if($digitalAsset.referencingNumberOfObjects == 0)notUsed#end" title="$ui.getString("tool.contenttool.usageCounterText"): $digitalAsset.referencingNumberOfObjects">$digitalAsset.referencingNumberOfObjects</div>
+				<p title="$digitalAsset.assetKey ($digitalAsset.assetContentType - $formatter.formatFileSize($digitalAsset.assetFileSize))" class="assetKeyP">#if($digitalAsset.assetKey.length() > 18)$digitalAsset.assetKey.substring(0,18)..#else$digitalAsset.assetKey#end</p>
+				<div class="imgBoxTop" id="digitalAsset$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')" #if($assetKey == "$digitalAsset.assetKey") style="background:url(css/images/v3/imgboxselected_bg.gif) repeat;" #else style="background:url(css/images/v3/imgbox_bg.gif) repeat;" #end>
+					<div id="imgBoxTopInner" class="imgBoxTopInner">
+						<input type="hidden" id="digitalAsset$formatter.encodeURI($formatter.encodeURI($digitalAsset.assetKey, 'utf-8'), 'utf-8')" value="$digitalAssetUrl">
+						#set($singleEncodedAssetKey = "$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')")
+						#set($doubleEncodedAssetKey = "$formatter.encodeURI($formatter.encodeURI($digitalAsset.assetKey, 'utf-8'), 'utf-8')")
+						#set($thumbnailImageUrl = "$this.getDigitalAssetThumbnailUrl($digitalAsset.digitalAssetId, 100, 60, 'ffffff', 'center', 'middle', 100, 60, 75)")
+						<a class="assetKeyHref" #if($contentId)ondblclick="onOk();" href="javascript:markAsset(this, $!contentId, '$doubleEncodedAssetKey', '$doubleEncodedAssetKey', '$thumbnailImageUrl');"#else href="$digitalAssetUrl" target="_blank" #end>
+							<img #if($contentId)ondblclick="onOk();" onclick="markAsset(this, $!contentId, '$singleEncodedAssetKey', '$singleEncodedAssetKey', '$thumbnailImageUrl');"#end src="$thumbnailImageUrl" alt="$digitalAsset.assetKey ($digitalAsset.assetContentType - $formatter.formatFileSize($digitalAsset.assetFileSize))" />
+						</a>
+						#if($showSelectButtonByEachImage && $contentId)<a href="javascript:markAsset(this, $!contentId, '$doubleEncodedAssetKey', '$doubleEncodedAssetKey', '$thumbnailImageUrl');onOk();"><b>Add asset to selection</b></a>#end
+						#if($assetKey == $digitalAsset.assetKey)
+							<script type="text/javascript">
+							<!--
+								var firstAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
+							-->
+							</script>	
+						#else
+							#if($counter == 0 && (!$assetKey || $!assetKey == ''))
+								<script type="text/javascript">
+								<!--
+									var firstAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
+								-->
+								</script>
+							#end
+						#end
 						<script type="text/javascript">
 						<!--
-							var firstAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
+							var lastAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
 						-->
-						</script>
-					#end
-				#end
-				<script type="text/javascript">
-				<!--
-					var lastAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
-				-->
-				</script>	
-				#set($counter = $counter + 1)
-            </div>
-        </div>
-	  	<div class="imgBoxBottom">
-	  		<a class="updateImg" href="#" onclick="parent.openInlineDiv('ViewDigitalAsset!update.action?contentVersionId=$!contentVersionId&digitalAssetId=$digitalAsset.digitalAssetId', 600, 800, true, true, '');" title="$ui.getString("tool.contenttool.updateAttachment")"></a>
-			<a class="menuImg" href="#" onclick="openPopupMenu(this);" title="$ui.getString("tool.contenttool.displayPopupMenu")"></a>
-			<a class="deleteImg" href="#" onclick="#if($digitalAsset.referencingNumberOfObjects > 0)if (confirm('$ui.getString("tool.contenttool.assetRemoveReferencedWarning", $digitalAsset.referencingNumberOfObjects)')){#end deleteAsset('ViewContentVersion!deleteDigitalAssetStandalone.action?contentVersionId=$!contentVersionId&digitalAssetId=$digitalAsset.digitalAssetId&returnAddress=$formatter.encodeURI($currentURL)', '$digitalAsset.assetKey'); #if($digitalAsset.referencingNumberOfObjects > 0)}#end" title="$ui.getString("tool.contenttool.deleteAttachment")"></a>
-		
-			##<a class="updateImg" href="#" onclick="parent.openInlineDiv('ViewDigitalAsset!update.action?contentVersionId=$!contentVersionId&contentId=$!contentId&languageId=$!languageId&digitalAssetId=$digitalAsset.digitalAssetId', 600, 800, true, true, ''); " title="$ui.getString("tool.contenttool.updateAttachment")"></a>
-			##<a class="deleteImg" href="#" onclick="deleteAsset('ViewContentVersion!deleteDigitalAssetStandalone.action?contentVersionId=$!contentVersionId&contentId=$!contentId&languageId=$!languageId&digitalAssetId=$digitalAsset.digitalAssetId&returnAddress=$formatter.encodeURI($currentURL)', '$digitalAsset.assetKey');" title="$ui.getString("tool.contenttool.deleteAttachment")"></a>
-		
-			<div class="popup">
-				<a class="previewImg" href="$digitalAssetUrl" target="_blank">$ui.getString("tool.contenttool.viewAttachment")</a>
-				#if($disableImageEditor != "true" && ($digitalAssetUrl.indexOf(".gif") > -1 || $digitalAssetUrl.indexOf(".jpg") > -1 || $digitalAssetUrl.indexOf(".png") > -1))
-				<a class="editImg" href="#" onclick="parent.openInlineDiv('ImageEditor.action?contentVersionId=$contentVersionId&digitalAssetId=$digitalAsset.digitalAssetId&clearHistory=true', 600, 800, true, true, ''); " >$ui.getString("tool.contenttool.editAttachment")</a>
-				#end
-				<a class="moveImg" href="#" onclick="#if($digitalAsset.referencingNumberOfObjects > 0)if (confirm('$ui.getString("tool.contenttool.assetMoveReferencedWarning", $digitalAsset.referencingNumberOfObjects)')){#end parent.openInlineDiv('MoveDigitalAsset!input.action?contentVersionId=$!contentVersionId&digitalAssetId=$digitalAsset.digitalAssetId', 600, 800, true, true, '');#if($digitalAsset.referencingNumberOfObjects > 0)}#end">$ui.getString("tool.contenttool.moveAttachment")</a>
+						</script>	
+						#set($counter = $counter + 1)
+					</div>
+				</div>
+				<div class="imgBoxBottom">
+					<a class="updateImg" href="#" onclick="parent.openInlineDiv('ViewDigitalAsset!update.action?contentVersionId=$!contentVersionId&digitalAssetId=$digitalAsset.digitalAssetId', 600, 800, true, true, '');" title="$ui.getString("tool.contenttool.updateAttachment")"></a>
+					<a class="menuImg" href="#" onclick="openPopupMenu(this);" title="$ui.getString("tool.contenttool.displayPopupMenu")"></a>
+					<a class="deleteImg" href="#" onclick="#if($digitalAsset.referencingNumberOfObjects > 0)if (confirm('$ui.getString("tool.contenttool.assetRemoveReferencedWarning", $digitalAsset.referencingNumberOfObjects)')){#end deleteAsset('ViewContentVersion!deleteDigitalAssetStandalone.action?contentVersionId=$!contentVersionId&digitalAssetId=$digitalAsset.digitalAssetId&returnAddress=$formatter.encodeURI($currentURL)', '$digitalAsset.assetKey'); #if($digitalAsset.referencingNumberOfObjects > 0)}#end" title="$ui.getString("tool.contenttool.deleteAttachment")"></a>
+				
+					##<a class="updateImg" href="#" onclick="parent.openInlineDiv('ViewDigitalAsset!update.action?contentVersionId=$!contentVersionId&contentId=$!contentId&languageId=$!languageId&digitalAssetId=$digitalAsset.digitalAssetId', 600, 800, true, true, ''); " title="$ui.getString("tool.contenttool.updateAttachment")"></a>
+					##<a class="deleteImg" href="#" onclick="deleteAsset('ViewContentVersion!deleteDigitalAssetStandalone.action?contentVersionId=$!contentVersionId&contentId=$!contentId&languageId=$!languageId&digitalAssetId=$digitalAsset.digitalAssetId&returnAddress=$formatter.encodeURI($currentURL)', '$digitalAsset.assetKey');" title="$ui.getString("tool.contenttool.deleteAttachment")"></a>
+				
+					<div class="popup">
+						<a class="previewImg" href="$digitalAssetUrl" target="_blank">$ui.getString("tool.contenttool.viewAttachment")</a>
+						#if($disableImageEditor != "true" && ($digitalAssetUrl.indexOf(".gif") > -1 || $digitalAssetUrl.indexOf(".jpg") > -1 || $digitalAssetUrl.indexOf(".png") > -1))
+						<a class="editImg" href="#" onclick="parent.openInlineDiv('ImageEditor.action?contentVersionId=$contentVersionId&digitalAssetId=$digitalAsset.digitalAssetId&clearHistory=true', 600, 800, true, true, ''); " >$ui.getString("tool.contenttool.editAttachment")</a>
+						#end
+						<a class="moveImg" href="#" onclick="#if($digitalAsset.referencingNumberOfObjects > 0)if (confirm('$ui.getString("tool.contenttool.assetMoveReferencedWarning", $digitalAsset.referencingNumberOfObjects)')){#end parent.openInlineDiv('MoveDigitalAsset!input.action?contentVersionId=$!contentVersionId&digitalAssetId=$digitalAsset.digitalAssetId', 600, 800, true, true, '');#if($digitalAsset.referencingNumberOfObjects > 0)}#end">$ui.getString("tool.contenttool.moveAttachment")</a>
+					</div>
+				
+				</div>
 			</div>
-		
-		</div>
- 	</div>
-#end
+		#end
 
-#if($counter == 0)
-<p>
-	$ui.getString("tool.contenttool.noAssetsOrNoContentSelectedLabel")
-</p>
-#end
+		#if($counter == 0)
+		<p>
+			$ui.getString("tool.contenttool.noAssetsOrNoContentSelectedLabel")
+		</p>
+		#end
 
-#if($enableInlineButtons)</div>#end
+		#if($enableInlineButtons)</div>#end
 
-#if($enableInlineButtons)
-<div style="display: block; float: left; width: 100%; height: 20px; margin-top: 6px; padding-top: 0px;"">
+		#if($enableInlineButtons)
+			<div style="display: block; float: left; width: 100%; height: 20px; margin-top: 6px; padding-top: 0px;"">
 
-	#if($contentId)
-		<a class='igButton' href="#" onclick="onOk();"><span class='igButtonOuterSpan'><span class='linkInsert'>$ui.getString("tool.contenttool.assetDialog.chooseAttachment")</span></span></a>
-	#end
+				#if($contentId)
+					<a class='igButton' href="#" onclick="onOk();"><span class='igButtonOuterSpan'><span class='linkInsert'>$ui.getString("tool.contenttool.assetDialog.chooseAttachment")</span></span></a>
+				#end
 
-	#if($contentVersionVO.id)
-		<a class='igButton' href="#" onclick="openPopup('ViewDigitalAsset.action?contentVersionId=$contentVersionVO.id', 'DigitalAsset', 'width=400,height=200,resizable=no');"><span class='igButtonOuterSpan'><span class='linkUpload'>$ui.getString("tool.contenttool.uploadNewAttachment")</span></span></a>
-	#end
+				#if($contentVersionVO.id)
+					<a class='igButton' href="#" onclick="openPopup('ViewDigitalAsset.action?contentVersionId=$contentVersionVO.id', 'DigitalAsset', 'width=400,height=200,resizable=no');"><span class='igButtonOuterSpan'><span class='linkUpload'>$ui.getString("tool.contenttool.uploadNewAttachment")</span></span></a>
+				#end
 
-</div>
-#end
-
-</body>
+			</div>
+		#end
+	</body>
 </html>

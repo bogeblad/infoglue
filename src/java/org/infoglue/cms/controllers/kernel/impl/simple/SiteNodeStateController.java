@@ -25,12 +25,15 @@ package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.ObjectNotFoundException;
+import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
@@ -67,6 +70,8 @@ import org.infoglue.deliver.util.Timer;
 public class SiteNodeStateController extends BaseController 
 {
     private final static Logger logger = Logger.getLogger(SiteNodeStateController.class.getName());
+
+	private VisualFormatter visualFormatter = new VisualFormatter();
 
     /**
 	 * Factory method
@@ -627,10 +632,19 @@ public class SiteNodeStateController extends BaseController
 	
 	public void copyAccessRights(String interceptionPointCategory, Integer originalSiteNodeVersionId, Integer newSiteNodeVersionId, Database db) throws ConstraintException, SystemException, Exception
 	{
+		copyAccessRights(interceptionPointCategory, originalSiteNodeVersionId, newSiteNodeVersionId, new HashMap<String,String>(), db);
+	}
+	
+	/**
+	 * This method assigns the same access rights as the old content-version has.
+	 */
+	
+	public void copyAccessRights(String interceptionPointCategory, Integer originalEntityId, Integer newEntityId, Map<String,String> replaceMap, Database db) throws ConstraintException, SystemException, Exception
+	{
 		Timer t = new Timer();
 		
 		List<InterceptionPoint> interceptionPointList = InterceptionPointController.getController().getInterceptionPointList(interceptionPointCategory, db);
-		List accessRightList = AccessRightController.getController().getAccessRightListForEntity(interceptionPointList, originalSiteNodeVersionId.toString(), db, true);
+		List accessRightList = AccessRightController.getController().getAccessRightListForEntity(interceptionPointList, originalEntityId.toString(), db, true);
 
 		logger.info("accessRightList:" + accessRightList.size());
 		Iterator accessRightListIterator = accessRightList.iterator();
@@ -640,7 +654,7 @@ public class SiteNodeStateController extends BaseController
 			logger.info("accessRight:" + accessRight.getId());
 			
 			AccessRightVO copiedAccessRight = accessRight.getValueObject().createCopy();
-			copiedAccessRight.setParameters(newSiteNodeVersionId.toString());
+			copiedAccessRight.setParameters(newEntityId.toString());
 			
 			InterceptionPoint icp = null;
 			for(InterceptionPoint currentICP : interceptionPointList)
@@ -657,7 +671,32 @@ public class SiteNodeStateController extends BaseController
 				{
 				    AccessRightGroup accessRightGroup = (AccessRightGroup)groupsIterator.next();
 				    AccessRightGroupVO newAccessRightGroupVO = new AccessRightGroupVO();
-				    newAccessRightGroupVO.setGroupName(accessRightGroup.getGroupName());
+				    String groupName = accessRightGroup.getGroupName();
+				    String newGroupName = visualFormatter.replaceAccordingToMappings(replaceMap, groupName);
+				    logger.info("groupName:" + groupName + "-->" + newGroupName);
+				    if(newGroupName != null && !groupName.equals(newGroupName))
+				    {
+				    	if(GroupControllerProxy.getController().groupExists(newGroupName))
+					    {
+					    	groupName = newGroupName;
+					    }
+					    else
+					    {
+					    	logger.info("newGroupName " + newGroupName + " was not found in GroupControllerProxy.getController().groupExists. Lets try getGroup.");
+					    	try
+					    	{
+						    	if(GroupControllerProxy.getController().getGroup(newGroupName) != null)
+						    	{
+						    		groupName = newGroupName;
+						    	}
+					    	}
+					    	catch(Exception e)
+					    	{
+					    		logger.info("Did not find group: " + e.getMessage());
+					    	}
+					    }
+				    }
+				    newAccessRightGroupVO.setGroupName(groupName);
 				    AccessRightGroup newAccessRightGroup = AccessRightController.getController().createAccessRightGroup(db, newAccessRightGroupVO, newAccessRight);
 				    newAccessRight.getGroups().add(newAccessRightGroup);
 				}
@@ -667,7 +706,33 @@ public class SiteNodeStateController extends BaseController
 				{
 				    AccessRightRole accessRightRole = (AccessRightRole)rolesIterator.next();
 				    AccessRightRoleVO newAccessRightRoleVO = new AccessRightRoleVO();
-				    newAccessRightRoleVO.setRoleName(accessRightRole.getRoleName());
+				    String roleName = accessRightRole.getRoleName();
+				    String newRoleName = visualFormatter.replaceAccordingToMappings(replaceMap, roleName);
+				    logger.info("roleName:" + roleName + "-->" + newRoleName);
+				    if(newRoleName != null && !roleName.equals(newRoleName))
+				    {
+				    	if(RoleControllerProxy.getController().roleExists(newRoleName))
+					    {
+				    		roleName = newRoleName;
+					    }
+					    else
+					    {
+					    	logger.info("newRoleName " + newRoleName + " was not found in RoleControllerProxy.getController().roleExists. Lets try getRole.");
+							try
+							{
+						    	if(RoleControllerProxy.getController().getRole(newRoleName) != null)
+						    	{
+						    		roleName = newRoleName;
+						    	}
+					    	}
+					    	catch(Exception e)
+					    	{
+					    		logger.info("Did not find role: " + e.getMessage());
+					    	}
+					    }
+				    }
+
+				    newAccessRightRoleVO.setRoleName(roleName);
 				    AccessRightRole newAccessRightRole = AccessRightController.getController().createAccessRightRole(db, newAccessRightRoleVO, newAccessRight);
 				    newAccessRight.getRoles().add(newAccessRightRole);
 				}

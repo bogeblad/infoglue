@@ -31,6 +31,8 @@ public class ContentCategoryAction extends ModelAction
 	public Integer getLanguageId()			{ return languageId; }
 	public void setLanguageId(Integer i)	{ languageId = i;	}
 
+	public String getAnchor() {return "categoriesBlock"; }
+	
 	public String doAdd() throws SystemException
 	{
 		setModel(controller.save(getContentCategory(), this.getInfoGluePrincipal()));

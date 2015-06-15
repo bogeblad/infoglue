@@ -12,12 +12,12 @@
 		var url = "ViewContent!standalone.action?contentId=" + contentId;
 	    openPopup(url, "Editcontent", "width=480,height=400,toolbar=no,status=no,scrollbars=yes,location=no,menubar=no,directories=no,resizable=yes");
 	}
-	
-	//-----------------------------------------------
+
+	//----------------------------------------------
 	// This function sets a different command to the editForm so that  
 	// the user can be handled different after the submit
 	//-----------------------------------------------
-	
+
 	function changeSiteNodeState(siteNodeVersionId)
 	{
 		stateId    	  = document.editForm.stateId.value;
@@ -32,14 +32,14 @@
 			return;
 		}
 		#end
-	
-		
+			
 		if (confirm('Are you sure you want to change state? If you have any unsaved changes they will be lost.'))
 		{
 			window.location.href="ChangeSiteNodeState.action?siteNodeVersionId=" + siteNodeVersionId + "&stateId=" + stateId + "&siteNodeId=" + siteNodeId + "&repositoryId=" + repositoryId;
 		}
 	}
 
+	
 	function loadFrame(tabHref)
 	{
 		var pageMetaDataSrcUrl 					= "ViewAndCreateContentForServiceBinding!inline.action?siteNodeId=$siteNodeId&repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersionId";
@@ -69,7 +69,7 @@
 		}
 		resizeScrollArea();
 	}
-	
+
 	/*
 	 * This method acts as a proxy to the frame that has the view in the tabbed world we live in.
 	 */	
@@ -120,9 +120,16 @@
 	
 	function submitLanguageLimitations(select)
 	{
+		//alert($("#disableLanguagesCheckbox").prop('checked'));
+		if($("#disableLanguagesCheckbox").prop('checked'))
+			document.editForm.disableLanguages.value = "2";
+		else
+			document.editForm.disableLanguages.value = "1";
+		//alert($("#disableLanguages").val());
+		
 		document.editForm.submit();
 	}
-	
+
 	$(document).ready(function(){
 		$("input.compare").hide();
 		$("input.reset").hide();
@@ -179,6 +186,7 @@
 			#if($isSiteNodeTypeDefinitionAssigned)
 			<p>The siteNode is of type $siteNodeTypeDefinition.name</p>
 			#end
+			<p>$ui.getString("entity.SiteNode.metaInfoContentId.label") $!metaMetaInfoContentId</p>
 			<p>
 				#set($hasAccessToChange = "true")
 				#set($protectedSiteNodeVersionId = $!this.getProtectedSiteNodeVersionId($siteNodeVersionId))
@@ -280,40 +288,44 @@
 				</p>
 			#end
 	*#
-						
-		#elseif($showPageLanguages == "true")
-			
-			<p>	
-				<label for="disableLanguages">$ui.getString("entity.SiteNode.disableLanguages.label")</label>
-				<select name="disableLanguages" style="width: 115px;" onchange="submitLanguageLimitations(this);">
-					<option value="0" #if($!disableLanguages == 0) selected="1" #end> $ui.getString("tool.common.no")</option>	
-					<option value="1" #if($!disableLanguages == 1) selected="1" #end> $ui.getString("tool.common.yes")</option>	
-					<option value="2" #if($!disableLanguages == 2) selected="1" #end> $ui.getString("tool.common.inherit")</option>	
-				</select>
-			</p>
-			#if($disableLanguages == 1)
-				<h4>$ui.getString("tool.structuretool.disableLanguages.header")</h4>
-				<p>
-				#foreach ($language in $availableLanguages)
-					<input type="checkbox" name="disabledLanguageId" value="$language.id" #if($disabledLanguages.contains($language))checked="1"#end>$language.displayLanguage
-				#end
-				</p>
 				
-				<h4>$ui.getString("tool.structuretool.enableLanguages.header")</h4>
-				<p>
-				#foreach ($language in $availableLanguages)
-					<input type="checkbox" name="enabledLanguageId" value="$language.id" #if($enabledLanguages.contains($language))checked="1"#end>$language.displayLanguage
+		#elseif($showPageLanguages == "true")
+			<p>	
+				<label for="disableLanguages">
+		
+				##set($disableLanguageCheckBoxValue = 2)
+				
+				#if($!disableLanguages != 2)
+					#set($disableLanguageCheckBoxValue = 2)
+				#else
+					#set($disableLanguageCheckBoxValue = 1)
 				#end
-				</p>
-			#end
-    	
-							
+
+				<input type="checkbox" id="disableLanguagesCheckbox" name="disableLanguagesCheckbox" onchange="submitLanguageLimitations(this);" value="$disableLanguageCheckBoxValue" #if($!disableLanguages == 2)checked="1"#end>
+				$ui.getString("tool.common.toggleLangaugeInheritanceLabel")</label>
+			</p>
+
+			<p style="display:none;">
+				#foreach ($language in $availableLanguages)
+					<input type="checkbox" name="disabledLanguageId" value="$language.id" #if(!$enabledLanguages.contains($language))checked="1"#end>$language.displayLanguage
+				#end
+			</p>
+			
+			<h4>$ui.getString("tool.structuretool.enableLanguages.header")</h4>
+			<p>
+				#foreach ($language in $availableLanguages)
+					<label for="enabledLanguageId">
+						<input type="checkbox" name="enabledLanguageId" value="$language.id" #if($enabledLanguages.contains($language))checked="1"#end #if($!disableLanguages == 2) disabled #end >$language.displayLanguage
+					</label>
+					
+				#end
+			</p>
 		#else
 			
 			#if($publicationMessage != "")
 				<p><font color='red'>$publicationMessage</font></p>
 			#end
-			
+		
 			#if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false, false))
 			<p>					
 				#editTextFieldCSS("SiteNode.name" "name" $!name "30" true false false "normaltextfield")
@@ -347,9 +359,9 @@
 			#end
 		
 			<p>$ui.getString("tool.contenttool.versionLastUpdatedByLabel") $siteNodeVersionVO.versionModifier</p>
-
     	#end
-		
+
+		<input type="hidden" name="disableLanguages" value="$!disableLanguages">
 		<input type="hidden" name="siteNodeId" value="$!siteNodeId">
 		<input type="hidden" name="isBranch" value="$!isBranch">
 		<input type="hidden" name="repositoryId" value="$!repositoryId">

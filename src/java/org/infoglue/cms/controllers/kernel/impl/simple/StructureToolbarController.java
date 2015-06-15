@@ -49,6 +49,61 @@ public class StructureToolbarController
 		
 		String dnsName = repositoryVO.getDnsName();
 
+		String workingUrl = getWorkingUrl(dnsName);
+	    
+	    ToolbarButton previewPage = new ToolbarButton("previewPage",
+				  getLocalizedString(locale, "tool.structuretool.toolbarV3.previewPageLabel"), 
+				  getLocalizedString(locale, "tool.structuretool.toolbarV3.previewPageLabel"),
+				  "javascript:openPopup('" + workingUrl + "?siteNodeId=" + siteNodeId + (siteNodeVersionId != null ? "&siteNodeVersionId=" + siteNodeVersionId : "") + "', 'Import', 'resizable=yes,toolbar=yes,scrollbars=yes,status=yes,location=yes,menubar=yes');",
+				  "",
+				  "left",
+				  "preview",
+				  true);
+	    	    
+	    return previewPage;
+	}
+	
+	public static ToolbarButton getPreviewMediumScreenButtons(Integer repositoryId, Integer siteNodeId, String siteNodeVersionId, Locale locale) throws Exception
+	{
+		RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);
+		
+		String dnsName = repositoryVO.getDnsName();
+
+	    String workingUrl = getWorkingUrl(dnsName);
+	    /*width of this is common breakpoint + 17px to compensate for scrollbars*/
+	    ToolbarButton previewPage = new ToolbarButton("previewMediumScreenPage",
+				  getLocalizedString(locale, "tool.structuretool.toolbarV3.previewMediumScreenPageLabel"), 
+				  getLocalizedString(locale, "tool.structuretool.toolbarV3.previewMediumScreenPageLabel"),
+				  "javascript:openInlineDiv('" + workingUrl + "?siteNodeId=" + siteNodeId + (siteNodeVersionId != null ? "&siteNodeVersionId=" + siteNodeVersionId : "") + "', 690, 1024, false, true,'Tablet (660 pixels width)'); return false;",
+				  "",
+				  "left",
+				  "preview",
+				  true);
+	    	    
+	    return previewPage;
+	}
+	
+	public static ToolbarButton getPreviewSmallScreenButtons(Integer repositoryId, Integer siteNodeId, String siteNodeVersionId, Locale locale) throws Exception
+	{
+		RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);
+		
+		String dnsName = repositoryVO.getDnsName();
+
+		String workingUrl = getWorkingUrl(dnsName);
+		/*width of this is common breakpoint + 17px to compensate for scrollbars*/
+	    ToolbarButton previewPage = new ToolbarButton("previewSmallScreenPage",
+				  getLocalizedString(locale, "tool.structuretool.toolbarV3.previewSmallScreenPageLabel"), 
+				  getLocalizedString(locale, "tool.structuretool.toolbarV3.previewSmallScreenPageLabel"),
+				  "javascript:openInlineDiv('" + workingUrl + "?siteNodeId=" + siteNodeId + (siteNodeVersionId != null ? "&siteNodeVersionId=" + siteNodeVersionId : "") + "', 480, 320, false, true,'Mobile phone(320 pixels width)'); return false;",
+				  "",
+				  "left",
+				  "preview",
+				  true);
+	    	    
+	    return previewPage;
+	}
+	
+	private static String getWorkingUrl(String dnsName) {
 	    String workingUrl = null;
 	    
 	    String keyword = "working=";
@@ -71,20 +126,9 @@ public class StructureToolbarController
 	    {
 	        workingUrl = CmsPropertyHandler.getPreviewDeliveryUrl();
 	    }
-	    
-	    ToolbarButton previewPage = new ToolbarButton("previewPage",
-				  getLocalizedString(locale, "tool.structuretool.toolbarV3.previewPageLabel"), 
-				  getLocalizedString(locale, "tool.structuretool.toolbarV3.previewPageLabel"),
-				  "javascript:openPopup('" + workingUrl + "?siteNodeId=" + siteNodeId + (siteNodeVersionId != null ? "&siteNodeVersionId=" + siteNodeVersionId : "") + "', 'Import', 'resizable=yes,toolbar=yes,scrollbars=yes,status=yes,location=yes,menubar=yes');",
-				  "",
-				  "left",
-				  "preview",
-				  true);
-	    	    
-	    return previewPage;
+	    return workingUrl;
+		
 	}
-	
-	
 	public static ToolbarButton getPreviewButton(Integer repositoryId, Integer siteNodeId, Locale locale) throws Exception
 	{
 		RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);

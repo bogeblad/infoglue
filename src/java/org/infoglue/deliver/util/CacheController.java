@@ -116,6 +116,7 @@ import org.infoglue.cms.entities.management.impl.simple.ServiceDefinitionImpl;
 import org.infoglue.cms.entities.management.impl.simple.SiteNodeTypeDefinitionImpl;
 import org.infoglue.cms.entities.management.impl.simple.SmallAvailableServiceBindingImpl;
 import org.infoglue.cms.entities.management.impl.simple.SmallGroupImpl;
+import org.infoglue.cms.entities.management.impl.simple.SmallRepositoryImpl;
 import org.infoglue.cms.entities.management.impl.simple.SmallRoleImpl;
 import org.infoglue.cms.entities.management.impl.simple.SmallSystemUserImpl;
 import org.infoglue.cms.entities.management.impl.simple.SubscriptionImpl;
@@ -127,6 +128,7 @@ import org.infoglue.cms.entities.management.impl.simple.UserPropertiesImpl;
 import org.infoglue.cms.entities.publishing.impl.simple.PublicationImpl;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
+import org.infoglue.cms.entities.structure.impl.simple.PureSiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.QualifyerImpl;
 import org.infoglue.cms.entities.structure.impl.simple.ServiceBindingImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl;
@@ -4070,6 +4072,7 @@ public class CacheController extends Thread
 			clearCache(db, ContentTypeDefinitionImpl.class);
 			clearCache(db, LanguageImpl.class);
 			clearCache(db, RepositoryImpl.class);
+			clearCache(db, SmallRepositoryImpl.class);
 			clearCache(db, RepositoryLanguageImpl.class);
 			clearCache(db, RoleImpl.class);
 			clearCache(db, GroupImpl.class);
@@ -4204,6 +4207,7 @@ public class CacheController extends Thread
 		       type.getName().equalsIgnoreCase(MediumContentImpl.class.getName()) ||
 		       type.getName().equalsIgnoreCase(ContentImpl.class.getName()) ||
 		       type.getName().equalsIgnoreCase(SmallSiteNodeImpl.class.getName()) || 
+		       type.getName().equalsIgnoreCase(PureSiteNodeImpl.class.getName()) || 
 			   type.getName().equalsIgnoreCase(SiteNodeImpl.class.getName()))
 		    {
 		        expireDateTime = null;
@@ -4299,6 +4303,7 @@ public class CacheController extends Thread
 	       type.getName().equalsIgnoreCase(MediumContentImpl.class.getName()) ||
 	       type.getName().equalsIgnoreCase(ContentImpl.class.getName()) ||
 	       type.getName().equalsIgnoreCase(SmallSiteNodeImpl.class.getName()) || 
+	       type.getName().equalsIgnoreCase(PureSiteNodeImpl.class.getName()) || 
 		   type.getName().equalsIgnoreCase(SiteNodeImpl.class.getName()))
 	    {
 	        expireDateTime = null;
@@ -4356,6 +4361,7 @@ public class CacheController extends Thread
 	       c.getName().equalsIgnoreCase(MediumContentImpl.class.getName()) ||
 	       c.getName().equalsIgnoreCase(ContentImpl.class.getName()) ||
 	       c.getName().equalsIgnoreCase(SmallSiteNodeImpl.class.getName()) || 
+	       c.getName().equalsIgnoreCase(PureSiteNodeImpl.class.getName()) || 
 		   c.getName().equalsIgnoreCase(SiteNodeImpl.class.getName()))
 	    {
 	        expireDateTime = null;

@@ -142,12 +142,32 @@ public class SiteNodeControllerProxy extends SiteNodeController
 
 	public SiteNode acCreate(InfoGluePrincipal infogluePrincipal, Integer parentSiteNodeId, Integer siteNodeTypeDefinitionId, Integer repositoryId, SiteNodeVO siteNodeVO, Database db) throws ConstraintException, SystemException, Bug, Exception
 	{
-		Map hashMap = new HashMap();
-		hashMap.put("siteNodeId", parentSiteNodeId);
-    	
-		intercept(hashMap, "SiteNodeVersion.CreateSiteNode", infogluePrincipal, db);
-
+		if(parentSiteNodeId != null && parentSiteNodeId != -1 && infogluePrincipal != null)
+		{
+			Map hashMap = new HashMap();
+			hashMap.put("siteNodeId", parentSiteNodeId);
+	    	
+			intercept(hashMap, "SiteNodeVersion.CreateSiteNode", infogluePrincipal, db);
+		}
+		
 		return SiteNodeController.getController().create(db, parentSiteNodeId, siteNodeTypeDefinitionId, infogluePrincipal, repositoryId, siteNodeVO);
+	}   
+
+	/**
+	 * This method creates a siteNode after first checking that the user has rights to create it.
+	 */
+
+	public SiteNode acCreatePure(InfoGluePrincipal infogluePrincipal, Integer parentSiteNodeId, Integer siteNodeTypeDefinitionId, Integer repositoryId, SiteNodeVO siteNodeVO, int childCount, Database db) throws ConstraintException, SystemException, Bug, Exception
+	{
+		if(parentSiteNodeId != null && parentSiteNodeId != -1 && infogluePrincipal != null)
+		{
+			Map hashMap = new HashMap();
+			hashMap.put("siteNodeId", parentSiteNodeId);
+	    	
+			intercept(hashMap, "SiteNodeVersion.CreateSiteNode", infogluePrincipal, db);
+		}
+		
+		return SiteNodeController.getController().createPure(db, parentSiteNodeId, siteNodeTypeDefinitionId, infogluePrincipal, repositoryId, siteNodeVO, childCount);
 	}   
     
 	/**
@@ -201,7 +221,7 @@ public class SiteNodeControllerProxy extends SiteNodeController
 		boolean doesObjectExist = SiteNodeController.getController().getDoesSiteNodeExist(siteNodeVO.getId());
 		if(!doesObjectExist)
 		{
-			System.out.println("The page: " + siteNodeVO.getName() + " was allready deleted. Why?");
+			//logger.info("The page: " + siteNodeVO.getName() + " was allready deleted. Why?");
 			return;
 		}
 

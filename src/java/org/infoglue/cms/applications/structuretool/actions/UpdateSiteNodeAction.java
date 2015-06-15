@@ -59,6 +59,7 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
     private Boolean isBranch;
     
 	private Integer isProtected;
+	private Boolean wasProtectedSet = false; 
 	private Boolean isHidden;
 	private Integer disablePageCache;
 	private Integer disableEditOnSight;
@@ -113,10 +114,12 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 				}	
 				
 				ceb.throwIfNotEmpty();
-	
+	System.out.println("AAAAAAAAAA:" + this.advanced);
 				SiteNodeVersionVO siteNodeVersionVO = null;
 				if(this.advanced != null && this.advanced.equals("true"))
 				{
+					SiteNodeVersionVO currentSiteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(getSiteNodeId());
+
 					siteNodeVersionVO = new SiteNodeVersionVO();
 					siteNodeVersionVO.setContentType(this.getContentType());
 					siteNodeVersionVO.setPageCacheKey(this.getPageCacheKey());
@@ -126,7 +129,11 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 					siteNodeVersionVO.setDisablePageCache(this.getDisablePageCache());
 					siteNodeVersionVO.setDisableForceIdentityCheck(this.disableForceIdentityCheck);
 					siteNodeVersionVO.setForceProtocolChange(this.forceProtocolChange);
-					siteNodeVersionVO.setIsProtected(this.getIsProtected());
+					if(wasProtectedSet)
+						siteNodeVersionVO.setIsProtected(this.getIsProtected());
+					else
+						siteNodeVersionVO.setIsProtected(currentSiteNodeVersionVO.getIsProtected());
+
 					siteNodeVersionVO.setIsHidden(this.getIsHidden());
 					siteNodeVersionVO.setVersionModifier(this.getInfoGluePrincipal().getName());
 				}
@@ -139,7 +146,9 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 					siteNodeVersionVO.setPageCacheKey(currentSiteNodeVersionVO.getPageCacheKey());
 					siteNodeVersionVO.setPageCacheTimeout(currentSiteNodeVersionVO.getPageCacheTimeout());
 					siteNodeVersionVO.setDisableEditOnSight(currentSiteNodeVersionVO.getDisableEditOnSight());
-					siteNodeVersionVO.setDisableLanguages(this.disableLanguages);
+					System.out.println(this.disableLanguages);
+					if(disableLanguages != null)
+						siteNodeVersionVO.setDisableLanguages(this.disableLanguages);
 					siteNodeVersionVO.setDisablePageCache(currentSiteNodeVersionVO.getDisablePageCache());
 					siteNodeVersionVO.setDisableForceIdentityCheck(currentSiteNodeVersionVO.getDisableForceIdentityCheck());
 					siteNodeVersionVO.setForceProtocolChange(currentSiteNodeVersionVO.getForceProtocolChange());
@@ -362,6 +371,7 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 
 	public void setDisableLanguages(Integer disableLanguages)
 	{
+		System.out.println("disableLanguages:" + disableLanguages);
 		this.disableLanguages = disableLanguages;
 	}
 
@@ -383,6 +393,7 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 	public void setIsProtected(Integer isProtected)
 	{
 		this.isProtected = isProtected;
+		this.wasProtectedSet = true;
 	}
 
 	public Boolean getIsHidden()

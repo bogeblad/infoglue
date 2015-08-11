@@ -23,16 +23,19 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
-import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryLanguageController;
 import org.infoglue.cms.controllers.usecases.structuretool.ViewSiteNodeTreeUCC;
 import org.infoglue.cms.controllers.usecases.structuretool.ViewSiteNodeTreeUCCFactory;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
+import org.infoglue.cms.exception.Bug;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 
 /**
  * This class implements the action class for viewRepository.
@@ -46,7 +49,8 @@ public class ViewRepositoryAction extends InfoGlueAbstractAction
 	private static final long serialVersionUID = 1L;
 
     private RepositoryVO repositoryVO;
-
+    List<RepositoryVO> duplicatedRepositoryVOList;
+    
 	private List<LanguageVO> languageVOList;
     
     public ViewRepositoryAction()
@@ -63,8 +67,10 @@ public class ViewRepositoryAction extends InfoGlueAbstractAction
     {
         repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);
         
+        this.duplicatedRepositoryVOList = getRepositoryDuplicates(repositoryVO);
+        
         this.languageVOList = LanguageController.getController().getLanguageVOList(repositoryId); 
-
+        
     	if(this.repositoryVO != null)
     	{
 	    	ViewSiteNodeTreeUCC ucc = ViewSiteNodeTreeUCCFactory.newViewSiteNodeTreeUCC();	
@@ -83,7 +89,22 @@ public class ViewRepositoryAction extends InfoGlueAbstractAction
 
         return "success";
     }
-
+    private List<RepositoryVO> getRepositoryDuplicates (RepositoryVO repositoryVO) throws ConstraintException, SystemException, Bug {
+    	List<RepositoryVO> duplicatedRepositories = new ArrayList<RepositoryVO>();
+    	List<RepositoryVO> repositoryVOList = RepositoryController.getController().getRepositoryVOList();
+    	for (RepositoryVO repoVO : repositoryVOList) {
+    		
+    		if (!repoVO.getRepositoryId().toString().trim().equalsIgnoreCase(repositoryVO.getRepositoryId().toString().trim())) {
+    			
+	    		if (repoVO.getWorkingBaseUrl().equalsIgnoreCase(repositoryVO.getWorkingBaseUrl()) && repoVO.getWorkingPath().equalsIgnoreCase(repositoryVO.getWorkingPath())) {
+	    			duplicatedRepositories.add(repoVO);
+	    		} else if (repoVO.getLiveBaseUrl().equalsIgnoreCase(repositoryVO.getLiveBaseUrl()) && repoVO.getPath().equalsIgnoreCase(repositoryVO.getPath())) {
+	    			duplicatedRepositories.add(repoVO);
+	    		}
+    		}
+    	}
+    	return duplicatedRepositories;
+    }
     /**
      * The main method that fetches the Value-object for this use-case
      */
@@ -94,7 +115,10 @@ public class ViewRepositoryAction extends InfoGlueAbstractAction
 
         return "successLocal";
     }
-          
+
+    
+    
+    
     public java.lang.Integer getRepositoryId()
     {
         return this.repositoryVO.getRepositoryId();
@@ -128,6 +152,11 @@ public class ViewRepositoryAction extends InfoGlueAbstractAction
 	public RepositoryVO getRepositoryVO()
 	{
 		return repositoryVO;
+	}
+	
+	public List<RepositoryVO> getDuplicatedRepositoryVOList()
+	{
+		return duplicatedRepositoryVOList;
 	}
 
 }

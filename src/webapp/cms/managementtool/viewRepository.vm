@@ -90,9 +90,9 @@
 			composeDNSString();
 	    });
 	});
-	
 //-->
 </script>
+
 
 <div id="warning" style="border: 1px solid black; background-color: white; color: black; padding: 4px; display: none; position: absolute; right: 50px; top: 100px; float:left;">
 	<p id="warningParagraph">
@@ -107,54 +107,81 @@
 </div>
 
 <div class="fullymarginalized">
-	<table class="managementtooledit" cellpadding="2" cellspacing="2" border="0">
-	<form name="editForm" method="POST" action="UpdateRepository.action">
-		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
-		<tr>
-			<td>
-				<span class="blockHeading">Repository settings</b></span>
-				#editField("Repository.name" "name" $!name "51")<br/>
-				#editField("Repository.description" "description" $!description "51")<br/>
-				#editReadOnlyField("Repository.dnsName" "dnsName" $!dnsName "51" "READONLY")<br/> 
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<span class="blockHeading">Working</b></span>
-				$ui.getString("entity.Repository.explainNiceURIWorkingUrl.label"):<br/> <input class="longtextfield" style="width: 600px;" type="textfield" id="workingUrl" name="workingUrl" value="$!repositoryVO.workingBaseUrl"/><br/>
-				$ui.getString("entity.Repository.explainNiceURIWorkingPath.label"):<br/> <input class="longtextfield" style="width: 600px;" type="textfield" id="workingPath" name="workingPath" value="$!repositoryVO.workingPath"/><br/>
-				<br/>
-				<span class="blockHeading">Live</span>
-				$ui.getString("entity.Repository.explainNiceURILiveUrl.label"):<br/> <input class="longtextfield" type="textfield" style="width: 600px;" id="liveUrl" name="liveUrl" value="$!repositoryVO.liveBaseUrl"/><br/>
-				$ui.getString("entity.Repository.explainNiceURILivePath.label"):<br/> <input class="longtextfield" type="textfield" style="width: 600px;" id="livePath" name="livePath" value="$!repositoryVO.path"/><br/>
-				<br/>
-				<span class="blockHeading">Preview</span>
-				$ui.getString("entity.Repository.explainNiceURIPreviewUrl.label"):<br/> <input class="longtextfield" style="width: 600px;" type="textfield" id="previewUrl" name="previewUrl" value="$!repositoryVO.previewBaseUrl"/><br/>
-				<br/>
-				<span class="blockHeading">Special</span>
-				$ui.getString("entity.Repository.explainNiceURIExtraUrl.label"):<br/> <textarea class="normaltextarea" style="width: 600px; height: 50px;" id="extraUrls" name="extraUrls">$!repositoryVO.extraUrlsFormatted</textarea><br/>
-				<br/>
-				<a href="javascript:explainNiceURI();">$ui.getString("entity.Repository.explainNiceURI.label")</a>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				#if($languageVOList.size() > 0)
-					<span class="blockHeading">Languages</b></span>
-					$ui.getString("entity.Repository.addedLanguages.label")
-					<br/><br/>
-					<ul style="list-style-type: none; margin: 0px; padding-left: 16px; float: left;">
-					#foreach ($languageVO in $languageVOList)
-						<li style="height: 16px; background-repeat: no-repeat; background-position: 0px 0px; padding-left: 18px; background-image: url(css/images/v3/check.png);">$languageVO.name #if($velocityCount == 1) (Master) #end</li>
-					#end
-					</ul>
-				#else
-					$ui.getString("entity.Repository.noLanguagesYet.label")
+	#if($duplicatedRepositoryVOList)
+		<h3>
+			$ui.getString("entity.Repository.name.duplicatedRepositories")
+		</h3>
+		<table class="managementtooledit" cellpadding="2" cellspacing="2" border="1">
+			<thead>
+				<tr>
+					<th>$ui.getString("entity.Repository.name.label")</th>
+					<th>$ui.getString("entity.Repository.description.label")</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+			
+				#foreach($repositoryVO in $duplicatedRepositoryVOList)
+					<tr>
+						<td>
+							<a href="ViewRepository.action?repositoryId=$repositoryVO.repositoryId&title=Repository%20details" class="group">$repositoryVO.name</a>
+						</td>
+						<td>$repositoryVO.description</td>
+						<td>$repositoryVO.id</td>
+					</tr>
 				#end
-			</td>
-		</tr>
-		<input type="hidden" name="repositoryId" value="$!repositoryId">
-	</form>
+				
+			</tbody>
+		</table>
+	#end
+	<table class="managementtooledit" cellpadding="2" cellspacing="2" border="0">
+		<form name="editForm" method="POST" action="UpdateRepository.action">
+			<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+			<tr>
+				<td>
+					<span class="blockHeading">Repository settings</b></span>
+					#editField("Repository.name" "name" $!name "51")<br/>
+					#editField("Repository.description" "description" $!description "51")<br/>
+					#editReadOnlyField("Repository.dnsName" "dnsName" $!dnsName "51" "READONLY")<br/> 
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<span class="blockHeading">Working</b></span>
+					$ui.getString("entity.Repository.explainNiceURIWorkingUrl.label"):<br/> <input class="longtextfield" style="width: 600px;" type="textfield" id="workingUrl" name="workingUrl" value="$!repositoryVO.workingBaseUrl"/><br/>
+					$ui.getString("entity.Repository.explainNiceURIWorkingPath.label"):<br/> <input class="longtextfield" style="width: 600px;" type="textfield" id="workingPath" name="workingPath" value="$!repositoryVO.workingPath"/><br/>
+					<br/>
+					<span class="blockHeading">Live</span>
+					$ui.getString("entity.Repository.explainNiceURILiveUrl.label"):<br/> <input class="longtextfield" type="textfield" style="width: 600px;" id="liveUrl" name="liveUrl" value="$!repositoryVO.liveBaseUrl"/><br/>
+					$ui.getString("entity.Repository.explainNiceURILivePath.label"):<br/> <input class="longtextfield" type="textfield" style="width: 600px;" id="livePath" name="livePath" value="$!repositoryVO.path"/><br/>
+					<br/>
+					<span class="blockHeading">Preview</span>
+					$ui.getString("entity.Repository.explainNiceURIPreviewUrl.label"):<br/> <input class="longtextfield" style="width: 600px;" type="textfield" id="previewUrl" name="previewUrl" value="$!repositoryVO.previewBaseUrl"/><br/>
+					<br/>
+					<span class="blockHeading">Special</span>
+					$ui.getString("entity.Repository.explainNiceURIExtraUrl.label"):<br/> <textarea class="normaltextarea" style="width: 600px; height: 50px;" id="extraUrls" name="extraUrls">$!repositoryVO.extraUrlsFormatted</textarea><br/>
+					<br/>
+					<a href="javascript:explainNiceURI();">$ui.getString("entity.Repository.explainNiceURI.label")</a>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					#if($languageVOList.size() > 0)
+						<span class="blockHeading">Languages</b></span>
+						$ui.getString("entity.Repository.addedLanguages.label")
+						<br/><br/>
+						<ul style="list-style-type: none; margin: 0px; padding-left: 16px; float: left;">
+						#foreach ($languageVO in $languageVOList)
+							<li style="height: 16px; background-repeat: no-repeat; background-position: 0px 0px; padding-left: 18px; background-image: url(css/images/v3/check.png);">$languageVO.name #if($velocityCount == 1) (Master) #end</li>
+						#end
+						</ul>
+					#else
+						$ui.getString("entity.Repository.noLanguagesYet.label")
+					#end
+				</td>
+			</tr>
+			<input type="hidden" name="repositoryId" value="$!repositoryId">
+		</form>
 	</table>
 </div>
 

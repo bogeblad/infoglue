@@ -116,7 +116,7 @@
 				<tr>
 					<th>$ui.getString("entity.Repository.name.label")</th>
 					<th>$ui.getString("entity.Repository.description.label")</th>
-					<th></th>
+					<th>$ui.getString("tool.managementtool.repositoryId")</th>
 				</tr>
 			</thead>
 			<tbody>

@@ -119,7 +119,7 @@ public class RedirectController extends BaseController
 		{
 			beginTransaction(db);
 
-			String sql = "SELECT c FROM org.infoglue.cms.entities.management.impl.simple.RedirectImpl c WHERE c.isUserManaged = $1 ORDER BY c.redirectId";
+			String sql = "SELECT c FROM org.infoglue.cms.entities.management.impl.simple.RedirectImpl c WHERE c.isUserManaged = $1 ORDER BY LENGTH(c.url) DESC";
 			
 			OQLQuery oql = db.getOQLQuery(sql);
 			oql.bind(true);
@@ -171,7 +171,7 @@ public class RedirectController extends BaseController
     {
     	List<RedirectVO> redirectVOList = new ArrayList<RedirectVO>();
 
-		String sql = "SELECT c FROM org.infoglue.cms.entities.management.impl.simple.RedirectImpl c WHERE c.isUserManaged = $1 ORDER BY c.redirectId";
+		String sql = "SELECT c FROM org.infoglue.cms.entities.management.impl.simple.RedirectImpl c WHERE c.isUserManaged = $1 ORDER BY LENGTH(c.url) DESC";
 		
 		OQLQuery oql = db.getOQLQuery(sql);
 		oql.bind(false);

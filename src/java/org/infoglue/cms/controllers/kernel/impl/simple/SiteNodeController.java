@@ -1864,7 +1864,7 @@ public class SiteNodeController extends BaseController
 			rollbackTransaction(db);
 			throw new SystemException(e.getMessage());
 		}
-
+		
 		if (pageUrls.size() > 0)
 		{
 			Database redirectDb = null;

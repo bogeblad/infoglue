@@ -204,6 +204,7 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.niceURIDisableNiceURIForContent" "niceURIDisableNiceURIForContent" "$this.getPropertyValue('niceURIDisableNiceURIForContent')" "$!cmsPH.niceURIDisableNiceURIForContent")
 				#editPropertyFieldCSS("ServerNode.property.niceURIDefaultReplacementCharacterForContent" "niceURIDefaultReplacementCharacterForContent" "$this.getPropertyValue('niceURIDefaultReplacementCharacterForContent')" "51" "$!serverNodeId" "$!cmsPH.niceURIDefaultReplacementCharacterForContent")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.redirectUsingSystemRedirect" "redirectUsingSystemRedirect" "$this.getPropertyValue('redirectUsingSystemRedirect')" "$!cmsPH.redirectUsingSystemRedirect")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.orderRedirectsByLength" "orderRedirectsByLength" "$this.getPropertyValue('orderRedirectsByLength')" "$!cmsPH.orderRedirectsByLength")
 			</div>
 		
 			<div class="inlineTabDiv" id="cacheSettings">

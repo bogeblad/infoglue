@@ -118,8 +118,9 @@ public class RedirectController extends BaseController
 		try 
 		{
 			beginTransaction(db);
-
-			String sql = "SELECT c FROM org.infoglue.cms.entities.management.impl.simple.RedirectImpl c WHERE c.isUserManaged = $1 ORDER BY LENGTH(c.url) DESC";
+			
+			String orderMode = getRedirectOrderString();
+			String sql = "SELECT c FROM org.infoglue.cms.entities.management.impl.simple.RedirectImpl c WHERE c.isUserManaged = $1 ORDER BY " + orderMode;
 			
 			OQLQuery oql = db.getOQLQuery(sql);
 			oql.bind(true);
@@ -170,8 +171,9 @@ public class RedirectController extends BaseController
     public List<RedirectVO> getSystemRedirectVOList(Database db) throws SystemException, Bug, Exception
     {
     	List<RedirectVO> redirectVOList = new ArrayList<RedirectVO>();
-
-		String sql = "SELECT c FROM org.infoglue.cms.entities.management.impl.simple.RedirectImpl c WHERE c.isUserManaged = $1 ORDER BY LENGTH(c.url) DESC";
+    	
+    	String orderMode = getRedirectOrderString();
+		String sql = "SELECT c FROM org.infoglue.cms.entities.management.impl.simple.RedirectImpl c WHERE c.isUserManaged = $1 ORDER BY " + orderMode;
 		
 		OQLQuery oql = db.getOQLQuery(sql);
 		oql.bind(false);
@@ -632,8 +634,9 @@ public class RedirectController extends BaseController
     private List<RedirectVO> getSystemManagedRedirectVOList(String url, Database db) throws Exception 
     {
     	List<RedirectVO> redirectVOList = new ArrayList<RedirectVO>();
-
-		String sql = "SELECT c FROM org.infoglue.cms.entities.management.impl.simple.RedirectImpl c WHERE c.isUserManaged = $1 AND c.url = $2 ORDER BY c.redirectId";
+    	
+    	String orderMode = getRedirectOrderString();
+		String sql = "SELECT c FROM org.infoglue.cms.entities.management.impl.simple.RedirectImpl c WHERE c.isUserManaged = $1 AND c.url = $2 ORDER BY " + orderMode;
 		
 		OQLQuery oql = db.getOQLQuery(sql);
 		oql.bind(false);
@@ -746,7 +749,8 @@ public class RedirectController extends BaseController
 		try
 		{
 			db = beginTransaction();
-			String sql = "SELECT c FROM org.infoglue.cms.entities.management.impl.simple.RedirectImpl c WHERE c.siteNodeId = $1 ORDER BY c.redirectId";
+			String orderMode = getRedirectOrderString();
+			String sql = "SELECT c FROM org.infoglue.cms.entities.management.impl.simple.RedirectImpl c WHERE c.siteNodeId = $1 ORDER BY " + orderMode;
 
 			OQLQuery oql = db.getOQLQuery(sql);
 			oql.bind(siteNodeId);
@@ -967,6 +971,18 @@ public class RedirectController extends BaseController
 	private interface RedirectCallback
 	{
 		String execute(RedirectVO redirectVO, String remainingUrlPart);
+	}
+	
+	protected String getRedirectOrderString()
+	{
+		if (CmsPropertyHandler.getOrderRedirectsByLength())
+		{
+			return "LENGTH(c.url) DESC";
+		}
+		else
+		{
+			return "c.redirectId";
+		}
 	}
 
 }

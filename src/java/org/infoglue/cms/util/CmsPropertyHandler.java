@@ -3128,6 +3128,13 @@ public class CmsPropertyHandler
 
 		return Boolean.parseBoolean(redirectUsingSystemRedirect);
 	}
+	
+	public static boolean getOrderRedirectsByLength()
+	{
+		String orderRedirectsByLength = getServerNodeProperty("orderRedirectsByLength", true, "false");
+
+		return Boolean.parseBoolean(orderRedirectsByLength);
+	}
 
 	/**
 	 * Dev note: This method is not used at all places where it should be used so don't depend on that. However

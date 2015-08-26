@@ -78,4 +78,9 @@ public class CategoryDisplayNameTag extends TemplateControllerTag
         this.categoryVO = (CategoryVO)evaluate("categoryDisplayName", "categoryVO", categoryVO, CategoryVO.class);
     }
 
+    public void setCategoryVOObject(final CategoryVO categoryVO) throws JspException
+    {
+        this.categoryVO = categoryVO;
+    }
+
 }

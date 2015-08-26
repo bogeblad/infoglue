@@ -49,7 +49,7 @@ public class ContentExportUrlTag extends ComponentLogicTag
 	private String fileNamePrefix = "ContentExport";
 	private boolean includeContentTypeDefinitions = true;
 	private boolean includeCategories = true;
-	
+
 	public int doEndTag() throws JspException
     {
     	if(contentIdList == null || contentIdList.size() == 0)
@@ -81,6 +81,11 @@ public class ContentExportUrlTag extends ComponentLogicTag
     public void setContentIdList(String contentIdList) throws JspException
     {
     	this.contentIdList = evaluateList("ContentExportUrlTag", "contentIdList", contentIdList);
+    }
+
+    public void setContentIdListObject(java.util.List contentIdList) throws JspException
+    {
+    	this.contentIdList = contentIdList;
     }
 
     public void setFileNamePrefix(String fileNamePrefix) throws JspException

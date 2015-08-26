@@ -197,6 +197,16 @@ public class ContentParameterTag extends AbstractTag
 	    this.contentMap.put("publishDateTime", (Date)evaluate("parameter", "publishDateTime", publishDateTime, Date.class));
 	}
 
+    public void setExpireDateTimeObject(Date expireDateTime) throws JspException
+    {
+    	this.contentMap.put("expireDateTime", expireDateTime);
+    }
+
+    public void setPublishDateTimeObject(Date publishDateTime) throws JspException
+    {
+    	this.contentMap.put("publishDateTime", publishDateTime);
+    }
+
 	/**
 	 * Add the contentVersion the child tag generated to the list of contentVersions that are to be persisted.
 	 */

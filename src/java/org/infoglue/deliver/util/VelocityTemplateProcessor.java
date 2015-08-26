@@ -194,8 +194,13 @@ public class VelocityTemplateProcessor
 	 * @throws ServletException
 	 * @throws IOException
 	 */
-	public void dispatchJSP(final Map params, final PrintWriter pw, final String templateAsString, final InfoGlueComponent component) throws ServletException, IOException, Exception
+	public void dispatchJSP(final Map params, final PrintWriter pw, String templateAsString, final InfoGlueComponent component) throws ServletException, IOException, Exception
 	{
+	    if(CmsPropertyHandler.getWebappVersion() >= 3 && templateAsString.contains("http://java.sun.com/jstl/"))
+	    	templateAsString = templateAsString.replaceAll("http://java.sun.com/jstl/", "http://java.sun.com/jsp/jstl/");
+	    else if(CmsPropertyHandler.getWebappVersion() < 3 && templateAsString.contains("http://java.sun.com/jsp/jstl/"))
+	    	templateAsString = templateAsString.replaceAll("http://java.sun.com/jsp/jstl/", "http://java.sun.com/jstl/");
+
 	    final String dir = CmsPropertyHandler.getContextRootPath() + "jsp";
 	    final String fileName;
 	    if ( component != null ) {
@@ -203,8 +208,8 @@ public class VelocityTemplateProcessor
 	    } else {
 	        fileName = "Template_" + templateAsString.hashCode() + ".jsp";
 	    }
-	    final File template = new File(dir , fileName);
-
+	    final File template = new File(dir, fileName);
+	    	    	
 	    synchronized (fileName.intern()) {
 		    if(!template.exists()) {
 		        final PrintWriter fpw = new PrintWriter(template);
@@ -261,6 +266,11 @@ public class VelocityTemplateProcessor
 	@Deprecated
 	public void dispatchJSP(Map params, PrintWriter pw, String templateAsString) throws ServletException, IOException, Exception
 	{
+	    if(CmsPropertyHandler.getWebappVersion() >= 3 && templateAsString.contains("http://java.sun.com/jstl/"))
+	    	templateAsString = templateAsString.replaceAll("http://java.sun.com/jstl/", "http://java.sun.com/jsp/jstl/");
+	    else if(CmsPropertyHandler.getWebappVersion() < 3 && templateAsString.contains("http://java.sun.com/jsp/jstl/"))
+	    	templateAsString = templateAsString.replaceAll("http://java.sun.com/jsp/jstl/", "http://java.sun.com/jstl/");
+
 	    Timer timer = new Timer();
 	    timer.setActive(false);
 

@@ -157,6 +157,11 @@ public class UpdateUserServiceTag extends TemplateControllerTag
 	   this.principal = (InfoGluePrincipal) this.evaluate("remoteUserService", "principal", principalString, InfoGluePrincipal.class);
    }
 
+   public void setPrincipalObject(final InfoGluePrincipal principal) throws JspException
+   {
+	   this.principal = principal;
+   }
+
    public void setUserName(String userName)  throws JspException
    {
 	   this.systemUserVO.setUserName(evaluateString("remoteUserService", "userName", userName));
@@ -185,6 +190,11 @@ public class UpdateUserServiceTag extends TemplateControllerTag
    public void setSystemUserVO(final String systemUserVO) throws JspException
    {
 	   this.systemUserVO = (SystemUserVO)this.evaluate("remoteUserService", "systemUserVO", systemUserVO, SystemUserVO.class);
+   }
+
+   public void setSystemUserVOObject(final SystemUserVO systemUserVO) throws JspException
+   {
+	   this.systemUserVO = systemUserVO;
    }
 
    public void setIsPasswordChangeOperation(final Boolean isPasswordChangeOperation) 

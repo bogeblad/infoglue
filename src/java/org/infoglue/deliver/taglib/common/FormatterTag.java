@@ -92,10 +92,15 @@ public class FormatterTag extends TemplateControllerTag
 		
 		return EVAL_PAGE;
 	}
-		
+
 	public void setValue(String value) throws JspException
 	{
 		this.value = evaluate("formatterTag", "value", value, Object.class);
+	}
+
+	public void setValueObject(Object value) throws JspException
+	{
+		this.value = value;
 	}
 
 	public void setPattern(String pattern) throws JspException
@@ -106,6 +111,11 @@ public class FormatterTag extends TemplateControllerTag
 	public void setLocale(String locale) throws JspException
 	{
 		this.locale = (Locale)evaluate("formatterTag", "locale", locale, Locale.class);
+	}
+
+	public void setLocaleObject(final Locale locale) throws JspException
+	{
+		this.locale = locale;
 	}
 
 	public void setType(String type) throws JspException

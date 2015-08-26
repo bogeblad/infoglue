@@ -60,6 +60,11 @@ public abstract class InfoGlueWebServiceTag extends TemplateControllerTag
         this.principal = (InfoGluePrincipal) this.evaluate("infoGlueWebService", "principal", principalString, InfoGluePrincipal.class);
     }
 
+    public void setPrincipalObject(final InfoGluePrincipal principal) throws JspException
+    {
+        this.principal = principal;
+    }
+
     protected void invokeOperation(String name, Object argument) throws JspException
     {
         try

@@ -123,6 +123,18 @@ public class PortletAttributeTag extends AbstractTag
 	 * @param value the value to use.
 	 * @throws JspException if an error occurs while evaluating value parameter.
 	 */
+	public void setValueObject(final Object value) throws JspException
+	{
+		this.value = value;
+	}
+
+	
+	/**
+	 * Sets the value attribute.
+	 * 
+	 * @param value the value to use.
+	 * @throws JspException if an error occurs while evaluating value parameter.
+	 */
 	public void setScope(final String scope) throws JspException
 	{
 		this.scope = evaluateString("portletAttribute", "scope", scope);

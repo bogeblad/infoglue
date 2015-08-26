@@ -3143,5 +3143,20 @@ public class CmsPropertyHandler
 	{
 		return getServerNodeProperty("expectFormPostToBeUnicodeAllready", true, "true");
 	}
+	
+	public static float getWebappVersion()
+	{
+		String webappVersion = getServerNodeProperty("webappVersion", true, "2.3");
+		try
+		{
+			return Float.parseFloat(webappVersion);
+		}
+		catch(Exception e) 
+		{
+			logger.error("Problem getting webapp version: " + e.getMessage());
+		}
+		
+		return 1F;
+	}
 
 }

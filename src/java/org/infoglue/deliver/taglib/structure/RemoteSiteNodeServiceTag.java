@@ -131,17 +131,12 @@ public class RemoteSiteNodeServiceTag extends TemplateControllerTag
    }
 
    /**
-    * Add the siteNode the child tag generated to the list of siteNodes that are to be persisted.
+    * 
     */
-   /*
-   public void addSiteNode(final SiteNodeVO siteNodeVO) 
+   public void setPrincipalObject(final InfoGluePrincipal principal) throws JspException
    {
-       //Map siteNodeMap = new HashMap();
-       //siteNodeMap.put("name", "Kalle" + siteNodeVO.getName());
-       //this.siteNodes.add(siteNodeMap);
-	   this.siteNodes.add(siteNodeVO);
+	   this.principal = principal;
    }
-   */
    
    /**
     * Add the siteNode the child tag generated to the list of siteNodes that are to be persisted.

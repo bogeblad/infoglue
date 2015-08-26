@@ -110,6 +110,11 @@ public class UpdateContentTag extends InfoGlueWebServiceTag
         this.principal = (InfoGluePrincipal) this.evaluate("remoteContentService", "principal", principalString, InfoGluePrincipal.class);
     }
 
+    public void setPrincipalObject(final InfoGluePrincipal principal) throws JspException
+    {
+        this.principal = principal;
+    }
+
     public void setContentId(String contentId) throws JspException
     {
         this.contentId = evaluateInteger("updateContent", "contentId", contentId);
@@ -128,6 +133,16 @@ public class UpdateContentTag extends InfoGlueWebServiceTag
     public void setPublishDateTime(String publishDateTime) throws JspException
     {
         this.publishDateTime = (Date) this.evaluate("updateContent", "publishDateTime", publishDateTime, Date.class);
+    }
+
+    public void setExpireDateTimeObject(Date expireDateTime) throws JspException
+    {
+        this.expireDateTime = expireDateTime;
+    }
+
+    public void setPublishDateTimeObject(Date publishDateTime) throws JspException
+    {
+        this.publishDateTime = publishDateTime;
     }
 
     public String getOperationName()

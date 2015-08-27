@@ -223,6 +223,7 @@ public class VelocityTemplateProcessor
 	    final TemplateController templateController = (TemplateController)params.get("templateLogic");
 	    final PortalController portletController = (PortalController)params.get("portalLogic");
 	    final Map<String,Object> model = (Map<String,Object>)params.get("model");
+	    final Integer includedComponentContentId = (Integer)params.get("includedComponentContentId");
 	    if(templateController != null)
 	    {
 	    	final DeliveryContext deliveryContext = templateController.getDeliveryContext();
@@ -232,6 +233,7 @@ public class VelocityTemplateProcessor
 		    templateController.getHttpServletRequest().setAttribute("org.infoglue.cms.deliver.portalLogic", portletController);
 		    templateController.getHttpServletRequest().setAttribute("org.infoglue.cms.deliver.classLoader", Thread.currentThread().getContextClassLoader());
 		    templateController.getHttpServletRequest().setAttribute("model", model);
+		    templateController.getHttpServletRequest().setAttribute("includedComponentContentId", includedComponentContentId);
 		    final CharResponseWrapper wrapper = new CharResponseWrapper(deliveryContext.getHttpServletResponse());
 		    final RequestDispatcher dispatch = templateController.getHttpServletRequest().getRequestDispatcher("/jsp/" + fileName);
 		    dispatch.include(templateController.getHttpServletRequest(), wrapper);
@@ -244,6 +246,7 @@ public class VelocityTemplateProcessor
 	    	scriptController.getRequest().setAttribute("org.infoglue.cms.deliver.portalLogic", portletController);
 	    	scriptController.getRequest().setAttribute("org.infoglue.cms.deliver.classLoader", Thread.currentThread().getContextClassLoader());
 	    	scriptController.getRequest().setAttribute("model", model);
+	    	scriptController.getRequest().setAttribute("includedComponentContentId", includedComponentContentId);
 		    final CharResponseWrapper wrapper = new CharResponseWrapper(scriptController.getResponse());
 		    final RequestDispatcher dispatch = scriptController.getRequest().getRequestDispatcher("/jsp/" + fileName);
 		    dispatch.include(scriptController.getRequest(), wrapper);

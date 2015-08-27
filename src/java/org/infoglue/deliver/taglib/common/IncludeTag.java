@@ -60,8 +60,15 @@ public class IncludeTag extends TemplateControllerTag
 			String renderDescription = null;
 		    if(contentId == null)
 		    {
-			    Integer componentContentId = this.getController().getComponentLogic().getInfoGlueComponent().getContentId();
-			    
+				Integer componentContentId = this.getController().getComponentLogic().getIncludedComponentContentId();
+				if(componentContentId == null)
+				{
+					logger.info("No includedComponentContentId in includeTag - lets look in attributes");
+					componentContentId = (Integer)getController().getHttpServletRequest().getAttribute("includedComponentContentId");
+				}
+				if(componentContentId == null)
+					componentContentId = this.getController().getComponentLogic().getInfoGlueComponent().getContentId();
+
 			    List relatedContents = this.getController().getRelatedContents(componentContentId, relationAttributeName, useAttributeLanguageFallback);
 
 			    Iterator i = relatedContents.iterator();

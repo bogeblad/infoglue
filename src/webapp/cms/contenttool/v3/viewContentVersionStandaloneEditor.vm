@@ -1,3 +1,4 @@
+111
 #if(($closeOnLoad == "true" && !$errors.hasErrors()) || $publishOnLoad == "true" && !$errors.hasErrors())
 <html>
 <head>
@@ -294,10 +295,11 @@
 		function changeLanguage(contentId, languageId)
 		{
 			attributeName = document.editForm.attributeName.value;
+			var saveAndExitUrl = "$formatter.encodeURI("$!saveAndExitURL", 'UTF-8')";
 			
 			if ((!getDirty() && !checkWYSIWYGDirty()) || confirm('$ui.getString("tool.contenttool.languageVersionChangeWarning")'))
 			{
-				window.location.href="ViewContentVersion!standalone.action?contentId=" + contentId +  "&extraClasses=$!extraClasses&saveAndExitURL=$!saveAndExitURL&languageId=" + languageId + "&attributeName=" + attributeName;
+				window.location.href="ViewContentVersion!standalone.action?contentId=" + contentId +  "&extraClasses=$!extraClasses&saveAndExitURL=" + saveAndExitUrl + "&languageId=" + languageId + "&attributeName=" + attributeName;
 			}
 			else
 			{
@@ -308,7 +310,7 @@
 		function changeLanguageForVersionAccess(contentId, languageId)
 		{
 
-			
+		
 			var versionAccessSrcUrl = "ViewContentVersion!viewContentAssetsForFCKEditorV3.action?contentId=$!contentId&languageId=" + languageId + "&extraClasses=$extraClasses&assetTypeFilter=.*";
 			$(".versionAccess-list-items li").removeClass("ui-tabs-selected");
 			$("#languageVersionAccessTab_" + languageId).addClass("ui-tabs-selected");
@@ -490,17 +492,15 @@
 
 		function refreshView(viewName)
 		{
-			//alert("viewName:" + viewName);
 			if(viewName == "contentVersionAssets")
 			{
-		
-					window.location.href = window.location.href + '&anchor=digitalAssetsBlock';
+				document.location.href = document.location.href.replace(".action?", ".action?anchor=digitalAssetsBlock&");
 
-					#if($this.hasAccessTo($categoriesInterceptionPoint, true, false))
-						$("#level-3").tabs("select", 2);
-					#else
-						$("#level-3").tabs("select", 1);
-					#end
+				#if($this.hasAccessTo($categoriesInterceptionPoint, true, false))
+					$("#level-3").tabs("select", 2);
+				#else
+					$("#level-3").tabs("select", 1);
+				#end
 			}
 		}
 

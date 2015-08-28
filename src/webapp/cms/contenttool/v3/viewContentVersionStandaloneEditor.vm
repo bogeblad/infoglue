@@ -1,4 +1,3 @@
-111
 #if(($closeOnLoad == "true" && !$errors.hasErrors()) || $publishOnLoad == "true" && !$errors.hasErrors())
 <html>
 <head>

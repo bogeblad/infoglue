@@ -37,7 +37,8 @@ public class PageUrlTag extends ComponentLogicTag
 	private boolean useInheritance = true;
 	private boolean useRepositoryInheritance = true;
     private boolean useStructureInheritance = true;
-
+    private boolean forceHTTPProtocol = false;
+    		
 	private Integer siteNodeId;
 	private Integer languageId;
 	private Integer contentId = new Integer(-1);
@@ -69,18 +70,27 @@ public class PageUrlTag extends ComponentLogicTag
 	{
 	    if(this.languageId == null)
 	        this.languageId = getController().getLanguageId();
-	    
-	    if(this.propertyName != null)
-	        return getComponentLogic().getPageUrl(propertyName, contentId, languageId, useInheritance, useRepositoryInheritance, useStructureInheritance);
-	    else
-	        return getController().getPageUrl(siteNodeId, languageId, contentId);
+	    String url = "";
+	    if(this.propertyName != null) {
+	        url = getComponentLogic().getPageUrl(propertyName, contentId, languageId, useInheritance, useRepositoryInheritance, useStructureInheritance);
+	    } else {
+	        url = getController().getPageUrl(siteNodeId, languageId, contentId);
+	    }
+	    if (forceHTTPProtocol) {
+	    	url.replaceFirst("https", "http");
+	    }
+	    return url;
 	}
 
 	public void setSiteNodeId(final String siteNodeId) throws JspException
     {
         this.siteNodeId = evaluateInteger("pageUrl", "siteNodeId", siteNodeId);
     }
-
+	public void setForceHTTPProtocol(final String forceHTTPProtocol) throws JspException
+    {
+        this.forceHTTPProtocol = evaluateBoolean("pageUrl", "forceHTTPProtocol", forceHTTPProtocol);
+    }
+	
     public void setLanguageId(final String languageId) throws JspException
     {
         this.languageId = evaluateInteger("pageUrl", "languageId", languageId);

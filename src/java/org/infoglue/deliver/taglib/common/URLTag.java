@@ -77,6 +77,10 @@ public class URLTag extends TemplateControllerTag
 	private boolean fullBaseUrl = false;
 	
 	/**
+	 * Determine if you want to replace https with http
+	 * */
+	private boolean forceHTTPProtocol = false;
+	/**
 	 * The parameters to use when constructing the url.
 	 */
 	private List parameters; // type: <String>, format: <name>=<value>
@@ -261,6 +265,10 @@ public class URLTag extends TemplateControllerTag
 	        newBaseUrl = (baseURL == null) ? getRequest().getRequestURL().toString() : baseURL;
 	    }
 	    logger.info("newBaseUrl:" + newBaseUrl);
+	    
+		if (forceHTTPProtocol) {
+			newBaseUrl.replaceFirst("https", "http");
+		}
 	    return newBaseUrl;
 	}
 	
@@ -344,6 +352,7 @@ public class URLTag extends TemplateControllerTag
 			else
 			    return getBaseURL() + (sb.toString().length() > 0 ? "?" + sb.toString() : "");
 		}
+
 		return getBaseURL();
 	}
 
@@ -377,6 +386,11 @@ public class URLTag extends TemplateControllerTag
     public void setFullBaseUrl(boolean fullBaseUrl)
     {
         this.fullBaseUrl = fullBaseUrl;
+    }
+    
+	public void setForceHTTPProtocol(final String forceHTTPProtocol) throws JspException
+    {
+        this.forceHTTPProtocol = evaluateBoolean("url", "forceHTTPProtocol", forceHTTPProtocol);
     }
     
     public void setDisableNiceURI(boolean disableNiceURI)

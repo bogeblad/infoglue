@@ -592,6 +592,9 @@
 		<copy file="${conf}/web-app_2_3.dtd" tofile="${deploy.dir.cms}/WEB-INF/web-app_2_3.dtd" overwrite="true">
 			<filterset refid="project.filters"/>
 		</copy>
+		<copy file="${conf}/error_${webappVersion}.jsp" tofile="${deploy.dir.cms}/error.jsp" overwrite="true">
+			<filterset refid="project.filters"/>
+		</copy>
 		<unzip dest="${deploy.dir.cms}/applications/">
 		    <fileset dir="${deploy.dir.cms}/applications/">
 		        <include name="*.zip"/>
@@ -621,6 +624,9 @@
 			<filterset refid="project.filters"/>
 		</copy>
 		<copy file="${conf}/web-app_2_3.dtd" tofile="${deploy.dir.working}/WEB-INF/web-app_2_3.dtd" overwrite="true">
+			<filterset refid="project.filters"/>
+		</copy>
+		<copy file="${conf}/error_${webappVersion}.jsp" tofile="${deploy.dir.working}/error.jsp" overwrite="true">
 			<filterset refid="project.filters"/>
 		</copy>
 		<unzip dest="${deploy.dir.working}/applications/">
@@ -653,6 +659,9 @@
 		<copy file="${conf}/web-app_2_3.dtd" tofile="${deploy.dir.preview}/WEB-INF/web-app_2_3.dtd" overwrite="true">
 			<filterset refid="project.filters"/>
 		</copy>
+		<copy file="${conf}/error_${webappVersion}.jsp" tofile="${deploy.dir.preview}/error.jsp" overwrite="true">
+			<filterset refid="project.filters"/>
+		</copy>
 		<unzip dest="${deploy.dir.preview}/applications/">
 		    <fileset dir="${deploy.dir.preview}/applications/">
 		        <include name="*.zip"/>
@@ -683,7 +692,10 @@
 		<copy file="${conf}/web-app_2_3.dtd" tofile="${deploy.dir.live}/WEB-INF/web-app_2_3.dtd" overwrite="true">
 			<filterset refid="project.filters"/>
 		</copy>
-			<copy file="${conf}/robots-live.txt" tofile="${deploy.dir.live}/robots.txt" overwrite="true">
+		<copy file="${conf}/error_${webappVersion}.jsp" tofile="${deploy.dir.live}/error.jsp" overwrite="true">
+			<filterset refid="project.filters"/>
+		</copy>
+		<copy file="${conf}/robots-live.txt" tofile="${deploy.dir.live}/robots.txt" overwrite="true">
 			<filterset refid="project.filters"/>
 		</copy>
 		<unzip dest="${deploy.dir.live}/applications/">
@@ -1173,6 +1185,8 @@
 		</copy>
 		<copy file="${conf}/deliver-web_${webappVersion}.xml" tofile="${deploy.dir.working}/WEB-INF/web.xml" overwrite="true">
 		</copy>
+		<copy file="${conf}/error_${webappVersion}.jsp" tofile="${deploy.dir.working}/error.jsp" overwrite="true">
+		</copy>
 		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${src}" includes="workflows/*.xml"/>
 		</copy>
@@ -1263,6 +1277,8 @@
 		</copy>
 		<copy file="${conf}/deliver-web_${webappVersion}.xml" tofile="${deploy.dir.preview}/WEB-INF/web.xml" overwrite="true">
 		</copy>
+		<copy file="${conf}/error_${webappVersion}.jsp" tofile="${deploy.dir.preview}/error.jsp" overwrite="true">
+		</copy>
 		<copy todir="${deploy.dir.preview}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${src}" includes="workflows/*.xml"/>
 		</copy>
@@ -1352,6 +1368,8 @@
 			<fileset dir="${conf}/deliver" includes="webwork.properties,actions.xml,jobs.xml"/>
 		</copy>
 		<copy file="${conf}/deliver-web_${webappVersion}.xml" tofile="${deploy.dir.live}/WEB-INF/web.xml" overwrite="true">
+		</copy>
+		<copy file="${conf}/error_${webappVersion}.jsp" tofile="${deploy.dir.live}/error.jsp" overwrite="true">
 		</copy>
 		<copy todir="${deploy.dir.live}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${src}" includes="workflows/*.xml"/>
@@ -1456,6 +1474,8 @@
 
 		<copy file="${conf}/cms-web_${webappVersion}.xml" tofile="${deploy.dir.cms}/WEB-INF/web.xml" overwrite="true">
 		</copy>
+		<copy file="${conf}/error_${webappVersion}.jsp" tofile="${deploy.dir.cms}/error.jsp" overwrite="true">
+		</copy>
 
 		<copy todir="${deploy.dir.cms}/WEB-INF" overwrite="true">
 			<fileset dir="${conf}" includes="server-config.wsdd,web-app_2_3.dtd"/>
@@ -1540,6 +1560,8 @@
 			<fileset dir="${conf}/deliver" includes="webwork.properties,actions.xml,jobs.xml"/>
 		</copy>
 		<copy file="${conf}/deliver-web_${webappVersion}.xml" tofile="${deploy.dir.working}/WEB-INF/web.xml" overwrite="true">
+		</copy>
+		<copy file="${conf}/error_${webappVersion}.jsp" tofile="${deploy.dir.working}/error.jsp" overwrite="true">
 		</copy>
 		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${src}" includes="workflows/*.xml"/>
@@ -1632,6 +1654,8 @@
 		</copy>
 		<copy file="${conf}/deliver-web_${webappVersion}.xml" tofile="${deploy.dir.preview}/WEB-INF/web.xml" overwrite="true">
 		</copy>
+		<copy file="${conf}/error_${webappVersion}.jsp" tofile="${deploy.dir.preview}/error.jsp" overwrite="true">
+		</copy>
 		<copy todir="${deploy.dir.preview}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${src}" includes="workflows/*.xml"/>
 		</copy>
@@ -1720,6 +1744,8 @@
 			<fileset dir="${conf}/deliver" includes="webwork.properties,actions.xml,jobs.xml"/>
 		</copy>
 		<copy file="${conf}/deliver-web_${webappVersion}.xml" tofile="${deploy.dir.live}/WEB-INF/web.xml" overwrite="true">
+		</copy>
+		<copy file="${conf}/error_${webappVersion}.jsp" tofile="${deploy.dir.live}/error.jsp" overwrite="true">
 		</copy>
 		<copy todir="${deploy.dir.live}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${src}" includes="workflows/*.xml"/>
@@ -1822,6 +1848,8 @@
 		</copy>
 
 		<copy file="${conf}/cms-web_${webappVersion}.xml" tofile="${deploy.dir.cms}/WEB-INF/web.xml" overwrite="true">
+		</copy>
+		<copy file="${conf}/error_${webappVersion}.jsp" tofile="${deploy.dir.cms}/error.jsp" overwrite="true">
 		</copy>
 
 		<copy todir="${deploy.dir.cms}/WEB-INF" overwrite="true">

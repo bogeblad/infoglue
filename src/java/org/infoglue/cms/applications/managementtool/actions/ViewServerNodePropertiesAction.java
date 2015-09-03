@@ -180,6 +180,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "niceURIDisableNiceURIForContent");
 	    populate(ps, "niceURIDefaultReplacementCharacterForContent");
 	    populate(ps, "redirectUsingSystemRedirect");
+	    populate(ps, "orderRedirectsByLength");
 	    populate(ps, "duplicateAssetsBetweenVersions");
 	    populate(ps, "requestArgumentDelimiter");
 	    populate(ps, "errorHandling");
@@ -232,7 +233,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "casCookiesBeforeRedirect");
 	    populate(ps, "useBrowserLanguage");
 	    populate(ps, "ipAddressesToFallbackToBasicAuth");
-	    
+	    populate(ps, "forceHTTPProtocol");
 	    
 	    populate(ps, "deliver_loginUrl");
 	    populate(ps, "deliver_logoutUrl");
@@ -400,6 +401,8 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "defaultSystemTheme");
 
 	    populate(ps, "doNotUseTrashcanForRepositories");
+
+	    populate(ps, "useGlobalRepositoryChange");
 
 	    try
 	    {

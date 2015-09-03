@@ -34,6 +34,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 
 import org.apache.log4j.Logger;
+import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.taglib.TemplateControllerTag;
 
 /**
@@ -266,7 +267,7 @@ public class URLTag extends TemplateControllerTag
 	    }
 	    logger.info("newBaseUrl:" + newBaseUrl);
 	    
-		if (forceHTTPProtocol) {
+		if (forceHTTPProtocol || CmsPropertyHandler.getForceHTTPProtocol()) {
 			newBaseUrl.replaceFirst("https", "http");
 		}
 	    return newBaseUrl;

@@ -623,7 +623,7 @@ public class CmsPropertyHandler
 		    if(value == null && defaultValue != null)
 		    	value = defaultValue;
 		    
-		    //H�r skall smartare l�sning in sen f�r att l�sa fallback.
+		    //Hï¿½r skall smartare lï¿½sning in sen fï¿½r att lï¿½sa fallback.
 		    if(!skipCache)
 		    	CacheController.cacheObject(cacheName, cacheKey, value);
 		    
@@ -727,7 +727,13 @@ public class CmsPropertyHandler
 		else
 			return false;
 	}
-
+	
+	public static boolean getForceHTTPProtocol() {
+			String forceHTTPProtocol = getServerNodeProperty("forceHTTPProtocol", true, "false");
+	
+			return Boolean.parseBoolean(forceHTTPProtocol);
+	}
+	
 	//TODO - refresh if changed....
 	public static String getInputCharacterEncoding(String defaultEncoding)
 	{
@@ -2070,6 +2076,13 @@ public class CmsPropertyHandler
 		return (defaultGUI == null ? "default" : defaultGUI);
 	}
 
+	public static String getDefaultTreeTitleField(String userName)
+	{
+		String defaultGUI = getPropertySet().getString("principal_" + userName + "_defaultTreeTitleField");
+	    
+		return (defaultGUI == null ? "NavigationTitle" : defaultGUI);
+	}
+
 	public static String getToolbarVariant(String userName)
 	{
 		String toolbarVariant = getPropertySet().getString("principal_" + userName + "_toolbarVariant");
@@ -3002,6 +3015,13 @@ public class CmsPropertyHandler
 		return Boolean.parseBoolean(allowInternalCallsBasedOnIP);
 	}
 
+	public static boolean getUseGlobalRepositoryChange() 
+	{
+		String useGlobalRepositoryChange = getServerNodeProperty("useGlobalRepositoryChange", true, "false");
+		
+		return Boolean.parseBoolean(useGlobalRepositoryChange);
+	}
+	
 	private static Boolean useSQLServerDialect = null;
 	public static boolean getUseSQLServerDialect()
 	{
@@ -3114,6 +3134,13 @@ public class CmsPropertyHandler
 
 		return Boolean.parseBoolean(redirectUsingSystemRedirect);
 	}
+	
+	public static boolean getOrderRedirectsByLength()
+	{
+		String orderRedirectsByLength = getServerNodeProperty("orderRedirectsByLength", true, "false");
+
+		return Boolean.parseBoolean(orderRedirectsByLength);
+	}
 
 	/**
 	 * Dev note: This method is not used at all places where it should be used so don't depend on that. However
@@ -3123,6 +3150,11 @@ public class CmsPropertyHandler
 	public static String getMetaDataContentTypeDefinitionName()
 	{
 		return getServerNodeProperty("metaDataContentTypeDefinitionName", true, "Meta info");
+	}
+
+	public static String getExpectFormPostToBeUnicodeAllready() 
+	{
+		return getServerNodeProperty("expectFormPostToBeUnicodeAllready", true, "true");
 	}
 
 }

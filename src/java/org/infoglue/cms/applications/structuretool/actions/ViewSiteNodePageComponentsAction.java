@@ -1224,7 +1224,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	        	propertyValue = PageEditorHelper.untransformAttribute(propertyValue);
 				logger.info("propertyValue2:" + propertyValue);
 	 			boolean keepExisting = new Boolean (this.getRequest().getParameter("keepExisting"));
-
+	 			propertyValue = propertyValue.replaceAll("\"", "&quot;");
 
 				if(propertyValue != null && !propertyValue.equals("") && !propertyValue.equalsIgnoreCase("undefined"))
 				{
@@ -1564,7 +1564,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 
 		try
 		{
-			Integer newComponentId = new Integer(0);
+			Integer newComponentId = this.componentId;
 			
 			Integer startNodeId = this.siteNodeId;
 			boolean recurseChildPages = false;

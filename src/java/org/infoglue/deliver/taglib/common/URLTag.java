@@ -34,8 +34,8 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 
 import org.apache.log4j.Logger;
-import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.taglib.TemplateControllerTag;
+import org.infoglue.cms.util.CmsPropertyHandler;
 
 /**
  * This class implements the &lt;common:urlBuilder&gt; tag, which creates an url
@@ -47,7 +47,7 @@ public class URLTag extends TemplateControllerTag
 {
 
     private final static Logger logger = Logger.getLogger(URLTag.class.getName());
-
+	private boolean forceHTTPProtocol = false;
     /**
 	 * 
 	 */
@@ -77,10 +77,6 @@ public class URLTag extends TemplateControllerTag
 	 */
 	private boolean fullBaseUrl = false;
 	
-	/**
-	 * Determine if you want to replace https with http
-	 * */
-	private boolean forceHTTPProtocol = false;
 	/**
 	 * The parameters to use when constructing the url.
 	 */
@@ -223,7 +219,7 @@ public class URLTag extends TemplateControllerTag
 			        	if(nextIndexOf > -1)
 			        		currentPageUrl = currentPageUrl + currentPageUrl.substring(nextIndexOf);
 			        }
-	
+		
 		            currentPageUrl = currentPageUrl.split("\\?")[0];
 		            newBaseUrl = (baseURL == null) ? base + currentPageUrl : baseURL;	        
 	            }
@@ -266,10 +262,11 @@ public class URLTag extends TemplateControllerTag
 	        newBaseUrl = (baseURL == null) ? getRequest().getRequestURL().toString() : baseURL;
 	    }
 	    logger.info("newBaseUrl:" + newBaseUrl);
-	    
+		
 		if (forceHTTPProtocol || CmsPropertyHandler.getForceHTTPProtocol()) {
 			newBaseUrl.replaceFirst("https", "http");
 		}
+		
 	    return newBaseUrl;
 	}
 	
@@ -353,7 +350,6 @@ public class URLTag extends TemplateControllerTag
 			else
 			    return getBaseURL() + (sb.toString().length() > 0 ? "?" + sb.toString() : "");
 		}
-
 		return getBaseURL();
 	}
 
@@ -389,11 +385,6 @@ public class URLTag extends TemplateControllerTag
         this.fullBaseUrl = fullBaseUrl;
     }
     
-	public void setForceHTTPProtocol(final String forceHTTPProtocol) throws JspException
-    {
-        this.forceHTTPProtocol = evaluateBoolean("url", "forceHTTPProtocol", forceHTTPProtocol);
-    }
-    
     public void setDisableNiceURI(boolean disableNiceURI)
     {
         this.disableNiceURI = disableNiceURI;
@@ -408,5 +399,8 @@ public class URLTag extends TemplateControllerTag
     {
         this.includeCurrentQueryString = includeCurrentQueryString;
     }
-    
+    public void setForceHTTPProtocol(final String forceHTTPProtocol) throws JspException
+    {
+        this.forceHTTPProtocol = evaluateBoolean("url", "forceHTTPProtocol", forceHTTPProtocol);
+    }
 }

@@ -1224,7 +1224,9 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	        	propertyValue = PageEditorHelper.untransformAttribute(propertyValue);
 				logger.info("propertyValue2:" + propertyValue);
 	 			boolean keepExisting = new Boolean (this.getRequest().getParameter("keepExisting"));
-	 			propertyValue = propertyValue.replaceAll("\"", "&quot;");
+				
+				/* This should probably be a more general HTML transformation */
+				propertyValue = propertyValue.replaceAll("\"", "&quot;");
 
 				if(propertyValue != null && !propertyValue.equals("") && !propertyValue.equalsIgnoreCase("undefined"))
 				{

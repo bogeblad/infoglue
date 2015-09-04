@@ -623,7 +623,7 @@ public class CmsPropertyHandler
 		    if(value == null && defaultValue != null)
 		    	value = defaultValue;
 		    
-		    //Hï¿½r skall smartare lï¿½sning in sen fï¿½r att lï¿½sa fallback.
+		    //H�r skall smartare l�sning in sen f�r att l�sa fallback.
 		    if(!skipCache)
 		    	CacheController.cacheObject(cacheName, cacheKey, value);
 		    
@@ -727,13 +727,7 @@ public class CmsPropertyHandler
 		else
 			return false;
 	}
-	
-	public static boolean getForceHTTPProtocol() {
-			String forceHTTPProtocol = getServerNodeProperty("forceHTTPProtocol", true, "false");
-	
-			return Boolean.parseBoolean(forceHTTPProtocol);
-	}
-	
+
 	//TODO - refresh if changed....
 	public static String getInputCharacterEncoding(String defaultEncoding)
 	{
@@ -3156,5 +3150,10 @@ public class CmsPropertyHandler
 	{
 		return getServerNodeProperty("expectFormPostToBeUnicodeAllready", true, "true");
 	}
-
+	
+	public static boolean getForceHTTPProtocol() {
+		String forceHTTPProtocol = getServerNodeProperty("forceHTTPProtocol", true, "false");
+	
+		return Boolean.parseBoolean(forceHTTPProtocol);
+	}
 }

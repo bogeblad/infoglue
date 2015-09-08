@@ -3151,4 +3151,9 @@ public class CmsPropertyHandler
 		return getServerNodeProperty("expectFormPostToBeUnicodeAllready", true, "true");
 	}
 
+	public static boolean getForceHTTPProtocol() {
+		String forceHTTPProtocol = getServerNodeProperty("forceHTTPProtocol", true, "false");
+	
+		return Boolean.parseBoolean(forceHTTPProtocol);
+	}
 }

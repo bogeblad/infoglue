@@ -35,6 +35,7 @@ import javax.servlet.jsp.JspTagException;
 
 import org.apache.log4j.Logger;
 import org.infoglue.deliver.taglib.TemplateControllerTag;
+import org.infoglue.cms.util.CmsPropertyHandler;
 
 /**
  * This class implements the &lt;common:urlBuilder&gt; tag, which creates an url
@@ -46,7 +47,6 @@ public class URLTag extends TemplateControllerTag
 {
 
     private final static Logger logger = Logger.getLogger(URLTag.class.getName());
-
     /**
 	 * 
 	 */
@@ -266,7 +266,7 @@ public class URLTag extends TemplateControllerTag
 	    }
 	    logger.info("newBaseUrl:" + newBaseUrl);
 	    
-		if (forceHTTPProtocol) {
+		if (forceHTTPProtocol || CmsPropertyHandler.getForceHTTPProtocol()) {
 			newBaseUrl.replaceFirst("https", "http");
 		}
 	    return newBaseUrl;

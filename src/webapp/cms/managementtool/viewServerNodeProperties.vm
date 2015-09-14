@@ -485,6 +485,7 @@
 				#selectFieldCSS("ServerNode.property.redirectStatusCode" "redirectStatusCode" $this.getPropertyValue('redirectStatusCode') $redirectStatusCodeOptions "$!cmsPH.redirectStatusCode")
 
 				#editPropertyFieldCSS("ServerNode.property.allowedDirectLoginNames" "allowedDirectLoginNames" "$this.getPropertyValue('allowedDirectLoginNames')" "51" "$!serverNodeId" "$!cmsPH.allowedDirectLoginNames")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.defaultFallbackForceProtocolForURLs" "forceHTTPProtocol" "$this.getPropertyValue('forceHTTPProtocol')" "$!cmsPH.forceHTTPProtocol")
 				
 				#yesNoDropDownWithInheritCSS("ServerNode.property.allowInternalCallsBasedOnIP" "allowInternalCallsBasedOnIP" "$this.getPropertyValue('allowInternalCallsBasedOnIP')" "$!cmsPH.allowInternalCallsBasedOnIP")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.forceIdentityCheck" "forceIdentityCheck" "$this.getPropertyValue('forceIdentityCheck')" "$!cmsPH.forceIdentityCheck")

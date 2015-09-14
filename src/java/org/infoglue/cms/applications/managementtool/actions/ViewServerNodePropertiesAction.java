@@ -233,7 +233,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "casCookiesBeforeRedirect");
 	    populate(ps, "useBrowserLanguage");
 	    populate(ps, "ipAddressesToFallbackToBasicAuth");
-	    
+	    populate(ps, "forceHTTPProtocol");
 	    
 	    populate(ps, "deliver_loginUrl");
 	    populate(ps, "deliver_logoutUrl");

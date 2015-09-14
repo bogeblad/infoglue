@@ -25,6 +25,7 @@ package org.infoglue.deliver.taglib.structure;
 import javax.servlet.jsp.JspException;
 
 import org.infoglue.deliver.taglib.component.ComponentLogicTag;
+import org.infoglue.cms.util.CmsPropertyHandler;
 
 public class PageUrlTag extends ComponentLogicTag
 {
@@ -76,7 +77,7 @@ public class PageUrlTag extends ComponentLogicTag
 	    } else {
 	        url = getController().getPageUrl(siteNodeId, languageId, contentId);
 	    }
-	    if (forceHTTPProtocol) {
+	    if (forceHTTPProtocol || CmsPropertyHandler.getForceHTTPProtocol()) {
 	    	url.replaceFirst("https", "http");
 	    }
 	    return url;

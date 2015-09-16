@@ -267,8 +267,9 @@ public class URLTag extends TemplateControllerTag
 	    logger.info("newBaseUrl:" + newBaseUrl);
 	    
 		if (forceHTTPProtocol || CmsPropertyHandler.getForceHTTPProtocol()) {
-			newBaseUrl.replaceFirst("https", "http");
+			newBaseUrl = newBaseUrl.replaceFirst("https:", "http:");
 		}
+
 	    return newBaseUrl;
 	}
 	

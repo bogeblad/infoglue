@@ -1888,7 +1888,12 @@ public class NodeDeliveryController extends BaseDeliveryController
 	                logger.info(attributeName + " ["+pathCandidate.trim()+"]==[" + path + "]");
 	                if (pathCandidate != null && pathCandidate.toLowerCase().trim().equals(path.toLowerCase())) 
 	                {
-	                	deliveryContext.setLanguageId(language.getId());
+	                	if(deliveryContext.getLanguageId() == null || deliveryContext.getLanguageId() == -1)
+	                	{
+	                		LanguageVO languageVO = LanguageDeliveryController.getLanguageDeliveryController().getLanguageIfSiteNodeSupportsIt(db, language.getId(), siteNodeVO.getId());
+	                		if(languageVO != null && languageVO.getId() == language.getId())
+	                			deliveryContext.setLanguageId(language.getId());
+	                	}
 	                	return siteNodeVO.getSiteNodeId();
 	                }
 	            }

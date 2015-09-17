@@ -302,13 +302,16 @@ public class ViewPageFilter implements Filter
 			                    
 			                    //TODO
 			                    DeliveryContext deliveryContext = DeliveryContext.getDeliveryContext();
-		                    	siteNodeId = NodeDeliveryController.getSiteNodeIdFromPath(db, infoGluePrincipal, repositoryVO, nodeNames, attributeName, deliveryContext, httpSession, languageId);
+			                    siteNodeId = NodeDeliveryController.getSiteNodeIdFromPath(db, infoGluePrincipal, repositoryVO, nodeNames, attributeName, deliveryContext, httpSession, languageId);
 			                    
-			                    if(deliveryContext.getLanguageId() != null && !deliveryContext.getLanguageId().equals(languageId))
-			                    {
-			                    	languageId = deliveryContext.getLanguageId();
-			                        httpSession.setAttribute(FilterConstants.LANGUAGE_ID, languageId);
-			                    }
+								if(httpRequest.getParameter("languageId") == null)
+		                    	{
+			                    	if(deliveryContext.getLanguageId() != null && !deliveryContext.getLanguageId().equals(languageId))
+			                    	{
+			                    		languageId = deliveryContext.getLanguageId();
+			                        	httpSession.setAttribute(FilterConstants.LANGUAGE_ID, languageId);
+			                    	}
+		                    	}
 			                    
 			                    if(siteNodeId != null)
 			                        break;

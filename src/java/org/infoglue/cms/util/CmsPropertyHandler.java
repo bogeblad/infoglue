@@ -1701,6 +1701,11 @@ public class CmsPropertyHandler
 	    return getServerNodeProperty("niceURIAttributeName", true, "NiceURIName");
 	}
 
+	public static String getNiceURIFallbackAttributeName()
+	{
+	    return getServerNodeProperty("niceURIFallbackAttributeName", true, "NavigationTitle");
+	}
+
 	public static String getRequestArgumentDelimiter()
 	{
 	    return getServerNodeProperty("requestArgumentDelimiter", true, "&amp;");
@@ -2841,6 +2846,63 @@ public class CmsPropertyHandler
 		}
 	}
 
+	/**
+	 * If the user has set a error-url to http://www.google.se we could either sendRedirect or do a http-backend include. The incude 
+	 * will be able to return the error page html AND a 404 status code. The old method will transfer the user and give robots etc the impression that 
+	 * the page just moved.
+	 * @return
+	 */
+	public static String getResponseMethodOnFullErrorURL()
+	{
+		return getServerNodeProperty("responseMethodOnFullErrorURL", true, "include");
+	}
+
+	/**
+	 * If a repository has no access rights defined - should it be available to users or not by default?
+	 * @return
+	 */
+	public static boolean getShowRepositoriesByDefaultIfNoAccessRightsAreDefined()
+	{
+		String showRepositoriesByDefaultIfNoAccessRightsAreDefined = getServerNodeProperty("showRepositoriesByDefaultIfNoAccessRightsAreDefined", true, "true");
+		
+		return Boolean.parseBoolean(showRepositoriesByDefaultIfNoAccessRightsAreDefined);
+	}
+
+	/**
+	 * Enable disk based deployment or not?
+	 * @return
+	 */
+	public static boolean getEnableDiskBasedDeployment()
+	{
+		String enableDiskBasedDeployment = getServerNodeProperty("enableDiskBasedDeployment", true, "false");
+	    System.out.println("enableDiskBasedDeployment:" +enableDiskBasedDeployment);
+	
+		return Boolean.parseBoolean(enableDiskBasedDeployment);
+	}
+	
+	/**
+	 * Enable disk based deployment or not?
+	 * @return
+	 */
+	public static boolean getEnableDiskBasedDeployment(boolean skipCaches)
+	{
+		String enableDiskBasedDeployment = getServerNodeProperty("enableDiskBasedDeployment", true, "false", skipCaches);
+	    System.out.println("enableDiskBasedDeployment without cache:" +enableDiskBasedDeployment);
+	
+		return Boolean.parseBoolean(enableDiskBasedDeployment);
+	}
+
+
+	/**
+	 * The folder to sync for changes. See doc for folder structure and content.
+	 * @return
+	 */
+	public static String getDiskBasedDeploymentBasePath()
+	{
+		return getServerNodeProperty("diskBasedDeploymentBasePath", true, "");
+	}
+
+	
 	public static String getDefaultRepositoryAccessRoles()
 	{
 		return getServerNodeProperty("defaultRepositoryAccessRoles", true, null);

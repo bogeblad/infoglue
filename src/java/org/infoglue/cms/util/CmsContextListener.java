@@ -118,7 +118,13 @@ public final class CmsContextListener implements ServletContextListener
 			System.out.println("Start introspection");
 			ExtensionLoader el = new ExtensionLoader();
 			el.startExtensions();
-						
+
+			if(CmsPropertyHandler.getEnableDiskBasedDeployment())
+			{
+				System.out.println("Starting disk sync area");
+				org.infoglue.cms.filesync.DevelopmentResourcesSyncService.getInstance();
+			}
+			
 			OSCacheUtility.setServletCacheParams(event.getServletContext());
 			
 			CmsPropertyHandler.setStartupTime(new Date()); 

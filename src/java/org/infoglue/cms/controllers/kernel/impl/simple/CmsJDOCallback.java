@@ -90,8 +90,10 @@ import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeVersionImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl;
 import org.infoglue.cms.entities.workflow.impl.simple.WorkflowDefinitionImpl;
 import org.infoglue.cms.exception.Bug;
+import org.infoglue.cms.filesync.DevelopmentResourcesSyncService;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.ChangeNotificationController;
+import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.CmsSessionContextListener;
 import org.infoglue.cms.util.NotificationMessage;
 import org.infoglue.cms.util.RemoteCacheUpdater;
@@ -336,6 +338,8 @@ public class CmsJDOCallback implements CallbackInterceptor
 					   contentVersion.getOwningContent().getContentTypeDefinition().getName().equalsIgnoreCase("PagePartTemplate")))
 					{
 						ComponentController.getController().reIndexComponentContentsDelayed(contentVersion.getOwningContent().getId());
+						if(CmsPropertyHandler.getEnableDiskBasedDeployment())
+							DevelopmentResourcesSyncService.getInstance().writeChangesToDiskDelayed(contentVersion.getId());
 					}
 
 					CacheController.clearCacheForGroup("registryCache", "" + ("org.infoglue.cms.entities.content.ContentVersion_" + getObjectIdentity(object)).hashCode());						
@@ -372,6 +376,8 @@ public class CmsJDOCallback implements CallbackInterceptor
 					   (pagePartTemplateMetaInfoCTDVO != null && contentVO.getContentTypeDefinitionId().equals(pagePartTemplateMetaInfoCTDVO.getId()))))
 					{
 						ComponentController.getController().reIndexComponentContentsDelayed(contentVersion.getContentId());
+						if(CmsPropertyHandler.getEnableDiskBasedDeployment())
+							DevelopmentResourcesSyncService.getInstance().writeChangesToDiskDelayed(contentVersion.getId());
 					}
 
 					CacheController.clearCacheForGroup("registryCache", "" + ("org.infoglue.cms.entities.content.ContentVersion_" + getObjectIdentity(object)).hashCode());
@@ -407,6 +413,8 @@ public class CmsJDOCallback implements CallbackInterceptor
 				clearCache(DigitalAssetImpl.class);
 				//logger.error("We should delete all images with digitalAssetId " + getObjectIdentity(object));
 				DigitalAssetController.deleteCachedDigitalAssets((Integer)getObjectIdentity(object));
+				if(CmsPropertyHandler.getEnableDiskBasedDeployment())
+					DevelopmentResourcesSyncService.getInstance().writeAssetChangesToDiskDelayed((Integer)getObjectIdentity(object));
 			}
 			else if(object.getClass().getName().equals(DigitalAssetImpl.class.getName()))
 			{
@@ -416,6 +424,8 @@ public class CmsJDOCallback implements CallbackInterceptor
 				clearCache(MediumDigitalAssetImpl.class);
 				//logger.error("We should delete all images with digitalAssetId " + getObjectIdentity(object));
 				DigitalAssetController.deleteCachedDigitalAssets((Integer)getObjectIdentity(object));
+				if(CmsPropertyHandler.getEnableDiskBasedDeployment())
+					DevelopmentResourcesSyncService.getInstance().writeAssetChangesToDiskDelayed((Integer)getObjectIdentity(object));
 			}
 			else if(object.getClass().getName().equals(SiteNodeImpl.class.getName()))
 			{
@@ -1304,6 +1314,8 @@ public class CmsJDOCallback implements CallbackInterceptor
 				   contentVersion.getOwningContent().getContentTypeDefinition().getName().equalsIgnoreCase("PagePartTemplate")))
 				{
 					ComponentController.getController().reIndexComponentContentsDelayed(contentVersion.getOwningContent().getId());
+					if(CmsPropertyHandler.getEnableDiskBasedDeployment())
+						DevelopmentResourcesSyncService.getInstance().writeChangesToDiskDelayed(contentVersion.getId());
 				}
 				CacheController.clearCacheForGroup("contentVersionCache", "content_" + contentVersion.getOwningContent().getId());
 
@@ -1327,6 +1339,8 @@ public class CmsJDOCallback implements CallbackInterceptor
 					   (pagePartTemplateMetaInfoCTDVO != null && contentVO.getContentTypeDefinitionId().equals(pagePartTemplateMetaInfoCTDVO.getId()))))
 					{
 						ComponentController.getController().reIndexComponentContentsDelayed(contentVersion.getContentId());
+						if(CmsPropertyHandler.getEnableDiskBasedDeployment())
+							DevelopmentResourcesSyncService.getInstance().writeChangesToDiskDelayed(contentVersion.getId());
 					}
 					CacheController.clearCacheForGroup("contentVersionCache", "content_" + contentVersion.getContentId());
 				}

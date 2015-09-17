@@ -221,7 +221,7 @@ public class ViewPageFilter implements Filter
 	                	logger.info("repositoryVOList:" + repositoryVOList.size());
             
 	            	languageId = getLanguageId(httpRequest, httpSession, repositoryVOList, requestURI, db);
-	            
+	            	
 	                Integer siteNodeId = null;
 	                if(languageId != null)
 	                {
@@ -304,12 +304,15 @@ public class ViewPageFilter implements Filter
 			                    DeliveryContext deliveryContext = DeliveryContext.getDeliveryContext();
 		                    	siteNodeId = NodeDeliveryController.getSiteNodeIdFromPath(db, infoGluePrincipal, repositoryVO, nodeNames, attributeName, deliveryContext, httpSession, languageId);
 			                    
-			                    if(deliveryContext.getLanguageId() != null && !deliveryContext.getLanguageId().equals(languageId))
-			                    {
-			                    	languageId = deliveryContext.getLanguageId();
-			                        httpSession.setAttribute(FilterConstants.LANGUAGE_ID, languageId);
-			                    }
-			                    
+		                    	if(httpRequest.getParameter("languageId") == null)
+		                    	{
+		                    		if(deliveryContext.getLanguageId() != null && !deliveryContext.getLanguageId().equals(languageId))
+				                    {
+				                    	languageId = deliveryContext.getLanguageId();
+				                        httpSession.setAttribute(FilterConstants.LANGUAGE_ID, languageId);
+				                    }
+		                    	}
+		                    	
 			                    if(siteNodeId != null)
 			                        break;
 			                }

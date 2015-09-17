@@ -1849,7 +1849,6 @@ public class NodeDeliveryController extends BaseDeliveryController
 	            logger.info("Returning siteNode:" + siteNodeVO.getName());
 	            return siteNodeVO.getId();
 	        }
-	        
 	        /*
 	        String pathCandidateFromMetaData = null;
 	        if(attributeName.equals("SiteNode.name"))
@@ -1918,16 +1917,36 @@ public class NodeDeliveryController extends BaseDeliveryController
 	                    pathCandidate = siteNodeVO.getName();
 	                else
 	                {
-	                    pathCandidate = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, content.getContentId(), language.getLanguageId(), attributeName, siteNodeVO.getSiteNodeId(), true, deliveryContext, infogluePrincipal, false, true);
+	                	pathCandidate = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, content.getContentId(), language.getLanguageId(), attributeName, siteNodeVO.getSiteNodeId(), false, deliveryContext, infogluePrincipal, false, true);
 	                    
-	                    if((pathCandidate == null || pathCandidate.equals("")) && !attributeName.equals(NAV_TITLE_ATTRIBUTE_NAME))
-	                        pathCandidate = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, content.getContentId(), language.getLanguageId(), NAV_TITLE_ATTRIBUTE_NAME, siteNodeVO.getSiteNodeId(), true, deliveryContext, infogluePrincipal, false, true);
+	    	        	String fallbackAttributeName = CmsPropertyHandler.getNiceURIFallbackAttributeName();
+	                    if((pathCandidate == null || pathCandidate.equals("")))
+	                    {
+		    	        	if(fallbackAttributeName.equals("SiteNode.name"))
+		    	            {
+		    	                pathCandidate = siteNodeVO.getName();
+		    	            }
+		    	        	else
+		    	        	{
+		                        pathCandidate = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, content.getContentId(), language.getLanguageId(), fallbackAttributeName, siteNodeVO.getSiteNodeId(), false, deliveryContext, infogluePrincipal, false, true);
+		    	        	}
+	                    }
+	                    
+		    	        if((pathCandidate == null || pathCandidate.equals("")) && !attributeName.equals(NAV_TITLE_ATTRIBUTE_NAME))
+		    	        	pathCandidate = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, content.getContentId(), language.getLanguageId(), NAV_TITLE_ATTRIBUTE_NAME, siteNodeVO.getSiteNodeId(), false, deliveryContext, infogluePrincipal, false, true);
 	                }
 	                
 	                logger.info(attributeName + " ["+pathCandidate.trim()+"]==[" + path + "]");
 	                if (pathCandidate != null && pathCandidate.toLowerCase().trim().equals(path.toLowerCase())) 
 	                {
-	                    return siteNodeVO.getSiteNodeId();
+	                	if(deliveryContext.getLanguageId() == null || deliveryContext.getLanguageId() == -1)
+	                	{
+	                		LanguageVO languageVO = LanguageDeliveryController.getLanguageDeliveryController().getLanguageIfSiteNodeSupportsIt(db, language.getId(), siteNodeVO.getId());
+	                		if(languageVO != null && languageVO.getId() == language.getId())
+	                			deliveryContext.setLanguageId(language.getId());
+	                	}
+	                	
+	                	return siteNodeVO.getSiteNodeId();
 	                }
 	            }
 	        }
@@ -1973,8 +1992,21 @@ public class NodeDeliveryController extends BaseDeliveryController
         else
         {
 	        pathPart = this.getPageNavigationTitle(db, infogluePrincipal, siteNodeId, languageId, null, META_INFO_BINDING_NAME, attributeName, true, deliveryContext, false);
-	        if((pathPart == null || pathPart.equals("")) && !attributeName.equals(NAV_TITLE_ATTRIBUTE_NAME)) {
-	            pathPart = this.getPageNavigationTitle(db, infogluePrincipal, siteNodeId, languageId, null, META_INFO_BINDING_NAME, NAV_TITLE_ATTRIBUTE_NAME, true, deliveryContext, false);
+	        if((pathPart == null || pathPart.equals(""))) 
+	        {
+	        	String fallbackAttributeName = CmsPropertyHandler.getNiceURIFallbackAttributeName();
+	        	if(fallbackAttributeName.equals("SiteNode.name"))
+	            {
+	                SiteNodeVO siteNode = this.getSiteNodeVO(db, siteNodeId);
+	                pathPart = siteNode.getName();
+	            }
+	        	else
+	        	{
+	        		pathPart = this.getPageNavigationTitle(db, infogluePrincipal, siteNodeId, languageId, null, META_INFO_BINDING_NAME, fallbackAttributeName, true, deliveryContext, false);
+	        	}
+	        	
+		        if((pathPart == null || pathPart.equals("")) && !attributeName.equals(NAV_TITLE_ATTRIBUTE_NAME)) 
+	        		pathPart = this.getPageNavigationTitle(db, infogluePrincipal, siteNodeId, languageId, null, META_INFO_BINDING_NAME, NAV_TITLE_ATTRIBUTE_NAME, true, deliveryContext, false);
 	        }
         }
         

@@ -73,7 +73,18 @@
 						stopClose = false;
 				}, 1000);
 			}
-			
+		}
+		
+		function openHelpUrl(baseUrl, toolbarKey, extraParameters)
+		{
+			#if($this.sendToolbarKeyAsParameter)
+				if(baseUrl.indexOf("?") > -1)
+					window.open(baseUrl + "&toolbarKey=" + window.toolbarKey + "&" + extraParameters);
+				else
+					window.open(baseUrl + "?toolbarKey=" + window.toolbarKey + "&" + extraParameters);
+				#else
+					window.open(baseUrl + "/" + window.toolbarKey + "?" + extraParameters);                 
+				#end
 		}
 		
 		$(function() {

@@ -303,9 +303,10 @@ public class ViewPageFilter implements Filter
 			                    //TODO
 			                    DeliveryContext deliveryContext = DeliveryContext.getDeliveryContext();
 			                    siteNodeId = NodeDeliveryController.getSiteNodeIdFromPath(db, infoGluePrincipal, repositoryVO, nodeNames, attributeName, deliveryContext, httpSession, languageId);
-			                    
-								if(httpRequest.getParameter("languageId") == null)
+			                
+			                if(httpRequest.getParameter("languageId") == null)
 		                    	{
+			                	logger.info("No languageId param - lets set to node language: " + deliveryContext.getLanguageId());
 			                    	if(deliveryContext.getLanguageId() != null && !deliveryContext.getLanguageId().equals(languageId))
 			                    	{
 			                    		languageId = deliveryContext.getLanguageId();

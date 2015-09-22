@@ -78,7 +78,7 @@ public class PageUrlTag extends ComponentLogicTag
 	        url = getController().getPageUrl(siteNodeId, languageId, contentId);
 	    }
 	    if (forceHTTPProtocol || CmsPropertyHandler.getForceHTTPProtocol()) {
-	    	url.replaceFirst("https", "http");
+	    	url = url.replaceFirst("https:", "http:");
 	    }
 	    return url;
 	}

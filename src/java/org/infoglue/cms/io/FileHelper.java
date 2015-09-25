@@ -48,7 +48,6 @@ import java.util.Map;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
@@ -533,12 +532,6 @@ public class FileHelper
       	{
         	ZipEntry entry = (ZipEntry)entries.nextElement();
         	logger.info("entry:" + entry.getName());
-        	
-	        if(entry.isDirectory()) 
-	        {
-	          	(new File(targetFolder + File.separator + entry.getName())).mkdir();
-	          	continue;
-	        }
 	
 	        //System.err.println("Extracting file: " + this.cmsTargetFolder + File.separator + entry.getName());
 	        boolean skip = false;
@@ -554,7 +547,15 @@ public class FileHelper
 	        if(!skip)
 	        {	
 	        	File targetFile = new File(targetFolder + File.separator + entry.getName());
-	        	//targetFile.mkdirs();
+	        	if (entry.isDirectory())
+	        	{
+	        		targetFile.mkdirs();
+	        	}
+	        	else 
+	        	{
+	        		// Sometimes the parent directory does not exist, let's make sure it does.
+	        		targetFile.getParentFile().mkdirs();
+	        	}
 	        	copyInputStream(zipFile.getInputStream(entry), new BufferedOutputStream(new FileOutputStream(targetFile)));
 	        }
 	    }
@@ -589,16 +590,20 @@ public class FileHelper
         	ZipEntry entry = (ZipEntry)entries.nextElement();
         	logger.info("entry:" + entry.getName());
         	
-	        if(entry.isDirectory() && allowedDirectories.contains(entry.getName().replaceFirst("/.*", ""))) 
-	        {
-	          	(new File(targetFolder + File.separator + entry.getName())).mkdir();
-	          	continue;
-	        }
-	
-	        if(allowedDirectories.contains(entry.getName().replaceFirst("/.*", "")))
+	        String simpleName = entry.getName().replaceFirst("/.*", "");	
+	        if(allowedDirectories.contains(simpleName))
 	        {	
 	        	File targetFile = new File(targetFolder + File.separator + entry.getName());
-	        	copyInputStream(zipFile.getInputStream(entry), new BufferedOutputStream(new FileOutputStream(targetFile)));
+	        	if (entry.isDirectory())
+	        	{
+	        		targetFile.mkdirs();
+	        	}
+	        	else 
+	        	{
+	        		// Sometimes the parent directory does not exist, let's make sure it does.
+	        		targetFile.getParentFile().mkdirs();
+	        		copyInputStream(zipFile.getInputStream(entry), new BufferedOutputStream(new FileOutputStream(targetFile)));
+	        	}
 	        }
 	    }
 	

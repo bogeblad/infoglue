@@ -78,6 +78,7 @@ import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.security.InfoGluePrincipal;
+import org.infoglue.cms.util.ChangeNotificationController;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.dom.DOMBuilder;
 import org.infoglue.deliver.util.Timer;
@@ -303,6 +304,7 @@ public class DevelopmentResourcesSyncService implements Runnable
 
 	private void handleContentFileChange(Path path, String relativePath) throws SystemException, Bug, ConstraintException, Exception 
 	{
+		//System.out.println("path:" + path);
 		String repoName = relativePath.replaceFirst("content", "");
 		String[] splitted = repoName.split(""+File.separator);
 		logger.info("splitted 0:" + splitted[0]);
@@ -310,7 +312,7 @@ public class DevelopmentResourcesSyncService implements Runnable
 		logger.info("splitted 2:" + splitted[2]);
 		String repoNameFromPath = splitted[1];
 		logger.info("relativePath:" + relativePath);
-		logger.info("repoName:" + repoName);
+		//System.out.println("repoName:" + repoName);
 		String pathLeft = relativePath.replaceFirst(repoNameFromPath, "");
 		logger.info("pathLeft:" + pathLeft);
 		pathLeft = pathLeft.replaceFirst("content" + File.separator, "");
@@ -327,6 +329,9 @@ public class DevelopmentResourcesSyncService implements Runnable
 		
 		InfoGluePrincipal principal = UserControllerProxy.getController().getUser("Administrator");
 		
+		//System.out.println("repoName:" + repoName);
+		//System.out.println("pathLeft:" + pathLeft);
+
 		ContentVO contentVO = ContentController.getContentController().getContentVOWithPath(repoVO.getId(), pathLeft, true, principal);
 		LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(contentVO.getRepositoryId());
 
@@ -412,57 +417,94 @@ public class DevelopmentResourcesSyncService implements Runnable
 		}
 		else
 		{
-			String fileContent = FileHelper.getFileAsStringOpt(path.toFile(), "utf-8");
-			Map<String, String> attributes = new HashMap<String,String>();
-			String attributeNameFromFile = FilenameUtils.removeExtension(path.getFileName().toString());
-			logger.info("Adding:" + attributeNameFromFile + "=" + fileContent);
-			attributes.put(attributeNameFromFile, fileContent);
-			
-			if(attributes != null && attributes.size() > 0)
+			//System.out.println("path:" + path.toFile().getPath() + ":" + path.toFile().length() + ":" + path.toFile().getParentFile().exists() + ":" + path.toFile().getParentFile().getParentFile().exists() + ":" + path.toFile().getParentFile().getParentFile().getParentFile().exists());
+			String escaped = path.toString().replace(" ", "\\ ");
+			//System.out.println("escaped:" + escaped + ":" + path.toFile().getPath() + ":" + path.toFile().exists());
+			//String fileContentTest = FileHelper.getFileAsStringOpt(new File(escaped), "utf-8");
+			String fileContent = null;
+			try
 			{
-				DOMBuilder domBuilder = new DOMBuilder();
-	
-				Element attributesRoot = null;
-				Document document = null;
-				
-				if (!isNewlyCreatedVersion)
-				{
-					String existingXML = contentVersionVO.getVersionValue();
-					document = domBuilder.getDocument(existingXML);
-					attributesRoot = (Element)document.getRootElement().element("attributes");
-				}
-				else
-				{
-			        document = domBuilder.createDocument();
-			        Element rootElement = domBuilder.addElement(document, "root");
-			        domBuilder.addAttribute(rootElement, "xmlns", "x-schema:Schema.xml");
-			        attributesRoot = domBuilder.addElement(rootElement, "attributes");
-				}
-	
-				if(logger.isDebugEnabled())
-					logger.info("attributesRoot:" + attributesRoot);
-				
-			    Iterator<String> attributesIterator = attributes.keySet().iterator();
-			    while(attributesIterator.hasNext())
-			    {
-			        String attributeName  = attributesIterator.next();
-			        String attributeValue = attributes.get(attributeName);
-			        
-			        //attributeValue = cleanAttributeValue(attributeValue, allowHTMLContent, allowExternalLinks, allowDollarSigns, allowAnchorSigns);
-			        
-			    	Element attribute = attributesRoot.element(attributeName);
-					if (attribute == null)
-					{
-						attribute = domBuilder.addElement(attributesRoot, attributeName);
-					}
-					attribute.clearContent();
-					domBuilder.addCDATAElement(attribute, attributeValue);
-			    }	                
-	
-			    contentVersionVO.setVersionValue(document.asXML());
+				fileContent = FileHelper.getFileAsStringOpt(path.toFile(), "utf-8");
 			}
-			logger.info("Updating template with new version:" + contentVO.getName());
-			ContentVersionControllerProxy.getController().acUpdate(principal, contentVO.getId(), masterLanguageVO.getId(), contentVersionVO);
+			catch(Exception e)
+			{
+				logger.error("Could not read content in UTF-8 (trying iso-8859-1 next): " + e.getMessage());
+				try
+				{
+					fileContent = FileHelper.getFileAsStringOpt(path.toFile(), "iso-8859-1");	
+				}
+				catch(Exception e2)
+				{
+					logger.error("Could not read content in iso-8859-1: " + e2.getMessage());
+				}
+			}
+			
+			if(fileContent != null)
+			{
+				Map<String, String> attributes = new HashMap<String,String>();
+				String attributeNameFromFile = FilenameUtils.removeExtension(path.getFileName().toString());
+				logger.info("Adding:" + attributeNameFromFile + "=" + fileContent);
+				attributes.put(attributeNameFromFile, fileContent);
+				
+				if(attributes != null && attributes.size() > 0)
+				{
+					DOMBuilder domBuilder = new DOMBuilder();
+		
+					Element attributesRoot = null;
+					Document document = null;
+					
+					if (!isNewlyCreatedVersion)
+					{
+						String existingXML = contentVersionVO.getVersionValue();
+						document = domBuilder.getDocument(existingXML);
+						attributesRoot = (Element)document.getRootElement().element("attributes");
+					}
+					else
+					{
+				        document = domBuilder.createDocument();
+				        Element rootElement = domBuilder.addElement(document, "root");
+				        domBuilder.addAttribute(rootElement, "xmlns", "x-schema:Schema.xml");
+				        attributesRoot = domBuilder.addElement(rootElement, "attributes");
+					}
+		
+					if(logger.isDebugEnabled())
+						logger.info("attributesRoot:" + attributesRoot);
+					
+				    Iterator<String> attributesIterator = attributes.keySet().iterator();
+				    while(attributesIterator.hasNext())
+				    {
+				        String attributeName  = attributesIterator.next();
+				        String attributeValue = attributes.get(attributeName);
+				        
+				        //attributeValue = cleanAttributeValue(attributeValue, allowHTMLContent, allowExternalLinks, allowDollarSigns, allowAnchorSigns);
+				        
+				    	Element attribute = attributesRoot.element(attributeName);
+						if (attribute == null)
+						{
+							attribute = domBuilder.addElement(attributesRoot, attributeName);
+						}
+						attribute.clearContent();
+						domBuilder.addCDATAElement(attribute, attributeValue);
+				    }	                
+		
+				    contentVersionVO.setVersionValue(document.asXML());
+				}
+				//System.out.println("Updating template with new version:" + contentVO.getName());
+				ContentVersionControllerProxy.getController().acUpdate(principal, contentVO.getId(), masterLanguageVO.getId(), contentVersionVO);
+
+				try
+		        {
+		        	if(CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms"))
+		        		ChangeNotificationController.getInstance().notifyListeners();
+		        }
+		        catch(Exception e)
+		        {
+		        	logger.error("Error notifying listener " + e.getMessage());
+		        	logger.warn("Error notifying listener " + e.getMessage(), e);
+		        }
+			}
+			else
+				logger.error("Skipped updating due to error");
 		}
 	}
 
@@ -678,6 +720,7 @@ public class DevelopmentResourcesSyncService implements Runnable
 			    		}
 			    		logger.info("FullPath: " + path + File.separator + addition);
 			    		File file = new File(path + File.separator + addition);
+			    		file.getParentFile().mkdirs();
 			    		FileHelper.writeToFile(file, attributeValue, false);
 		    		}
 		    	}

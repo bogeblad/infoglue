@@ -1512,26 +1512,28 @@ public class NodeDeliveryController extends BaseDeliveryController
 	/**
 	 * This method returns a url to the given page. The url is composed of siteNode, language and content
 	 */
-
 	public String getPageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception
 	{
 		String pageUrl = "";
+		
+		return getPageUrl(db, infoGluePrincipal, siteNodeId, languageId, true, contentId, deliveryContext); 
+	}
+	public String getPageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception
+	{
+		String pageUrl = "";
 
-		pageUrl = urlComposer.composePageUrl(db, infoGluePrincipal, siteNodeId, languageId, contentId, deliveryContext); 
+		pageUrl = urlComposer.composePageUrl(db, infoGluePrincipal, siteNodeId, languageId, includeLanguageId, contentId, deliveryContext); 
 		
 		return pageUrl;
 	}
 
-
 	public String getPageUrlAfterLanguageChange(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception
     {
-		/*
-	    SiteNode siteNode = getSiteNode(db, siteNodeId);
-		String dnsName = CmsPropertyHandler.getWebServerAddress();
-		if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
-			dnsName = siteNode.getRepository().getDnsName();
-		*/
         return urlComposer.composePageUrlAfterLanguageChange(db, infoGluePrincipal, siteNodeId, languageId, contentId, deliveryContext);
+    } 
+	public String getPageUrlAfterLanguageChange(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Boolean includeLanguageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception
+    {
+        return urlComposer.composePageUrlAfterLanguageChange(db, infoGluePrincipal, siteNodeId, languageId, includeLanguageId, contentId, deliveryContext);
     } 
 	
 	public String getPageAsDigitalAssetUrl(Database database, InfoGluePrincipal principal, Integer siteNodeId, Integer languageId, Integer contentId, DeliveryContext context, String fileSuffix, boolean cacheUrl) throws SystemException

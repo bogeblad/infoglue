@@ -1121,7 +1121,7 @@ public interface TemplateController
     /**
      * This method deliveres a new url pointing to the same address as now but with new parameters.
      */
-    public abstract String getPageUrl(Integer siteNodeId, Integer languageId,
+    public abstract String getPageUrl(Integer siteNodeId, Integer languageId, boolean includeLanguageId,
             Integer contentId);
 
     /**
@@ -1167,7 +1167,11 @@ public interface TemplateController
      * corresponding to the code sent in.
      */
     public abstract String getPageUrlAfterLanguageChange(String languageCode);
-
+    
+    /**
+     *	Same as above but with a boolean if you dont want lanagueId to be added
+     */
+    public abstract String getPageUrlAfterLanguageChange(String languageCode, Boolean includeLanguagId);
     /**
      * This method deliveres a String with the Navigation title the page the user are on has.
      * The navigation-title is fetched from the meta-info-content bound to the site node.

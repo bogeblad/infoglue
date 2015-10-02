@@ -39,7 +39,8 @@ public class PageUrlTag extends ComponentLogicTag
 	private boolean useRepositoryInheritance = true;
     private boolean useStructureInheritance = true;
     private boolean forceHTTPProtocol = false;
-    		
+    private boolean includeLanguageId = true;
+    	
 	private Integer siteNodeId;
 	private Integer languageId;
 	private Integer contentId = new Integer(-1);
@@ -73,9 +74,9 @@ public class PageUrlTag extends ComponentLogicTag
 	        this.languageId = getController().getLanguageId();
 	    String url = "";
 	    if(this.propertyName != null) {
-	        url = getComponentLogic().getPageUrl(propertyName, contentId, languageId, useInheritance, useRepositoryInheritance, useStructureInheritance);
+	        url = getComponentLogic().getPageUrl(propertyName, contentId, languageId, includeLanguageId, useInheritance, useRepositoryInheritance, useStructureInheritance);
 	    } else {
-	        url = getController().getPageUrl(siteNodeId, languageId, contentId);
+	        url = getController().getPageUrl(siteNodeId, languageId, includeLanguageId, contentId);
 	    }
 	    if (forceHTTPProtocol || CmsPropertyHandler.getForceHTTPProtocol()) {
 	    	url = url.replaceFirst("https:", "http:");
@@ -126,5 +127,10 @@ public class PageUrlTag extends ComponentLogicTag
     public void setExtraParameters(String extraParameters)
     {
         this.extraParameters = extraParameters;
+    }
+    
+	public void setIncludeLanguageId(final String languageCode, final String includeLanguageId) throws JspException
+    {
+        this.includeLanguageId = evaluateBoolean("pageUrlAfterLanguageChange", "includeLanguageId", includeLanguageId);
     }
 }

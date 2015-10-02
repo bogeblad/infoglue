@@ -31,15 +31,25 @@ public class PageUrlAfterLanguageChangeTag extends TemplateControllerTag
 	private static final long serialVersionUID = 4050485595074016051L;
 	
 	private String languageCode;
-	
+	private Boolean includeLanguageId = true;
     public int doEndTag() throws JspException
     {
-        produceResult(this.getController().getPageUrlAfterLanguageChange(languageCode));
+
+    	if (includeLanguageId != null && !includeLanguageId) {
+    		produceResult(this.getController().getPageUrlAfterLanguageChange(languageCode));
+    	} else {
+    		produceResult(this.getController().getPageUrlAfterLanguageChange(languageCode, includeLanguageId));
+    	}
         return EVAL_PAGE;
     }
 
 	public void setLanguageCode(final String languageCode) throws JspException
     {
-        this.languageCode = evaluateString("pageUrl", "languageCode", languageCode);
+        this.languageCode = evaluateString("pageUrlAfterLanguageChange", "languageCode", languageCode);
+    }
+	
+	public void setIncludeLanguageId(final String languageCode, final String includeLanguageId) throws JspException
+    {
+        this.includeLanguageId = evaluateBoolean("pageUrlAfterLanguageChange", "includeLanguageId", includeLanguageId);
     }
 }

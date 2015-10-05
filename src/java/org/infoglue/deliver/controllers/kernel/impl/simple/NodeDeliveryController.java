@@ -1533,6 +1533,8 @@ public class NodeDeliveryController extends BaseDeliveryController
     } 
 	public String getPageUrlAfterLanguageChange(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Boolean includeLanguageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception
     {
+	
+		logger.fatal("77777includeLanguageId" + includeLanguageId);
         return urlComposer.composePageUrlAfterLanguageChange(db, infoGluePrincipal, siteNodeId, languageId, includeLanguageId, contentId, deliveryContext);
     } 
 	

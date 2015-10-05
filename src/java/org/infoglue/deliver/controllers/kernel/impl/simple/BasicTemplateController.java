@@ -5867,6 +5867,7 @@ public class BasicTemplateController implements TemplateController
 		
 		try
 		{
+			logger.debug("pageUrl values: Database=" + getDatabase() + " principal=" + this.getPrincipal() + " siteNodeId=" + this.siteNodeId + " languageId=" + this.languageId + " contentId=" + this.contentId + " deliveryContext=" + this.deliveryContext);
 			pageUrl = this.nodeDeliveryController.getPageUrl(getDatabase(), this.getPrincipal(), this.siteNodeId, this.languageId, this.contentId, this.deliveryContext);
 		}
 		catch(Exception e)

@@ -34,7 +34,7 @@ public class PageUrlAfterLanguageChangeTag extends TemplateControllerTag
 	private Boolean includeLanguageId = true;
     public int doEndTag() throws JspException
     {
-
+    
     	if (includeLanguageId != null && !includeLanguageId) {
     		produceResult(this.getController().getPageUrlAfterLanguageChange(languageCode));
     	} else {
@@ -48,7 +48,7 @@ public class PageUrlAfterLanguageChangeTag extends TemplateControllerTag
         this.languageCode = evaluateString("pageUrlAfterLanguageChange", "languageCode", languageCode);
     }
 	
-	public void setIncludeLanguageId(final String languageCode, final String includeLanguageId) throws JspException
+	public void setIncludeLanguageId(final String includeLanguageId) throws JspException
     {
         this.includeLanguageId = evaluateBoolean("pageUrlAfterLanguageChange", "includeLanguageId", includeLanguageId);
     }

@@ -79,7 +79,7 @@
         <name>pageUrlAfterLanguageChange</name>
         <tagclass>org.infoglue.deliver.taglib.structure.PageUrlAfterLanguageChangeTag</tagclass>
         <bodycontent>empty</bodycontent>
-        <info>TemplateController.getPageUrlAfterLanguageChange(String languageCode)</info>
+        <info>TemplateController.getPageUrlAfterLanguageChange(String languageCode, String includeLanguageId)</info>
         <attribute>
     	    <name>id</name>
         	<required>false</required>

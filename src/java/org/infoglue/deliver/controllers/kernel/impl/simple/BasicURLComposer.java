@@ -356,14 +356,6 @@ public class BasicURLComposer extends URLComposer
 		return host;
 	}
 				  
-	public String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception {
-		return null;
-	}
-
-	@Override
-	public String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, String applicationContext, DeliveryContext deliveryContext) throws SystemException, Exception {
-		return null;
-	}
 	
 	public String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception
 	{
@@ -373,6 +365,12 @@ public class BasicURLComposer extends URLComposer
 	/**
 	 * If the <em>infoGluePrincipal</em> argument is null the anonymous principal will be used.
 	 */
+	public String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, String applicationContext, DeliveryContext deliveryContext) throws SystemException, Exception {
+		return composePageUrl(db, infoGluePrincipal, siteNodeId, languageId, true, contentId, applicationContext, deliveryContext);
+	}
+	public String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception {
+		return 	 composePageUrl(db, infoGluePrincipal, siteNodeId, languageId, includeLanguageId, contentId, CmsPropertyHandler.getServletContext(), deliveryContext);
+	}
     public String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId, String applicationContext, DeliveryContext deliveryContext) throws SystemException, Exception
     {
     	String url = null;

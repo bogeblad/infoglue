@@ -64,6 +64,7 @@ public class PageUrlTag extends ComponentLogicTag
         this.siteNodeId = null;
         this.contentId = null;
         this.extraParameters = null;
+        this.includeLanguageId = true;
         
         return EVAL_PAGE;
     }
@@ -129,7 +130,7 @@ public class PageUrlTag extends ComponentLogicTag
         this.extraParameters = extraParameters;
     }
     
-	public void setIncludeLanguageId(final String languageCode, final String includeLanguageId) throws JspException
+	public void setIncludeLanguageId(final String includeLanguageId) throws JspException
     {
         this.includeLanguageId = evaluateBoolean("pageUrlAfterLanguageChange", "includeLanguageId", includeLanguageId);
     }

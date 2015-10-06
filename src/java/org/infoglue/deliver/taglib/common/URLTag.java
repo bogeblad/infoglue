@@ -398,7 +398,7 @@ public class URLTag extends TemplateControllerTag
 	/**
 	 * Sets wether to include languageId in the url .
 	 * 
-	 * @param includeLanguageId the base url to use.
+	 * @param includeLanguageId.
 	 * @throws JspException if an error occurs while evaluating base includeLanguageId parameter.
 	 */
 	public void setIncludeLanguageId(final String includeLanguageId) throws JspException

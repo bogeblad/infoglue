@@ -38,10 +38,10 @@ public class PageUrlAfterLanguageChangeTag extends TemplateControllerTag
     {
     	logger.fatal("222includeLanguageId" + includeLanguageId);
     	if (includeLanguageId != null && !includeLanguageId) {
-    		produceResult(this.getController().getPageUrlAfterLanguageChange(languageCode));
+    		produceResult(this.getController().getPageUrlAfterLanguageChange(languageCode, includeLanguageId));
     	} else {
     		logger.fatal("222includeLanguageId" + includeLanguageId);
-    		produceResult(this.getController().getPageUrlAfterLanguageChange(languageCode, includeLanguageId));
+    		produceResult(this.getController().getPageUrlAfterLanguageChange(languageCode));
     	}
         return EVAL_PAGE;
     }

@@ -872,15 +872,19 @@ public class RepositoryController extends BaseController
 		boolean hasAccess = false;
     	
 	    if(isBindingDialog)
+	    {
 	        hasAccess = (AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Read", repositoryId.toString()) || AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.ReadForBinding", repositoryId.toString()));
+		}
 	    else if(allowIfWriteAccess)
-	        hasAccess = (AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Read", repositoryId.toString()) || AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Write", repositoryId.toString())); 
+	    {
+	    	hasAccess = (AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Read", repositoryId.toString()) || AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Write", repositoryId.toString())); 
+		}
 	    else
 	    {
 	    	boolean showRepositoriesByDefaultIfNoAccessRightsAreDefined = CmsPropertyHandler.getShowRepositoriesByDefaultIfNoAccessRightsAreDefined();
 	    	hasAccess = AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Read", repositoryId.toString(), showRepositoriesByDefaultIfNoAccessRightsAreDefined); 
-	    }
-	    
+		}
+
 	    return hasAccess;
 	}	
 

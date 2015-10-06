@@ -1926,6 +1926,9 @@ public class RegistryController extends BaseController
     {
         List<ReferenceBean> referenceBeanList = new ArrayList<ReferenceBean>();
 
+        if(contentId == null)
+        	return referenceBeanList;
+        
         Map entries = new HashMap();
 		
         Map<String,Boolean> checkedLanguageVersions = new HashMap<String,Boolean>();

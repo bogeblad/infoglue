@@ -1849,44 +1849,6 @@ public class NodeDeliveryController extends BaseDeliveryController
 	            logger.info("Returning siteNode:" + siteNodeVO.getName());
 	            return siteNodeVO.getId();
 	        }
-	        /*
-	        String pathCandidateFromMetaData = null;
-	        if(attributeName.equals("SiteNode.name"))
-	        {
-	        	pathCandidateFromMetaData = siteNodeVO.getName();
-            }
-	        else
-	        {
-	        	//System.out.println("languages:" + languages.size());
-	        	for (int i=0;i<languages.size();i++) 
-	            {
-	                LanguageVO language = (LanguageVO) languages.get(i);
-	                //System.out.println("language:" + language.getName());
-	                
-		        	String metaAttributeKey = "" + siteNodeVO.getId() + "_" + language.getId() + "_" + attributeName;
-		        	pathCandidateFromMetaData = (String)CacheController.getCachedObjectFromAdvancedCache("metaInfoContentAttributeCache", metaAttributeKey);
-		        	//System.out.println("pathCandidateFromMetaData:" + pathCandidateFromMetaData + " on " + metaAttributeKey);
-		        	if((pathCandidateFromMetaData == null || pathCandidateFromMetaData.equals("")) && !attributeName.equals(NAV_TITLE_ATTRIBUTE_NAME))
-		        	{
-		    			metaAttributeKey = "" + siteNodeVO.getId() + "_" + language.getId() + "_" + NAV_TITLE_ATTRIBUTE_NAME;
-		    			pathCandidateFromMetaData = (String)CacheController.getCachedObjectFromAdvancedCache("metaInfoContentAttributeCache", metaAttributeKey);
-		    			//System.out.println("pathCandidateFromMetaData2:" + pathCandidateFromMetaData + " on " + metaAttributeKey);
-		        	}
-		        	
-		        	if(pathCandidateFromMetaData != null)
-		        		break;
-	            }
-	        }
-	        
-	        //System.out.println(attributeName + " ["+pathCandidateFromMetaData.trim()+"]==[" + path + "]");
-	        logger.info(attributeName + " ["+pathCandidateFromMetaData.trim()+"]==[" + path + "]");
-            if (pathCandidateFromMetaData != null && pathCandidateFromMetaData.toLowerCase().trim().equals(path.toLowerCase())) 
-            {
-            	//System.out.println("Found cached meta data");
-            	return siteNodeVO.getSiteNodeId();
-            }
-	       	*/
-
             
 	        logger.info("Continued with siteNode: " + siteNodeVO.getName());
 	        
@@ -3030,7 +2992,14 @@ public class NodeDeliveryController extends BaseDeliveryController
 								
 								if(localizedSortOrder != null && !localizedSortOrder.equals(""))
 								{
-									siteNode.getValueObject().setLocalizedSortOrder(new Integer(localizedSortOrder));
+									try
+									{
+										siteNode.getValueObject().setLocalizedSortOrder(new Integer(localizedSortOrder));										
+									}
+									catch(Exception e)
+									{
+										logger.warn("The sitenode " + siteNode.getName() + " (ID: " + siteNode.getId() + ") had a bad localizedSortOrder:" + localizedSortOrder + ". Error:" + e.getMessage());
+									}
 								}
 							}
 						}

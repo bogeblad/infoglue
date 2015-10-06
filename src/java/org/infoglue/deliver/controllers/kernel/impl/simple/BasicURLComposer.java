@@ -1011,7 +1011,7 @@ public class BasicURLComposer extends URLComposer
 			if(enableNiceURIForLanguageForRepo != null && enableNiceURIForLanguageForRepo.equals("true"))
 				enableNiceURIForLanguage = enableNiceURIForLanguageForRepo;
 	    }
-	    System.out.println("3333includeLanguageId" + includeLangaugeId);
+	    
         if(enableNiceURI.equalsIgnoreCase("true") && !deliveryContext.getDisableNiceUri() && !enableNiceURIForLanguage.equalsIgnoreCase("true") && includeLangaugeId)
         {
             if (pageUrl.indexOf("?") == -1) 

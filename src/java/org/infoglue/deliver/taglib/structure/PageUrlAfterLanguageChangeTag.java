@@ -36,11 +36,10 @@ public class PageUrlAfterLanguageChangeTag extends TemplateControllerTag
 	private Boolean includeLanguageId;
     public int doEndTag() throws JspException
     {
-    	logger.fatal("222includeLanguageId" + includeLanguageId);
     	if (includeLanguageId != null && !includeLanguageId) {
     		produceResult(this.getController().getPageUrlAfterLanguageChange(languageCode, includeLanguageId));
     	} else {
-    		logger.fatal("222includeLanguageId" + includeLanguageId);
+    		
     		produceResult(this.getController().getPageUrlAfterLanguageChange(languageCode));
     	}
         return EVAL_PAGE;

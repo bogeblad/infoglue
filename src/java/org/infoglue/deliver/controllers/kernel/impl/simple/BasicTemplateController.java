@@ -6104,7 +6104,6 @@ public class BasicTemplateController implements TemplateController
 	{
 		String pageUrl = "";
 
-		logger.fatal("222includeLanguageId" + includeLanguageId);
 		try
 		{
 			LanguageVO languageVO = LanguageDeliveryController.getLanguageDeliveryController().getLanguageWithCode(getDatabase(), languageCode);		

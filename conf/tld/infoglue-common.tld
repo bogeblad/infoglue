@@ -188,6 +188,11 @@
 	    	<required>false</required>
 	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
+		<attribute>
+		    <name>includeLanguageId</name>
+	    	<required>false</required>
+	        <rtexprvalue>true</rtexprvalue>
+		</attribute>
 	    <attribute>
 		    <name>disableNiceURI</name>
 	    	<required>false</required>

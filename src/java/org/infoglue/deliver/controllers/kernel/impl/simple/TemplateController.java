@@ -1096,7 +1096,12 @@ public interface TemplateController
      * corresponding to the code sent in.
      */
     public abstract String getCurrentPageUrl();
-
+    
+    /**
+     * Same as above but with includeLanguageId flag
+     */
+    public abstract String getCurrentPageUrl(Boolean includeLanguageId);
+    
 	/**
 	 * This method returns the exact full url excluding query string from the original request - not modified
 	 * @return

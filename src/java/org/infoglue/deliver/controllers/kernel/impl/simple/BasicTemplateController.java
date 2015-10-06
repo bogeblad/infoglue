@@ -5854,20 +5854,26 @@ public class BasicTemplateController implements TemplateController
 				
 		return pageUrl;
 	}
-
-
 	/**
 	 * This method deliveres a new url pointing to the same address as now but in the language 
-	 * corresponding to the code sent in.
+	 * corresponding to the code sent in. Addition default includeLanguageId value.
+	 */
+	public String getCurrentPageUrl() 
+	{
+		return getCurrentPageUrl(true);
+	}
+	/**
+	 * This method deliveres a new url pointing to the same address as now but in the language 
+	 * corresponding to the code sent in but with 
 	 */
 	 
-	public String getCurrentPageUrl() 
+	public String getCurrentPageUrl(boolean includeLanguageId) 
 	{
 		String pageUrl = "";
 		logger.debug("pageUrl values:principal=" + this.getPrincipal() + " siteNodeId=" + this.siteNodeId + " languageId=" + this.languageId + " contentId=" + this.contentId + " deliveryContext=" + this.deliveryContext);
 		try
 		{
-			pageUrl = this.nodeDeliveryController.getPageUrl(getDatabase(), this.getPrincipal(), this.siteNodeId, this.languageId, this.contentId, this.deliveryContext);
+			pageUrl = this.nodeDeliveryController.getPageUrl(getDatabase(), this.getPrincipal(), this.siteNodeId, this.languageId, includeLanguageId, this.contentId, this.deliveryContext);
 		}
 		catch(Exception e)
 		{

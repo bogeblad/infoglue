@@ -1011,6 +1011,7 @@ public class BasicURLComposer extends URLComposer
 			if(enableNiceURIForLanguageForRepo != null && enableNiceURIForLanguageForRepo.equals("true"))
 				enableNiceURIForLanguage = enableNiceURIForLanguageForRepo;
 	    }
+	    System.out.println("DOOOORAPAGEURL BEFORE:" + pageUrl);
 	    System.out.println("DOOOORA:" + includeLangaugeId);
         if(enableNiceURI.equalsIgnoreCase("true") && !deliveryContext.getDisableNiceUri() && !enableNiceURIForLanguage.equalsIgnoreCase("true") && includeLangaugeId)
         {
@@ -1024,7 +1025,7 @@ public class BasicURLComposer extends URLComposer
 	        		pageUrl += getRequestArgumentDelimiter() + "languageId=" + String.valueOf(languageId);
 	        }
         }
-        
+        System.out.println("DOOOORAPAGEURL AFTER:" + pageUrl);
         return pageUrl;
     }
 

@@ -1013,7 +1013,7 @@ public class BasicURLComposer extends URLComposer
 				enableNiceURIForLanguage = enableNiceURIForLanguageForRepo;
 	    }
 	    System.out.println("DOOOORAPAGEURL BEFORE:" + pageUrl);
-	    System.out.println("DOOOORA:" + includeLangaugeId);
+
         if(enableNiceURI.equalsIgnoreCase("true") && !deliveryContext.getDisableNiceUri() && !enableNiceURIForLanguage.equalsIgnoreCase("true") && includeLangaugeId)
         {
             if (pageUrl.indexOf("?") == -1) 

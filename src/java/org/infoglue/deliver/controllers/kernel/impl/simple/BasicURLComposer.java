@@ -991,8 +991,9 @@ public class BasicURLComposer extends URLComposer
     
     public String composePageUrlAfterLanguageChange(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Boolean includeLangaugeId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception
     {
-        String pageUrl = composePageUrl(db, infoGluePrincipal, siteNodeId, languageId, contentId, deliveryContext);
-
+    
+        String pageUrl = composePageUrl(db, infoGluePrincipal, siteNodeId, languageId, includeLangaugeId, contentId, deliveryContext);
+    	
         String enableNiceURI = CmsPropertyHandler.getEnableNiceURI();
         if(enableNiceURI == null || enableNiceURI.equalsIgnoreCase(""))
         	enableNiceURI = "false";
@@ -1025,6 +1026,7 @@ public class BasicURLComposer extends URLComposer
 	        		pageUrl += getRequestArgumentDelimiter() + "languageId=" + String.valueOf(languageId);
 	        }
         }
+
         System.out.println("DOOOORAPAGEURL AFTER:" + pageUrl);
         return pageUrl;
     }

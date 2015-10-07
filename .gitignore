@@ -6,3 +6,4 @@ build.properties
 .gitignore
 .project/build.properties
 /.gitignore
+.classpath

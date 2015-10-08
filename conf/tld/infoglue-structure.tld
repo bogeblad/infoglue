@@ -68,13 +68,18 @@
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
+        <attribute>
+    	    <name>includeLanguageId</name>
+        	<required>false</required>
+	        <rtexprvalue>true</rtexprvalue>
+    	</attribute>
     </tag>
     
 	<tag>
         <name>pageUrlAfterLanguageChange</name>
         <tagclass>org.infoglue.deliver.taglib.structure.PageUrlAfterLanguageChangeTag</tagclass>
         <bodycontent>empty</bodycontent>
-        <info>TemplateController.getPageUrlAfterLanguageChange(String languageCode)</info>
+        <info>TemplateController.getPageUrlAfterLanguageChange(String languageCode, String includeLanguageId)</info>
         <attribute>
     	    <name>id</name>
         	<required>false</required>
@@ -83,6 +88,11 @@
         <attribute>
     	    <name>languageCode</name>
         	<required>true</required>
+	        <rtexprvalue>true</rtexprvalue>
+    	</attribute>
+    	<attribute>
+    	    <name>includeLanguageId</name>
+        	<required>false</required>
 	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
     </tag>

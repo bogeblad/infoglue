@@ -79,6 +79,11 @@ public class URLTag extends TemplateControllerTag
 	/**
 	 * Determine if you want to replace https with http
 	 * */
+	private boolean includeLanguageId = true;
+	
+	/**
+	 * Determine if you want to replace https with http
+	 * */
 	private boolean forceHTTPProtocol = false;
 	/**
 	 * The parameters to use when constructing the url.
@@ -141,6 +146,7 @@ public class URLTag extends TemplateControllerTag
 		this.query = null;
 		this.excludedQueryStringParameters = null;
 		this.fullBaseUrl = false;
+		this.includeLanguageId = true;
 		this.parameters = null;
 		this.parameterNames = null;
 		this.disableNiceURI = false;
@@ -208,7 +214,7 @@ public class URLTag extends TemplateControllerTag
 	            else
 	                base = getRequest().getRequestURL().substring(0);
 	            
-	            String currentPageUrl = this.getController().getCurrentPageUrl();
+	            String currentPageUrl = this.getController().getCurrentPageUrl(includeLanguageId);
 	            
 	            if(currentPageUrl != null)
 	            {
@@ -234,7 +240,7 @@ public class URLTag extends TemplateControllerTag
 	        }
 		    else
 		    {
-		        String currentPageUrl = this.getController().getCurrentPageUrl();
+		        String currentPageUrl = this.getController().getCurrentPageUrl(includeLanguageId);
 		        
 		        if(currentPageUrl != null)
 	            {
@@ -389,6 +395,17 @@ public class URLTag extends TemplateControllerTag
         this.fullBaseUrl = fullBaseUrl;
     }
     
+	/**
+	 * Sets wether to include languageId in the url .
+	 * 
+	 * @param includeLanguageId.
+	 * @throws JspException if an error occurs while evaluating base includeLanguageId parameter.
+	 */
+	public void setIncludeLanguageId(final String includeLanguageId) throws JspException
+	{
+		this.includeLanguageId = evaluateBoolean("url", "includeLanguageId", includeLanguageId);
+	}
+	
 	public void setForceHTTPProtocol(final String forceHTTPProtocol) throws JspException
     {
         this.forceHTTPProtocol = evaluateBoolean("url", "forceHTTPProtocol", forceHTTPProtocol);

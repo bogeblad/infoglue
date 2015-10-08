@@ -355,16 +355,23 @@ public class BasicURLComposer extends URLComposer
 		}
 		return host;
 	}
-
+				  
+	
 	public String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception
 	{
-		return composePageUrl(db, infoGluePrincipal, siteNodeId, languageId, contentId, CmsPropertyHandler.getServletContext(), deliveryContext);
+		return composePageUrl(db, infoGluePrincipal, siteNodeId, languageId, true, contentId, CmsPropertyHandler.getServletContext(), deliveryContext);
 	}
 
 	/**
 	 * If the <em>infoGluePrincipal</em> argument is null the anonymous principal will be used.
 	 */
-    public String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, String applicationContext, DeliveryContext deliveryContext) throws SystemException, Exception
+	public String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, String applicationContext, DeliveryContext deliveryContext) throws SystemException, Exception {
+		return composePageUrl(db, infoGluePrincipal, siteNodeId, languageId, true, contentId, applicationContext, deliveryContext);
+	}
+	public String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception {
+		return 	 composePageUrl(db, infoGluePrincipal, siteNodeId, languageId, includeLanguageId, contentId, CmsPropertyHandler.getServletContext(), deliveryContext);
+	}
+    public String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId, String applicationContext, DeliveryContext deliveryContext) throws SystemException, Exception
     {
     	String url = null;
 
@@ -753,7 +760,7 @@ public class BasicURLComposer extends URLComposer
 					}
 	            }
 
-	            if(!enableNiceURIForLanguage.equalsIgnoreCase("true"))
+	            if(!enableNiceURIForLanguage.equalsIgnoreCase("true") && includeLanguageId)
 	            {
 		            if (languageId != null && languageId.intValue() != -1 && deliveryContext.getLanguageId().intValue() != languageId.intValue())
 		            {
@@ -979,8 +986,14 @@ public class BasicURLComposer extends URLComposer
     
     public String composePageUrlAfterLanguageChange(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception
     {
-        String pageUrl = composePageUrl(db, infoGluePrincipal, siteNodeId, languageId, contentId, deliveryContext);
-
+    	return composePageUrlAfterLanguageChange(db, infoGluePrincipal, siteNodeId, languageId, true, contentId, deliveryContext);
+    }
+    
+    public String composePageUrlAfterLanguageChange(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Boolean includeLangaugeId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception
+    {
+    
+        String pageUrl = composePageUrl(db, infoGluePrincipal, siteNodeId, languageId, includeLangaugeId, contentId, deliveryContext);
+    	
         String enableNiceURI = CmsPropertyHandler.getEnableNiceURI();
         if(enableNiceURI == null || enableNiceURI.equalsIgnoreCase(""))
         	enableNiceURI = "false";
@@ -1000,7 +1013,7 @@ public class BasicURLComposer extends URLComposer
 				enableNiceURIForLanguage = enableNiceURIForLanguageForRepo;
 	    }
 
-        if(enableNiceURI.equalsIgnoreCase("true") && !deliveryContext.getDisableNiceUri() && !enableNiceURIForLanguage.equalsIgnoreCase("true"))
+        if(enableNiceURI.equalsIgnoreCase("true") && !deliveryContext.getDisableNiceUri() && !enableNiceURIForLanguage.equalsIgnoreCase("true") && includeLangaugeId)
         {
             if (pageUrl.indexOf("?") == -1) 
 	        {
@@ -1012,7 +1025,7 @@ public class BasicURLComposer extends URLComposer
 	        		pageUrl += getRequestArgumentDelimiter() + "languageId=" + String.valueOf(languageId);
 	        }
         }
-        
+
         return pageUrl;
     }
 

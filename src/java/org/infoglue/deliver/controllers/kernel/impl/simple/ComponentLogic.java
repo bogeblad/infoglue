@@ -1283,7 +1283,7 @@ public class ComponentLogic
 	}
 	
 	public String getPageUrl(String propertyName, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance) {
-		return getPageUrl(propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
+		return getPageUrl(propertyName, true, useInheritance, useRepositoryInheritance, useStructureInheritance);
 	}
 	public String getPageUrl(String propertyName, boolean includeLanguageId, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance)
 	{

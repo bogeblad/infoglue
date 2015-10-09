@@ -1098,7 +1098,8 @@ public interface TemplateController
     public abstract String getCurrentPageUrl();
     
     /**
-     * Same as above but with includeLanguageId flag
+     * This method deliveres a new url pointing to the same address as now but in the language 
+     * corresponding to the code sent in with the flag that skips adding languageId parameter to the url.
      */
     public abstract String getCurrentPageUrl(boolean includeLanguageId);
     
@@ -1174,9 +1175,10 @@ public interface TemplateController
     public abstract String getPageUrlAfterLanguageChange(String languageCode);
     
     /**
-     *	Same as above but with a boolean if you dont want lanagueId to be added
+     *	Same as above but with a boolean if you dont want languageId to be added
      */
     public abstract String getPageUrlAfterLanguageChange(String languageCode, Boolean includeLanguagId);
+    
     /**
      * This method deliveres a String with the Navigation title the page the user are on has.
      * The navigation-title is fetched from the meta-info-content bound to the site node.

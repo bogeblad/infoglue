@@ -5856,7 +5856,7 @@ public class BasicTemplateController implements TemplateController
 	}
 	/**
 	 * This method deliveres a new url pointing to the same address as now but in the language 
-	 * corresponding to the code sent in. Addition default includeLanguageId value.
+	 * corresponding to the code sent in. 
 	 */
 	public String getCurrentPageUrl() 
 	{
@@ -5866,7 +5866,6 @@ public class BasicTemplateController implements TemplateController
 	 * This method deliveres a new url pointing to the same address as now but in the language 
 	 * corresponding to the code sent in but with 
 	 */
-	 
 	public String getCurrentPageUrl(boolean includeLanguageId) 
 	{
 		String pageUrl = "";
@@ -8861,4 +8860,6 @@ public class BasicTemplateController implements TemplateController
 		}
 		return value;
 	}
+
+
 }

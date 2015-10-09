@@ -989,10 +989,10 @@ public class BasicURLComposer extends URLComposer
     	return composePageUrlAfterLanguageChange(db, infoGluePrincipal, siteNodeId, languageId, true, contentId, deliveryContext);
     }
     
-    public String composePageUrlAfterLanguageChange(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Boolean includeLangaugeId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception
+    public String composePageUrlAfterLanguageChange(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Boolean includeLanguageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception
     {
     
-        String pageUrl = composePageUrl(db, infoGluePrincipal, siteNodeId, languageId, includeLangaugeId, contentId, deliveryContext);
+        String pageUrl = composePageUrl(db, infoGluePrincipal, siteNodeId, languageId, includeLanguageId, contentId, deliveryContext);
     	
         String enableNiceURI = CmsPropertyHandler.getEnableNiceURI();
         if(enableNiceURI == null || enableNiceURI.equalsIgnoreCase(""))
@@ -1013,7 +1013,7 @@ public class BasicURLComposer extends URLComposer
 				enableNiceURIForLanguage = enableNiceURIForLanguageForRepo;
 	    }
 
-        if(enableNiceURI.equalsIgnoreCase("true") && !deliveryContext.getDisableNiceUri() && !enableNiceURIForLanguage.equalsIgnoreCase("true") && includeLangaugeId)
+        if(enableNiceURI.equalsIgnoreCase("true") && !deliveryContext.getDisableNiceUri() && !enableNiceURIForLanguage.equalsIgnoreCase("true") && includeLanguageId)
         {
             if (pageUrl.indexOf("?") == -1) 
 	        {

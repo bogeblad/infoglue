@@ -33,15 +33,17 @@ public class PageUrlAfterLanguageChangeTag extends TemplateControllerTag
 	private static final long serialVersionUID = 4050485595074016051L;
 	private final static Logger logger = Logger.getLogger(PageUrlAfterLanguageChangeTag.class.getName());
 	private String languageCode;
-	private Boolean includeLanguageId;
+	private boolean includeLanguageId = true;
     public int doEndTag() throws JspException
     {
-    	if (includeLanguageId != null && !includeLanguageId) {
+    	if (!includeLanguageId) {
     		produceResult(this.getController().getPageUrlAfterLanguageChange(languageCode, includeLanguageId));
     	} else {
     		
     		produceResult(this.getController().getPageUrlAfterLanguageChange(languageCode));
     	}
+    	
+    	this.includeLanguageId = true;
         return EVAL_PAGE;
     }
 

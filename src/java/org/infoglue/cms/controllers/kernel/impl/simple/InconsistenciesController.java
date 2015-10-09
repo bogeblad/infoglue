@@ -250,10 +250,10 @@ public class InconsistenciesController extends BaseController
 			contentVersionVO.setVersionModifier(infoGluePrincipal.getName());
 			contentVersionVO.setModifiedDateTime(DateHelper.getSecondPreciseDate());
 			contentVersionVO.setVersionValue(versionValue);
-			
+
 			//ContentVersionController.getContentVersionController().update(contentVersionVO.getContentId(), contentVersionVO.getLanguageId(), contentVersionVO, db);
-			ContentVersionController.getContentVersionController().update(contentVersionVO.getContentId(), contentVersionVO.getLanguageId(), contentVersionVO, infoGluePrincipal, true, db, false);
-		}
+			ContentVersionController.getContentVersionController().update(contentVersionVO.getContentId(), contentVersionVO.getLanguageId(), contentVersionVO, infoGluePrincipal, true, db, true);
+		}	
 	}
 
 	public void removeSiteNodeReferences(Map<SiteNodeVO, RegistryVO> siteNodeRegistryPair, InfoGluePrincipal infoGluePrincipal, Database db) throws SystemException, Exception

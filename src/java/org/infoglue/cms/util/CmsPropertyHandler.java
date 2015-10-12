@@ -3156,4 +3156,15 @@ public class CmsPropertyHandler
 	
 		return Boolean.parseBoolean(forceHTTPProtocol);
 	}
+	
+	/**
+	 * Setting which determines if you wanna skip cleaning up references in content
+	 * @return boolean
+	 */
+	public static boolean getCleanReferencesAfterDelete() {
+		String cleanReferencesAfterDelete = getServerNodeProperty("cleanReferencesAfterDelete", true, "true");
+	
+		return Boolean.parseBoolean(cleanReferencesAfterDelete);
+	}
+	
 }

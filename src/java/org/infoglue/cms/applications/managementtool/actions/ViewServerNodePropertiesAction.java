@@ -403,7 +403,8 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "doNotUseTrashcanForRepositories");
 
 	    populate(ps, "useGlobalRepositoryChange");
-
+	    populate(ps, "cleanReferencesAfterDelete");
+	    
 	    try
 	    {
 	    	UserControllerProxy.getController().updateAnonymousUserPassword();
@@ -424,7 +425,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 		}
 
 		NotificationMessage notificationMessage = new NotificationMessage("ViewServerNodePropertiesAction.doSave():", "ServerNodeProperties", this.getInfoGluePrincipal().getName(), NotificationMessage.SYSTEM, "0", "ServerNodeProperties");
-		//ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
+
 		RemoteCacheUpdater.getSystemNotificationMessages().add(notificationMessage);
 			    
     	return "save";

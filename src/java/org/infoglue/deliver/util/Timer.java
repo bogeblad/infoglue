@@ -82,7 +82,7 @@ public class Timer
 		{
 			elapsedTime = System.currentTimeMillis() - lastPrintTime;
 			lastPrintTime = System.currentTimeMillis();
-			logger.warn(message + " - Elapsed time since last report: " + elapsedTime);
+			logger.info(message + " - Elapsed time since last report: " + elapsedTime);
 		}
 	}
 	
@@ -103,7 +103,7 @@ public class Timer
 		{
 			elapsedTimeNanos = System.nanoTime() - lastPrintTimeNanos;
 			lastPrintTimeNanos = System.nanoTime();
-			logger.warn(message + " - Elapsed time since last report (ns): " + elapsedTimeNanos);
+			logger.info(message + " - Elapsed time since last report (ns): " + elapsedTimeNanos);
 		}
 	}
 

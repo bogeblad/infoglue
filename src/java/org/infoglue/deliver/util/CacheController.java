@@ -3884,22 +3884,21 @@ public class CacheController extends Thread
 							    	{
 							    		if(logger.isInfoEnabled())
 							    			logger.info("WHOOOAAAAAAAAAA.. clearing all... on " + cacheName + ":" + entity);
-								    	//System.out.println("selectiveCacheUpdate:" + selectiveCacheUpdate);
-								    	//System.out.println("entity:" + entity);
-								    	//System.out.println("cacheName:" + cacheName);
-								    	//logger.info("Flushing all:" + cacheName);
+
 								    	cacheInstance.flushAll();
 								    	if(logger.isInfoEnabled())
 								    		logger.info("clearing:" + e.getKey());
-										//t.printElapsedTime("WHOOOAAAAAAAAAA.. clearing all... ", 10);
+									
 									}
 							    }
 							} //BACK
 						}
 						
 						long elapsedTime = t.getElapsedTime();
-						if(elapsedTime > 20)
-							logger.warn("Clear cache end took " + e.getKey() + ": " + elapsedTime);
+						if(elapsedTime > 20) {
+							logger.info("Clear cache end took " + e.getKey() + ": " + elapsedTime);
+						}
+						
 						logger.info("Cleared cache:" + e.getKey());
 	
 						if(!selectiveCacheUpdate)

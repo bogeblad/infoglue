@@ -916,7 +916,7 @@ public class LuceneController extends BaseController implements NotificationList
 			List<NotificationMessage> baseEntitiesToIndexMessageList = new ArrayList<NotificationMessage>();
 			
 			List<String> existingSignatures = new ArrayList<String>();
-			logger.info("Before AAAAA:" + internalMessageList.size() + ":" + existingSignatures.size());
+
 			Iterator<NotificationMessage> cleanupInternalMessageListIterator = internalMessageList.iterator();
 			while(cleanupInternalMessageListIterator.hasNext())
 			{
@@ -1217,7 +1217,7 @@ public class LuceneController extends BaseController implements NotificationList
 			}
 			
 			if(initDoneLocally && !finishDoneLocally)
-				logger.error("EEEEEEEEEEEEEEERRRRRRRRRRRRRRROOOOOOOOOOOORRRRRRRR aaaaaaa");
+				logger.error("initDoneLocally && !finishDoneLocally was true");
 
 			logger.info("internalMessageList 1:" + internalMessageList.size() + " / " + qeuedMessages.size());
 		}

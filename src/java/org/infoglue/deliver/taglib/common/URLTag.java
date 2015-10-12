@@ -77,7 +77,7 @@ public class URLTag extends TemplateControllerTag
 	private boolean fullBaseUrl = false;
 	
 	/**
-	 * Determine if you want to replace https with http
+	 * Include languageId in created urls
 	 * */
 	private boolean includeLanguageId = true;
 	

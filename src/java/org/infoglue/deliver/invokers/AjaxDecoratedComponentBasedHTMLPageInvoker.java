@@ -1868,7 +1868,7 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 			
 			ComponentBinding componentBinding = new ComponentBinding();
 			componentBinding.setEntityClass(entity);
-			componentBinding.setEntityId(new Integer(entityId));
+			componentBinding.setEntityId(entityId);
 			componentBinding.setAssetKey(assetKey);
 
 			componentBindings.add(componentBinding);
@@ -1979,7 +1979,7 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 				componentBinding.setId(new Integer(id));
 				componentBinding.setComponentId(componentId);
 				componentBinding.setEntityClass(entityClass);
-				componentBinding.setEntityId(new Integer(entityId));
+				componentBinding.setEntityId(entityId);
 				componentBinding.setAssetKey(assetKey);
 				componentBinding.setBindingPath(contentVO.getName());
 				

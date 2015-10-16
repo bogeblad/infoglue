@@ -2875,7 +2875,6 @@ public class CmsPropertyHandler
 	public static boolean getEnableDiskBasedDeployment()
 	{
 		String enableDiskBasedDeployment = getServerNodeProperty("enableDiskBasedDeployment", true, "false");
-	    System.out.println("enableDiskBasedDeployment:" +enableDiskBasedDeployment);
 	
 		return Boolean.parseBoolean(enableDiskBasedDeployment);
 	}
@@ -2887,7 +2886,6 @@ public class CmsPropertyHandler
 	public static boolean getEnableDiskBasedDeployment(boolean skipCaches)
 	{
 		String enableDiskBasedDeployment = getServerNodeProperty("enableDiskBasedDeployment", true, "false", skipCaches);
-	    System.out.println("enableDiskBasedDeployment without cache:" +enableDiskBasedDeployment);
 	
 		return Boolean.parseBoolean(enableDiskBasedDeployment);
 	}

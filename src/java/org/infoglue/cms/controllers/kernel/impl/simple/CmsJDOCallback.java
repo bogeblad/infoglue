@@ -745,8 +745,16 @@ public class CmsJDOCallback implements CallbackInterceptor
 		   c.getName().contains(".RepositoryLanguageImpl") || 
 		   c.getName().contains(".DigitalAssetImpl") || 
 		   c.getName().contains(".MediumDigitalAssetImpl") || 
+		   c.getName().contains(".ContentImpl") || 
+		   c.getName().contains(".MediumContentImpl") || 
+		   c.getName().contains(".SmallContentImpl") || 
+		   c.getName().contains(".SmallishContentImpl") ||
 		   c.getName().contains(".ContentVersionImpl") || 
 		   c.getName().contains(".MediumContentVersionImpl") || 
+		   c.getName().contains(".SmallContentVersionImpl") || 
+		   c.getName().contains(".SmallestContentVersionImpl") || 
+		   c.getName().contains(".AccessRightImpl") || 
+		   c.getName().contains(".SmallAccessRightImpl") || 
 		   c.getName().contains(".AccessRightRoleImpl") || 
 		   c.getName().contains(".AccessRightGroupImpl") || 
 		   c.getName().contains(".AccessRightUserImpl") || 
@@ -756,6 +764,12 @@ public class CmsJDOCallback implements CallbackInterceptor
 			return;
 		}
 
+		if(c.getName().contains("ContentImpl"))
+		{
+			System.out.println("c.getName():" + c.getName());
+			//Thread.dumpStack();
+		}
+		
 		Database db = CastorDatabaseService.getDatabase();
 
 		try
@@ -787,8 +801,16 @@ public class CmsJDOCallback implements CallbackInterceptor
 		   c.getName().contains(".RepositoryLanguageImpl") || 
 		   c.getName().contains(".DigitalAssetImpl") || 
 		   c.getName().contains(".MediumDigitalAssetImpl") || 
+		   c.getName().contains(".ContentImpl") || 
+		   c.getName().contains(".MediumContentImpl") || 
+		   c.getName().contains(".SmallContentImpl") || 
+		   c.getName().contains(".SmallishContentImpl") || 
 		   c.getName().contains(".ContentVersionImpl") || 
 		   c.getName().contains(".MediumContentVersionImpl") || 
+		   c.getName().contains(".SmallContentVersionImpl") || 
+		   c.getName().contains(".SmallestContentVersionImpl") || 
+		   c.getName().contains(".AccessRightImpl") || 
+		   c.getName().contains(".SmallAccessRightImpl") || 
 		   c.getName().contains(".AccessRightRoleImpl") || 
 		   c.getName().contains(".AccessRightGroupImpl") || 
 		   c.getName().contains(".AccessRightUserImpl") || 
@@ -1314,8 +1336,8 @@ public class CmsJDOCallback implements CallbackInterceptor
 				   contentVersion.getOwningContent().getContentTypeDefinition().getName().equalsIgnoreCase("PagePartTemplate")))
 				{
 					ComponentController.getController().reIndexComponentContentsDelayed(contentVersion.getOwningContent().getId());
-					if(CmsPropertyHandler.getEnableDiskBasedDeployment())
-						DevelopmentResourcesSyncService.getInstance().writeChangesToDiskDelayed(contentVersion.getId());
+					//if(CmsPropertyHandler.getEnableDiskBasedDeployment())
+					//	DevelopmentResourcesSyncService.getInstance().writeChangesToDiskDelayed(contentVersion.getId());
 				}
 				CacheController.clearCacheForGroup("contentVersionCache", "content_" + contentVersion.getOwningContent().getId());
 

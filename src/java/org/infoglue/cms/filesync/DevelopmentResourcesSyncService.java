@@ -811,9 +811,17 @@ public class DevelopmentResourcesSyncService implements Runnable
 	    		while(parentContentVO != null)
 	    		{
 	    			addition = parentContentVO.getName() + File.separator + addition; 
-	    			parentContentVO = ContentController.getContentController().getContentVOWithId(parentContentVO.getParentContentId());
-	    			if(parentContentVO.getParentContentId() == null || parentContentVO.getParentContentId() == -1)
+	    			if(parentContentVO.getParentContentId() == null)
+	    			{
+	    				System.out.println("Stopping at addition: " + addition);
 	    				break;
+	    			}
+	    			else
+	    			{
+		    			parentContentVO = ContentController.getContentController().getContentVOWithId(parentContentVO.getParentContentId());
+		    			if(parentContentVO.getParentContentId() == null || parentContentVO.getParentContentId() == -1)
+		    				break;
+	    			}
 	    		}
 	    		logger.info("FullPath: " + path + File.separator + addition);
 	    		File file = new File(path + File.separator + addition);

@@ -111,8 +111,8 @@ public class IncludeTag extends TemplateControllerTag
         } 
 		catch (Exception e)
         {
-            e.printStackTrace();
-		    produceResult("");
+			logger.error("Error including: " + e.getMessage(), e);
+            produceResult("");
         }
 		
 		this.contentId = null;

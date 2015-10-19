@@ -879,7 +879,7 @@ public class PublicationController extends BaseController
 					    		}
 					    		catch(Exception e)
 					    		{
-					    			logger.error("Problem with repoEvent: " + repoEvent.getId() + " AND/OR event: " + event.getId()+ ". Error: " + e.getMessage());
+					    			logger.warn("Problem with repoEvent: " + repoEvent.getId() + " AND/OR event: " + event.getId()+ ". Error: " + e.getMessage());
 					    		}
 					    	}
 					    	else if(event.getEntityClass().equals(SiteNodeVersion.class.getName()))
@@ -895,7 +895,7 @@ public class PublicationController extends BaseController
 					    		}
 					    		catch(Exception e)
 					    		{
-					    			logger.error("Problem with repoEvent: " + repoEvent.getId() + " AND/OR event: " + event.getId()+ ". Error: " + e.getMessage());
+					    			logger.warn("Problem with repoEvent: " + repoEvent.getId() + " AND/OR event: " + event.getId()+ ". Error: " + e.getMessage());
 					    		}
 					    	}
 					    }

@@ -48,8 +48,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -89,7 +91,7 @@ public class DevelopmentResourcesSyncService implements Runnable
 	private final static Logger logger = Logger.getLogger(DevelopmentResourcesSyncService.class.getName());
 
     //String basePath = "/Applications/infoglue/eclipse/workspace/bogeblad";
-    public static String basePath = CmsPropertyHandler.getDiskBasedDeploymentBasePath();
+    public static String basePath = StringEscapeUtils.escapeJava(CmsPropertyHandler.getDiskBasedDeploymentBasePath());
     		
 	private static DevelopmentResourcesSyncService singleton = null;
 	
@@ -122,7 +124,7 @@ public class DevelopmentResourcesSyncService implements Runnable
 			return null;
 		}
 
-		String basePathCurrently = CmsPropertyHandler.getDiskBasedDeploymentBasePath();
+		String basePathCurrently = StringEscapeUtils.escapeJava(CmsPropertyHandler.getDiskBasedDeploymentBasePath());
 		if(!basePathCurrently.equals(basePath))
 		{
 			logger.info("basePath changed - restart thread..");
@@ -304,9 +306,9 @@ public class DevelopmentResourcesSyncService implements Runnable
 
 	private void handleContentFileChange(Path path, String relativePath) throws SystemException, Bug, ConstraintException, Exception 
 	{
-		//System.out.println("path:" + path);
+		logger.info("path:" + path);
 		String repoName = relativePath.replaceFirst("content", "");
-		String[] splitted = repoName.split(""+File.separator);
+		String[] splitted = repoName.split(Pattern.quote(""+File.separator));
 		logger.info("splitted 0:" + splitted[0]);
 		logger.info("splitted 1:" + splitted[1]);
 		logger.info("splitted 2:" + splitted[2]);
@@ -315,7 +317,7 @@ public class DevelopmentResourcesSyncService implements Runnable
 		//System.out.println("repoName:" + repoName);
 		String pathLeft = relativePath.replaceFirst(repoNameFromPath, "");
 		logger.info("pathLeft:" + pathLeft);
-		pathLeft = pathLeft.replaceFirst("content" + File.separator, "");
+		pathLeft = pathLeft.replaceFirst(Pattern.quote("content" + File.separator), "");
 		logger.info("pathLeft:" + pathLeft);
 		RepositoryVO repoVO = RepositoryController.getController().getRepositoryVOWithName(repoNameFromPath);
 		logger.info("repoVO:" + repoVO);
@@ -324,13 +326,18 @@ public class DevelopmentResourcesSyncService implements Runnable
 		logger.info("pathLeft:" + pathLeft);
 		
 		if(pathLeft.endsWith("Assets"))
-			pathLeft = pathLeft.replaceFirst("/Assets", "");
+		{
+			pathLeft = pathLeft.replaceFirst(Pattern.quote(File.separator + "Assets"), "");
+		}
 		logger.info("pathLeft:" + pathLeft);
 		
 		InfoGluePrincipal principal = UserControllerProxy.getController().getUser("Administrator");
 		
-		//System.out.println("repoName:" + repoName);
-		//System.out.println("pathLeft:" + pathLeft);
+		// Convert to Infoglue friendly path
+		if (!File.separator.equals("/"))
+		{
+			pathLeft = pathLeft.replaceAll(Pattern.quote(File.separator), "/");
+		}
 
 		ContentVO contentVO = ContentController.getContentController().getContentVOWithPath(repoVO.getId(), pathLeft, true, principal);
 		LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(contentVO.getRepositoryId());
@@ -345,7 +352,7 @@ public class DevelopmentResourcesSyncService implements Runnable
 			ContentController.getContentController().update(contentVO, ctdVO.getId());
 		}
 		logger.info("contentVO" + contentVO);
-				    
+
 		if(contentVersionVO != null)
 		{
 			try
@@ -584,7 +591,7 @@ public class DevelopmentResourcesSyncService implements Runnable
 			
 			for(File file : path.toFile().listFiles())
 			{
-				//logger.info("file:" + file);
+				logger.info("file:" + file);
 				if(file.getName().startsWith("."))
 				{
 					logger.info("Skipping files with . as start:" + file);				
@@ -600,14 +607,14 @@ public class DevelopmentResourcesSyncService implements Runnable
 			}
 		}
 		else
-			logger.info("Allready a listener on path: " + path);
+			logger.info("Already a listener on path: " + path);
 		
 		for(File file : path.toFile().listFiles())
 		{
 			//logger.info("file:" + file);
 			if(file.getName().startsWith("."))
 			{
-				logger.info("Skipping files with . as start:" + file);				
+				System.out.println("Skipping files with . as start:" + file);				
 				continue;
 			}
 			

@@ -1512,26 +1512,28 @@ public class NodeDeliveryController extends BaseDeliveryController
 	/**
 	 * This method returns a url to the given page. The url is composed of siteNode, language and content
 	 */
-
 	public String getPageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception
 	{
 		String pageUrl = "";
+		
+		return getPageUrl(db, infoGluePrincipal, siteNodeId, languageId, true, contentId, deliveryContext); 
+	}
+	public String getPageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception
+	{
+		String pageUrl = "";
 
-		pageUrl = urlComposer.composePageUrl(db, infoGluePrincipal, siteNodeId, languageId, contentId, deliveryContext); 
+		pageUrl = urlComposer.composePageUrl(db, infoGluePrincipal, siteNodeId, languageId, includeLanguageId, contentId, deliveryContext); 
 		
 		return pageUrl;
 	}
 
-
 	public String getPageUrlAfterLanguageChange(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception
     {
-		/*
-	    SiteNode siteNode = getSiteNode(db, siteNodeId);
-		String dnsName = CmsPropertyHandler.getWebServerAddress();
-		if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
-			dnsName = siteNode.getRepository().getDnsName();
-		*/
         return urlComposer.composePageUrlAfterLanguageChange(db, infoGluePrincipal, siteNodeId, languageId, contentId, deliveryContext);
+    } 
+	public String getPageUrlAfterLanguageChange(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Boolean includeLanguageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception
+    {
+        return urlComposer.composePageUrlAfterLanguageChange(db, infoGluePrincipal, siteNodeId, languageId, includeLanguageId, contentId, deliveryContext);
     } 
 	
 	public String getPageAsDigitalAssetUrl(Database database, InfoGluePrincipal principal, Integer siteNodeId, Integer languageId, Integer contentId, DeliveryContext context, String fileSuffix, boolean cacheUrl) throws SystemException
@@ -1849,45 +1851,6 @@ public class NodeDeliveryController extends BaseDeliveryController
 	            logger.info("Returning siteNode:" + siteNodeVO.getName());
 	            return siteNodeVO.getId();
 	        }
-	        
-	        /*
-	        String pathCandidateFromMetaData = null;
-	        if(attributeName.equals("SiteNode.name"))
-	        {
-	        	pathCandidateFromMetaData = siteNodeVO.getName();
-            }
-	        else
-	        {
-	        	//System.out.println("languages:" + languages.size());
-	        	for (int i=0;i<languages.size();i++) 
-	            {
-	                LanguageVO language = (LanguageVO) languages.get(i);
-	                //System.out.println("language:" + language.getName());
-	                
-		        	String metaAttributeKey = "" + siteNodeVO.getId() + "_" + language.getId() + "_" + attributeName;
-		        	pathCandidateFromMetaData = (String)CacheController.getCachedObjectFromAdvancedCache("metaInfoContentAttributeCache", metaAttributeKey);
-		        	//System.out.println("pathCandidateFromMetaData:" + pathCandidateFromMetaData + " on " + metaAttributeKey);
-		        	if((pathCandidateFromMetaData == null || pathCandidateFromMetaData.equals("")) && !attributeName.equals(NAV_TITLE_ATTRIBUTE_NAME))
-		        	{
-		    			metaAttributeKey = "" + siteNodeVO.getId() + "_" + language.getId() + "_" + NAV_TITLE_ATTRIBUTE_NAME;
-		    			pathCandidateFromMetaData = (String)CacheController.getCachedObjectFromAdvancedCache("metaInfoContentAttributeCache", metaAttributeKey);
-		    			//System.out.println("pathCandidateFromMetaData2:" + pathCandidateFromMetaData + " on " + metaAttributeKey);
-		        	}
-		        	
-		        	if(pathCandidateFromMetaData != null)
-		        		break;
-	            }
-	        }
-	        
-	        //System.out.println(attributeName + " ["+pathCandidateFromMetaData.trim()+"]==[" + path + "]");
-	        logger.info(attributeName + " ["+pathCandidateFromMetaData.trim()+"]==[" + path + "]");
-            if (pathCandidateFromMetaData != null && pathCandidateFromMetaData.toLowerCase().trim().equals(path.toLowerCase())) 
-            {
-            	//System.out.println("Found cached meta data");
-            	return siteNodeVO.getSiteNodeId();
-            }
-	       	*/
-
             
 	        logger.info("Continued with siteNode: " + siteNodeVO.getName());
 	        
@@ -1918,16 +1881,25 @@ public class NodeDeliveryController extends BaseDeliveryController
 	                    pathCandidate = siteNodeVO.getName();
 	                else
 	                {
-	                    pathCandidate = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, content.getContentId(), language.getLanguageId(), attributeName, siteNodeVO.getSiteNodeId(), true, deliveryContext, infogluePrincipal, false, true);
+	                    pathCandidate = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, content.getContentId(), language.getLanguageId(), attributeName, siteNodeVO.getSiteNodeId(), false, deliveryContext, infogluePrincipal, false, true);
 	                    
 	                    if((pathCandidate == null || pathCandidate.equals("")) && !attributeName.equals(NAV_TITLE_ATTRIBUTE_NAME))
-	                        pathCandidate = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, content.getContentId(), language.getLanguageId(), NAV_TITLE_ATTRIBUTE_NAME, siteNodeVO.getSiteNodeId(), true, deliveryContext, infogluePrincipal, false, true);
+	                        pathCandidate = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, content.getContentId(), language.getLanguageId(), NAV_TITLE_ATTRIBUTE_NAME, siteNodeVO.getSiteNodeId(), false, deliveryContext, infogluePrincipal, false, true);
 	                }
 	                
 	                logger.info(attributeName + " ["+pathCandidate.trim()+"]==[" + path + "]");
 	                if (pathCandidate != null && pathCandidate.toLowerCase().trim().equals(path.toLowerCase())) 
 	                {
-	                    return siteNodeVO.getSiteNodeId();
+				logger.info("Nya koden:" + pathCandidate);
+				logger.info("deliveryContext.getLanguageId():" + deliveryContext.getLanguageId());
+	                	if(deliveryContext.getLanguageId() == null || deliveryContext.getLanguageId() == -1)
+	                	{
+	                		LanguageVO languageVO = LanguageDeliveryController.getLanguageDeliveryController().getLanguageIfSiteNodeSupportsIt(db, language.getId(), siteNodeVO.getId());
+	                		logger.info("languageVO:" + languageVO);
+	                		if(languageVO != null && languageVO.getId() == language.getId())
+	                			deliveryContext.setLanguageId(language.getId());
+	                	}
+	                	return siteNodeVO.getSiteNodeId();
 	                }
 	            }
 	        }
@@ -1991,101 +1963,6 @@ public class NodeDeliveryController extends BaseDeliveryController
         return path.toString();
     }
 
-    /*
-    public static Integer getSiteNodeIdFromPath(Database db, InfoGluePrincipal infogluePrincipal, RepositoryVO repositoryVO, String[] path, String attributeName, Integer languageId, DeliveryContext deliveryContext) throws SystemException, Exception
-    {
-        Integer siteNodeId = null;
-        URIMapperCache uriCache = URIMapperCache.getInstance();
-
-        int idx = path.length;
-        while (idx >= 0) 
-        {
-        	//logger.info("Looking for cache nodeName at index "+idx);
-            siteNodeId = uriCache.getCachedSiteNodeId(repositoryVO.getId(), path, idx);
-            if (siteNodeId != null)
-                break;
-            idx = idx - 1;
-        }
-        
-        String repositoryPath = null;
-    	if(!CmsPropertyHandler.getOperatingMode().equals("3"))
-    	{
-	    	int workingPathStartIndex = repositoryVO.getDnsName().indexOf("workingPath=");
-	    	if(workingPathStartIndex != -1)
-	    	{
-	    		int workingPathEndIndex = repositoryVO.getDnsName().indexOf(",", workingPathStartIndex);
-	    		if(workingPathEndIndex > -1)
-		    		repositoryPath = repositoryVO.getDnsName().substring(workingPathStartIndex + 12, workingPathEndIndex);
-	    		else
-	    			repositoryPath = repositoryVO.getDnsName().substring(workingPathStartIndex + 12);
-	    	}
-    	}
-
-    	if(repositoryPath == null)
-    	{
-        	int pathStartIndex = repositoryVO.getDnsName().indexOf("path=");
-        	if(pathStartIndex != -1)
-        	{
-        		int pathEndIndex = repositoryVO.getDnsName().indexOf(",", pathStartIndex);
-	    		if(pathEndIndex > -1)
-		    		repositoryPath = repositoryVO.getDnsName().substring(pathStartIndex + 5, pathEndIndex);
-	    		else
-	    			repositoryPath = repositoryVO.getDnsName().substring(pathStartIndex + 5);
-        	}
-    	}
-    	
-    	logger.info("repositoryPath:" + repositoryPath);    	
-    	logger.info("path:" + path.length);    	
-    	
-    	if(repositoryPath != null && path.length > 0)
-    	{
-    		String[] repositoryPaths = repositoryPath.split("/");
-    		String[] newPath = path;
-    		
-    		logger.info("repositoryPaths:" + repositoryPaths.length); 
-    		logger.info("newPath:" + newPath.length); 
-    		
-    		for(int repPathIndex = 0; repPathIndex < repositoryPaths.length; repPathIndex++)
-    		{
-    			String repPath = repositoryPaths[repPathIndex];
-    	    	logger.info("repPath:" + repPath);
-    	    	if(path.length > repPathIndex)
-    	    	{
-    		    	logger.info("path:" + path[repPathIndex]);
-    		    	if(path[repPathIndex].equals(repPath))
-    		    	{
-    		    		String[] tempNewPath = new String[newPath.length - 1];
-    		    		for(int i=1; i<newPath.length; i++)
-    		    			tempNewPath[i-1] = newPath[i];
-    		    		
-    		    		newPath = tempNewPath;
-    		    	}    	    		
-    	    	}
-    		}
-    		path = newPath;
-    	}
-	   	logger.info("new path:" + path.length);
-
-        //logger.info("Idx = "+idx);
-        for (int i = idx;i < path.length; i++) 
-        {
-            if (i < 0) 
-            {
-                siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null).getSiteNodeId(db, infogluePrincipal, repositoryVO.getId(), null, attributeName, null, languageId, deliveryContext);
-            } 
-            else 
-            {
-                siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null).getSiteNodeId(db, infogluePrincipal, repositoryVO.getId(), path[i], attributeName, siteNodeId, languageId, deliveryContext);
-            }
-            
-            if (siteNodeId != null)
-                uriCache.addCachedSiteNodeId(repositoryVO.getId(), path, i+1, siteNodeId);
-        }
-
-        return siteNodeId;
-    }
-    */
-    
     public static Integer getSiteNodeIdFromPath(InfoGluePrincipal infogluePrincipal, RepositoryVO repositoryVO, String[] path, String attributeName, Integer languageId, DeliveryContext deliveryContext) throws SystemException, Exception
     {
     	return getSiteNodeIdFromPath(infogluePrincipal, repositoryVO, path, attributeName, deliveryContext, null, languageId);
@@ -2132,7 +2009,13 @@ public class NodeDeliveryController extends BaseDeliveryController
             siteNodeId = uriCache.getCachedSiteNodeId(repositoryVO.getId(), path, numberOfPaths);
             
             if (siteNodeId != null)
-                break;
+            {
+                Integer siteNodeLanguageId = uriCache.getCachedSiteNodeLanguageId(repositoryVO.getId(), path, numberOfPaths);
+                if(siteNodeLanguageId != null)
+                deliveryContext.setLanguageId(siteNodeLanguageId);
+            
+            break;
+            }
 
             numberOfPaths = numberOfPaths - 1;
         }
@@ -2303,7 +2186,7 @@ public class NodeDeliveryController extends BaseDeliveryController
             }
 
             if (siteNodeId != null)
-                uriCache.addCachedSiteNodeId(repositoryVO.getId(), path, i+1, siteNodeId);
+                uriCache.addCachedSiteNodeId(repositoryVO.getId(), path, i+1, siteNodeId, deliveryContext.getLanguageId());
         }
 		
         return siteNodeId;
@@ -2997,9 +2880,14 @@ public class NodeDeliveryController extends BaseDeliveryController
 								}
 								
 								if(localizedSortOrder != null && !localizedSortOrder.equals(""))
-								{
-									siteNode.getValueObject().setLocalizedSortOrder(new Integer(localizedSortOrder));
-								}
+									try
+									{
+										siteNode.getValueObject().setLocalizedSortOrder(new Integer(localizedSortOrder));										
+									}
+									catch(Exception e)
+									{
+										logger.warn("The sitenode " + siteNode.getName() + " (ID: " + siteNode.getId() + ") had a bad localizedSortOrder:" + localizedSortOrder + ". Error:" + e.getMessage());
+									}
 							}
 						}
 						

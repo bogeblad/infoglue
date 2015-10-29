@@ -5854,20 +5854,25 @@ public class BasicTemplateController implements TemplateController
 				
 		return pageUrl;
 	}
-
-
 	/**
 	 * This method deliveres a new url pointing to the same address as now but in the language 
-	 * corresponding to the code sent in.
+	 * corresponding to the code sent in. 
 	 */
-	 
 	public String getCurrentPageUrl() 
 	{
+		return getCurrentPageUrl(true);
+	}
+	/**
+	 * This method deliveres a new url pointing to the same address as now but in the language 
+	 * corresponding to the code sent in but with 
+	 */
+	public String getCurrentPageUrl(boolean includeLanguageId) 
+	{
 		String pageUrl = "";
-		
+		logger.debug("pageUrl values:principal=" + this.getPrincipal() + " siteNodeId=" + this.siteNodeId + " languageId=" + this.languageId + " contentId=" + this.contentId + " deliveryContext=" + this.deliveryContext);
 		try
 		{
-			pageUrl = this.nodeDeliveryController.getPageUrl(getDatabase(), this.getPrincipal(), this.siteNodeId, this.languageId, this.contentId, this.deliveryContext);
+			pageUrl = this.nodeDeliveryController.getPageUrl(getDatabase(), this.getPrincipal(), this.siteNodeId, this.languageId, includeLanguageId, this.contentId, this.deliveryContext);
 		}
 		catch(Exception e)
 		{
@@ -5921,14 +5926,17 @@ public class BasicTemplateController implements TemplateController
 	/**
 	 * This method deliveres a new url pointing to the same address as now but with new parameters.
 	 */
-	 
-	public String getPageUrl(Integer siteNodeId, Integer languageId, Integer contentId) 
+	public String getPageUrl(Integer siteNodeId, Integer languageId, Integer contentId) {
+		return getPageUrl(siteNodeId, languageId, true, contentId);
+	}
+	
+	public String getPageUrl(Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId) 
 	{
 		String pageUrl = "";
 		
 		try
 		{
-			pageUrl = this.nodeDeliveryController.getPageUrl(getDatabase(), this.getPrincipal(), siteNodeId, languageId, contentId, this.deliveryContext);
+			pageUrl = this.nodeDeliveryController.getPageUrl(getDatabase(), this.getPrincipal(), siteNodeId, languageId, includeLanguageId, contentId, this.deliveryContext);
 		}
 		catch(Exception e)
 		{
@@ -6090,16 +6098,22 @@ public class BasicTemplateController implements TemplateController
 	 * This method deliveres a new url pointing to the same address as now but in the language 
 	 * corresponding to the code sent in.
 	 */
-	 
 	public String getPageUrlAfterLanguageChange(String languageCode) 
 	{
+		return getPageUrlAfterLanguageChange(languageCode, true);
+	}
+	/**
+	 * Same as above but with boolean
+	 */
+	public String getPageUrlAfterLanguageChange(String languageCode , Boolean includeLanguageId) 
+	{
 		String pageUrl = "";
-		
+
 		try
 		{
 			LanguageVO languageVO = LanguageDeliveryController.getLanguageDeliveryController().getLanguageWithCode(getDatabase(), languageCode);		
-			//pageUrl = this.nodeDeliveryController.getPageUrl(this.siteNodeId, languageVO.getLanguageId(), this.contentId);
-			pageUrl = this.nodeDeliveryController.getPageUrlAfterLanguageChange(getDatabase(), this.getPrincipal(), this.siteNodeId, languageVO.getLanguageId(), this.contentId, this.deliveryContext); 
+			
+			pageUrl = this.nodeDeliveryController.getPageUrlAfterLanguageChange(getDatabase(), this.getPrincipal(), this.siteNodeId, languageVO.getLanguageId(), includeLanguageId, this.contentId, this.deliveryContext); 
 		}
 		catch(Exception e)
 		{
@@ -8846,4 +8860,6 @@ public class BasicTemplateController implements TemplateController
 		}
 		return value;
 	}
+
+
 }

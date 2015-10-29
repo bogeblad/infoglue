@@ -25,6 +25,7 @@ package org.infoglue.deliver.taglib.structure;
 import javax.servlet.jsp.JspException;
 
 import org.infoglue.deliver.taglib.component.ComponentLogicTag;
+import org.infoglue.cms.util.CmsPropertyHandler;
 
 public class PageUrlTag extends ComponentLogicTag
 {
@@ -37,7 +38,9 @@ public class PageUrlTag extends ComponentLogicTag
 	private boolean useInheritance = true;
 	private boolean useRepositoryInheritance = true;
     private boolean useStructureInheritance = true;
-
+    private boolean forceHTTPProtocol = false;
+    private boolean includeLanguageId = true;
+    	
 	private Integer siteNodeId;
 	private Integer languageId;
 	private Integer contentId = new Integer(-1);
@@ -61,6 +64,7 @@ public class PageUrlTag extends ComponentLogicTag
         this.siteNodeId = null;
         this.contentId = null;
         this.extraParameters = null;
+        this.includeLanguageId = true;
         
         return EVAL_PAGE;
     }
@@ -69,18 +73,28 @@ public class PageUrlTag extends ComponentLogicTag
 	{
 	    if(this.languageId == null)
 	        this.languageId = getController().getLanguageId();
-	    
-	    if(this.propertyName != null)
-	        return getComponentLogic().getPageUrl(propertyName, contentId, languageId, useInheritance, useRepositoryInheritance, useStructureInheritance);
-	    else
-	        return getController().getPageUrl(siteNodeId, languageId, contentId);
+	    String url = "";
+	    if(this.propertyName != null) {
+	        url = getComponentLogic().getPageUrl(propertyName, contentId, languageId, includeLanguageId, useInheritance, useRepositoryInheritance, useStructureInheritance);
+	    } else {
+	        url = getController().getPageUrl(siteNodeId, languageId, includeLanguageId, contentId);
+	    }
+	    if (forceHTTPProtocol || CmsPropertyHandler.getForceHTTPProtocol()) {
+	    	url = url.replaceFirst("https:", "http:");
+	    }
+
+	    return url;
 	}
 
 	public void setSiteNodeId(final String siteNodeId) throws JspException
     {
         this.siteNodeId = evaluateInteger("pageUrl", "siteNodeId", siteNodeId);
     }
-
+	public void setForceHTTPProtocol(final String forceHTTPProtocol) throws JspException
+    {
+        this.forceHTTPProtocol = evaluateBoolean("pageUrl", "forceHTTPProtocol", forceHTTPProtocol);
+    }
+	
     public void setLanguageId(final String languageId) throws JspException
     {
         this.languageId = evaluateInteger("pageUrl", "languageId", languageId);
@@ -114,5 +128,10 @@ public class PageUrlTag extends ComponentLogicTag
     public void setExtraParameters(String extraParameters)
     {
         this.extraParameters = extraParameters;
+    }
+    
+	public void setIncludeLanguageId(final String includeLanguageId) throws JspException
+    {
+        this.includeLanguageId = evaluateBoolean("pageUrlAfterLanguageChange", "includeLanguageId", includeLanguageId);
     }
 }

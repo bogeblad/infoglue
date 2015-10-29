@@ -107,12 +107,6 @@ public class DeleteSiteNodeAction extends InfoGlueAbstractAction
 				logger.info("The siteNode must have been a root-siteNode because we could not find a parent.");
 			}
 
-//			if (!forceDelete && CmsPropertyHandler.getOnlyShowReferenceIfLatestVersion())
-//			{
-//				logger.info("Looking for and removing registry entries that has not been removed because we are in show-only-latest-version-mode.");
-//				RegistryController.getController().deleteAllForSiteNode(this.siteNodeVO.getSiteNodeId(), getInfoGluePrincipal());
-//			}
-
 			SiteNodeControllerProxy.getSiteNodeControllerProxy().acMarkForDelete(this.getInfoGluePrincipal(), this.siteNodeVO, forceDelete);
 
 			return "success";
@@ -128,6 +122,7 @@ public class DeleteSiteNodeAction extends InfoGlueAbstractAction
 
         try
         {
+
     		SiteNodeVO siteNodeVO = SiteNodeControllerProxy.getController().getSiteNodeVOWithId(this.siteNodeVO.getSiteNodeId());
     		String siteNodeName = siteNodeVO.getName();
     		logger.info("siteNodeName:" + siteNodeName + " for " + this.siteNodeVO.getSiteNodeId());
@@ -162,11 +157,7 @@ public class DeleteSiteNodeAction extends InfoGlueAbstractAction
         	if(ce.getErrorCode().equalsIgnoreCase("3400"))
         	{
         		ce.setResult("showRelations");
-        		//String unpublishSiteNodesInlineOperationLinkText = getLocalizedString(getLocale(), "tool.structuretool.unpublishSiteNodesInlineOperationLinkText");
-        		//String unpublishSiteNodesInlineOperationTitleText = getLocalizedString(getLocale(), "tool.structuretool.unpublishSiteNodesInlineOperationTitleText");
-
-        		//ce.getLinkBeans().add(new LinkBean("unpublishPageUrl", unpublishSiteNodesInlineOperationLinkText, unpublishSiteNodesInlineOperationTitleText, unpublishSiteNodesInlineOperationTitleText, StructureToolbarController.getUnpublishButtonLink(this.siteNodeVO.getSiteNodeId(), true), false, "", "", "inline"));
-        	}
+           	}
 
 			ce.setResult(INPUT + "V3");
 			throw ce;
@@ -207,7 +198,8 @@ public class DeleteSiteNodeAction extends InfoGlueAbstractAction
 
 	public String doDeleteReference() throws Exception 
 	{
-		RegistryController.getController().delete(registryId, this.getInfoGluePrincipal(), true, getOnlyShowLatestReferenceIfLatestVersion());
+		
+		RegistryController.getController().delete(registryId, this.getInfoGluePrincipal(), CmsPropertyHandler.getCleanReferencesAfterDelete(), getOnlyShowLatestReferenceIfLatestVersion());
 
 	    return executeV3(false);
 	}

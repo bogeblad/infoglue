@@ -141,11 +141,11 @@ public class CreateContentWizardFinishAction extends CreateContentWizardAbstract
 	    	    return "inputContentVersionsForFCKEditor";
 			}
 			//ceb.throwIfNotEmpty();
-	    						
+	    					
 			String returnAddress = createContentWizardInfoBean.getReturnAddress();
 			returnAddress = returnAddress.replaceAll("#entityId", createContentWizardInfoBean.getContentVO().getId().toString());
 			returnAddress = returnAddress.replaceAll("#path", createContentWizardInfoBean.getContentVO().getName());
-			
+
 			this.invalidateCreateContentWizardInfoBean();
 			
 			this.getResponse().sendRedirect(returnAddress);
@@ -203,11 +203,13 @@ public class CreateContentWizardFinishAction extends CreateContentWizardAbstract
 
 			Integer repositoryId = createContentWizardInfoBean.getRepositoryId();
 			Integer languageId = createContentWizardInfoBean.getLanguageId();
+			
 			if(languageId == null)
 				languageId = LanguageController.getController().getMasterLanguage(repositoryId).getId();
 			
 			if(createContentWizardInfoBean.getContentVersions().size() == 0)
 			{
+				
 				String versionValue = "<?xml version='1.0' encoding='UTF-8'?><article xmlns=\"x-schema:ArticleSchema.xml\"><attributes></attributes></article>";
 	
 				ContentVersionVO initialContentVersionVO = new ContentVersionVO();
@@ -218,6 +220,7 @@ public class CreateContentWizardFinishAction extends CreateContentWizardAbstract
 				createContentWizardInfoBean.getContentVersions().put(languageId, initialContentVersionVO);
 	
 		    	ContentVO contentVO = ContentControllerProxy.getController().acCreate(this.getInfoGluePrincipal(), createContentWizardInfoBean);
+		
 				this.contentId = contentVO.getContentId();
 				createContentWizardInfoBean.setContentVO(contentVO);
 			
@@ -242,15 +245,14 @@ public class CreateContentWizardFinishAction extends CreateContentWizardAbstract
 						else
 							this.invalidateCreateContentWizardInfoBean();
 					}
+			    	if (this.contentVersionId == null) {
+			    		return "stateLocation";
+			    	}
 				}
-					
+			
 				return "inputContentVersionsForFCKEditor";
 			}
-								
-			//String returnAddress = createContentWizardInfoBean.getReturnAddress();
-			//returnAddress = returnAddress.replaceAll("#entityId", createContentWizardInfoBean.getContentVO().getId().toString());
-			//returnAddress = returnAddress.replaceAll("#path", createContentWizardInfoBean.getContentVO().getName());
-			
+
 			this.invalidateCreateContentWizardInfoBean();
 			
 			this.getResponse().sendRedirect(returnAddress);

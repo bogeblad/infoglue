@@ -204,6 +204,7 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.niceURIDisableNiceURIForContent" "niceURIDisableNiceURIForContent" "$this.getPropertyValue('niceURIDisableNiceURIForContent')" "$!cmsPH.niceURIDisableNiceURIForContent")
 				#editPropertyFieldCSS("ServerNode.property.niceURIDefaultReplacementCharacterForContent" "niceURIDefaultReplacementCharacterForContent" "$this.getPropertyValue('niceURIDefaultReplacementCharacterForContent')" "51" "$!serverNodeId" "$!cmsPH.niceURIDefaultReplacementCharacterForContent")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.redirectUsingSystemRedirect" "redirectUsingSystemRedirect" "$this.getPropertyValue('redirectUsingSystemRedirect')" "$!cmsPH.redirectUsingSystemRedirect")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.orderRedirectsByLength" "orderRedirectsByLength" "$this.getPropertyValue('orderRedirectsByLength')" "$!cmsPH.orderRedirectsByLength")
 			</div>
 		
 			<div class="inlineTabDiv" id="cacheSettings">
@@ -484,7 +485,7 @@
 				#selectFieldCSS("ServerNode.property.redirectStatusCode" "redirectStatusCode" $this.getPropertyValue('redirectStatusCode') $redirectStatusCodeOptions "$!cmsPH.redirectStatusCode")
 
 				#editPropertyFieldCSS("ServerNode.property.allowedDirectLoginNames" "allowedDirectLoginNames" "$this.getPropertyValue('allowedDirectLoginNames')" "51" "$!serverNodeId" "$!cmsPH.allowedDirectLoginNames")
-				
+							
 				#yesNoDropDownWithInheritCSS("ServerNode.property.allowInternalCallsBasedOnIP" "allowInternalCallsBasedOnIP" "$this.getPropertyValue('allowInternalCallsBasedOnIP')" "$!cmsPH.allowInternalCallsBasedOnIP")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.forceIdentityCheck" "forceIdentityCheck" "$this.getPropertyValue('forceIdentityCheck')" "$!cmsPH.forceIdentityCheck")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.enforceRigidContentAccess" "enforceRigidContentAccess" "$this.getPropertyValue('enforceRigidContentAccess')" "$!cmsPH.enforceRigidContentAccess")
@@ -551,6 +552,8 @@
 				#editPropertyFieldCSS("ServerNode.property.buildName" "buildName" "$this.getPropertyValue('buildName')" "51" "$!serverNodeId" "$!cmsPH.buildName")
 				#editPropertyFieldCSS("ServerNode.property.adminToolsPath" "adminToolsPath" "$this.getPropertyValue('adminToolsPath')" "51" "$!serverNodeId" "$!cmsPH.adminToolsPath")
 				#editPropertyFieldCSS("ServerNode.property.dbScriptPath" "dbScriptPath" "$this.getPropertyValue('dbScriptPath')" "51" "$!serverNodeId" "$!cmsPH.dbScriptPath")	
+				#yesNoDropDownWithInheritCSS("ServerNode.property.defaultFallbackForceProtocolForURLs" "forceHTTPProtocol" "$this.getPropertyValue('forceHTTPProtocol')" "$!cmsPH.forceHTTPProtocol")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.cleanReferencesAfterDelete" "cleanReferencesAfterDelete" "$this.getPropertyValue('cleanReferencesAfterDelete')" "$!cmsPH.cleanReferencesAfterDelete")
 			</div>
 		
 		</div>

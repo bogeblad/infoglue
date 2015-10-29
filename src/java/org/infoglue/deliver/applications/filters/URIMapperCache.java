@@ -64,12 +64,21 @@ public class URIMapperCache
         return (Integer)CacheController.getCachedObject(CACHE_NAME, cacheKey);
     }
 
-    public boolean addCachedSiteNodeId(Integer repositoryId, String[] path, int upToIndex, Integer siteNodeId)
+    public Integer getCachedSiteNodeLanguageId(Integer repositoryId, String[] path, int upToIndex)
+    {
+        if (repositoryId == null || path == null)
+            return null;
+        String cacheKey = createCacheKey(repositoryId, path, upToIndex) + "_languageId";
+        return (Integer)CacheController.getCachedObject(CACHE_NAME, cacheKey);
+    }
+
+    public boolean addCachedSiteNodeId(Integer repositoryId, String[] path, int upToIndex, Integer siteNodeId, Integer languageId)
     {
         if (repositoryId == null || path == null || siteNodeId == null)
             return false;
         String cacheKey = createCacheKey(repositoryId, path, upToIndex);
         CacheController.cacheObject(CACHE_NAME, cacheKey, siteNodeId);
+        CacheController.cacheObject(CACHE_NAME, cacheKey + "_languageId", languageId);
         return true;
     }
 

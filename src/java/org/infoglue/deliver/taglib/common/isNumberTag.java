@@ -43,24 +43,23 @@ public class isNumberTag extends AbstractTag
 	}
 
 	public int doEndTag() throws JspException
-    {
+	{
 		setResultAttribute(isNumber());
 
-        return EVAL_PAGE;
-    }
-    
-    private boolean isNumber() {
-    	try {
-       		Integer.parseInt(text);
-   
-       	} catch (NumberFormatException numberFormatException) {
-       		return false;
-       	}
+		return EVAL_PAGE;
+	}
+
+	private boolean isNumber() {
+		try {
+			Integer.parseInt(text);
+		} catch (NumberFormatException numberFormatException) {
+			return false;
+		}
 		return true;
 	}
 
 	public void setText(final String text) throws JspException
-    {
-        this.text = evaluateString("size", "text", text);
-    }
+	{
+		this.text = evaluateString("size", "text", text);
+	}
 }

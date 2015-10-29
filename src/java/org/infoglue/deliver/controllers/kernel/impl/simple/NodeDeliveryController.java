@@ -2009,7 +2009,13 @@ public class NodeDeliveryController extends BaseDeliveryController
             siteNodeId = uriCache.getCachedSiteNodeId(repositoryVO.getId(), path, numberOfPaths);
             
             if (siteNodeId != null)
-                break;
+            {
+                Integer siteNodeLanguageId = uriCache.getCachedSiteNodeLanguageId(repositoryVO.getId(), path, numberOfPaths);
+                if(siteNodeLanguageId != null)
+                deliveryContext.setLanguageId(siteNodeLanguageId);
+            
+            break;
+            }
 
             numberOfPaths = numberOfPaths - 1;
         }
@@ -2180,7 +2186,7 @@ public class NodeDeliveryController extends BaseDeliveryController
             }
 
             if (siteNodeId != null)
-                uriCache.addCachedSiteNodeId(repositoryVO.getId(), path, i+1, siteNodeId);
+                uriCache.addCachedSiteNodeId(repositoryVO.getId(), path, i+1, siteNodeId, deliveryContext.getLanguageId());
         }
 		
         return siteNodeId;

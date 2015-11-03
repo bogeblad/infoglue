@@ -2897,7 +2897,10 @@ public class CmsPropertyHandler
 	 */
 	public static String getDiskBasedDeploymentBasePath()
 	{
-		return getServerNodeProperty("diskBasedDeploymentBasePath", true, "");
+		String diskBasedDeploymentBasePath = getServerNodeProperty("diskBasedDeploymentBasePath", true, "");
+		if(diskBasedDeploymentBasePath != null && diskBasedDeploymentBasePath.contains("\\"))
+			diskBasedDeploymentBasePath = diskBasedDeploymentBasePath.replace("\\", "/");
+		return diskBasedDeploymentBasePath;
 	}
 
 	

@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.ClosedWatchServiceException;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
@@ -90,8 +91,7 @@ public class DevelopmentResourcesSyncService implements Runnable
 {
 	private final static Logger logger = Logger.getLogger(DevelopmentResourcesSyncService.class.getName());
 
-    //String basePath = "/Applications/infoglue/eclipse/workspace/bogeblad";
-    public static String basePath = StringEscapeUtils.escapeJava(CmsPropertyHandler.getDiskBasedDeploymentBasePath());
+    public static String basePath = CmsPropertyHandler.getDiskBasedDeploymentBasePath();
     		
 	private static DevelopmentResourcesSyncService singleton = null;
 	
@@ -124,7 +124,7 @@ public class DevelopmentResourcesSyncService implements Runnable
 			return null;
 		}
 
-		String basePathCurrently = StringEscapeUtils.escapeJava(CmsPropertyHandler.getDiskBasedDeploymentBasePath());
+		String basePathCurrently = CmsPropertyHandler.getDiskBasedDeploymentBasePath();
 		if(!basePathCurrently.equals(basePath))
 		{
 			logger.info("basePath changed - restart thread..");
@@ -165,49 +165,60 @@ public class DevelopmentResourcesSyncService implements Runnable
 
 			for (;;) {
 				
-				if(!CmsPropertyHandler.getEnableDiskBasedDeployment() || CmsPropertyHandler.getDiskBasedDeploymentBasePath().trim().equals(""))
+				try
 				{
-					logger.info("Exiting thread");
-					watcher.close();
-					break;
+					if(!CmsPropertyHandler.getEnableDiskBasedDeployment() || CmsPropertyHandler.getDiskBasedDeploymentBasePath().trim().equals(""))
+					{
+						logger.info("Exiting thread");
+						watcher.close();
+						break;
+					}
+					
+				    // wait for key to be signaled
+				    WatchKey key;
+				    try 
+				    {
+				        key = watcher.take();
+				    }
+				    catch (ClosedWatchServiceException cw)
+				    {
+				    	return;
+				    }
+				    catch (InterruptedException x) 
+				    {
+				        return;
+				    }
+				    
+				    Path dir = watchPathKeyMap.get(key);
+				    
+				    for (WatchEvent<?> event: key.pollEvents()) 
+				    {
+				        WatchEvent.Kind<?> kind = event.kind();
+		
+				        if (kind == StandardWatchEventKinds.OVERFLOW) 
+				        {
+				            continue;
+				        }
+		
+				        WatchEvent<Path> ev = (WatchEvent<Path>)event;
+				        Path filename = ev.context();
+		
+			            logger.info("child: " + filename);
+			            Path child = dir.resolve(filename);
+			            logger.info("child: " + child);
+			            processEvent(child, kind);
+				    }
+		
+				    boolean valid = key.reset();
+				    if (!valid) 
+				    {
+				        break;
+				    }
 				}
-				
-			    // wait for key to be signaled
-			    WatchKey key;
-			    try 
-			    {
-			        key = watcher.take();
-			    } 
-			    catch (InterruptedException x) 
-			    {
-			        return;
-			    }
-			    
-			    Path dir = watchPathKeyMap.get(key);
-			    
-			    for (WatchEvent<?> event: key.pollEvents()) 
-			    {
-			        WatchEvent.Kind<?> kind = event.kind();
-	
-			        if (kind == StandardWatchEventKinds.OVERFLOW) 
-			        {
-			            continue;
-			        }
-	
-			        WatchEvent<Path> ev = (WatchEvent<Path>)event;
-			        Path filename = ev.context();
-	
-		            logger.info("child: " + filename);
-		            Path child = dir.resolve(filename);
-		            logger.info("child: " + child);
-		            processEvent(child, kind);
-			    }
-	
-			    boolean valid = key.reset();
-			    if (!valid) 
-			    {
-			        break;
-			    }
+				catch(Exception e2)
+				{
+					logger.error("Error processing event: " + e2.getMessage(), e2);
+				}
 			}
 		}
 		catch(Exception e)
@@ -238,7 +249,7 @@ public class DevelopmentResourcesSyncService implements Runnable
 								StandardWatchEventKinds.ENTRY_CREATE,
 								StandardWatchEventKinds.ENTRY_DELETE,
 								StandardWatchEventKinds.ENTRY_MODIFY);
-						
+
 						watchPathKeyMap.put(keyContent, dir);
 						
 						return FileVisitResult.CONTINUE;
@@ -424,10 +435,9 @@ public class DevelopmentResourcesSyncService implements Runnable
 		}
 		else
 		{
-			//System.out.println("path:" + path.toFile().getPath() + ":" + path.toFile().length() + ":" + path.toFile().getParentFile().exists() + ":" + path.toFile().getParentFile().getParentFile().exists() + ":" + path.toFile().getParentFile().getParentFile().getParentFile().exists());
+			logger.info("path:" + path.toFile().getPath() + ":" + path.toFile().length() + ":" + path.toFile().getParentFile().exists() + ":" + path.toFile().getParentFile().getParentFile().exists() + ":" + path.toFile().getParentFile().getParentFile().getParentFile().exists());
 			String escaped = path.toString().replace(" ", "\\ ");
-			//System.out.println("escaped:" + escaped + ":" + path.toFile().getPath() + ":" + path.toFile().exists());
-			//String fileContentTest = FileHelper.getFileAsStringOpt(new File(escaped), "utf-8");
+			logger.info("escaped:" + escaped + ":" + path.toFile().getPath() + ":" + path.toFile().exists());
 			String fileContent = null;
 			try
 			{
@@ -720,8 +730,15 @@ public class DevelopmentResourcesSyncService implements Runnable
 			    		ContentVO parentContentVO = ContentController.getContentController().getContentVOWithId(contentVO.getParentContentId());
 			    		while(parentContentVO != null)
 			    		{
-			    			addition = parentContentVO.getName() + File.separator + addition; 
-			    			parentContentVO = ContentController.getContentController().getContentVOWithId(parentContentVO.getParentContentId());
+			    			if(parentContentVO.getParentContentId() != null)
+			    			{
+				    			addition = parentContentVO.getName() + File.separator + addition; 
+				    			logger.info("parentContentVO:" + parentContentVO.getName());
+				    			parentContentVO = ContentController.getContentController().getContentVOWithId(parentContentVO.getParentContentId());
+			    			}
+			    			else
+			    				logger.info("Was root...:" + path);
+			    			
 			    			if(parentContentVO.getParentContentId() == null || parentContentVO.getParentContentId() == -1)
 			    				break;
 			    		}

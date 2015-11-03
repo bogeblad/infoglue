@@ -1035,6 +1035,9 @@ public class CmsJDOCallback implements CallbackInterceptor
 				
 				CacheController.clearCacheForGroup("contentVersionCache", "content_" + contentVersion.getContentId());
 
+				if(CmsPropertyHandler.getEnableDiskBasedDeployment())
+					DevelopmentResourcesSyncService.getInstance().writeChangesToDiskDelayed(contentVersion.getId());
+
 				clearCache(MediumContentVersionImpl.class);
 				clearCache(SmallContentVersionImpl.class);
 				clearCache(SmallestContentVersionImpl.class);
@@ -1044,6 +1047,9 @@ public class CmsJDOCallback implements CallbackInterceptor
 				MediumContentVersionImpl contentVersion = (MediumContentVersionImpl)object;
 
 				CacheController.clearCacheForGroup("contentVersionCache", "content_" + contentVersion.getContentId());
+
+				if(CmsPropertyHandler.getEnableDiskBasedDeployment())
+					DevelopmentResourcesSyncService.getInstance().writeChangesToDiskDelayed(contentVersion.getId());
 
 				clearCache(ContentVersionImpl.class);
 				clearCache(SmallContentVersionImpl.class);

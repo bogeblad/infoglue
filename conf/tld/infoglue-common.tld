@@ -357,6 +357,16 @@
 	    	<required>false</required>
 	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
+	 	<attribute>
+		    <name>repositoryId</name>
+	    	<required>false</required>
+	        <rtexprvalue>true</rtexprvalue>
+		</attribute>
+	 	<attribute>
+		    <name>contentPath</name>
+	    	<required>false</required>
+	        <rtexprvalue>true</rtexprvalue>
+		</attribute>
 	</tag>
     <tag>
 	    <name>import</name>

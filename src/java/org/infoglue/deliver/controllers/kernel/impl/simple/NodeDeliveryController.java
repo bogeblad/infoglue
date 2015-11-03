@@ -1901,7 +1901,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	                logger.info(attributeName + " ["+pathCandidate.trim()+"]==[" + path + "]");
 	                if (pathCandidate != null && pathCandidate.toLowerCase().trim().equals(path.toLowerCase())) 
 	                {
-	                	if(deliveryContext.getLanguageId() == null || deliveryContext.getLanguageId() == -1)
+	    				if(deliveryContext.getLanguageId() == null || deliveryContext.getLanguageId() == -1)
 	                	{
 	                		LanguageVO languageVO = LanguageDeliveryController.getLanguageDeliveryController().getLanguageIfSiteNodeSupportsIt(db, language.getId(), siteNodeVO.getId());
 	                		if(languageVO != null && languageVO.getId() == language.getId())
@@ -2126,8 +2126,14 @@ public class NodeDeliveryController extends BaseDeliveryController
             siteNodeId = uriCache.getCachedSiteNodeId(repositoryVO.getId(), path, numberOfPaths);
             
             if (siteNodeId != null)
-                break;
-
+            {
+                Integer siteNodeLanguageId = uriCache.getCachedSiteNodeLanguageId(repositoryVO.getId(), path, numberOfPaths);
+                if(siteNodeLanguageId != null)
+                	deliveryContext.setLanguageId(siteNodeLanguageId);
+            	
+            	break;
+            }
+            
             numberOfPaths = numberOfPaths - 1;
         }
         
@@ -2280,6 +2286,7 @@ public class NodeDeliveryController extends BaseDeliveryController
         		path = tempNewPath;
         	}
     	}
+   
         for (int i = numberOfPaths;i < path.length; i++) 
         {
         	if (i < 0) 
@@ -2292,12 +2299,11 @@ public class NodeDeliveryController extends BaseDeliveryController
             {
   	    		if(logger.isInfoEnabled())
 	    	        logger.info("Getting normal");
-
                 siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null, deliveryContext).getSiteNodeId(db, infogluePrincipal, repositoryVO.getId(), path[i], attributeName, siteNodeId, languageId, deliveryContext);
             }
 
             if (siteNodeId != null)
-                uriCache.addCachedSiteNodeId(repositoryVO.getId(), path, i+1, siteNodeId);
+                uriCache.addCachedSiteNodeId(repositoryVO.getId(), path, i+1, siteNodeId, deliveryContext.getLanguageId());
         }
 		
         return siteNodeId;

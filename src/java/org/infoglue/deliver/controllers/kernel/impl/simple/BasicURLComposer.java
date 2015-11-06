@@ -752,7 +752,7 @@ public class BasicURLComposer extends URLComposer
 						}
 					}
 	            }
-
+	            
 	            if(!enableNiceURIForLanguage.equalsIgnoreCase("true"))
 	            {
 		            if (languageId != null && languageId.intValue() != -1 && deliveryContext.getLanguageId().intValue() != languageId.intValue())

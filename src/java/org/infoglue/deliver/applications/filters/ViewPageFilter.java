@@ -221,7 +221,7 @@ public class ViewPageFilter implements Filter
 	                	logger.info("repositoryVOList:" + repositoryVOList.size());
             
 	            	languageId = getLanguageId(httpRequest, httpSession, repositoryVOList, requestURI, db);
-	            
+    	
 	                Integer siteNodeId = null;
 	                if(languageId != null)
 	                {
@@ -242,7 +242,7 @@ public class ViewPageFilter implements Filter
 	            		nodeNames = nodeNameList.toArray(nodeNames);
 			            
 	            		//logger.info("RepositoryId.: "+repositoryId);
-			            //logger.info("LanguageId...: "+languageId);
+	            		//logger.info("LanguageId...: "+languageId);
 			            //logger.info("RequestURI...: "+requestURI);
 			
 		                InfoGluePrincipal infoGluePrincipal = (InfoGluePrincipal) httpSession.getAttribute("infogluePrincipal");
@@ -286,11 +286,11 @@ public class ViewPageFilter implements Filter
 				            	}
 				            }
 
-		            		nodeNames = new String[nodeNameList.size()];
+		            		nodeNames = new String[nodeNameList.size()]; 
 		            		nodeNames = nodeNameList.toArray(nodeNames);
 		            		
 		                    DeliveryContext deliveryContext = DeliveryContext.getDeliveryContext();
-		                    siteNodeId = NodeDeliveryController.getSiteNodeIdFromBaseSiteNodeIdAndPath(db, infoGluePrincipal, nodeNames, attributeName, deliveryContext, httpSession, languageId, siteNodeIdString, remainingURI);
+		                    siteNodeId = NodeDeliveryController.getSiteNodeIdFromBaseSiteNodeIdAndPath(db, infoGluePrincipal, nodeNames, attributeName, deliveryContext, httpSession, languageId, siteNodeIdString, remainingURI, httpRequest.getParameter("languageId"));
 		                }
 		                else
 		                {
@@ -302,18 +302,17 @@ public class ViewPageFilter implements Filter
 			                    
 			                    //TODO
 			                    DeliveryContext deliveryContext = DeliveryContext.getDeliveryContext();
-			                    siteNodeId = NodeDeliveryController.getSiteNodeIdFromPath(db, infoGluePrincipal, repositoryVO, nodeNames, attributeName, deliveryContext, httpSession, languageId);
-			                
-			                if(httpRequest.getParameter("languageId") == null)
+		                    	siteNodeId = NodeDeliveryController.getSiteNodeIdFromPath(db, infoGluePrincipal, repositoryVO, nodeNames, attributeName, deliveryContext, httpSession, languageId, httpRequest.getParameter("languageId"), true); 
+		                    	
+		                    	if(httpRequest.getParameter("languageId") == null)
 		                    	{
-			                	logger.info("No languageId param - lets set to node language: " + deliveryContext.getLanguageId());
 			                    	if(deliveryContext.getLanguageId() != null && !deliveryContext.getLanguageId().equals(languageId))
-			                    	{
-			                    		languageId = deliveryContext.getLanguageId();
-			                        	httpSession.setAttribute(FilterConstants.LANGUAGE_ID, languageId);
-			                    	}
+				                    {
+				                    	languageId = deliveryContext.getLanguageId();
+				                        httpSession.setAttribute(FilterConstants.LANGUAGE_ID, languageId);
+				                    }
 		                    	}
-			                    
+		                    	
 			                    if(siteNodeId != null)
 			                        break;
 			                }
@@ -621,7 +620,7 @@ public class ViewPageFilter implements Filter
 
         if (session.getAttribute(FilterConstants.LANGUAGE_ID) != null) {
             logger.info("Fetching languageId from session");
-            return (Integer) session.getAttribute(FilterConstants.LANGUAGE_ID);
+        	return (Integer) session.getAttribute(FilterConstants.LANGUAGE_ID);
         }
 
         Integer repositoryId = null;

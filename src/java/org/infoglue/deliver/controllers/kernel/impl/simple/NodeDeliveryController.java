@@ -1525,12 +1525,6 @@ public class NodeDeliveryController extends BaseDeliveryController
 
 	public String getPageUrlAfterLanguageChange(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception
     {
-		/*
-	    SiteNode siteNode = getSiteNode(db, siteNodeId);
-		String dnsName = CmsPropertyHandler.getWebServerAddress();
-		if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
-			dnsName = siteNode.getRepository().getDnsName();
-		*/
         return urlComposer.composePageUrlAfterLanguageChange(db, infoGluePrincipal, siteNodeId, languageId, contentId, deliveryContext);
     } 
 	
@@ -1993,100 +1987,7 @@ public class NodeDeliveryController extends BaseDeliveryController
         return path.toString();
     }
 
-    /*
-    public static Integer getSiteNodeIdFromPath(Database db, InfoGluePrincipal infogluePrincipal, RepositoryVO repositoryVO, String[] path, String attributeName, Integer languageId, DeliveryContext deliveryContext) throws SystemException, Exception
-    {
-        Integer siteNodeId = null;
-        URIMapperCache uriCache = URIMapperCache.getInstance();
-
-        int idx = path.length;
-        while (idx >= 0) 
-        {
-        	//logger.info("Looking for cache nodeName at index "+idx);
-            siteNodeId = uriCache.getCachedSiteNodeId(repositoryVO.getId(), path, idx);
-            if (siteNodeId != null)
-                break;
-            idx = idx - 1;
-        }
-        
-        String repositoryPath = null;
-    	if(!CmsPropertyHandler.getOperatingMode().equals("3"))
-    	{
-	    	int workingPathStartIndex = repositoryVO.getDnsName().indexOf("workingPath=");
-	    	if(workingPathStartIndex != -1)
-	    	{
-	    		int workingPathEndIndex = repositoryVO.getDnsName().indexOf(",", workingPathStartIndex);
-	    		if(workingPathEndIndex > -1)
-		    		repositoryPath = repositoryVO.getDnsName().substring(workingPathStartIndex + 12, workingPathEndIndex);
-	    		else
-	    			repositoryPath = repositoryVO.getDnsName().substring(workingPathStartIndex + 12);
-	    	}
-    	}
-
-    	if(repositoryPath == null)
-    	{
-        	int pathStartIndex = repositoryVO.getDnsName().indexOf("path=");
-        	if(pathStartIndex != -1)
-        	{
-        		int pathEndIndex = repositoryVO.getDnsName().indexOf(",", pathStartIndex);
-	    		if(pathEndIndex > -1)
-		    		repositoryPath = repositoryVO.getDnsName().substring(pathStartIndex + 5, pathEndIndex);
-	    		else
-	    			repositoryPath = repositoryVO.getDnsName().substring(pathStartIndex + 5);
-        	}
-    	}
-    	
-    	logger.info("repositoryPath:" + repositoryPath);    	
-    	logger.info("path:" + path.length);    	
-    	
-    	if(repositoryPath != null && path.length > 0)
-    	{
-    		String[] repositoryPaths = repositoryPath.split("/");
-    		String[] newPath = path;
-    		
-    		logger.info("repositoryPaths:" + repositoryPaths.length); 
-    		logger.info("newPath:" + newPath.length); 
-    		
-    		for(int repPathIndex = 0; repPathIndex < repositoryPaths.length; repPathIndex++)
-    		{
-    			String repPath = repositoryPaths[repPathIndex];
-    	    	logger.info("repPath:" + repPath);
-    	    	if(path.length > repPathIndex)
-    	    	{
-    		    	logger.info("path:" + path[repPathIndex]);
-    		    	if(path[repPathIndex].equals(repPath))
-    		    	{
-    		    		String[] tempNewPath = new String[newPath.length - 1];
-    		    		for(int i=1; i<newPath.length; i++)
-    		    			tempNewPath[i-1] = newPath[i];
-    		    		
-    		    		newPath = tempNewPath;
-    		    	}    	    		
-    	    	}
-    		}
-    		path = newPath;
-    	}
-	   	logger.info("new path:" + path.length);
-
-        //logger.info("Idx = "+idx);
-        for (int i = idx;i < path.length; i++) 
-        {
-            if (i < 0) 
-            {
-                siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null).getSiteNodeId(db, infogluePrincipal, repositoryVO.getId(), null, attributeName, null, languageId, deliveryContext);
-            } 
-            else 
-            {
-                siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null).getSiteNodeId(db, infogluePrincipal, repositoryVO.getId(), path[i], attributeName, siteNodeId, languageId, deliveryContext);
-            }
-            
-            if (siteNodeId != null)
-                uriCache.addCachedSiteNodeId(repositoryVO.getId(), path, i+1, siteNodeId);
-        }
-
-        return siteNodeId;
-    }
-    */
+  
     public static Integer getSiteNodeIdFromPath(InfoGluePrincipal infogluePrincipal, RepositoryVO repositoryVO, String[] path, String attributeName, Integer languageId, DeliveryContext deliveryContext) throws SystemException, Exception
     {
     	return getSiteNodeIdFromPath(infogluePrincipal, repositoryVO, path, attributeName, deliveryContext, null, languageId, null);

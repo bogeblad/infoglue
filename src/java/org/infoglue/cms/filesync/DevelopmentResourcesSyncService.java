@@ -407,10 +407,32 @@ public class DevelopmentResourcesSyncService implements Runnable
 			String assetKey = FilenameUtils.removeExtension(path.getFileName().toString());
 			DigitalAssetVO assetVO = DigitalAssetController.getController().getDigitalAssetVO(contentVO.getId(), masterLanguageVO.getId(), assetKey, false);
 			logger.info("assetVO:" + assetVO);
+			
+			if(assetVO != null)
+			{
+				contentVersionVO = ContentVersionController.getContentVersionController().deleteDigitalAssetRelation(contentVersionVO.getId(), assetVO.getId(), principal);
+				Thread.sleep(10000);
+				contentVersionVO.setVersionComment("Version updated by filesync deploy");
+			    contentVersionVO.setModifiedDateTime(new Date());
+			    contentVersionVO.setVersionModifier("" + principal.getName());
+				isNewlyCreatedVersion = false;
+				DigitalAssetVO afterAssetVO = DigitalAssetController.getController().getDigitalAssetVO(contentVO.getId(), masterLanguageVO.getId(), assetKey, false);
+				assetVO = null;
+			}
+			
 			if(assetVO == null)
 			{
 				assetVO = new DigitalAssetVO();
-				assetVO.setAssetContentType("image/png");
+				
+				String contentType = "image/png";
+				if(path.getFileName().toString().endsWith("jpg"))
+					contentType = "image/jpg";
+				if(path.getFileName().toString().endsWith("jar"))
+					contentType = "application/java-archive";
+				if(path.getFileName().toString().endsWith("pdf"))
+					contentType = "application/pdf";
+				
+				assetVO.setAssetContentType(contentType);
 				assetVO.setAssetKey(assetKey);
 				assetVO.setAssetFileName(path.toFile().getName());
 				assetVO.setAssetFilePath(path.toFile().getPath());
@@ -432,6 +454,17 @@ public class DevelopmentResourcesSyncService implements Runnable
 				    logger.error("An error occurred when we tried to close the fileinput stream and delete the file:" + e.getMessage(), e);
 				}
 			}
+			
+			try
+	        {
+	        	if(CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms"))
+	        		ChangeNotificationController.getInstance().notifyListeners();
+	        }
+	        catch(Exception e)
+	        {
+	        	logger.error("Error notifying listener " + e.getMessage());
+	        	logger.warn("Error notifying listener " + e.getMessage(), e);
+	        }
 		}
 		else
 		{
@@ -501,7 +534,7 @@ public class DevelopmentResourcesSyncService implements Runnable
 							attribute = domBuilder.addElement(attributesRoot, attributeName);
 						}
 						attribute.clearContent();
-						domBuilder.addCDATAElement(attribute, attributeValue);
+						domBuilder.addCDATAElement(attribute, attributeValue.trim());
 				    }	                
 		
 				    contentVersionVO.setVersionValue(document.asXML());

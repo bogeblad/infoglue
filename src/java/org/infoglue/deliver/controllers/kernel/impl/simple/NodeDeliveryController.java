@@ -1892,22 +1892,27 @@ public class NodeDeliveryController extends BaseDeliveryController
 		    	        	pathCandidate = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, content.getContentId(), language.getLanguageId(), NAV_TITLE_ATTRIBUTE_NAME, siteNodeVO.getSiteNodeId(), false, deliveryContext, infogluePrincipal, false, true);
 	                }
 	                
-                	logger.info(attributeName + " ["+pathCandidate.trim()+"]==[" + path + "]");
+                	logger.error(attributeName + " ["+pathCandidate.trim()+"]==[" + path + "]");
 	                if (pathCandidate != null && pathCandidate.toLowerCase().trim().equals(path.toLowerCase())) 
 	                {
 	                	if(requestLanguageId != null && !requestLanguageId.equals("") && !requestLanguageId.equals("-1"))
 	                	{
-	                		logger.info("Not resetting languageID as it came from request: " + requestLanguageId);
+	                		logger.error("Not resetting languageID as it came from request: " + requestLanguageId);
 	                	}
-	                	else if(deliveryContext.getLanguageId() == null || deliveryContext.getLanguageId() == -1)
+	                	else if(deliveryContext.getLanguageId() == null || deliveryContext.getLanguageId() == -1 || deliveryContext.getLanguageCanBeOverridden())
 	                	{
 	                		LanguageVO languageVO = LanguageDeliveryController.getLanguageDeliveryController().getLanguageIfSiteNodeSupportsIt(db, language.getId(), siteNodeVO.getId());
-	                		logger.info("LanguageId was " + languageId + " and deliveryContext was " + deliveryContext.getLanguageId() + ". Is now:" + language + " vs " + languageVO);
-	                		if(languageVO != null && languageVO.getId() == language.getId())
+	                		logger.error("LanguageId was " + languageId + " and deliveryContext was " + deliveryContext.getLanguageId() + ". Is now:" + language + " vs " + languageVO);
+	                		if(languageVO != null && languageVO.getId() == language.getId() )
 	                		{
 	                			deliveryContext.setLanguageId(language.getId());
+	                			deliveryContext.setLanguageCanBeOverridden(true);
 	                			logger.info("LanguageId was " + languageId + " and deliveryContext was " + deliveryContext.getLanguageId() + ". Is now:" + language);
 	                		}
+	                	}
+	                	else
+	                	{
+	                		logger.error("Not resetting languageID as it was not set in this loop");
 	                	}
 	                	
 	                	return siteNodeVO.getSiteNodeId();

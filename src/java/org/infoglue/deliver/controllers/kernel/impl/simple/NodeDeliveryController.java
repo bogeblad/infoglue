@@ -1862,12 +1862,16 @@ public class NodeDeliveryController extends BaseDeliveryController
 	        
 	        if(content != null) 
 	        {
-	            //logger.info("Content "+content.getContentId());
+	        	SiteNodeVO matchingSiteNodeVO = null;
+	        	List<Integer> matchingLanguages = new ArrayList<Integer>();
+	        	Integer lastMatchingLanguageId = null;
+	        	
+ 	            //logger.info("Content "+content.getContentId());
 	            String pathCandidate = null;
 	            for (int i=0;i<languages.size();i++) 
 	            {
 	                LanguageVO language = (LanguageVO) languages.get(i);
-	                //logger.info("Language : "+language.getLanguageCode());
+	                logger.info("Language : "+language.getLanguageCode());
 	                
 	                if(attributeName.equals("SiteNode.name"))
 	                    pathCandidate = siteNodeVO.getName();
@@ -1892,31 +1896,63 @@ public class NodeDeliveryController extends BaseDeliveryController
 		    	        	pathCandidate = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, content.getContentId(), language.getLanguageId(), NAV_TITLE_ATTRIBUTE_NAME, siteNodeVO.getSiteNodeId(), false, deliveryContext, infogluePrincipal, false, true);
 	                }
 	                
-                	logger.info(attributeName + " ["+pathCandidate.trim()+"]==[" + path + "]");
+	                logger.info(attributeName + " ["+pathCandidate.toLowerCase().trim()+"]==[" + path.toLowerCase() + "]");
 	                if (pathCandidate != null && pathCandidate.toLowerCase().trim().equals(path.toLowerCase())) 
 	                {
-	                	if(requestLanguageId != null && !requestLanguageId.equals("") && !requestLanguageId.equals("-1"))
-	                	{
-	                		logger.info("Not resetting languageID as it came from request: " + requestLanguageId);
-	                	}
-	                	else if(deliveryContext.getLanguageId() == null || deliveryContext.getLanguageId() == -1 || deliveryContext.getLanguageCanBeOverridden())
-	                	{
-	                		LanguageVO languageVO = LanguageDeliveryController.getLanguageDeliveryController().getLanguageIfSiteNodeSupportsIt(db, language.getId(), siteNodeVO.getId());
-	                		logger.info("LanguageId was " + languageId + " and deliveryContext was " + deliveryContext.getLanguageId() + ". Is now:" + language + " vs " + languageVO);
-	                		if(languageVO != null && languageVO.getId() == language.getId() )
-	                		{
-	                			deliveryContext.setLanguageId(language.getId());
-	                			deliveryContext.setLanguageCanBeOverridden(true);
-	                			logger.info("LanguageId was " + languageId + " and deliveryContext was " + deliveryContext.getLanguageId() + ". Is now:" + language);
-	                		}
-	                	}
-	                	else
-	                	{
-	                		logger.info("Not resetting languageID as it was not set in this loop");
-	                	}
-	                	
-	                	return siteNodeVO.getSiteNodeId();
+	                	logger.info("Match: ["+pathCandidate.trim()+"]==[" + path + "]:" + pathCandidate.toLowerCase().trim().equals(path.toLowerCase()));
+	                	matchingSiteNodeVO = siteNodeVO;
+	                	matchingLanguages.add(language.getId());
+	                	lastMatchingLanguageId = language.getId();
 	                }
+	            }
+	            
+	            if(matchingSiteNodeVO != null)
+	            {
+	            	logger.info("matchingSiteNodeVO:" + matchingSiteNodeVO.getName());
+	            	logger.info("matchingLanguages:" + matchingLanguages);
+	            	logger.info("lastMatchingLanguageId:" + lastMatchingLanguageId);
+	            	if(matchingLanguages.size() > 0)
+	            	{
+	            		logger.info("Setting acceptableLanguageIds: " + matchingLanguages);
+		            	deliveryContext.setAcceptableLanguageIds(matchingLanguages);
+		            	logger.info("Found languages on the page which could be valid... setting preferred to that: " + matchingLanguages.size());
+	            		if(deliveryContext.getLanguageId() != null && matchingLanguages.contains(deliveryContext.getLanguageId()))
+	            		{
+	            			logger.info("There was allready a lang in session or similar so we do not need to change it:" + deliveryContext.getLanguageId());
+	            		}
+	            		else
+	            		{
+	            			for(Integer matchingLanguageId : matchingLanguages)
+	            			{
+		                		LanguageVO matchingLanguageVO = LanguageDeliveryController.getLanguageDeliveryController().getLanguageIfSiteNodeSupportsIt(db, matchingLanguageId, siteNodeVO.getId());
+		                		logger.info("matchingLanguageVO:" + matchingLanguageVO);
+		                		logger.info("deliveryContext.getLanguageId():" + deliveryContext.getLanguageId());
+		                		logger.info("deliveryContext.getLanguageCanBeOverridden():" + deliveryContext.getLanguageCanBeOverridden());
+		                		
+		                		if(matchingLanguageVO != null)
+		                		{
+				                	if(requestLanguageId != null && !requestLanguageId.equals("") && !requestLanguageId.equals("-1"))
+				                	{
+				                		logger.info("Not resetting languageID as it came from request: " + requestLanguageId);
+				                	}
+				                	else if(deliveryContext.getLanguageId() == null || deliveryContext.getLanguageId() == -1 || deliveryContext.getLanguageCanBeOverridden())
+				                	{
+			                			deliveryContext.setLanguageId(matchingLanguageVO.getId());
+			                			deliveryContext.setLanguageCanBeOverridden(true);
+			                			logger.info("LanguageId was " + languageId + " and deliveryContext was " + deliveryContext.getLanguageId() + ". Is now:" + matchingLanguageVO.getId());
+			                			//deliveryContext.setParentPreferredLanguageId(matchingLanguageVO.getId());
+			                			break;
+				                	}
+				                	else
+				                	{
+				                		logger.info("Not resetting languageID as it was not set in this loop");
+				                	}
+		                		}
+	            			}
+	            		}
+	            	}
+	            	
+	            	return matchingSiteNodeVO.getSiteNodeId();
 	            }
 	        }
 	        else
@@ -2036,8 +2072,11 @@ public class NodeDeliveryController extends BaseDeliveryController
     	return getSiteNodeIdFromPath(db, infogluePrincipal, repositoryVO, path, attributeName, deliveryContext, session, languageId, requestLanguageId, false);
     }
     
-    public static Integer getSiteNodeIdFromPath(Database db, InfoGluePrincipal infogluePrincipal, RepositoryVO repositoryVO, String[] path, String attributeName, DeliveryContext deliveryContext, HttpSession session, Integer languageId, String requestLanguageId, boolean resetLanguageContextOnCacheHit) throws SystemException, Exception
+    public static Integer getSiteNodeIdFromPath(Database db, InfoGluePrincipal infogluePrincipal, RepositoryVO repositoryVO, String[] originalPath, String attributeName, DeliveryContext deliveryContext, HttpSession session, Integer languageId, String requestLanguageId, boolean resetLanguageContextOnCacheHit) throws SystemException, Exception
     {
+    	String[] path = new String[originalPath.length];
+    	System.arraycopy( originalPath, 0, path, 0, originalPath.length );
+    	
         Integer siteNodeId = null;
 
         URIMapperCache uriCache = URIMapperCache.getInstance();
@@ -2045,19 +2084,29 @@ public class NodeDeliveryController extends BaseDeliveryController
         int numberOfPaths = path.length;
         while (numberOfPaths >= 0) 
         {
-        	//logger.info("Looking for cached nodeName at index "+idx);
+        	logger.info("Looking for cached nodeName at index " + path[path.length - 1]);
             siteNodeId = uriCache.getCachedSiteNodeId(repositoryVO.getId(), path, numberOfPaths, requestLanguageId);
+            logger.info("siteNodeId:" + siteNodeId);
             
             if (siteNodeId != null)
             {
             	logger.info("languageId:" + languageId);
             	logger.info("deliveryContext.getLanguageId():" + deliveryContext.getLanguageId());
             	logger.info("requestLanguageId:" + requestLanguageId);
-                Integer siteNodeLanguageId = uriCache.getCachedSiteNodeLanguageId(repositoryVO.getId(), path, numberOfPaths, requestLanguageId);
-                if(siteNodeLanguageId != null && resetLanguageContextOnCacheHit)
+                List<Integer> siteNodeLanguageIds = uriCache.getCachedSiteNodeLanguageId(repositoryVO.getId(), originalPath, numberOfPaths, requestLanguageId);
+                logger.info("cached siteNodeLanguageIds:" + siteNodeLanguageIds);
+                if(siteNodeLanguageIds != null && siteNodeLanguageIds.size() > 0 && resetLanguageContextOnCacheHit)
                 {
-                	deliveryContext.setLanguageId(siteNodeLanguageId);
-                	logger.info("A languageId was " + languageId + " and deliveryContext was " + deliveryContext.getLanguageId() + ". Is now:" + siteNodeLanguageId);
+                	if(deliveryContext.getSessionLanguageId() != null && siteNodeLanguageIds.contains(deliveryContext.getSessionLanguageId()))
+                	{
+                		deliveryContext.setLanguageId(deliveryContext.getSessionLanguageId());
+                		logger.info("Session language was set and it was in the list of acceptable languages.. lets use that: " + deliveryContext.getSessionLanguageId());
+                	}
+                	else
+                	{
+                		deliveryContext.setLanguageId(siteNodeLanguageIds.get(0));
+                		logger.info("Session language was not set so lets use first language: " + siteNodeLanguageIds.get(0));
+                	}
                 }
                 
             	break;
@@ -2220,25 +2269,28 @@ public class NodeDeliveryController extends BaseDeliveryController
         {
         	if (i < 0) 
             {
-  	    		if(logger.isInfoEnabled())
+        		if(logger.isInfoEnabled())
 	    	        logger.info("Getting root node");
                 siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null, deliveryContext).getSiteNodeId(db, infogluePrincipal, repositoryVO.getId(), null, attributeName, null, languageId, deliveryContext, requestLanguageId);
   	        } 
             else 
             {
-  	    		if(logger.isInfoEnabled())
+        		if(logger.isInfoEnabled())
 	    	        logger.info("Getting normal");
                 siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null, deliveryContext).getSiteNodeId(db, infogluePrincipal, repositoryVO.getId(), path[i], attributeName, siteNodeId, languageId, deliveryContext, requestLanguageId);
             }
 
             if (siteNodeId != null)
             {
-            	Integer cacheLanguageId = deliveryContext.getLanguageId(); //languageId;
-            	logger.info("cacheLanguageId:" + cacheLanguageId);
+            	List<Integer> cacheLanguageIds = deliveryContext.getAcceptableLanguageIds(); //languageId;
+            	logger.info("cacheLanguageIds:" + cacheLanguageIds);
             	logger.info("deliveryContext.getLanguageId():" + deliveryContext.getLanguageId());
             	
-            	if(cacheLanguageId != null && resetLanguageContextOnCacheHit)
-            		uriCache.addCachedSiteNodeId(repositoryVO.getId(), path, i+1, siteNodeId, requestLanguageId, cacheLanguageId);
+            	if(cacheLanguageIds != null && cacheLanguageIds.size() > 0 && resetLanguageContextOnCacheHit)
+            	{
+            		logger.info("Caching:" + path[i]);
+            		uriCache.addCachedSiteNodeId(repositoryVO.getId(), originalPath, i+1, siteNodeId, requestLanguageId, cacheLanguageIds);
+            	}
             }
         }
 		

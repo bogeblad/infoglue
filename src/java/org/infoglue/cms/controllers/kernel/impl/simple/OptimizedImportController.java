@@ -154,6 +154,9 @@ public class OptimizedImportController extends BaseController implements Runnabl
 	
 	private void importFile(File file, String onlyLatestVersions, String standardReplacement, String replacements, ProcessBean processBean) throws Exception
 	{
+		if(replacements == null)
+			replacements = "";
+		
 		Timer t = new Timer();
 		processBean.setStatus(ProcessBean.RUNNING);
 		
@@ -179,7 +182,7 @@ public class OptimizedImportController extends BaseController implements Runnabl
 			{
 				boolean isUTF8 = false;
 				boolean hasUnicodeChars = false;
-				if(replacements.indexOf((char)65533) > -1)
+				if(replacements != null && replacements.indexOf((char)65533) > -1)
 					isUTF8 = true;
 				
 				for(int i=0; i<replacements.length(); i++)

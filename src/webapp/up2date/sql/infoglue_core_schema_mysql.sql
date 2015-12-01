@@ -27,7 +27,7 @@ CREATE TABLE cmContent (
   expireDateTime datetime NOT NULL default '2070-01-01 12:00:00',
   contentTypeDefinitionId integer(11) default NULL,
   parentContentId integer(11) default NULL,
-  creator TEXT NOT NULL,
+  creator varchar(255) NOT NULL default 'unknown',
   repositoryId integer(11) NOT NULL default '0',
   isBranch tinyint(4) NOT NULL default '0',
   isProtected tinyint(4) NOT NULL default '2',

@@ -3,6 +3,12 @@
 set -m
 set -e
 
+sed '/nice            = 0/r lower_case_table_names=2' /usr/my.cnf
+sed '/nice            = 0/r lower_case_table_names=2' /etc/mysql/my.cnf
+
+sed '/nice            = 0/r max_allowed_packet=32M' /usr/my.cnf
+sed '/nice            = 0/r max_allowed_packet=32M' /etc/mysql/my.cnf
+
 /usr/bin/mysqld_safe &
 
 sleep 10

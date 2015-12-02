@@ -51,7 +51,8 @@ CREATE TABLE `cmaccessrightgroup` (
   `accessRightGroupId` int(11) NOT NULL AUTO_INCREMENT,
   `accessRightId` int(11) NOT NULL DEFAULT '0',
   `groupName` varchar(150) NOT NULL DEFAULT '',
-  PRIMARY KEY (`accessRightGroupId`)
+  PRIMARY KEY (`accessRightGroupId`),
+  KEY `accessRightIDIndex` (`accessRightId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -75,7 +76,8 @@ CREATE TABLE `cmaccessrightrole` (
   `accessRightRoleId` int(11) NOT NULL AUTO_INCREMENT,
   `accessRightId` int(11) NOT NULL DEFAULT '0',
   `roleName` varchar(150) NOT NULL DEFAULT '',
-  PRIMARY KEY (`accessRightRoleId`)
+  PRIMARY KEY (`accessRightRoleId`),
+  KEY `accessRightIDIndex` (`accessRightId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -100,7 +102,8 @@ CREATE TABLE `cmaccessrightuser` (
   `accessRightUserId` int(11) NOT NULL AUTO_INCREMENT,
   `accessRightId` int(11) NOT NULL DEFAULT '0',
   `userName` varchar(150) NOT NULL DEFAULT '',
-  PRIMARY KEY (`accessRightUserId`)
+  PRIMARY KEY (`accessRightUserId`),
+  KEY `accessRightIDIndex` (`accessRightId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -178,13 +181,13 @@ CREATE TABLE `cmcategory` (
   `categoryId` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `displayName` varchar(4096) DEFAULT NULL,
-  `description` text,
+  `description` mediumtext,
   `active` tinyint(4) NOT NULL DEFAULT '1',
   `parentId` int(11) DEFAULT NULL,
   PRIMARY KEY (`categoryId`),
   KEY `categoryParentIdIndex` (`parentId`),
   KEY `categoryNameIndex` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -218,7 +221,9 @@ CREATE TABLE `cmcontent` (
   `isDeleted` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`contentId`),
   KEY `contentTypeDefinitionId` (`contentTypeDefinitionId`),
-  KEY `parentContentId` (`parentContentId`)
+  KEY `parentContentId` (`parentContentId`),
+  KEY `cExpireDateTimeIndex` (`expireDateTime`),
+  KEY `cPublishDateTimeIndex` (`publishDateTime`)
 ) ENGINE=InnoDB AUTO_INCREMENT=343 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -248,7 +253,7 @@ CREATE TABLE `cmcontentcategory` (
   KEY `attributeName_categoryId` (`attributeName`,`categoryId`),
   KEY `contentVersionId` (`contentVersionId`),
   KEY `categoryContVersionId` (`contentVersionId`)
-) ENGINE=MyISAM AUTO_INCREMENT=22 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -336,7 +341,9 @@ CREATE TABLE `cmcontentversion` (
   `languageId` int(11) NOT NULL DEFAULT '0',
   `versionModifier` text NOT NULL,
   PRIMARY KEY (`contentVersionId`),
-  KEY `contentId` (`contentId`)
+  KEY `contentId` (`contentId`),
+  KEY `contentVersionModifierIndex` (`versionModifier`(20)),
+  KEY `cvVersionModifierIndex` (`versionModifier`(30))
 ) ENGINE=InnoDB AUTO_INCREMENT=297 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -390,9 +397,13 @@ CREATE TABLE `cmdigitalasset` (
   `assetFileName` text NOT NULL,
   `assetFilePath` text NOT NULL,
   `assetFileSize` int(11) NOT NULL DEFAULT '0',
-  `assetContentType` varchar(255) NOT NULL,
+  `assetContentType` varchar(255) DEFAULT NULL,
   `assetBlob` longblob,
-  PRIMARY KEY (`digitalAssetId`)
+  PRIMARY KEY (`digitalAssetId`),
+  KEY `assetKeyIndex` (`assetKey`(255)),
+  KEY `assetFileNameIndex` (`assetFileName`(255)),
+  KEY `assetFileSizeIndex` (`assetFileSize`),
+  KEY `assetContentTypeIndex` (`assetContentType`)
 ) ENGINE=InnoDB AUTO_INCREMENT=180 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -531,6 +542,10 @@ DROP TABLE IF EXISTS `cmgroup`;
 CREATE TABLE `cmgroup` (
   `groupName` varchar(255) NOT NULL DEFAULT '',
   `description` text NOT NULL,
+  `source` varchar(45) NOT NULL DEFAULT 'infoglue',
+  `groupType` varchar(45) NOT NULL DEFAULT '',
+  `isActive` tinyint(4) NOT NULL DEFAULT '1',
+  `modifiedDateTime` timestamp NOT NULL DEFAULT '2010-01-01 11:00:00',
   PRIMARY KEY (`groupName`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -747,6 +762,60 @@ INSERT INTO `cmlanguage` VALUES (1,'English','en','utf-8'),(2,'German','de','utf
 UNLOCK TABLES;
 
 --
+-- Table structure for table `cmpagedeliverymetadata`
+--
+
+DROP TABLE IF EXISTS `cmpagedeliverymetadata`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cmpagedeliverymetadata` (
+  `pageDeliveryMetaDataId` int(11) NOT NULL AUTO_INCREMENT,
+  `siteNodeId` int(11) NOT NULL,
+  `languageId` int(11) NOT NULL,
+  `contentId` int(11) NOT NULL,
+  `lastModifiedDateTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `selectiveCacheUpdateNotApplicable` tinyint(4) NOT NULL DEFAULT '0',
+  `lastModifiedTimeout` int(11) NOT NULL DEFAULT '-1',
+  PRIMARY KEY (`pageDeliveryMetaDataId`),
+  KEY `pageDeliveryMetaDataIDX` (`siteNodeId`,`languageId`,`contentId`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cmpagedeliverymetadata`
+--
+
+LOCK TABLES `cmpagedeliverymetadata` WRITE;
+/*!40000 ALTER TABLE `cmpagedeliverymetadata` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cmpagedeliverymetadata` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cmpagedeliverymetadataentity`
+--
+
+DROP TABLE IF EXISTS `cmpagedeliverymetadataentity`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cmpagedeliverymetadataentity` (
+  `pageDeliveryMetaDataEntityId` int(11) NOT NULL AUTO_INCREMENT,
+  `pageDeliveryMetaDataId` int(11) NOT NULL,
+  `siteNodeId` int(11) DEFAULT NULL,
+  `contentId` int(11) DEFAULT NULL,
+  PRIMARY KEY (`pageDeliveryMetaDataEntityId`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cmpagedeliverymetadataentity`
+--
+
+LOCK TABLES `cmpagedeliverymetadataentity` WRITE;
+/*!40000 ALTER TABLE `cmpagedeliverymetadataentity` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cmpagedeliverymetadataentity` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `cmpropertiescategory`
 --
 
@@ -764,7 +833,7 @@ CREATE TABLE `cmpropertiescategory` (
   KEY `propCategoryEntityNameIndex` (`entityName`),
   KEY `propCategoryEntityIdIndex` (`entityId`),
   KEY `propCategoryCategoryIdIndex` (`categoryId`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -871,11 +940,17 @@ DROP TABLE IF EXISTS `cmredirect`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `cmredirect` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `url` text NOT NULL,
-  `redirectUrl` text NOT NULL,
+  `url` mediumtext NOT NULL,
+  `redirectUrl` mediumtext NOT NULL,
+  `createdDateTime` datetime DEFAULT NULL,
+  `publishDateTime` datetime DEFAULT NULL,
+  `expireDateTime` datetime DEFAULT NULL,
+  `modifier` mediumtext,
+  `isUserManaged` tinyint(4) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
-  KEY `redirectUrl` (`redirectUrl`(255))
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  KEY `redirectUrl` (`redirectUrl`(255)),
+  KEY `redirectUrlIndex` (`redirectUrl`(255))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -910,7 +985,7 @@ CREATE TABLE `cmregistry` (
   KEY `entityId` (`entityId`),
   KEY `referencingEntityComplName` (`referencingEntityComplName`),
   KEY `referencingEntityComplId` (`referencingEntityComplId`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1010,6 +1085,9 @@ DROP TABLE IF EXISTS `cmrole`;
 CREATE TABLE `cmrole` (
   `roleName` varchar(200) NOT NULL,
   `description` text NOT NULL,
+  `source` varchar(45) NOT NULL DEFAULT 'infoglue',
+  `isActive` tinyint(4) NOT NULL DEFAULT '1',
+  `modifiedDateTime` timestamp NOT NULL DEFAULT '2010-01-01 11:00:00',
   PRIMARY KEY (`roleName`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1020,7 +1098,7 @@ CREATE TABLE `cmrole` (
 
 LOCK TABLES `cmrole` WRITE;
 /*!40000 ALTER TABLE `cmrole` DISABLE KEYS */;
-INSERT INTO `cmrole` VALUES ('administrators','This is the most priviliged group'),('anonymous','Must be present to model the default anonymous extranet role.'),('cmsUser','Must be present to allow any ordinary user to get access.');
+INSERT INTO `cmrole` VALUES ('administrators','This is the most priviliged group','infoglue',1,'2010-01-01 11:00:00'),('anonymous','Must be present to model the default anonymous extranet role.','infoglue',1,'2010-01-01 11:00:00'),('cmsUser','Must be present to allow any ordinary user to get access.','infoglue',1,'2010-01-01 11:00:00');
 /*!40000 ALTER TABLE `cmrole` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1225,7 +1303,9 @@ CREATE TABLE `cmsitenode` (
   `isBranch` tinyint(4) NOT NULL DEFAULT '0',
   `metaInfoContentId` int(11) DEFAULT '-1',
   `isDeleted` tinyint(4) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`siteNodeId`)
+  PRIMARY KEY (`siteNodeId`),
+  KEY `snExpireDateTimeIndex` (`expireDateTime`),
+  KEY `snPublishDateTimeIndex` (`publishDateTime`)
 ) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1294,7 +1374,8 @@ CREATE TABLE `cmsitenodeversion` (
   `sortOrder` int(11) NOT NULL DEFAULT '-1',
   `isHidden` tinyint(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`siteNodeVersionId`),
-  KEY `siteNodeId` (`siteNodeId`)
+  KEY `siteNodeId` (`siteNodeId`),
+  KEY `siteNodeVersionModifierIndex` (`versionModifier`(20))
 ) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1404,6 +1485,9 @@ CREATE TABLE `cmsystemuser` (
   `firstName` text NOT NULL,
   `lastName` text NOT NULL,
   `email` text NOT NULL,
+  `source` varchar(45) NOT NULL DEFAULT 'infoglue',
+  `isActive` tinyint(4) NOT NULL DEFAULT '1',
+  `modifiedDateTime` timestamp NOT NULL DEFAULT '2010-01-01 11:00:00',
   PRIMARY KEY (`userName`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1414,7 +1498,7 @@ CREATE TABLE `cmsystemuser` (
 
 LOCK TABLES `cmsystemuser` WRITE;
 /*!40000 ALTER TABLE `cmsystemuser` DISABLE KEYS */;
-INSERT INTO `cmsystemuser` VALUES ('administrator','changeit','System','Administrator','administrator@your.domain'),('anonymous','anonymous','Anonymous','User','anonymous@infoglue.org');
+INSERT INTO `cmsystemuser` VALUES ('administrator','changeit','System','Administrator','administrator@your.domain','infoglue',1,'2010-01-01 11:00:00'),('anonymous','anonymous','Anonymous','User','anonymous@infoglue.org','infoglue',1,'2010-01-01 11:00:00');
 /*!40000 ALTER TABLE `cmsystemuser` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1618,7 +1702,7 @@ CREATE TABLE `os_currentstep` (
   KEY `CS_OWNER` (`OWNER`),
   KEY `CS_CALLER` (`CALLER`),
   CONSTRAINT `os_currentstep_ibfk_1` FOREIGN KEY (`ENTRY_ID`) REFERENCES `os_wfentry` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1645,7 +1729,7 @@ CREATE TABLE `os_currentstep_prev` (
   KEY `PREVIOUS_ID` (`PREVIOUS_ID`),
   CONSTRAINT `os_currentstep_prev_ibfk_1` FOREIGN KEY (`ID`) REFERENCES `os_currentstep` (`ID`),
   CONSTRAINT `os_currentstep_prev_ibfk_2` FOREIGN KEY (`PREVIOUS_ID`) REFERENCES `os_historystep` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1683,7 +1767,7 @@ CREATE TABLE `os_historystep` (
   KEY `HS_OWNER` (`OWNER`),
   KEY `HS_CALLER` (`CALLER`),
   CONSTRAINT `os_historystep_ibfk_1` FOREIGN KEY (`ENTRY_ID`) REFERENCES `os_wfentry` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1710,7 +1794,7 @@ CREATE TABLE `os_historystep_prev` (
   KEY `PREVIOUS_ID` (`PREVIOUS_ID`),
   CONSTRAINT `os_historystep_prev_ibfk_1` FOREIGN KEY (`ID`) REFERENCES `os_historystep` (`ID`),
   CONSTRAINT `os_historystep_prev_ibfk_2` FOREIGN KEY (`PREVIOUS_ID`) REFERENCES `os_historystep` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1742,7 +1826,7 @@ CREATE TABLE `os_propertyentry` (
   `double_val` double DEFAULT NULL,
   `int_val` int(11) DEFAULT NULL,
   PRIMARY KEY (`entity_name`,`entity_id`,`entity_key`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1765,7 +1849,7 @@ DROP TABLE IF EXISTS `os_stepids`;
 CREATE TABLE `os_stepids` (
   `ID` bigint(20) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1789,7 +1873,7 @@ CREATE TABLE `os_wfentry` (
   `NAME` varchar(60) DEFAULT NULL,
   `STATE` int(11) DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1810,4 +1894,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-12-02  8:30:33
+-- Dump completed on 2015-12-02  9:40:50

@@ -3222,4 +3222,12 @@ public class CmsPropertyHandler
 		return 1F;
 	}
 
+	/**
+	 * Indicates that the structure tool should be reloaded when activated
+	 */
+	public static boolean getReloadStructureOnActivation()
+	{
+		return Boolean.parseBoolean(getServerNodeProperty("reloadStructureOnActivation", false, "false"));
+	}
+
 }

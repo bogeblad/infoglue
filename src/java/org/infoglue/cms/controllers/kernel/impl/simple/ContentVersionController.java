@@ -1731,6 +1731,12 @@ public class ContentVersionController extends BaseController
     	String languageCode = null;
     	if(principal != null && principal.getName() != null)
     		languageCode = CmsPropertyHandler.getPreferredLanguageCode(principal.getName());
+
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("VerisonValue before validateAdvanced: " + contentVersionVO.getVersionValue());
+		}
+
     	ConstraintExceptionBuffer ceb = contentVersionVO.validateAdvanced(contentTypeDefinitionVO, languageCode);
         logger.info("Skipping validate:" + skipValidate);
     	if(!skipValidate)

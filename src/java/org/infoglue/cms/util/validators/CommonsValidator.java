@@ -6,12 +6,13 @@ import org.apache.commons.validator.GenericValidator;
 import org.apache.commons.validator.Validator;
 import org.apache.commons.validator.ValidatorException;
 import org.apache.commons.validator.util.ValidatorUtils;
+import org.apache.log4j.Logger;
 
 /**                                                       
  * Contains validation methods for different unit tests.
  */                                                       
 public class CommonsValidator {
-          
+	private static final Logger logger = Logger.getLogger(CommonsValidator.class);
     /**
      * Throws a runtime exception if the value of the argument is "RUNTIME", 
      * an exception if the value of the argument is "CHECKED", and a 
@@ -173,9 +174,14 @@ public class CommonsValidator {
     * Checks if the field value matches a regexp.
     */
    public static boolean validateRegexp(Object bean, Field field) {
-      String value = ValidatorUtils.getValueAsString(bean, field.getProperty());
-      String regexp = field.getVarValue("regexp");
-      
+		String value = ValidatorUtils.getValueAsString(bean, field.getProperty());
+		String regexp = field.getVarValue("regexp");
+
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("validateRegexp. value: <" + value + ">. Regexp: <" + regexp + ">");
+		}
+
       //boolean valid = GenericValidator.matchRegexp(value, regexp);
       boolean valid = value.matches(regexp);
 	  return valid;

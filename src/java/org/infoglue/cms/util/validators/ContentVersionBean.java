@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.entities.content.ContentVersionVO;
@@ -14,14 +15,25 @@ import org.infoglue.cms.entities.management.ContentTypeAttribute;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 
 public class ContentVersionBean implements Map {
-	private Map delegate = new HashMap();
+	private static final Logger logger = Logger.getLogger(ContentVersionBean.class);
+
+	private Map<String, String> delegate = new HashMap<String, String>();
 	
 	public ContentVersionBean(ContentTypeDefinitionVO contentType, ContentVersionVO contentVersionVO, String languageCode) {
-		List contentTypeAttributes = ContentTypeDefinitionController.getController().getContentTypeAttributes(contentType, true, languageCode);
-		for(Iterator i=contentTypeAttributes.iterator(); i.hasNext();) {
-			ContentTypeAttribute attribute = (ContentTypeAttribute) i.next();
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("Version value before bean parse. Value: " + contentVersionVO.getVersionValue());
+		}
+		List<ContentTypeAttribute> contentTypeAttributes = ContentTypeDefinitionController.getController().getContentTypeAttributes(contentType, true, languageCode);
+		for (Iterator<ContentTypeAttribute> i=contentTypeAttributes.iterator(); i.hasNext();)
+		{
+			ContentTypeAttribute attribute =  i.next();
 			String name  = attribute.getName();
 			String value = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO, name, false);
+			if (logger.isDebugEnabled())
+			{
+				logger.debug("Adding key-value to validation bean. Key: <" + name + ">, Value: <" + value + ">");
+			}
 			delegate.put(name, value);
 		}
 	}

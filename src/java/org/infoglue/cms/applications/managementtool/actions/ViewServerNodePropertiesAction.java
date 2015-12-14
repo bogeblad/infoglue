@@ -416,6 +416,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "doNotUseTrashcanForRepositories");
 
 	    populate(ps, "useGlobalRepositoryChange");
+	    populate(ps, "reloadStructureOnActivation");
 
 	    try
 	    {

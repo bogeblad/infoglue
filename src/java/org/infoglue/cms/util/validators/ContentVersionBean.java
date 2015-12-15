@@ -18,6 +18,7 @@ public class ContentVersionBean implements Map {
 	private static final Logger logger = Logger.getLogger(ContentVersionBean.class);
 
 	private Map<String, String> delegate = new HashMap<String, String>();
+	private Map<String, ContentTypeAttribute> attributeMap = new HashMap<String, ContentTypeAttribute>();
 	
 	public ContentVersionBean(ContentTypeDefinitionVO contentType, ContentVersionVO contentVersionVO, String languageCode) {
 		if (logger.isDebugEnabled())
@@ -35,6 +36,7 @@ public class ContentVersionBean implements Map {
 				logger.debug("Adding key-value to validation bean. Key: <" + name + ">, Value: <" + value + ">");
 			}
 			delegate.put(name, value);
+			attributeMap.put(name, attribute);
 		}
 	}
 	  
@@ -53,4 +55,9 @@ public class ContentVersionBean implements Map {
 	public Set entrySet() { return delegate.entrySet(); }
 	public boolean equals(Object o) { return delegate.equals(o); }
 	public int hashCode() { return delegate.hashCode(); }
+
+	public ContentTypeAttribute getAttributeType(String attributeName)
+	{
+		return attributeMap.get(attributeName);
+	}
 }

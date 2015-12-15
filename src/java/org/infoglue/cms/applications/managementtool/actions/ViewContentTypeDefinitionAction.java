@@ -664,6 +664,17 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 						newVar.appendChild(varValueElement);
 						newField.appendChild(newVar);
 					}
+					else if(validatorName.equals("greaterThan") || validatorName.equals("greaterThanEquals") || validatorName.equals("lessThan") || validatorName.equals("lessThanEquals"))
+					{
+						errorKey = "306"; //Invalid value
+
+						Element newVar = document.createElement("var");
+						Element varNameElement = createTextElement(document, "var-name", "dependent");
+						Element varValueElement = createTextElement(document, "var-value", "AttributeName");
+						newVar.appendChild(varNameElement);
+						newVar.appendChild(varValueElement);
+						newField.appendChild(newVar);
+					}
 
 					Element newMessage = document.createElement("msg");
 					newMessage.setAttribute("name", validatorName);
@@ -735,7 +746,7 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 		    logger.info("msgText:" + msgText);
 		    msgText = StringEscapeUtils.escapeXml(msgText);
 		    logger.info("msgText:" + msgText);
-		    //se=Du fŒr inte 'ladda' innehŒllet med "sŒnt"!<b>NU</b>;en=You cannot do 'this' or "that"
+		    //se=Du fï¿½r inte 'ladda' innehï¿½llet med "sï¿½nt"!<b>NU</b>;en=You cannot do 'this' or "that"
 		    
 		    //String validatorsXPath = "/xs:schema/xs:complexType[@name = 'Validation']/xs:annotation/xs:appinfo/form-validation/formset/form/field[@property = '" + attributeName + "'][@depends = '" + attributeValidatorName + "']";
 		    String validatorsXPath = "/xs:schema/xs:complexType[@name = 'Validation']/xs:annotation/xs:appinfo/form-validation/formset/form/field[@property = '" + attributeName + "'][" + attributeValidatorIndexInteger + "]";

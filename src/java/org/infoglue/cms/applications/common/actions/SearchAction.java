@@ -56,7 +56,7 @@ import webwork.action.Action;
  * Action class for usecase SearchContentAction. Was better before but due to wanted support for multiple 
  * databases and lack of time I had to cut down on functionality - sorry Magnus. 
  *
- * @author Magnus Güvenal
+ * @author Magnus GÃ¼venal
  * @author Mattias Bogeblad
  */
 
@@ -204,7 +204,7 @@ public class SearchAction extends InfoGlueAbstractAction
 					t.printElapsedTime("contentVersionVOList took");
 					siteNodeVersionVOList = searchController.getSiteNodeVersionVOList(repositoryIdAsIntegerToSearch, this.getSearchString(), maxRows, name, languageId, caseSensitive, stateId);
 					t.printElapsedTime("siteNodeVersionVOList took");
-					digitalAssetVOList = searchController.getDigitalAssets(repositoryIdAsIntegerToSearch, this.getSearchString(), null, maxRows, assetSearchMetaData);
+					digitalAssetVOList = searchController.getDigitalAssets(repositoryIdAsIntegerToSearch, this.getSearchString(), null, maxRows, assetSearchMetaData, languageId, caseSensitive, stateId);
 					t.printElapsedTime("digitalAssetVOList took");
 				}
 				else
@@ -215,7 +215,7 @@ public class SearchAction extends InfoGlueAbstractAction
 					t.printElapsedTime("contentVersionVOList took");
 					siteNodeVersionVOList = searchController.getSiteNodeVersionVOList(new Integer[]{this.repositoryId}, this.getSearchString(), maxRows, name, languageId, caseSensitive, stateId);
 					t.printElapsedTime("siteNodeVersionVOList took");
-					digitalAssetVOList = searchController.getDigitalAssets(new Integer[]{this.repositoryId}, this.getSearchString(), assetTypeFilter, maxRows, assetSearchMetaData);
+					digitalAssetVOList = searchController.getDigitalAssets(new Integer[]{this.repositoryId}, this.getSearchString(), assetTypeFilter, maxRows, assetSearchMetaData, languageId, caseSensitive, stateId);
 					t.printElapsedTime("digitalAssetVOList took");
 					selectedRepositoryIdList.add("" + this.repositoryId);
 				}
@@ -337,11 +337,11 @@ public class SearchAction extends InfoGlueAbstractAction
 				selectedRepositoryIdList.add(repositoryIdToSearch[i]);
 			}
 			
-			digitalAssetVOList = SearchController.getController().getDigitalAssets(repositoryIdAsIntegerToSearch, this.getSearchString(), assetTypeFilter, maxRows, assetSearchMetaData);
+			digitalAssetVOList = SearchController.getController().getDigitalAssets(repositoryIdAsIntegerToSearch, this.getSearchString(), assetTypeFilter, maxRows, assetSearchMetaData, languageId, caseSensitive, stateId);
 		}
 		else 
 		{
-			digitalAssetVOList = SearchController.getController().getDigitalAssets(new Integer[]{this.repositoryId}, this.getSearchString(), assetTypeFilter, maxRows, assetSearchMetaData);
+			digitalAssetVOList = SearchController.getController().getDigitalAssets(new Integer[]{this.repositoryId}, this.getSearchString(), assetTypeFilter, maxRows, assetSearchMetaData, languageId, caseSensitive, stateId);
 			selectedRepositoryIdList.add("" + this.repositoryId);
 		}
 

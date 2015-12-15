@@ -886,23 +886,33 @@ public class ContentVersionController extends BaseController
 		return contentVersionIdList;
 	}
 
+	public List<ContentVersionVO> getLatestContentVersionVOListPerLanguage(Integer contentId, Database db) throws SystemException, Bug, Exception
+	{
+		return getLatestContentVersionVOListPerLanguage(contentId, true, db);
+	}
+
    	/**
 	 * This method returns the latest active content version.
 	 */
 
-	public List<ContentVersionVO> getLatestContentVersionVOListPerLanguage(Integer contentId, Database db) throws SystemException, Bug, Exception
+	public List<ContentVersionVO> getLatestContentVersionVOListPerLanguage(Integer contentId, boolean showDeletedFiles, Database db) throws SystemException, Bug, Exception
 	{
 		Set<Integer> contentIds = new HashSet<Integer>();
 		contentIds.add(contentId);
 		
-		return getLatestContentVersionVOListPerLanguage(contentIds, db);
+		return getLatestContentVersionVOListPerLanguage(contentIds, showDeletedFiles, db);
+	}
+
+	public List<ContentVersionVO> getLatestContentVersionVOListPerLanguage(Set<Integer> contentIds/*, Integer stateId*/, Database db) throws SystemException, Bug, Exception
+	{
+		return getLatestContentVersionVOListPerLanguage(contentIds, true, db);
 	}
 	
-   	/**
+	/**
 	 * This method returns the latest active content version.
 	 */
 
-	public List<ContentVersionVO> getLatestContentVersionVOListPerLanguage(Set<Integer> contentIds/*, Integer stateId*/, Database db) throws SystemException, Bug, Exception
+	public List<ContentVersionVO> getLatestContentVersionVOListPerLanguage(Set<Integer> contentIds/*, Integer stateId*/, boolean showDeletedItems, Database db) throws SystemException, Bug, Exception
 	{
 		List<ContentVersionVO> contentVersionIdSet = new ArrayList<ContentVersionVO>();
 		if(contentIds == null || contentIds.size() == 0)
@@ -919,7 +929,7 @@ public class ContentVersionController extends BaseController
     			subList = contentVersionVOListSubList.subList(0, slotSize);
 	    	while(subList != null && subList.size() > 0)
 	    	{
-	    		contentVersionIdSet.addAll(getLatestContentVersionIdsPerLanguageImpl(subList, db));
+				contentVersionIdSet.addAll(getLatestContentVersionIdsPerLanguageImpl(subList, showDeletedItems, db));
 	    		contentVersionVOListSubList = contentVersionVOListSubList.subList(subList.size(), contentVersionVOListSubList.size());
 	    	
 	    		subList = new ArrayList(contentVersionVOListSubList);
@@ -933,6 +943,11 @@ public class ContentVersionController extends BaseController
 	
 	public List<ContentVersionVO> getLatestContentVersionIdsPerLanguageImpl(List<Integer> contentIds, Database db) throws SystemException, Bug, Exception
 	{
+		return getLatestContentVersionIdsPerLanguageImpl(contentIds, true, db);
+	}
+
+	public List<ContentVersionVO> getLatestContentVersionIdsPerLanguageImpl(List<Integer> contentIds, boolean showDeletedItems, Database db) throws SystemException, Bug, Exception
+	{
 		List<ContentVersionVO> contentVersionIdSet = new ArrayList<ContentVersionVO>();
 		if(contentIds == null || contentIds.size() == 0)
 			return contentVersionIdSet;
@@ -942,15 +957,21 @@ public class ContentVersionController extends BaseController
 		StringBuilder variables = new StringBuilder();
 		for(int i=0; i<contentIds.size(); i++)
 	    	variables.append("?" + (i+1!=contentIds.size() ? "," : ""));
+
+		String showDeletedItemsWhereClause = "";
+		if (!showDeletedItems)
+		{
+			showDeletedItemsWhereClause = " AND c.isDeleted != 1 ";
+		}
 	    
 		StringBuilder sb = new StringBuilder();
 		if(CmsPropertyHandler.getUseShortTableNames().equals("true"))
 		{
-			sb.append("select max(cv.contVerId) AS id, cv.contId as column1Value, cv.stateId as column2Value, cv.languageId as column3Value, c.repositoryId as column4Value, c.contentTypeDefId as column5Value, max(cv.versionModifier) as column6Value, max(cv.modifiedDateTime) as column7Value from cmContVer cv, cmCont c where cv.isActive = 1 AND c.contId = cv.contId AND cv.contId IN (" + variables + ") group by cv.contId, cv.languageId, cv.stateId, c.repositoryId, c.contentTypeDefId order by ID desc ");
+			sb.append("select max(cv.contVerId) AS id, cv.contId as column1Value, cv.stateId as column2Value, cv.languageId as column3Value, c.repositoryId as column4Value, c.contentTypeDefId as column5Value, max(cv.versionModifier) as column6Value, max(cv.modifiedDateTime) as column7Value from cmContVer cv, cmCont c where cv.isActive = 1 AND c.contId = cv.contId " + showDeletedItemsWhereClause + "AND cv.contId IN (" + variables + ") group by cv.contId, cv.languageId, cv.stateId, c.repositoryId, c.contentTypeDefId order by ID desc ");
 		}
 		else
 		{
-			sb.append("select max(cv.contentVersionId) AS id, cv.contentId as column1Value, cv.stateId as column2Value, cv.languageId as column3Value, c.repositoryId as column4Value, c.contentTypeDefinitionId as column5Value, max(cv.versionModifier) as column6Value, max(cv.modifiedDateTime) as column7Value from cmContentVersion cv, cmContent c where cv.isActive = 1 AND c.contentId = cv.contentId AND cv.contentId IN (" + variables + ") group by cv.contentId, cv.languageId, cv.stateId, c.repositoryId, c.contentTypeDefinitionId order by ID desc ");
+			sb.append("select max(cv.contentVersionId) AS id, cv.contentId as column1Value, cv.stateId as column2Value, cv.languageId as column3Value, c.repositoryId as column4Value, c.contentTypeDefinitionId as column5Value, max(cv.versionModifier) as column6Value, max(cv.modifiedDateTime) as column7Value from cmContentVersion cv, cmContent c where cv.isActive = 1 AND c.contentId = cv.contentId " + showDeletedItemsWhereClause + "AND cv.contentId IN (" + variables + ") group by cv.contentId, cv.languageId, cv.stateId, c.repositoryId, c.contentTypeDefinitionId order by ID desc ");
 		}
 
 		Connection conn = (Connection) db.getJdbcConnection();
@@ -2707,10 +2728,19 @@ public class ContentVersionController extends BaseController
 	}
 
 	/**
+	 * Calls {@link #getContentAndAffectedItemsRecursive(Integer, Integer, List, List, boolean, boolean, ProcessBean, boolean) with
+	 * <code>showDeletedItems</code> set to true
+	 */
+	public void getContentAndAffectedItemsRecursive(Integer contentId, Integer stateId, List<SiteNodeVersionVO> siteNodeVersionVOList, List<ContentVersionVO> contentVersionVOList, boolean mustBeFirst, boolean includeMetaInfo, ProcessBean processBean) throws ConstraintException, SystemException
+	{
+		getContentAndAffectedItemsRecursive(contentId, stateId, siteNodeVersionVOList, contentVersionVOList, mustBeFirst, includeMetaInfo, processBean, true);
+	}
+
+	/**
 	 * Recursive methods to get all contentVersions of a given state under the specified parent content.
 	 */ 
 	
-    public void getContentAndAffectedItemsRecursive(Integer contentId, Integer stateId, List<SiteNodeVersionVO> siteNodeVersionVOList, List<ContentVersionVO> contentVersionVOList, boolean mustBeFirst, boolean includeMetaInfo, ProcessBean processBean) throws ConstraintException, SystemException
+    public void getContentAndAffectedItemsRecursive(Integer contentId, Integer stateId, List<SiteNodeVersionVO> siteNodeVersionVOList, List<ContentVersionVO> contentVersionVOList, boolean mustBeFirst, boolean includeMetaInfo, ProcessBean processBean, boolean showDeletedItems) throws ConstraintException, SystemException
 	{
         Database db = CastorDatabaseService.getDatabase();
 
@@ -2721,7 +2751,7 @@ public class ContentVersionController extends BaseController
             ContentVO content = ContentController.getContentController().getContentVOWithId(contentId, db);
 			processBean.updateProcess("Searching for items to publish");
 
-            getContentAndAffectedItemsRecursive(content, stateId, new ArrayList(), new ArrayList(), db, siteNodeVersionVOList, contentVersionVOList, mustBeFirst, includeMetaInfo, processBean);
+            getContentAndAffectedItemsRecursive(content, stateId, new ArrayList(), new ArrayList(), db, siteNodeVersionVOList, contentVersionVOList, mustBeFirst, includeMetaInfo, processBean, showDeletedItems);
             
             commitTransaction(db);
         }
@@ -2735,12 +2765,12 @@ public class ContentVersionController extends BaseController
         }
 	}
 
-	private void getContentAndAffectedItemsRecursive(ContentVO contentVO, Integer stateId, List checkedSiteNodes, List checkedContents, Database db, List<SiteNodeVersionVO> siteNodeVersionVOList, List<ContentVersionVO> contentVersionVOList, boolean mustBeFirst, boolean includeMetaInfo, ProcessBean processBean) throws ConstraintException, SystemException, Exception
+	private void getContentAndAffectedItemsRecursive(ContentVO contentVO, Integer stateId, List checkedSiteNodes, List checkedContents, Database db, List<SiteNodeVersionVO> siteNodeVersionVOList, List<ContentVersionVO> contentVersionVOList, boolean mustBeFirst, boolean includeMetaInfo, ProcessBean processBean, boolean showDeletedItems) throws ConstraintException, SystemException, Exception
 	{
 	    //checkedSiteNodes.add(content.getId());
 	    checkedContents.add(contentVO.getId());
         
-		List<ContentVersionVO> contentVersions = ContentVersionController.getContentVersionController().getLatestContentVersionVOListPerLanguage(contentVO.getId(), db);
+		List<ContentVersionVO> contentVersions = ContentVersionController.getContentVersionController().getLatestContentVersionVOListPerLanguage(contentVO.getId(), showDeletedItems, db);
 	    //List contentVersions = getLatestContentVersionWithParent(contentVO.getId(), stateId, db, mustBeFirst);
 	    
 		Iterator<ContentVersionVO> contentVersionsIterator = contentVersions.iterator();
@@ -2780,13 +2810,19 @@ public class ContentVersionController extends BaseController
 	                try
 	                {
 		                SiteNodeVO relatedSiteNode = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(registryVO.getEntityId()), db);
-		                SiteNodeVersionVO relatedSiteNodeVersion = SiteNodeVersionController.getController().getLatestSiteNodeVersionVO(db, new Integer(registryVO.getEntityId()));
-		                //SiteNodeVersionVO relatedSiteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionIfInState(relatedSiteNode, stateId, db);
-		                if(relatedSiteNodeVersion != null && contentVO.getRepositoryId().intValue() == relatedSiteNode.getRepositoryId().intValue())
-		                {
-		                	if(relatedSiteNodeVersion.getStateId().equals(SiteNodeVersionVO.WORKING_STATE))
-		                		siteNodeVersionVOList.add(relatedSiteNodeVersion);
-		                }
+						if (!relatedSiteNode.getIsDeleted())
+						{
+							SiteNodeVersionVO relatedSiteNodeVersion = SiteNodeVersionController.getController().getLatestSiteNodeVersionVO(db, new Integer(registryVO.getEntityId()));
+							if(relatedSiteNodeVersion != null && contentVO.getRepositoryId().intValue() == relatedSiteNode.getRepositoryId().intValue())
+							{
+								if(relatedSiteNodeVersion.getStateId().equals(SiteNodeVersionVO.WORKING_STATE))
+									siteNodeVersionVOList.add(relatedSiteNodeVersion);
+							}
+						}
+						else if (logger.isDebugEnabled())
+						{
+							logger.debug("SiteNode excluded from list because it is deleted. SiteNode.id: " + registryVO.getEntityId());
+						}
 	                }
 	                catch(Exception e)
 	                {
@@ -2848,7 +2884,7 @@ public class ContentVersionController extends BaseController
 			}
 
 			ContentVO citContent = cit.next();
-			getContentAndAffectedItemsRecursive(citContent, stateId, checkedSiteNodes, checkedContents, db, siteNodeVersionVOList, contentVersionVOList, mustBeFirst, includeMetaInfo, processBean);
+			getContentAndAffectedItemsRecursive(citContent, stateId, checkedSiteNodes, checkedContents, db, siteNodeVersionVOList, contentVersionVOList, mustBeFirst, includeMetaInfo, processBean, showDeletedItems);
 		}
 		
 	}

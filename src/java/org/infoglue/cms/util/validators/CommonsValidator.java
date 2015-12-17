@@ -173,33 +173,61 @@ public class CommonsValidator {
       return GenericValidator.isEmail(value);
    }
 
-   /**
-    * Checks if the field value matches a regexp.
-    */
-   public static boolean validateRegexp(Object bean, Field field) {
-		String value = ValidatorUtils.getValueAsString(bean, field.getProperty());
-		String regexp = field.getVarValue("regexp");
+	/**
+	* Checks if the field value matches a regexp.
+	*/
+	public static boolean validateRegexp(Object bean, Field field) {
+		String value	= getBeanValue(bean, field.getProperty());
+		String regexp	= field.getVarValue("regexp");
 
 		if (logger.isDebugEnabled())
 		{
 			logger.debug("validateRegexp. value: <" + value + ">. Regexp: <" + regexp + ">");
 		}
 
-      //boolean valid = GenericValidator.matchRegexp(value, regexp);
-      boolean valid = value.matches(regexp);
-	  return valid;
-   }
-   
-  public final static String FIELD_TEST_NULL = "NULL";
-  public final static String FIELD_TEST_NOTNULL = "NOTNULL";
-  public final static String FIELD_TEST_EQUAL = "EQUAL";
+		boolean valid = value.matches(regexp);
+		return valid;
+	}
 
-  public static boolean validateRequiredIf(Object bean, Field field, Validator validator) 
-  {
-      final String value          = ValidatorUtils.getValueAsString(bean, field.getProperty());
-      final String dependentValue = ValidatorUtils.getValueAsString(bean, field.getVarValue("dependent"));
-      return dependentValue == null || dependentValue.length() == 0 || (value != null && value.length() > 0);  
-  }
+	public final static String FIELD_TEST_NULL = "NULL";
+	public final static String FIELD_TEST_NOTNULL = "NOTNULL";
+	public final static String FIELD_TEST_EQUAL = "EQUAL";
+
+	public static boolean validateRequiredIf(Object bean, Field field, Validator validator)
+	{
+		final String value			= getBeanValue(bean, field.getProperty());
+		final String dependentValue	= getBeanValue(bean, field.getVarValue("dependent"));
+
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("validateRequiredIf. value: <" + value + ">. dependentValue: <" + dependentValue + ">");
+		}
+
+		return dependentValue == null || dependentValue.length() == 0 || (value != null && value.length() > 0);
+	}
+
+	private static String getBeanValue(Object bean, String property)
+	{
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("Getting value from bean. Property: <" + property + ">. Bean: " + bean);
+		}
+
+		String value = ValidatorUtils.getValueAsString(bean, property);
+		if (value == null && bean instanceof ContentVersionBean)
+		{
+			logger.trace("Value was null and bean is ContentVersionBean");
+			ContentVersionBean cvBean = (ContentVersionBean)bean;
+			value = (String)cvBean.get(property);
+		}
+
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("Got value from bean. Property: <" + property + ">. Value: " + value);
+		}
+
+		return value;
+	}
 
 	public static boolean validateGreaterThan(Object bean, Field field, Validator validator) 
 	{

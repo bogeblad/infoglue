@@ -3270,7 +3270,7 @@ public class ContentController extends BaseController
 
 		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId, db);
 
-		sb.insert(0, contentVO.getName());
+		insertContentNameInPath(sb, contentVO);
 
 		while (contentVO.getParentContentId() != null)
 		{
@@ -3278,7 +3278,8 @@ public class ContentController extends BaseController
 
 			if (includeRootContent || contentVO.getParentContentId() != null)
 			{
-				sb.insert(0, contentVO.getName() + "/");
+				sb.insert(0, "/");
+				insertContentNameInPath(sb, contentVO);
 			}
 		}
 
@@ -3292,6 +3293,19 @@ public class ContentController extends BaseController
 		return sb.toString();
 	}
 
+	private void insertContentNameInPath(StringBuffer sb, ContentVO contentVO)
+	{
+		if (contentVO.getName() == null || contentVO.getName().equals(""))
+		{
+			sb.insert(0, "]");
+			sb.insert(0, contentVO.getId());
+			sb.insert(0, "[");
+		}
+		else
+		{
+			sb.insert(0, contentVO.getName());
+		}
+	}
 
 
 	public List<ContentVO> getRelatedContents(Database db, Integer contentId, Integer languageId, String attributeName, boolean useLanguageFallback) throws Exception

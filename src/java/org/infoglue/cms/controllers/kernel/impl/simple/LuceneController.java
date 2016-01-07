@@ -2448,13 +2448,35 @@ public class LuceneController extends BaseController implements NotificationList
 	public String getContentPath(Integer contentId, Database db) throws Exception
 	{
 		StringBuffer sb = new StringBuffer();
-		
+
 		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId, db);
-		sb.insert(0, contentVO.getName());
+
+		if (contentVO.getName() == null || contentVO.getName().equals(""))
+		{
+			sb.insert(0, "]");
+			sb.insert(0, contentVO.getId());
+			sb.insert(0, "[");
+		}
+		else
+		{
+			sb.insert(0, contentVO.getName());
+		}
+
 		while(contentVO.getParentContentId() != null)
 		{
 			contentVO = ContentController.getContentController().getContentVOWithId(contentVO.getParentContentId(), db);
-			sb.insert(0, contentVO.getName() + "/");
+
+			sb.insert(0, "/");
+			if (contentVO.getName() == null || contentVO.getName().equals(""))
+			{
+				sb.insert(0, "]");
+				sb.insert(0, contentVO.getId());
+				sb.insert(0, "[");
+			}
+			else
+			{
+				sb.insert(0, contentVO.getName());
+			}
 		}
 		sb.insert(0, "/");
 		

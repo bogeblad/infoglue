@@ -35,6 +35,7 @@ import java.util.Map;
 
 import javax.xml.transform.TransformerException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.xerces.parsers.DOMParser;
 import org.apache.xpath.XPathAPI;
@@ -2153,10 +2154,27 @@ public class ContentTypeDefinitionController extends BaseController
 							}
 						}
 					}
-
 				}
+				else if(schemaElement.getAttribute("version") != null && schemaElement.getAttribute("version").equalsIgnoreCase("2.5.2"))
+				{
+					isModified = true;
+					schemaElement.setAttribute("version", "2.5.3");
 
-				
+					String validatorsXPath = "/xs:schema/xs:complexType[@name = 'Validation']";
+					Node formNode = org.apache.xpath.XPathAPI.selectSingleNode(document.getDocumentElement(), validatorsXPath);
+					if (formNode == null)
+					{
+						logger.error("Did not find a Validation element, weird! Will not apply verison 2.5.3 for content type with name: " + contentTypeDefinitionVO.getName());
+						schemaElement.setAttribute("version", "2.5.2");
+					}
+					else
+					{
+						addValidatorToContentTypeDefinitionXML(formNode, "greaterThan", "306", "validateGreaterThan", new String[] {"java.lang.Object", "org.apache.commons.validator.Field", "org.apache.commons.validator.Validator"});
+						addValidatorToContentTypeDefinitionXML(formNode, "greaterThanEquals", "306", "validateGreaterThanEquals", new String[] {"java.lang.Object", "org.apache.commons.validator.Field", "org.apache.commons.validator.Validator"});
+						addValidatorToContentTypeDefinitionXML(formNode, "lessThan", "306", "validateLessThan", new String[] {"java.lang.Object", "org.apache.commons.validator.Field", "org.apache.commons.validator.Validator"});
+						addValidatorToContentTypeDefinitionXML(formNode, "lessThanEquals", "306", "validateLessThanEquals", new String[] {"java.lang.Object", "org.apache.commons.validator.Field", "org.apache.commons.validator.Validator"});
+					}
+				}
 			}
 
 			if(isModified)
@@ -2176,7 +2194,24 @@ public class ContentTypeDefinitionController extends BaseController
 		return contentTypeDefinitionVO;
 	}
 
-	
+	private void addValidatorToContentTypeDefinitionXML(Node formNode, String name, String message, String method, String[] methodParameters) throws TransformerException
+	{
+		String globalNodePath = "//form-validation/global";
+		Node globalNode = org.apache.xpath.XPathAPI.selectSingleNode(formNode, globalNodePath);
+
+		Element globalElement = (Element)globalNode;
+
+		Element newValidator = globalElement.getOwnerDocument().createElement("validator");
+
+		newValidator.setAttribute("name", name);
+		newValidator.setAttribute("msg", message);
+		newValidator.setAttribute("method", method);
+		newValidator.setAttribute("methodParams", StringUtils.join(methodParameters, ","));
+		newValidator.setAttribute("classname", "org.infoglue.cms.util.validators.CommonsValidator");
+
+		globalElement.appendChild(newValidator);
+	}
+
 	public void controlAndUpdateSystemContentTypes()
 	{
 		logger.info("Verifying and updating system content types");

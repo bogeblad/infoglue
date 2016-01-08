@@ -2084,7 +2084,7 @@ public class NodeDeliveryController extends BaseDeliveryController
         int numberOfPaths = path.length;
         while (numberOfPaths >= 0) 
         {
-        	logger.info("Looking for cached nodeName at index " + path[path.length - 1]);
+        	logger.info("Looking for cached nodeName in " + path);
             siteNodeId = uriCache.getCachedSiteNodeId(repositoryVO.getId(), path, numberOfPaths, requestLanguageId);
             logger.info("siteNodeId:" + siteNodeId);
             

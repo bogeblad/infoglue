@@ -38,6 +38,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LuceneController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SearchController;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
@@ -221,7 +222,7 @@ public class SearchAction extends InfoGlueAbstractAction
 				}
 			}
 		}
-		
+
 		if(CmsPropertyHandler.getInternalSearchEngine().equalsIgnoreCase("lucene"))
 		{
 			allowCaseSensitive = false;
@@ -683,5 +684,37 @@ public class SearchAction extends InfoGlueAbstractAction
 	public String[] getRepositoryIdToSearch()
 	{
 		return this.repositoryIdToSearch;
+	}
+
+	public boolean getIsLuceneSearch()
+	{
+		return CmsPropertyHandler.getInternalSearchEngine().equalsIgnoreCase("lucene");
+	}
+
+	/**
+	 * Calls the right getPath version for the given <em>entity</em>.
+	 *
+	 * @throws NullPointerException if <em>entity</em> is null
+	 */
+	public String getEntityPath(BaseEntityVO entity) throws NullPointerException
+	{
+		try
+		{
+			if (entity instanceof ContentVersionVO)
+			{
+				return ContentController.getContentController().getContentPath(((ContentVersionVO)entity).getContentId(), false, true);
+			}
+			else if (entity instanceof SiteNodeVersionVO)
+			{
+				return SiteNodeController.getController().getSiteNodePath(((SiteNodeVersionVO)entity).getSiteNodeId(), false, true);
+			}
+		}
+		catch (Exception ex)
+		{
+			logger.warn("Error when getting path for entity in search result. Message: " + ex.getMessage());
+			logger.info("Error when getting path for entity in search result.", ex);
+		}
+
+		return "[" + entity.getId() + "]";
 	}
 }

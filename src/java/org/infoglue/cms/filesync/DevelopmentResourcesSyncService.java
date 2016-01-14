@@ -731,8 +731,13 @@ public class DevelopmentResourcesSyncService implements Runnable
     	{
     		try
     		{
-		    	ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentVersionVO.getContentId());
+		    	ContentVO contentVO = ContentController.getContentController().getLocklessContentVOWithId(contentVersionVO.getContentId());
 		    	logger.info("contentVO:" + contentVO);
+				if(contentVO == null)
+				{
+					logger.info("Could not find content - could be deleted.");
+					return;
+				}
 				
 		    	ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId());
 		    	logger.info("ctdVO:" + ctdVO);
@@ -760,14 +765,14 @@ public class DevelopmentResourcesSyncService implements Runnable
 			    			addition = addition + ".txt";
 			    		
 			    		logger.info("path:" + path);
-			    		ContentVO parentContentVO = ContentController.getContentController().getContentVOWithId(contentVO.getParentContentId());
+			    		ContentVO parentContentVO = ContentController.getContentController().getLocklessContentVOWithId(contentVO.getParentContentId());
 			    		while(parentContentVO != null)
 			    		{
 			    			if(parentContentVO.getParentContentId() != null)
 			    			{
 				    			addition = parentContentVO.getName() + File.separator + addition; 
 				    			logger.info("parentContentVO:" + parentContentVO.getName());
-				    			parentContentVO = ContentController.getContentController().getContentVOWithId(parentContentVO.getParentContentId());
+				    			parentContentVO = ContentController.getContentController().getLocklessContentVOWithId(parentContentVO.getParentContentId());
 			    			}
 			    			else
 			    				logger.info("Was root...:" + path);
@@ -784,7 +789,7 @@ public class DevelopmentResourcesSyncService implements Runnable
     		}
     		catch(Exception e)
     		{
-    			e.printStackTrace();
+    			logger.error("Error writing changes to disk: " + e.getMessage(), e);
     		}
     	}
 	}

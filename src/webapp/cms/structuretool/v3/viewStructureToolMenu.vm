@@ -167,8 +167,15 @@
 
 		function loadTreeSrc()
 		{
-			window.languageId = top.getDeliverLanguageId();
-			if(languageId)
+  			var fallbackLanguage = "$!this.languages[0].id";
+  			if(typeof(languageId) == 'undefined')
+  				languageId = fallbackLanguage;
+			if(top.getDeliverLanguageId)
+				window.languageId = top.getDeliverLanguageId();
+			else
+				window.languageId = languageId;
+				
+			if(typeof(languageId) != 'undefined')
 			{
 				$("#itreeFrame").attr("src", "ViewStructureHtmlTree!V3.action?repositoryId=${repositoryId}" + (languageId != -1 ? "&sortLanguageId=" + languageId : ""));
 			}

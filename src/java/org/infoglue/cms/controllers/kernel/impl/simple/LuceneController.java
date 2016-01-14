@@ -75,6 +75,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.QueryResults;
+import org.infoglue.cms.applications.databeans.ProcessBean;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentCategory;
 import org.infoglue.cms.entities.content.ContentVO;
@@ -147,6 +148,7 @@ public class LuceneController extends BaseController implements NotificationList
 	}
 	
 	private static List<NotificationMessage> qeuedMessages = new ArrayList<NotificationMessage>();
+	private static List<NotificationMessage> maturedQeuedMessages = new ArrayList<NotificationMessage>();
 	
 	private StandardAnalyzer getStandardAnalyzer() throws Exception
 	{
@@ -903,6 +905,7 @@ public class LuceneController extends BaseController implements NotificationList
 				initDoneLocally = true;
 			
 			List<NotificationMessage> internalMessageList = new ArrayList<NotificationMessage>();
+			List<NotificationMessage> revisitedInternalMessageList = new ArrayList<NotificationMessage>();
 			synchronized (qeuedMessages)
 			{
 				//logger.error("internalMessageList: " + internalMessageList.size() + "/" + qeuedMessages.size());
@@ -911,7 +914,20 @@ public class LuceneController extends BaseController implements NotificationList
 				qeuedMessages.clear();
 				//logger.error("internalMessageList: " + internalMessageList.size() + "/" + qeuedMessages.size());
 			}
-
+			
+			synchronized (maturedQeuedMessages) 
+			{
+				logger.info("maturedQeuedMessages:" + maturedQeuedMessages.size());
+				if(maturedQeuedMessages.size() > 0)
+				{
+					logger.info("Was a matured message - let's take it also");
+					internalMessageList.addAll(maturedQeuedMessages);
+					revisitedInternalMessageList.addAll(maturedQeuedMessages);
+					//logger.error("internalMessageList: " + internalMessageList.size() + "/" + qeuedMessages.size());
+					maturedQeuedMessages.clear();
+				}
+			}
+			
 			//Should implement equals on NotificationMessage later
 			List<NotificationMessage> baseEntitiesToIndexMessageList = new ArrayList<NotificationMessage>();
 			
@@ -925,59 +941,9 @@ public class LuceneController extends BaseController implements NotificationList
 
 				if(notificationMessage.getClassName().equals(ContentImpl.class.getName()) || notificationMessage.getClassName().equals(Content.class.getName()))
 				{
-					ContentVO contentVO = ContentController.getContentController().getContentVOWithId((Integer)notificationMessage.getObjectId());
-
-					ContentTypeDefinitionVO ctdVO = null;
-					try
-					{
-						ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId());
-					}
-					catch (SystemException sex)
-					{
-						logger.warn("Failed to get the content type definition for content with Id: " + contentVO.getContentId() + ". The content will not be indexed. Message: " + sex.getMessage());
-						logger.info("Failed to get the content type definition for content with Id: " + contentVO.getContentId(), sex);
-					}
-					if(ctdVO != null && ctdVO.getName().equals("Meta info"))
-					{
-						SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(contentVO.getContentId());
-						if(siteNodeVO != null && notificationMessage != null)
-						{
-							NotificationMessage newNotificationMessage = new NotificationMessage("" + siteNodeVO.getName(), SiteNodeImpl.class.getName(), "SYSTEM", notificationMessage.getType(), siteNodeVO.getId(), "" + siteNodeVO.getName());
-							String key = "" + newNotificationMessage.getClassName() + "_" + newNotificationMessage.getObjectId() + "_"  + "_" + newNotificationMessage.getType();
-							if(!existingSignatures.contains(key))
-							{
-								logger.info("++++++++++++++Got an META PAGE notification - just adding it AS A PAGE instead: " + newNotificationMessage.getObjectId());								
-								baseEntitiesToIndexMessageList.add(newNotificationMessage);
-								existingSignatures.add(key);
-							}
-							else
-							{
-								logger.info("++++++++++++++Skipping Content notification - duplicate existed: " + notificationMessage.getObjectId());
-							}
-						}
-					}
-					else
-					{
-						String key = "" + notificationMessage.getClassName() + "_" + notificationMessage.getObjectId() + "_"  + "_" + notificationMessage.getType();
-						if(!existingSignatures.contains(key))
-						{
-							logger.info("++++++++++++++Got an Content notification - just adding it: " + notificationMessage.getObjectId());
-							baseEntitiesToIndexMessageList.add(notificationMessage);
-							existingSignatures.add(key);
-						}
-						else
-						{
-							logger.info("++++++++++++++Skipping Content notification - duplicate existed: " + notificationMessage.getObjectId());
-						}
-					}
-				}
-				else if(notificationMessage.getClassName().equals(ContentVersionImpl.class.getName()) || notificationMessage.getClassName().equals(ContentVersion.class.getName()))
-				{
-					logger.info("++++++++++++++Got an ContentVersion notification - focus on content: " + notificationMessage.getObjectId());
-					ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId((Integer)notificationMessage.getObjectId());
-					ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentVersionVO.getContentId());
-
-					if(contentVO.getContentTypeDefinitionId() != null)
+					ContentVO contentVO = ContentController.getContentController().getLocklessContentVOWithId((Integer)notificationMessage.getObjectId());
+					//ContentVO contentVO = ContentController.getContentController().getContentVOWithId((Integer)notificationMessage.getObjectId());
+					if(contentVO != null)
 					{
 						ContentTypeDefinitionVO ctdVO = null;
 						try
@@ -986,24 +952,19 @@ public class LuceneController extends BaseController implements NotificationList
 						}
 						catch (SystemException sex)
 						{
-							logger.warn("Failed to get the content type definition for content with Id: " + contentVO.getContentId() + ". The content version will not be indexed. Message: " + sex.getMessage());
+							logger.warn("Failed to get the content type definition for content with Id: " + contentVO.getContentId() + ". The content will not be indexed. Message: " + sex.getMessage());
 							logger.info("Failed to get the content type definition for content with Id: " + contentVO.getContentId(), sex);
 						}
 						if(ctdVO != null && ctdVO.getName().equals("Meta info"))
 						{
 							SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(contentVO.getContentId());
-
-							if (siteNodeVO == null)
-							{
-								logger.warn("Got meta info notification but could not find a page for the Content-id. Content.id: " + contentVO.getContentId());
-							}
-							else
+							if(siteNodeVO != null && notificationMessage != null)
 							{
 								NotificationMessage newNotificationMessage = new NotificationMessage("" + siteNodeVO.getName(), SiteNodeImpl.class.getName(), "SYSTEM", notificationMessage.getType(), siteNodeVO.getId(), "" + siteNodeVO.getName());
-								String key = "" + newNotificationMessage.getClassName() + "_" + newNotificationMessage.getObjectId() + "_"  + newNotificationMessage.getType();
+								String key = "" + newNotificationMessage.getClassName() + "_" + newNotificationMessage.getObjectId() + "_"  + "_" + newNotificationMessage.getType();
 								if(!existingSignatures.contains(key))
 								{
-									logger.info("++++++++++++++Got an META PAGE notification - just adding it AS A PAGE instead: " + newNotificationMessage.getObjectId());
+									logger.info("++++++++++++++Got an META PAGE notification - just adding it AS A PAGE instead: " + newNotificationMessage.getObjectId());								
 									baseEntitiesToIndexMessageList.add(newNotificationMessage);
 									existingSignatures.add(key);
 								}
@@ -1015,12 +976,11 @@ public class LuceneController extends BaseController implements NotificationList
 						}
 						else
 						{
-							NotificationMessage newNotificationMessage = new NotificationMessage("" + contentVersionVO.getContentName(), ContentImpl.class.getName(), "SYSTEM", notificationMessage.getType(), contentVersionVO.getContentId(), "" + contentVersionVO.getContentName());
-							String key = "" + newNotificationMessage.getClassName() + "_" + newNotificationMessage.getObjectId() + "_" + newNotificationMessage.getType();
+							String key = "" + notificationMessage.getClassName() + "_" + notificationMessage.getObjectId() + "_"  + "_" + notificationMessage.getType();
 							if(!existingSignatures.contains(key))
 							{
-								logger.info("++++++++++++++Got an Content notification - just adding it: " + newNotificationMessage.getObjectId());
-								baseEntitiesToIndexMessageList.add(newNotificationMessage);
+								logger.info("++++++++++++++Got an Content notification - just adding it: " + notificationMessage.getObjectId());
+								baseEntitiesToIndexMessageList.add(notificationMessage);
 								existingSignatures.add(key);
 							}
 							else
@@ -1028,6 +988,85 @@ public class LuceneController extends BaseController implements NotificationList
 								logger.info("++++++++++++++Skipping Content notification - duplicate existed: " + notificationMessage.getObjectId());
 							}
 						}
+					}
+					else
+					{
+						logger.info("The content seems to be missing from the database. A guess is that it's new or deleted. Let's try later.");
+						if(!revisitedInternalMessageList.contains(notificationMessage))
+							maturedQeuedMessages.add(notificationMessage);
+						else
+							logger.info("No - allready tried it again.. skipping.");
+					}
+				}
+				else if(notificationMessage.getClassName().equals(ContentVersionImpl.class.getName()) || notificationMessage.getClassName().equals(ContentVersion.class.getName()))
+				{
+					logger.info("++++++++++++++Got an ContentVersion notification - focus on content: " + notificationMessage.getObjectId());
+					//ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId((Integer)notificationMessage.getObjectId());
+					ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLocklessContentVersionVOWithId((Integer)notificationMessage.getObjectId());
+					if(contentVersionVO != null)
+					{
+						ContentVO contentVO = ContentController.getContentController().getLocklessContentVOWithId(contentVersionVO.getContentId());
+	
+						if(contentVO.getContentTypeDefinitionId() != null)
+						{
+							ContentTypeDefinitionVO ctdVO = null;
+							try
+							{
+								ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId());
+							}
+							catch (SystemException sex)
+							{
+								logger.warn("Failed to get the content type definition for content with Id: " + contentVO.getContentId() + ". The content version will not be indexed. Message: " + sex.getMessage());
+								logger.info("Failed to get the content type definition for content with Id: " + contentVO.getContentId(), sex);
+							}
+							if(ctdVO != null && ctdVO.getName().equals("Meta info"))
+							{
+								SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(contentVO.getContentId());
+	
+								if (siteNodeVO == null)
+								{
+									logger.warn("Got meta info notification but could not find a page for the Content-id. Content.id: " + contentVO.getContentId());
+								}
+								else
+								{
+									NotificationMessage newNotificationMessage = new NotificationMessage("" + siteNodeVO.getName(), SiteNodeImpl.class.getName(), "SYSTEM", notificationMessage.getType(), siteNodeVO.getId(), "" + siteNodeVO.getName());
+									String key = "" + newNotificationMessage.getClassName() + "_" + newNotificationMessage.getObjectId() + "_"  + newNotificationMessage.getType();
+									if(!existingSignatures.contains(key))
+									{
+										logger.info("++++++++++++++Got an META PAGE notification - just adding it AS A PAGE instead: " + newNotificationMessage.getObjectId());
+										baseEntitiesToIndexMessageList.add(newNotificationMessage);
+										existingSignatures.add(key);
+									}
+									else
+									{
+										logger.info("++++++++++++++Skipping Content notification - duplicate existed: " + notificationMessage.getObjectId());
+									}
+								}
+							}
+							else
+							{
+								NotificationMessage newNotificationMessage = new NotificationMessage("" + contentVersionVO.getContentName(), ContentImpl.class.getName(), "SYSTEM", notificationMessage.getType(), contentVersionVO.getContentId(), "" + contentVersionVO.getContentName());
+								String key = "" + newNotificationMessage.getClassName() + "_" + newNotificationMessage.getObjectId() + "_" + newNotificationMessage.getType();
+								if(!existingSignatures.contains(key))
+								{
+									logger.info("++++++++++++++Got an Content notification - just adding it: " + newNotificationMessage.getObjectId());
+									baseEntitiesToIndexMessageList.add(newNotificationMessage);
+									existingSignatures.add(key);
+								}
+								else
+								{
+									logger.info("++++++++++++++Skipping Content notification - duplicate existed: " + notificationMessage.getObjectId());
+								}
+							}
+						}
+					}
+					else
+					{
+						logger.info("The content version seems to be missing from the database. A guess is that it's new or deleted. Let's try later.");
+						if(!revisitedInternalMessageList.contains(notificationMessage))
+							maturedQeuedMessages.add(notificationMessage);
+						else
+							logger.info("No - allready tried it again.. skipping.");
 					}
 				}
 				else if(notificationMessage.getClassName().equals(DigitalAssetImpl.class.getName()) || 
@@ -2450,11 +2489,33 @@ public class LuceneController extends BaseController implements NotificationList
 		StringBuffer sb = new StringBuffer();
 		
 		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId, db);
-		sb.insert(0, contentVO.getName());
+
+		if (contentVO.getName() == null || contentVO.getName().equals(""))
+		{
+			sb.insert(0, "]");
+			sb.insert(0, contentVO.getId());
+			sb.insert(0, "[");
+		}
+		else
+		{
+			sb.insert(0, contentVO.getName());
+		}
+
 		while(contentVO.getParentContentId() != null)
 		{
 			contentVO = ContentController.getContentController().getContentVOWithId(contentVO.getParentContentId(), db);
-			sb.insert(0, contentVO.getName() + "/");
+
+			sb.insert(0, "/");
+			if (contentVO.getName() == null || contentVO.getName().equals(""))
+			{
+				sb.insert(0, "]");
+				sb.insert(0, contentVO.getId());
+				sb.insert(0, "[");
+			}
+			else
+			{
+				sb.insert(0, contentVO.getName());
+			}
 		}
 		sb.insert(0, "/");
 		

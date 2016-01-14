@@ -88,7 +88,7 @@
 				<group>infoglueJobs</group>
 				<job-name>ProcessSubscriptions</job-name>
 				<job-group>infoglueJobs</job-group>
-				<cron-expression>0 0 1 * * ?</cron-expression>
+				<cron-expression>*/20 * * * * ?</cron-expression>
 				<!--<cron-expression>0/30 * * ? * *</cron-expression>-->
 			</cron>
 		</trigger>

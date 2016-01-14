@@ -502,6 +502,11 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
         
     public void setVersionValue(java.lang.String versionValue) throws Exception
     {
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("VersionValue before processing: " + versionValue);
+		}
+
     	try
     	{
 	    	if(versionValue != null)
@@ -567,6 +572,11 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
     		logger.warn(versionValue);
     		logger.info("VersionValue:" + versionValue);
     		throw new Exception("Faulty XML from Eclipse plugin.. not accepting");
+		}
+
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("VersionValue after processing: " + versionValue);
 		}
 
     	this.contentVersionVO.setVersionValue(versionValue);

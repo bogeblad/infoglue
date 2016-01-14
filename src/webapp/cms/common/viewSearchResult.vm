@@ -361,7 +361,12 @@
 										<tr>
 											<td>
 												<input type="checkbox" id="cv$contentVersionId" name="sel" value="$contentVersionId"/>
-												<a href="#" class="content" onclick="top.openUrlInWorkArea('ViewContent!V3.action?contentId=$contentVersionVO.contentId', '$contentVersionVO.contentName', 'content', '$ui.getString("tool.common.contentTabLabelPrefix")', 'ContentTool'); return false;">$contentVersionVO.contentName.replaceAll(' ', '&nbsp;') #*$this.getContentPath($contentVersionVO.contentId).replaceAll(' ', '&nbsp;')*#</a>
+												#if( $isLuceneSearch )
+													#set($contentPath = $contentVersionVO.getContentName().replaceAll(' ', '&nbsp;') )
+												#else
+													#set($contentPath = $this.getEntityPath($contentVersionVO).replaceAll(' ', '&nbsp;') )
+												#end
+												<a href="#" class="content" onclick="top.openUrlInWorkArea('ViewContent!V3.action?contentId=$contentVersionVO.contentId', '$contentVersionVO.contentName', 'content', '$ui.getString("tool.common.contentTabLabelPrefix")', 'ContentTool'); return false;">$contentPath</a>
 											</td>
 											<td>
 												<span>$this.getLanguageVO($contentVersionVO.languageId).name</span>
@@ -402,7 +407,12 @@
 										<tr>
 											<td>
 												<input type="checkbox" id="snv$siteNodeVersionId" name="selSiteNodeVersion" value="$siteNodeVersionId"/>
-												<a href="#" class="page" onclick="top.openUrlInWorkArea('ViewSiteNode.action?siteNodeId=$siteNodeVersionVO.siteNodeId', '$siteNodeVersionVO.siteNodeName', 'structure', '$ui.getString("tool.common.pageTabLabelPrefix")', 'StructureTool'); return false;">$siteNodeVersionVO.siteNodeName.replaceAll(' ', '&nbsp;') #*$this.getSiteNodePath($siteNodeVersionVO.siteNodeId)*#</a><br/>
+												#if( $isLuceneSearch )
+													#set($siteNodePath = $siteNodeVersionVO.siteNodeName.replaceAll(' ', '&nbsp;') )
+												#else
+													#set($siteNodePath = $this.getEntityPath($siteNodeVersionVO).replaceAll(' ', '&nbsp;') )
+												#end
+												<a href="#" class="page" onclick="top.openUrlInWorkArea('ViewSiteNode.action?siteNodeId=$siteNodeVersionVO.siteNodeId', '$siteNodeVersionVO.siteNodeName', 'structure', '$ui.getString("tool.common.pageTabLabelPrefix")', 'StructureTool'); return false;">$siteNodePath</a><br/>
 											</td>
 											<td>
 												<span>$siteNodeVersionVO.stateId</span>

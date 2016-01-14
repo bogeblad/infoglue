@@ -2487,7 +2487,7 @@ public class LuceneController extends BaseController implements NotificationList
 	public String getContentPath(Integer contentId, Database db) throws Exception
 	{
 		StringBuffer sb = new StringBuffer();
-		
+
 		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId, db);
 
 		if (contentVO.getName() == null || contentVO.getName().equals(""))

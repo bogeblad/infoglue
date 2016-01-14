@@ -143,6 +143,10 @@
 			    <option value="required">Required</option>
 			    <option value="requiredif">Required If</option>
 			    <option value="matchRegexp">Match Regexp</option>
+			    <option value="greaterThan">Greater than</option>
+			    <option value="lessThan">Less than</option>
+			    <option value="greaterThanEquals">Greater than or equal</option>
+			    <option value="lessThanEquals">Less than or equal</option>
 			 </select>
 		</td>
 	</tr>

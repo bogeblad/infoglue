@@ -376,6 +376,28 @@ public class ContentController extends BaseController
 		return contentVO;
     } 
 	
+	public ContentVO getLocklessContentVOWithId(Integer contentId, Database db) throws Exception
+    {
+		String key = "" + contentId;
+		ContentVO contentVO = (ContentVO)CacheController.getCachedObjectFromAdvancedCache("contentCache", key);
+		if(contentVO != null)
+		{
+			//logger.info("There was an cached contentVO:" + contentVO);
+		}
+		else
+		{
+			contentVO = (ContentVO) getVOWithIdLockless(SmallContentImpl.class, "contentId", contentId, db);
+
+			if(contentVO != null)
+			{
+				CacheController.cacheObjectInAdvancedCache("contentCache", key, contentVO, new String[]{CacheController.getPooledString(1, contentId)}, true);
+			}
+		}
+		
+		return contentVO;
+    } 
+
+	
 	public ContentVO getContentVOWithId(Integer contentId) throws SystemException, Bug
     {
 		String key = "" + contentId;

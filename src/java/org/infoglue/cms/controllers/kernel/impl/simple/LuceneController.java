@@ -1857,29 +1857,34 @@ public class LuceneController extends BaseController implements NotificationList
 
 			try
 			{
-				DigitalAssetVO asset = DigitalAssetController.getSmallDigitalAssetVOWithId((Integer)notificationMessage.getObjectId(), db2);
-				//MediumDigitalAssetImpl asset = (MediumDigitalAssetImpl)DigitalAssetController.getMediumDigitalAssetWithIdReadOnly((Integer)notificationMessage.getObjectId(), db2);
-				//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getMediumDigitalAssetWithIdReadOnly", t.getElapsedTime());
-				//Collection contentVersions = asset.getContentVersions();
-
-				List<SmallestContentVersionVO> contentVersionVOList = DigitalAssetController.getContentVersionVOListConnectedToAssetWithId((Integer)notificationMessage.getObjectId());	
-
-				if(logger.isInfoEnabled())
-					logger.info("contentVersionVOList:" + contentVersionVOList.size());
-				Iterator<SmallestContentVersionVO> contentVersionsIterator = contentVersionVOList.iterator();
-				while(contentVersionsIterator.hasNext())
+				DigitalAssetVO asset = DigitalAssetController.getController().getLocklessSmallDigitalAssetVOWithId((Integer)notificationMessage.getObjectId(), db2);
+				//DigitalAssetVO asset = DigitalAssetController.getSmallDigitalAssetVOWithId((Integer)notificationMessage.getObjectId(), db2);
+				
+				if(asset != null)
 				{
-					SmallestContentVersionVO version = contentVersionsIterator.next();
-					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("contentVersionsIterator", t.getElapsedTime());
-					ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(version.getId(), db2);
-					
-					Document document = getDocumentFromDigitalAsset(asset, cvVO, db);
-					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getDocumentFromDigitalAsset", t.getElapsedTime());
-					logger.info("00000000000000000: Adding asset document:" + document);
-					if(document != null)
-						returnDocuments.add(document);
+					List<SmallestContentVersionVO> contentVersionVOList = DigitalAssetController.getContentVersionVOListConnectedToAssetWithId((Integer)notificationMessage.getObjectId());	
+	
+					if(logger.isInfoEnabled())
+						logger.info("contentVersionVOList:" + contentVersionVOList.size());
+					Iterator<SmallestContentVersionVO> contentVersionsIterator = contentVersionVOList.iterator();
+					while(contentVersionsIterator.hasNext())
+					{
+						SmallestContentVersionVO version = contentVersionsIterator.next();
+						RequestAnalyser.getRequestAnalyser().registerComponentStatistics("contentVersionsIterator", t.getElapsedTime());
+						ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(version.getId(), db2);
+						
+						Document document = getDocumentFromDigitalAsset(asset, cvVO, db);
+						RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getDocumentFromDigitalAsset", t.getElapsedTime());
+						logger.info("00000000000000000: Adding asset document:" + document);
+						if(document != null)
+							returnDocuments.add(document);
+					}
 				}
-
+				else
+				{
+					logger.info("Asset was probably deleted - ignoring it.");
+				}
+				
 				commitTransaction(db2);
 			}
 			catch(Exception e)
@@ -2323,7 +2328,8 @@ public class LuceneController extends BaseController implements NotificationList
 
 	public Document getDocumentFromDigitalAsset(DigitalAssetVO digitalAssetVO, ContentVersionVO contentVersionVO, Database db) throws Exception, InterruptedException
 	{
-		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentVersionVO.getContentId(), db);
+		//ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentVersionVO.getContentId(), db);
+		ContentVO contentVO = ContentController.getContentController().getLocklessContentVOWithId(contentVersionVO.getContentId(), db);
 		if(contentVO == null || contentVO.getIsDeleted())
 			return null;
 
@@ -2487,7 +2493,7 @@ public class LuceneController extends BaseController implements NotificationList
 	public String getContentPath(Integer contentId, Database db) throws Exception
 	{
 		StringBuffer sb = new StringBuffer();
-
+		
 		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId, db);
 
 		if (contentVO.getName() == null || contentVO.getName().equals(""))

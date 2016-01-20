@@ -23,6 +23,8 @@
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
+import java.sql.Connection;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -305,6 +307,29 @@ public class RepositoryLanguageController extends BaseController
     }
     */
 
+    /**
+     * Rewrote method to be lock insensitive
+     * @param repository
+     * @param db
+     * @throws SystemException
+     * @throws Bug
+     */
+    
+    public void deleteRepositoryLanguagesLockless(Repository repository, Database db) throws SystemException, Bug
+	{
+		try
+		{
+			Connection conn = db.getJdbcConnection();
+			
+			Statement stmt = conn.createStatement();
+			String sql = "DELETE FROM cmRepositoryLanguage WHERE repositoryId = " + repository.getId();
+			stmt.executeUpdate(sql);
+		}
+		catch(Exception e)
+		{
+			throw new SystemException("An error occurred when we tried to find the matching RepositoryLanguage in the database. Reason: " + e.getMessage(), e);
+		}
+	}
     
 	public void deleteRepositoryLanguages(Repository repository, Database db) throws SystemException, Bug
 	{

@@ -1,4 +1,3 @@
-
 /* ===============================================================================
  *
  * Part of the InfoGlue Content Management Platform (www.infoglue.org)
@@ -132,7 +131,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 	public Class loaded(Object object, AccessMode arg1) throws Exception 
 	{
 		//System.out.println("Loaded 2" + arg0.getClass().getName());
-    	//if(arg0.getClass().getName().contains("RegistryImpl"))
+    	//if(object.getClass().getName().contains("SmallContentImpl"))
 		//	Thread.dumpStack();
 		//System.out.println("Loaded 2" + arg0.getClass().getName());
 		
@@ -952,11 +951,14 @@ public class CmsJDOCallback implements CallbackInterceptor
 						CacheController.clearCacheForGroup("childContentCache", "content_" + content.getValueObject().getParentContentId());
 						if(ContentController.getContentController().getDoesContentExist(content.getId()))
 						{
-							ContentVO parentContentVO = ContentController.getContentController().getContentVOWithId(content.getValueObject().getParentContentId(), false);
-							if(parentContentVO.getParentContentId() != null)
+							//ContentVO parentContentVO = ContentController.getContentController().getContentVOWithId(content.getValueObject().getParentContentId(), false);
+							ContentVO parentContentVO = ContentController.getContentController().getLocklessContentVOWithId(content.getValueObject().getParentContentId());
+							if(parentContentVO != null && parentContentVO.getParentContentId() != null)
 							{
 								CacheController.clearCacheForGroup("childContentCache", "content_" + parentContentVO.getParentContentId());
 							}
+							else
+								logger.error("Null parent - skipping");						
 						}
 					}
 				}
@@ -978,12 +980,15 @@ public class CmsJDOCallback implements CallbackInterceptor
 					if(content.getValueObject().getParentContentId() != null)
 					{
 						CacheController.clearCacheForGroup("childContentCache", "content_" + content.getValueObject().getParentContentId());
-						ContentVO parentContentVO = ContentController.getContentController().getContentVOWithId(content.getValueObject().getParentContentId(), false);
-						if(parentContentVO.getParentContentId() != null)
+						//ContentVO parentContentVO = ContentController.getContentController().getContentVOWithId(content.getValueObject().getParentContentId(), false);
+						ContentVO parentContentVO = ContentController.getContentController().getLocklessContentVOWithId(content.getValueObject().getParentContentId());
+						if(parentContentVO != null && parentContentVO.getParentContentId() != null)
 						{
 							CacheController.clearCacheForGroup("childContentCache", "content_" + parentContentVO.getParentContentId());
 						}
-					}
+						else
+							logger.error("Null parent - skipping");
+					} 
 				}
 				catch (Exception e) 
 				{
@@ -1003,11 +1008,14 @@ public class CmsJDOCallback implements CallbackInterceptor
 					if(content.getValueObject().getParentContentId() != null)
 					{
 						CacheController.clearCacheForGroup("childContentCache", "content_" + content.getValueObject().getParentContentId());
-						ContentVO parentContentVO = ContentController.getContentController().getContentVOWithId(content.getValueObject().getParentContentId(), false);
-						if(parentContentVO.getParentContentId() != null)
+						ContentVO parentContentVO = ContentController.getContentController().getLocklessContentVOWithId(content.getValueObject().getParentContentId());
+						//ContentVO parentContentVO = ContentController.getContentController().getContentVOWithId(content.getValueObject().getParentContentId(), false);
+						if(parentContentVO != null && parentContentVO.getParentContentId() != null)
 						{
 							CacheController.clearCacheForGroup("childContentCache", "content_" + parentContentVO.getParentContentId());
 						}
+						else
+							logger.error("Null parent - skipping");
 					}
 				}
 				catch (Exception e) 

@@ -2234,10 +2234,15 @@ public class AccessRightController extends BaseController
 				Integer hasAccess = userAccessRightsMap.get(acKey);
 				if(hasAccess == null)
 				{
-					boolean doDoubleCheck = interceptionPointName.indexOf("Repository.") <= -1;
+					boolean doDoubleCheck = true;
+					if(interceptionPointName.indexOf("Repository.") > -1 || interceptionPointName.indexOf("ComponentEditor.") > -1  || interceptionPointName.indexOf("ComponentPropertyEditor.EditProperty") > -1)
+						doDoubleCheck = false;
 					
-					logger.info("Double checking on access as it's a content version and those are often not protected:" + acKey);
-					if(!returnTrueIfNoAccessRightsDefined && !doDoubleCheck)
+					if(returnTrueIfNoAccessRightsDefined && doDoubleCheck /*&& (interceptionPointName.indexOf("ContentVersion.") > -1 || )*/)
+					{
+						logger.warn("Double checking on access as it's a content version and those are often not protected:" + interceptionPointName + ":" + acKey);
+					}
+					else
 					{
 						CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(false), new String[]{infoGluePrincipal.getName()}, true);
 						return false;

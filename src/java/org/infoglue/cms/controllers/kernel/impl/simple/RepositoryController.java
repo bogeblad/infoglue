@@ -297,10 +297,11 @@ public class RepositoryController extends BaseController
 
 			repository = getRepositoryWithId(repositoryVO.getRepositoryId(), db);
 			
-			RepositoryLanguageController.getController().deleteRepositoryLanguages(repository, db);
+			RepositoryLanguageController.getController().deleteRepositoryLanguagesLockless(repository, db);
 			processBean.updateProcess("Deleted repo languages...");
 			
-			deleteEntity(RepositoryImpl.class, repositoryVO.getRepositoryId(), db);
+			deleteEntity(SmallRepositoryImpl.class, repositoryVO.getRepositoryId(), db);
+			//deleteEntity(RepositoryImpl.class, repositoryVO.getRepositoryId(), db);
 			processBean.updateProcess("Deleted repo...");
 
 			commitTransaction(db);

@@ -57,7 +57,7 @@ public class CommonsValidator {
     * Otherwise <code>false</code>.
     */
    public static boolean validateRequired(Object bean, Field field) {
-      String value = ValidatorUtils.getValueAsString(bean, field.getProperty());
+      String value = getBeanValue(bean, field.getProperty());
       return !GenericValidator.isBlankOrNull(value);
    }
 
@@ -291,8 +291,8 @@ public class CommonsValidator {
 		try
 		{
 			ContentVersionBean bean		= (ContentVersionBean)beanObject;
-			final String value			= ValidatorUtils.getValueAsString(bean, field.getProperty());
-			final String dependentValue	= ValidatorUtils.getValueAsString(bean, field.getVarValue("dependent"));
+			final String value			= getBeanValue(bean, field.getProperty());
+			final String dependentValue	= getBeanValue(bean, field.getVarValue("dependent"));
 			final String valueType		= bean.getAttributeType(field.getProperty()).getInputType();
 
 			boolean valueEmpty = value == null || value.equals("");

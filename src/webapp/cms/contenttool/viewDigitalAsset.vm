@@ -288,6 +288,7 @@
 					url: "$URLBase/CreateDigitalAsset!multiple.action",
 					previewTemplate: jQuery("#bulkUploadPreviewTemplate").html(),
 					previewsContainer: "#bulkupload",
+					parallelUploads: 1,
 					thumbnail: function setupThumbnail(file, dataUri) {
 						var previewElement = $(file.previewElement);
 						var imagePreviewElement = previewElement.find(".bulkupload--preview");

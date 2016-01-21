@@ -87,7 +87,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	private Integer unrefreshedSiteNodeId 	= new Integer(0);
 	private Integer changeTypeId 			= new Integer(0);
 	private Integer repositoryId 			= null;
-	private Integer languageId 				= null;
+	private String languageId 				= null;
 	private Integer metaInfoContentId 		= null;
 	
 	private SiteNodeTypeDefinitionVO siteNodeTypeDefinitionVO;
@@ -1169,18 +1169,21 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 		this.showPageLanguages = showPageLanguages;
 	}
 
-	public Integer getLanguageId() 
+	public String getLanguageId()
 	{
 		return languageId;
 	}
 
 	public void setLanguageId(String languageId) throws SystemException, Exception 
 	{
-		try {
-			this.languageId = Integer.parseInt(languageId);
-		} catch (NumberFormatException e) {
+		try
+		{
+			this.languageId = "" + Integer.parseInt(languageId);
+		}
+		catch (NumberFormatException e)
+		{
 			LanguageVO languageVO = LanguageController.getController().getMasterLanguage(this.repositoryId);
-			this.languageId = languageVO.getLanguageId();
+			this.languageId = "" + languageVO.getLanguageId();
 		}
 	}
 	

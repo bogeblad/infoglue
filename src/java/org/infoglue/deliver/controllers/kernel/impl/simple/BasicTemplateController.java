@@ -5945,7 +5945,22 @@ public class BasicTemplateController implements TemplateController
 				
 		return pageUrl;
 	}
-
+	
+	public String getPageUrl(Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId,  String stateId) 
+	{
+		String pageUrl = "";
+		
+		try
+		{
+			pageUrl = this.nodeDeliveryController.getPageUrl(getDatabase(), this.getPrincipal(), this.siteNodeId, this.languageId, includeLanguageId, stateId, this.deliveryContext);
+		}
+		catch(Exception e)
+		{
+			logger.warn("An error occurred trying to get page url for siteNodeId[" + siteNodeId + "]:" + e.getMessage() + "\n" + "The page generating the error was:" + this.getOriginalFullURL(), e);
+		}
+				
+		return pageUrl;
+	}
 	/**
 	 * This method calls an page and stores it as an digitalAsset - that way one can avoid having to 
 	 * serve javascript-files and css-files through InfoGlue. Not suitable for use if you have very dynamic

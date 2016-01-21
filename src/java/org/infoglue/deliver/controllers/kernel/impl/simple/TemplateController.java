@@ -1127,9 +1127,11 @@ public interface TemplateController
     /**
      * This method deliveres a new url pointing to the same address as now but with new parameters.
      */
-    public abstract String getPageUrl(Integer siteNodeId, Integer languageId, boolean includeLanguageId,
-            Integer contentId);
-
+    public abstract String getPageUrl(Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId);
+    /**
+     * This method deliveres a new url pointing to the same address as now but with new parameters.
+     */
+    public abstract String getPageUrl(Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId,  String stateId);
     /**
      * This method constructs a string representing the path to the page with respect to where in the
      * structure the page is. It also takes the page title into consideration.

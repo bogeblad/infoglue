@@ -1526,7 +1526,30 @@ public class NodeDeliveryController extends BaseDeliveryController
 		
 		return pageUrl;
 	}
+	/**
+	 * This method translates stateId into context values
+	 * */
+	public String getPageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, String stateId, DeliveryContext deliveryContext) throws SystemException, Exception
+	{
+		String pageUrl = "";
+		String applicationContext = "";
+		String context = "";
 
+		if (!stateId.equalsIgnoreCase("3")) {
+
+			applicationContext = CmsPropertyHandler.getServletContext();
+			
+			if (!applicationContext.startsWith("/")) {
+				applicationContext = "/" + applicationContext;
+			}
+		}	
+
+		pageUrl = urlComposer.composePageUrl(db, infoGluePrincipal, siteNodeId, languageId, includeLanguageId, -1, applicationContext, deliveryContext, true, true, stateId, context);
+
+		
+		return pageUrl;
+	}
+	
 	public String getPageUrlAfterLanguageChange(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception
     {
         return urlComposer.composePageUrlAfterLanguageChange(db, infoGluePrincipal, siteNodeId, languageId, contentId, deliveryContext);

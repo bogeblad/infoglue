@@ -73,6 +73,11 @@
         	<required>false</required>
 	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
+    	<attribute>
+    	    <name>stateId</name>
+        	<required>false</required>
+	        <rtexprvalue>true</rtexprvalue>
+    	</attribute>
     </tag>
 	<tag>
         <name>customPageUrl</name>

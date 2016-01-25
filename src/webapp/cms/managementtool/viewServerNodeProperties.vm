@@ -455,7 +455,7 @@
 				#set($WYSIWYGEditorAreaCSS = $this.getDataPropertyValue("WYSIWYGEditorAreaCSS"))
 				#set($WYSIWYGEditorAreaCSS = $WYSIWYGEditorAreaCSS.replaceAll("&amp;", "&amp;amp;"))
 				#editPropertyTextAreaCSS("ServerNode.property.WYSIWYGEditorAreaCSS" "WYSIWYGEditorAreaCSS" "$WYSIWYGEditorAreaCSS" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.WYSIWYGEditorAreaCSS")
-
+				#yesNoDropDownWithInheritCSS("ServerNode.property.viewInheritedAssetsInContentDialog" "viewInheritedAssetsInContentDialog" "$this.getPropertyValue('viewInheritedAssetsInContentDialog')" "$!cmsPH.viewInheritedAssetsInContentDialog")
 			</div>
 		
 			<div class="inlineTabDiv" id="protectionSettings">

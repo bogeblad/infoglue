@@ -1059,12 +1059,15 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	public List getInheritedDigitalAssets()
 	{
 		List filteredDigitalAssets = new ArrayList();
+		boolean istrue = this.contentVO != null && this.contentVO.getContentId() != null && this.contentVO.getContentId().intValue() != -1;
+		System.out.println("cmsproperty was: " + CmsPropertyHandler.getViewInheritedAssetsInContentDialog() + "::::" + istrue);
 		try
 		{
 
 			if(this.contentVO != null && this.contentVO.getContentId() != null && this.contentVO.getContentId().intValue() != -1)
 	       	{
-				List digitalAssets = DigitalAssetController.getDigitalAssetVOList(this.contentVO.getContentId(), this.languageId, true);
+				
+				List digitalAssets = DigitalAssetController.getDigitalAssetVOList(this.contentVO.getContentId(), this.languageId, CmsPropertyHandler.getViewInheritedAssetsInContentDialog());
 			
 				filteredDigitalAssets.addAll(digitalAssets);
 
@@ -1085,8 +1088,13 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	       	}
 			else if(this.contentVersionVO != null && this.contentVersionVO.getContentVersionId() != null)
 	       	{
+				System.out.println("1");
 				this.contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(this.contentVersionVO.getId());
-				filteredDigitalAssets = DigitalAssetController.getDigitalAssetVOList(this.contentVersionVO.getContentVersionId());
+				if (CmsPropertyHandler.getViewInheritedAssetsInContentDialog()) {
+					filteredDigitalAssets = DigitalAssetController.getDigitalAssetVOList(this.contentVersionVO.getContentVersionId());
+				} else {
+					filteredDigitalAssets = DigitalAssetController.getDigitalAssetVOList(this.contentVO.getContentId(), this.getLanguageId(), false);
+				}
 	       	}
 
 			Iterator digitalAssetsIterator = filteredDigitalAssets.iterator();
@@ -1097,7 +1105,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
    				List<ReferenceBean> referenceBeans = RegistryController.getController().getReferencingObjectsForContentAsset(this.contentVersionVO.getContentId(), assetVO.getAssetKey(), 100, false, true, true);
    				assetVO.setReferencingNumberOfObjects(referenceBeans.size());
-   				
+   				System.out.println("2");
    			}
 		}
 		catch(Exception e)

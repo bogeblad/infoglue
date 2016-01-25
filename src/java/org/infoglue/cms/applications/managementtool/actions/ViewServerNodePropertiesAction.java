@@ -377,7 +377,8 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "allowInternalCallsBasedOnIP");
 	    
 	    populate(ps, "assetFileNameForm");
-
+	    populate(ps, "viewInheritedAssetsInContentDialog");
+	    
 	    populate(ps, "deriveProtocolWhenUsingProtocolRedirects");
 	    populate(ps, "useAccessBasedProtocolRedirects");
 	    populate(ps, "unprotectedProtocolName");

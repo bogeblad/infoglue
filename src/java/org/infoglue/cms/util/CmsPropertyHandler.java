@@ -3157,6 +3157,10 @@ public class CmsPropertyHandler
 		return Boolean.parseBoolean(forceHTTPProtocol);
 	}
 	
+	public static boolean getViewInheritedAssetsInContentDialog() {
+		String viewInheritedAssetsInContentDialog = getServerNodeProperty("viewInheritedAssetsInContentDialog", true, "false");
+		return Boolean.parseBoolean(viewInheritedAssetsInContentDialog);
+	}
 	/**
 	 * Setting which determines if you wanna skip cleaning up references in content
 	 * @return boolean

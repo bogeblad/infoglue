@@ -1256,7 +1256,7 @@ public class BasicURLComposer extends URLComposer
 			}
 
 			sb.append(applicationContext);
-System.out.println("sb append 1:" + sb.toString());
+
 			try
 			{
 				String navigationPath = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getPageNavigationPath(db, infoGluePrincipal, siteNodeId, languageId, contentId, deliveryContext);
@@ -1458,7 +1458,7 @@ System.out.println("sb append 1:" + sb.toString());
 
 				url = sb.toString();
             }
-            System.out.println("url was at the end:" + url);
+
         }
         
         if(logger.isInfoEnabled())

@@ -861,4 +861,15 @@ public class DeliveryContext implements UsageListener
 		this.cachedResponse = cachedResponse;
 	}
 
+	private Boolean languageCanBeOverridden = false;
+
+	public void setLanguageCanBeOverridden(boolean languageCanBeOverridden) 
+	{
+		this.languageCanBeOverridden = languageCanBeOverridden;
+	}
+
+	public Boolean getLanguageCanBeOverridden() 
+	{
+		return this.languageCanBeOverridden;
+	}
 }

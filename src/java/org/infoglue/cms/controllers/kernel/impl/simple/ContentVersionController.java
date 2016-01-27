@@ -170,6 +170,11 @@ public class ContentVersionController extends BaseController
 		return (ContentVersionVO) getVOWithId(SmallContentVersionImpl.class, contentVersionId);
     }
 
+    public ContentVersionVO getLocklessContentVersionVOWithId(Integer contentVersionId) throws SystemException, Bug
+    {
+		return (ContentVersionVO) getVOWithIdLockless(SmallContentVersionImpl.class, "contentVersionId", contentVersionId);
+    }
+
     public ContentVersionVO getContentVersionVOWithId(Integer contentVersionId, Database db) throws SystemException, Bug
     {
 		return (ContentVersionVO) getVOWithId(SmallContentVersionImpl.class, contentVersionId, db);

@@ -57,7 +57,23 @@
 	        <type>java.util.Map</type>
 		</attribute>
 	</tag>
-
+	
+	<tag>
+	    <name>isNumber</name>
+	    <tagclass>org.infoglue.deliver.taglib.common.isNumberTag</tagclass>
+	    <bodycontent>empty</bodycontent>
+	    <info></info>
+	    <attribute>
+		    <name>id</name>
+	    	<required>false</required>
+	        <rtexprvalue>true</rtexprvalue>
+		</attribute>
+	    <attribute>
+		    <name>text</name>
+	    	<required>false</required>
+	        <rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
 	<tag>
 	    <name>slots</name>
 	    <tagclass>org.infoglue.deliver.taglib.common.SlotsTag</tagclass>
@@ -188,6 +204,11 @@
 	    	<required>false</required>
 	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
+		<attribute>
+		    <name>includeLanguageId</name>
+	    	<required>false</required>
+	        <rtexprvalue>true</rtexprvalue>
+		</attribute>
 	    <attribute>
 		    <name>disableNiceURI</name>
 	    	<required>false</required>
@@ -200,6 +221,11 @@
 		</attribute>		
 		<attribute>
 		    <name>includeCurrentQueryString</name>
+	    	<required>false</required>
+	        <rtexprvalue>true</rtexprvalue>
+		</attribute>		
+		<attribute>
+		    <name>forceHTTPProtocol</name>
 	    	<required>false</required>
 	        <rtexprvalue>true</rtexprvalue>
 		</attribute>		

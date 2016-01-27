@@ -22,9 +22,20 @@
 */
 package org.infoglue.deliver.taglib.structure;
 
-import javax.servlet.jsp.JspException;
+import java.util.Map;
 
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspTagException;
+
+import org.exolab.castor.jdo.Database;
+import org.infoglue.deliver.applications.databeans.DeliveryContext;
+import org.infoglue.deliver.controllers.kernel.URLComposer;
+import org.infoglue.deliver.controllers.kernel.impl.simple.ComponentLogic;
+import org.infoglue.deliver.controllers.kernel.impl.simple.NodeDeliveryController;
 import org.infoglue.deliver.taglib.component.ComponentLogicTag;
+import org.infoglue.cms.exception.SystemException;
+import org.infoglue.cms.security.InfoGluePrincipal;
+import org.infoglue.cms.util.CmsPropertyHandler;
 
 public class PageUrlTag extends ComponentLogicTag
 {
@@ -37,11 +48,14 @@ public class PageUrlTag extends ComponentLogicTag
 	private boolean useInheritance = true;
 	private boolean useRepositoryInheritance = true;
     private boolean useStructureInheritance = true;
-
+    private boolean forceHTTPProtocol = false;
+    private boolean includeLanguageId = true;
+    	
 	private Integer siteNodeId;
 	private Integer languageId;
 	private Integer contentId = new Integer(-1);
-
+	private String stateId;
+	
 	private String extraParameters;
 	
 	public PageUrlTag() 
@@ -61,31 +75,61 @@ public class PageUrlTag extends ComponentLogicTag
         this.siteNodeId = null;
         this.contentId = null;
         this.extraParameters = null;
+        this.includeLanguageId = true;
+        this.stateId = null;
         
         return EVAL_PAGE;
     }
 
-	private String getPageUrl() throws JspException
+	private String getPageUrl() throws JspTagException
 	{
 	    if(this.languageId == null)
 	        this.languageId = getController().getLanguageId();
-	    
-	    if(this.propertyName != null)
-	        return getComponentLogic().getPageUrl(propertyName, contentId, languageId, useInheritance, useRepositoryInheritance, useStructureInheritance);
-	    else
-	        return getController().getPageUrl(siteNodeId, languageId, contentId);
+	    String url = "";
+	   
+	    if(this.propertyName != null) {
+	    	ComponentLogic componentLogic = getController().getComponentLogic();
+	 		Map property = componentLogic.getInheritedComponentProperty(componentLogic.getInfoGlueComponent(), propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
+	 		this.siteNodeId = componentLogic.getSiteNodeId(property);
+	 		if(siteNodeId == null) {
+	 			return "";
+	 		}
+	    }
+
+	    if (this.stateId == null) {
+	    	url = getController().getPageUrl(siteNodeId, languageId, includeLanguageId, contentId);
+	    } else {
+	    	DeliveryContext dc = getController().getDeliveryContext();
+	    	dc.setOperatingMode(this.stateId);
+	    	url = getController().getPageUrl(this.siteNodeId, this.languageId, this.includeLanguageId, -1, this.stateId);
+
+	    }
+	    if (forceHTTPProtocol || CmsPropertyHandler.getForceHTTPProtocol()) {
+	    	url = url.replaceFirst("https:", "http:");
+	    }
+
+	    return url;
 	}
 
 	public void setSiteNodeId(final String siteNodeId) throws JspException
     {
         this.siteNodeId = evaluateInteger("pageUrl", "siteNodeId", siteNodeId);
     }
-
+	public void setForceHTTPProtocol(final String forceHTTPProtocol) throws JspException
+    {
+        this.forceHTTPProtocol = evaluateBoolean("pageUrl", "forceHTTPProtocol", forceHTTPProtocol);
+    }
+	
     public void setLanguageId(final String languageId) throws JspException
     {
         this.languageId = evaluateInteger("pageUrl", "languageId", languageId);
     }
-
+    
+    public void setStateId(final String stateId) throws JspException
+    {
+        this.stateId = evaluateString("pageUrl", "stateId", stateId);
+    }
+    
     public void setContentId(final String contentId) throws JspException
     {
         this.contentId = evaluateInteger("pageUrl", "contentId", contentId);
@@ -114,5 +158,10 @@ public class PageUrlTag extends ComponentLogicTag
     public void setExtraParameters(String extraParameters)
     {
         this.extraParameters = extraParameters;
+    }
+    
+	public void setIncludeLanguageId(final String includeLanguageId) throws JspException
+    {
+        this.includeLanguageId = evaluateBoolean("pageUrlAfterLanguageChange", "includeLanguageId", includeLanguageId);
     }
 }

@@ -66,13 +66,22 @@ public abstract class URLComposer
 	public abstract String composeDigitalAssetUrl(String dnsName, String folderName, String filename, DeliveryContext deliveryContext);
 
 	public abstract String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception;
+	
+	public abstract String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId, String applicationContext, DeliveryContext deliveryContext) throws SystemException, Exception;
+	
+	public abstract String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception;
 
+	public abstract String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId, String applicationContext, DeliveryContext deliveryContext, Boolean enableNiceURI, Boolean useDNSNameInUrls, String operatingMode, String context) throws SystemException, Exception;
+	
 	public abstract String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, String applicationContext, DeliveryContext deliveryContext) throws SystemException, Exception;
 
 	public abstract String composePageUrlForRedirectRegistry(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, DeliveryContext deliveryContext, Boolean useNiceURI, Boolean enableNiceURIForLanguage) throws SystemException, Exception;
 
 	public abstract String composePageUrlAfterLanguageChange(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception;
+	
+	public abstract String composePageUrlAfterLanguageChange(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Boolean includeLanguageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception;
 
 	public abstract String composePageBaseUrl(String dnsName);
+	
 
 }

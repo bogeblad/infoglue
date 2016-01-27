@@ -517,8 +517,16 @@ public class RegistryController extends BaseController
 		   c.getName().contains(".RepositoryLanguageImpl") || 
 		   c.getName().contains(".DigitalAssetImpl") || 
 		   c.getName().contains(".MediumDigitalAssetImpl") || 
+		   c.getName().contains(".ContentImpl") || 
+		   c.getName().contains(".MediumContentImpl") || 
+		   c.getName().contains(".SmallContentImpl") || 
+		   c.getName().contains(".SmallishContentImpl") || 
 		   c.getName().contains(".ContentVersionImpl") || 
 		   c.getName().contains(".MediumContentVersionImpl") || 
+		   c.getName().contains(".SmallContentVersionImpl") || 
+		   c.getName().contains(".SmallestContentVersionImpl") || 
+		   c.getName().contains(".AccessRightImpl") || 
+		   c.getName().contains(".SmallAccessRightImpl") || 
 		   c.getName().contains(".AccessRightRoleImpl") || 
 		   c.getName().contains(".AccessRightGroupImpl") || 
 		   c.getName().contains(".AccessRightUserImpl") || 
@@ -714,7 +722,10 @@ public class RegistryController extends BaseController
 	   	ContentVersionVO oldContentVersion = contentVersion; //ContentVersionController.getContentVersionController().getContentVersionWithId(contentVersionVO.getContentVersionId(), db);
 	   	//Content oldContent = oldContentVersion.getOwningContent();
 	    ContentVO oldContentVO = ContentController.getContentController().getSmallContentVOWithId(contentVersion.getContentId(), db);
-	    ContentTypeDefinitionVO ctd = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(oldContentVO.getContentTypeDefinitionId(), db);
+ 
+	    ContentTypeDefinitionVO ctd = null;
+	    if(oldContentVO.getContentTypeDefinitionId() != null)
+	    	ctd = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(oldContentVO.getContentTypeDefinitionId(), db);
  
 	    if(ctd != null && ctd.getName().equalsIgnoreCase("Meta info"))
 	    {
@@ -1926,6 +1937,9 @@ public class RegistryController extends BaseController
     {
         List<ReferenceBean> referenceBeanList = new ArrayList<ReferenceBean>();
 
+        if(contentId == null)
+        	return referenceBeanList;
+        
         Map entries = new HashMap();
 		
         Map<String,Boolean> checkedLanguageVersions = new HashMap<String,Boolean>();

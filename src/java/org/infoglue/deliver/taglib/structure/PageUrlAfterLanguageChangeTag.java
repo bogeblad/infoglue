@@ -24,22 +24,36 @@ package org.infoglue.deliver.taglib.structure;
 
 import javax.servlet.jsp.JspException;
 
+import org.apache.log4j.Logger;
+import org.infoglue.deliver.controllers.kernel.impl.simple.NodeDeliveryController;
 import org.infoglue.deliver.taglib.TemplateControllerTag;
 
 public class PageUrlAfterLanguageChangeTag extends TemplateControllerTag
 {
 	private static final long serialVersionUID = 4050485595074016051L;
-	
+	private final static Logger logger = Logger.getLogger(PageUrlAfterLanguageChangeTag.class.getName());
 	private String languageCode;
-	
+	private boolean includeLanguageId = true;
     public int doEndTag() throws JspException
     {
-        produceResult(this.getController().getPageUrlAfterLanguageChange(languageCode));
+    	if (!includeLanguageId) {
+    		produceResult(this.getController().getPageUrlAfterLanguageChange(languageCode, includeLanguageId));
+    	} else {
+    		
+    		produceResult(this.getController().getPageUrlAfterLanguageChange(languageCode));
+    	}
+    	
+    	this.includeLanguageId = true;
         return EVAL_PAGE;
     }
 
 	public void setLanguageCode(final String languageCode) throws JspException
     {
-        this.languageCode = evaluateString("pageUrl", "languageCode", languageCode);
+        this.languageCode = evaluateString("pageUrlAfterLanguageChange", "languageCode", languageCode);
+    }
+	
+	public void setIncludeLanguageId(final String includeLanguageId) throws JspException
+    {
+        this.includeLanguageId = evaluateBoolean("pageUrlAfterLanguageChange", "includeLanguageId", includeLanguageId);
     }
 }

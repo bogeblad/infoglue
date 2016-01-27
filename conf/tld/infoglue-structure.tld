@@ -63,13 +63,58 @@
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
+         <attribute>
+            <name>forceHTTPProtocol</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+    	    <name>includeLanguageId</name>
+        	<required>false</required>
+	        <rtexprvalue>true</rtexprvalue>
+    	</attribute>
+    	<attribute>
+    	    <name>stateId</name>
+        	<required>false</required>
+	        <rtexprvalue>true</rtexprvalue>
+    	</attribute>
     </tag>
-    
+	<tag>
+        <name>customPageUrl</name>
+        <tagclass>org.infoglue.deliver.taglib.structure.CustomPageUrlTag</tagclass>
+        <bodycontent>empty</bodycontent>
+        <info>TemplateController.getPageUrl(Integer, Integer, Integer)</info>
+        <attribute>
+    	    <name>id</name>
+        	<required>false</required>
+	        <rtexprvalue>true</rtexprvalue>
+    	</attribute>
+        <attribute>
+    	    <name>customPath</name>
+        	<required>true</required>
+	        <rtexprvalue>true</rtexprvalue>
+    	</attribute>
+    	<attribute>
+    	    <name>siteNodeId</name>
+        	<required>false</required>
+	        <rtexprvalue>true</rtexprvalue>
+    	</attribute>
+    	<attribute>
+    	    <name>languageId</name>
+        	<required>false</required>
+	        <rtexprvalue>true</rtexprvalue>
+    	</attribute>
+    	<attribute>
+    	    <name>operatingMode</name>
+        	<required>false</required>
+	        <rtexprvalue>true</rtexprvalue>
+    	</attribute>
+	</tag>
 	<tag>
         <name>pageUrlAfterLanguageChange</name>
         <tagclass>org.infoglue.deliver.taglib.structure.PageUrlAfterLanguageChangeTag</tagclass>
         <bodycontent>empty</bodycontent>
-        <info>TemplateController.getPageUrlAfterLanguageChange(String languageCode)</info>
+        <info>TemplateController.getPageUrlAfterLanguageChange(String languageCode, String includeLanguageId)</info>
         <attribute>
     	    <name>id</name>
         	<required>false</required>
@@ -78,6 +123,11 @@
         <attribute>
     	    <name>languageCode</name>
         	<required>true</required>
+	        <rtexprvalue>true</rtexprvalue>
+    	</attribute>
+    	<attribute>
+    	    <name>includeLanguageId</name>
+        	<required>false</required>
 	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
     </tag>

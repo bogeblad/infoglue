@@ -1196,6 +1196,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 
 			String propertyName = this.getRequest().getParameter("propertyName");
 			String propertyValue = "";
+			
 			if(propertyName != null && !propertyName.equals(""))
 			{
 				String[] propertyValues = this.getRequest().getParameterValues(propertyName);
@@ -1224,8 +1225,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	        	propertyValue = PageEditorHelper.untransformAttribute(propertyValue);
 				logger.info("propertyValue2:" + propertyValue);
 	 			boolean keepExisting = new Boolean (this.getRequest().getParameter("keepExisting"));
-
-
+							
 				if(propertyValue != null && !propertyValue.equals("") && !propertyValue.equalsIgnoreCase("undefined"))
 				{
 
@@ -1408,7 +1408,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	        	propertyValue = PageEditorHelper.untransformAttribute(propertyValue);
 				logger.info("propertyValue2:" + propertyValue);
 	 			
-
+				propertyValue = propertyValue.replaceAll("\"", "&quot;");
 				if(propertyValue != null && !propertyValue.equals("") && !propertyValue.equalsIgnoreCase("undefined"))
 				{
 					String componentPropertyXPath = "//component[@id=" + this.componentId + "]/properties/property[@name='" + propertyName + "']";

@@ -1273,7 +1273,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 				
 			rollbackTransaction(dbWrapper.getDatabase());
 			
-			throw new SystemException(e.getMessage());
+			throw new SystemException(e.getMessage(), e);
 		}
 		finally
 		{

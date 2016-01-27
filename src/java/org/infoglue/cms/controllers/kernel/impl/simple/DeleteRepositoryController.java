@@ -23,8 +23,12 @@
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.databeans.ProcessBean;
+import org.infoglue.cms.applications.databeans.ReferenceBean;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.exception.ConstraintException;
@@ -67,6 +71,11 @@ public class DeleteRepositoryController extends BaseController implements Runnab
 		thread.start();
 	}
 	   	
+	public static Map<BaseEntityVO,List<ReferenceBean>> getRepositoryReferences(RepositoryVO repositoryVO, InfoGluePrincipal principal) throws Exception
+	{ 
+		return RepositoryController.getController().getReferencingObjectsForRepository(repositoryVO, principal);
+	}
+	
 	public synchronized void run()
 	{
 		logger.info("Starting Delete Repo Thread....");
@@ -104,6 +113,7 @@ public class DeleteRepositoryController extends BaseController implements Runnab
 		}
 	}
 	
+		
     public BaseEntityVO getNewVO()
     {
         return null;

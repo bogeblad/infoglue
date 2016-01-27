@@ -27,8 +27,8 @@ function toggleBlock(id)
 	<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
 	<input type="checkbox" name="byPassTrashcan" value="true"/> $ui.getString("tool.managementtool.deleteRepository.skipTrashcan")
 	<br/><br/>
-	<input type="submit" value="$ui.getString("tool.common.nextButton.label")"/>
 	<input type="button" value="$ui.getString("tool.common.cancelButton.label")" onclick="document.location.href='ViewListRepository.action?title=Repositories';"/>
+	<input type="submit" value="$ui.getString("tool.common.nextButton.label")"/>
 </form>
 
 </div>

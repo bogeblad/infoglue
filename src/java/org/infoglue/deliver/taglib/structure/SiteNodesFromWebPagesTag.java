@@ -60,4 +60,9 @@ public class SiteNodesFromWebPagesTag extends ComponentLogicTag
         this.webPages = (Collection)evaluate("SiteNodesFromWebPages", "webpages", webpages, Collection.class);
     }
 
+    public void setWebpagesObject(Collection webpages) throws JspException
+    {
+        this.webPages = webpages;
+    }
+
 }

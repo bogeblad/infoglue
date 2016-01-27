@@ -107,6 +107,11 @@ public class PrincipalPropertyTag extends TemplateControllerTag
         this.principal = (InfoGluePrincipal)evaluate("principal", "principal", principalString, InfoGluePrincipal.class);
     }
 
+    public void setPrincipalObject(final InfoGluePrincipal principal) throws JspException
+    {
+        this.principal = principal;
+    }
+
     public void setAttributeName(final String attributeName) throws JspException
     {
         this.attributeName = evaluateString("principal", "attributeName", attributeName);

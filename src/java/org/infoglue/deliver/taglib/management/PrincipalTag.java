@@ -75,4 +75,9 @@ public class PrincipalTag extends TemplateControllerTag
     {
         this.contentVersion = (ContentVersionVO)evaluate("principal", "contentVersion", contentVersionExp, ContentVersionVO.class);
     }
+
+    public void setContentVersionObject(ContentVersionVO contentVersion) throws JspException
+    {
+        this.contentVersion = contentVersion;
+    }
 }

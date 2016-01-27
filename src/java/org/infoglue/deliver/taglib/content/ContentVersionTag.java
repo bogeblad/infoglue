@@ -94,6 +94,19 @@ public class ContentVersionTag extends TemplateControllerTag
     		logger.warn("Content evaluated wrong:" + t.getMessage());
 		}
     }
+
+    public void setContentObject(ContentVO contentVO) throws JspException
+    {
+    	try
+    	{
+    		this.content = contentVO;
+    	}
+    	catch (Throwable t) 
+    	{
+    		logger.warn("Content evaluated wrong:" + t.getMessage());
+		}
+    }
+
     
     public void setLanguageId(String languageId) throws JspException
     {

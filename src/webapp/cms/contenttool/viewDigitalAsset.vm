@@ -40,10 +40,8 @@
 
 	<link rel="stylesheet" type="text/css" href="css/tabs.css" media="screen">
 
-	<link href="applications/swfupload/css/infoglue.css" rel="stylesheet" type="text/css" />
-
 	<style type="text/css">
-		.fileUploadTable 
+		.fileUploadTable
 		{
 			border: none;
 			border-spacing: 8px;
@@ -71,12 +69,178 @@
 		
 		#cboBoxTable td {border: 1px solid rgb(200, 200,200);}
 		#cboBoxTable td:first-child {border-right: none;}
+
+		/* Dropzonejs styling */
+		#multiUploadContainer {
+			border: 2px dashed #d0d1d0;
+		}
+		#multiUploadContainer:hover {
+			cursor: pointer;
+			background-color: rgba(208,209,208,0.2);
+			transition: 300ms background-color;
+		}
+		.dz-message {
+			padding: 35px 50px;
+			text-align: center;
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			user-select: none;
+		}
+
+		#bulkupload {
+			margin-top: 15px;
+		}
+
+		.bulkupload--itemcontainer {
+			height: 80px;
+			position: relative;
+			padding-left: 10px; /* match with :before width */
+			box-sizing: border-box;
+			margin-bottom: 12px;
+			font-size: 0;
+			background-color: rgb(237, 237, 237);
+		}
+
+		.bulkupload--itemcontainer:before {
+			content: "";
+			display: block;
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 0;
+			height: 100%;
+			background-color: #FFCB63;
+			transition: 200ms width, 500ms background-color;
+		}
+
+		.bulkupload--itemcontainer.dz-processing:before {
+			width: 10px;
+		}
+
+		.bulkupload--itemcontainer.dz-success:before {
+			background-color: #67AB26;
+		}
+
+		.bulkupload--itemcontainer.dz-error:before {
+			background-color: #D52F2F;
+		}
+
+		.bulkupload--preview {
+			display: inline-block;
+			height: 60px;
+			width: 100px;
+			background-size: contain;
+			background-repeat: no-repeat;
+			background-position: left center;
+			vertical-align: top;
+			box-sizing: border-box;
+			margin: 10px;
+			margin-right: 0;
+		}
+
+		.bulkupload--itemcontainer.-no-preview .bulkupload--preview {
+			display: none;
+		}
+
+		.bulkupload-content {
+			display: inline-block;
+			height: 100%;
+			font-size: 12px;
+			box-sizing: border-box;
+			padding: 10px;
+			width: 70%;
+			width: calc(100% - 110px);
+		}
+
+		.bulkupload--itemcontainer.-no-preview .bulkupload-content {
+			width: 100%;
+		}
+
+		.multiUploadMessage--link {
+			color: #0022AA !important;
+			text-decoration: underline;
+		}
+
+		.assetTitle {
+			white-space: nowrap;
+			position: relative;
+			margin-right: 70px;
+		}
+
+		.assetTitle--text {
+			width: 100%;
+			overflow: hidden;
+			display: inline-block;
+			text-overflow: ellipsis;
+			font-weight: bold;
+		}
+
+		.assetTitle--text:after {
+			font-weight: normal;
+			margin-left: 0.4em;
+		}
+
+		.bulkupload--itemcontainer .assetTitle--text:after {
+			content: "$ui.getString("tool.contenttool.fileUpload.multi.status.waiting")";
+		}
+
+		.bulkupload--itemcontainer.dz-processing .assetTitle--text:after {
+			content: "$ui.getString("tool.contenttool.fileUpload.multi.status.uploading")";
+		}
+
+		.bulkupload--itemcontainer.dz-success .assetTitle--text:after {
+			content: "$ui.getString("tool.contenttool.fileUpload.multi.status.uploaded")";
+		}
+
+		.bulkupload--itemcontainer.dz-error .assetTitle--text:after {
+			content: "$ui.getString("tool.contenttool.fileUpload.multi.status.notUploaded")";
+		}
+
+		.assetTitle--size {
+			position: absolute;
+			right: -70px;
+			top: 0;
+		}
+
+		.assetTitle--size:before {
+			content: "(";
+		}
+
+		.assetTitle--size:after {
+			content: ")";
+		}
+
+		.assetTitle--size strong {
+			font-weight: normal;
+		}
+
+		.dz-error-message {
+			margin: 5px 0;
+			color: red;
+		}
+
+		.dz-progress {
+			width: 50%;
+			height: 1em;
+			margin: 10px 0;
+			border: 1px solid lightgray;
+		}
+
+		.bulkupload--itemcontainer.dz-success .dz-progress, .bulkupload--itemcontainer.dz-error .dz-progress {
+			display: none;
+		}
+
+		.dz-upload {
+			display: block;
+			background-color: #67AB26;
+			height: 100%;
+			transition: 100ms width;
+			width: 0;
+		}
+
 	</style>
 
-	<script type="text/javascript" src="applications/swfupload/swfupload.js"></script>
-	<script type="text/javascript" src="applications/swfupload/plugins/swfupload.queue.js"></script>
-	<script type="text/javascript" src="applications/swfupload/plugins/fileprogress.js"></script>
-	<script type="text/javascript" src="applications/swfupload/plugins/handlers.js"></script>
+	<script type="text/javascript" src="applications/dropzonejs/dropzone.min.js"></script>
 
 	<script type="text/javascript">
 
@@ -95,8 +259,8 @@
 		$(document).ready(function(){
 			
 			$("#tabsContainer").tabs({
-				show:function(e, ui) { 
-					if(ui.index > 0) 
+				show:function(e, ui) {
+					if(ui.index > 0)
 					{
 						$(".save").hide();
 						$(".saveAndExit").hide();
@@ -117,10 +281,38 @@
 					}
 				}
 			});
-			
-			if(parent.showTab)
+			#set( $maxFileSizeInMB = $uploadMaxSize / 1000 / 1000 )
+			var divStatusValue = $("#divStatus").find(".divStatus--value");
+			var multiUpload = new Dropzone("#multiUploadContainer",
+				{
+					url: "$URLBase/CreateDigitalAsset!multiple.action",
+					previewTemplate: jQuery("#bulkUploadPreviewTemplate").html(),
+					previewsContainer: "#bulkupload",
+					parallelUploads: 1,
+					thumbnail: function setupThumbnail(file, dataUri) {
+						var previewElement = $(file.previewElement);
+						var imagePreviewElement = previewElement.find(".bulkupload--preview");
+						imagePreviewElement.attr("style", "background-image: url(" + dataUri + ");");
+						previewElement.removeClass("-no-preview");
+					},
+					maxFilesize: $maxFileSizeInMB,
+					dictFileTooBig: "$ui.getString("tool.contenttool.fileUpload.multi.error.fileSize")",
+					fallback: function dropzoneFallback() {
+						var multiUploadTab = jQuery("#bulkUploadTab");
+						multiUploadTab.hide();
+					}
+				}
+			);
+
+			multiUpload.on("success", function fileUploadSuccess() {
+				var currentValue = parseInt(divStatusValue.text()) || 0;
+				divStatusValue.text("" + (currentValue + 1));
+			});
+
+			if(parent.showTab) {
 				parent.showTab(2);
-			
+			}
+
 		});
 		
 		var swfu;
@@ -131,66 +323,8 @@
 				refreshCaller();
 				return;
 			#end
-		
-			var settings = {
-				flash_url : "applications/swfupload/swfupload.swf",
-				upload_url: "$URLBase/CreateDigitalAsset!multiple.action",	// Relative to the SWF file
-				post_params: {
-					"contentTypeDefinitionId": "$contentTypeDefinitionVO.id",
-					"entity": "$!entity",
-					"entityId": "$!entityId",
-					"contentVersionId": "$!contentVersionId",
-					"uploadedFilesCounter": "$!uploadedFilesCounter",
-					"closeOnLoad": "$!closeOnLoad",
-					"JSESSIONID": "$this.getSessionId()"
-					},
-
-				#set($maxSizeInKB = $this.userUploadMaxSize / 1000)
-				file_size_limit : "$maxSizeInKB",
-				file_types : "*.*",
-				file_types_description : "All files",
-				file_upload_limit : 0,
-				file_queue_limit : 0,
-
-				custom_settings : {
-					progressTarget : "divFileProgressContainer",
-					cancelButtonId : "btnCancel"
-				},
-				debug: false,
-
-				// Button Settings
-				button_image_url: "applications/swfupload/images/SmallSpyGlassWithTransperancy_17x18.png",	// Relative to the Flash file
-				//button_image_url: "applications/swfupload/images/XPButtonUploadText_61x22.png",	// Relative to the Flash file
-				/*
-				button_width: "61",
-				button_height: "22",
-				*/
-				button_placeholder_id: "spanButtonPlaceHolder",
-				button_width: "180",
-				button_height: "18",
-				button_text : '<span class="button">Select files <span class="buttonSmall">(Max $formatter.formatFileSize($this.userUploadMaxSize))</span></span>',
-				button_text_style : '.button { font-family: Helvetica, Arial, sans-serif; font-size: 12pt; } .buttonSmall { font-size: 10pt; }',
-				button_text_top_padding: "0",
-				button_text_left_padding: "18",
-				button_window_mode: SWFUpload.WINDOW_MODE.TRANSPARENT,
-				button_cursor: SWFUpload.CURSOR.HAND,
-				
-				// The event handler functions are defined in handlers.js
-				file_queued_handler : fileQueued,
-				file_queue_error_handler : fileQueueError,
-				file_dialog_complete_handler : fileDialogComplete,
-				upload_start_handler : uploadStart,
-				upload_progress_handler : uploadProgress,
-				upload_error_handler : uploadError,
-				upload_success_handler : uploadSuccess,
-				upload_complete_handler : uploadComplete,
-				queue_complete_handler : queueComplete	// Queue plugin event
-			};
-	
-			ddListClick();
-			swfu = new SWFUpload(settings);
-	     };
-	</script>	
+		};
+	</script>
 
 	<script type="text/javascript">
 	<!--
@@ -428,7 +562,7 @@
 		function close()
 		{
 			if(parent.refreshView)
-				parent.refreshView("contentVersionAssets");		
+				parent.refreshView("contentVersionAssets");
 		}
 	-->
 	</script>
@@ -563,31 +697,50 @@
 				#end
 			</div>
 			#end
-			
+
 		</div>
 	
 		<div id="bulkUpload" style="padding: 10px;">
 			#if(!$this.getAllowedSessionId($this.getSessionId()))
 				<span style="color: red;">Please restart your session by logging out from the administrative tools and the log in again. Your session ID is out of sync and until you log restart it you cannot use the multi upload.</span>
 			#else
-			<form>
+			<div >
 				<div id="intro">
-					<strong>$ui.getString("tool.contenttool.fileUpload.fileUploadHeader") <span id="maxSize"> $ui.getString("tool.contenttool.myFileUploadLimit", $formatter.formatFileSize($this.userUploadMaxSize))</span></strong> - <span id="divStatus">0 Files Uploaded</span><br/><br/>
-					<div style="display: inline-block; border: solid 1px #7FAAFF; background-color: #C5D9FF; padding: 2px; margin-bottom: 2px;">
-						<span id="spanButtonPlaceHolder"></span>
-					</div>
-					<!-- 
-					<input id="btnCancel" type="button" value="Cancel All Uploads" onclick="swfu.cancelQueue();" disabled="disabled" style="margin-left: 2px; font-size: 8pt; height: 29px;" />
-					<button id="btnBrowse" type="button" style="margin-top: 5px; padding: 2px;" onclick="swfu.selectFiles(); this.blur();"><img src="applications/swfupload/images/page_white_add.png" style="padding-right: 3px; vertical-align: bottom;">$ui.getString("tool.contenttool.fileUpload.fileUploadFileLabel")</button> -->
+					<strong>$ui.getString("tool.contenttool.fileUpload.fileUploadHeader") <span id="maxSize"> $ui.getString("tool.contenttool.myFileUploadLimit", $formatter.formatFileSize($this.userUploadMaxSize))</span></strong> &ndash; <span id="divStatus"><span class="divStatus--value">0</span> $ui.getString("tool.contenttool.fileUpload.multi.numberOfFiles")</span><br/><br/>
 				</div>
-					
-				<div id="divFileProgressContainer"></div>
-				<div id="thumbnails" style="border: 1px solid #ccc; height: 100px; background-color: white; overflow: auto; margin-top: 5px;"></div>
-			</form>
+
+				<form action="$URLBase/CreateDigitalAsset!multiple.action" class="multiUploadContainer" id="multiUploadContainer">
+					<input type="hidden" name="contentTypeDefinitionId" value="$contentTypeDefinitionVO.id"/>
+					<input type="hidden" name="entity" value="$!entity"/>
+					<input type="hidden" name="entityId" value="$!entityId"/>
+					<input type="hidden" name="contentVersionId" value="$!contentVersionId"/>
+					<input type="hidden" name="uploadedFilesCounter" value="$!uploadedFilesCounter"/>
+					<input type="hidden" name="closeOnLoad" value="$!closeOnLoad"/>
+					<input type="hidden" name="JSESSIONID" value="$this.getSessionId()"/>
+
+					<div class="dz-default dz-message">
+						<div><a class="multiUploadMessage--link" href="javascript:void(0)">$ui.getString("tool.contenttool.fileUpload.multi.clickToUpload")</a> $ui.getString("tool.contenttool.fileUpload.multi.dropToUpload")</div>
+					</div>
+				</form>
+				
+				<div class="bulkupload" id="bulkupload"></div>
+			</div>
 			#end
 		</div>
+		<script type="x-dropzonejs" id="bulkUploadPreviewTemplate">
+			<div class="bulkupload--itemcontainer -no-preview">
+				<div class="bulkupload--preview"></div>
+				<div class="bulkupload-content">
+					<div class="bulkupload--title assetTitle">
+						<span class="assetTitle--text" data-dz-name></span>
+						<span class="assetTitle--size" data-dz-size></span>
+					</div>
+					<div class="dz-error-message"><span data-dz-errormessage></span></div>
+					<div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>
+				</div>
+			</div>
+		</script>
 	</div>
-  
 </div>
 
 #lightFooterToolbar($footerButtons)

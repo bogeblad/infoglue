@@ -194,9 +194,19 @@ public class MatchingContentsTag extends TemplateControllerTag
 		this.fromDate = (Date)evaluate("matchingContentsTag", "fromDate", fromDate, Date.class);
 	}
 
+	public void setFromDateObject(Date fromDate) throws JspException
+	{
+		this.fromDate = fromDate;
+	}
+
 	public void setToDate(String toDate) throws JspException
 	{
 		this.toDate = (Date)evaluate("matchingContentsTag", "toDate", toDate, Date.class);
+	}
+
+	public void setToDateObject(Date toDate) throws JspException
+	{
+		this.toDate = toDate;
 	}
 
 	public void setExpireFromDate(String expireFromDate) throws JspException
@@ -204,9 +214,19 @@ public class MatchingContentsTag extends TemplateControllerTag
 		this.expireFromDate = (Date)evaluate("matchingContentsTag", "expireFromDate", expireFromDate, Date.class);
 	}
 
+	public void setExpireFromDateObject(Date expireFromDate) throws JspException
+	{
+		this.expireFromDate = expireFromDate;
+	}
+
 	public void setExpireToDate(String expireToDate) throws JspException
 	{
 		this.expireToDate = (Date)evaluate("matchingContentsTag", "expireToDate", expireToDate, Date.class);
+	}
+
+	public void setExpireToDateObject(Date expireToDate) throws JspException
+	{
+		this.expireToDate = expireToDate;
 	}
 
 	public void setVersionModifier(String versionModifier) throws JspException

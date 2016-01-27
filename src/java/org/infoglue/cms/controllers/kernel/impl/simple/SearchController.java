@@ -27,6 +27,7 @@ import java.awt.Color;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.Field;
@@ -51,6 +53,7 @@ import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
+import org.infoglue.cms.entities.content.SmallestContentVersionVO;
 import org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
@@ -588,24 +591,27 @@ public class SearchController extends BaseController
 		return matchingEntities;
 		
    	}
-   	
-   	public List<DigitalAssetVO> getDigitalAssets(Integer[] repositoryId, String searchString, String assetTypeFilter, int maxRows, Map<String,Integer> searchMetaData) throws SystemException, Bug
-   	{
-   		String internalSearchEngine = CmsPropertyHandler.getInternalSearchEngine();
-   		if(internalSearchEngine.equalsIgnoreCase("sqlSearch"))
-   			return getDigitalAssetsFromCastor(repositoryId, searchString, assetTypeFilter, maxRows);
-   		else
-   			return getDigitalAssetsFromLucene(repositoryId, searchString, assetTypeFilter, maxRows, searchMetaData);
-   	}
 
-   	public List<DigitalAssetVO> getDigitalAssetsFromCastor(Integer[] repositoryId, String searchString, String assetTypeFilter, int maxRows) throws SystemException, Bug
-   	{
-   		List<DigitalAssetVO> matchingAssets = new ArrayList<DigitalAssetVO>();
+	public List<DigitalAssetVO> getDigitalAssets(Integer[] repositoryId, String searchString, String assetTypeFilter, int maxRows, Map<String,Integer> searchMetaData, Integer languageId, Integer caseSensitive, Integer stateId) throws SystemException, Bug
+	{
+		String internalSearchEngine = CmsPropertyHandler.getInternalSearchEngine();
+		if(internalSearchEngine.equalsIgnoreCase("sqlSearch"))
+			return getDigitalAssetsFromCastor(repositoryId, searchString, assetTypeFilter, maxRows, languageId, caseSensitive, stateId);
+		else
+			return getDigitalAssetsFromLucene(repositoryId, searchString, assetTypeFilter, maxRows, searchMetaData, languageId, caseSensitive, stateId);
+	}
+
+	public List<DigitalAssetVO> getDigitalAssetsFromCastor(Integer[] repositoryId, String searchString, String assetTypeFilter, int maxRows, Integer languageId, Integer caseSensitive, Integer stateId) throws SystemException, Bug
+	{
+		List<DigitalAssetVO> matchingAssets = new ArrayList<DigitalAssetVO>();
 
 		ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 		
 		Database db = CastorDatabaseService.getDatabase();
 		
+		// Enable binarySearch later
+		Arrays.sort(repositoryId);
+
 		try
 		{
 			beginTransaction(db);
@@ -615,52 +621,91 @@ public class SearchController extends BaseController
 			OQLQuery assetOQL = db.getOQLQuery(assetSQL);
 			assetOQL.bind("%" + searchString + "%");
 			assetOQL.bind("%" + searchString + "%");
-	        
+
 			QueryResults assetResults = assetOQL.execute(Database.READONLY);
-			
-			Integer previousContentId  = new Integer(-1);
-			Integer previousLanguageId = new Integer(-1);  	
+
+			String previousMatchKey = "";
 			int currentCount = 0;
 
-			while(assetResults.hasMore() && currentCount < maxRows) 
+			assetloop:while(assetResults.hasMore() && currentCount < maxRows)
 			{
 				SmallDigitalAssetImpl smallAsset = (SmallDigitalAssetImpl)assetResults.next();
-				//if(smallAsset.getAssetContentType().matches(assetTypeFilter))
+
+				if (caseSensitive != null)
+				{
+					if (smallAsset.getAssetKey().indexOf(searchString) == -1 && smallAsset.getAssetFileName().indexOf(searchString) == -1)
+					{
+						logger.debug("Testing asset. Wrong search string (case sensitive). Asset.id: " + smallAsset.getDigitalAssetId());
+						continue assetloop;
+					}
+				}
+
 				if(assetTypeFilter == null || assetTypeFilter.equals("*") || assetTypeFilter.indexOf(smallAsset.getAssetContentType()) > -1)
 				{
 					DigitalAsset asset = DigitalAssetController.getMediumDigitalAssetWithId(smallAsset.getId(), db);
+
 					logger.info("Found a asset matching " + searchString + ":" + asset.getId());
-					Collection versions = asset.getContentVersions();
-					Iterator versionsIterator = versions.iterator();
-					while(versionsIterator.hasNext())
+					Collection<ContentVersion> versions = asset.getContentVersions();
+					Iterator<ContentVersion> versionsIterator = versions.iterator();
+					cvloop:while(versionsIterator.hasNext())
 					{
-						ContentVersion contentVersion = (ContentVersion)versionsIterator.next();
-						if(contentVersion.getValueObject().getContentId().intValue() != previousContentId.intValue() || contentVersion.getValueObject().getLanguageId().intValue() != previousLanguageId.intValue())
+						ContentVersion contentVersion = versionsIterator.next();
+						if (logger.isDebugEnabled())
 						{
-						    ContentVersion latestContentVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersion(contentVersion.getValueObject().getContentId(), contentVersion.getValueObject().getLanguageId(), db);
+							logger.debug("Testing content version in asset search. CV.id: " + contentVersion.getContentVersionId());
+						}
+
+						if (languageId != null && !contentVersion.getLanguageId().equals(languageId))
+						{
+							logger.debug("Skipping content version in asset search. Wrong language.");
+							continue cvloop;
+						}
+
+						if (stateId != null && !contentVersion.getStateId().equals(stateId))
+						{
+							logger.debug("Skipping content version in asset search. Wrong state.");
+							continue cvloop;
+						}
+
+						String matchKey = new StringBuilder()
+								.append(contentVersion.getValueObject().getContentId())
+								.append("_")
+								.append(contentVersion.getValueObject().getLanguageId())
+								.append("_")
+								.append(smallAsset.getAssetKey())
+								.toString();
+						if (!previousMatchKey.equals(matchKey))
+						{
+							ContentVersion latestContentVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersion(contentVersion.getValueObject().getContentId(), contentVersion.getValueObject().getLanguageId(), db);
 							if(latestContentVersion != null && latestContentVersion.getId().intValue() == contentVersion.getId().intValue())
 							{
-								asset.getValueObject().setContentPath(ContentController.getContentController().getContentPath(latestContentVersion.getValueObject().getContentId(), false, true, db));
-								asset.getValueObject().setContentId(latestContentVersion.getValueObject().getContentId());
+								if (Arrays.binarySearch(repositoryId, latestContentVersion.getOwningContent().getRepositoryId()) > -1)
+								{
+									asset.getValueObject().setContentPath(ContentController.getContentController().getContentPath(latestContentVersion.getValueObject().getContentId(), false, true, db));
+									asset.getValueObject().setContentId(latestContentVersion.getValueObject().getContentId());
 
-								String assetUrl = getDigitalAssetUrl(asset.getValueObject(), db);
-								String assetThumbnailUrl = getDigitalAssetThumbnailUrl(asset.getValueObject().getId(), 100, 60, "ffffff", "center", "middle", 100, 60, 75, db);
-								asset.getValueObject().setAssetUrl(assetUrl);
-								asset.getValueObject().setAssetThumbnailUrl(assetThumbnailUrl);
+									String assetUrl = getDigitalAssetUrl(asset.getValueObject(), db);
+									String assetThumbnailUrl = getDigitalAssetThumbnailUrl(asset.getValueObject().getId(), 100, 60, "ffffff", "center", "middle", 100, 60, 75, db);
+									asset.getValueObject().setAssetUrl(assetUrl);
+									asset.getValueObject().setAssetThumbnailUrl(assetThumbnailUrl);
 
-								matchingAssets.add(asset.getValueObject());
-							    previousContentId = contentVersion.getValueObject().getContentId();
-							    previousLanguageId = contentVersion.getValueObject().getLanguageId();
-							    currentCount++;
+									matchingAssets.add(asset.getValueObject());
+									previousMatchKey = matchKey;
+									currentCount++;
+								}
+								else if (logger.isDebugEnabled())
+								{
+									logger.debug("ContentVersion referencing the asset was not in the repository list. ContentVersion.id: " + latestContentVersion.getContentVersionId());
+								}
 							}
-						}						
+						}
 					}
 				}
 			}
-			
+
 			assetResults.close();
 			assetOQL.close();
-			
+
 			commitTransaction(db);
 		}
 		catch ( Exception e )
@@ -672,7 +717,7 @@ public class SearchController extends BaseController
 		return matchingAssets;
    	}
    	
-   	public List<DigitalAssetVO> getDigitalAssetsFromLucene(Integer[] repositoryId, String searchString, String assetTypeFilter, int maxRows, Map<String,Integer> searchMetaData) throws SystemException, Bug
+	public List<DigitalAssetVO> getDigitalAssetsFromLucene(Integer[] repositoryId, String searchString, String assetTypeFilter, int maxRows, Map<String,Integer> searchMetaData, Integer languageId, Integer caseSensitive, Integer stateId) throws SystemException, Bug
    	{
    		List<DigitalAssetVO> matchingAssets = new ArrayList<DigitalAssetVO>();
 
@@ -685,49 +730,151 @@ public class SearchController extends BaseController
 		{
 			beginTransaction(db);
 
-			String[] fields = new String[]{"isAsset","contents"};
-			String[] queries = new String[]{"true","" + searchString};
-			BooleanClause.Occur[] flags = new BooleanClause.Occur[]{BooleanClause.Occur.MUST,BooleanClause.Occur.MUST};
+			List<String> fieldNames = new ArrayList<String>();
+			List<String> queryStrings = new ArrayList<String>();
+			List<BooleanClause.Occur> booleanList = new ArrayList<BooleanClause.Occur>();
 
-			if(assetTypeFilter != null && !assetTypeFilter.equals("*"))
+			fieldNames.add("isAsset");
+			queryStrings.add("true");
+			booleanList.add(BooleanClause.Occur.MUST);
+
+			fieldNames.add("contents");
+			queryStrings.add("" + searchString);
+			booleanList.add(BooleanClause.Occur.MUST);
+
+			if (assetTypeFilter != null && !assetTypeFilter.equals("*"))
 			{
-				fields = new String[]{"isAsset","contents","contents"};
-				queries = new String[]{"true","" + searchString,"" + assetTypeFilter + "*"};
-				flags = new BooleanClause.Occur[]{BooleanClause.Occur.MUST,BooleanClause.Occur.MUST,BooleanClause.Occur.MUST};
+				fieldNames.add("contents");
+				queryStrings.add("" + assetTypeFilter);
+				booleanList.add(BooleanClause.Occur.MUST);
 			}
+
+			if (languageId != null && languageId.intValue() > 0)
+			{
+				fieldNames.add("languageId");
+				queryStrings.add("" + languageId);
+				booleanList.add(BooleanClause.Occur.MUST);
+			}
+
+			if (repositoryId != null && !repositoryId.equals("null") && repositoryId.length > 0)
+			{
+				StringBuffer sb = new StringBuffer();
+				for(int i=0; i < repositoryId.length; i++)
+				{
+					if(i > 0)
+					{
+						sb.append(" OR ");
+					}
+					sb.append("" + repositoryId[i]);
+				}
+
+				if (sb.length() > 0)
+				{
+					fieldNames.add("repositoryId");
+					queryStrings.add("" + sb.toString());
+					booleanList.add(BooleanClause.Occur.MUST);
+				}
+			}
+
+			if(stateId != null && !stateId.equals(""))
+			{
+				if (stateId == 0)
+				{
+					fieldNames.add("stateId");
+					queryStrings.add("0 OR 1 OR 2 OR 3");
+					booleanList.add(BooleanClause.Occur.MUST);
+				}
+				else if (stateId == 2)
+				{
+					fieldNames.add("stateId");
+					queryStrings.add("2 OR 3");
+					booleanList.add(BooleanClause.Occur.MUST);
+				}
+				else
+				{
+					fieldNames.add("stateId");
+					queryStrings.add("" + stateId);
+					booleanList.add(BooleanClause.Occur.MUST);
+				}
+			}
+
+			String[] fields = new String[fieldNames.size()];
+			fields = (String[])fieldNames.toArray(fields);
+
+			String[] queries = new String[fieldNames.size()];
+			queries = (String[])queryStrings.toArray(queries);
+
+			BooleanClause.Occur[] flags = new BooleanClause.Occur[fieldNames.size()];
+			flags = (BooleanClause.Occur[])booleanList.toArray(flags);
 
 			SortField sortField = new SortField("modificationDateTime", SortField.LONG, true);
 			Sort sort = new Sort(sortField);
 			List<org.apache.lucene.document.Document> documents = LuceneController.getController().queryDocuments(fields, flags, queries, sort, maxRows, searchMetaData);
 
-			for(org.apache.lucene.document.Document document : documents)
+			List<String> previousMatchKeys = new ArrayList<String>();
+			for (org.apache.lucene.document.Document document : documents)
 			{
 				logger.info("document for asset:" + document);
 				logger.info("Doc:" + document);
 				String digitalAssetIdString = document.get("digitalAssetId");
-				if(digitalAssetIdString != null)
+				if (digitalAssetIdString != null)
 				{
 					try
 					{
-						DigitalAssetVO digitalAssetVO = DigitalAssetController.getController().getSmallDigitalAssetVOWithId(Integer.parseInt(digitalAssetIdString), db);
+						DigitalAssetVO digitalAssetVO = DigitalAssetController.getSmallDigitalAssetVOWithId(Integer.parseInt(digitalAssetIdString), db);
 						if(logger.isInfoEnabled())
+						{
 							logger.info("document:" + document);
-						digitalAssetVO.setContentPath(document.get("path"));
-						if(document.get("contentId") != null && !document.get("contentId").equals(""))
-							digitalAssetVO.setContentId(new Integer(document.get("contentId")));
-						
-						String assetUrl = getDigitalAssetUrl(digitalAssetVO, db);
-						String assetThumbnailUrl = getDigitalAssetThumbnailUrl(digitalAssetVO.getId(), 100, 60, "ffffff", "center", "middle", 100, 60, 75, db);
-						digitalAssetVO.setAssetUrl(assetUrl);
-						digitalAssetVO.setAssetThumbnailUrl(assetThumbnailUrl);
-						
-						matchingAssets.add(digitalAssetVO);
+						}
+
+						List<SmallestContentVersionVO> contentVerisonVOs = DigitalAssetController.getContentVersionVOListConnectedToAssetWithId(digitalAssetVO.getDigitalAssetId());
+
+						Iterator<SmallestContentVersionVO> versionsIterator = contentVerisonVOs.iterator();
+						while(versionsIterator.hasNext())
+						{
+							SmallestContentVersionVO contentVersion = versionsIterator.next();
+							if (logger.isDebugEnabled())
+							{
+								logger.debug("Testing content version in lucene asset search. CV.id: " + contentVersion.getContentVersionId());
+							}
+
+							String matchKey = new StringBuilder()
+									.append(contentVersion.getContentId())
+									.append("_")
+									.append(contentVersion.getLanguageId())
+									.append("_")
+									.append(digitalAssetVO.getAssetKey())
+									.toString();
+							if (previousMatchKeys.indexOf(matchKey) == -1)
+							{
+								ContentVersion latestContentVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersion(contentVersion.getContentId(), contentVersion.getLanguageId(), db);
+
+								if (latestContentVersion != null && latestContentVersion.getId().intValue() == contentVersion.getId().intValue())
+								{
+									digitalAssetVO.setContentPath(document.get("path"));
+									if(document.get("contentId") != null && !document.get("contentId").equals(""))
+										digitalAssetVO.setContentId(new Integer(document.get("contentId")));
+
+									String assetUrl = getDigitalAssetUrl(digitalAssetVO, db);
+									String assetThumbnailUrl = getDigitalAssetThumbnailUrl(digitalAssetVO.getId(), 100, 60, "ffffff", "center", "middle", 100, 60, 75, db);
+									digitalAssetVO.setAssetUrl(assetUrl);
+									digitalAssetVO.setAssetThumbnailUrl(assetThumbnailUrl);
+
+									matchingAssets.add(digitalAssetVO);
+									previousMatchKeys.add(matchKey);
+								}
+							}
+						}
 					}
 					catch (Exception e) 
 					{
 						logger.warn("Problem getting asset with id: " + digitalAssetIdString + ": " + e.getLocalizedMessage(), e);
 					}
 				}
+			}
+			if (logger.isDebugEnabled())
+			{
+				logger.debug("Asset match keys added to the list: " + StringUtils.join(previousMatchKeys, ","));
 			}
 		
 		
@@ -1049,7 +1196,7 @@ public class SearchController extends BaseController
 			if(!includeSiteNodes)
 			{
 				if(logger.isInfoEnabled())
-					logger.info("Detta var inte metaInfoFråga");
+					logger.info("Detta var inte metaInfoFraga");
 				fieldNames.add("isSiteNode");
 				queryStrings.add("true");
 				booleanList.add(BooleanClause.Occur.MUST_NOT);
@@ -1057,7 +1204,7 @@ public class SearchController extends BaseController
 			else
 			{
 				if(logger.isInfoEnabled())
-					logger.info("Detta var inte metaInfoFråga");
+					logger.info("Detta var inte metaInfoFraga");
 				fieldNames.add("isSiteNode");
 				queryStrings.add("true");
 				booleanList.add(BooleanClause.Occur.MUST);
@@ -1364,7 +1511,7 @@ public class SearchController extends BaseController
 			if(!includeSiteNodes)
 			{
 				if(logger.isInfoEnabled())
-					logger.info("Detta var inte metaInfoFråga");
+					logger.info("Detta var inte metaInfoFraga");
 				fieldNames.add("isSiteNode");
 				queryStrings.add("true");
 				booleanList.add(BooleanClause.Occur.MUST_NOT);
@@ -1372,7 +1519,7 @@ public class SearchController extends BaseController
 			else
 			{
 				if(logger.isInfoEnabled())
-					logger.info("Detta var inte metaInfoFråga");
+					logger.info("Detta var inte metaInfoFraga");
 				fieldNames.add("isSiteNode");
 				queryStrings.add("true");
 				booleanList.add(BooleanClause.Occur.MUST);

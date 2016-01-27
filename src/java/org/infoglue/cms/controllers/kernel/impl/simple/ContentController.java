@@ -355,6 +355,49 @@ public class ContentController extends BaseController
 		return contentVO;
     } 
 
+	public ContentVO getLocklessContentVOWithId(Integer contentId) throws SystemException, Bug
+    {
+		String key = "" + contentId;
+		ContentVO contentVO = (ContentVO)CacheController.getCachedObjectFromAdvancedCache("contentCache", key);
+		if(contentVO != null)
+		{
+			//logger.info("There was an cached contentVO:" + contentVO);
+		}
+		else
+		{
+			contentVO = (ContentVO) getVOWithIdLockless(SmallContentImpl.class, "contentId", contentId);
+
+			if(contentVO != null)
+			{
+				CacheController.cacheObjectInAdvancedCache("contentCache", key, contentVO, new String[]{CacheController.getPooledString(1, contentId)}, true);
+			}
+		}
+		
+		return contentVO;
+    } 
+	
+	public ContentVO getLocklessContentVOWithId(Integer contentId, Database db) throws Exception
+    {
+		String key = "" + contentId;
+		ContentVO contentVO = (ContentVO)CacheController.getCachedObjectFromAdvancedCache("contentCache", key);
+		if(contentVO != null)
+		{
+			//logger.info("There was an cached contentVO:" + contentVO);
+		}
+		else
+		{
+			contentVO = (ContentVO) getVOWithIdLockless(SmallContentImpl.class, "contentId", contentId, db);
+
+			if(contentVO != null)
+			{
+				CacheController.cacheObjectInAdvancedCache("contentCache", key, contentVO, new String[]{CacheController.getPooledString(1, contentId)}, true);
+			}
+		}
+		
+		return contentVO;
+    } 
+
+	
 	public ContentVO getContentVOWithId(Integer contentId) throws SystemException, Bug
     {
 		String key = "" + contentId;
@@ -3270,7 +3313,7 @@ public class ContentController extends BaseController
 
 		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId, db);
 
-		sb.insert(0, contentVO.getName());
+		insertContentNameInPath(sb, contentVO);
 
 		while (contentVO.getParentContentId() != null)
 		{
@@ -3278,7 +3321,8 @@ public class ContentController extends BaseController
 
 			if (includeRootContent || contentVO.getParentContentId() != null)
 			{
-				sb.insert(0, contentVO.getName() + "/");
+				sb.insert(0, "/");
+				insertContentNameInPath(sb, contentVO);
 			}
 		}
 
@@ -3292,6 +3336,19 @@ public class ContentController extends BaseController
 		return sb.toString();
 	}
 
+	private void insertContentNameInPath(StringBuffer sb, ContentVO contentVO)
+	{
+		if (contentVO.getName() == null || contentVO.getName().equals(""))
+		{
+			sb.insert(0, "]");
+			sb.insert(0, contentVO.getId());
+			sb.insert(0, "[");
+		}
+		else
+		{
+			sb.insert(0, contentVO.getName());
+		}
+	}
 
 
 	public List<ContentVO> getRelatedContents(Database db, Integer contentId, Integer languageId, String attributeName, boolean useLanguageFallback) throws Exception

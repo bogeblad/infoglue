@@ -24,6 +24,9 @@
 
 package org.infoglue.deliver.applications.actions;
 
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.RequestDispatcher;
@@ -38,6 +41,7 @@ import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.controllers.kernel.impl.simple.RepositoryDeliveryController;
 import org.infoglue.deliver.util.CacheController;
+import org.infoglue.deliver.util.HttpHelper;
 
 
 /**
@@ -109,7 +113,7 @@ public class ErrorPageAction extends InfoGlueAbstractAction
 	        String responseCodeParameter = (String)this.getRequest().getParameter("responseCode");
 	        if(responseCodeParameter != null)
 	            responseCode = Integer.parseInt(responseCodeParameter);
-
+	        
 	        String requestURI = this.getRequest().getServerName() + this.getRequest().getRequestURI();
 	        
 	        String errorUrlAttribute = (String)this.getRequest().getAttribute("errorUrl");
@@ -152,7 +156,27 @@ public class ErrorPageAction extends InfoGlueAbstractAction
 	        if(errorUrl != null && errorUrl.indexOf("@errorUrl@") == -1)
 	        {
 	            if(errorUrl.indexOf("http") > -1)
-	                this.getResponse().sendRedirect(errorUrl);
+	            {
+	            	if(CmsPropertyHandler.getResponseMethodOnFullErrorURL().equalsIgnoreCase("include"))
+	            	{
+		            	HttpHelper helper = new HttpHelper();
+		            	Map<String,String> requestParameters = new HashMap<String,String>();
+		            	if(e != null)
+			            	requestParameters.put("errorMessage", e.getMessage());
+		            	requestParameters.put("errorURL", errorUrl);
+		            	String urlContent = helper.getUrlContent(errorUrl, new HashMap(), requestParameters, "utf-8", 5000);
+		            	
+		            	getResponse().setContentType("text/html; charset=utf-8");
+		            	getResponse().setStatus(404);
+	
+		        		PrintWriter out = getResponse().getWriter();
+		        		out.println(urlContent);
+	            	}
+	            	else
+	            	{
+	            		this.getResponse().sendRedirect(errorUrl);
+	            	}
+	            }
 	            else
 	            {
 	            	try

@@ -38,6 +38,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LuceneController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SearchController;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
@@ -56,7 +57,7 @@ import webwork.action.Action;
  * Action class for usecase SearchContentAction. Was better before but due to wanted support for multiple 
  * databases and lack of time I had to cut down on functionality - sorry Magnus. 
  *
- * @author Magnus Güvenal
+ * @author Magnus GÃ¼venal
  * @author Mattias Bogeblad
  */
 
@@ -204,7 +205,7 @@ public class SearchAction extends InfoGlueAbstractAction
 					t.printElapsedTime("contentVersionVOList took");
 					siteNodeVersionVOList = searchController.getSiteNodeVersionVOList(repositoryIdAsIntegerToSearch, this.getSearchString(), maxRows, name, languageId, caseSensitive, stateId);
 					t.printElapsedTime("siteNodeVersionVOList took");
-					digitalAssetVOList = searchController.getDigitalAssets(repositoryIdAsIntegerToSearch, this.getSearchString(), null, maxRows, assetSearchMetaData);
+					digitalAssetVOList = searchController.getDigitalAssets(repositoryIdAsIntegerToSearch, this.getSearchString(), null, maxRows, assetSearchMetaData, languageId, caseSensitive, stateId);
 					t.printElapsedTime("digitalAssetVOList took");
 				}
 				else
@@ -215,13 +216,13 @@ public class SearchAction extends InfoGlueAbstractAction
 					t.printElapsedTime("contentVersionVOList took");
 					siteNodeVersionVOList = searchController.getSiteNodeVersionVOList(new Integer[]{this.repositoryId}, this.getSearchString(), maxRows, name, languageId, caseSensitive, stateId);
 					t.printElapsedTime("siteNodeVersionVOList took");
-					digitalAssetVOList = searchController.getDigitalAssets(new Integer[]{this.repositoryId}, this.getSearchString(), assetTypeFilter, maxRows, assetSearchMetaData);
+					digitalAssetVOList = searchController.getDigitalAssets(new Integer[]{this.repositoryId}, this.getSearchString(), assetTypeFilter, maxRows, assetSearchMetaData, languageId, caseSensitive, stateId);
 					t.printElapsedTime("digitalAssetVOList took");
 					selectedRepositoryIdList.add("" + this.repositoryId);
 				}
 			}
 		}
-		
+
 		if(CmsPropertyHandler.getInternalSearchEngine().equalsIgnoreCase("lucene"))
 		{
 			allowCaseSensitive = false;
@@ -337,11 +338,11 @@ public class SearchAction extends InfoGlueAbstractAction
 				selectedRepositoryIdList.add(repositoryIdToSearch[i]);
 			}
 			
-			digitalAssetVOList = SearchController.getController().getDigitalAssets(repositoryIdAsIntegerToSearch, this.getSearchString(), assetTypeFilter, maxRows, assetSearchMetaData);
+			digitalAssetVOList = SearchController.getController().getDigitalAssets(repositoryIdAsIntegerToSearch, this.getSearchString(), assetTypeFilter, maxRows, assetSearchMetaData, languageId, caseSensitive, stateId);
 		}
 		else 
 		{
-			digitalAssetVOList = SearchController.getController().getDigitalAssets(new Integer[]{this.repositoryId}, this.getSearchString(), assetTypeFilter, maxRows, assetSearchMetaData);
+			digitalAssetVOList = SearchController.getController().getDigitalAssets(new Integer[]{this.repositoryId}, this.getSearchString(), assetTypeFilter, maxRows, assetSearchMetaData, languageId, caseSensitive, stateId);
 			selectedRepositoryIdList.add("" + this.repositoryId);
 		}
 
@@ -683,5 +684,37 @@ public class SearchAction extends InfoGlueAbstractAction
 	public String[] getRepositoryIdToSearch()
 	{
 		return this.repositoryIdToSearch;
+	}
+
+	public boolean getIsLuceneSearch()
+	{
+		return CmsPropertyHandler.getInternalSearchEngine().equalsIgnoreCase("lucene");
+	}
+
+	/**
+	 * Calls the right getPath version for the given <em>entity</em>.
+	 *
+	 * @throws NullPointerException if <em>entity</em> is null
+	 */
+	public String getEntityPath(BaseEntityVO entity) throws NullPointerException
+	{
+		try
+		{
+			if (entity instanceof ContentVersionVO)
+			{
+				return ContentController.getContentController().getContentPath(((ContentVersionVO)entity).getContentId(), false, true);
+			}
+			else if (entity instanceof SiteNodeVersionVO)
+			{
+				return SiteNodeController.getController().getSiteNodePath(((SiteNodeVersionVO)entity).getSiteNodeId(), false, true);
+			}
+		}
+		catch (Exception ex)
+		{
+			logger.warn("Error when getting path for entity in search result. Message: " + ex.getMessage());
+			logger.info("Error when getting path for entity in search result.", ex);
+		}
+
+		return "[" + entity.getId() + "]";
 	}
 }

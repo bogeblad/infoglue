@@ -103,6 +103,12 @@ public class ExtranetController extends BaseDeliveryController
 		    String casServiceUrl 		= InfoGlueAuthenticationFilter.casServiceUrl;
 		    String casValidateUrl 		= InfoGlueAuthenticationFilter.casValidateUrl;
 		    String casProxyValidateUrl 	= InfoGlueAuthenticationFilter.casProxyValidateUrl;
+		    if(authenticatorClass == null)
+		    	authenticatorClass = "org.infoglue.cms.security.InfoGlueBasicAuthenticationModule";
+		    if(authorizerClass == null)
+		    	authorizerClass = "org.infoglue.cms.security.InfoGlueBasicAuthorizationModule";
+		    if(loginUrl == null)
+		    	loginUrl = "Login.action";
 		    
 		    AuthenticationModule authenticationModule = (AuthenticationModule)Class.forName(authenticatorClass).newInstance();
 			authenticationModule.setAuthenticatorClass(authenticatorClass);

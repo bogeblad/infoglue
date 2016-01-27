@@ -174,6 +174,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "disableAssetDeletionInLiveThread");
 	    populate(ps, "niceURIEncoding");
 	    populate(ps, "niceURIAttributeName");
+	    populate(ps, "niceURIFallbackAttributeName");
 	    populateData(ps, "niceURICharacterReplacingMapping");
 	    populate(ps, "niceURIUseLowerCase");
 	    populate(ps, "niceURIDefaultReplacementCharacter");
@@ -385,6 +386,19 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "protectedProtocolPort");
 	    populate(ps, "accessBasedProtocolRedirectHTTPCode");
 	    populate(ps, "redirectStatusCode");
+	    populate(ps, "responseMethodOnFullErrorURL");
+	    populate(ps, "showRepositoriesByDefaultIfNoAccessRightsAreDefined");
+	    			  
+	    populate(ps, "enableDiskBasedDeployment");
+	    populate(ps, "diskBasedDeploymentBasePath");
+	    
+	    System.out.println("CmsPropertyHandler.getEnableDiskBasedDeployment()......");
+	    System.out.println("CmsPropertyHandler.getEnableDiskBasedDeployment():" + CmsPropertyHandler.getEnableDiskBasedDeployment());
+	    if(CmsPropertyHandler.getEnableDiskBasedDeployment())
+		{
+			System.out.println("Starting disk sync area");
+			org.infoglue.cms.filesync.DevelopmentResourcesSyncService.getInstance(true);
+		}
 
 	    populate(ps, "indexDigitalAssetContent");
 
@@ -402,6 +416,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "doNotUseTrashcanForRepositories");
 
 	    populate(ps, "useGlobalRepositoryChange");
+	    populate(ps, "reloadStructureOnActivation");
 
 	    try
 	    {

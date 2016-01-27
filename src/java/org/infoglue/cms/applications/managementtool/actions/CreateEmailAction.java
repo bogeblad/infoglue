@@ -275,13 +275,16 @@ public class CreateEmailAction extends InfoGlueAbstractAction
 	    	for(int i=0; i<userNames.length; i++)
 	    	{
 	    		String userName = userNames[i];
-	    		InfoGluePrincipal principal = UserControllerProxy.getController().getUser(userName);
-	    		if(usersAddresses.indexOf(principal.getEmail()) == -1)
+	    		if(userName != null && !userName.equals(""))
 	    		{
-		    		if(usersAddresses.length() > 0)
-		    			usersAddresses += ";";
-		    		
-		    		usersAddresses += principal.getEmail();
+		    		InfoGluePrincipal principal = UserControllerProxy.getController().getUser(userName);
+		    		if(usersAddresses.indexOf(principal.getEmail()) == -1)
+		    		{
+			    		if(usersAddresses.length() > 0)
+			    			usersAddresses += ";";
+			    		
+			    		usersAddresses += principal.getEmail();
+		    		}
 	    		}
 	    	}
     	}

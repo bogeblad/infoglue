@@ -94,9 +94,19 @@ public class ContainsTag extends AbstractTag
     {
         this.object = evaluate("contains", "object", object, Object.class);
     }
-    
+
+    public void setObjectObject(final Object object) throws JspException
+    {
+        this.object = object;
+    }
+
     public void setValue(final String value) throws JspException
     {
         this.value = evaluate("contains", "value", value, Object.class);
+    }
+
+    public void setValueObject(final Object value) throws JspException
+    {
+        this.value = value;
     }
 }

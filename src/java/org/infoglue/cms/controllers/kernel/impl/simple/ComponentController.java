@@ -926,7 +926,7 @@ public class ComponentController extends BaseController
 				LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId(), db);		
 
 				String entity = "Content";
-				Integer entityId  = new Integer(autoContentVO.getId());
+				String entityId  = autoContentVO.getId().toString();
 				String propertyName = "" + componentPropertyDefinition.getName();
 				
 				ComponentController.getController().addComponentPropertyBinding(document, locale, siteNodeId, languageId, masterLanguageVO.getId(), entity, entityId, propertyName, newComponentId, path, assetKey, principal);
@@ -944,7 +944,7 @@ public class ComponentController extends BaseController
 											Integer languageId, 
 											Integer masterLanguageId,
 											String entity,
-											Integer entityId,
+											String entityId,
 											String propertyName,
 											Integer componentId,
 											String path,
@@ -1086,10 +1086,10 @@ public class ComponentController extends BaseController
 	 * This is to support form steering information later.
 	 */
 	
-	private Element addBindingElement(Element parent, String entity, Integer entityId, String assetKey)
+	private Element addBindingElement(Element parent, String entity, String entityId, String assetKey)
 	{
 		Element element = parent.getOwnerDocument().createElement("binding");
-		element.setAttribute("entityId", entityId.toString());
+		element.setAttribute("entityId", entityId);
 		element.setAttribute("entity", entity);
 		if(assetKey != null && !assetKey.equals(""))
 			element.setAttribute("assetKey", assetKey);

@@ -58,7 +58,6 @@ public class ResourceFilter implements Filter
         HttpServletResponse resp = (HttpServletResponse) response;
 
     	String requestURI = req.getRequestURI();
-    	
     	if(requestURI.indexOf(".png") > -1 || requestURI.indexOf(".jpg") > -1 || requestURI.indexOf(".gif") > -1)
     	{
     		resp.setDateHeader("Expires", System.currentTimeMillis() + 3000*24*60*60*1000);  
@@ -79,14 +78,19 @@ public class ResourceFilter implements Filter
     		resp.setDateHeader("Expires", System.currentTimeMillis() + 1*24*60*60*1000);  
     		// check for the HTTP header that
             // signifies GZIP support
-            String ae = req.getHeader("accept-encoding");
+            /*
+    		String ae = req.getHeader("accept-encoding");
             if (ae != null && ae.indexOf("gzip") != -1) 
             {
             	GZIPResponseWrapper wrappedResponse = new GZIPResponseWrapper(resp);
+            	System.out.println("ResourceFilter before doFilter:" + requestURI);
             	chain.doFilter(request, wrappedResponse);
+            	System.out.println("ResourceFilter before finishResponse:" + requestURI);
             	wrappedResponse.finishResponse();
+            	System.out.println("ResourceFilter end requestURI:" + requestURI);
             	return;
             }
+            */
         }
 
         // Continue  

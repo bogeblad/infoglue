@@ -1650,14 +1650,23 @@ public class SiteNodeVersionController extends BaseController
 	
     public void getSiteNodeAndAffectedItemsRecursive(Integer siteNodeId, Integer stateId, Set<SiteNodeVersionVO> siteNodeVersionVOList, Set<ContentVersionVO> contentVersionVOList, boolean includeMetaInfo, InfoGluePrincipal principal, ProcessBean processBean, Locale locale, int maxItems) throws ConstraintException, SystemException
 	{
-    	getSiteNodeAndAffectedItemsRecursive(siteNodeId, stateId, siteNodeVersionVOList, contentVersionVOList, includeMetaInfo, true, principal, processBean, locale, maxItems);
+		getSiteNodeAndAffectedItemsRecursive(siteNodeId, stateId, siteNodeVersionVOList, contentVersionVOList, includeMetaInfo, true, principal, processBean, locale, maxItems, true);
 	}
-	
+
+    /**
+     * Calls {@link #getSiteNodeAndAffectedItemsRecursive(Integer, Integer, Set, Set, boolean, boolean, InfoGluePrincipal, ProcessBean, Locale, int, boolean)} with
+     * <code>showDeletedItems=true</code>
+     */
+	public void getSiteNodeAndAffectedItemsRecursive(Integer siteNodeId, Integer stateId, Set<SiteNodeVersionVO> siteNodeVersionVOList, Set<ContentVersionVO> contentVersionVOList, boolean includeMetaInfo, boolean recurseSiteNodes, InfoGluePrincipal principal, ProcessBean processBean, Locale locale, int maxItems) throws ConstraintException, SystemException
+	{
+		getSiteNodeAndAffectedItemsRecursive(siteNodeId, stateId, siteNodeVersionVOList, contentVersionVOList, includeMetaInfo, true, principal, processBean, locale, maxItems, true);
+	}
+
 	/**
 	 * Recursive methods to get all contentVersions of a given state under the specified parent content.
 	 */ 
 	
-    public void getSiteNodeAndAffectedItemsRecursive(Integer siteNodeId, Integer stateId, Set<SiteNodeVersionVO> siteNodeVersionVOList, Set<ContentVersionVO> contentVersionVOList, boolean includeMetaInfo, boolean recurseSiteNodes, InfoGluePrincipal principal, ProcessBean processBean, Locale locale, int maxItems) throws ConstraintException, SystemException
+	public void getSiteNodeAndAffectedItemsRecursive(Integer siteNodeId, Integer stateId, Set<SiteNodeVersionVO> siteNodeVersionVOList, Set<ContentVersionVO> contentVersionVOList, boolean includeMetaInfo, boolean recurseSiteNodes, InfoGluePrincipal principal, ProcessBean processBean, Locale locale, int maxItems, boolean showDeletedItems) throws ConstraintException, SystemException
 	{
     	Timer t = new Timer();
     	
@@ -1669,7 +1678,7 @@ public class SiteNodeVersionController extends BaseController
         {
             processBean.updateProcess(getLocalizedString(locale, "tool.structuretool.publicationProcess.traversingChildNodes"));
             SiteNodeVO siteNode = SiteNodeController.getController().getSiteNodeVOWithIdNoStateCheck(siteNodeId, db);
-            List<SiteNodeVersionVO> localSiteNodeVersionVOList = getSiteNodeVersionsRecursive(siteNode, stateId, db, includeMetaInfo, recurseSiteNodes, principal);
+            List<SiteNodeVersionVO> localSiteNodeVersionVOList = getSiteNodeVersionsRecursive(siteNode, stateId, db, includeMetaInfo, recurseSiteNodes, principal, showDeletedItems);
             processBean.updateProcess(getLocalizedString(locale, "tool.structuretool.publicationProcess.foundPages", localSiteNodeVersionVOList.size()));
 
             Set<Integer> localSiteNodeVersionIdSet = new HashSet<Integer>();
@@ -1850,12 +1859,12 @@ public class SiteNodeVersionController extends BaseController
 		}
 	}
 	
-	private List<SiteNodeVersionVO> getSiteNodeVersionsRecursive(SiteNodeVO siteNodeVO, Integer stateId, Database db, boolean includeMetaInfo, InfoGluePrincipal principal) throws ConstraintException, SystemException, Exception
+	private List<SiteNodeVersionVO> getSiteNodeVersionsRecursive(SiteNodeVO siteNodeVO, Integer stateId, Database db, boolean includeMetaInfo, InfoGluePrincipal principal, boolean showDeletedItems) throws ConstraintException, SystemException, Exception
 	{
-		return getSiteNodeVersionsRecursive(siteNodeVO, stateId, db, includeMetaInfo, true, principal);
+		return getSiteNodeVersionsRecursive(siteNodeVO, stateId, db, includeMetaInfo, true, principal, showDeletedItems);
 	}
 	
-	private List<SiteNodeVersionVO> getSiteNodeVersionsRecursive(SiteNodeVO siteNodeVO, Integer stateId, Database db, boolean includeMetaInfo, boolean recurseSiteNodes, InfoGluePrincipal principal) throws ConstraintException, SystemException, Exception
+	private List<SiteNodeVersionVO> getSiteNodeVersionsRecursive(SiteNodeVO siteNodeVO, Integer stateId, Database db, boolean includeMetaInfo, boolean recurseSiteNodes, InfoGluePrincipal principal, boolean showDeletedItems) throws ConstraintException, SystemException, Exception
 	{
 		Timer t = new Timer();
 		List<SiteNodeVersionVO> siteNodeVersionVOToCheck = new ArrayList<SiteNodeVersionVO>();
@@ -1882,14 +1891,14 @@ public class SiteNodeVersionController extends BaseController
         	//System.out.println("ChildPages:" + siteNodeVO.getChildCount());
         	if(siteNodeVO.getChildCount() == null || siteNodeVO.getChildCount() > 0)
         	{
-	        	List childSiteNodeList = SiteNodeController.getController().getSiteNodeChildrenVOList(siteNodeVO.getId(), db);
+				List childSiteNodeList = SiteNodeController.getController().getChildSiteNodeVOList(siteNodeVO.getId(), showDeletedItems, db, null);
 				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getSiteNodeAndAffectedItemsRecursive.getSiteNodeChildrenVOList", t.getElapsedTime());
 				//Collection childSiteNodeList = siteNode.getChildSiteNodes();
 				Iterator cit = childSiteNodeList.iterator();
 				while (cit.hasNext())
 				{
 					SiteNodeVO childSiteNode = (SiteNodeVO) cit.next();
-					siteNodeVersionVOToCheck.addAll(getSiteNodeVersionsRecursive(childSiteNode, stateId, db, includeMetaInfo, principal));
+					siteNodeVersionVOToCheck.addAll(getSiteNodeVersionsRecursive(childSiteNode, stateId, db, includeMetaInfo, principal, showDeletedItems));
 				}
         	}
         }   

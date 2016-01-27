@@ -121,7 +121,12 @@ public class DocumentConverterTag extends TemplateControllerTag
     {
         this.cssList = (List)evaluate("DocumentConverterTag", "cssList", cssList, List.class);
     }
-    
+
+    public void setCssListObject(final java.util.List cssList) throws JspException
+    {
+        this.cssList = cssList;
+    }
+
     public void setRewrite(String rewrite) throws JspException
     {
         this.rewrite = evaluateString("DocumentConverterTag", "rewrite", rewrite);

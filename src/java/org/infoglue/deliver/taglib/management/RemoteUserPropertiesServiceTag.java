@@ -164,6 +164,11 @@ public class RemoteUserPropertiesServiceTag extends TemplateControllerTag implem
 	   this.principal = (InfoGluePrincipal) this.evaluate("remoteContentService", "principal", principalString, InfoGluePrincipal.class);
    }
 
+   public void setPrincipalObject(final InfoGluePrincipal principal) throws JspException
+   {
+	   this.principal = principal;
+   }
+
    /**
     * 
     */

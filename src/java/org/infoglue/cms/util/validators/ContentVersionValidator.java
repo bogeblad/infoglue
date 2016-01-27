@@ -2,9 +2,11 @@ package org.infoglue.cms.util.validators;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.validator.Field;
 import org.apache.commons.validator.Msg;
 import org.apache.commons.validator.Validator;
@@ -97,6 +99,14 @@ public class ContentVersionValidator
     private ValidatorResources loadResources(ContentTypeDefinitionVO contentType, String languageCode) {
 		try {
 			InputStream is = readValidatorXML(contentType, languageCode);
+			if (logger.isTraceEnabled())
+			{
+				StringWriter writer = new StringWriter();
+				IOUtils.copy(is, writer, "utf-8");
+				String theString = writer.toString();
+				logger.trace("is: " + theString);
+				is.reset();
+			}
 			return new ValidatorResources(is);
 		} catch(Exception e) {
 			logger.error("Error loading resource: " + e.getMessage());

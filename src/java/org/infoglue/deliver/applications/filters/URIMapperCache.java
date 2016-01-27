@@ -23,6 +23,8 @@
 
 package org.infoglue.deliver.applications.filters;
 
+import java.util.List;
+
 import org.infoglue.deliver.util.CacheController;
 
 
@@ -56,30 +58,43 @@ public class URIMapperCache
     {
     }
 
-    public Integer getCachedSiteNodeId(Integer repositoryId, String[] path, int upToIndex)
+    public Integer getCachedSiteNodeId(Integer repositoryId, String[] path, int upToIndex, String requestLanguageId)
     {
         if (repositoryId == null || path == null)
             return null;
-        String cacheKey = createCacheKey(repositoryId, path, upToIndex);
+        String cacheKey = createCacheKey(repositoryId, path, upToIndex, requestLanguageId);
         return (Integer)CacheController.getCachedObject(CACHE_NAME, cacheKey);
     }
 
-    public boolean addCachedSiteNodeId(Integer repositoryId, String[] path, int upToIndex, Integer siteNodeId)
+    public List<Integer> getCachedSiteNodeLanguageId(Integer repositoryId, String[] path, int upToIndex, String requestLanguageId)
+    {
+        if (repositoryId == null || path == null)
+            return null;
+        String cacheKey = createCacheKey(repositoryId, path, upToIndex, requestLanguageId) + "_languageId";
+        return (List<Integer>)CacheController.getCachedObject(CACHE_NAME, cacheKey);
+    }
+
+    public boolean addCachedSiteNodeId(Integer repositoryId, String[] path, int upToIndex, Integer siteNodeId, String requestLanguageId, List<Integer> languageIds)
     {
         if (repositoryId == null || path == null || siteNodeId == null)
             return false;
-        String cacheKey = createCacheKey(repositoryId, path, upToIndex);
+        String cacheKey = createCacheKey(repositoryId, path, upToIndex, requestLanguageId);
         CacheController.cacheObject(CACHE_NAME, cacheKey, siteNodeId);
+        CacheController.cacheObject(CACHE_NAME, cacheKey + "_languageId", languageIds);
         return true;
     }
 
-    private String createCacheKey(Integer repositoryId, String[] path, int upToIndex)
+    private String createCacheKey(Integer repositoryId, String[] path, int upToIndex, String requestLanguageId)
     {
     	StringBuilder sb = new StringBuilder(128);
         sb.append(String.valueOf(repositoryId)).append(":/");
-        for (int i=0;i < path.length && i < upToIndex ;i++) {
+      //for (int i=0;i < path.length && i < upToIndex ;i++) {
+        for (int i=0;i < path.length;i++) {
             sb.append(path[i].toLowerCase()).append("/");
         }
+        if(requestLanguageId != null)
+        	sb.append("?" + requestLanguageId);
+        
         return sb.toString();
     }
 } 

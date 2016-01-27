@@ -124,7 +124,12 @@ public class RemoteFormServiceTag extends TemplateControllerTag
    {
 	   this.principal = (InfoGluePrincipal) this.evaluate("remoteSiteNodeService", "principal", principalString, InfoGluePrincipal.class);
    }
-   
+
+   public void setPrincipalObject(final InfoGluePrincipal principal) throws JspException
+   {
+	   this.principal = principal;
+   }
+
    /**
     * Add the siteNode the child tag generated to the list of siteNodes that are to be persisted.
     */

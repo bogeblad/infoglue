@@ -315,12 +315,6 @@ public class XSLTransformTag extends TemplateControllerTag
         return x;
     }
 
-    
-    public void setXml(String xml) throws JspException
-    {
-        this.xml = evaluate("XSLTransform", "xmlFile", xmlFile, Object.class);
-    }    
-    
     public void setXmlFile(String xmlFile) throws JspException
     {
         this.xmlFile = evaluateString("XSLTransform", "xmlFile", xmlFile);
@@ -334,6 +328,11 @@ public class XSLTransformTag extends TemplateControllerTag
     public void setSource(String source) throws JspException
     {
         this.source = evaluate("XSLTransform", "source", source, Object.class);
+    }    
+
+    public void setSourceObject(Object source) throws JspException
+    {
+        this.source = source;
     }    
 
     public void setStyleFile(String styleFile) throws JspException

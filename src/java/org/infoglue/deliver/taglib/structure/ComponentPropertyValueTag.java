@@ -45,7 +45,7 @@ public class ComponentPropertyValueTag extends ComponentLogicTag
     private boolean parseToMap = false;
     private InfoGlueComponent component = null;
     
-    public ComponentPropertyValueTag()
+	public ComponentPropertyValueTag()
     {
         super();
     }
@@ -117,7 +117,12 @@ public class ComponentPropertyValueTag extends ComponentLogicTag
     {
         this.component = (InfoGlueComponent)evaluate("componentPropertyValue", "component", component, InfoGlueComponent.class);
     }
-
+    
+    public void setComponentObject(InfoGlueComponent component) throws JspException
+    {
+        this.component = component;
+    }
+    
     public void setPropertyName(String propertyName) throws JspException
 	{
 		this.propertyName = evaluateString("componentPropertyValue", "propertyName", propertyName);

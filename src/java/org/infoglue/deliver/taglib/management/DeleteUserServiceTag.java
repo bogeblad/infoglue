@@ -113,6 +113,11 @@ public class DeleteUserServiceTag extends TemplateControllerTag
 	   this.principal = (InfoGluePrincipal) this.evaluate("remoteUserService", "principal", principalString, InfoGluePrincipal.class);
    }
 
+   public void setPrincipalObject(final InfoGluePrincipal principal) throws JspException
+   {
+	   this.principal = principal;
+   }
+
    /**
     * 
     */

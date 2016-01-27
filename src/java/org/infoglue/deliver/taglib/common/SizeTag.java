@@ -43,9 +43,8 @@ public class SizeTag extends AbstractTag
 	/**
 	 * The collection.
 	 */
-	private Collection collection;
+	private Collection list;
 	private Map map;
-	
 	/**
 	 * Default constructor.
 	 */
@@ -63,13 +62,13 @@ public class SizeTag extends AbstractTag
 	public int doEndTag() throws JspException
     {
 		if(map != null)
-		    setResultAttribute(new Integer(map == null ? 0 : map.size()));
-		else if(collection != null)
-			setResultAttribute(new Integer(collection == null ? 0 : collection.size()));
+			setResultAttribute(new Integer(map == null ? 0 : map.size()));
+		else if(list != null)
+			setResultAttribute(new Integer(list == null ? 0 : list.size()));
 		else
 			throw new JspException("You must set either map or collection attribute on common:size-tag");
 		
-		this.collection = null;
+		this.list = null;
 		this.map = null;
 
         return EVAL_PAGE;
@@ -84,11 +83,21 @@ public class SizeTag extends AbstractTag
 	 */
     public void setList(final String collection) throws JspException
     {
-        this.collection = evaluateCollection("size", "list", collection);
+        this.list = evaluateCollection("size", "list", collection);
     }
-    
+
+    public void setListObject(final Collection collection) throws JspException
+    {
+        this.list = collection;
+    }
+
     public void setMap(final String map) throws JspException
     {
         this.map = (Map)evaluate("size", "map", map, Map.class);
+    }
+
+    public void setMapObject(final Map map) throws JspException
+    {
+        this.map = map;
     }
 }

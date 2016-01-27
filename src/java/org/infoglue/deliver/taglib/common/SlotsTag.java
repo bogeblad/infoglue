@@ -174,6 +174,11 @@ public class SlotsTag extends AbstractTag
 		this.elements = evaluateList("slots", "elements", elements);
 	}
 
+	public void setElementsObject(final java.util.List elements) throws JspException
+	{
+		this.elements = elements;
+	}
+
 	/**
 	 *
 	 */

@@ -106,7 +106,7 @@ public class ViewListContentVersionAction extends InfoGlueAbstractAction
 				//Set<SiteNodeVersionVO> siteNodeVersionVOList = new HashSet<SiteNodeVersionVO>();
 				//Set<ContentVersionVO> contentVersionVOList = new HashSet<ContentVersionVO>();
 	
-				ContentVersionController.getContentVersionController().getContentAndAffectedItemsRecursive(this.contentId, ContentVersionVO.WORKING_STATE, this.siteNodeVersionVOList, this.contentVersionVOList, true, true, processBean);
+				ContentVersionController.getContentVersionController().getContentAndAffectedItemsRecursive(this.contentId, ContentVersionVO.WORKING_STATE, this.siteNodeVersionVOList, this.contentVersionVOList, true, true, processBean, false);
 				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ViewListContentVersion getContentAndAffectedItemsRecursive", t.getElapsedTime());
 				
 				processBean.updateProcess("Found " + this.siteNodeVersionVOList.size() + " pages and " + this.contentVersionVOList.size() + " contents");

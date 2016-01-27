@@ -134,7 +134,7 @@
   	  #foreach($key in $cache.keySet())
 	  <tr>
 	 	 <td>$key</td>
-	 	 <td><a href="javascript:showGroups('$cacheName', '$cacheEntry.key');">View value</a></td>
+	 	 <td><a href="javascript:showGroups('$cacheName', '$key');">View value</a></td>
 	 	 <td>&nbsp;</td>
 	  </tr>
 	  #end

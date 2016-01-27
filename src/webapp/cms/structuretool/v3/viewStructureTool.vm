@@ -73,7 +73,19 @@
 		function setIsItAnActivationCall(value) {
 			isItAnActivationCall=value;
 			
-			setTimeout("refreshTreeSize();",500);			
+			setTimeout("refreshTreeSize();", 500);
+			#if( $isReloadStructureOnActivation )
+			if (value) {
+				var iframe = $("#workIframe").get(0);
+				if (!!iframe) {
+					if (!iframe.contentWindow.isPageDirty) {
+						setTimeout(function() {
+							refreshWorkSurface();
+						}, 500);
+					}
+				}
+			}
+			#end
 		}
 	
 		function refreshTreeSize()

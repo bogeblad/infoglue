@@ -80,6 +80,11 @@ public class RolePropertyTag extends TemplateControllerTag
         this.role = (InfoGlueRole)evaluate("role", "role", role, InfoGlueRole.class);
     }
 
+    public void setRoleObject(final InfoGlueRole role) throws JspException
+    {
+        this.role = role;
+    }
+
     public void setPropertyName(final String propertyName) throws JspException
     {
         this.propertyName = evaluateString("role", "propertyName", propertyName);

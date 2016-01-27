@@ -254,7 +254,7 @@ public class RemoteUserServiceImpl extends RemoteInfoGlueService
      * Deletes a system user.
      */
     
-    public Boolean deleteUser(final String principalName, SystemUserVO systemUserVO) 
+    public Boolean deleteUser(final String principalName, String userName) 
     {
         if(!ServerNodeController.getController().getIsIPAllowed(getRequest()))
         {
@@ -272,7 +272,7 @@ public class RemoteUserServiceImpl extends RemoteInfoGlueService
         {
             initializePrincipal(principalName);
             
-            userControllerProxy.deleteUser(systemUserVO.getUserName());
+            userControllerProxy.deleteUser(userName);
         }
         catch(Exception e)
         {

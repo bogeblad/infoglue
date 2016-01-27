@@ -861,4 +861,38 @@ public class DeliveryContext implements UsageListener
 		this.cachedResponse = cachedResponse;
 	}
 
+	private Boolean languageCanBeOverridden = false;
+	private Integer sessionLanguageId = -1;
+	private List<Integer> acceptableLanguageIds = new ArrayList<Integer>();
+
+	public void setLanguageCanBeOverridden(boolean languageCanBeOverridden) 
+	{
+		this.languageCanBeOverridden = languageCanBeOverridden;
+	}
+
+	public Boolean getLanguageCanBeOverridden() 
+	{
+		return this.languageCanBeOverridden;
+	}
+
+	public Integer getSessionLanguageId() 
+	{
+		return sessionLanguageId;
+	}
+
+	public void setSessionLanguageId(Integer sessionLanguageId) 
+	{
+		this.sessionLanguageId = sessionLanguageId;
+	}
+
+	public List<Integer> getAcceptableLanguageIds() 
+	{
+		return acceptableLanguageIds;
+	}
+
+	public void setAcceptableLanguageIds(List<Integer> acceptableLanguageIds) 
+	{
+		this.acceptableLanguageIds = acceptableLanguageIds;
+	}
+
 }

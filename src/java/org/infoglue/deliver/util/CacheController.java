@@ -4185,7 +4185,16 @@ public class CacheController extends Thread
 			   type.getName().contains(".RepositoryLanguageImpl") || 
 			   type.getName().contains(".DigitalAssetImpl") || 
 			   type.getName().contains(".MediumDigitalAssetImpl") || 
+			   type.getName().contains(".ContentImpl") || 
+			   type.getName().contains(".MediumContentImpl") || 
+			   type.getName().contains(".SmallContentImpl") || 
+			   type.getName().contains(".SmallishContentImpl") || 
 			   type.getName().contains(".ContentVersionImpl") || 
+			   type.getName().contains(".MediumContentVersionImpl") || 
+			   type.getName().contains(".SmallContentVersionImpl") || 
+			   type.getName().contains(".SmallestContentVersionImpl") || 
+			   type.getName().contains(".AccessRightImpl") || 
+			   type.getName().contains(".SmallAccessRightImpl") || 
 			   type.getName().contains(".AccessRightRoleImpl") || 
 			   type.getName().contains(".AccessRightGroupImpl") || 
 			   type.getName().contains(".AccessRightUserImpl") || 
@@ -4281,7 +4290,16 @@ public class CacheController extends Thread
 		   type.getName().contains(".RepositoryLanguageImpl") || 
 		   type.getName().contains(".DigitalAssetImpl") || 
 		   type.getName().contains(".MediumDigitalAssetImpl") || 
+		   type.getName().contains(".ContentImpl") || 
+		   type.getName().contains(".MediumContentImpl") || 
+		   type.getName().contains(".SmallContentImpl") || 
+		   type.getName().contains(".SmallishContentImpl") || 
 		   type.getName().contains(".ContentVersionImpl") || 
+		   type.getName().contains(".MediumContentVersionImpl") || 
+		   type.getName().contains(".SmallContentVersionImpl") || 
+		   type.getName().contains(".SmallestContentVersionImpl") || 
+		   type.getName().contains(".AccessRightImpl") || 
+		   type.getName().contains(".SmallAccessRightImpl") || 
 		   type.getName().contains(".AccessRightRoleImpl") || 
 		   type.getName().contains(".AccessRightGroupImpl") || 
 		   type.getName().contains(".AccessRightUserImpl") || 
@@ -4338,8 +4356,16 @@ public class CacheController extends Thread
 		   c.getName().contains(".RepositoryLanguageImpl") || 
 		   c.getName().contains(".DigitalAssetImpl") || 
 		   c.getName().contains(".MediumDigitalAssetImpl") || 
+		   c.getName().contains(".ContentImpl") || 
+		   c.getName().contains(".MediumContentImpl") || 
+		   c.getName().contains(".SmallContentImpl") || 
+		   c.getName().contains(".SmallishContentImpl") || 
 		   c.getName().contains(".ContentVersionImpl") || 
 		   c.getName().contains(".MediumContentVersionImpl") || 
+		   c.getName().contains(".SmallContentVersionImpl") || 
+		   c.getName().contains(".SmallestContentVersionImpl") || 
+		   c.getName().contains(".AccessRightImpl") || 
+		   c.getName().contains(".SmallAccessRightImpl") || 
 		   c.getName().contains(".AccessRightRoleImpl") || 
 		   c.getName().contains(".AccessRightGroupImpl") || 
 		   c.getName().contains(".AccessRightUserImpl") ||

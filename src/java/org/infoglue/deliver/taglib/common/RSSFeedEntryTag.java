@@ -114,6 +114,9 @@ public class RSSFeedEntryTag extends TemplateControllerTag
 	        logger.error("An error occurred when generating RSS-feed:" + e.getMessage(), e);
 	    }
 	    
+	    categories	= new ArrayList();
+		contents	= new ArrayList<SyndContent>();
+	    
         return EVAL_PAGE;
     }
 
@@ -163,7 +166,12 @@ public class RSSFeedEntryTag extends TemplateControllerTag
     {
         this.publishedDate = (Date)evaluate("RssFeedEntry", "publishedDate", publishedDate, Date.class);
     }
-        
+
+    public void setPublishedDateObject(java.util.Date publishedDate) throws JspException
+    {
+        this.publishedDate = publishedDate;
+    }
+
     public void addEntryCategory(SyndCategory category)
     {    	
     	this.categories.add(category);

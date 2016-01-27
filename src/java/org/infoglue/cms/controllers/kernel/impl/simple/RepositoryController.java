@@ -93,6 +93,53 @@ public class RepositoryController extends BaseController
         return ent;
     }     
 
+    
+	/**
+	 * This method sets a Repository in markedForDelete mode.
+	 */
+	
+    public Map<BaseEntityVO, List<ReferenceBean>> getReferencingObjectsForRepository(RepositoryVO repositoryVO, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
+    {
+    	Map<BaseEntityVO, List<ReferenceBean>> map = new HashMap<BaseEntityVO, List<ReferenceBean>>();
+    	
+		Database db = CastorDatabaseService.getDatabase();
+
+		beginTransaction(db);
+		try
+		{
+			ContentVO contentVO = ContentControllerProxy.getController().getRootContentVO(repositoryVO.getRepositoryId(), infoGluePrincipal.getName(), false);
+			if(contentVO != null)
+			{
+				Map<ContentVO, List<ReferenceBean>> refBeansMap = new HashMap<ContentVO, List<ReferenceBean>>();
+				ContentController.getContentController().checkReferences(contentVO, db, false, false, infoGluePrincipal, refBeansMap);
+				map.putAll(refBeansMap);
+			}
+			
+			SiteNodeVO siteNodeVO = SiteNodeController.getController().getRootSiteNodeVO(repositoryVO.getRepositoryId());
+			if(siteNodeVO != null)
+			{
+				Map<SiteNodeVO, List<ReferenceBean>> refBeansMap = new HashMap<SiteNodeVO, List<ReferenceBean>>();
+				SiteNodeController.getController().checkReferences(siteNodeVO, db, infoGluePrincipal, refBeansMap);
+				map.putAll(refBeansMap);
+			}
+    
+			commitTransaction(db);
+		}
+		catch(ConstraintException ce)
+		{
+			logger.warn("An error occurred so we should not completes the transaction:" + ce, ce);
+			rollbackTransaction(db);
+			throw ce;
+		}
+		catch(Exception e)
+		{
+			logger.error("An error occurred so we should not completes the transaction:" + e, e);
+			rollbackTransaction(db);
+			throw new SystemException(e.getMessage());
+		}
+		return map;
+    } 
+    
 	/**
 	 * This method removes a Repository from the system and also cleans out all depending repositoryLanguages.
 	 */

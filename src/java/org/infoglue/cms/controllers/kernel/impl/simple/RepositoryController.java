@@ -929,7 +929,7 @@ public class RepositoryController extends BaseController
 		}
 	    else
 	    {
-	    	boolean showRepositoriesByDefaultIfNoAccessRightsAreDefined = CmsPropertyHandler.getShowRepositoriesByDefaultIfNoAccessRightsAreDefined();
+	    	boolean showRepositoriesByDefaultIfNoAccessRightsAreDefined = true;
 	    	hasAccess = AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Read", repositoryId.toString(), showRepositoriesByDefaultIfNoAccessRightsAreDefined); 
 		}
 

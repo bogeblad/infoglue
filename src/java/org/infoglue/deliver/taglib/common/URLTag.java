@@ -327,7 +327,7 @@ public class URLTag extends TemplateControllerTag
 				if(parameter.countTokens() == 0 || parameter.countTokens() > 2)
 				{
 					logger.warn("The url contained illegal parameters [" + token + "].");
-					continue;
+					break;
 				}
 				final String name  = parameter.nextToken();
 				final String value = parameter.hasMoreTokens() ? parameter.nextToken() : "";

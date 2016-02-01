@@ -326,7 +326,8 @@ public class URLTag extends TemplateControllerTag
 				final StringTokenizer parameter = new StringTokenizer(token, "=");
 				if(parameter.countTokens() == 0 || parameter.countTokens() > 2)
 				{
-					throw new JspTagException("Illegal query parameter [" + token + "].");
+					logger.warn("The url contained illegal parameters [" + token + "].");
+					continue;
 				}
 				final String name  = parameter.nextToken();
 				final String value = parameter.hasMoreTokens() ? parameter.nextToken() : "";

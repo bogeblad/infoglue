@@ -93,7 +93,7 @@ public class PageUrlTag extends ComponentLogicTag
 	 		Map property = componentLogic.getInheritedComponentProperty(componentLogic.getInfoGlueComponent(), propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
 	 		siteNodeId = componentLogic.getSiteNodeId(property);
 	 		if(siteNodeId == null) {
-	 			return "";
+	 			return url;
 	 		}
 	    }
 
@@ -101,9 +101,14 @@ public class PageUrlTag extends ComponentLogicTag
 	    	url = getController().getPageUrl(siteNodeId, languageId, includeLanguageId, contentId);
 	    } else {
 	    	DeliveryContext dc = getController().getDeliveryContext();
+	    	String tempStateId = dc.getOperatingMode();
 	    	dc.setOperatingMode(stateId);
-	    	url = getController().getPageUrl(siteNodeId, languageId, includeLanguageId, -1, stateId);
-	    	
+	    	try {
+	    		url = getController().getPageUrl(siteNodeId, languageId, includeLanguageId, -1, stateId);
+	    	} finally {
+		    	/* restoring stateid */
+		    	dc.setOperatingMode(tempStateId);	
+	    	}
 	    }
 	    if (forceHTTPProtocol || CmsPropertyHandler.getForceHTTPProtocol()) {
 	    	url = url.replaceFirst("https:", "http:");

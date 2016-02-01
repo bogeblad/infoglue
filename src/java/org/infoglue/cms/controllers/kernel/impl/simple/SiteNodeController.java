@@ -782,7 +782,7 @@ public class SiteNodeController extends BaseController
 			if(!hasAccess)
 				return false;
 		}
-			
+		
         List<SiteNodeVersionVO> siteNodeVersions = SiteNodeVersionController.getController().getSiteNodeVersionVOList(db, siteNodeVO.getId());
     	if(siteNodeVersions != null)
     	{
@@ -1871,7 +1871,7 @@ public class SiteNodeController extends BaseController
 			rollbackTransaction(db);
 			throw new SystemException(e.getMessage());
 		}
-		
+
 		if (pageUrls.size() > 0)
 		{
 			Database redirectDb = null;
@@ -3866,7 +3866,7 @@ public class SiteNodeController extends BaseController
     public void markForDeletion(SiteNodeVO siteNodeVO, InfoGluePrincipal infogluePrincipal, boolean forceDelete) throws ConstraintException, SystemException
     {
     	Map<SiteNodeVO, List<ReferenceBean>> contactPersons = new HashMap<SiteNodeVO, List<ReferenceBean>>();
-    	
+
     	Database db = CastorDatabaseService.getDatabase();
         beginTransaction(db);
 		try
@@ -3948,26 +3948,22 @@ public class SiteNodeController extends BaseController
 		        	logger.info("Marking " + siteNode.getName() + " for delete");
 
 		        List<ReferenceBean> referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(siteNode.getId(), -1, false, db);
-
 				if(referenceBeanList != null && referenceBeanList.size() > 0 && !forceDelete)
 					throw new ConstraintException("SiteNode.stateId", "3405", "<br/><br/>" + siteNode.getName() + " (" + siteNode.getId() + ")");
 
 				boolean isDeletable = true;
-		        if(!forceDelete) 
-		        {
+		        if(!forceDelete)
 		        	isDeletable = getIsDeletable(siteNode.getValueObject(), infogluePrincipal, db);
-		        }
 		        
 				if(forceDelete || isDeletable)
 			    {
-					
 					siteNode.setIsDeleted(true);
 					boolean clean = true;
-					if (notifyResponsibleOnReferenceChange || !CmsPropertyHandler.getCleanReferencesAfterDelete())
+					if (notifyResponsibleOnReferenceChange)
 					{
 						clean = false;
 					}
-					
+
 					List<ReferenceBean> contactList = RegistryController.getController().deleteAllForSiteNode(siteNode.getSiteNodeId(), infogluePrincipal, clean, CmsPropertyHandler.getOnlyShowReferenceIfLatestVersion(), db);
 					if (notifyResponsibleOnReferenceChange)
 					{
@@ -3994,7 +3990,35 @@ public class SiteNodeController extends BaseController
 	}
 
 
+	/**
+	 * This method deletes a siteNode and also erases all the children and all versions.
+	 */
+	public void checkReferences(SiteNodeVO siteNodeVO, Database db, InfoGluePrincipal infogluePrincipal, Map<SiteNodeVO, List<ReferenceBean>> refBeansMap) throws ConstraintException, SystemException, Exception
+	{
+		List<Integer> siteNodeIds = getSiteNodeIdsForAllChildren(siteNodeVO.getId(), db);
+		siteNodeIds.add(siteNodeVO.getId());
 
+		int i = 0;
+		for(Integer childSiteNodeId : siteNodeIds)
+		{
+			i++;
+			try
+			{
+				SmallSiteNodeImpl siteNode = getSmallSiteNodeWithId(childSiteNodeId, db);
+				
+				List<ReferenceBean> referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(siteNode.getId(), -1, false, false, true, db);
+				if (referenceBeanList != null && referenceBeanList.size() > 0)
+				{
+					refBeansMap.put(siteNode.getValueObject(), referenceBeanList);
+				}
+			}
+			catch(SystemException e)
+			{
+				logger.warn("Problem checking content: " + childSiteNodeId + " for references. Message: " + e.getMessage(), e);
+			}
+		}
+	}
+	
     /**
 	 * This method restores a siteNode.
 	 */

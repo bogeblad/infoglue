@@ -3607,7 +3607,7 @@ public class AccessRightController extends BaseController
 		StringBuffer sb = new StringBuffer();
 		try
 		{
-			System.out.println(accessRight.getInterceptionPointName());
+			//System.out.println(accessRight.getInterceptionPointName());
 			if(accessRight.getInterceptionPointName().startsWith("SiteNodeVersion"))
 			{
 				SiteNodeVersionVO snvVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(accessRight.getParameters()));

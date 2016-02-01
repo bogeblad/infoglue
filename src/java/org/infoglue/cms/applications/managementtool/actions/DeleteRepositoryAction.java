@@ -290,11 +290,11 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 
 	public String doDeleteProcessBean() throws Exception
 	{
-		System.out.println("this.processId:" + this.processId);
+		//System.out.println("this.processId:" + this.processId);
 		if(this.processId != null)
 		{
 			ProcessBean pb = ProcessBean.getProcessBean(DeleteRepositoryAction.class.getName(), processId);
-			System.out.println("pb:" + pb);
+			//System.out.println("pb:" + pb);
 			if(pb != null)
 				pb.removeProcess();
 		}

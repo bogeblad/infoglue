@@ -406,7 +406,7 @@ public interface TemplateController
             boolean clean);
 
     /**
-     * This method deliveres a String with the content-attribute asked for a
+     * This method delivers a String with the content-attribute asked for a
      * specific content and ensure not to get decorated attributes if EditOnSite is
      * turned on.
      * 
@@ -457,13 +457,13 @@ public interface TemplateController
 	        Integer languageId, String attributeName, boolean clean, Set contentVersionId, Set<String> usedContentEntities);
 
     /**
-     * This method deliveres a String with the content-attribute asked for if it exists in the content
+     * This method delivers a String with the content-attribute asked for if it exists in the content
      * defined in the url-parameter contentId.
      */
     public abstract String getContentAttribute(String attributeName);
 
     /**
-     * This method deliveres a String with the content-attribute asked for.
+     * This method delivers a String with the content-attribute asked for.
      * As the siteNode can have multiple bindings as well as a content as a parameter this
      * parameter requires a bindingName which refers to the AvailableServiceBinding.name-attribute. 
      */
@@ -471,7 +471,7 @@ public interface TemplateController
             String attributeName);
 
     /**
-     * This method deliveres a String with the content-attribute asked for.
+     * This method delivers a String with the content-attribute asked for.
      * As the siteNode can have multiple bindings as well as a content as a parameter this
      * parameter requires a bindingName which refers to the AvailableServiceBinding.name-attribute. 
      */
@@ -479,7 +479,7 @@ public interface TemplateController
             String attributeName);
 
     /**
-     * This method deliveres a String with the content-attribute asked for in the language asked for.
+     * This method delivers a String with the content-attribute asked for in the language asked for.
      * As the siteNode can have multiple bindings as well as a content as a parameter this
      * parameter requires a bindingName which refers to the AvailableServiceBinding.name-attribute. 
      */
@@ -488,7 +488,7 @@ public interface TemplateController
 	 
 
 	/**
-	 * This method deliveres a String with the content-attribute asked for in the language asked for.
+	 * This method delivers a String with the content-attribute asked for in the language asked for.
 	 * If the attribute is not found in the language requested it fallbacks to the master language.
 	 */
 
@@ -496,14 +496,14 @@ public interface TemplateController
 	
 
     /**
-     * This method deliveres a String with the content-attribute asked for after it has been parsed and all special tags have been converted.
+     * This method delivers a String with the content-attribute asked for after it has been parsed and all special tags have been converted.
      * As the siteNode can have multiple bindings as well as a content as a parameter this
      * parameter requires a bindingName which refers to the AvailableServiceBinding.name-attribute. 
      */
     public abstract String getParsedContentAttribute(String attributeName);
 
     /**
-     * This method deliveres a String with the content-attribute asked for after it has been parsed and all special tags have been converted.
+     * This method delivers a String with the content-attribute asked for after it has been parsed and all special tags have been converted.
      * As the siteNode can have multiple bindings as well as a content as a parameter this
      * parameter requires a bindingName which refers to the AvailableServiceBinding.name-attribute. 
      */
@@ -511,7 +511,7 @@ public interface TemplateController
             String contentBindningName, String attributeName);
 
     /**
-     * This method deliveres a String with the content-attribute asked for after it has been parsed and all special tags have been converted.
+     * This method delivers a String with the content-attribute asked for after it has been parsed and all special tags have been converted.
      * The attribute is fetched from the specified content.
      */
     public abstract String getParsedContentAttribute(Integer contentId,
@@ -572,57 +572,57 @@ public interface TemplateController
 	//public abstract static String untransformAttribute(String plainAttribute);
 
     /**
-     * This method deliveres a list of strings which represents all assetKeys for a content.
+     * This method delivers a list of strings which represents all assetKeys for a content.
      */
     public abstract Collection getAssetKeys(String contentBindningName);
 
 	/**
-	 * This method deliveres a list of DigitalAssetVO-objects which represents all assets bound to a property.
+	 * This method delivers a list of DigitalAssetVO-objects which represents all assets bound to a property.
 	 */
 	 
 	public List getAssets(Integer contentId);
 
 	/**
-	 * This method deliveres a list of DigitalAssetVO-objects which represents a certain asset for a content.
+	 * This method delivers a list of DigitalAssetVO-objects which represents a certain asset for a content.
 	 */
 	 
 	public DigitalAssetVO getAsset(Integer contentId, String assetKey);
 
 	/**
-	 * This method deliveres a list of assetIds which represents all assets for a content.
+	 * This method delivers a list of assetIds which represents all assets for a content.
 	 */
 	 
 	public Collection getAssetIds(Integer contentId);
 
 
     /**
-     * This method deliveres a list of strings which represents all assetKeys for a content.
+     * This method delivers a list of strings which represents all assetKeys for a content.
      */
     public abstract Collection getAssetKeys(Integer contentId);
 
 	/**
-	 * This method deliveres a String with the URL to the thumbnail for the digital asset asked for.
+	 * This method delivers a String with the URL to the thumbnail for the digital asset asked for.
 	 * This method takes a key for the asset you want to make a thumbnail from.
 	 */
 	 
 	public String getAssetThumbnailUrlForAssetWithId(Integer digitalAssetId, int width, int height);
 
     /**
-     * This method deliveres a String with the URL to the thumbnail for the digital asset asked for.
+     * This method delivers a String with the URL to the thumbnail for the digital asset asked for.
      * This method assumes that the content sent in only has one asset attached.
      */
     public abstract String getAssetThumbnailUrl(Integer contentId, int width,
             int height);
 
     /**
-     * This method deliveres a String with the URL to the thumbnail for the digital asset asked for.
+     * This method delivers a String with the URL to the thumbnail for the digital asset asked for.
      * This method takes a key for the asset you want to make a thumbnail from.
      */
     public abstract String getAssetThumbnailUrl(Integer contentId,
             String assetKey, int width, int height);
 
     /**
-     * This method deliveres a String with the URL to the thumbnail of the digital asset asked for.
+     * This method delivers a String with the URL to the thumbnail of the digital asset asked for.
      * As the siteNode can have multiple bindings as well as a content as a parameter this
      * parameter requires a bindingName which refers to the AvailableServiceBinding.name-attribute. 
      */
@@ -630,7 +630,7 @@ public interface TemplateController
             int width, int height);
 
     /**
-     * This method deliveres a String with the URL to the thumbnail of the digital asset asked for.
+     * This method delivers a String with the URL to the thumbnail of the digital asset asked for.
      * As the siteNode can have multiple bindings as well as a content as a parameter this
      * parameter requires a bindingName which refers to the AvailableServiceBinding.name-attribute. 
      */
@@ -638,7 +638,7 @@ public interface TemplateController
             String assetKey, int width, int height);
 
     /**
-     * This method deliveres a String with the URL to the digital asset asked for.
+     * This method delivers a String with the URL to the digital asset asked for.
      * As the siteNode can have multiple bindings as well as a content as a parameter this
      * parameter requires a bindingName which refers to the AvailableServiceBinding.name-attribute. 
      */
@@ -647,7 +647,7 @@ public interface TemplateController
     public abstract String getEncodedUrl(String s, String enc);
 
 	/**
-	 * This method deliveres a String with the URL to the digital asset asked for.
+	 * This method delivers a String with the URL to the digital asset asked for.
 	 */
 	 
 	public String getAssetUrlForAssetWithId(Integer digitalAssetId);
@@ -655,29 +655,29 @@ public interface TemplateController
 	public String getAssetFilePathForAssetWithId(Integer digitalAssetId);
 
     /**
-     * This method deliveres a String with the URL to the digital asset asked for.
+     * This method delivers a String with the URL to the digital asset asked for.
      */
     public abstract String getAssetUrl(Integer contentId);
 
     /**
-     * This method deliveres a collection of strings with the URL to the digital assets for a certain content.
+     * This method delivers a collection of strings with the URL to the digital assets for a certain content.
      */
     public abstract List getAssetUrls(Integer contentId);
 
     /**
-     * This method deliveres a String with the URL to the digital asset asked for.
+     * This method delivers a String with the URL to the digital asset asked for.
      */
     public abstract String getAssetUrl(Integer contentId, String assetKey);
 
     /**
-     * This method deliveres a String with the URL to the digital asset asked for.
+     * This method delivers a String with the URL to the digital asset asked for.
      * As the siteNode can have multiple bindings as well as a content as a parameter this
      * parameter requires a bindingName which refers to the AvailableServiceBinding.name-attribute. 
      */
     public abstract String getAssetUrl(String contentBindningName, int index);
 
     /**
-     * This method deliveres a String with the URL to the digital asset asked for.
+     * This method delivers a String with the URL to the digital asset asked for.
      * As the siteNode can have multiple bindings as well as a content as a parameter this
      * parameter requires a bindingName which refers to the AvailableServiceBinding.name-attribute. 
      */
@@ -685,14 +685,14 @@ public interface TemplateController
             String assetKey);
 
     /**
-     * This method deliveres a String with the URL to the digital asset asked for. In this special case the image
+     * This method delivers a String with the URL to the digital asset asked for. In this special case the image
      * is fetched from the article being generated. This means that this method only is of interest if you have attached
      * assets to either a template or to an content and are useing parsedContentAttribute.
      */
     public abstract String getInlineAssetUrl(String assetKey);
 
     /**
-     * This method deliveres a String with the URL to the digital asset asked for. In this special case the image
+     * This method delivers a String with the URL to the digital asset asked for. In this special case the image
      * is fetched from the article being generated. This means that this method only is of interest if you have attached
      * assets to either a template or to an content and are useing parsedContentAttribute.
      */
@@ -793,20 +793,20 @@ public interface TemplateController
 	public List getReferencingPages(Integer contentId, int maxRows, Boolean excludeCurrentPage);
 
     /**
-     * This method deliveres a String with the URL to the base path of the directory resulting from 
+     * This method delivers a String with the URL to the base path of the directory resulting from 
      * an unpacking of a uploaded zip-digitalAsset.
      */
     public abstract String getArchiveBaseUrl(String contentBindningName,
             String assetKey);
 
     /**
-     * This method deliveres a String with the URL to the base path of the directory resulting from 
+     * This method delivers a String with the URL to the base path of the directory resulting from 
      * an unpacking of a uploaded zip-digitalAsset.
      */
     public abstract String getArchiveBaseUrl(Integer contentId, String assetKey);
 
     /**
-	 * This method deliveres a String containing the URL to the directory resulting from unpacking of a uploaded zip-digitalAsset.
+	 * This method delivers a String containing the URL to the directory resulting from unpacking of a uploaded zip-digitalAsset.
 	 * This method is meant to be used for javascript plugins and similar bundles - and the target directory is therefore the infoglueDeliverXXXX/digitalAssets/extensions
 	 */
 	 
@@ -815,7 +815,7 @@ public interface TemplateController
     public abstract Vector getArchiveEntries(Integer contentId, String assetKey);
 
     /**
-     * This method deliveres a String with the URL to the base path of the directory resulting from 
+     * This method delivers a String with the URL to the base path of the directory resulting from 
      * an unpacking of a uploaded zip-digitalAsset.
      */
     public abstract String getArchiveBaseUrl(String contentBindningName,
@@ -845,7 +845,7 @@ public interface TemplateController
 	public abstract List getContentAttributes(String schemaValue);
 
     /**
-     * This method deliveres a String with the content-attribute asked for generated as a gif-file.
+     * This method delivers a String with the content-attribute asked for generated as a gif-file.
      * That is - the text is printed as an image. You can specify a number of things to control the 
      * generation. Just experiment and the names are pretty much self explainatory.
      * The method checks if a previous file exists that has the same attributes as the wanted one
@@ -906,7 +906,7 @@ public interface TemplateController
             String backgroundImageUrl);
 
     /**
-     * This method deliveres a String with the content-attribute asked for generated as a png-file.
+     * This method delivers a String with the content-attribute asked for generated as a png-file.
      * That is - the text is printed as an image. You can specify a number of things to control the 
      * generation. Just experiment and the names are pretty much self explainatory.
      * The method checks if a previous file exists that has the same attributes as the wanted one
@@ -980,7 +980,7 @@ public interface TemplateController
     public abstract RepositoryVO getRepositoryWithName(String name);
 
     /**
-     * This method deliveres a String with the URL to the page asked for.
+     * This method delivers a String with the URL to the page asked for.
      * As the siteNode can have multiple bindings the method requires a bindingName 
      * which refers to the AvailableServiceBinding.name-attribute. 
      */
@@ -992,7 +992,7 @@ public interface TemplateController
     public abstract String getPageUrl(WebPage webpage, Integer contentId);
 
     /**
-     * This method deliveres a String with the URL to the page asked for.
+     * This method delivers a String with the URL to the page asked for.
      * As the siteNode can have multiple bindings the method requires a bindingName 
      * which refers to the AvailableServiceBinding.name-attribute. 
      */
@@ -1064,7 +1064,7 @@ public interface TemplateController
             String contentBindningName);
 
     /**
-     * This method deliveres a String with the URL to the page asked for.
+     * This method delivers a String with the URL to the page asked for.
      * As the siteNode can have multiple bindings the method requires a bindingName 
      * which refers to the AvailableServiceBinding.name-attribute. This method also allows the user
      * to specify that the content is important. This method is mostly used for master/detail-pages.
@@ -1073,7 +1073,7 @@ public interface TemplateController
             Integer contentId);
 
     /**
-     * This method deliveres a String with the URL to the page asked for.
+     * This method delivers a String with the URL to the page asked for.
      * As the siteNode can have multiple bindings the method requires a bindingName and also allows the user to specify a 
      * special siteNode in an ordered collection. 
      * which refers to the AvailableServiceBinding.name-attribute. 
@@ -1082,7 +1082,7 @@ public interface TemplateController
             int position);
 
     /**
-     * This method deliveres a String with the URL to the page asked for.
+     * This method delivers a String with the URL to the page asked for.
      * As the siteNode can have multiple bindings the method requires a bindingName and also allows the user to specify a 
      * special siteNode in an ordered collection. 
      * which refers to the AvailableServiceBinding.name-attribute. This method also allows the user
@@ -1092,13 +1092,13 @@ public interface TemplateController
             int position, Integer contentId);
 
     /**
-     * This method deliveres a new url pointing to the same address as now but in the language 
+     * This method delivers a new url pointing to the same address as now but in the language 
      * corresponding to the code sent in.
      */
     public abstract String getCurrentPageUrl();
     
     /**
-     * This method deliveres a new url pointing to the same address as now but in the language 
+     * This method delivers a new url pointing to the same address as now but in the language 
      * corresponding to the code sent in with the flag that skips adding languageId parameter to the url.
      */
     public abstract String getCurrentPageUrl(boolean includeLanguageId);
@@ -1125,11 +1125,11 @@ public interface TemplateController
 	public String getOriginalFullURL();
 
     /**
-     * This method deliveres a new url pointing to the same address as now but with new parameters.
+     * This method delivers a new url pointing to the same address as now but with new parameters.
      */
     public abstract String getPageUrl(Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId);
     /**
-     * This method deliveres a new url pointing to the same address as now but with new parameters.
+     * This method is the same as above but with context parameter
      */
     public abstract String getPageUrl(Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId,  String stateId);
     /**
@@ -1171,7 +1171,7 @@ public interface TemplateController
     public abstract SiteNodeVO getParentSiteNode(Integer siteNodeId);
 
     /**
-     * This method deliveres a new url pointing to the same address as now but in the language 
+     * This method delivers a new url pointing to the same address as now but in the language 
      * corresponding to the code sent in.
      */
     public abstract String getPageUrlAfterLanguageChange(String languageCode);
@@ -1182,13 +1182,13 @@ public interface TemplateController
     public abstract String getPageUrlAfterLanguageChange(String languageCode, Boolean includeLanguagId);
     
     /**
-     * This method deliveres a String with the Navigation title the page the user are on has.
+     * This method delivers a String with the Navigation title the page the user are on has.
      * The navigation-title is fetched from the meta-info-content bound to the site node.
      */
     public abstract String getPageTitle();
 
     /**
-     * This method deliveres a String with the Navigation title the page asked for has.
+     * This method delivers a String with the Navigation title the page asked for has.
      * As the siteNode can have multiple bindings the method requires a bindingName 
      * which refers to the AvailableServiceBinding.name-attribute. The navigation-title is fetched
      * from the meta-info-content bound to the site node.
@@ -1196,13 +1196,13 @@ public interface TemplateController
     public abstract String getPageNavTitle(String structureBindningName);
 
     /**
-     * This method deliveres a String with the Navigation title the page asked for has.
+     * This method delivers a String with the Navigation title the page asked for has.
      * The navigation-title is fetched from the meta-info-content bound to the site node.
      */
     public abstract String getPageNavTitle(Integer siteNodeId);
 
     /**
-     * This method deliveres a String with the Navigation title the page asked for has.
+     * This method delivers a String with the Navigation title the page asked for has.
      * As the siteNode can have multiple bindings the method requires a bindingName and a collection index. 
      * The navigation-title is fetched from the meta-info-content bound to the site node.
      */
@@ -1515,13 +1515,13 @@ public interface TemplateController
 	public abstract ContentTypeDefinitionVO getContentTypeDefinitionVO(String name);
 
 	/**
-	 * This method deliveres a list of strings which represents all assetKeys defined for a contentTypeDefinition.
+	 * This method delivers a list of strings which represents all assetKeys defined for a contentTypeDefinition.
 	 */
 	 
 	public Collection getContentTypeDefinitionAssetKeys(String schemaValue); 
 
 	/**
-	 * This method deliveres a list of all Categories defined for a contentTypeDefinition.
+	 * This method delivers a list of all Categories defined for a contentTypeDefinition.
 	 */
 	 
 	public Collection getContentTypeDefinitionCategories(String schemaValue); 

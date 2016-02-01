@@ -1527,7 +1527,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 		return pageUrl;
 	}
 	/**
-	 * This method translates stateId into context values
+	 * This method translates stateId into context values before composing the url
 	 * */
 	public String getPageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, String stateId, DeliveryContext deliveryContext) throws SystemException, Exception
 	{

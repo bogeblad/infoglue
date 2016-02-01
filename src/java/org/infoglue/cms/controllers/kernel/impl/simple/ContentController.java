@@ -4325,7 +4325,7 @@ public class ContentController extends BaseController
 		while(rs.next() && sizes.size() < 500)
 		{
 			sizes.put(new Integer(rs.getString(1)), new Long(rs.getString(4)));
-            System.out.println(new Integer(rs.getString(1)) + ":" + new Long(rs.getString(4)));
+            //System.out.println(new Integer(rs.getString(1)) + ":" + new Long(rs.getString(4)));
             if(new Long(rs.getString(4)) < 2000000)
             	break;
 		}

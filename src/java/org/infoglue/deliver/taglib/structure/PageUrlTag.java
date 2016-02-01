@@ -30,6 +30,7 @@ import javax.servlet.jsp.JspTagException;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.deliver.applications.databeans.DeliveryContext;
 import org.infoglue.deliver.controllers.kernel.URLComposer;
+import org.infoglue.deliver.controllers.kernel.impl.simple.BasicURLComposer;
 import org.infoglue.deliver.controllers.kernel.impl.simple.ComponentLogic;
 import org.infoglue.deliver.controllers.kernel.impl.simple.NodeDeliveryController;
 import org.infoglue.deliver.taglib.component.ComponentLogicTag;
@@ -90,19 +91,19 @@ public class PageUrlTag extends ComponentLogicTag
 	    if(this.propertyName != null) {
 	    	ComponentLogic componentLogic = getController().getComponentLogic();
 	 		Map property = componentLogic.getInheritedComponentProperty(componentLogic.getInfoGlueComponent(), propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
-	 		this.siteNodeId = componentLogic.getSiteNodeId(property);
+	 		siteNodeId = componentLogic.getSiteNodeId(property);
 	 		if(siteNodeId == null) {
 	 			return "";
 	 		}
 	    }
 
-	    if (this.stateId == null) {
+	    if (stateId == null) {
 	    	url = getController().getPageUrl(siteNodeId, languageId, includeLanguageId, contentId);
 	    } else {
 	    	DeliveryContext dc = getController().getDeliveryContext();
-	    	dc.setOperatingMode(this.stateId);
-	    	url = getController().getPageUrl(this.siteNodeId, this.languageId, this.includeLanguageId, -1, this.stateId);
-
+	    	dc.setOperatingMode(stateId);
+	    	url = getController().getPageUrl(siteNodeId, languageId, includeLanguageId, -1, stateId);
+	    	
 	    }
 	    if (forceHTTPProtocol || CmsPropertyHandler.getForceHTTPProtocol()) {
 	    	url = url.replaceFirst("https:", "http:");

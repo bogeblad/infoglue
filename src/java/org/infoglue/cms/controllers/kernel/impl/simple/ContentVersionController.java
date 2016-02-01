@@ -2953,7 +2953,7 @@ public class ContentVersionController extends BaseController
 					cleanVersions(numberOfVersionsToKeep, partList);
 				}
 				cleanedVersions = cleanedVersions + partList.size();
-				System.out.println("Cleaned " + cleanedVersions + " of " + contentVersionVOList.size());
+				//System.out.println("Cleaned " + cleanedVersions + " of " + contentVersionVOList.size());
 				partList.clear();
 				maxIndex = (contentVersionVOList.size() > batchLimit ? batchLimit : contentVersionVOList.size());
 				partList = contentVersionVOList.subList(0, maxIndex);
@@ -3170,7 +3170,7 @@ public class ContentVersionController extends BaseController
 	 */
 	public List<SmallestContentVersionVO> getSmallestContentVersionVOListImpl(List<Integer> contentIdList, Integer languageId, int numberOfVersionsToKeep, boolean keepOnlyOldPublishedVersions, long minimumTimeBetweenVersionsDuringClean) throws SystemException 
 	{
-		System.out.println("numberOfVersionsToKeep:" + numberOfVersionsToKeep);
+		//System.out.println("numberOfVersionsToKeep:" + numberOfVersionsToKeep);
 
 		Database db = CastorDatabaseService.getDatabase();
     	

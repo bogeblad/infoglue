@@ -1059,8 +1059,6 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	public List getInheritedDigitalAssets()
 	{
 		List filteredDigitalAssets = new ArrayList();
-		boolean istrue = this.contentVO != null && this.contentVO.getContentId() != null && this.contentVO.getContentId().intValue() != -1;
-		System.out.println("cmsproperty was: " + CmsPropertyHandler.getViewInheritedAssetsInContentDialog() + "::::" + istrue);
 		try
 		{
 
@@ -1088,7 +1086,6 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	       	}
 			else if(this.contentVersionVO != null && this.contentVersionVO.getContentVersionId() != null)
 	       	{
-				System.out.println("1");
 				this.contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(this.contentVersionVO.getId());
 				if (CmsPropertyHandler.getViewInheritedAssetsInContentDialog()) {
 					filteredDigitalAssets = DigitalAssetController.getDigitalAssetVOList(this.contentVersionVO.getContentVersionId());
@@ -1105,7 +1102,6 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
    				List<ReferenceBean> referenceBeans = RegistryController.getController().getReferencingObjectsForContentAsset(this.contentVersionVO.getContentId(), assetVO.getAssetKey(), 100, false, true, true);
    				assetVO.setReferencingNumberOfObjects(referenceBeans.size());
-   				System.out.println("2");
    			}
 		}
 		catch(Exception e)

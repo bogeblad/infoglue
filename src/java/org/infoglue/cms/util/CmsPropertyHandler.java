@@ -2841,6 +2841,17 @@ public class CmsPropertyHandler
 		}
 	}
 
+	/**
+	 * If a repository has no access rights defined - should it be available to users or not by default?
+	 * @return
+	 */
+	public static boolean getShowRepositoriesByDefaultIfNoAccessRightsAreDefined()
+	{
+		String showRepositoriesByDefaultIfNoAccessRightsAreDefined = getServerNodeProperty("showRepositoriesByDefaultIfNoAccessRightsAreDefined", true, "true");
+		
+		return Boolean.parseBoolean(showRepositoriesByDefaultIfNoAccessRightsAreDefined);
+	}
+
 	public static String getDefaultRepositoryAccessRoles()
 	{
 		return getServerNodeProperty("defaultRepositoryAccessRoles", true, null);

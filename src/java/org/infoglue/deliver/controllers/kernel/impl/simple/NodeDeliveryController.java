@@ -1527,14 +1527,15 @@ public class NodeDeliveryController extends BaseDeliveryController
 		return pageUrl;
 	}
 	/**
-	 * This method translates stateId into context values before composing the url
-	 * */
+	 * This method returns a page url 
+	 * @param stateId (0,1,2,3)
+	 */
 	public String getPageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, String stateId, DeliveryContext deliveryContext) throws SystemException, Exception
 	{
 		String pageUrl = "";
 		String applicationContext = "";
 		String context = "";
-
+		/* Translate stateId into context */
 		if (!stateId.equalsIgnoreCase("3")) {
 
 			applicationContext = CmsPropertyHandler.getServletContext();

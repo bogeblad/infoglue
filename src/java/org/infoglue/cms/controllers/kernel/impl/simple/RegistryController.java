@@ -1809,7 +1809,17 @@ public class RegistryController extends BaseController
                 			isLocalRepo = true;
                 	}
                 		
+            		ContentVO referencingContentVO = ContentController.getContentController().getSmallContentVOWithId(new Integer(registryVO.getReferencingEntityCompletingId()), db);
+
                     ContentVersionVO contentVersion = ContentVersionController.getContentVersionController().getContentVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
+            		ContentVersionVO latestCVVOForReferencingContent = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(referencingContentVO.getId(), contentVersion.getLanguageId(), db);
+
+            		boolean isLatest = (contentVersion.getId().intValue() == latestCVVOForReferencingContent.getId().intValue());
+            		if(!isLatest)
+            		{
+	            		continue;
+            		}
+            		
                     //logger.info("content: " + contentVersion.getOwningContent().getContentId() + " - contentVersion: " + contentVersion.getId());
                     Boolean hasVersion = checkedLanguageVersions.get("" + contentVersion.getContentId() + "_" + contentVersion.getLanguageId());
                     if(hasVersion != null && onlyOneVersionPerLanguage)
@@ -1873,15 +1883,23 @@ public class RegistryController extends BaseController
                 try
                 {
 	                SiteNodeVersionVO siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
+	                SiteNodeVO referencingSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersion.getSiteNodeId(), db);
 
                 	Boolean isLocalRepo = false;
                 	if(excludeInternalRepoReferences)
                 	{
                 		ContentVO checkedContentVO = ContentController.getContentController().getSmallContentVOWithId(contentId, db);
-    	                SiteNodeVO referencingSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersion.getSiteNodeId(), db);
                 		if(checkedContentVO.getRepositoryId().intValue() == referencingSiteNodeVO.getRepositoryId().intValue())
                 			isLocalRepo = true;
                 	}
+
+            		SiteNodeVersionVO latestSNVVOForReferencingContent = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, referencingSiteNodeVO.getId());
+
+            		boolean isLatest = (siteNodeVersion.getId().intValue() == latestSNVVOForReferencingContent.getId().intValue());
+            		if(!isLatest)
+            		{
+	            		continue;
+            		}
 
 	                if(!siteNodeVersion.getIsActive() || isLocalRepo)
 	                	add = false;
@@ -2514,12 +2532,31 @@ public class RegistryController extends BaseController
             		SiteNodeVO referencingSiteNodeVO = SiteNodeController.getController().getSmallSiteNodeVOWithId(new Integer(registryVO.getReferencingEntityCompletingId()), db);
             		if(checkedSiteNodeVO.getRepositoryId().intValue() == referencingSiteNodeVO.getRepositoryId().intValue())
             			isLocalRepo = true;
+            		
+                	SiteNodeVersionVO siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
+            		SiteNodeVersionVO latestSNVVOForReferencingContent = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, referencingSiteNodeVO.getId());
+
+            		boolean isLatest = (siteNodeVersion.getId().intValue() == latestSNVVOForReferencingContent.getId().intValue());
+            		if(!isLatest)
+            		{
+	            		continue;
+	            	}
         		}
         		else if(registryVO.getReferencingEntityCompletingName().contains("Content"))
         		{
         			ContentVO referencingContentVO = ContentController.getContentController().getSmallContentVOWithId(new Integer(registryVO.getReferencingEntityCompletingId()), db);
             		if(checkedSiteNodeVO.getRepositoryId().intValue() == referencingContentVO.getRepositoryId().intValue())
             			isLocalRepo = true;
+            		
+                	ContentVersionVO contentVersion = ContentVersionController.getContentVersionController().getContentVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
+            		ContentVersionVO latestCVVOForReferencingContent = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(referencingContentVO.getId(), contentVersion.getLanguageId(), db);
+
+            		boolean isLatest = (contentVersion.getId().intValue() == latestCVVOForReferencingContent.getId().intValue());
+            		if(!isLatest)
+            		{
+	            		continue;
+            		}
+
         		}
         	}
         	

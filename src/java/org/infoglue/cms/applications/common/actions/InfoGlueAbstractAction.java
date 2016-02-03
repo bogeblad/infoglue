@@ -1549,6 +1549,11 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 
 	public String getContentPath(Integer contentId) throws Exception
 	{
+		return getContentPath(contentId, false);
+	}
+	
+	public String getContentPath(Integer contentId, boolean includeRepoName) throws Exception
+	{
 		StringBuffer sb = new StringBuffer();
 		
 		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId);
@@ -1559,6 +1564,12 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 			sb.insert(0, contentVO.getName() + "/");
 		}
 		sb.insert(0, "/");
+		
+		if(includeRepoName)
+		{
+			RepositoryVO repoVO = RepositoryController.getController().getRepositoryVOWithId(contentVO.getRepositoryId());
+			sb.insert(0, "[" + repoVO.getName() + "] ");
+		}
 		
 		return sb.toString();
 	}
@@ -1608,11 +1619,18 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 
 	public String getLocalizedSiteNodePath(Integer siteNodeId) throws Exception
 	{
+		return getLocalizedSiteNodePath(siteNodeId, false);
+	}
+	
+	public String getLocalizedSiteNodePath(Integer siteNodeId, boolean includeRepoName) throws Exception
+	{
 		Integer structureLanguageId = (Integer)getHttpSession().getAttribute("structureLanguageId");
 		logger.info("structureLanguageId:" + structureLanguageId);	
 		StringBuffer sb = new StringBuffer();
 		
 		SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
+		SiteNodeVO startSiteNodeVO = siteNodeVO;
+		
 		while(siteNodeVO != null)
 		{
 			String pageName = siteNodeVO.getName();
@@ -1642,6 +1660,12 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 				siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVO.getParentSiteNodeId());
 			else
 				siteNodeVO = null;
+		}
+		
+		if(includeRepoName)
+		{
+			RepositoryVO repoVO = RepositoryController.getController().getRepositoryVOWithId(startSiteNodeVO.getRepositoryId());
+			sb.insert(0, "[" + repoVO.getName() + "] ");
 		}
 		
 		return sb.toString();

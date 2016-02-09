@@ -485,7 +485,8 @@ public class BasicURLComposer extends URLComposer
 		boolean isDecoratedUrl = request == null ? false : request.getRequestURI().indexOf("!renderDecoratedPage") > -1;
 		
 		logger.debug("URL is decorated: " + isDecoratedUrl);
-		if (enableNiceURI && (!isDecoratedUrl || isDecorated) && !deliveryContext.getDisableNiceUri())
+		logger.debug("isDecorated was: " + isDecorated);
+		if (enableNiceURI && (!isDecoratedUrl || !isDecorated) && !deliveryContext.getDisableNiceUri())
 		{
 			SiteNodeVO siteNode = SiteNodeController.getController().getSmallSiteNodeVOWithId(siteNodeId, db);
 			if(siteNode == null)

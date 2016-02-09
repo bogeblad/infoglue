@@ -1131,7 +1131,7 @@ public interface TemplateController
     /**
      * This method is the same as above but with context parameter
      */
-    public abstract String getPageUrl(Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId,  String stateId);
+    public abstract String getPageUrl(Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId,  String operatingMode, boolean isDecorated);
     /**
      * This method constructs a string representing the path to the page with respect to where in the
      * structure the page is. It also takes the page title into consideration.

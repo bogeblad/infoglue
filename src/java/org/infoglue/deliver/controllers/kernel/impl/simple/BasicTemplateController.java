@@ -5946,13 +5946,13 @@ public class BasicTemplateController implements TemplateController
 		return pageUrl;
 	}
 	
-	public String getPageUrl(Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId,  String stateId) 
+	public String getPageUrl(Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId,  String operatingMode, boolean isDecorated) 
 	{
 		String pageUrl = "";
 		
 		try
 		{
-			pageUrl = this.nodeDeliveryController.getPageUrl(getDatabase(), this.getPrincipal(), this.siteNodeId, this.languageId, includeLanguageId, stateId, this.deliveryContext);
+			pageUrl = this.nodeDeliveryController.getPageUrl(getDatabase(), this.getPrincipal(), this.siteNodeId, this.languageId, includeLanguageId, operatingMode, isDecorated, this.deliveryContext);
 		}
 		catch(Exception e)
 		{

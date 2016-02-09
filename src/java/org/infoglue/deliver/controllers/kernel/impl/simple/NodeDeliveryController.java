@@ -1530,23 +1530,22 @@ public class NodeDeliveryController extends BaseDeliveryController
 	 * This method returns a page url 
 	 * @param stateId (0,1,2,3)
 	 */
-	public String getPageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, String stateId, DeliveryContext deliveryContext) throws SystemException, Exception
+	public String getPageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, String operatingMode, boolean isDecorated, DeliveryContext deliveryContext) throws SystemException, Exception
 	{
 		String pageUrl = "";
 		String applicationContext = "";
 		String context = "";
 		/* Translate stateId into context */
-		if (!stateId.equalsIgnoreCase("3")) {
+		if (!operatingMode.equalsIgnoreCase("3")) {
 
 			applicationContext = CmsPropertyHandler.getServletContext();
-			
+
 			if (!applicationContext.startsWith("/")) {
 				applicationContext = "/" + applicationContext;
 			}
-		}	
+		}
 
-		pageUrl = urlComposer.composePageUrl(db, infoGluePrincipal, siteNodeId, languageId, includeLanguageId, -1, applicationContext, deliveryContext, true, true, stateId, context);
-
+		pageUrl = urlComposer.composePageUrl(db, infoGluePrincipal, siteNodeId, languageId, includeLanguageId, -1, applicationContext, deliveryContext, true, true, operatingMode, isDecorated, context);
 		
 		return pageUrl;
 	}

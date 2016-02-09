@@ -71,7 +71,7 @@ public abstract class URLComposer
 	
 	public abstract String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception;
 
-	public abstract String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId, String applicationContext, DeliveryContext deliveryContext, Boolean enableNiceURI, Boolean useDNSNameInUrls, String operatingMode, String context) throws SystemException, Exception;
+	public abstract String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId, String applicationContext, DeliveryContext deliveryContext, Boolean enableNiceURI, Boolean useDNSNameInUrls, String operatingMode, boolean isDecorated, String context) throws SystemException, Exception;
 	
 	public abstract String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, String applicationContext, DeliveryContext deliveryContext) throws SystemException, Exception;
 

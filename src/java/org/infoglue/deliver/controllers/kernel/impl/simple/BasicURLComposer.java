@@ -371,7 +371,7 @@ public class BasicURLComposer extends URLComposer
 	public String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception {
 		return 	 composePageUrl(db, infoGluePrincipal, siteNodeId, languageId, includeLanguageId, contentId, CmsPropertyHandler.getServletContext(), deliveryContext);
 	}
-	public String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId, String applicationContext, DeliveryContext deliveryContext, Boolean enableNiceURI, Boolean useDNSNameInUrls, String operatingMode, String context) throws SystemException, Exception
+	public String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId, String applicationContext, DeliveryContext deliveryContext, Boolean enableNiceURI, Boolean useDNSNameInUrls, String operatingMode, boolean isDecorated, String context) throws SystemException, Exception
     {
     	String url = null;
 
@@ -483,8 +483,9 @@ public class BasicURLComposer extends URLComposer
 		}
 
 		boolean isDecoratedUrl = request == null ? false : request.getRequestURI().indexOf("!renderDecoratedPage") > -1;
+		
 		logger.debug("URL is decorated: " + isDecoratedUrl);
-		if (enableNiceURI && !isDecoratedUrl && !deliveryContext.getDisableNiceUri())
+		if (enableNiceURI && (!isDecoratedUrl || isDecorated) && !deliveryContext.getDisableNiceUri())
 		{
 			SiteNodeVO siteNode = SiteNodeController.getController().getSmallSiteNodeVOWithId(siteNodeId, db);
 			if(siteNode == null)

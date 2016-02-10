@@ -44,6 +44,7 @@ public class CreateContentWizardChooseParentAction extends CreateContentWizardAb
 	private String tree;
 	private String hideLeafs;
 	private Integer siteNodeId;
+	private Integer selectedRepositoryId;
 	private Integer languageId;
 	private String componentId;
 	private String propertyName;
@@ -79,7 +80,7 @@ public class CreateContentWizardChooseParentAction extends CreateContentWizardAb
   	
 		return topRepositoryId;
 	}
-  
+	
 	public void setHideLeafs(String hideLeafs)
 	{
 		this.hideLeafs = hideLeafs;
@@ -127,12 +128,14 @@ public class CreateContentWizardChooseParentAction extends CreateContentWizardAb
 	
 	public Integer getRepositoryId() 
 	{
+		if (this.getSelectedRepositoryId() != null) {
+			this.repositoryId = this.getSelectedRepositoryId();
+		}
 		try
 		{
 			if(this.repositoryId == null)
 			{	
 				this.repositoryId = getContentRepositoryId();
-					
 				if(this.repositoryId == null)
 				{
 					this.repositoryId = getTopRepositoryId();
@@ -142,8 +145,7 @@ public class CreateContentWizardChooseParentAction extends CreateContentWizardAb
 		}
 		catch(Exception e)
 		{
-		}
-	    	
+		}	
 		return repositoryId;
 	}
 
@@ -196,7 +198,14 @@ public class CreateContentWizardChooseParentAction extends CreateContentWizardAb
 	{
 		return repositories;
 	}
-
+	
+	public RepositoryVO getRepositoryVO () throws ConstraintException, SystemException, Bug {
+		if (this.repositoryId != null) { 
+			return RepositoryController.getController().getRepositoryVOWithId(this.repositoryId);
+		} 
+		return null;
+	}
+	
 	public String getComponentId() 
 	{
 		return componentId;
@@ -206,10 +215,19 @@ public class CreateContentWizardChooseParentAction extends CreateContentWizardAb
 	{
 		this.componentId = componentId;
 	}
+	
+	public Integer getSelectedRepositoryId() 
+	{
+		return selectedRepositoryId;
+	}
 
+	public void setSelectedRepositoryId(Integer selectedRepositoryId) 
+	{
+		this.selectedRepositoryId = selectedRepositoryId;
+	}
 	public Integer getLanguageId() 
 	{
-		return languageId;
+		return languageId;	
 	}
 
 	public void setLanguageId(Integer languageId) 

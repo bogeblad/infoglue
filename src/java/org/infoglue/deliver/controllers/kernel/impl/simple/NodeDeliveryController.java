@@ -1539,10 +1539,6 @@ public class NodeDeliveryController extends BaseDeliveryController
 		if (!operatingMode.equalsIgnoreCase("3")) {
 
 			applicationContext = CmsPropertyHandler.getServletContext();
-
-			if (!applicationContext.startsWith("/")) {
-				applicationContext = "/" + applicationContext;
-			}
 		}
 
 		pageUrl = urlComposer.composePageUrl(db, infoGluePrincipal, siteNodeId, languageId, includeLanguageId, -1, applicationContext, deliveryContext, true, true, operatingMode, isDecorated, context);

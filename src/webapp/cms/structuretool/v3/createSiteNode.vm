@@ -182,7 +182,11 @@
 		$("#languageTabsContainer").tabs({ show:function() { 
 			
 		} $selectedCode});
-
+		
+		$("input[name='" + window.currentMetaInfoLanguageCode + "_NiceURIName']").keyup(function() {
+			replaceNiceURINonAsciiWithSpecifiedChars($("input[name='" + window.currentMetaInfoLanguageCode + "_NiceURIName']").val());
+		});
+		
 		$("input[name='name']").blur(function() {
 		  	//alert( "Handler for .blur() called." );
 		  	$(".autofill").val($("input[name='name']").val());

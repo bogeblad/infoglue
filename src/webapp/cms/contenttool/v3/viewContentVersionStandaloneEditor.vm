@@ -594,7 +594,24 @@
 			$("input.reset").hide();
 			$("input.preview").hide();
 			$("input.attachAsset").hide();
-			
+			$("input[id='NiceURIName']").keyup(function() {
+				var text = $("input[id='NiceURIName']");
+				replaceNiceURINonAsciiWithSpecifiedChars(text.val());
+			});
+			function replaceNiceURINonAsciiWithSpecifiedChars(text)
+			{
+				var data = "text=" + text;
+				$.ajax({
+					type: "POST",
+					url: "ViewCommonAjaxServices!replaceNiceURINonAsciiWithSpecifiedChars.action",
+					data: data,
+					dataType: "html", 
+					cache: false,
+					success: function(msg, textStatus){
+						$("input[id='NiceURIName']").val(msg);
+				   }
+				});
+			}
 			#if($anchor)
 				#if($!anchor == "contentVersionBlock")
 					$("#level-1").tabs({ selected: 0, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );

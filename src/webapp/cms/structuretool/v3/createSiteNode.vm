@@ -201,8 +201,10 @@
 	function replaceNiceURINonAsciiWithSpecifiedChars(text)
 	{
 		var data = "text=" + text;
+
+		data = data.replace('%','%25');
 		$.ajax({
-			type: "POST",
+			type: "GET",
 		   	url: "ViewCommonAjaxServices!replaceNiceURINonAsciiWithSpecifiedChars.action",
 		   	data: data,
 		   	dataType: "html", 

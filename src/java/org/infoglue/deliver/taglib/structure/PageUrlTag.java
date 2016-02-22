@@ -53,7 +53,7 @@ public class PageUrlTag extends ComponentLogicTag
     private boolean useStructureInheritance = true;
     private boolean forceHTTPProtocol = false;
     private boolean includeLanguageId = true;
-    private boolean isDecorated = true;
+    private boolean isDecorated = false;
 	private Integer siteNodeId;
 	private Integer languageId;
 	private Integer contentId = new Integer(-1);
@@ -80,7 +80,7 @@ public class PageUrlTag extends ComponentLogicTag
         this.extraParameters = null;
         this.includeLanguageId = true;
         this.operatingMode = null;
-        this.isDecorated = true;
+        this.isDecorated = false;
         
         return EVAL_PAGE;
     }

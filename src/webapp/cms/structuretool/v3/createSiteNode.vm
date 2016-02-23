@@ -240,6 +240,9 @@
 
 	function save()
 	{
+		if ($("input[name='" + window.currentMetaInfoLanguageCode + "_NiceURIName']").val() == "") {
+			$("input[name='" + window.currentMetaInfoLanguageCode + "_NiceURIName']").val($("input[name='name']").val());
+		}
 		#if($sortedPageTemplates.size() > 0)
 			if(document.editForm.pageTemplateContentId.value != "" || $pageTemplateIsOptional)
 				document.editForm.submit()

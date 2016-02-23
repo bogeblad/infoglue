@@ -594,7 +594,8 @@
 			$("input.reset").hide();
 			$("input.preview").hide();
 			$("input.attachAsset").hide();
-			$("input[id='NiceURIName']").keyup(function() {
+			$("input[id='NiceURIName']").on('keyup blur', function(e) {
+
 				var text = $("input[id='NiceURIName']");
 				replaceNiceURINonAsciiWithSpecifiedChars(text.val());
 			});

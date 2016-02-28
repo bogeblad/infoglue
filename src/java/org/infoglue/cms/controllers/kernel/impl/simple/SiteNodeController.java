@@ -2292,7 +2292,8 @@ public class SiteNodeController extends BaseController
 					{
 						logger.trace("Version value after copy transformation (ContentVersion.id: " + contentVersionVO.getContentVersionId() + "). VersionValue: " + contentVersionVO.getVersionValue());
 					}
-					ContentVersionController.getContentVersionController().update(contentVO.getId(), contentVersionVO.getLanguageId(), contentVersionVO, db);
+					//ContentVersionController.getContentVersionController().update(contentVO.getId(), contentVersionVO.getLanguageId(), contentVersionVO, db);
+					ContentVersionController.getContentVersionController().update(contentVO.getId(), contentVersionVO.getLanguageId(), contentVersionVO, null, true, db, false);
 				}
 			}
 
@@ -3964,7 +3965,7 @@ public class SiteNodeController extends BaseController
 						clean = false;
 					}
 
-					List<ReferenceBean> contactList = RegistryController.getController().deleteAllForSiteNode(siteNode.getSiteNodeId(), infogluePrincipal, clean, CmsPropertyHandler.getOnlyShowReferenceIfLatestVersion(), db);
+					List<ReferenceBean> contactList = RegistryController.getController().deleteAllForSiteNode(siteNode.getSiteNodeId(), infogluePrincipal, clean, CmsPropertyHandler.getOnlyShowReferenceIfLatestVersion(), true, db);
 					if (notifyResponsibleOnReferenceChange)
 					{
 						if (contactList != null)

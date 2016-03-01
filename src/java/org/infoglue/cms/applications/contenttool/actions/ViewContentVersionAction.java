@@ -317,6 +317,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
     		this.contentVersionVO = ContentVersionControllerProxy.getController().getACContentVersionVOWithId(this.getInfoGluePrincipal(), contentVersionId);    		 	
     		contentId = contentVersionVO.getContentId();
     		languageId = contentVersionVO.getLanguageId();
+
     		this.languageId = contentVersionVO.getLanguageId();
     	
     	}   
@@ -738,6 +739,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	{
 		logger.info("considerLatest:" + considerLatest);
 
+		
 		if(considerLatest && getContentVersionId() != null) 
 		{
 			ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(getContentVersionId());
@@ -764,7 +766,6 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 		
 		if(getContentId() != null && getContentId().intValue() != -1 && getLanguageId() == null)
 		{
-
 			
 		    this.initialize(getContentVersionId(), getContentId(), this.languageId, true, false);
 		}
@@ -1064,7 +1065,6 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
 			if(this.contentVO != null && this.contentVO.getContentId() != null && this.contentVO.getContentId().intValue() != -1)
 	       	{
-				
 				List digitalAssets = DigitalAssetController.getDigitalAssetVOList(this.contentVO.getContentId(), this.languageId, CmsPropertyHandler.getViewInheritedAssetsInContentDialog());
 			
 				filteredDigitalAssets.addAll(digitalAssets);
@@ -1086,12 +1086,11 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	       	}
 			else if(this.contentVersionVO != null && this.contentVersionVO.getContentVersionId() != null)
 	       	{
+
 				this.contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(this.contentVersionVO.getId());
-				if (CmsPropertyHandler.getViewInheritedAssetsInContentDialog()) {
-					filteredDigitalAssets = DigitalAssetController.getDigitalAssetVOList(this.contentVersionVO.getContentVersionId());
-				} else {
-					filteredDigitalAssets = DigitalAssetController.getDigitalAssetVOList(this.contentVO.getContentId(), this.getLanguageId(), false);
-				}
+
+				filteredDigitalAssets = DigitalAssetController.getDigitalAssetVOList(this.contentVersionVO.getContentId(), this.getLanguageId(), CmsPropertyHandler.getViewInheritedAssetsInContentDialog());
+				
 	       	}
 
 			Iterator digitalAssetsIterator = filteredDigitalAssets.iterator();

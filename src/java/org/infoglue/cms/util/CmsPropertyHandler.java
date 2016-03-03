@@ -3230,4 +3230,9 @@ public class CmsPropertyHandler
 		return Boolean.parseBoolean(getServerNodeProperty("reloadStructureOnActivation", false, "false"));
 	}
 
+	public static boolean getUseWriteForAccessControlInWorking() 
+	{
+		return Boolean.parseBoolean(getServerNodeProperty("useWriteForAccessControlInWorking", false, "false"));
+	}
+
 }

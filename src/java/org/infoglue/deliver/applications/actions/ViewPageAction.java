@@ -179,7 +179,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
     public String doExecute() throws Exception
     {
     	Timer pageTimer = new Timer();
-    	
+    	logger.error("* ViewPageAction was called....                *");
         if(isRecacheCall)
         {
 	        //logger.warn("ThreadId:" + Thread.currentThread().getName());
@@ -291,15 +291,19 @@ public class ViewPageAction extends InfoGlueAbstractAction
 						protectDeliver = false;
 				}
 				
+				String interceptionPointForAccess = "SiteNodeVersion.Read";
+				if(CmsPropertyHandler.getOperatingMode().equals("0") && CmsPropertyHandler.getUseWriteForAccessControlInWorking())
+					interceptionPointForAccess = "SiteNodeVersion.Write";
+
 				boolean isAnonymousAuthorized = true;
 				logger.info("protectedSiteNodeVersionId:" +protectedSiteNodeVersionId);
 				if(protectedSiteNodeVersionId != null)
 				{
 					SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(protectedSiteNodeVersionId, dbWrapper.getDatabase());
 					if(siteNodeVersionVO.getIsProtected().intValue() == SiteNodeVersionVO.YES_WITH_INHERIT_FALLBACK.intValue())
-						isAnonymousAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(dbWrapper.getDatabase(), (InfoGluePrincipal)this.getAnonymousPrincipal(), "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), false);
+						isAnonymousAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(dbWrapper.getDatabase(), (InfoGluePrincipal)this.getAnonymousPrincipal(), interceptionPointForAccess, protectedSiteNodeVersionId.toString(), false);
 					else
-						isAnonymousAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(dbWrapper.getDatabase(), (InfoGluePrincipal)this.getAnonymousPrincipal(), "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString());
+						isAnonymousAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(dbWrapper.getDatabase(), (InfoGluePrincipal)this.getAnonymousPrincipal(), interceptionPointForAccess, protectedSiteNodeVersionId.toString());
 				}
 				logger.info("isAnonymousAuthorized:" + isAnonymousAuthorized);
 				logger.info("URI:" + getOriginalFullURL());
@@ -977,6 +981,10 @@ public class ViewPageAction extends InfoGlueAbstractAction
 			if(repositoryUseAccessBasedProtocolRedirects.equals("true") && CmsPropertyHandler.getOperatingMode().equals("3"))
 				useAccessBasedProtocolRedirects = true;
 			
+			String interceptionPointForAccess = "SiteNodeVersion.Read";
+			if(CmsPropertyHandler.getOperatingMode().equals("0"))
+				interceptionPointForAccess = "SiteNodeVersion.Write";
+			
 			if(useAccessBasedProtocolRedirects || forceProtocolChangeSetting.equals(SiteNodeVersionVO.FORCE_SECURE))
 			{
 				String originalFullURL = getOriginalFullURL();
@@ -985,7 +993,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 		    	if(protectedSiteNodeVersionId != null)
 		    	{
 					Principal anonymousPrincipal = getAnonymousPrincipal();
-					isAnonymousAccepted = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)anonymousPrincipal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString());
+					isAnonymousAccepted = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)anonymousPrincipal, interceptionPointForAccess, protectedSiteNodeVersionId.toString());
 		    	}
 		    	
 		    	if((protectedSiteNodeVersionId != null && !isAnonymousAccepted) || forceProtocolChangeSetting.equals(SiteNodeVersionVO.FORCE_SECURE))
@@ -1654,6 +1662,11 @@ public class ViewPageAction extends InfoGlueAbstractAction
 					}
 			    }
 			}
+			
+			String interceptionPointForAccess = "SiteNodeVersion.Read";
+			if(CmsPropertyHandler.getOperatingMode().equals("0"))
+				interceptionPointForAccess = "SiteNodeVersion.Write";
+			
 			if(principal == null && !protectDeliver)
 			{
 				Principal anonymousPrincipal = getAnonymousPrincipal();
@@ -1664,9 +1677,9 @@ public class ViewPageAction extends InfoGlueAbstractAction
 					isAuthorized = false;
 					SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(protectedSiteNodeVersionId, db);
 					if(siteNodeVersionVO.getIsProtected().intValue() == SiteNodeVersionVO.YES_WITH_INHERIT_FALLBACK.intValue())
-						isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)anonymousPrincipal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), false);
+						isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)anonymousPrincipal, interceptionPointForAccess, protectedSiteNodeVersionId.toString(), false);
 					else
-						isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)anonymousPrincipal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString());
+						isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)anonymousPrincipal, interceptionPointForAccess, protectedSiteNodeVersionId.toString());
 				}				
 				
 				logger.info("isAuthorized:" + isAuthorized);
@@ -1726,7 +1739,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 								
 								boolean isAuthorized = false;
 								if(!protectDeliver)
-									isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString());
+									isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, interceptionPointForAccess, protectedSiteNodeVersionId.toString());
 								
 								if(!isAuthorized)
 								{	
@@ -1767,14 +1780,14 @@ public class ViewPageAction extends InfoGlueAbstractAction
 						if(logger.isInfoEnabled())
 							logger.info("protectedSiteNodeVersionId:" + protectedSiteNodeVersionId);
 						
-						isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)this.getAnonymousPrincipal(), "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString());
+						isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)this.getAnonymousPrincipal(), interceptionPointForAccess, protectedSiteNodeVersionId.toString());
 						
 						if(logger.isInfoEnabled())
 							logger.info("Anonymous auth:" + isAuthorized);
 						
 						if(!isAuthorized)
 						{
-							isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString());
+							isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, interceptionPointForAccess, protectedSiteNodeVersionId.toString());
 						
 							if(logger.isInfoEnabled())
 								logger.info("" + principal + " auth:" + isAuthorized);
@@ -1786,7 +1799,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 					}
 					else if(!protectDeliver)
 					{
-						isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString());
+						isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, interceptionPointForAccess, protectedSiteNodeVersionId.toString());
 					}
 					
 					if(logger.isInfoEnabled())
@@ -1858,20 +1871,20 @@ public class ViewPageAction extends InfoGlueAbstractAction
 			    if(siteNodeVersionVO != null && siteNodeVersionVO.getIsProtected().intValue() == SiteNodeVersionVO.YES_WITH_INHERIT_FALLBACK.intValue())
 				{
 					if(alternativePrincipal != null)
-						isAlternativePrincipalAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)alternativePrincipal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), true);
+						isAlternativePrincipalAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)alternativePrincipal, interceptionPointForAccess, protectedSiteNodeVersionId.toString(), true);
 					if(!isAlternativePrincipalAuthorized && !((InfoGluePrincipal)principal).getName().equals(((InfoGluePrincipal)this.getAnonymousPrincipal()).getName()))
-						isPrincipalAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), true);
+						isPrincipalAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, interceptionPointForAccess, protectedSiteNodeVersionId.toString(), true);
 					else if(!isAlternativePrincipalAuthorized)
-						isAnonymousPrincipalAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)this.getAnonymousPrincipal(), "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), false);
+						isAnonymousPrincipalAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)this.getAnonymousPrincipal(), interceptionPointForAccess, protectedSiteNodeVersionId.toString(), false);
 				}
 				else if(siteNodeVersionVO != null)
 				{
 				    if(alternativePrincipal != null)
-						isAlternativePrincipalAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)alternativePrincipal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), true);
+						isAlternativePrincipalAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)alternativePrincipal, interceptionPointForAccess, protectedSiteNodeVersionId.toString(), true);
 					if(!isAlternativePrincipalAuthorized && !((InfoGluePrincipal)principal).getName().equals(((InfoGluePrincipal)this.getAnonymousPrincipal()).getName()))
-						isPrincipalAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), true);
+						isPrincipalAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, interceptionPointForAccess, protectedSiteNodeVersionId.toString(), true);
 					if(!isAlternativePrincipalAuthorized && !isPrincipalAuthorized)
-						isAnonymousPrincipalAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)this.getAnonymousPrincipal(), "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), false);
+						isAnonymousPrincipalAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)this.getAnonymousPrincipal(), interceptionPointForAccess, protectedSiteNodeVersionId.toString(), false);
 				}
 				
 			    logger.info("isAlternativePrincipalAuthorized:" + isAlternativePrincipalAuthorized);
@@ -1915,9 +1928,9 @@ public class ViewPageAction extends InfoGlueAbstractAction
 						logger.info("protectedSiteNodeVersionId:" + protectedSiteNodeVersionId);
 						logger.info("this.getAnonymousPrincipal():" + this.getAnonymousPrincipal());
 						
-						logger.info("Principal access: " + !AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString()));
-						logger.info("Principal access: " + !AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString()));
-						logger.info("Anonymous access: " + !AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)this.getAnonymousPrincipal(), "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString()));
+						logger.info("Principal access: " + !AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, interceptionPointForAccess, protectedSiteNodeVersionId.toString()));
+						logger.info("Principal access: " + !AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, interceptionPointForAccess, protectedSiteNodeVersionId.toString()));
+						logger.info("Anonymous access: " + !AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)this.getAnonymousPrincipal(), interceptionPointForAccess, protectedSiteNodeVersionId.toString()));
 					}
 					
 					if(this.referer == null)
@@ -1945,7 +1958,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 								// Check if the principal is authorized to view this page.
 								// If not, redirect him to the unauthorized.jsp page.
 								//---------------------------------------------------------
-								if (protectedSiteNodeVersionId != null && !AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString()))
+								if (protectedSiteNodeVersionId != null && !AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)principal, interceptionPointForAccess, protectedSiteNodeVersionId.toString()))
 								{
 									String url = getNoAccessURL();
 									getResponse().sendRedirect(url);

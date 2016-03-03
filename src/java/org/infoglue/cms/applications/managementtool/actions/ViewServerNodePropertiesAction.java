@@ -417,6 +417,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 
 	    populate(ps, "useGlobalRepositoryChange");
 	    populate(ps, "reloadStructureOnActivation");
+	    populate(ps, "useWriteForAccessControlInWorking");
 
 	    try
 	    {

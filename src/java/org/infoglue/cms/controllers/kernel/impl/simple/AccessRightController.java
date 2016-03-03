@@ -2121,6 +2121,12 @@ public class AccessRightController extends BaseController
 		if(!logger.isInfoEnabled())
 			t.setActive(false);
 		
+		if(interceptionPointName.equalsIgnoreCase("SiteNodeVersion.Read"))
+		{			
+			if(CmsPropertyHandler.getOperatingMode().equals("0") && CmsPropertyHandler.getUseWriteForAccessControlInWorking())
+				interceptionPointName = "SiteNodeVersion.Write";
+		}
+		
 		//Map<String,Integer> cachedPrincipalAuthorizationMap = (Map<String,Integer>)CacheController.getCachedObjectFromAdvancedCache("personalAuthorizationCache", "authorizationMap_" + infoGluePrincipal.getName());
 		Map<String,Integer> cachedPrincipalAuthorizationMap = (Map<String,Integer>)CacheController.getCachedObject("userAccessCache", "authorizationMap_" + infoGluePrincipal.getName());
 		if(!infoGluePrincipal.getIsAdministrator() && cachedPrincipalAuthorizationMap == null && !preCacheInProcessForUsers.contains(infoGluePrincipal.getName()))

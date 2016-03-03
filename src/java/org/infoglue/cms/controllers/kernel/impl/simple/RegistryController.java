@@ -2569,6 +2569,9 @@ public class RegistryController extends BaseController
         		if(registryVO.getReferencingEntityCompletingName().contains("SiteNode"))
         		{
             		SiteNodeVO referencingSiteNodeVO = SiteNodeController.getController().getSmallSiteNodeVOWithId(new Integer(registryVO.getReferencingEntityCompletingId()), db);
+            		if(checkedSiteNodeVO == null || referencingSiteNodeVO == null)
+            			continue;
+            			
             		if(checkedSiteNodeVO.getRepositoryId().intValue() == referencingSiteNodeVO.getRepositoryId().intValue())
             			isLocalRepo = true;
             		
@@ -2584,7 +2587,11 @@ public class RegistryController extends BaseController
         		else if(registryVO.getReferencingEntityCompletingName().contains("Content"))
         		{
         			ContentVO referencingContentVO = ContentController.getContentController().getSmallContentVOWithId(new Integer(registryVO.getReferencingEntityCompletingId()), db);
-            		if(checkedSiteNodeVO.getRepositoryId().intValue() == referencingContentVO.getRepositoryId().intValue())
+
+        			if(checkedSiteNodeVO == null || referencingContentVO == null)
+            			continue;
+
+        			if(checkedSiteNodeVO.getRepositoryId().intValue() == referencingContentVO.getRepositoryId().intValue())
             			isLocalRepo = true;
             		
                 	ContentVersionVO contentVersion = ContentVersionController.getContentVersionController().getContentVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);

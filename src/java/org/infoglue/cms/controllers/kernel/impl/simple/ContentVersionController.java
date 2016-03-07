@@ -2641,8 +2641,16 @@ public class ContentVersionController extends BaseController
 
 	public void updateAttributeValue(Integer contentVersionId, String attributeName, String attributeValue, InfoGluePrincipal infogluePrincipal, boolean skipValidate, Database db, boolean skipSiteNodeVersionUpdate) throws SystemException, Bug
 	{
-		ContentVersionVO contentVersionVO = getContentVersionVOWithId(contentVersionId);
-
+		ContentVersionVO contentVersionVO = null;
+		try
+		{
+			contentVersionVO = getContentVersionVOWithId(contentVersionId);
+		}
+		catch(Exception e)
+		{
+			logger.warn("Problem finding version: " + e.getMessage() + " - skipping - was probably deleted");
+		}
+		
 		if(contentVersionVO != null)
 		{
 			try
@@ -2696,7 +2704,7 @@ public class ContentVersionController extends BaseController
 			}
 			catch(Exception e)
 			{
-				e.printStackTrace();
+				logger.error("Error updating version value: " + e.getMessage(), e);
 			}
 		}
 	}

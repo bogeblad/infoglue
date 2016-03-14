@@ -50,6 +50,7 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 	private List repositories;
 	private String textAreaId = "";
 	private Integer oldSiteNodeId;
+	private Integer oldAnchorId;
 	private Integer oldContentId;
 	private Integer languageId;
 	
@@ -203,4 +204,12 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
     {
         this.languageId = languageId;
     }
+
+	public Integer getOldAnchorId() {
+		return oldAnchorId;
+	}
+
+	public void setOldAnchorId(Integer oldAnchorId) {
+		this.oldAnchorId = oldAnchorId;
+	}
 }

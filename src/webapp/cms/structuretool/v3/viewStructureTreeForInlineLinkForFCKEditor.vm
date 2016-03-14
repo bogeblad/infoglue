@@ -36,6 +36,19 @@
 				document.getElementById("itreeFrame").src = "ViewStructureToolMenuHtml!bindingViewV3.action?repositoryId=" + repositoryId + "$sortArg";
 			else
 				document.getElementById("itreeFrameContent").src = "ViewContentHtmlTree.action?repositoryId=" + repositoryId + "&bodyClass=generaltooledit" + "$sortArg";
+				
+			updateContentList(repositoryId, 0);
+		}
+		
+		function updateContentList(entityId, repositoryId)
+		{
+			var eid = parseInt(entityId);
+			var rid = parseInt(repositoryId);
+			
+			if(!isNaN(eid) && !isNaN(rid))
+			{
+				document.getElementById("listFrameBoundContent").src = "ViewContentToolBoundList.action?repositoryId=" + rid + "&siteNodeId=" + eid;
+			}
 		}
 
 		var previousPath = "";
@@ -55,6 +68,7 @@
 			$("#selectedPagePath").text("$ui.getString("tool.contenttool.linkDialog.insertPage") \"" + shortPath + "\"");
 		
 			previousContentPath = path;
+			
 		}
 
 		function structureTreeItemClick(entityId, repositoryId, path)
@@ -73,8 +87,16 @@
 				$("#selectedPagePath").text("$ui.getString("tool.contenttool.linkDialog.insertPage") \"" + shortPath + "\"");
 				previousPath = path;
 			}
+			updateContentList(entityId, repositoryId);
 		}
 		
+		function anchorListItemClick(anchorId)
+		{
+			if(parent.anchorMarked)
+			{
+				parent.anchorMarked(anchorId);
+			}
+		}
 				
 		function init() 
 		{
@@ -82,6 +104,14 @@
             document.getElementById("entityId").value = "$oldSiteNodeId";
 		  	#else
 		  	document.getElementById("entityId").value = "-1";
+		  	#end
+		  	
+		  	#if($oldAnchorId)
+            document.getElementById("anchorId").value = "anchor-$oldAnchorId";
+            #set($oldAnchorId = "anchor-$oldAnchorId")
+		  	#else
+		  	document.getElementById("anchorId").value = "";
+		  	#set($oldAnchorId = "")
 		  	#end
 
             #if($oldContentId)
@@ -100,10 +130,11 @@
 		{
 		  	siteNodeId = document.inputForm.entityId.value;
 		  	contentId = document.inputForm.contentId.value;
+		  	anchorId = document.inputForm.anchorId.value;
 			path = document.inputForm.path.value;
 
 			if(siteNodeId != "" && siteNodeId.indexOf("select") == -1)
-				parent.onOkForInlineLink(siteNodeId, contentId);
+				parent.onOkForInlineLink(siteNodeId, contentId, anchorId);
 			else
 				alert("$ui.getString("tool.contenttool.linkDialog.pageMandatoryWarning")");
 			
@@ -145,8 +176,9 @@
 <form name="inputForm" action="CreateServiceBinding.action">
 	<input type="hidden" id="entityId" name="entityId" value="$!oldSiteNodeId">
 	<input type="hidden" id="contentId" name="contentId" value="">
-	<input type="hidden" id="repositoryId" name="repositoryId" value="">
+	<input type="hidden" id="repositoryId" name="repositoryId" value="$!repositoryId">
 	<input type="hidden" id="path" name="path" value="">
+	<input type="hidden" id="anchorId" name="anchorId" value="">
 </form>
 
 <div id="linkDiv" class="linkContainer">
@@ -179,8 +211,9 @@
 		</div>
 	</td>	
 	<td valign="middle" width="20">
-		<img src="css/images/trans.gif" width="20" height="1"/>
-		<a href="javascript:enableContentDiv();" class="optionalContent" title="$ui.getString('tool.contenttool.linkDialog.optionalContentTitle')"></a>
+		<!--<img src="css/images/trans.gif" width="20" height="1"/>-->
+		<!--<a href="javascript:enableContentDiv();" class="optionalContent" title="$ui.getString('tool.contenttool.linkDialog.optionalContentTitle')"></a>-->
+		<iframe frameborder="0" name="listFrameBoundContent" id="listFrameBoundContent" src="ViewContentToolBoundList.action?repositoryId=$!repositoryId&siteNodeId=$!oldSiteNodeId&anchorId=$!oldAnchorId" width="310" height="385" ></iframe>
 	</td>
 	<td valign="top">
 		<div id="content" style="display: none;">

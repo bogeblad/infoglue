@@ -74,7 +74,12 @@
 	        <rtexprvalue>true</rtexprvalue>
     	</attribute>
     	<attribute>
-    	    <name>stateId</name>
+    	    <name>operatingMode</name>
+        	<required>false</required>
+	        <rtexprvalue>true</rtexprvalue>
+    	</attribute>
+    	<attribute>
+    	    <name>isDecorated</name>
         	<required>false</required>
 	        <rtexprvalue>true</rtexprvalue>
     	</attribute>

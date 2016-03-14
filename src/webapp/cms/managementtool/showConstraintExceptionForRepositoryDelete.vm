@@ -38,6 +38,7 @@ li.pageIcon {background:url(css/images/v3/pageIcon.gif) no-repeat left center; b
 		aheight: 20px;
 		text-decoration: none;
 		font-weight: bold;
+		white-space: nowrap;
 	}
 	
 	#navcontainer li li 
@@ -51,6 +52,7 @@ li.pageIcon {background:url(css/images/v3/pageIcon.gif) no-repeat left center; b
 		width: 9em;
 		/*padding: 3px 3px 3px 17px;*/
 		text-decoration: none;
+		white-space: nowrap;
 	}
 	
 	
@@ -82,10 +84,10 @@ li.pageIcon {background:url(css/images/v3/pageIcon.gif) no-repeat left center; b
 		#foreach($refKey in $refs.keySet())
 			#set($linkName = $refKey.name)
 			#if($refKey.class.name == "org.infoglue.cms.entities.structure.SiteNodeVO")
-				#set($linkName = $this.getLocalizedSiteNodePath($refKey.id).replaceAll(' ', '&nbsp;'))
+				#set($linkName = $this.getLocalizedSiteNodePath($refKey.id, true).replaceAll(' ', '&nbsp;'))
 				#set($className = "pageIcon")
 			#elseif($refKey.class.name == "org.infoglue.cms.entities.content.ContentVO")
-				#set($linkName = $this.getContentPath($refKey.id).replaceAll(' ', '&nbsp;'))
+				#set($linkName = $this.getContentPath($refKey.id, true).replaceAll(' ', '&nbsp;'))
 				#set($className = "contentIcon")
 			#end
 			
@@ -102,10 +104,10 @@ li.pageIcon {background:url(css/images/v3/pageIcon.gif) no-repeat left center; b
 						
 						#set($refLinkName = $ref.name)
 						#if($ref.referencingCompletingObject.class.name == "org.infoglue.cms.entities.structure.SiteNodeVO")
-							#set($refLinkName = $this.getLocalizedSiteNodePath($ref.referencingCompletingObject.id).replaceAll(' ', '&nbsp;'))
+							#set($refLinkName = $this.getLocalizedSiteNodePath($ref.referencingCompletingObject.id, true).replaceAll(' ', '&nbsp;'))
 							<li class="pageIcon"><a href="#" onclick="top.openUrlInWorkArea('ViewSiteNode.action?siteNodeId=$ref.referencingCompletingObject.id', '$ref.referencingCompletingObject.name', 'structure', '$ui.getString("tool.common.pageTabLabelPrefix")', 'StructureTool'); return false;">$refLinkName</a></li>
 						#elseif($ref.referencingCompletingObject.class.name == "org.infoglue.cms.entities.content.ContentVO")
-							#set($refLinkName = $this.getContentPath($ref.referencingCompletingObject.id).replaceAll(' ', '&nbsp;'))
+							#set($refLinkName = $this.getContentPath($ref.referencingCompletingObject.id, true).replaceAll(' ', '&nbsp;'))
 							<li class="contentIcon"><a href="#" onclick="top.openUrlInWorkArea('ViewContent!V3.action?contentId=$ref.referencingCompletingObject.id', '$ref.referencingCompletingObject.name', 'content', '$ui.getString("tool.common.contentTabLabelPrefix")', 'ContentTool'); return false;">$refLinkName</a></li>
 						#end
 						

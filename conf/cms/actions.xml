@@ -1036,6 +1036,7 @@
 	<action name="org.infoglue.cms.applications.contenttool.actions.UpdateContentVersionAction" alias="UpdateContentVersion">
 		<view name="input">/cms/contenttool/v3/viewContentVersionForFCKEditor.vm</view>
 		<view name="inputStandalone">/cms/contenttool/v3/viewContentVersionStandaloneForFCKEditor.vm</view>
+		<view name="inputVersionEditor">/cms/contenttool/v3/viewContentVersionStandaloneEditor.vm</view>
 		<view name="success">ExtendedRedirect.action?url=ViewContentVersion.action#contentId#languageId#currentEditorId#concurrentModification#oldModifiedDateTime#stateChanged#anchor</view>
 		<view name="successV3">ExtendedRedirect.action?url=ViewContentVersion!V3.action#contentVersionId#contentId#languageId#attributeName#currentEditorId#concurrentModification#oldModifiedDateTime#closeOnLoad#publishOnLoad#stateChanged#anchor</view>
 		<view name="successXMLV3">ExtendedRedirect.action?url=ViewContentVersion!asXMLV3.action?#contentVersionId#contentId#repositoryId</view>

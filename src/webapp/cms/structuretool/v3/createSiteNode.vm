@@ -182,7 +182,11 @@
 		$("#languageTabsContainer").tabs({ show:function() { 
 			
 		} $selectedCode});
-
+		
+		$("input[name='" + window.currentMetaInfoLanguageCode + "_NiceURIName']").keyup(function() {
+			replaceNiceURINonAsciiWithSpecifiedChars($("input[name='" + window.currentMetaInfoLanguageCode + "_NiceURIName']").val());
+		});
+		
 		$("input[name='name']").blur(function() {
 		  	//alert( "Handler for .blur() called." );
 		  	$(".autofill").val($("input[name='name']").val());
@@ -197,8 +201,10 @@
 	function replaceNiceURINonAsciiWithSpecifiedChars(text)
 	{
 		var data = "text=" + text;
+
+		data = data.replace('%','%25');
 		$.ajax({
-			type: "POST",
+			type: "GET",
 		   	url: "ViewCommonAjaxServices!replaceNiceURINonAsciiWithSpecifiedChars.action",
 		   	data: data,
 		   	dataType: "html", 
@@ -234,6 +240,10 @@
 
 	function save()
 	{
+		if ($("input[name='" + window.currentMetaInfoLanguageCode + "_NiceURIName']").val() == "") {
+			$("input[name='" + window.currentMetaInfoLanguageCode + "_NiceURIName']").val($("input[name='name']").val());
+			var cleansedURIValue = replaceNiceURINonAsciiWithSpecifiedChars($("input[name='" + window.currentMetaInfoLanguageCode + "_NiceURIName']").val())
+		}
 		#if($sortedPageTemplates.size() > 0)
 			if(document.editForm.pageTemplateContentId.value != "" || $pageTemplateIsOptional)
 				document.editForm.submit()

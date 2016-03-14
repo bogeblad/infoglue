@@ -37,6 +37,8 @@ import org.infoglue.deliver.taglib.component.ComponentLogicTag;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
+import org.jfree.util.Log;
+import org.netbeans.lib.cvsclient.commandLine.command.log;
 
 public class PageUrlTag extends ComponentLogicTag
 {
@@ -51,11 +53,11 @@ public class PageUrlTag extends ComponentLogicTag
     private boolean useStructureInheritance = true;
     private boolean forceHTTPProtocol = false;
     private boolean includeLanguageId = true;
-    	
+    private boolean isDecorated = false;
 	private Integer siteNodeId;
 	private Integer languageId;
 	private Integer contentId = new Integer(-1);
-	private String stateId;
+	private String operatingMode;
 	
 	private String extraParameters;
 	
@@ -77,7 +79,8 @@ public class PageUrlTag extends ComponentLogicTag
         this.contentId = null;
         this.extraParameters = null;
         this.includeLanguageId = true;
-        this.stateId = null;
+        this.operatingMode = null;
+        this.isDecorated = false;
         
         return EVAL_PAGE;
     }
@@ -96,18 +99,22 @@ public class PageUrlTag extends ComponentLogicTag
 	 			return url;
 	 		}
 	    }
-
-	    if (stateId == null) {
+	    
+	    if (operatingMode == null) {
 	    	url = getController().getPageUrl(siteNodeId, languageId, includeLanguageId, contentId);
-	    } else {
+	    } else{
+	    	if (operatingMode.equalsIgnoreCase("3") && isDecorated == true) {
+	    		/* live pages can not med combined with decorated mode */
+		    	isDecorated = false;
+	    	}
 	    	DeliveryContext dc = getController().getDeliveryContext();
-	    	String tempStateId = dc.getOperatingMode();
-	    	dc.setOperatingMode(stateId);
+	    	String tempOperatingMode = dc.getOperatingMode();
+	    	dc.setOperatingMode(operatingMode);
 	    	try {
-	    		url = getController().getPageUrl(siteNodeId, languageId, includeLanguageId, -1, stateId);
+	    		url = getController().getPageUrl(siteNodeId, languageId, includeLanguageId, -1, operatingMode, isDecorated);
 	    	} finally {
-		    	/* restoring stateid */
-		    	dc.setOperatingMode(tempStateId);	
+		    	/* restoring operatingMode */
+		    	dc.setOperatingMode(tempOperatingMode);	
 	    	}
 	    }
 	    if (forceHTTPProtocol || CmsPropertyHandler.getForceHTTPProtocol()) {
@@ -131,9 +138,9 @@ public class PageUrlTag extends ComponentLogicTag
         this.languageId = evaluateInteger("pageUrl", "languageId", languageId);
     }
     
-    public void setStateId(final String stateId) throws JspException
+    public void setOperatingMode(final String operatingMode) throws JspException
     {
-        this.stateId = evaluateString("pageUrl", "stateId", stateId);
+        this.operatingMode = evaluateString("pageUrl", "operatingMode", operatingMode);
     }
     
     public void setContentId(final String contentId) throws JspException
@@ -169,5 +176,10 @@ public class PageUrlTag extends ComponentLogicTag
 	public void setIncludeLanguageId(final String includeLanguageId) throws JspException
     {
         this.includeLanguageId = evaluateBoolean("pageUrlAfterLanguageChange", "includeLanguageId", includeLanguageId);
+    }
+	
+	public void setIsDecorated(final String isDecorated) throws JspException
+    {
+        this.isDecorated = evaluateBoolean("pageUrlAfterLanguageChange", "isDecorated", isDecorated);
     }
 }

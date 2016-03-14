@@ -907,9 +907,6 @@ public class ComponentLogic
 		contents = getBoundContents(property);
 		if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
 			this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO contents:" + (contents == null ? "null" : contents.size()) + " (Thread" + Thread.currentThread().getId() + ")\n");
-		
-		if(property == null || contents == null && this.templateController.getDeliveryContext().getDebugInformation() != null && !this.templateController.getDeliveryContext().getDebugInformation().equals(""))
-			logger.warn("DEBUGGING INFORMATION GUFlashImages:" + this.templateController.getDeliveryContext().getDebugInformation());
 					
 		return contents;
 	}

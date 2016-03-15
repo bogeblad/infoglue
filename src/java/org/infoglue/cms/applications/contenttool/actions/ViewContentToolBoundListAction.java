@@ -29,10 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
-import org.infoglue.cms.applications.databeans.ReferenceBean;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
@@ -41,7 +39,6 @@ import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionControllerProxy;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
-import org.infoglue.cms.entities.management.ContentTypeDefinition;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
@@ -61,19 +58,8 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 	private String anchorId;
 	private String articleTitle;
 	private Map<Integer, String> contentList;
-	private Integer select = -1;
 	private String[] allowedContentTypeIds = null;
-	private String bodyClass;
-	private boolean binding = false;
 	
-	public String doBindingView() throws Exception
-	{
-		setBinding(true);
-		
-		//super.doExecute();
-        
-		return "bindingView";
-	}
 
 	@Override
 	public String doExecute() throws Exception
@@ -158,24 +144,6 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 	{
 		this.repositoryId = repositoryId;
 	}
-
-	/**
-	 * Returns the select.
-	 * @return Integer
-	 */
-	public Integer getSelect()
-	{
-		return select;
-	}
-
-	/**
-	 * Sets the select.
-	 * @param select The select to set
-	 */
-	public void setSelect(Integer select)
-	{
-		this.select = select;
-	}
 	
     public String[] getAllowedContentTypeIds()
     {
@@ -200,32 +168,6 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
         }
 
         return sb.toString();
-    }
-    
-    public String getBodyClass()
-    {
-        return bodyClass;
-    }
-    
-    public void setBodyClass(String bodyClass)
-    {
-        this.bodyClass = bodyClass;
-    }
-
-    /** 
-				Returns true if this is a binding action.
-    */
-    public boolean isBinding()
-    {
-    	return binding;
-    }
-    
-    /** 
-				Set if this is a binding action.
-     */
-    public void setBinding(boolean binding)
-    {
-    	this.binding = binding;
     }
 
 	public Integer getSiteNodeId() {

@@ -3,6 +3,5 @@
 .settings
 *.launch
 build.properties
-.gitignore
+.classpath
 .project/build.properties
-/.gitignore

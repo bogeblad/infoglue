@@ -2560,60 +2560,68 @@ public class RegistryController extends BaseController
         while(registryEntiresIterator.hasNext())
         {
             RegistryVO registryVO = registryEntiresIterator.next();
-            logger.info("registryVO:" + registryVO.getReferencingEntityId() + ":" +  registryVO.getReferencingEntityCompletingId());
             
-        	Boolean isLocalRepo = false;
-        	if(excludeInternalRepoReferences)
-        	{
-        		SiteNodeVO checkedSiteNodeVO = SiteNodeController.getController().getSmallSiteNodeVOWithId(siteNodeId, db);
-        		if(registryVO.getReferencingEntityCompletingName().contains("SiteNode"))
-        		{
-            		SiteNodeVO referencingSiteNodeVO = SiteNodeController.getController().getSmallSiteNodeVOWithId(new Integer(registryVO.getReferencingEntityCompletingId()), db);
-            		if(checkedSiteNodeVO == null || referencingSiteNodeVO == null)
-            			continue;
-            			
-            		if(checkedSiteNodeVO.getRepositoryId().intValue() == referencingSiteNodeVO.getRepositoryId().intValue())
-            			isLocalRepo = true;
-            		
-                	SiteNodeVersionVO siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
-            		SiteNodeVersionVO latestSNVVOForReferencingContent = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, referencingSiteNodeVO.getId());
-
-            		boolean isLatest = (siteNodeVersion.getId().intValue() == latestSNVVOForReferencingContent.getId().intValue());
-            		if(!isLatest)
-            		{
-	            		continue;
-	            	}
-        		}
-        		else if(registryVO.getReferencingEntityCompletingName().contains("Content"))
-        		{
-        			ContentVO referencingContentVO = ContentController.getContentController().getSmallContentVOWithId(new Integer(registryVO.getReferencingEntityCompletingId()), db);
-
-        			if(checkedSiteNodeVO == null || referencingContentVO == null)
-            			continue;
-
-        			if(checkedSiteNodeVO.getRepositoryId().intValue() == referencingContentVO.getRepositoryId().intValue())
-            			isLocalRepo = true;
-            		
-                	ContentVersionVO contentVersion = ContentVersionController.getContentVersionController().getContentVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
-            		ContentVersionVO latestCVVOForReferencingContent = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(referencingContentVO.getId(), contentVersion.getLanguageId(), db);
-
-            		boolean isLatest = (contentVersion.getId().intValue() == latestCVVOForReferencingContent.getId().intValue());
-            		if(!isLatest)
-            		{
-	            		continue;
-            		}
-
-        		}
-        	}
-        	
-        	if(!isLocalRepo)
-        	{
-	            ReferenceBean referenceBean = getReferenceBeanFromRegistryVO(registryVO, entries, checkedLanguageVersions, onlyLatestVersion, onlyOneVersionPerLanguage, db);
-	            if (referenceBean != null)
-	            {
-	            	referenceBeanList.add(referenceBean);
-	            }
-        	}
+            try
+            {
+	            logger.info("registryVO:" + registryVO.getReferencingEntityId() + ":" +  registryVO.getReferencingEntityCompletingId());
+	            
+	            Boolean isLocalRepo = false;
+	        	if(excludeInternalRepoReferences)
+	        	{
+	        		SiteNodeVO checkedSiteNodeVO = SiteNodeController.getController().getSmallSiteNodeVOWithId(siteNodeId, db);
+	        		if(registryVO.getReferencingEntityCompletingName().contains("SiteNode"))
+	        		{
+	            		SiteNodeVO referencingSiteNodeVO = SiteNodeController.getController().getSmallSiteNodeVOWithId(new Integer(registryVO.getReferencingEntityCompletingId()), db);
+	            		if(checkedSiteNodeVO == null || referencingSiteNodeVO == null)
+	            			continue;
+	            			
+	            		if(checkedSiteNodeVO.getRepositoryId().intValue() == referencingSiteNodeVO.getRepositoryId().intValue())
+	            			isLocalRepo = true;
+	            		
+	                	SiteNodeVersionVO siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
+	            		SiteNodeVersionVO latestSNVVOForReferencingContent = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, referencingSiteNodeVO.getId());
+	
+	            		boolean isLatest = (siteNodeVersion.getId().intValue() == latestSNVVOForReferencingContent.getId().intValue());
+	            		if(!isLatest)
+	            		{
+		            		continue;
+		            	}
+	        		}
+	        		else if(registryVO.getReferencingEntityCompletingName().contains("Content"))
+	        		{
+	        			ContentVO referencingContentVO = ContentController.getContentController().getSmallContentVOWithId(new Integer(registryVO.getReferencingEntityCompletingId()), db);
+	
+	        			if(checkedSiteNodeVO == null || referencingContentVO == null)
+	            			continue;
+	
+	        			if(checkedSiteNodeVO.getRepositoryId().intValue() == referencingContentVO.getRepositoryId().intValue())
+	            			isLocalRepo = true;
+	            		
+	                	ContentVersionVO contentVersion = ContentVersionController.getContentVersionController().getContentVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
+	            		ContentVersionVO latestCVVOForReferencingContent = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(referencingContentVO.getId(), contentVersion.getLanguageId(), db);
+	
+	            		boolean isLatest = (contentVersion.getId().intValue() == latestCVVOForReferencingContent.getId().intValue());
+	            		if(!isLatest)
+	            		{
+		            		continue;
+	            		}
+	
+	        		}
+	        	}
+	        	
+	        	if(!isLocalRepo)
+	        	{
+		            ReferenceBean referenceBean = getReferenceBeanFromRegistryVO(registryVO, entries, checkedLanguageVersions, onlyLatestVersion, onlyOneVersionPerLanguage, db);
+		            if (referenceBean != null)
+		            {
+		            	referenceBeanList.add(referenceBean);
+		            }
+	        	}
+            }
+            catch(Exception e)
+            {
+            	logger.warn("No reference:" + registryVO.getId() + " had deleted relation - skipping.");
+            }
         }
 
         Iterator<ReferenceBean> i = referenceBeanList.iterator();

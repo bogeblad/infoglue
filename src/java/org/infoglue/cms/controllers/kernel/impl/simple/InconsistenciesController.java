@@ -284,7 +284,7 @@ public class InconsistenciesController extends BaseController
 			}
 			catch (Exception e) 
 			{
-				logger.warn("Could not remove reference on " + siteNodeVO.getName() + ": " + e.getMessage(), e);
+				logger.warn("Could not remove reference on " + (siteNodeVO == null ? "null" : siteNodeVO.getName()) + ": " + e.getMessage(), e);
 			}
 		}
 	}

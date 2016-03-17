@@ -175,11 +175,11 @@ public class PageUrlTag extends ComponentLogicTag
     
 	public void setIncludeLanguageId(final String includeLanguageId) throws JspException
     {
-        this.includeLanguageId = evaluateBoolean("pageUrlAfterLanguageChange", "includeLanguageId", includeLanguageId);
+        this.includeLanguageId = evaluateBoolean("pageUrl", "includeLanguageId", includeLanguageId);
     }
 	
 	public void setIsDecorated(final String isDecorated) throws JspException
     {
-        this.isDecorated = evaluateBoolean("pageUrlAfterLanguageChange", "isDecorated", isDecorated);
+        this.isDecorated = evaluateBoolean("pageUrl", "isDecorated", isDecorated);
     }
 }

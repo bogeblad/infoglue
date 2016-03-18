@@ -718,8 +718,7 @@ public class RepositoryController extends BaseController
 			return cachedRepositoryVOList;
 		}
 		
-		List<RepositoryVO> repositoryVOListNew = new ArrayList<RepositoryVO>();
-		//System.out.println("repositoryVOListNew:" + repositoryVOListNew);
+		List<RepositoryVO> repositoryVOList = new ArrayList<RepositoryVO>();
 
 		String SQL = "SELECT r.repositoryId, r.name, r.description, r.dnsName, r.isDeleted from cmRepository r order by r.repositoryId";
 		logger.info("SQL:" + SQL);
@@ -741,7 +740,7 @@ public class RepositoryController extends BaseController
 				repoVO.setIsDeleted(rs.getBoolean(5));
 				
 				logger.info("Found:" + repoVO);
-				repositoryVOListNew.add(repoVO);
+				repositoryVOList.add(repoVO);
 			}
 			rs.close();
 			psmt.close();

@@ -23,6 +23,9 @@
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -688,7 +691,7 @@ public class RepositoryController extends BaseController
 		List cachedRepositoryVOList = (List)CacheController.getCachedObject("repositoryCache", key);
 		if(cachedRepositoryVOList != null)
 		{
-			logger.info("There was an cached authorization:" + cachedRepositoryVOList.size());
+			logger.info("There was an cached repo list:" + cachedRepositoryVOList.size());
 			return cachedRepositoryVOList;
 		}
 				
@@ -699,6 +702,59 @@ public class RepositoryController extends BaseController
 		return repositoryVOList;
     }
 
+	/**
+	 * This method can be used by actions and use-case-controllers that only need to have simple access to the
+	 * functionality. They don't get the transaction-safety but probably just wants to show the info.
+	 */	
+    
+    public List<RepositoryVO> getRepositoryVOList(Database db) throws ConstraintException, SystemException, Bug
+    {   
+		String key = "repositoryVOList";
+		logger.info("key:" + key);
+		List<RepositoryVO> cachedRepositoryVOList = (List<RepositoryVO>)CacheController.getCachedObject("repositoryCache", key);
+		if(cachedRepositoryVOList != null)
+		{
+			logger.info("There was an cached repo list:" + cachedRepositoryVOList.size());
+			return cachedRepositoryVOList;
+		}
+		
+		List<RepositoryVO> repositoryVOListNew = new ArrayList<RepositoryVO>();
+		//System.out.println("repositoryVOListNew:" + repositoryVOListNew);
+
+		String SQL = "SELECT r.repositoryId, r.name, r.description, r.dnsName, r.isDeleted from cmRepository r order by r.repositoryId";
+		logger.info("SQL:" + SQL);
+		
+		try
+		{
+			Connection conn = (Connection) db.getJdbcConnection();
+			
+			PreparedStatement psmt = conn.prepareStatement(SQL.toString());
+	
+			ResultSet rs = psmt.executeQuery();
+			while(rs.next())
+			{
+				RepositoryVO repoVO = new RepositoryVO();
+				repoVO.setRepositoryId(new Integer(rs.getString(1)));
+				repoVO.setName(rs.getString(2));
+				repoVO.setDescription(rs.getString(3));
+				repoVO.setDnsName(rs.getString(4));
+				repoVO.setIsDeleted(rs.getBoolean(5));
+				
+				logger.info("Found:" + repoVO);
+				repositoryVOListNew.add(repoVO);
+			}
+			rs.close();
+			psmt.close();
+		}
+		catch(Exception e)
+		{
+			logger.error("Problem getting repo list: " + e.getMessage(), e);
+		}
+		
+		CacheController.cacheObject("repositoryCache", key, repositoryVOList);
+			
+		return repositoryVOList;
+    }
 
 	/**
 	 * This method can be used by actions and use-case-controllers that only need to have simple access to the
@@ -736,7 +792,7 @@ public class RepositoryController extends BaseController
 		{
 			beginTransaction(db);
 		
-			List allRepositories = this.getRepositoryVOList();
+			List allRepositories = this.getRepositoryVOList(db);
 			//t.printElapsedTime("allRepositories took");
 			
 			Iterator i = allRepositories.iterator();
@@ -841,19 +897,17 @@ public class RepositoryController extends BaseController
 		{
 			beginTransaction(db);
 		
-			OQLQuery oql = db.getOQLQuery("SELECT r FROM org.infoglue.cms.entities.management.impl.simple.SmallRepositoryImpl r WHERE r.isDeleted = $1 ORDER BY r.repositoryId");
-			oql.bind(false);
+			List<RepositoryVO> repositoryVOList = getRepositoryVOList(db);
 			
-			QueryResults results = oql.execute(Database.READONLY);
-			while (results.hasMore()) 
-            {
-                Repository repository = (Repository)results.next();
-                repositoryVOListNotMarkedForDeletion.add(repository.getValueObject());
-            }
-			CacheController.cacheObject("repositoryCache", key, repositoryVOListNotMarkedForDeletion);
+			for(RepositoryVO repo : repositoryVOList)
+			{
+				if(!repo.getIsDeleted())
+				{
+					repositoryVOListNotMarkedForDeletion.add(repo);
+				}
+			}
 
-			results.close();
-			oql.close();
+			CacheController.cacheObject("repositoryCache", key, repositoryVOListNotMarkedForDeletion);
 
 			commitTransaction(db);
 		}
@@ -881,24 +935,16 @@ public class RepositoryController extends BaseController
 		{
 			beginTransaction(db);
 		
-			OQLQuery oql = db.getOQLQuery("SELECT r FROM org.infoglue.cms.entities.management.impl.simple.SmallRepositoryImpl r WHERE r.isDeleted = $1 ORDER BY r.repositoryId");
-			oql.bind(true);
+			List<RepositoryVO> repositoryVOList = getRepositoryVOList(db);
 			
-			QueryResults results = oql.execute(Database.READONLY);
-			while (results.hasMore()) 
-            {
-				Repository repository = (Repository)results.next();
-				Integer repositoryId = repository.getRepositoryId();
-
-				if(AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Read", repositoryId.toString()) && AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Write", repositoryId.toString()))
+			for(RepositoryVO repo : repositoryVOList)
+			{
+				if(repo.getIsDeleted() && AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Read", repo.getId().toString()) && AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Write", repo.getId().toString()))
 				{
-					repositoryVOListMarkedForDeletion.add(repository.getValueObject());
+					repositoryVOListMarkedForDeletion.add(repo);
 				}
 			}
 			
-			results.close();
-			oql.close();
-
 			commitTransaction(db);
 		}
 		catch ( Exception e)		

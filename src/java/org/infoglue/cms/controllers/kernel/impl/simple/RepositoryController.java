@@ -723,13 +723,16 @@ public class RepositoryController extends BaseController
 		String SQL = "SELECT r.repositoryId, r.name, r.description, r.dnsName, r.isDeleted from cmRepository r order by r.repositoryId";
 		logger.info("SQL:" + SQL);
 		
+		PreparedStatement psmt = null;
+		ResultSet rs = null;
+		
 		try
 		{
 			Connection conn = (Connection) db.getJdbcConnection();
 			
-			PreparedStatement psmt = conn.prepareStatement(SQL.toString());
+			psmt = conn.prepareStatement(SQL.toString());
 	
-			ResultSet rs = psmt.executeQuery();
+			rs = psmt.executeQuery();
 			while(rs.next())
 			{
 				RepositoryVO repoVO = new RepositoryVO();
@@ -742,15 +745,25 @@ public class RepositoryController extends BaseController
 				logger.info("Found:" + repoVO);
 				repositoryVOList.add(repoVO);
 			}
-			rs.close();
-			psmt.close();
+			
+			CacheController.cacheObject("repositoryCache", key, repositoryVOList);
 		}
 		catch(Exception e)
 		{
 			logger.error("Problem getting repo list: " + e.getMessage(), e);
 		}
-		
-		CacheController.cacheObject("repositoryCache", key, repositoryVOList);
+		finally 
+		{
+		    try 
+		    {
+		    	rs.close();
+		    	psmt.close();
+		    }
+		    catch(Exception e) 
+		    {
+		    	logger.error("Problem getting repo list: " + e.getMessage(), e);
+		    }
+		}		
 			
 		return repositoryVOList;
     }

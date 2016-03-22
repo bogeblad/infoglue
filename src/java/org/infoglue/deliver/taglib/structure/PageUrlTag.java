@@ -107,7 +107,8 @@ public class PageUrlTag extends ComponentLogicTag
 	    	if (operatingMode == null) {
 	    		operatingMode = dc.getOperatingMode();
 	    	}
-	    	if (operatingMode.equalsIgnoreCase("3") && isDecorated == true) {
+	    	
+	    	if (isDecorated == null ||operatingMode.equalsIgnoreCase("3") && isDecorated == true) {
 	    		/* live pages can not med combined with decorated mode */
 		    	isDecorated = false;
 	    	}

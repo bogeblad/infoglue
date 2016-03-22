@@ -41,19 +41,21 @@
 				node.select();
 		}
 		
-		var ig_expanded_nodes_cookie = "igStructureTreeForBindingExpansionForRepository${repositoryId}";
+		//var ig_expanded_nodes_cookie = "igStructureTreeForBindingExpansionForRepository${repositoryId}";
+		var path = "${exp}";
 		
 		function loaded()
 		{			
 			setSelected("${select}");
 			
-			path = webFXTreeHandler.cookies.getCookie(ig_expanded_nodes_cookie);
+			//path = webFXTreeHandler.cookies.getCookie(ig_expanded_nodes_cookie);
 			//alert("path:" + path);
 			if(path && path != "")
 			{
-				path = path.substring(0, path.length - 1);
-				var pathArr = path.split(',');
-				
+				//path = path.substring(0, path.length - 1);
+				//var pathArr = path.split(',');
+				var pathArr = path.split('/');
+				pathArr = pathArr.filter(function(elem) {return !!elem}); // return only elements with a value
 				expandTreeRec(pathArr, 0);
 			}	
 			

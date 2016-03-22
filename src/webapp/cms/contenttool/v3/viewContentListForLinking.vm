@@ -34,14 +34,12 @@
 						parent.anchorListItemClick(anchor);
 					}
 					jQuery(this).addClass("selected-content");
-					jQuery("span#selected-content").text(anchor);
 				}
 				else {
 					parent.document.inputForm.anchorId.value = "";
 					if(parent.anchorListItemClick) {
 						parent.anchorListItemClick("");
 					}
-					jQuery("span#selected-content").text("");
 				}
 			});
 		});

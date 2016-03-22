@@ -3948,14 +3948,14 @@ public class SiteNodeController extends BaseController
 		        if(logger.isDebugEnabled())
 		        	logger.info("Marking " + siteNode.getName() + " for delete");
 
-		        List<ReferenceBean> referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(siteNode.getId(), -1, false, db);
+		        List<ReferenceBean> referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(siteNode.getId(), -1, CmsPropertyHandler.getOnlyShowReferenceIfLatestVersion(), true, db);
 				if(referenceBeanList != null && referenceBeanList.size() > 0 && !forceDelete)
 					throw new ConstraintException("SiteNode.stateId", "3405", "<br/><br/>" + siteNode.getName() + " (" + siteNode.getId() + ")");
 
 				boolean isDeletable = true;
 		        if(!forceDelete)
 		        	isDeletable = getIsDeletable(siteNode.getValueObject(), infogluePrincipal, db);
-		        
+
 				if(forceDelete || isDeletable)
 			    {
 					siteNode.setIsDeleted(true);

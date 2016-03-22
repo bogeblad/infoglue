@@ -34,6 +34,7 @@ import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.entities.content.ContentVO;
@@ -373,6 +374,7 @@ public class BasicURLComposer extends URLComposer
 	}
 	public String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId, String applicationContext, DeliveryContext deliveryContext, Boolean enableNiceURI, Boolean useDNSNameInUrls, String operatingMode, boolean isDecorated, String context) throws SystemException, Exception
     {
+
     	String url = null;
 
 		if (infoGluePrincipal == null)
@@ -389,12 +391,7 @@ public class BasicURLComposer extends URLComposer
     	
     	if(contentId == null || contentId == 0)
     		contentId = -1;
-    	
-        /*
-        String disableEmptyUrls = CmsPropertyHandler.getDisableEmptyUrls();
-        if(filename == null || filename.equals("") && disableEmptyUrls == null || disableEmptyUrls.equalsIgnoreCase("no"))
-            return "";
-        */
+
         
         boolean makeAccessBasedProtocolAdjustments = false;
         boolean makeAccessBasedProtocolAdjustmentsIntoProtected = false;
@@ -487,9 +484,9 @@ public class BasicURLComposer extends URLComposer
 		logger.debug("URL is decorated: " + isDecoratedUrl);
 		logger.debug("isDecorated was: " + isDecorated);
 
-		
-		if (enableNiceURI && (!isDecoratedUrl || !isDecorated) && !deliveryContext.getDisableNiceUri())
+		if (enableNiceURI && (!isDecoratedUrl && !deliveryContext.getDisableNiceUri()) && !isDecorated)
 		{
+
 			SiteNodeVO siteNode = SiteNodeController.getController().getSmallSiteNodeVOWithId(siteNodeId, db);
 			if(siteNode == null)
 			{
@@ -497,18 +494,7 @@ public class BasicURLComposer extends URLComposer
 				return "";
 			}
 			String enableNiceURIForLanguage = CmsPropertyHandler.getEnableNiceURIForLanguage();
-			/*
-		    //logger.info("enableNiceURIForLanguage:" + enableNiceURIForLanguage);
-		    if(enableNiceURIForLanguage == null || !enableNiceURIForLanguage.equals("true"))
-		    {
-		        String enableNiceURIForLanguageForRepo = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(siteNode.getRepositoryId(), "enableNiceURIForLanguage");
-				if(enableNiceURIForLanguageForRepo != null && enableNiceURIForLanguageForRepo.equals("true"))
-					enableNiceURIForLanguage = enableNiceURIForLanguageForRepo;
-		    }
 
-		    if(enableNiceURIForLanguage.equalsIgnoreCase("true"))
-        		context = context + "/" + LanguageDeliveryController.getLanguageDeliveryController().getLanguageVO(db, languageId).getLanguageCode();
-			*/
 			SiteNodeVO currentSiteNode = SiteNodeController.getController().getSmallSiteNodeVOWithId(deliveryContext.getSiteNodeId(), db);
 
 			if(!siteNode.getRepositoryId().equals(currentSiteNode.getRepositoryId()))
@@ -738,6 +724,8 @@ public class BasicURLComposer extends URLComposer
 						}
 		            	else
 		            	{
+		            
+		            	
 		    	            if(contentId != null && contentId.intValue() != -1)
 		    	            {
 		    	                sb.append("?contentId=").append(String.valueOf(contentId));
@@ -777,6 +765,7 @@ public class BasicURLComposer extends URLComposer
         }
         else
         {           
+
             if(useDNSNameInUrls)
             {
 	    		if(siteNodeId == null)
@@ -838,9 +827,13 @@ public class BasicURLComposer extends URLComposer
 	    		        
 	    		    }
 				}
-
-				url = dnsName + context + "/" + CmsPropertyHandler.getApplicationBaseAction() + "?" + arguments;
-
+			    String applicationBaseAction = CmsPropertyHandler.getApplicationBaseAction();
+			    if (isDecorated) {
+			    	applicationBaseAction = CmsPropertyHandler.getComponentRendererAction();
+			    }
+	
+				url = dnsName + context + "/" + applicationBaseAction + "?" + arguments;
+				
 				if (isDecoratedUrl)
 				{
 					String componentRendererUrl = CmsPropertyHandler.getComponentRendererUrl();
@@ -897,7 +890,7 @@ public class BasicURLComposer extends URLComposer
 				{
 					sb.append(servletContext + "/" + CmsPropertyHandler.getApplicationBaseAction() + "?" + arguments);
 				}
-
+		
 				url = sb.toString();
             }
         }
@@ -1057,18 +1050,6 @@ public class BasicURLComposer extends URLComposer
 				return "";
 			}
 			String enableNiceURIForLanguage = CmsPropertyHandler.getEnableNiceURIForLanguage();
-			/*
-		    //logger.info("enableNiceURIForLanguage:" + enableNiceURIForLanguage);
-		    if(enableNiceURIForLanguage == null || !enableNiceURIForLanguage.equals("true"))
-		    {
-		        String enableNiceURIForLanguageForRepo = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(siteNode.getRepositoryId(), "enableNiceURIForLanguage");
-				if(enableNiceURIForLanguageForRepo != null && enableNiceURIForLanguageForRepo.equals("true"))
-					enableNiceURIForLanguage = enableNiceURIForLanguageForRepo;
-		    }
-
-		    if(enableNiceURIForLanguage.equalsIgnoreCase("true"))
-        		context = context + "/" + LanguageDeliveryController.getLanguageDeliveryController().getLanguageVO(db, languageId).getLanguageCode();
-			*/
 			SiteNodeVO currentSiteNode = SiteNodeController.getController().getSmallSiteNodeVOWithId(deliveryContext.getSiteNodeId(), db);
 
 			if(!siteNode.getRepositoryId().equals(currentSiteNode.getRepositoryId()))

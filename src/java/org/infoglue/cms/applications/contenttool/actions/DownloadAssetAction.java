@@ -48,7 +48,7 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws Exception 
 	{
-		String assetUrl = "";
+		String assetUrl = null;
 		if (contentId != null && assetKey != null && languageId != null) {
 			try
 			{

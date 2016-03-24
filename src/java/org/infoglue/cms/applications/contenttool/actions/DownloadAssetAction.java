@@ -23,6 +23,8 @@
 
 package org.infoglue.cms.applications.contenttool.actions;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
@@ -42,19 +44,38 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 	private Integer contentId;
 	private Integer languageId;
 	private String assetKey;
+	private Integer assetId;
 	
 	protected String doExecute() throws Exception 
 	{
 		String assetUrl = "";
-		
-		try
-		{
-			assetUrl = DigitalAssetController.getDigitalAssetUrl(contentId, languageId, assetKey, true);
-			this.getResponse().sendRedirect(assetUrl);
+		if (contentId != null && assetKey != null && languageId != null) {
+			try
+			{
+				assetUrl = DigitalAssetController.getDigitalAssetUrl(contentId, languageId, assetKey, true);
+			}
+			catch(Exception e)
+			{
+				logger.warn("Could not download asset on contentId:" + contentId + " (" + languageId + "/" + assetKey + ")");
+			}
+		} else if (assetId != null) {
+			try 
+			{
+				assetUrl = DigitalAssetController.getDigitalAssetUrl(assetId);
+			}
+			catch(Exception e)
+			{
+				logger.warn("Could not download asset on assetId:" + assetId);
+			}
 		}
-		catch(Exception e)
+
+		if (assetUrl != null)
 		{
-			logger.warn("Could not download asset on contentId:" + contentId + " (" + languageId + "/" + assetKey + ")");
+			this.getResponse().sendRedirect(assetUrl);
+		} 
+		else
+		{
+			this.getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
 		}
 		
 		return NONE;
@@ -78,6 +99,11 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 	public void setContentId(Integer contentId) 
 	{
 		this.contentId = contentId;
+	}
+
+	public void setAssetId(Integer assetId) 
+	{
+		this.assetId = assetId;
 	}
 	
 	public Integer getLanguageId() 

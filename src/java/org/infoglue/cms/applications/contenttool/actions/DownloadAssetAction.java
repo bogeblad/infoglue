@@ -61,7 +61,7 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 		} else if (assetId != null) {
 			try 
 			{
-				assetUrl = DigitalAssetController.getDigitalAssetUrl(assetId);
+				assetUrl = DigitalAssetController.getDigitalAssetUrl(assetId, true);
 			}
 			catch(Exception e)
 			{
@@ -75,6 +75,8 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 		} 
 		else
 		{
+			logger.info("Could not find asset since parameters were not set correctly.");
+			logger.debug("contentId: " + contentId + ", languageId: " + languageId + ", assetKey: " + assetKey + ", assetId: " + assetId);
 			this.getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
 		}
 		

@@ -562,8 +562,7 @@ public abstract class PageInvoker
 
 	protected String decorateHeadAndPageWithVarsFromComponents(String pageString)
 	{
-		if(pageString.length() < 500000)
-		{
+
 			pageString = this.getTemplateController().decoratePage(pageString);
 			
 			StringBuilder sb = null;
@@ -662,12 +661,6 @@ public abstract class PageInvoker
 			
 			if(sb != null)
 				pageString = sb.toString();			
-		}
-		else
-		{
-			if(logger.isInfoEnabled())
-				logger.info("pageString was to large (" + pageString.length() + ") so the headers was not inserted.");
-		}
 		
 		return pageString;
 	}

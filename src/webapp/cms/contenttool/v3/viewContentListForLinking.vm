@@ -60,14 +60,17 @@
 	</style>
 </head>
 <body oncontextmenu="return false;" class="generaltooledit" onload="">
-#if ($siteNodeId > 0)
+#if ($!siteNodeId > 0)
 	<div id="contentList" class="contentTree">
-		<h4 id="content-list-label">$ui.getString("tool.contenttool.linkDialog.nodeContentLabel")</h4>
-		<ul>
-		#foreach( $key in $contentList.keySet() )
-		    <li class="content-item" id="anchor-$key">$contentList.get($key)</li>
+		#if ($!contentList)
+			<ul>
+			#foreach( $key in $contentList.keySet() )
+			    <li class="content-item" id="anchor-$key">$contentList.get($key)</li>
+			#end
+			</ul>
+		#else
+			<p>$ui.getString("tool.contenttool.linkDialog.noNodeContentLabel")</p>
 		#end
-		</ul>
 	</div>
 #end
 </body>

@@ -593,7 +593,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 			String componentXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><components><component contentId=\"" + componentId + "\" id=\"" + newComponentId + "\" name=\"base\"><properties></properties><bindings></bindings><components></components></component></components>";
 			ContentVO templateContentVO = nodeDeliveryController.getBoundContent(this.getInfoGluePrincipal(), siteNodeId, languageId, true, "Meta information", DeliveryContext.getDeliveryContext());
 			
-			ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(templateContentVO.getId(), this.masterLanguageVO.getId());
+			ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(templateContentVO.getId(), this.languageId);
 			if(contentVersionVO == null)
 			{
 				SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
@@ -609,7 +609,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 		}
 		else
 		{
-		    String componentXML   = getPageComponentsString(siteNodeId, this.masterLanguageVO.getId());			
+		    String componentXML   = getPageComponentsString(siteNodeId, this.languageId);			
 		    
 			Document document = XMLHelper.readDocumentFromByteArray(componentXML.getBytes("UTF-8"));
 			String componentXPath = "//component[@id=" + this.parentComponentId + "]/components";
@@ -663,8 +663,8 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 
 				String modifiedXML = XMLHelper.serializeDom(document, new StringBuffer()).toString(); 
 
-				ContentVO contentVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, this.masterLanguageVO.getId(), contentId).getBoundContent(this.getInfoGluePrincipal(), siteNodeId, this.masterLanguageVO.getId(), true, "Meta information", DeliveryContext.getDeliveryContext());
-				ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVO.getId(), this.masterLanguageVO.getId());
+				ContentVO contentVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, this.languageId, contentId).getBoundContent(this.getInfoGluePrincipal(), siteNodeId, this.languageId, true, "Meta information", DeliveryContext.getDeliveryContext());
+				ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVO.getId(), this.languageId);
 				
 				logger.info("Updating ComponentStructure on " + contentVersionVO.getContentVersionId());
 				ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal());

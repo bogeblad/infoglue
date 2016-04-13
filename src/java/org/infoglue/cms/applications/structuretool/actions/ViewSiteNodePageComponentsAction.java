@@ -609,7 +609,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 		}
 		else
 		{
-		    String componentXML   = getPageComponentsString(siteNodeId, this.languageId);			
+		    String componentXML   = getPageComponentsString(siteNodeId, this.masterLanguageVO.getId());
 		    
 			Document document = XMLHelper.readDocumentFromByteArray(componentXML.getBytes("UTF-8"));
 			String componentXPath = "//component[@id=" + this.parentComponentId + "]/components";

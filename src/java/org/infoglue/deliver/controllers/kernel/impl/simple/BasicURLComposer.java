@@ -839,10 +839,6 @@ public class BasicURLComposer extends URLComposer
 				if (isDecoratedUrl || isDecorated)
 				{
 					String componentRendererUrl = CmsPropertyHandler.getComponentRendererUrl();
-					if(componentRendererUrl.endsWith("/"))
-					{
-						componentRendererUrl += "/";
-					}
 
 					url = componentRendererUrl + CmsPropertyHandler.getComponentRendererAction() + "?" + arguments;
 				}

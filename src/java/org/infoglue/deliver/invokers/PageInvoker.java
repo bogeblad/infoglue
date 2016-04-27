@@ -185,6 +185,7 @@ public abstract class PageInvoker
 			logger.info("PageCache:" + this.getDeliveryContext().getDisablePageCache());
 		}
 		
+	
 		LanguageVO languageVO = LanguageDeliveryController.getLanguageDeliveryController().getLanguageVO(getDatabase(), this.getTemplateController().getLanguageId());
 		
 		if(logger.isInfoEnabled())
@@ -661,6 +662,7 @@ public abstract class PageInvoker
 			
 			if(sb != null)
 				pageString = sb.toString();			
+
 		
 		return pageString;
 	}

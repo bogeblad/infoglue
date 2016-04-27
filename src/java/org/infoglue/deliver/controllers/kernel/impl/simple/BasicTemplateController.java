@@ -5952,7 +5952,7 @@ public class BasicTemplateController implements TemplateController
 		
 		try
 		{
-			pageUrl = this.nodeDeliveryController.getPageUrl(getDatabase(), this.getPrincipal(), this.siteNodeId, this.languageId, includeLanguageId, operatingMode, isDecorated, this.deliveryContext);
+			pageUrl = this.nodeDeliveryController.getPageUrl(getDatabase(), this.getPrincipal(), siteNodeId, this.languageId, includeLanguageId, operatingMode, isDecorated, this.deliveryContext);
 		}
 		catch(Exception e)
 		{

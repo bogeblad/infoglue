@@ -562,7 +562,6 @@ public abstract class PageInvoker
 
 	protected String decorateHeadAndPageWithVarsFromComponents(String pageString)
 	{
-		System.out.println("pageString.length():" + pageString.length());
 
 			pageString = this.getTemplateController().decoratePage(pageString);
 			
@@ -586,9 +585,8 @@ public abstract class PageInvoker
 					Iterator htmlHeadItemsIterator = htmlHeadItems.iterator();
 					while(htmlHeadItemsIterator.hasNext())
 					{
-						
 						String value = (String)htmlHeadItemsIterator.next();
-						System.out.println("headItem:" + value);
+						//logger.info("headItem:" + value);
 						headerItems = headerItems + value + "\n";
 					}
 					sb.insert(indexOfHeadEndTag, headerItems);
@@ -613,7 +611,7 @@ public abstract class PageInvoker
 					while(htmlBodyItemsIterator.hasNext())
 					{
 						String value = (String)htmlBodyItemsIterator.next();
-						System.out.println("headItem:" + value);
+						//logger.info("headItem:" + value);
 						bodyItems = bodyItems + value + "\n";
 					}
 					sb.insert(indexOfBodyEndTag, bodyItems);
@@ -663,10 +661,6 @@ public abstract class PageInvoker
 			
 			if(sb != null)
 				pageString = sb.toString();			
-
-			if(logger.isInfoEnabled())
-				logger.info("pageString was to large (" + pageString.length() + ") so the headers was not inserted.");
-		
 		
 		return pageString;
 	}

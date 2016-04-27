@@ -210,7 +210,7 @@
 	var selectedSiteNodeId;
 	var selectedSiteNodePath;
 	var selectedAnchorId;
-	function pageMarked(siteNodeId, path, anchorId)
+	function pageMarked(siteNodeId, path)
 	{
 		//alert("Page was marked in link:" + siteNodeId + ":" + selectedSiteNodePath);
 		selectedSiteNodeId = siteNodeId;

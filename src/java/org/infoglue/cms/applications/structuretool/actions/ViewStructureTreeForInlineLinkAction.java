@@ -139,7 +139,7 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 	
 	public String getExpansion(Integer oldSiteNodeId)
 	{
-	    String expansion = "/";
+	    String expansion = "";
 	    
 	    if(oldSiteNodeId == null)
 	        return "";
@@ -149,7 +149,7 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 	        SiteNodeVO parentSiteNodeVO = SiteNodeController.getController().getParentSiteNode(oldSiteNodeId);
 		    while(parentSiteNodeVO != null)
 		    {
-		        expansion += parentSiteNodeVO.getId() + "/";
+		        expansion = parentSiteNodeVO.getId() + "/" + expansion;
 		        parentSiteNodeVO = SiteNodeController.getController().getParentSiteNode(parentSiteNodeVO.getId());
 		    }
 	    }

@@ -5,3 +5,5 @@
 build.properties
 .classpath
 .project/build.properties
+/bin/
+.project

@@ -108,6 +108,7 @@
 		  	
 		  	#if($oldAnchorId)
             document.getElementById("anchorId").value = "anchor-$oldAnchorId";
+            toggleContentDiv();
             #set($oldAnchorId = "anchor-$oldAnchorId")
 		  	#else
 		  	document.getElementById("anchorId").value = "";
@@ -121,9 +122,18 @@
 		  	#end
 		}
 
-		function enableContentDiv()
+		function toggleContentDiv()
 		{
-			document.getElementById("content").style.display = "block";
+			var cDiv = jQuery("div#content");
+			if(cDiv.css("display") == "none") {
+				cDiv.show();
+			}
+			else {
+				cDiv.hide();
+				jQuery("#listFrameBoundContent").contents().find("li.content-item").removeClass("selected-content");
+				document.inputForm.anchorId.value = "";
+				anchorListItemClick("");
+			}
 		}
 		
 		function onOk() 
@@ -193,7 +203,7 @@
 			  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this, 'itreeFrame');" class="contenttool">
 					    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
 					    #foreach ($repositoryVO in $repositories)
-					    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+					    <option value="$repositoryVO.getRepositoryId()"#if(${repositoryId} == $repositoryVO.getRepositoryId()) selected#end>$repositoryVO.getName()</option>
 					    #end
 					</select>
 				</td>
@@ -202,7 +212,7 @@
 				<td height="1" colspan="2"><img src="css/images/trans.gif" width="1" height="5"></td>
 			</tr>	
 			<tr>
-				<td class="menu" colspan="2" style="border: 1px solid silver;">   
+				<td class="menu" colspan="2">
 					#set($exp = $this.getExpansion($oldSiteNodeId))
 					<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureToolMenuHtml!bindingViewV3.action?repositoryId=${repositoryId}$sortArg&exp=$exp&akey=/$!oldSiteNodeId/&select=$!oldSiteNodeId" width="310" height="385" ></iframe>
 				</td>
@@ -211,40 +221,27 @@
 		</div>
 	</td>	
 	<td valign="middle" width="20">
-		<!--<img src="css/images/trans.gif" width="20" height="1"/>-->
-		<!--<a href="javascript:enableContentDiv();" class="optionalContent" title="$ui.getString('tool.contenttool.linkDialog.optionalContentTitle')"></a>-->
-		<iframe frameborder="0" name="listFrameBoundContent" id="listFrameBoundContent" src="ViewContentToolBoundList.action?repositoryId=$!repositoryId&siteNodeId=$!oldSiteNodeId&anchorId=$!oldAnchorId" width="310" height="385" ></iframe>
+		<img src="css/images/trans.gif" width="20" height="1"/>
 	</td>
 	<td valign="top">
-		<div id="content" style="display: none;">
-			<table cellpadding="0" cellspacing="0" border="0">
-			<tr>
-				<td colspan="2">
-			  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this, 'itreeFrameContent');" class="contenttool">
-					    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
-					    #foreach ($repositoryVO in $repositories)
-					    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
-					    #end
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td height="1" colspan="2"><img src="css/images/trans.gif" width="1" height="5"></td>
-			</tr>		
-			<tr>
-				<td class="menu" colspan="2" style="border: 1px solid silver;">  
-					#if($oldContentId > -1)
-						#set($exp = $this.getContentExpansion($oldContentId))
-					#else
-						#set($oldContentId = "")
-						#set($exp = "")
-					#end
-					<iframe frameborder="0" name="itreeFrameContent" id="itreeFrameContent" src="ViewContentHtmlTree.action?repositoryId=$!repositoryId&exp=$exp&akey=/$!oldContentId/&select=$!oldContentId&bodyClass=generaltooledit" width="310" height="385" ></iframe>
-				</td>
-			</tr>	
-			</table>	
-		</div>
-		
+		<table cellpadding="0" cellspacing="0" border="0">
+		<tr>
+			<td>
+				<a href="javascript:toggleContentDiv();" class="optionalContent" title="$ui.getString('tool.contenttool.linkDialog.optionalContentHeader')"><p>$ui.getString('tool.contenttool.linkDialog.optionalContentHeader')</p></a>
+			</td>
+		</tr>
+		<tr>
+			<td height="1" colspan="2"><img src="css/images/trans.gif" width="1" height="5"></td>
+		</tr>
+		<tr>
+			<td class="menu" colspan="2">
+				<div id="content" style="display: none;">
+					<iframe frameborder="0" name="listFrameBoundContent" id="listFrameBoundContent" src="ViewContentToolBoundList.action?repositoryId=$!repositoryId&siteNodeId=$!oldSiteNodeId&anchorId=$!oldAnchorId"></iframe>
+					##  ---- IG-3618 deleted code ----
+				</div>
+			</td>
+		</tr>
+		</table>
 	</td>
 </tr>
 </table>

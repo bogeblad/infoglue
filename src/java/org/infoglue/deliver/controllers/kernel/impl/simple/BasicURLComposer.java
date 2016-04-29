@@ -767,7 +767,7 @@ public class BasicURLComposer extends URLComposer
         }
         else
         {           
-
+        	System.out.println("useDNSNameInUrls:" + useDNSNameInUrls);
             if(useDNSNameInUrls)
             {
 	    		if(siteNodeId == null)
@@ -888,7 +888,7 @@ public class BasicURLComposer extends URLComposer
 				{
 					sb.append(servletContext + "/" + CmsPropertyHandler.getApplicationBaseAction() + "?" + arguments);
 				}
-		
+				System.out.println("ServletContext: " + servletContext);
 				url = sb.toString();
             }
         }

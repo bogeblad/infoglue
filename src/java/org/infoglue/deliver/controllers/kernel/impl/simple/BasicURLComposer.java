@@ -767,7 +767,7 @@ public class BasicURLComposer extends URLComposer
         }
         else
         {           
-        	System.out.println("useDNSNameInUrls:" + useDNSNameInUrls);
+
             if(useDNSNameInUrls)
             {
 	    		if(siteNodeId == null)
@@ -836,11 +836,11 @@ public class BasicURLComposer extends URLComposer
 	
 				url = dnsName + context + "/" + applicationBaseAction + "?" + arguments;
 				
-				if (isDecoratedUrl || isDecorated)
+				if ((isDecoratedUrl || isDecorated) && !operatingMode.equalsIgnoreCase("3"))
 				{
 					String componentRendererUrl = CmsPropertyHandler.getComponentRendererUrl();
 
-					url = componentRendererUrl + CmsPropertyHandler.getComponentRendererAction() + "?" + arguments;
+					url = dnsName + componentRendererUrl + CmsPropertyHandler.getComponentRendererAction() + "?" + arguments;
 				}
 
 				if(request != null && request.getScheme().equalsIgnoreCase("https"))
@@ -888,7 +888,7 @@ public class BasicURLComposer extends URLComposer
 				{
 					sb.append(servletContext + "/" + CmsPropertyHandler.getApplicationBaseAction() + "?" + arguments);
 				}
-				System.out.println("ServletContext: " + servletContext);
+			
 				url = sb.toString();
             }
         }

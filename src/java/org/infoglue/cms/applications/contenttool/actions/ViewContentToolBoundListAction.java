@@ -24,28 +24,29 @@
 package org.infoglue.cms.applications.contenttool.actions;
 
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
-import org.infoglue.cms.controllers.kernel.impl.simple.RegistryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionControllerProxy;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
-import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
+import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
-import org.infoglue.cms.entities.structure.SiteNodeVersion;
+import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
-
-//import com.frovi.ss.Tree.BaseNode;
-//import com.frovi.ss.Tree.INodeSupplier;
+import org.infoglue.cms.util.XMLHelper;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 {
@@ -59,39 +60,49 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 	private String articleTitle;
 	private Map<Integer, String> contentList;
 	private String[] allowedContentTypeIds = null;
+	private Integer selectedLanguage = 0;
 	
 
 	@Override
 	public String doExecute() throws Exception
 	{
-		SiteNodeVersionVO latestSiteNodeVersion = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getLatestActiveSiteNodeVersionVO(siteNodeId);
+		List<LanguageVO> enabledLangs = SiteNodeController.getController().getEnabledLanguageVOListForSiteNode(this.siteNodeId);
+		SiteNodeVersionVO latestSiteNodeVersion = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getLatestActiveSiteNodeVersionVO(this.siteNodeId);
+		
 		if(latestSiteNodeVersion != null) {
-			List<Object> referencedObjects = RegistryController.getController().getReferencedObjects(SiteNodeVersion.class.getName(), latestSiteNodeVersion.getSiteNodeVersionId().toString(), true);
+			String slotName = "komponentplats 2/slot 2";
+			String contentName = "Article";
+			String componentXML = null;
+			SiteNodeVO siteNode = SiteNodeController.getController().getSiteNodeVOWithId(this.siteNodeId);
+			ContentVersionVO metaInfo = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNode.getMetaInfoContentId());
+			componentXML = ContentVersionController.getContentVersionController().getAttributeValue(metaInfo.getId(), "ComponentStructure", false);
+			logger.info("componentXML:" + componentXML);
 			
-			if(!referencedObjects.isEmpty()) {
-				// List of CTD-ID for the content types that you can have anchor links to.
-				// To add more content types, just add the CTD-ID for them to the array list
-				List<Integer> ctdIdList = new ArrayList<Integer>();
-				ContentTypeDefinitionVO ctd = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Article");
-				ctdIdList.add(ctd.getContentTypeDefinitionId());
+			Document document = XMLHelper.readDocumentFromByteArray(componentXML.getBytes("UTF-8"));
+			String xpath = "//component[@name='" + slotName + "']/properties/property[@name='" + contentName + "']/binding";
+			NodeList components = org.apache.xpath.XPathAPI.selectNodeList(document.getDocumentElement(), xpath);
+			int NrOfComponents = components.getLength();
+			logger.info("Number of sitenode contents: " + NrOfComponents);
+			
+			if (components.getLength() > 0) {
+				if (this.selectedLanguage == 0) {
+					this.selectedLanguage = enabledLangs.get(0).getLanguageId();
+				}
 				contentList = new HashMap<Integer, String>();
-				
-				// Build list of contents that can be linked to
-				for (Object obj : referencedObjects) {
+				for (int i=0; i<NrOfComponents; i++) {
 					setArticleTitle("");
-					if(obj instanceof ContentVO) {
-						ContentVO contentObj = (ContentVO) obj;
-						if(ctdIdList.contains(contentObj.getContentTypeDefinitionId())) {
-							ContentVersionVO cvObj = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentObj.getId());
-							if(cvObj != null) {
-								setArticleTitle(ContentVersionController.getContentVersionController().getAttributeValue(cvObj.getContentVersionId(), "Title", true));
-								contentList.put(contentObj.getContentId(), contentObj.getName() + (getArticleTitle().length() > 0 ? " (" + getArticleTitle() + ")" : ""));
-							}
-						}
+					Element elem = (Element) components.item(i);
+					int contentId = Integer.parseInt(elem.getAttribute("entityId"));
+					setArticleTitle(ContentController.getContentController().getContentAttribute(contentId, selectedLanguage, "Title"));
+					ContentVO contentObj = ContentController.getContentController().getContentVOWithId(contentId);
+					if(contentObj != null) {
+						contentList.put(contentId, contentObj.getName() + (getArticleTitle().length() > 0 ? " (" + getArticleTitle() + ")" : ""));
+						logger.info("Content item: " + contentId + " - " + contentObj.getName() + " - " + getArticleTitle());
 					}
 				}
 			}
 		}
+		
 		return "success";
 	}
 
@@ -194,5 +205,13 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 
 	public void setArticleTitle(String articleTitle) {
 		this.articleTitle = articleTitle;
+	}
+
+	public Integer getSelectedLanguage() {
+		return selectedLanguage;
+	}
+
+	public void setSelectedLanguage(Integer selectedLanguage) {
+		this.selectedLanguage = selectedLanguage;
 	}
 }

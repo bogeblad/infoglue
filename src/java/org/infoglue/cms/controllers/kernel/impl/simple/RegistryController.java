@@ -1840,16 +1840,20 @@ public class RegistryController extends BaseController
                 try
                 {
                 	Boolean isLocalRepo = false;
+                	Boolean isDeleted = false;
                 	if(excludeInternalRepoReferences)
                 	{
                 		ContentVO checkedContentVO = ContentController.getContentController().getSmallContentVOWithId(contentId, db);
                 		ContentVO referencingContentVO = ContentController.getContentController().getSmallContentVOWithId(new Integer(registryVO.getReferencingEntityCompletingId()), db);
+
                 		if(checkedContentVO.getRepositoryId().intValue() == referencingContentVO.getRepositoryId().intValue())
                 			isLocalRepo = true;
                 	}
                 		
             		ContentVO referencingContentVO = ContentController.getContentController().getSmallContentVOWithId(new Integer(registryVO.getReferencingEntityCompletingId()), db);
-
+            		if(referencingContentVO.getIsDeleted())
+            			isDeleted = true;
+            		
                     ContentVersionVO contentVersion = ContentVersionController.getContentVersionController().getContentVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
             		ContentVersionVO latestCVVOForReferencingContent = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(referencingContentVO.getId(), contentVersion.getLanguageId(), db);
 
@@ -1874,6 +1878,11 @@ public class RegistryController extends BaseController
                     else if(isLocalRepo)
                     {
 		    			logger.info("Skipping internal reference " + contentId + " had on local repo contents.");
+		    			referenceBeanList.remove(existingReferenceBean);                    	
+                    }
+                    else if(isDeleted)
+                    {
+		    			logger.info("Skipping reference " + contentId + " was deleted.");
 		    			referenceBeanList.remove(existingReferenceBean);                    	
                     }
 		    		else
@@ -1925,13 +1934,17 @@ public class RegistryController extends BaseController
 	                SiteNodeVO referencingSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersion.getSiteNodeId(), db);
 
                 	Boolean isLocalRepo = false;
+                	Boolean isDeleted = false;
                 	if(excludeInternalRepoReferences)
                 	{
                 		ContentVO checkedContentVO = ContentController.getContentController().getSmallContentVOWithId(contentId, db);
                 		if(checkedContentVO.getRepositoryId().intValue() == referencingSiteNodeVO.getRepositoryId().intValue())
                 			isLocalRepo = true;
                 	}
-
+                	
+            		if(referencingSiteNodeVO.getIsDeleted())
+            			isDeleted = true;
+            		
             		SiteNodeVersionVO latestSNVVOForReferencingContent = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, referencingSiteNodeVO.getId());
 
             		boolean isLatest = (siteNodeVersion.getId().intValue() == latestSNVVOForReferencingContent.getId().intValue());
@@ -1939,6 +1952,11 @@ public class RegistryController extends BaseController
             		{
 	            		continue;
             		}
+                    else if(isDeleted)
+                    {
+		    			logger.info("Skipping reference " + contentId + " was deleted.");
+		    			referenceBeanList.remove(existingReferenceBean);                    	
+                    }
 
 	                if(!siteNodeVersion.getIsActive() || isLocalRepo)
 	                	add = false;
@@ -2566,6 +2584,7 @@ public class RegistryController extends BaseController
 	            logger.info("registryVO:" + registryVO.getReferencingEntityId() + ":" +  registryVO.getReferencingEntityCompletingId());
 	            
 	            Boolean isLocalRepo = false;
+	            Boolean isDeleted = false;
 	        	if(excludeInternalRepoReferences)
 	        	{
 	        		SiteNodeVO checkedSiteNodeVO = SiteNodeController.getController().getSmallSiteNodeVOWithId(siteNodeId, db);
@@ -2577,12 +2596,15 @@ public class RegistryController extends BaseController
 	            			
 	            		if(checkedSiteNodeVO.getRepositoryId().intValue() == referencingSiteNodeVO.getRepositoryId().intValue())
 	            			isLocalRepo = true;
+
+	            		if(checkedSiteNodeVO.getIsDeleted())
+	            			isDeleted = true;
 	            		
 	                	SiteNodeVersionVO siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
 	            		SiteNodeVersionVO latestSNVVOForReferencingContent = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, referencingSiteNodeVO.getId());
 	
 	            		boolean isLatest = (siteNodeVersion.getId().intValue() == latestSNVVOForReferencingContent.getId().intValue());
-	            		if(!isLatest)
+	            		if(!isLatest || isDeleted)
 	            		{
 		            		continue;
 		            	}
@@ -2597,11 +2619,14 @@ public class RegistryController extends BaseController
 	        			if(checkedSiteNodeVO.getRepositoryId().intValue() == referencingContentVO.getRepositoryId().intValue())
 	            			isLocalRepo = true;
 	            		
+	            		if(checkedSiteNodeVO.getIsDeleted())
+	            			isDeleted = true;
+
 	                	ContentVersionVO contentVersion = ContentVersionController.getContentVersionController().getContentVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
 	            		ContentVersionVO latestCVVOForReferencingContent = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(referencingContentVO.getId(), contentVersion.getLanguageId(), db);
 	
 	            		boolean isLatest = (contentVersion.getId().intValue() == latestCVVOForReferencingContent.getId().intValue());
-	            		if(!isLatest)
+	            		if(!isLatest || isDeleted)
 	            		{
 		            		continue;
 	            		}

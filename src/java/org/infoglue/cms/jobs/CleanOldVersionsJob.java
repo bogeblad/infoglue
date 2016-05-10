@@ -66,46 +66,75 @@ public class CleanOldVersionsJob implements Job
 	    		if(deleteVersions == null)
 	    			deleteVersions = new Boolean(true);
 
+	    		Integer redoNumberOfTimes = (Integer)context.get("redoNumberOfTimes");
+	    		if(redoNumberOfTimes == null)
+	    			redoNumberOfTimes = new Integer(2);
+
 	    		Map<String,Integer> totalCleanedContentVersions = new HashMap<String,Integer>();
 	    		//Map<String,Integer> totalCleanedSiteNodeVersions = new HashMap<String,Integer>();
 	    		int cleanedSiteNodeVersions = 0;
 	    		
-	    		List<ContentTypeDefinitionVO> contentTypes = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList();
-	    		for(ContentTypeDefinitionVO ctdVO : contentTypes)
-	    		{
-	    			Integer numberOfVersionsToKeepDuringCleanInteger = -1;
-	    			try
-	    			{
-	    				numberOfVersionsToKeepDuringCleanInteger = new Integer(CmsPropertyHandler.getServerNodeProperty("contentTypeDefinitionId_" + ctdVO.getId() + "_versionsToKeep", false, "-1", true));
-	    			}
-	    			catch (Exception e) 
-	    			{
-	    				logger.warn("Could not get number of versions to keep:" + e.getMessage());
-	    			}
-	    			
-	    			logger.info("numberOfVersionsToKeepDuringCleanInteger: " + numberOfVersionsToKeepDuringCleanInteger);
-	    			logger.info("deleteVersions:" + deleteVersions);
-			    	String keepOnlyOldPublishedVersionsString = CmsPropertyHandler.getKeepOnlyOldPublishedVersionsDuringClean();
-			    	logger.info("keepOnlyOldPublishedVersionsString:" + keepOnlyOldPublishedVersionsString);
-			    	long minimumTimeBetweenVersionsDuringClean = CmsPropertyHandler.getMinimumTimeBetweenVersionsDuringClean();
-			    	logger.info("minimumTimeBetweenVersionsDuringClean:" + minimumTimeBetweenVersionsDuringClean);
-			    	boolean keepOnlyOldPublishedVersions = Boolean.parseBoolean(keepOnlyOldPublishedVersionsString);
+				for(int i=0; i<redoNumberOfTimes; i++)
+				{
+					boolean anyDeletions = false;
 					
-			    	if(numberOfVersionsToKeepDuringCleanInteger.intValue() < 3 && numberOfVersionsToKeepDuringCleanInteger.intValue() > -1)
-						numberOfVersionsToKeepDuringCleanInteger = new Integer(3);
-			    	
-					if(numberOfVersionsToKeepDuringCleanInteger.intValue() > -1)
-					{
-						int cleanedContentVersions = ContentVersionController.getContentVersionController().cleanContentVersions(numberOfVersionsToKeepDuringCleanInteger.intValue(), keepOnlyOldPublishedVersions, minimumTimeBetweenVersionsDuringClean, deleteVersions, ctdVO.getId());
-						logger.info("cleanedContentVersions:" + cleanedContentVersions);
-						totalCleanedContentVersions.put(ctdVO.getName(), cleanedContentVersions);
-						if(ctdVO.getName().equalsIgnoreCase("Meta information"))
+		    		List<ContentTypeDefinitionVO> contentTypes = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList();
+		    		for(ContentTypeDefinitionVO ctdVO : contentTypes)
+		    		{
+		    			Integer numberOfVersionsToKeepDuringCleanInteger = -1;
+		    			try
+		    			{
+		    				numberOfVersionsToKeepDuringCleanInteger = new Integer(CmsPropertyHandler.getServerNodeProperty("contentTypeDefinitionId_" + ctdVO.getId() + "_versionsToKeep", false, "-1", true));
+		    			}
+		    			catch (Exception e) 
+		    			{
+		    				logger.warn("Could not get number of versions to keep:" + e.getMessage());
+		    			}
+		    			
+		    			logger.info("numberOfVersionsToKeepDuringCleanInteger: " + numberOfVersionsToKeepDuringCleanInteger);
+		    			logger.info("deleteVersions:" + deleteVersions);
+				    	String keepOnlyOldPublishedVersionsString = CmsPropertyHandler.getKeepOnlyOldPublishedVersionsDuringClean();
+				    	logger.info("keepOnlyOldPublishedVersionsString:" + keepOnlyOldPublishedVersionsString);
+				    	long minimumTimeBetweenVersionsDuringClean = CmsPropertyHandler.getMinimumTimeBetweenVersionsDuringClean();
+				    	logger.info("minimumTimeBetweenVersionsDuringClean:" + minimumTimeBetweenVersionsDuringClean);
+				    	boolean keepOnlyOldPublishedVersions = Boolean.parseBoolean(keepOnlyOldPublishedVersionsString);
+						
+				    	if(numberOfVersionsToKeepDuringCleanInteger.intValue() < 3 && numberOfVersionsToKeepDuringCleanInteger.intValue() > -1)
+							numberOfVersionsToKeepDuringCleanInteger = new Integer(3);
+				    	
+						if(numberOfVersionsToKeepDuringCleanInteger.intValue() > -1)
 						{
-							cleanedSiteNodeVersions = SiteNodeController.getController().cleanSiteNodeVersions(numberOfVersionsToKeepDuringCleanInteger.intValue(), keepOnlyOldPublishedVersions, minimumTimeBetweenVersionsDuringClean, deleteVersions);
-							totalCleanedContentVersions.put(ctdVO.getName(), cleanedSiteNodeVersions);
+							int cleanedContentVersions = ContentVersionController.getContentVersionController().cleanContentVersions(numberOfVersionsToKeepDuringCleanInteger.intValue(), keepOnlyOldPublishedVersions, minimumTimeBetweenVersionsDuringClean, deleteVersions, ctdVO.getId());
+							if(deleteVersions && cleanedContentVersions > 0)
+								anyDeletions = true;
+							
+							logger.info("cleanedContentVersions:" + cleanedContentVersions);
+							if(totalCleanedContentVersions.get(ctdVO.getName()) != null)
+								totalCleanedContentVersions.put(ctdVO.getName(), totalCleanedContentVersions.get(ctdVO.getName()) + cleanedContentVersions);
+							else
+								totalCleanedContentVersions.put(ctdVO.getName(), cleanedContentVersions);
+							
+							if(ctdVO.getName().equalsIgnoreCase("Meta information"))
+							{
+								cleanedSiteNodeVersions = SiteNodeController.getController().cleanSiteNodeVersions(numberOfVersionsToKeepDuringCleanInteger.intValue(), keepOnlyOldPublishedVersions, minimumTimeBetweenVersionsDuringClean, deleteVersions);
+								if(deleteVersions && cleanedSiteNodeVersions > 0)
+									anyDeletions = true;
+								
+								if(totalCleanedContentVersions.get(ctdVO.getName()) != null)
+									totalCleanedContentVersions.put(ctdVO.getName(), totalCleanedContentVersions.get(ctdVO.getName()) + cleanedSiteNodeVersions);
+								else
+									totalCleanedContentVersions.put(ctdVO.getName(), cleanedSiteNodeVersions);
+							}
 						}
-					}
-	    		}
+		    		}
+		    		
+	    			logger.info("anyDeletions:" + anyDeletions);
+		    		if(!anyDeletions)
+		    		{
+		    			logger.info("No deletions made - done...");
+		    			break;
+		    		}
+		    	}
 	    		
 				logger.info("totalCleanedContentVersions:" + totalCleanedContentVersions);
 				context.setResult(totalCleanedContentVersions);

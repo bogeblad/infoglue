@@ -66,43 +66,56 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 	@Override
 	public String doExecute() throws Exception
 	{
-		List<LanguageVO> enabledLangs = SiteNodeController.getController().getEnabledLanguageVOListForSiteNode(this.siteNodeId);
-		SiteNodeVersionVO latestSiteNodeVersion = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getLatestActiveSiteNodeVersionVO(this.siteNodeId);
-		
-		if(latestSiteNodeVersion != null) {
-			String slotName = "komponentplats 2/slot 2";
-			String contentName = "Article";
-			String componentXML = null;
-			SiteNodeVO siteNode = SiteNodeController.getController().getSiteNodeVOWithId(this.siteNodeId);
-			ContentVersionVO metaInfo = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNode.getMetaInfoContentId());
-			componentXML = ContentVersionController.getContentVersionController().getAttributeValue(metaInfo.getId(), "ComponentStructure", false);
-			logger.info("componentXML:" + componentXML);
-			
-			Document document = XMLHelper.readDocumentFromByteArray(componentXML.getBytes("UTF-8"));
-			String xpath = "//component[@name='" + slotName + "']/properties/property[@name='" + contentName + "']/binding";
-			NodeList components = org.apache.xpath.XPathAPI.selectNodeList(document.getDocumentElement(), xpath);
-			int NrOfComponents = components.getLength();
-			logger.info("Number of sitenode contents: " + NrOfComponents);
-			
-			if (components.getLength() > 0) {
-				if (this.selectedLanguage == 0) {
+		if(this.siteNodeId != null && this.siteNodeId > 0)
+		{
+			try
+			{
+				List<LanguageVO> enabledLangs = SiteNodeController.getController().getEnabledLanguageVOListForSiteNode(this.siteNodeId);
+				if (this.selectedLanguage == 0)
+				{
 					this.selectedLanguage = enabledLangs.get(0).getLanguageId();
 				}
-				contentList = new HashMap<Integer, String>();
-				for (int i=0; i<NrOfComponents; i++) {
-					setArticleTitle("");
-					Element elem = (Element) components.item(i);
-					int contentId = Integer.parseInt(elem.getAttribute("entityId"));
-					setArticleTitle(ContentController.getContentController().getContentAttribute(contentId, selectedLanguage, "Title"));
-					ContentVO contentObj = ContentController.getContentController().getContentVOWithId(contentId);
-					if(contentObj != null) {
-						contentList.put(contentId, contentObj.getName() + (getArticleTitle().length() > 0 ? " (" + getArticleTitle() + ")" : ""));
-						logger.info("Content item: " + contentId + " - " + contentObj.getName() + " - " + getArticleTitle());
+				SiteNodeVersionVO latestSiteNodeVersion = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getLatestActiveSiteNodeVersionVO(this.siteNodeId);
+				
+				if(latestSiteNodeVersion != null) {
+					String slotName = "komponentplats 2/slot 2";
+					String contentName = "Article";
+					String componentXML = null;
+					SiteNodeVO siteNode = SiteNodeController.getController().getSiteNodeVOWithId(this.siteNodeId);
+					ContentVersionVO metaInfo = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNode.getMetaInfoContentId(),this.selectedLanguage);
+					componentXML = ContentVersionController.getContentVersionController().getAttributeValue(metaInfo.getId(), "ComponentStructure", false);
+					logger.info("componentXML:" + componentXML);
+					
+					Document document = XMLHelper.readDocumentFromByteArray(componentXML.getBytes("UTF-8"));
+					String xpath = "//component[@name='" + slotName + "']/properties/property[@name='" + contentName + "']/binding";
+					NodeList components = org.apache.xpath.XPathAPI.selectNodeList(document.getDocumentElement(), xpath);
+					int NrOfComponents = components.getLength();
+					logger.info("Number of sitenode contents: " + NrOfComponents);
+					
+					if (components.getLength() > 0)
+					{
+						contentList = new HashMap<Integer, String>();
+						for (int i=0; i<NrOfComponents; i++)
+						{
+							setArticleTitle("");
+							Element elem = (Element) components.item(i);
+							int contentId = Integer.parseInt(elem.getAttribute("entityId"));
+							setArticleTitle(ContentController.getContentController().getContentAttribute(contentId, selectedLanguage, "Title"));
+							ContentVO contentObj = ContentController.getContentController().getContentVOWithId(contentId);
+							if(contentObj != null)
+							{
+								contentList.put(contentId, contentObj.getName() + (getArticleTitle().length() > 0 ? " (" + getArticleTitle() + ")" : ""));
+								logger.info("Content item: " + contentId + " - " + contentObj.getName() + " - " + getArticleTitle());
+							}
+						}
 					}
 				}
 			}
+			catch(Exception e)
+			{
+				logger.info("Error when listing sitenode content:" + e.getMessage(), e);
+			}
 		}
-		
 		return "success";
 	}
 

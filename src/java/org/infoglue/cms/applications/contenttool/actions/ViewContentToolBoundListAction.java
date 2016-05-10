@@ -70,10 +70,12 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 		{
 			try
 			{
-				List<LanguageVO> enabledLangs = SiteNodeController.getController().getEnabledLanguageVOListForSiteNode(this.siteNodeId);
+				logger.info("Selected language for repository: " + this.selectedLanguage);
 				if (this.selectedLanguage == 0)
 				{
+					List<LanguageVO> enabledLangs = SiteNodeController.getController().getEnabledLanguageVOListForSiteNode(this.siteNodeId);
 					this.selectedLanguage = enabledLangs.get(0).getLanguageId();
+					logger.info("Re-set selected language for repository: " + this.selectedLanguage);
 				}
 				SiteNodeVersionVO latestSiteNodeVersion = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getLatestActiveSiteNodeVersionVO(this.siteNodeId);
 				

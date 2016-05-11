@@ -95,12 +95,14 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 	
 	public String doV3() throws Exception
     {
+		logUserActionInfo(getClass(), "doV3");
     	doExecute();
     	return "successV3";
     }
     
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
     	Timer t = new Timer();
     	
     	AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();

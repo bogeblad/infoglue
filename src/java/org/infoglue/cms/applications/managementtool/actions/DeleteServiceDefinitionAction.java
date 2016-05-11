@@ -49,6 +49,7 @@ public class DeleteServiceDefinitionAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		ServiceDefinitionController.getController().delete(this.serviceDefinitionVO);
 		
 		return "success";

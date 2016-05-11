@@ -38,11 +38,13 @@ public class ViewStructureToolStartPageAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
     	return "success";
     }
 
     public String doV3() throws Exception
     {
+		logUserActionInfo(getClass(), "doV3");
     	return "successV3";
     }         
 }

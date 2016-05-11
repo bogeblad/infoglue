@@ -44,6 +44,7 @@ public class ViewListLanguageAction extends InfoGlueAbstractAction
 
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		this.languageVOList = LanguageController.getController().getLanguageVOList();
 
 		return "success";

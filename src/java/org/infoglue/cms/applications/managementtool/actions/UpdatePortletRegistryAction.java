@@ -52,6 +52,7 @@ public class UpdatePortletRegistryAction extends InfoGlueAbstractAction
 	
 	public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		store();
 		
 		return "success";
@@ -59,6 +60,7 @@ public class UpdatePortletRegistryAction extends InfoGlueAbstractAction
 
 	public String doSaveAndExit() throws Exception
     {
+		logUserActionInfo(getClass(), "doSaveAndExit");
 		store();
 		
 		return "saveAndExit";

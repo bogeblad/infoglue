@@ -93,6 +93,7 @@ public class ViewDigitalAssetAction extends InfoGlueAbstractAction
 
 	public String doExecute() throws Exception
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		if (this.contentVersionId != null)
 		{
 			this.contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(this.contentVersionId);
@@ -141,6 +142,7 @@ public class ViewDigitalAssetAction extends InfoGlueAbstractAction
 
 	public String doMultiple() throws Exception
 	{
+		logUserActionInfo(getClass(), "doMultiple");
 		doExecute();
 
 		return "successMultiple";
@@ -148,6 +150,7 @@ public class ViewDigitalAssetAction extends InfoGlueAbstractAction
 
 	public String doUpdate() throws Exception
 	{
+		logUserActionInfo(getClass(), "doUpdate");
 		this.digitalAssetVO = DigitalAssetController.getDigitalAssetVOWithId(this.digitalAssetId);
 
 		if(this.contentVersionId != null)

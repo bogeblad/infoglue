@@ -51,6 +51,7 @@ public class DeleteContentTypeDefinitionAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		ContentTypeDefinitionController.getController().delete(this.contentTypeDefinitionVO);
 		return "success";
 	}

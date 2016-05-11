@@ -55,6 +55,7 @@ public class ViewContentToolAjaxServicesAction extends InfoGlueAbstractAction
 	
 	public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		if(contentId != null)
 		{
 			this.contentVO = ContentController.getContentController().getContentVOWithId(contentId);

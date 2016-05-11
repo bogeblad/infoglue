@@ -58,6 +58,7 @@ public class ViewLinkDialogAction extends InfoGlueAbstractAction
 	
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), true);
 
 		if(this.repositoryId == null)
@@ -72,6 +73,7 @@ public class ViewLinkDialogAction extends InfoGlueAbstractAction
       
     public String doViewLinkDialogForFCKEditor() throws Exception
     {
+		logUserActionInfo(getClass(), "doViewLinkDialogForFCKEditor");
         this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), true);
 
 		if(this.repositoryId == null)
@@ -86,6 +88,7 @@ public class ViewLinkDialogAction extends InfoGlueAbstractAction
 
     public String doViewLinkDialogForFCKEditorV3() throws Exception
     {
+		logUserActionInfo(getClass(), "doViewLinkDialogForFCKEditorV3");
         this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), true);
 
 		if(this.repositoryId == null)

@@ -39,8 +39,10 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
+import org.infoglue.cms.applications.common.Session;
 import org.infoglue.cms.applications.databeans.InfoglueTool;
 import org.infoglue.cms.applications.databeans.LinkBean;
 import org.infoglue.cms.applications.databeans.ProcessBean;
@@ -68,6 +70,7 @@ import org.infoglue.cms.entities.management.InterceptionPointVO;
 import org.infoglue.cms.entities.management.InterceptorVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
+import org.infoglue.cms.entities.management.SystemUser;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.exception.Bug;
@@ -103,8 +106,9 @@ import webwork.config.Configuration;
 public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 {
     private final static Logger logger = Logger.getLogger(InfoGlueAbstractAction.class.getName());
-
+	private final static Logger USER_ACTION_LOGGER = Logger.getLogger("User Action");
 	private final static AdminToolbarService toolbarService = AdminToolbarService.getService();
+	
 
     protected String colorScheme = null; 
     
@@ -607,7 +611,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 			principal = (Principal)CacheController.getCachedObject("userCache", "anonymous");
 			if(principal == null)
 			{
-			    Map arguments = new HashMap();
+				Map arguments = new HashMap();
 			    arguments.put("j_username", CmsPropertyHandler.getAnonymousUser());
 			    arguments.put("j_password", CmsPropertyHandler.getAnonymousPassword());
 			    arguments.put("ticket", this.getHttpSession().getAttribute("ticket"));
@@ -1822,9 +1826,46 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 
 	public String doShowProcessesAsJSON() throws Exception
 	{
+		logUserActionInfo(getClass(), "doShowProcessesAsJSON");
 		return "successShowProcessesAsJSON";
 	}
 
+	private <T> void logUserAction(Class<T> actionClass, String actionMethod, Level level)
+	{
+		String className = actionClass.getSimpleName();
+		String packageName = actionClass.getPackage().getName();
+		String userName = getOptionalUserName();
+		USER_ACTION_LOGGER.log(level, String.format("%-10s %-60s %-40s %s", userName, packageName, className, actionMethod));
+	}
+	
+	protected <T> void logUserActionInfo(Class<T> actionClass, String actionMethod)
+	{
+		if (USER_ACTION_LOGGER.isInfoEnabled()) {
+			logUserAction(actionClass, actionMethod, Level.INFO);
+		}
+	}
+	
+	private String getOptionalUserName() {
+		String name = "????????";
+		Session session = getSession();
+		if (session != null) {
+			InfoGluePrincipal principal = session.getInfoGluePrincipal();
+			if (principal != null) {
+				name = principal.getName();
+				if (principal.getIsAdministrator()) {
+					name += "*";
+				}
+			} else {
+				SystemUser user = session.getUser();
+				if (user != null) {
+					name = "(" + user.getUserName() + ")";
+				}
+			}
+		}
+		
+		return name;
+	}
+	
 	public String getLocalizedNameForSiteNode(SiteNodeVO siteNodeVO, Integer languageId) throws Exception
 	{
 		String navigationTitle = ContentController.getContentController().getContentAttribute(siteNodeVO.getMetaInfoContentId(), languageId, "NavigationTitle");

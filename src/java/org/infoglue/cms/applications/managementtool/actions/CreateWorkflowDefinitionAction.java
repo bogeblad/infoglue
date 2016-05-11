@@ -43,11 +43,13 @@ public class CreateWorkflowDefinitionAction extends InfoGlueAbstractAction
 		
 	public String doInput() throws Exception
     {
+		logUserActionInfo(getClass(), "doInput");
     	return "input";
     }
 	
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		ceb.add(this.workflowDefinitionVO.validate());
     	ceb.throwIfNotEmpty();	
     				

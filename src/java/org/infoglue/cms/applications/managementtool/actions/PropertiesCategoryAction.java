@@ -43,6 +43,7 @@ public class PropertiesCategoryAction extends ModelAction
 	
 	public String doAdd() throws SystemException, Exception
 	{
+		logUserActionInfo(getClass(), "doAdd");
 		setModel(controller.save(getPropertiesCategory()));
 		
 		this.getResponse().sendRedirect(returnAddress);
@@ -52,6 +53,7 @@ public class PropertiesCategoryAction extends ModelAction
 
 	public String doDelete() throws SystemException, Exception
 	{
+		logUserActionInfo(getClass(), "doDelete");
 		controller.delete(getPropertiesCategoryId());
 		
 		this.getResponse().sendRedirect(returnAddress);

@@ -56,6 +56,7 @@ public class ViewListTransactionHistoryAction extends InfoGlueAbstractAction
 	 */
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		/*
 		String typeFilterFull = null;
 		if(typeFilter != null && typeFilter.equals("auth"))

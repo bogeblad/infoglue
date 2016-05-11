@@ -66,6 +66,7 @@ public class ViewContentToolMenuHtmlAction extends TreeViewAbstractAction
 	
 	public String doBindingView() throws Exception
 	{
+		logUserActionInfo(getClass(), "doBindingView");
 		setBinding(true);
 		
 		super.doExecute();
@@ -75,6 +76,7 @@ public class ViewContentToolMenuHtmlAction extends TreeViewAbstractAction
 
 	public String doBindingViewV3() throws Exception
 	{
+		logUserActionInfo(getClass(), "doBindingViewV3");
 		setBinding(true);
 
 		super.doExecute();
@@ -85,6 +87,7 @@ public class ViewContentToolMenuHtmlAction extends TreeViewAbstractAction
 	@Override
 	public String doExecute() throws Exception
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		setBinding(false);
 
 		return super.doExecute();
@@ -93,6 +96,7 @@ public class ViewContentToolMenuHtmlAction extends TreeViewAbstractAction
 	@Override
 	public String doV3() throws Exception
 	{
+		logUserActionInfo(getClass(), "doV3");
 		setBinding(false);
 
 		return super.doV3();       

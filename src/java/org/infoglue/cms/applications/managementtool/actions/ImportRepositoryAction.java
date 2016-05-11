@@ -103,6 +103,7 @@ public class ImportRepositoryAction extends InfoGlueAbstractAction
 
 	public String doDeleteProcessBean() throws Exception
 	{
+		logUserActionInfo(getClass(), "doDeleteProcessBean");
 		if(this.processId != null)
 		{
 			ProcessBean pb = ProcessBean.getProcessBean(ImportRepositoryAction.class.getName(), processId);
@@ -121,11 +122,13 @@ public class ImportRepositoryAction extends InfoGlueAbstractAction
 
 	public String doShowProcesses() throws Exception
 	{
+		logUserActionInfo(getClass(), "doShowProcesses");
 		return "successShowProcesses";
 	}
 
 	public String doShowProcessesAsJSON() throws Exception
 	{
+		logUserActionInfo(getClass(), "doShowProcessesAsJSON");
 		// TODO it would be nice we could write JSON to the OutputStream but we get a content already transmitted exception then.
 		return "successShowProcessesAsJSON";
 	}
@@ -137,6 +140,7 @@ public class ImportRepositoryAction extends InfoGlueAbstractAction
 
 	public String doInput() throws Exception
 	{
+		logUserActionInfo(getClass(), "doInput");
 		standardReplacement = "stateYourOldSiteName=stateYourNewSiteName";
 
 		return "input";
@@ -144,6 +148,7 @@ public class ImportRepositoryAction extends InfoGlueAbstractAction
 
 	public String doInputCopy() throws Exception
 	{
+		logUserActionInfo(getClass(), "doInputCopy");
 		RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);
 		
 		standardReplacement = repositoryVO.getName() + "=" + repositoryVO.getName() + " copy";
@@ -157,6 +162,7 @@ public class ImportRepositoryAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws SystemException 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		Database db = CastorDatabaseService.getDatabase();
 		
 		try 
@@ -360,6 +366,7 @@ public class ImportRepositoryAction extends InfoGlueAbstractAction
 	
 	public String doCopy() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doCopy");
 		String exportId = "Copy_Repository_" + visualFormatter.formatDate(new Date(), "yyyy-MM-dd_HHmm");
 		ProcessBean processBean = ProcessBean.createProcessBean(ImportRepositoryAction.class.getName(), exportId);
 		

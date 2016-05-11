@@ -60,6 +60,7 @@ public class ViewCMSToolHeaderAction extends InfoGlueAbstractAction
 
 	public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
         return "success";
     }
                

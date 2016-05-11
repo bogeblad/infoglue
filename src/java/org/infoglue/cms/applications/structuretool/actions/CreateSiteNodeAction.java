@@ -273,6 +273,7 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
       
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
         ceb = this.siteNodeVO.validate();
     	ceb.throwIfNotEmpty();
     	
@@ -315,6 +316,7 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 
     public String doInput() throws Exception
     {
+		logUserActionInfo(getClass(), "doInput");
     	AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
 		Integer protectedSiteNodeVersionId = SiteNodeControllerProxy.getController().getProtectedSiteNodeVersionId(parentSiteNodeId);
@@ -328,6 +330,7 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
     
     public String doExecuteV3() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecuteV3");
     	logger.info("name:" + this.siteNodeVO.getName());
     	logger.info("publishDateTime:" + this.siteNodeVO.getPublishDateTime());
     	logger.info("expireDateTime:" + this.siteNodeVO.getExpireDateTime());
@@ -422,7 +425,8 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 
 
     public String doInputV3() throws Exception
-    {    	
+    {
+		logUserActionInfo(getClass(), "doInputV3");    	
     	AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 
 		Integer protectedSiteNodeVersionId = SiteNodeControllerProxy.getController().getProtectedSiteNodeVersionId(parentSiteNodeId);

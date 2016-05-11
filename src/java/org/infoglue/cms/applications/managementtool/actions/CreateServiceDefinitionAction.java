@@ -117,6 +117,7 @@ public class CreateServiceDefinitionAction extends InfoGlueAbstractAction
       
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		ceb.add( this.serviceDefinitionVO.validate());
     	ceb.throwIfNotEmpty();				
     	
@@ -127,6 +128,7 @@ public class CreateServiceDefinitionAction extends InfoGlueAbstractAction
         
     public String doInput() throws Exception
     {
+		logUserActionInfo(getClass(), "doInput");
     	return "input";
     }    
         

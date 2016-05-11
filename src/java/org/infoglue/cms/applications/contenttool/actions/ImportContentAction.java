@@ -89,6 +89,7 @@ public class ImportContentAction extends InfoGlueAbstractAction
 
 	public String doInput() throws Exception
 	{
+		logUserActionInfo(getClass(), "doInput");
 		return "input";
 	}
 	
@@ -98,6 +99,7 @@ public class ImportContentAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws SystemException 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		if(!AccessRightController.getController().getIsPrincipalAuthorized(this.getInfoGluePrincipal(), "ContentTool.ImportExport", true))
 			throw new SystemException("You are not allowed to import contents.");
 		

@@ -190,6 +190,7 @@ public class ViewListTemplateAction extends InfoGlueAbstractAction
      
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
     	List serviceDefinitions = AvailableServiceBindingController.getController().getServiceDefinitionVOList(this.availableServiceBindingId);
     	if(serviceDefinitions == null || serviceDefinitions.size() == 0)
     	{

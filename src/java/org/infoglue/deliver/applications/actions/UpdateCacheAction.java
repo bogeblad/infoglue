@@ -92,6 +92,7 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
          
     public String doPassThroughPublication() throws Exception
     {
+		logUserActionInfo(getClass(), "doPassThroughPublication");
     	String publisherName = getRequest().getParameter("publisherName");
     	if(publisherName == null || publisherName.equalsIgnoreCase(""))
     		publisherName = "SYSTEM";
@@ -178,6 +179,8 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
          
     public String doTest() throws Exception
     {
+    	// Not logging this action since it is called very often
+    	// logUserActionInfo(getClass(), "doTest");
         String operatingMode = CmsPropertyHandler.getOperatingMode();
 		
         if(operatingMode != null && operatingMode.equalsIgnoreCase("3"))
@@ -207,6 +210,7 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
          
     public String doGetPublicationState() throws Exception
     {
+		logUserActionInfo(getClass(), "doGetPublicationState");
         String operatingMode = CmsPropertyHandler.getOperatingMode();
 		
         if(operatingMode != null && operatingMode.equalsIgnoreCase("3"))
@@ -260,6 +264,7 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
          
     public String doGetOngoingPublications() throws Exception
     {
+		logUserActionInfo(getClass(), "doGetOngoingPublications");
         String operatingMode = CmsPropertyHandler.getOperatingMode();
 		
         if(operatingMode != null && operatingMode.equalsIgnoreCase("3"))
@@ -293,6 +298,7 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
          
     public String doGetLatestPublications() throws Exception
     {
+		logUserActionInfo(getClass(), "doGetLatestPublications");
         String operatingMode = CmsPropertyHandler.getOperatingMode();
 		
         if(operatingMode != null && operatingMode.equalsIgnoreCase("3"))
@@ -326,6 +332,7 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
          
     public String doEntityCacheDebugInformation() throws Exception
     {
+		logUserActionInfo(getClass(), "doEntityCacheDebugInformation");
         String operatingMode = CmsPropertyHandler.getOperatingMode();
 		
         if(operatingMode != null && operatingMode.equalsIgnoreCase("3"))
@@ -360,6 +367,7 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
          
     public String doTestV3() throws Exception
     {
+		logUserActionInfo(getClass(), "doTestV3");
         String operatingMode = CmsPropertyHandler.getOperatingMode();
 		
         if(operatingMode != null && operatingMode.equalsIgnoreCase("3"))
@@ -389,6 +397,7 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
          
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
     	/*
     	System.out.println("PATH: " + getCurrentURL());
     	if(getCurrentURL().contains("infoglueDeliverLive2"))

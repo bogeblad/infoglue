@@ -76,6 +76,7 @@ public class DeleteServiceBindingAction extends InfoGlueAbstractAction
      */
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
     	ServiceBindingController.delete(this.serviceBindingVO);	
 	    this.siteNodeId = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(this.siteNodeVersionId).getSiteNodeId();
 	    return "success";	

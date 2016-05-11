@@ -46,6 +46,7 @@ public class PreviewContentVersionAction  extends InfoGlueAbstractAction
 	 */
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId);
 		return "success";
 	}

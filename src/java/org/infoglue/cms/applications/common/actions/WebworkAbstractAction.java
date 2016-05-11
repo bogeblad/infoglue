@@ -40,7 +40,6 @@ import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.Session;
 import org.infoglue.cms.applications.databeans.LinkBean;
 import org.infoglue.cms.controllers.kernel.impl.simple.LabelController;
-import org.infoglue.cms.controllers.kernel.impl.simple.LuceneController;
 import org.infoglue.cms.exception.AccessConstraintException;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConfigurationError;
@@ -52,7 +51,6 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.StringManager;
 import org.infoglue.cms.util.StringManagerFactory;
 import org.infoglue.deliver.util.BrowserBean;
-import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.ThreadMonitor;
 import org.infoglue.deliver.util.Timer;
 
@@ -116,7 +114,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
      *
      */
 	public String doDefault() throws Exception 
-    { 
+    {
         return INPUT;
     }
 

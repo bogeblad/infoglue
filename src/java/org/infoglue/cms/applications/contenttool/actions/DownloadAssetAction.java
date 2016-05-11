@@ -48,6 +48,7 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		String assetUrl = null;
 		if (contentId != null && assetKey != null && languageId != null) {
 			try

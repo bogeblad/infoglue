@@ -87,11 +87,13 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		return doV3();
 	}
 
 	public String doV3() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doV3");
 	    return "successV3";
 	}
 
@@ -101,6 +103,7 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 
 	public String doPopupProcessAndFilter() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doPopupProcessAndFilter");
 		doProcessAndFilter();
 		
 		return "successPopupFiltered"; 
@@ -108,6 +111,7 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 	
 	public String doProcessAndFilter() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doProcessAndFilter");
 		String sortColNumber = getRequest().getParameter("iSortCol_0");
 		String sortDirection = getRequest().getParameter("sSortDir_0");
 		if(sortDirection == null || sortDirection.equals(""))
@@ -259,6 +263,7 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 	
 	public String doPopupProcessAndFilterAssignedForRole() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doPopupProcessAndFilterAssignedForRole");
 		doProcessAndFilterAssignedForRole();
 		
 		return "successPopupFiltered"; 
@@ -266,6 +271,7 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 	
 	public String doProcessAndFilterAssignedForRole() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doProcessAndFilterAssignedForRole");
 		String sortColNumber = getRequest().getParameter("iSortCol_0");
 		String sortDirection = getRequest().getParameter("sSortDir_0");
 		if(sortDirection == null || sortDirection.equals(""))
@@ -332,6 +338,7 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 
 	public String doPopupProcessAndFilterAssignedForGroup() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doPopupProcessAndFilterAssignedForGroup");
 		doProcessAndFilterAssignedForGroup();
 		
 		return "successPopupFiltered"; 
@@ -339,6 +346,7 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 	
 	public String doProcessAndFilterAssignedForGroup() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doProcessAndFilterAssignedForGroup");
 		String sortColNumber = getRequest().getParameter("iSortCol_0");
 		String sortDirection = getRequest().getParameter("sSortDir_0");
 		if(sortDirection == null || sortDirection.equals(""))
@@ -404,6 +412,7 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 	
 	public String doUserListForPopup() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doUserListForPopup");
 		this.infogluePrincipals = UserControllerProxy.getController().getAllUsers();
 		Collections.sort(this.infogluePrincipals, new ReflectionComparator("firstName"));
 		
@@ -412,6 +421,7 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 
 	public String doUserListForPopupV3() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doUserListForPopupV3");
 		/*
 		this.infogluePrincipals = UserControllerProxy.getController().getAllUsers();
 		Collections.sort(this.infogluePrincipals, new ReflectionComparator("firstName"));
@@ -465,6 +475,7 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 	/*
 	public String doUserListSearch() throws Exception
 	{
+		logUserActivity(getClass(), "doUserListSearch");
 		String searchString 					= this.getRequest().getParameter("searchString");		
 		List<InfoGluePrincipal> searchResult 	= UserControllerProxy.getController().getFilteredUsers(searchString, null, null, null, null);
 		ServletOutputStream myOut 				= getResponse().getOutputStream();

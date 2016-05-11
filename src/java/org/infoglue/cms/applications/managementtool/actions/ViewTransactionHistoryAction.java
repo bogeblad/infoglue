@@ -45,6 +45,7 @@ public class ViewTransactionHistoryAction extends InfoGlueAbstractAction
     
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
         Integer transactionHistoryId = getTransactionHistoryId();
         if(transactionHistoryId == null)
             transactionHistoryId = new Integer(1);

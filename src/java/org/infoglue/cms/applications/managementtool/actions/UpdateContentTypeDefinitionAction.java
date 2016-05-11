@@ -66,6 +66,7 @@ public class UpdateContentTypeDefinitionAction extends ViewContentTypeDefinition
        	
 	public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		super.initialize(getContentTypeDefinitionId());
 
     	ceb.add(this.contentTypeDefinitionVO.validate());
@@ -84,6 +85,7 @@ public class UpdateContentTypeDefinitionAction extends ViewContentTypeDefinition
 
 	public String doSaveSimple() throws Exception
     {
+		logUserActionInfo(getClass(), "doSaveSimple");
 		doExecute();
 						
 		return "simple";
@@ -91,6 +93,7 @@ public class UpdateContentTypeDefinitionAction extends ViewContentTypeDefinition
 	
 	public String doSaveAndExit() throws Exception
     {
+		logUserActionInfo(getClass(), "doSaveAndExit");
 		doExecute();
 						
 		return "saveAndExit";

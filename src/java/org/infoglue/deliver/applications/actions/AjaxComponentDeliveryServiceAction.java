@@ -55,6 +55,7 @@ public class AjaxComponentDeliveryServiceAction extends InfoGlueAbstractAction
          
     public String doGetComponentPropertyDiv() throws Exception
     {
+		logUserActionInfo(getClass(), "doGetComponentPropertyDiv");
     	try
     	{
     	StringBuffer propertiesDiv = new StringBuffer();
@@ -162,6 +163,7 @@ public class AjaxComponentDeliveryServiceAction extends InfoGlueAbstractAction
          
     public String doGetComponentTasksDiv() throws Exception
     {
+		logUserActionInfo(getClass(), "doGetComponentTasksDiv");
     	StringBuffer tasksDiv = new StringBuffer();
 
     	String repositoryIdString 		= this.getRequest().getParameter("repositoryId");
@@ -245,6 +247,7 @@ public class AjaxComponentDeliveryServiceAction extends InfoGlueAbstractAction
          
     public String doGetAvailableComponentsDiv() throws Exception
     {
+		logUserActionInfo(getClass(), "doGetAvailableComponentsDiv");
     	String availableComponentDiv = "";
 
     	String repositoryIdString 		= this.getRequest().getParameter("repositoryId");
@@ -318,6 +321,7 @@ public class AjaxComponentDeliveryServiceAction extends InfoGlueAbstractAction
          
     public String doGetComponentStructureDiv() throws Exception
     {
+		logUserActionInfo(getClass(), "doGetComponentStructureDiv");
     	StringBuffer componentStructureDiv = new StringBuffer();
 
     	String repositoryIdString 		= this.getRequest().getParameter("repositoryId");
@@ -382,6 +386,7 @@ public class AjaxComponentDeliveryServiceAction extends InfoGlueAbstractAction
          
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
         return SUCCESS;
     }
     

@@ -178,6 +178,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
          
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
     	Timer pageTimer = new Timer();
     	
         if(isRecacheCall)
@@ -1030,6 +1031,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
          
 	public String doRenderDecoratedPage() throws Exception
 	{
+		logUserActionInfo(getClass(), "doRenderDecoratedPage");
 		if(CmsPropertyHandler.getOperatingMode().equals("3"))
 		{
 			this.getResponse().setStatus(301);

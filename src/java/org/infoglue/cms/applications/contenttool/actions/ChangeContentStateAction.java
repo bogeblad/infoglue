@@ -58,6 +58,7 @@ public class ChangeContentStateAction extends InfoGlueAbstractAction
 	   
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
 		Integer protectedContentId = ContentControllerProxy.getController().getProtectedContentId(contentId);
@@ -89,7 +90,8 @@ public class ChangeContentStateAction extends InfoGlueAbstractAction
     }
 
 	public String doStandalone() throws Exception
-	{      
+	{
+		logUserActionInfo(getClass(), "doStandalone");      
 		//If the comment is not null we carry out the stateChange
 		if(getStateId().intValue() == 2 && getVersionComment() == null)
 		{

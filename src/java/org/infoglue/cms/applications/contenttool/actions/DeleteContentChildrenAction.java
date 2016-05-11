@@ -80,6 +80,7 @@ public class DeleteContentChildrenAction extends InfoGlueAbstractAction
 
 	public String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
     	String userSessionKey = "" + System.currentTimeMillis();
     	
     	Integer repositoryId = contentVO.getRepositoryId();
@@ -148,6 +149,7 @@ public class DeleteContentChildrenAction extends InfoGlueAbstractAction
 	
 	public String doDeleteReference() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doDeleteReference");
 	    for(int i=0; i<registryId.length; i++)
 	    {
 	    	try
@@ -174,11 +176,13 @@ public class DeleteContentChildrenAction extends InfoGlueAbstractAction
 	
 	public String doFixPage() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doFixPage");
 	    return "fixPage";
 	}
 
 	public String doFixPageHeader() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doFixPageHeader");
 	    return "fixPageHeader";
 	}
 

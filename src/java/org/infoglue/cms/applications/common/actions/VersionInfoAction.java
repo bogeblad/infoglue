@@ -46,6 +46,7 @@ public class VersionInfoAction extends InfoGlueAbstractAction
 
 	protected String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		return Action.SUCCESS;
     }
 

@@ -59,6 +59,7 @@ public class ViewInterceptorAction extends InfoGlueAbstractAction
     
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
         initialize(getInterceptorId());
 
         return "success";

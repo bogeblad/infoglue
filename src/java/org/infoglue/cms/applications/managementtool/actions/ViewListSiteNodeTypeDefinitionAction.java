@@ -44,6 +44,7 @@ public class ViewListSiteNodeTypeDefinitionAction extends InfoGlueAbstractAction
 
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		this.siteNodeTypeDefinitionVOList = SiteNodeTypeDefinitionController.getController().getSiteNodeTypeDefinitionVOList();
 	
 	    return "success";

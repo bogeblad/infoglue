@@ -39,6 +39,7 @@ public class ViewCMSToolAction extends InfoGlueAbstractAction
 	
 	public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		String preferredGUI = CmsPropertyHandler.getDefaultGUI(this.getUserName());
 		if(preferredGUI.equalsIgnoreCase("default"))
 			return "successDefault";
@@ -48,6 +49,7 @@ public class ViewCMSToolAction extends InfoGlueAbstractAction
 	
 	public String doLoginStandalone() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doLoginStandalone");
 		return "loginComplete";
 	}	
 

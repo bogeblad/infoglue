@@ -54,6 +54,7 @@ public class UpdateRepositoryAction extends ViewRepositoryAction //WebworkAbstra
        	
 	public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		super.initialize(getRepositoryId());
 
     	ceb.add(this.repositoryVO.validate());
@@ -67,6 +68,7 @@ public class UpdateRepositoryAction extends ViewRepositoryAction //WebworkAbstra
 
 	public String doSaveAndExit() throws Exception
     {
+		logUserActionInfo(getClass(), "doSaveAndExit");
 		doExecute();
 						
 		return "saveAndExit";

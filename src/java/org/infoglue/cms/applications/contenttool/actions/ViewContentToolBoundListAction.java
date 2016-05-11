@@ -64,6 +64,7 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 	@Override
 	public String doExecute() throws Exception
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		SiteNodeVersionVO latestSiteNodeVersion = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getLatestActiveSiteNodeVersionVO(siteNodeId);
 		if(latestSiteNodeVersion != null) {
 			List<Object> referencedObjects = RegistryController.getController().getReferencedObjects(SiteNodeVersion.class.getName(), latestSiteNodeVersion.getSiteNodeVersionId().toString(), true);

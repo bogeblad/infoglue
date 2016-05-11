@@ -46,6 +46,7 @@ public class ViewListRepositoryAction extends InfoGlueAbstractAction
 
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 	    this.repositories = RepositoryController.getController().getRepositoryVOListNotMarkedForDeletion();
 	    Collections.sort(this.repositories, new ReflectionComparator("name"));
 
@@ -54,6 +55,7 @@ public class ViewListRepositoryAction extends InfoGlueAbstractAction
 	
 	public String doV3() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doV3");
 	    this.repositories = RepositoryController.getController().getRepositoryVOListNotMarkedForDeletion();
 	    Collections.sort(this.repositories, new ReflectionComparator("name"));
 

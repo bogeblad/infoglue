@@ -106,6 +106,7 @@ public class CopyMultipleSiteNodeAction extends InfoGlueAbstractAction
 	@SuppressWarnings("unchecked")
 	public String doInput() throws Exception
 	{
+		logUserActionInfo(getClass(), "doInput");
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 		this.returnAddress = "ViewInlineOperationMessages.action"; //ViewContent!V3.action?contentId=" + contentId + "&repositoryId=" + this.repositoryId;
 
@@ -124,12 +125,14 @@ public class CopyMultipleSiteNodeAction extends InfoGlueAbstractAction
 	}
 
    public String doCopyDone() throws Exception
-   {    	
+   {
+		logUserActionInfo(getClass(), "doCopyDone");    	
        return "success";
    }
     
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
     	if(this.newParentSiteNodeId == null)
         {
     		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);

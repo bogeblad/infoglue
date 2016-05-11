@@ -95,6 +95,7 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 	
 	public String doExecute() throws Exception
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		super.initialize(this.contentVersionId, this.contentId, this.languageId);
 		ceb.throwIfNotEmpty();
 
@@ -146,6 +147,7 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 
 	public String doV3() throws Exception
 	{
+		logUserActionInfo(getClass(), "doV3");
 		doExecute();
 		
 		return "successV3";
@@ -153,6 +155,7 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 
 	public String doUpdateVersionValue() throws Exception
 	{
+		logUserActionInfo(getClass(), "doUpdateVersionValue");
 		super.initialize(this.contentVersionId, this.contentId, this.languageId);
 		ceb.throwIfNotEmpty();
 
@@ -191,6 +194,7 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 	
 	public String doRevertToVersion() throws Exception
 	{
+		logUserActionInfo(getClass(), "doRevertToVersion");
 		String contentVersionIdParameter = getRequest().getParameter("contentVersionId");
 		ContentVersionVO contentVersionVOToRevertTo = ContentVersionController.getContentVersionController().getContentVersionVOWithId(new Integer(contentVersionIdParameter));
 		this.contentId = contentVersionVOToRevertTo.getContentId();
@@ -207,6 +211,7 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 
 	public String doUpdateVersionXMLV3() throws Exception
 	{
+		logUserActionInfo(getClass(), "doUpdateVersionXMLV3");
 		doUpdateVersionValue();
 		
 		return "successXMLV3";
@@ -214,6 +219,7 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 
 	public String doStandalone() throws Exception
 	{
+		logUserActionInfo(getClass(), "doStandalone");
 		super.initialize(this.contentVersionId, this.contentId, this.languageId);
 		ceb.throwIfNotEmpty();
 		
@@ -263,6 +269,7 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 
 	public String doStandaloneXML() throws Exception
 	{
+		logUserActionInfo(getClass(), "doStandaloneXML");
 		try
 		{
 			String xmlResult = null;
@@ -321,6 +328,7 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 
 	public String doSaveAndExit() throws Exception
     {
+		logUserActionInfo(getClass(), "doSaveAndExit");
 		doExecute();
 						 
 		return "saveAndExit";
@@ -328,6 +336,7 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 
 	public String doSaveAndExitStandalone() throws Exception
 	{
+		logUserActionInfo(getClass(), "doSaveAndExitStandalone");
 		try
 		{
 			doExecute();
@@ -344,6 +353,7 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 
 	public String doSaveAndExitInline() throws Exception
 	{
+		logUserActionInfo(getClass(), "doSaveAndExitInline");
 		try
 		{
 			doExecute();
@@ -360,6 +370,7 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 
 	public String doBackground() throws Exception
 	{
+		logUserActionInfo(getClass(), "doBackground");
 		doExecute();
 						 
 		return "background";
@@ -367,6 +378,7 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 	
 	public String doXml() throws IOException, SystemException, Bug, DocumentException
 	{
+		logUserActionInfo(getClass(), "doXml");
 		try
 		{
 			String xmlResult = null;

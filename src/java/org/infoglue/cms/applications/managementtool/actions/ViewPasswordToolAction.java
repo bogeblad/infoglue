@@ -46,6 +46,7 @@ public class ViewPasswordToolAction extends InfoGlueAbstractAction
     
     public String doInput() throws Exception
     {
+		logUserActionInfo(getClass(), "doInput");
         return "input";
     }
 
@@ -55,6 +56,7 @@ public class ViewPasswordToolAction extends InfoGlueAbstractAction
     
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		byte[] encryptedPassRaw = DigestUtils.sha(this.password);
 		String encryptedPass = new String(Base64.encodeBase64(encryptedPassRaw), "ASCII");
 		encryptedPassword = encryptedPass;

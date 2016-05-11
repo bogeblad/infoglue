@@ -118,7 +118,8 @@ public class MoveDigitalAssetAction extends InfoGlueAbstractAction
 	}
 
     public String doInput() throws Exception
-    {		
+    {
+		logUserActionInfo(getClass(), "doInput");		
         userSessionKey = "" + System.currentTimeMillis();
 
         
@@ -138,6 +139,7 @@ public class MoveDigitalAssetAction extends InfoGlueAbstractAction
 
 	public String doExecute() throws Exception
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		try
 		{
 			ceb.throwIfNotEmpty();

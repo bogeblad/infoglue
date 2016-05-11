@@ -108,6 +108,7 @@ public class UpdateDigitalAssetAction extends ViewDigitalAssetAction
 		   
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
     	initialize();
 
     	ceb.throwIfNotEmpty();

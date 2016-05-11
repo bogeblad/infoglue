@@ -107,6 +107,7 @@ public class ExportRepositoryAction extends InfoGlueAbstractAction
 
 	public String doDeleteProcessBean() throws Exception
 	{
+		logUserActionInfo(getClass(), "doDeleteProcessBean");
 		if(this.processId != null)
 		{
 			ProcessBean pb = ProcessBean.getProcessBean(ExportRepositoryAction.class.getName(), processId);
@@ -125,12 +126,14 @@ public class ExportRepositoryAction extends InfoGlueAbstractAction
 
 	public String doShowProcesses() throws Exception
 	{
+		logUserActionInfo(getClass(), "doShowProcesses");
 		return "successShowProcesses";
 	}
 
 	
 	public String doShowProcessesAsJSON() throws Exception
 	{
+		logUserActionInfo(getClass(), "doShowProcessesAsJSON");
 		// TODO it would be nice we could write JSON to the OutputStream but we get a content already transmitted exception then.
 		return "successShowProcessesAsJSON";
 	}
@@ -143,6 +146,7 @@ public class ExportRepositoryAction extends InfoGlueAbstractAction
 
 	public String doInput() throws Exception
 	{
+		logUserActionInfo(getClass(), "doInput");
 		repositories = RepositoryController.getController().getRepositoryVOListNotMarkedForDeletion();
 		
 		return "input";
@@ -154,6 +158,7 @@ public class ExportRepositoryAction extends InfoGlueAbstractAction
 	
 	protected String doExecuteV3() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		String[] repositories = getRequest().getParameterValues("repositoryId");
 
 		String exportId = "Export_" + visualFormatter.formatDate(new Date(), "yyyy-MM-dd_HHmm");
@@ -171,6 +176,7 @@ public class ExportRepositoryAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		String exportFormat = CmsPropertyHandler.getExportFormat();
 		if(exportFormat.equalsIgnoreCase("3") || this.exportFormat.equals("3"))
 		{

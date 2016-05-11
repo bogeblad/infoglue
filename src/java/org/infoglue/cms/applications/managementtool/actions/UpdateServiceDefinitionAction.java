@@ -57,6 +57,7 @@ public class UpdateServiceDefinitionAction extends ViewServiceDefinitionAction /
 	
 	public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		super.initialize(getServiceDefinitionId());
 
     	ceb.add(this.serviceDefinitionVO.validate());
@@ -69,6 +70,7 @@ public class UpdateServiceDefinitionAction extends ViewServiceDefinitionAction /
 
 	public String doSaveAndExit() throws Exception
     {
+		logUserActionInfo(getClass(), "doSaveAndExit");
 		doExecute();
 						
 		return "saveAndExit";

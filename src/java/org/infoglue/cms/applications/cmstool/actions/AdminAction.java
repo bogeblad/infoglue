@@ -29,8 +29,6 @@ import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
-import com.caucho.env.repository.Repository;
-
 /**
  * This class implements the action class for the base fram for the entire tool.
  * 
@@ -45,6 +43,7 @@ public class AdminAction extends InfoGlueAbstractAction
 
 	public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		String preferredGUI = CmsPropertyHandler.getDefaultGUI(getUserName());
 		if(preferredGUI.equalsIgnoreCase("classic"))
 			return "successClassic";
@@ -54,6 +53,7 @@ public class AdminAction extends InfoGlueAbstractAction
 
 	public String doEmbla() throws Exception
     {
+		logUserActionInfo(getClass(), "doEmbla");
 		String preferredGUI = CmsPropertyHandler.getDefaultGUI(getUserName());
 		if(preferredGUI.equalsIgnoreCase("classic"))
 			return "successClassic";
@@ -63,6 +63,7 @@ public class AdminAction extends InfoGlueAbstractAction
 
 	public String doResetGUI() throws Exception
     {
+		logUserActionInfo(getClass(), "doResetGUI");
 		this.getHttpSession().removeAttribute("repositoryId");
 		setLanguageCode(CmsPropertyHandler.getPreferredLanguageCode(getUserName()));
 		

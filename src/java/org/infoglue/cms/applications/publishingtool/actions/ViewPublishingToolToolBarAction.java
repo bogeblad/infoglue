@@ -65,6 +65,7 @@ public class ViewPublishingToolToolBarAction extends InfoGlueAbstractAction
 		
 	public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
         return "success";
     }
 

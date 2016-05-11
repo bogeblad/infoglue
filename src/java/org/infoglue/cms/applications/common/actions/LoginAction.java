@@ -70,6 +70,7 @@ public class LoginAction extends InfoGlueAbstractAction
 	
 	public String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		this.getResponse().setStatus(this.getResponse().SC_FORBIDDEN);
 		
 		if(this.getRequest().getRemoteUser() != null)
@@ -80,6 +81,7 @@ public class LoginAction extends InfoGlueAbstractAction
 
 	public String doInvalidLogin() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doInvalidLogin");
 		if(this.getRequest().getRemoteUser() != null)
 		{
 			return "redirect";
@@ -92,6 +94,7 @@ public class LoginAction extends InfoGlueAbstractAction
 
 	public String doLogonUser() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doLogonUser");
 		LoginUCC loginController = LoginUCCFactory.newLoginUCC();
 		boolean isAccepted = loginController.authorizeSystemUser(this.userName, this.password);
 		
@@ -113,6 +116,7 @@ public class LoginAction extends InfoGlueAbstractAction
 
 	public String doLogout() throws Exception
 	{
+		logUserActionInfo(getClass(), "doLogout");
 		getHttpSession().invalidate();
 		
 		String encodedUserNameCookie = httpHelper.getCookie(this.getRequest(), "iguserid");

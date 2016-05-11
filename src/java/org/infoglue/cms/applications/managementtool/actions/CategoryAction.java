@@ -41,34 +41,40 @@ public class CategoryAction extends ModelAction
 	
 	public String doList() throws SystemException
 	{
+		logUserActionInfo(getClass(), "doList");
 		setModels(controller.findRootCategories());
 		return SUCCESS;
 	}
 
 	public String doNew() throws SystemException
 	{
+		logUserActionInfo(getClass(), "doNew");
 		return SUCCESS;
 	}
 
 	public String doEdit() throws SystemException
 	{
+		logUserActionInfo(getClass(), "doEdit");
 		setModel(controller.findWithChildren(getCategoryId()));
 		return SUCCESS;
 	}
 
 	public String doDisplayTreeForMove() throws SystemException
 	{
+		logUserActionInfo(getClass(), "doDisplayTreeForMove");
 		return SUCCESS;
 	}
 
 	public String doMove() throws SystemException
 	{
+		logUserActionInfo(getClass(), "doMove");
 		setModel(controller.moveCategory(getCategoryId(), getCategory().getParentId()));
 		return SUCCESS;
 	}
 
 	public String doSave() throws SystemException, ConstraintException
 	{
+		logUserActionInfo(getClass(), "doSave");
 		validateModel();
 		setModel(controller.save(getCategory()));
 		return (getCategory().isRoot())? MAIN : SUCCESS;
@@ -76,6 +82,7 @@ public class CategoryAction extends ModelAction
 
 	public String doDelete() throws Exception
 	{
+		logUserActionInfo(getClass(), "doDelete");
 		List references = new ArrayList();
 		try
 		{
@@ -98,7 +105,8 @@ public class CategoryAction extends ModelAction
 
 	// Needed as part of WebworklAbstractAction
 	public String doExecute() throws Exception
-	{ 
+	{
+		logUserActionInfo(getClass(), "doExecute"); 
 		return SUCCESS; 
 	}
 

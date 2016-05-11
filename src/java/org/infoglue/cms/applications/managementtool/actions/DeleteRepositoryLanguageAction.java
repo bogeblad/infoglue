@@ -51,6 +51,7 @@ public class DeleteRepositoryLanguageAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		this.repositoryLanguageVO.setRepositoryLanguageId(this.getRepositoryLanguageId());
 		RepositoryLanguageController.getController().delete(this.repositoryLanguageVO);
 		

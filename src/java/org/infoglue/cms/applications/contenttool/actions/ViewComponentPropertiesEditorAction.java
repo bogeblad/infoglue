@@ -59,6 +59,7 @@ public class ViewComponentPropertiesEditorAction extends InfoGlueAbstractAction
     
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
         initialize();
         
         return SUCCESS;
@@ -66,6 +67,7 @@ public class ViewComponentPropertiesEditorAction extends InfoGlueAbstractAction
 
     public String doUpdate() throws Exception
     {
+		logUserActionInfo(getClass(), "doUpdate");
         ContentVersionController.getContentVersionController().updateAttributeValue(this.contentVersionId, this.attributeName, this.propertiesXML, this.getInfoGluePrincipal());
         
         return "update";

@@ -56,6 +56,7 @@ public class DeleteSystemUserAction extends InfoGlueAbstractAction
 
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 	    if(this.systemUserVO.getUserName().equals(CmsPropertyHandler.getAnonymousUser()))
 	        throw new SystemException("You must not remove the anonymous user as it's needed by the system.");
 		
@@ -66,6 +67,7 @@ public class DeleteSystemUserAction extends InfoGlueAbstractAction
 
 	public String doV3() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doV3");
 		doExecute();		
 		
 		return "successV3";

@@ -87,6 +87,7 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
 
     public String doInput() throws Exception
     {
+		logUserActionInfo(getClass(), "doInput");
     	try
     	{
     		Map<String, DeploymentServerBean> deploymentServers = CmsPropertyHandler.getDeploymentServers();
@@ -382,6 +383,7 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
     
 	public String doUpdateContentTypes() throws Exception
     {
+		logUserActionInfo(getClass(), "doUpdateContentTypes");
 		Map<String, DeploymentServerBean> deploymentServers = CmsPropertyHandler.getDeploymentServers();
     	DeploymentServerBean deploymentServerBean = deploymentServers.get(deploymentServerName);
     	String deploymentServerUrl = deploymentServerBean.getUrl();
@@ -597,6 +599,7 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
 
     public String doUpdateCategories() throws Exception
     {
+		logUserActionInfo(getClass(), "doUpdateCategories");
     	//logger.info("*****************************");
     	//logger.info("*    UPDATING CATEGORIES    *");
     	//logger.info("*****************************");
@@ -645,6 +648,7 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
 
     public String doUpdateWorkflows() throws Exception
     {
+		logUserActionInfo(getClass(), "doUpdateWorkflows");
     	Map<String, DeploymentServerBean> deploymentServers = CmsPropertyHandler.getDeploymentServers();
     	DeploymentServerBean deploymentServerBean = deploymentServers.get(deploymentServerName);
     	String deploymentServerUrl = deploymentServerBean.getUrl();
@@ -700,6 +704,7 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
 
     public String doUpdateComponents() throws Exception
     {
+		logUserActionInfo(getClass(), "doUpdateComponents");
     	Map<String, DeploymentServerBean> deploymentServers = CmsPropertyHandler.getDeploymentServers();
     	DeploymentServerBean deploymentServerBean = deploymentServers.get(deploymentServerName);
     	String deploymentServerUrl = deploymentServerBean.getUrl();
@@ -942,6 +947,7 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
 
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
     	Map<String, DeploymentServerBean> deploymentServers = CmsPropertyHandler.getDeploymentServers();
     	String deploymentServerUrl = deploymentServers.get(deploymentServerName).getUrl();
 

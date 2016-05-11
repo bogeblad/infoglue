@@ -89,6 +89,7 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 	
 	public String doInput() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doInput");
 		if(this.contentId != null)
 		{
 		    ContentVO contentVO = ContentController.getContentController().getContentVOWithId(this.contentId);
@@ -110,6 +111,7 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 
 	public String doInputV3() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doInputV3");
 		doInput();
 
         userSessionKey = "" + System.currentTimeMillis();
@@ -130,6 +132,7 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 
 	public String doInputChooseContents() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doInputChooseContents");
 		ProcessBean processBean = ProcessBean.createProcessBean(UnpublishContentVersionAction.class.getName(), "" + getInfoGluePrincipal().getName());
 		processBean.setStatus(ProcessBean.RUNNING);
 
@@ -165,6 +168,7 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 
 	public String doInputChooseContentsV3() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doInputChooseContentsV3");
 		try
 		{
 			doInputChooseContents();
@@ -199,7 +203,8 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 	 */
 	   
     public String doExecute() throws Exception
-    {   
+    {
+		logUserActionInfo(getClass(), "doExecute");   
 		setContentVersionId( getRequest().getParameterValues("sel") );
 		Iterator it = getContentVersionId().iterator();
 		
@@ -259,6 +264,7 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 	   
     public String doV3() throws Exception
     {
+		logUserActionInfo(getClass(), "doV3");
     	try
     	{
 	    	doExecute();
@@ -299,7 +305,8 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 	 */
 	   
     public String doUnpublishAll() throws Exception
-    {   
+    {
+		logUserActionInfo(getClass(), "doUnpublishAll");   
 		ProcessBean processBean = ProcessBean.createProcessBean(UnpublishContentVersionAction.class.getName(), "" + getInfoGluePrincipal().getName());
 		processBean.setStatus(ProcessBean.RUNNING);
 
@@ -398,7 +405,8 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 	 */
 	   
     public String doUnpublishAllV3() throws Exception
-    {   
+    {
+		logUserActionInfo(getClass(), "doUnpublishAllV3");   
     	try
     	{
 	    	doUnpublishAll();

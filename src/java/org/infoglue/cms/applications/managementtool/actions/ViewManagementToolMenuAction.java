@@ -63,6 +63,7 @@ public class ViewManagementToolMenuAction extends InfoGlueAbstractAction
     
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
     	if(this.repositoryId != null && this.repositoryId.intValue() > 0)
     	{
 	    	this.repositoryVO = RepositoryController.getController().getRepositoryVOWithId(this.repositoryId);
@@ -74,6 +75,7 @@ public class ViewManagementToolMenuAction extends InfoGlueAbstractAction
 
     public String doV3() throws Exception
     {
+		logUserActionInfo(getClass(), "doV3");
     	if(this.repositoryId != null && this.repositoryId.intValue() > 0)
     	{
 	    	this.repositoryVO = RepositoryController.getController().getRepositoryVOWithId(this.repositoryId);

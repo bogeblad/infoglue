@@ -64,7 +64,8 @@ public class ViewDiagnosticCenterAction extends InfoGlueAbstractAction
 	 * This method does several checks and return the diagnostic view.
 	 */
 	public String doExecute() throws Exception
-    {		
+    {
+		logUserActionInfo(getClass(), "doExecute");		
     	this.internalDeliverUrls = CmsPropertyHandler.getInternalDeliveryUrls();
     	this.publicDeliverUrls = CmsPropertyHandler.getPublicDeliveryUrls();
 
@@ -135,6 +136,7 @@ public class ViewDiagnosticCenterAction extends InfoGlueAbstractAction
      */
     public String doClearQueue() throws Exception
     {
+		logUserActionInfo(getClass(), "doClearQueue");
     	PublicationQueue.getPublicationQueue().clearPublicationQueueBean(liveInstanceValidationUrl);
     	
         if(this.returnAddress != null && !this.returnAddress.equals(""))
@@ -151,6 +153,7 @@ public class ViewDiagnosticCenterAction extends InfoGlueAbstractAction
      */
     public String doViewFailedPublications() throws Exception
     {
+		logUserActionInfo(getClass(), "doViewFailedPublications");
         return "successFailedPublications";
     }
     

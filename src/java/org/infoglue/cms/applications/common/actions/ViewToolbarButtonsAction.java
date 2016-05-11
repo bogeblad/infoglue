@@ -72,6 +72,7 @@ public class ViewToolbarButtonsAction extends InfoGlueAbstractAction
 
 	public String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		try
 		{
 			this.buttons = this.getToolbarButtons(toolbarKey, getRequest());			
@@ -86,6 +87,7 @@ public class ViewToolbarButtonsAction extends InfoGlueAbstractAction
 
 	public String doEmbla() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doEmbla");
 		try
 		{
 			this.useEmblaToolbar = true;

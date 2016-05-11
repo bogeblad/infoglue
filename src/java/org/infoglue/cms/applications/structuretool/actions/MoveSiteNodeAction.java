@@ -149,6 +149,7 @@ public class MoveSiteNodeAction extends InfoGlueAbstractAction
 
 	public String doInputV3() throws Exception
 	{
+		logUserActionInfo(getClass(), "doInputV3");
 		userSessionKey = "" + System.currentTimeMillis();
 
 		SiteNodeVO siteNodeVO = SiteNodeControllerProxy.getController().getSiteNodeVOWithId(getSiteNodeId());
@@ -166,6 +167,7 @@ public class MoveSiteNodeAction extends InfoGlueAbstractAction
 	
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
         ceb.throwIfNotEmpty();
     	
 		SiteNodeControllerProxy.getSiteNodeControllerProxy().acMoveSiteNode(this.getInfoGluePrincipal(), this.siteNodeVO, this.newParentSiteNodeId, this.sortLanguageId);
@@ -177,6 +179,7 @@ public class MoveSiteNodeAction extends InfoGlueAbstractAction
     
     public String doV3() throws Exception
     {
+		logUserActionInfo(getClass(), "doV3");
         try
         {
             ceb.throwIfNotEmpty();
@@ -228,6 +231,7 @@ public class MoveSiteNodeAction extends InfoGlueAbstractAction
 
     public String doAjax() throws Exception
     {
+		logUserActionInfo(getClass(), "doAjax");
         try
         {
             ceb.throwIfNotEmpty();

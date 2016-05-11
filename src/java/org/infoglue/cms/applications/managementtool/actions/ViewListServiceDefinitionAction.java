@@ -43,6 +43,7 @@ public class ViewListServiceDefinitionAction extends InfoGlueAbstractAction
 
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		this.serviceDefinitionVOList = ServiceDefinitionController.getController().getServiceDefinitionVOList();
 	    return "success";
 	}

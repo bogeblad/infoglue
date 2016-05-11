@@ -72,7 +72,8 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 	private ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 	
 	public String doExecute() throws Exception
-    {   		
+    {
+		logUserActionInfo(getClass(), "doExecute");   		
 		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
 		if(this.extraMultiParameter == null || this.extraMultiParameter.length == 0)
@@ -165,7 +166,8 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 	}
 	
 	public String doAddGroups() throws Exception
-    {   
+    {
+		logUserActionInfo(getClass(), "doAddGroups");   
 		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
 		if(interceptionPointCategory.equalsIgnoreCase("Content"))
@@ -237,7 +239,8 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 	}
 
 	public String doAddUser() throws Exception
-    {   
+    {
+		logUserActionInfo(getClass(), "doAddUser");   
 		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
 		if(this.extraMultiParameter == null || this.extraMultiParameter.length == 0)
@@ -346,12 +349,14 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 	}
 
 	public String doAddUserV3() throws Exception
-    {   
+    {
+		logUserActionInfo(getClass(), "doAddUserV3");   
 		return doAddUser();
     }
 	
 	public String doDeleteUser() throws Exception
-    {   
+    {
+		logUserActionInfo(getClass(), "doDeleteUser");   
 		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
 		if(this.extraMultiParameter == null || this.extraMultiParameter.length == 0)
@@ -428,6 +433,7 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 
 	public String doDeleteUserV3() throws Exception
     {
+		logUserActionInfo(getClass(), "doDeleteUserV3");
 		return doDeleteUser();
 //
 //		this.url = getResponse().encodeRedirectURL(this.returnAddress);
@@ -449,6 +455,7 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 	
 	public String doSaveAndExit() throws Exception
     {
+		logUserActionInfo(getClass(), "doSaveAndExit");
 		doExecute();
 						
 		return "saveAndExit";
@@ -456,6 +463,7 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 
 	public String doV3() throws Exception
     {
+		logUserActionInfo(getClass(), "doV3");
 		doExecute();
 						
 		return "successV3";
@@ -463,6 +471,7 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 
 	public String doSaveAndExitV3() throws Exception
     {
+		logUserActionInfo(getClass(), "doSaveAndExitV3");
 		String result = doExecute();
 		if(result.equals("none"))
 			return result;

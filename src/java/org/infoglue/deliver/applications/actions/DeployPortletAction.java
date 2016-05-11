@@ -60,6 +60,7 @@ public class DeployPortletAction extends InfoGlueAbstractAction {
      */
     protected String doExecute() throws Exception 
     {
+		logUserActionInfo(getClass(), "doExecute");
         log.debug("Deploying portlet, digitalAssetId=" + digitalAssetId);
 
         Database db = CastorDatabaseService.getDatabase();

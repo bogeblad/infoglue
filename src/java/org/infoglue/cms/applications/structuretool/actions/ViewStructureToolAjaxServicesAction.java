@@ -75,6 +75,7 @@ public class ViewStructureToolAjaxServicesAction extends InfoGlueAbstractAction
 
 	public String doContextMenu() throws Exception
     {
+		logUserActionInfo(getClass(), "doContextMenu");
 	    try
 	    {
 			if(siteNodeVersionId != null)
@@ -109,6 +110,7 @@ public class ViewStructureToolAjaxServicesAction extends InfoGlueAbstractAction
 	
 	public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 	    try
 	    {
 			if(siteNodeVersionId != null)

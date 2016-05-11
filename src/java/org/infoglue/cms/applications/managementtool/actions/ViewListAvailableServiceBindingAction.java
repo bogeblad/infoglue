@@ -43,6 +43,7 @@ public class ViewListAvailableServiceBindingAction extends InfoGlueAbstractActio
 
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		this.availableServiceBindingVOList = AvailableServiceBindingController.getController().getAvailableServiceBindingVOList();
         return "success";
 	}

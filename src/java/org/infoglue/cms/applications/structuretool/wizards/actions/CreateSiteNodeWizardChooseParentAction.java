@@ -68,6 +68,7 @@ public class CreateSiteNodeWizardChooseParentAction extends CreateSiteNodeWizard
 
 	public String doExecute() throws Exception
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 
 		return "success";

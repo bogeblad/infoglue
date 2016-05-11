@@ -63,6 +63,7 @@ public class RebuildRegistryAction extends InfoGlueAbstractAction
 
 	public String doInput() throws Exception
 	{
+		logUserActionInfo(getClass(), "doInput");
 		return "input";
 	}
 	
@@ -72,6 +73,7 @@ public class RebuildRegistryAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 	    RegistryController registryController = RegistryController.getController();
 		
 		Database db = CastorDatabaseService.getDatabase();

@@ -75,8 +75,7 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 				{
 					List<LanguageVO> enabledLangs = SiteNodeController.getController().getEnabledLanguageVOListForSiteNode(this.siteNodeId);
 					this.selectedLanguage = enabledLangs.get(0).getLanguageId();
-					logger.info("Re-set selected language for sitenode: " + this.selectedLanguage);
-					logger.info("Enabled languages: " + enabledLangs.toString());
+					logger.info("Re-set selected language for sitenode (first enabled language): " + this.selectedLanguage);
 				}
 				SiteNodeVersionVO latestSiteNodeVersion = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getLatestActiveSiteNodeVersionVO(this.siteNodeId);
 				
@@ -109,7 +108,6 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 							if(contentObj != null)
 							{
 								contentList.put(contentId, contentObj.getName() + (articleTitle.length() > 0 ? " (" + articleTitle + ")" : ""));
-								logger.info("Content item: " + contentId + " - " + contentObj.getName() + " - " + articleTitle);
 							}
 						}
 					}

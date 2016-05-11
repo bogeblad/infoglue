@@ -57,7 +57,6 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 	private Integer repositoryId;
 	private Integer siteNodeId;
 	private String anchorId;
-	private String articleTitle;
 	private Map<Integer, String> contentList;
 	private String[] allowedContentTypeIds = null;
 	private Integer selectedLanguage = 0;
@@ -70,12 +69,14 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 		{
 			try
 			{
-				logger.info("Selected language for repository: " + this.selectedLanguage);
+				LanguageVO masterLanguage = LanguageController.getController().getMasterLanguage(this.repositoryId);
+				logger.info("Selected language for sitenode: " + this.selectedLanguage);
 				if (this.selectedLanguage == 0)
 				{
 					List<LanguageVO> enabledLangs = SiteNodeController.getController().getEnabledLanguageVOListForSiteNode(this.siteNodeId);
 					this.selectedLanguage = enabledLangs.get(0).getLanguageId();
-					logger.info("Re-set selected language for repository: " + this.selectedLanguage);
+					logger.info("Re-set selected language for sitenode: " + this.selectedLanguage);
+					logger.info("Enabled languages: " + enabledLangs.toString());
 				}
 				SiteNodeVersionVO latestSiteNodeVersion = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getLatestActiveSiteNodeVersionVO(this.siteNodeId);
 				
@@ -84,7 +85,7 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 					String contentName = "Article";
 					String componentXML = null;
 					SiteNodeVO siteNode = SiteNodeController.getController().getSiteNodeVOWithId(this.siteNodeId);
-					ContentVersionVO metaInfo = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNode.getMetaInfoContentId(),this.selectedLanguage);
+					ContentVersionVO metaInfo = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNode.getMetaInfoContentId(), masterLanguage.getLanguageId());
 					componentXML = ContentVersionController.getContentVersionController().getAttributeValue(metaInfo.getId(), "ComponentStructure", false);
 					logger.info("componentXML:" + componentXML);
 					
@@ -96,18 +97,19 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 					
 					if (components.getLength() > 0)
 					{
+						String articleTitle;
 						contentList = new HashMap<Integer, String>();
 						for (int i=0; i<NrOfComponents; i++)
 						{
-							setArticleTitle("");
+							articleTitle = "";
 							Element elem = (Element) components.item(i);
 							int contentId = Integer.parseInt(elem.getAttribute("entityId"));
-							setArticleTitle(ContentController.getContentController().getContentAttribute(contentId, selectedLanguage, "Title"));
+							articleTitle = ContentController.getContentController().getContentAttribute(contentId, selectedLanguage, "Title");
 							ContentVO contentObj = ContentController.getContentController().getContentVOWithId(contentId);
 							if(contentObj != null)
 							{
-								contentList.put(contentId, contentObj.getName() + (getArticleTitle().length() > 0 ? " (" + getArticleTitle() + ")" : ""));
-								logger.info("Content item: " + contentId + " - " + contentObj.getName() + " - " + getArticleTitle());
+								contentList.put(contentId, contentObj.getName() + (articleTitle.length() > 0 ? " (" + articleTitle + ")" : ""));
+								logger.info("Content item: " + contentId + " - " + contentObj.getName() + " - " + articleTitle);
 							}
 						}
 					}
@@ -212,14 +214,6 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 
 	public void setAnchorId(String anchorId) {
 		this.anchorId = anchorId;
-	}
-
-	public String getArticleTitle() {
-		return articleTitle;
-	}
-
-	public void setArticleTitle(String articleTitle) {
-		this.articleTitle = articleTitle;
 	}
 
 	public Integer getSelectedLanguage() {

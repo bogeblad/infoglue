@@ -300,6 +300,7 @@ public class BasicURLComposer extends URLComposer
             String context = CmsPropertyHandler.getServletContext();
 
             if(folderName != null)
+            	
             	assetUrl = dnsName + context + "/" + CmsPropertyHandler.getDigitalAssetBaseUrl() + "/" + folderName + "/" + filename;
             else
             	assetUrl = dnsName + context + "/" + CmsPropertyHandler.getDigitalAssetBaseUrl() + "/" + filename;	
@@ -488,7 +489,7 @@ public class BasicURLComposer extends URLComposer
 
 		if (enableNiceURI && (!isDecoratedUrl && !deliveryContext.getDisableNiceUri()) && !isDecorated)
 		{
-
+			logger.info("The url should not be decorated and displayed as uri");
 			SiteNodeVO siteNode = SiteNodeController.getController().getSmallSiteNodeVOWithId(siteNodeId, db);
 			if(siteNode == null)
 			{
@@ -501,6 +502,7 @@ public class BasicURLComposer extends URLComposer
 
 			if(!siteNode.getRepositoryId().equals(currentSiteNode.getRepositoryId()) || operatingMode != null)
 			{
+				logger.info("The target url is not in this repository or operating mode is set");
 				RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNode.getRepositoryId(), db);
 				String dnsName = repositoryVO.getDnsName();
 				logger.info("dnsName:" + dnsName + " for siteNode " + siteNode.getName());
@@ -599,6 +601,7 @@ public class BasicURLComposer extends URLComposer
 				}
 				else
 				{
+					
 					if(applicationContext.startsWith("/"))
 						applicationContext = dnsName + applicationContext;
 					else
@@ -703,13 +706,6 @@ public class BasicURLComposer extends URLComposer
 				}
 
 				boolean addedContent = false;
-	            /*
-	            if(contentId != null && contentId.intValue() != -1)
-	            {
-	                sb.append("?contentId=").append(String.valueOf(contentId));
-	                addedContent = true;
-	            }
-	            */
 	            
 	            if(contentId != null && contentId.intValue() != -1)
 	            {
@@ -833,13 +829,19 @@ public class BasicURLComposer extends URLComposer
 			    if (isDecorated) {
 			    	applicationBaseAction = CmsPropertyHandler.getComponentRendererAction();
 			    }
-	
-				url = dnsName + context + "/" + applicationBaseAction + "?" + arguments;
+			    if (applicationBaseAction.startsWith("/")) {
+			    	url = dnsName + context + applicationBaseAction + "?" + arguments;
+			    } else {
+			    	url = dnsName + context + "/" + applicationBaseAction + "?" + arguments;
+			    }
+				
 				
 				if ((isDecoratedUrl || isDecorated) && !operatingMode.equalsIgnoreCase("3"))
 				{
 					String componentRendererUrl = CmsPropertyHandler.getComponentRendererUrl();
-
+					if(!componentRendererUrl.endsWith("/")) {
+						componentRendererUrl += "/";
+					}
 					url = dnsName + componentRendererUrl + CmsPropertyHandler.getComponentRendererAction() + "?" + arguments;
 				}
 
@@ -935,13 +937,7 @@ public class BasicURLComposer extends URLComposer
     	
     	if(contentId == null || contentId == 0)
     		contentId = -1;
-    	
-        /*
-        String disableEmptyUrls = CmsPropertyHandler.getDisableEmptyUrls();
-        if(filename == null || filename.equals("") && disableEmptyUrls == null || disableEmptyUrls.equalsIgnoreCase("no"))
-            return "";
-        */
-        
+
     	String enableNiceURI = CmsPropertyHandler.getEnableNiceURI();
         if(enableNiceURI == null || enableNiceURI.equalsIgnoreCase(""))
         	enableNiceURI = "false";

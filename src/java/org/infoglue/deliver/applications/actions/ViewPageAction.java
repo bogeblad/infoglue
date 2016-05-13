@@ -178,7 +178,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
          
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
+		logUserActionInfo(getClass(), "doExecute (principal: " + principal + ")");
     	Timer pageTimer = new Timer();
     	
         if(isRecacheCall)

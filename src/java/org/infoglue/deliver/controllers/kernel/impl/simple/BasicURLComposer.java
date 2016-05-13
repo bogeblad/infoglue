@@ -480,7 +480,9 @@ public class BasicURLComposer extends URLComposer
 		}
 
 		boolean isDecoratedUrl = request == null ? false : request.getRequestURI().indexOf("!renderDecoratedPage") > -1;
-
+		if (isDecoratedUrl && !isDecorated)
+			isDecoratedUrl = isDecorated;
+		
 		logger.debug("URL is decorated: " + isDecoratedUrl);
 		logger.debug("isDecorated was: " + isDecorated);
 
@@ -497,7 +499,7 @@ public class BasicURLComposer extends URLComposer
 
 			SiteNodeVO currentSiteNode = SiteNodeController.getController().getSmallSiteNodeVOWithId(deliveryContext.getSiteNodeId(), db);
 
-			if(!siteNode.getRepositoryId().equals(currentSiteNode.getRepositoryId()))
+			if(!siteNode.getRepositoryId().equals(currentSiteNode.getRepositoryId()) || operatingMode != null)
 			{
 				RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNode.getRepositoryId(), db);
 				String dnsName = repositoryVO.getDnsName();
@@ -834,15 +836,11 @@ public class BasicURLComposer extends URLComposer
 	
 				url = dnsName + context + "/" + applicationBaseAction + "?" + arguments;
 				
-				if (isDecoratedUrl)
+				if ((isDecoratedUrl || isDecorated) && !operatingMode.equalsIgnoreCase("3"))
 				{
 					String componentRendererUrl = CmsPropertyHandler.getComponentRendererUrl();
-					if(componentRendererUrl.endsWith("/"))
-					{
-						componentRendererUrl += "/";
-					}
 
-					url = componentRendererUrl + CmsPropertyHandler.getComponentRendererAction() + "?" + arguments;
+					url = dnsName + componentRendererUrl + CmsPropertyHandler.getComponentRendererAction() + "?" + arguments;
 				}
 
 				if(request != null && request.getScheme().equalsIgnoreCase("https"))
@@ -882,7 +880,7 @@ public class BasicURLComposer extends URLComposer
 
 	            String arguments = "siteNodeId=" + siteNodeId + getRequestArgumentDelimiter() + "languageId=" + languageId + getRequestArgumentDelimiter() + "contentId=" + contentId;
 
-				if (isDecoratedUrl)
+				if (isDecoratedUrl || isDecorated)
 				{
 					sb.append(servletContext + "/" + CmsPropertyHandler.getComponentRendererAction() + "?" + arguments);
 				}
@@ -890,7 +888,7 @@ public class BasicURLComposer extends URLComposer
 				{
 					sb.append(servletContext + "/" + CmsPropertyHandler.getApplicationBaseAction() + "?" + arguments);
 				}
-		
+			
 				url = sb.toString();
             }
         }

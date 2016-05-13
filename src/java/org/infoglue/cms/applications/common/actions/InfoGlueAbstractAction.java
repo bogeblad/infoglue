@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -1849,15 +1850,26 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	private String getOptionalUserName() {
 		String name = "????????";
 		Session session = getSession();
-		InfoGluePrincipal user = null;
+		Principal user = null;
 		
 		// Try to fetch the user from the session
 		if (session != null) {
+			logger.debug("Got session");
 			user = session.getInfoGluePrincipal();
 			logger.debug("Got InfogluePrincipal from session: " + user);
 		}
 		
-		// If we got no user, try to get a TemplateController from the request
+		// If we got no user, try to get it from the HTTP session
+		if (user == null) {
+			logger.debug("Got HTTP session");
+			HttpSession httpSession = this.getHttpSession();
+			if (httpSession != null) {
+				user = (Principal) httpSession.getAttribute("infogluePrincipal");
+				logger.debug("Got InfogluePrincipal from HTTP session: " + user);
+			}
+		}
+		
+		// If we still have got no user, try to get a TemplateController from the request
 		// to get the user from there
 		if (user == null) {
 			HttpServletRequest request = getRequest();
@@ -1879,7 +1891,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 
 			// We have a user, get the name of the user
 			name = user.getName();
-			if (user.getIsAdministrator()) {
+			if (user instanceof InfoGluePrincipal && ((InfoGluePrincipal) user).getIsAdministrator()) {
 				name = name + "*";
 			}
 		} else if (session != null) {

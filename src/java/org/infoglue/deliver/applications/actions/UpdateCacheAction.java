@@ -367,7 +367,8 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
          
     public String doTestV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doTestV3");
+    	// Not logging this action since it is called very often
+    	// logUserActionInfo(getClass(), "doTestV3");
         String operatingMode = CmsPropertyHandler.getOperatingMode();
 		
         if(operatingMode != null && operatingMode.equalsIgnoreCase("3"))

@@ -87,6 +87,7 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
 import org.infoglue.deliver.controllers.kernel.impl.simple.ExtranetController;
 import org.infoglue.deliver.controllers.kernel.impl.simple.RepositoryDeliveryController;
+import org.infoglue.deliver.controllers.kernel.impl.simple.TemplateController;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.HttpHelper;
 import org.infoglue.deliver.util.LiveInstanceMonitor;
@@ -1848,21 +1849,39 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	private String getOptionalUserName() {
 		String name = "????????";
 		Session session = getSession();
+		InfoGluePrincipal user = null;
+		
+		// Try to fetch the user from the session
 		if (session != null) {
-			InfoGluePrincipal principal = session.getInfoGluePrincipal();
-			if (principal != null) {
-				name = principal.getName();
-				if (principal.getIsAdministrator()) {
-					name += "*";
-				}
-			} else {
-				SystemUser user = session.getUser();
-				if (user != null) {
-					name = "(" + user.getUserName() + ")";
+			user = session.getInfoGluePrincipal();			
+		}
+		
+		// If we got no user, try to get a TemplateController from the request
+		// to get the user from there
+		if (user == null) {
+			HttpServletRequest request = getRequest();
+			if (request != null) {
+				TemplateController controller = (TemplateController) request.getAttribute("org.infoglue.cms.deliver.templateLogic");
+				if (controller != null) {
+					user = controller.getPrincipal();
 				}
 			}
 		}
-		
+
+		if (user != null) {
+			// We have a user, get the name of the user
+			name = user.getName();
+			if (user.getIsAdministrator()) {
+				name += "*";
+			}
+		} else {
+			// We have no principal user, fall back on a SystemUser if available
+			SystemUser systemUser = session.getUser();
+			if (systemUser != null) {
+				name = "(" + systemUser.getUserName() + ")";
+			}
+		}
+
 		return name;
 	}
 	

@@ -1853,7 +1853,8 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		
 		// Try to fetch the user from the session
 		if (session != null) {
-			user = session.getInfoGluePrincipal();			
+			user = session.getInfoGluePrincipal();
+			logger.debug("Got InfogluePrincipal from session: " + user);
 		}
 		
 		// If we got no user, try to get a TemplateController from the request
@@ -1861,23 +1862,32 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		if (user == null) {
 			HttpServletRequest request = getRequest();
 			if (request != null) {
+				logger.debug("Got request");
+
 				TemplateController controller = (TemplateController) request.getAttribute("org.infoglue.cms.deliver.templateLogic");
 				if (controller != null) {
+					logger.debug("Got controller");
+					
 					user = controller.getPrincipal();
+					logger.debug("Got InfogluePrincipal from request: " + user);
 				}
 			}
 		}
 
 		if (user != null) {
+			logger.debug("Got user");
+
 			// We have a user, get the name of the user
 			name = user.getName();
 			if (user.getIsAdministrator()) {
-				name += "*";
+				name = name + "*";
 			}
-		} else {
+		} else if (session != null) {
 			// We have no principal user, fall back on a SystemUser if available
 			SystemUser systemUser = session.getUser();
 			if (systemUser != null) {
+				logger.debug("Got SystemUser from session: " + systemUser);
+
 				name = "(" + systemUser.getUserName() + ")";
 			}
 		}

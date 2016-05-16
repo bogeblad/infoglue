@@ -129,6 +129,7 @@ public class ViewArchiveToolAction extends InfoGlueAbstractAction
 		SimpleTrigger trig = new SimpleTrigger();
 
 		JobExecutionContext jec = new JobExecutionContext(null, new TriggerFiredBundle(jobDetail, trig, null, false, null, null, null, null), new NoOpJob());
+
 		jec.put("deleteVersions", new Boolean(deleteVersions));
 		jec.put("redoNumberOfTimes", redoNumberOfTimes);
 		new CleanOldVersionsJob().execute(jec);

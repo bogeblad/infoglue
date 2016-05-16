@@ -731,34 +731,7 @@ public class SearchController extends BaseController
 			}
 		
 		
-			/*
-			while(assetResults.hasMore() && currentCount < maxRows) 
-			{
-				SmallDigitalAssetImpl smallAsset = (SmallDigitalAssetImpl)assetResults.next();
-				//if(smallAsset.getAssetContentType().matches(assetTypeFilter))
-				if(assetTypeFilter == null || assetTypeFilter.equals("*") || assetTypeFilter.indexOf(smallAsset.getAssetContentType()) > -1)
-				{
-					DigitalAsset asset = DigitalAssetController.getMediumDigitalAssetWithId(smallAsset.getId(), db);
-					logger.info("Found a asset matching " + searchString + ":" + asset.getId());
-					Collection versions = asset.getContentVersions();
-					Iterator versionsIterator = versions.iterator();
-					while(versionsIterator.hasNext())
-					{
-						ContentVersion contentVersion = (ContentVersion)versionsIterator.next();
-						if(contentVersion.getValueObject().getContentId().intValue() != previousContentId.intValue() || contentVersion.getValueObject().getLanguageId().intValue() != previousLanguageId.intValue())
-						{
-						    ContentVersion latestContentVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersion(contentVersion.getValueObject().getContentId(), contentVersion.getValueObject().getLanguageId(), db);
-							if(latestContentVersion != null && latestContentVersion.getId().intValue() == contentVersion.getId().intValue())
-							{
-								matchingAssets.add(asset.getValueObject());
-							    previousContentId = contentVersion.getValueObject().getContentId();
-							    previousLanguageId = contentVersion.getValueObject().getLanguageId();
-							    currentCount++;
-							}
-						}						
-					}
-				}
-			}*/
+
 			
 			commitTransaction(db);
 		}

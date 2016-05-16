@@ -58,20 +58,22 @@ function listRowOn(rowEl)
 
 function listRowHiLight(rowEl)
 {
-	// Används inte än!
-	return;
+	// Anvï¿½nds inte ï¿½n!
+	
 	if (rowEl.className.slice(0,6) == "marked") return
 
 	if (rowEl.className.slice(0,2) != "hi")
 		rowEl.className = "hi"+rowEl.className;
 		
+	
+	return;
 }
 
 
 function listRowUnHiLight(rowEl)
 {
-	// Används inte än!
-	return;
+	// Anvï¿½nds inte ï¿½n!
+	
 	if (rowEl.className.slice(0,6) == "marked") return
 	
 	var rowClass = rowEl.className;
@@ -82,6 +84,7 @@ function listRowUnHiLight(rowEl)
 			rowEl.className = rowClass.slice(2, rowClass.length);
 		}
 	}
+	return;
 }
 
 function listRowMarked(rowEl)

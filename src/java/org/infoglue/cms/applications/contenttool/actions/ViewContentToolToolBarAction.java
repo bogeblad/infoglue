@@ -78,6 +78,7 @@ public class ViewContentToolToolBarAction extends InfoGlueAbstractAction
 	
 	public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		if(this.contentId != null)
 		{
 			this.contentVO = ContentController.getContentController().getContentVOWithId(this.contentId);

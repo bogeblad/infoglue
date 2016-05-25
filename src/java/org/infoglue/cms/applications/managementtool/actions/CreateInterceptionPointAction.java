@@ -59,6 +59,7 @@ public class CreateInterceptionPointAction extends InfoGlueAbstractAction
 	      
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
     	if(interceptionPointVOName != null && !interceptionPointVOName.equals(""))
     	{
     		this.interceptionPointVO = (InterceptionPointVO)InterceptionPointController.systemInterceptionPoints.get(interceptionPointVOName);
@@ -74,6 +75,7 @@ public class CreateInterceptionPointAction extends InfoGlueAbstractAction
 
     public String doInput() throws Exception
     {
+		logUserActionInfo(getClass(), "doInput");
     	this.inactiveInterceptionPointVOList = InterceptionPointController.getController().getInactiveInterceptionPointVOList();
     	
 		Collections.sort(this.inactiveInterceptionPointVOList, new ReflectionComparator("name"));

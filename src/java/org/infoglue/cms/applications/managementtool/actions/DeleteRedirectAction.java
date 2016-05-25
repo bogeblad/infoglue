@@ -53,6 +53,7 @@ public class DeleteRedirectAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws ConstraintException, Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 	    this.redirectVO.setRedirectId(this.getRedirectId());
 		RedirectController.getController().delete(this.redirectVO);
 		return "success";

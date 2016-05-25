@@ -75,6 +75,7 @@ public class ViewSiteNodeTreeAction extends InfoGlueAbstractAction
 	
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
     	// Get / Set tree preferance
     	if (tree != null)
     	{

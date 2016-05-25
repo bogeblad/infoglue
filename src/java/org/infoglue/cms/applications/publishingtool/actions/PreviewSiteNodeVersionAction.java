@@ -47,6 +47,7 @@ public class PreviewSiteNodeVersionAction  extends InfoGlueAbstractAction
 	 */
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(siteNodeVersionId);
 		return "success";
 	}

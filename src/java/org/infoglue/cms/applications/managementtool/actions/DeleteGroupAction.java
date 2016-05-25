@@ -41,6 +41,7 @@ public class DeleteGroupAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 	    GroupControllerProxy.getController().deleteGroup(groupName);
 
 		return "success";
@@ -48,6 +49,7 @@ public class DeleteGroupAction extends InfoGlueAbstractAction
 	
 	public String doV3() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doV3");
 		GroupControllerProxy.getController().deleteGroup(groupName);
 
 		return "successV3";

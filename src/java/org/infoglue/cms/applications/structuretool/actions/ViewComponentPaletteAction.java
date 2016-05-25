@@ -70,6 +70,7 @@ public class ViewComponentPaletteAction extends InfoGlueAbstractAction
 	
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
     	Integer currentRepositoryId = getRepositoryId();
 		this.masterLanguageVO = LanguageController.getController().getMasterLanguage(currentRepositoryId);		
     	/*

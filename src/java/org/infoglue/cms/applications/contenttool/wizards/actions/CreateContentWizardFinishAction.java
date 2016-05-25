@@ -69,6 +69,7 @@ public class CreateContentWizardFinishAction extends CreateContentWizardAbstract
 	
 	public String doExecute() throws Exception
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		try
 		{
 			CreateContentWizardInfoBean createContentWizardInfoBean = getCreateContentWizardInfoBean();
@@ -160,6 +161,7 @@ public class CreateContentWizardFinishAction extends CreateContentWizardAbstract
 
 	public String doCancel() throws Exception
 	{
+		logUserActionInfo(getClass(), "doCancel");
 		try
 		{
 			CreateContentWizardInfoBean createContentWizardInfoBean = getCreateContentWizardInfoBean();
@@ -185,6 +187,7 @@ public class CreateContentWizardFinishAction extends CreateContentWizardAbstract
 	
 	public String doV3() throws Exception
 	{
+		logUserActionInfo(getClass(), "doV3");
 		try
 		{
 			CreateContentWizardInfoBean createContentWizardInfoBean = getCreateContentWizardInfoBean();
@@ -268,6 +271,7 @@ public class CreateContentWizardFinishAction extends CreateContentWizardAbstract
 
 	public String doCancelV3() throws Exception
 	{
+		logUserActionInfo(getClass(), "doCancelV3");
 		try
 		{
 			CreateContentWizardInfoBean createContentWizardInfoBean = getCreateContentWizardInfoBean();

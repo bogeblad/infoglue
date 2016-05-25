@@ -35,36 +35,42 @@ public class ContentCategoryAction extends ModelAction
 	
 	public String doAdd() throws SystemException
 	{
+		logUserActionInfo(getClass(), "doAdd");
 		setModel(controller.save(getContentCategory(), this.getInfoGluePrincipal()));
 		return SUCCESS;
 	}
 
 	public String doDelete() throws SystemException
 	{
+		logUserActionInfo(getClass(), "doDelete");
 		controller.delete(getContentCategoryId(), this.getInfoGluePrincipal());
 		return SUCCESS;
 	}
 
 	public String doAddStandalone() throws SystemException
 	{
+		logUserActionInfo(getClass(), "doAddStandalone");
 		setModel(controller.save(getContentCategory(), this.getInfoGluePrincipal()));
 		return SUCCESS;
 	}
 
 	public String doDeleteStandalone() throws SystemException
 	{
+		logUserActionInfo(getClass(), "doDeleteStandalone");
 		controller.delete(getContentCategoryId(), this.getInfoGluePrincipal());
 		return SUCCESS;
 	}
 
 	public String doAddWizard() throws SystemException
 	{
+		logUserActionInfo(getClass(), "doAddWizard");
 		setModel(controller.save(getContentCategory(), this.getInfoGluePrincipal()));
 		return SUCCESS;
 	}
 
 	public String doDeleteWizard() throws SystemException
 	{
+		logUserActionInfo(getClass(), "doDeleteWizard");
 		controller.delete(getContentCategoryId(), this.getInfoGluePrincipal());
 		return SUCCESS;
 	}

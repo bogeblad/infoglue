@@ -48,6 +48,7 @@ public class ViewContentVersionHistoryAction extends InfoGlueAbstractAction
 
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 	    this.contentVO = ContentController.getContentController().getContentVOWithId(this.contentId);
 	    contentVersionVOList = ContentVersionController.getContentVersionController().getContentVersionVOList(contentId);
 	    
@@ -56,6 +57,7 @@ public class ViewContentVersionHistoryAction extends InfoGlueAbstractAction
 
 	public String doV3() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doV3");
 		doExecute();
 
 	    return "successV3";

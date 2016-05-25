@@ -82,6 +82,7 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
 	
 	public String doDigitalAssets() throws Exception
 	{
+		logUserActionInfo(getClass(), "doDigitalAssets");
 		String ret = "";
 		DigitalAssetVO digitalAssetVO = null;
 
@@ -261,6 +262,7 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
      */
     public String doContentVersion() throws Exception
 	{
+		logUserActionInfo(getClass(), "doContentVersion");
         Document doc = DocumentHelper.createDocument();
         doc.add(getContentVersionElement(parent));
 	    return out(getFormattedDocument(doc));
@@ -268,6 +270,7 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
 
     public String doContent() throws Exception
 	{
+		logUserActionInfo(getClass(), "doContent");
         Document doc = DocumentHelper.createDocument();
         doc.add(getContentElement(parent));
 	    return out(getFormattedDocument(doc));
@@ -275,6 +278,7 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
     
     public String doRootContent() throws Exception
 	{
+		logUserActionInfo(getClass(), "doRootContent");
         Document doc = DocumentHelper.createDocument();
         ContentVO rootContent = ContentController.getContentController().getRootContentVO(repositoryId, getInfoGluePrincipal().getName(), true);
         doc.add(getPlainContentElement(rootContent));
@@ -283,6 +287,7 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
 
     public String doMasterLanguage() throws Exception
 	{
+		logUserActionInfo(getClass(), "doMasterLanguage");
         LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(repositoryId);
 	    return out("" + masterLanguageVO.getId());
 	}
@@ -292,6 +297,7 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
      */
     public String doContentVersionHead() throws Exception
 	{
+		logUserActionInfo(getClass(), "doContentVersionHead");
         Document doc = DocumentHelper.createDocument();
         Element element = DocumentHelper.createElement("contentVersion");
 
@@ -306,6 +312,7 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
      */
     public String doContentVersions() throws Exception
 	{
+		logUserActionInfo(getClass(), "doContentVersions");
         Document doc = DocumentHelper.createDocument();
         Element root = doc.addElement("contentVersions");
         Collection availableLanguages = ContentController.getContentController().getRepositoryLanguagesEx(parent);

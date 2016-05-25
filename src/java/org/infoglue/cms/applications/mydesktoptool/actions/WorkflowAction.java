@@ -67,6 +67,7 @@ public class WorkflowAction extends InfoGlueAbstractAction
 
 	public String doExecute()
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		try
 		{
 		}
@@ -80,6 +81,7 @@ public class WorkflowAction extends InfoGlueAbstractAction
 
 	public String doShowWorkflowDetails() throws SystemException
 	{
+		logUserActionInfo(getClass(), "doShowWorkflowDetails");
 		try
 		{
 			workflow = controller.getWorkflow(workflowName, getInfoGluePrincipal());
@@ -94,6 +96,7 @@ public class WorkflowAction extends InfoGlueAbstractAction
 
 	public String doShowRunningWorkflowDetails() throws SystemException
 	{
+		logUserActionInfo(getClass(), "doShowRunningWorkflowDetails");
 		try
 		{
 			workflow = controller.getCurrentWorkflow(workflowId, getInfoGluePrincipal());
@@ -108,6 +111,7 @@ public class WorkflowAction extends InfoGlueAbstractAction
 
 	public String doStartWorkflow() throws SystemException
 	{
+		logUserActionInfo(getClass(), "doStartWorkflow");
 		WorkflowVO existingWorkflow = null;
 		try
 		{
@@ -131,6 +135,7 @@ public class WorkflowAction extends InfoGlueAbstractAction
 
 	public String doInvoke() throws SystemException
 	{
+		logUserActionInfo(getClass(), "doInvoke");
 		logger.info("****************************************");
 		logger.info("workflowId:" + getWorkflowId());
 		logger.info("actionId:" + actionId);
@@ -321,12 +326,14 @@ public class WorkflowAction extends InfoGlueAbstractAction
 
 	public String doExecute() throws SystemException
 	{
+		logUserActivity(getClass(), "doExecute");
 		populateLists();
 		return SUCCESS;
 	}
 
 	public String doTaskList() throws SystemException
 	{
+		logUserActivity(getClass(), "doTaskList");
 		populateActiveWorkflowVOList();
 		return "successTaskList";
 	}
@@ -353,6 +360,7 @@ public class WorkflowAction extends InfoGlueAbstractAction
 	
 	public String doGetActiveWorkflowProperties() throws Exception
 	{
+		logUserActivity(getClass(), "doGetActiveWorkflowProperties");
 		StringBuffer sb = new StringBuffer();
 		
 		String activeWorkflowId = getRequest().getParameter("activeWorkflowId");
@@ -403,6 +411,7 @@ public class WorkflowAction extends InfoGlueAbstractAction
 
 	public String doGetAvailableWorkflowProperties() throws Exception
 	{
+		logUserActivity(getClass(), "doGetAvailableWorkflowProperties");
 		StringBuffer sb = new StringBuffer();
 		
 		String workflowName = getRequest().getParameter("workflowName");

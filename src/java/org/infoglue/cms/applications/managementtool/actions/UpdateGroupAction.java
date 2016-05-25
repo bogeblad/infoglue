@@ -61,6 +61,7 @@ public class UpdateGroupAction extends ViewGroupAction
 	
 	public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
     	super.initialize(getGroupName());
     	
     	ceb.add(this.groupVO.validate());
@@ -78,6 +79,7 @@ public class UpdateGroupAction extends ViewGroupAction
 	
 	public String doSaveAndExit() throws Exception
     {
+		logUserActionInfo(getClass(), "doSaveAndExit");
 		doExecute();
 						
 		return "saveAndExit";
@@ -85,6 +87,7 @@ public class UpdateGroupAction extends ViewGroupAction
 
 	public String doDeleteUser() throws Exception
     {
+		logUserActionInfo(getClass(), "doDeleteUser");
 		GroupControllerProxy.getController().removeUser(getGroupName(), this.userName);
 		
 		return "successRedirect";
@@ -92,6 +95,7 @@ public class UpdateGroupAction extends ViewGroupAction
 
 	public String doAddUser() throws Exception
     {
+		logUserActionInfo(getClass(), "doAddUser");
 		GroupControllerProxy.getController().addUser(getGroupName(), this.userName);
 		
 		return "successRedirect";
@@ -99,6 +103,7 @@ public class UpdateGroupAction extends ViewGroupAction
 	
 	public String doV3() throws Exception
     {
+		logUserActionInfo(getClass(), "doV3");
 		try
 		{
 			doExecute();
@@ -114,6 +119,7 @@ public class UpdateGroupAction extends ViewGroupAction
 
 	public String doSaveAndExitV3() throws Exception
     {
+		logUserActionInfo(getClass(), "doSaveAndExitV3");
 		try
 		{
 			doExecute();

@@ -39,6 +39,7 @@ public class ViewCategoryTreeAction extends TreeViewAbstractAction
 
 	public String doBindingView() throws Exception
 	{
+		logUserActionInfo(getClass(), "doBindingView");
 		super.doExecute();
 
 		return BINDING;

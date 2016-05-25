@@ -43,6 +43,7 @@ public class ViewListInterceptionPointAction extends InfoGlueAbstractAction
 
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		this.interceptionPointVOList = InterceptionPointController.getController().getSortedInterceptionPointVOList();
 		
 		return "success";

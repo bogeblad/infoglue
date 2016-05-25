@@ -69,6 +69,7 @@ public class ViewLoggingAction extends InfoGlueAbstractAction
 	 */
 	public String doDownloadFile() throws Exception
 	{
+		logUserActionInfo(getClass(), "doDownloadFile");
         if(!ServerNodeController.getController().getIsIPAllowed(getRequest()))
         {
         	java.security.Principal principal = (java.security.Principal)getHttpSession().getAttribute("infogluePrincipal");
@@ -156,6 +157,7 @@ public class ViewLoggingAction extends InfoGlueAbstractAction
 	 */
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
     	if(!ServerNodeController.getController().getIsIPAllowed(this.getRequest()))
         {
     		java.security.Principal principal = (java.security.Principal)getHttpSession().getAttribute("infogluePrincipal");

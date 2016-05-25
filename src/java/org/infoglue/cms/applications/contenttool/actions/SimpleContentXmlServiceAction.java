@@ -78,6 +78,7 @@ public class SimpleContentXmlServiceAction extends InfoGlueAbstractAction
 	}
 
 	public String doExecute() throws Exception {
+		logUserActionInfo(getClass(), "doExecute");
 		String resp;
 		try {
 			resp = getDigitalAssetInfo();

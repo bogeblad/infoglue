@@ -94,6 +94,7 @@ public class CreateEditionAction extends ViewPublicationsAction
 
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
     	this.publicationVO.setRepositoryId(getRepositoryId());
     	
 		ceb = this.publicationVO.validate();
@@ -110,6 +111,7 @@ public class CreateEditionAction extends ViewPublicationsAction
 
     public String doV3() throws Exception
     {
+		logUserActionInfo(getClass(), "doV3");
     	doExecute();
     	
         return "successV3";
@@ -117,6 +119,7 @@ public class CreateEditionAction extends ViewPublicationsAction
     
     public String doInput() throws Exception
     {
+		logUserActionInfo(getClass(), "doInput");
     	this.publicationVO.PrepareValidation();
     	setEvents(getRequest().getParameterValues("sel"));
     	return "input";
@@ -124,6 +127,7 @@ public class CreateEditionAction extends ViewPublicationsAction
 
     public String doInputV3() throws Exception
     {
+		logUserActionInfo(getClass(), "doInputV3");
     	this.publicationVO.PrepareValidation();
     	setEvents(getRequest().getParameterValues("sel"));
     	return "inputV3";

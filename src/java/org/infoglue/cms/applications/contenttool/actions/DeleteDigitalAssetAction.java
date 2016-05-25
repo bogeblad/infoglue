@@ -44,6 +44,7 @@ public class DeleteDigitalAssetAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 	    DigitalAssetController.getController().delete(digitalAssetId, entity, entityId);
 		
 	    this.getResponse().sendRedirect(returnAddress);

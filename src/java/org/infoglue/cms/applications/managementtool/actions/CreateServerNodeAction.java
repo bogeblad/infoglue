@@ -84,6 +84,7 @@ public class CreateServerNodeAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		ceb.add(this.serverNodeVO.validate());
     	ceb.throwIfNotEmpty();				
     	
@@ -94,6 +95,7 @@ public class CreateServerNodeAction extends InfoGlueAbstractAction
         
     public String doInput() throws Exception
     {
+		logUserActionInfo(getClass(), "doInput");
     	return "input";
     }    
 }

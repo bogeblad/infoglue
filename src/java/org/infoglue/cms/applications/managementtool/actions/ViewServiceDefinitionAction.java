@@ -54,6 +54,7 @@ public class ViewServiceDefinitionAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
         logger.info("Executing doExecute on ViewServiceDefinitionAction..");
         this.initialize(getServiceDefinitionId());
         logger.info("Finished executing doExecute on ViewServiceDefinitionAction..");

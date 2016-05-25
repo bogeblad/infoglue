@@ -67,6 +67,7 @@ public class UpdateContentAction extends ViewContentAction //WebworkAbstractActi
 
 	public String doInputContentType() throws Exception
 	{
+		logUserActionInfo(getClass(), "doInputContentType");
 		super.initialize(getContentId());
 		
 		return "successInputContentType";
@@ -74,6 +75,7 @@ public class UpdateContentAction extends ViewContentAction //WebworkAbstractActi
 
 	public String doChangeContentType() throws Exception
 	{
+		logUserActionInfo(getClass(), "doChangeContentType");
 		super.initialize(getContentId());
 
 		ContentVO oldContentVO = ContentController.getContentController().getContentVOWithId(getContentId());
@@ -89,6 +91,7 @@ public class UpdateContentAction extends ViewContentAction //WebworkAbstractActi
 
 	public String doSwitchToFolder() throws Exception
 	{
+		logUserActionInfo(getClass(), "doSwitchToFolder");
 		super.initialize(getContentId());
 
 		ContentVO oldContentVO = ContentController.getContentController().getContentVOWithId(getContentId());
@@ -101,6 +104,7 @@ public class UpdateContentAction extends ViewContentAction //WebworkAbstractActi
 
 	public String doSwitchToContent() throws Exception
 	{
+		logUserActionInfo(getClass(), "doSwitchToContent");
 		super.initialize(getContentId());
 
 		ContentVO oldContentVO = ContentController.getContentController().getContentVOWithId(getContentId());
@@ -113,6 +117,7 @@ public class UpdateContentAction extends ViewContentAction //WebworkAbstractActi
 
 	public String doExecute() throws Exception
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		super.initialize(getContentId());
 		ContentVO oldContentVO = ContentController.getContentController().getContentVOWithId(getContentId());
 		
@@ -138,6 +143,7 @@ public class UpdateContentAction extends ViewContentAction //WebworkAbstractActi
 	
 	public String doV3() throws Exception
 	{
+		logUserActionInfo(getClass(), "doV3");
 		super.initialize(getContentId());
 		ContentVO oldContentVO = ContentController.getContentController().getContentVOWithId(getContentId());
 		
@@ -162,6 +168,7 @@ public class UpdateContentAction extends ViewContentAction //WebworkAbstractActi
 
 	public String doStandalone() throws Exception
 	{
+		logUserActionInfo(getClass(), "doStandalone");
 		doExecute();
 						
 		return "successStandalone";
@@ -169,6 +176,7 @@ public class UpdateContentAction extends ViewContentAction //WebworkAbstractActi
 		
 	public String doSaveAndExit() throws Exception
     {
+		logUserActionInfo(getClass(), "doSaveAndExit");
 		doExecute();
 						
 		return "saveAndExit";

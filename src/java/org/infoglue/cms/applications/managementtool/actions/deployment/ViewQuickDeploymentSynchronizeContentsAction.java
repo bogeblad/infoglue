@@ -71,6 +71,7 @@ public class ViewQuickDeploymentSynchronizeContentsAction extends InfoGlueAbstra
 
 	public String doInput() throws Exception
     {
+		logUserActionInfo(getClass(), "doInput");
     	try
     	{
     		Map<String, DeploymentServerBean> deploymentServers = CmsPropertyHandler.getDeploymentServers();
@@ -157,6 +158,7 @@ public class ViewQuickDeploymentSynchronizeContentsAction extends InfoGlueAbstra
 
 	public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		logger.info("Inne i execute...");
 		
 		try

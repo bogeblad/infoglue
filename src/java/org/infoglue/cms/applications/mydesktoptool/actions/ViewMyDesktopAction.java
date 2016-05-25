@@ -76,6 +76,7 @@ public class ViewMyDesktopAction extends InfoGlueAbstractAction
 	
 	public String doExecute()
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		try
 		{
 			populateActiveWorkflowVOList();
@@ -97,6 +98,7 @@ public class ViewMyDesktopAction extends InfoGlueAbstractAction
 	
 	public String doAvailable()
 	{
+		logUserActionInfo(getClass(), "doAvailable");
 		try
 		{
 			availableWorkflowVOList = controller.getAvailableWorkflowVOList(getInfoGluePrincipal());
@@ -111,6 +113,7 @@ public class ViewMyDesktopAction extends InfoGlueAbstractAction
 
 	public String doOngoing()
 	{
+		logUserActionInfo(getClass(), "doOngoing");
 		try
 		{
 			populateActiveWorkflowVOList();
@@ -125,6 +128,7 @@ public class ViewMyDesktopAction extends InfoGlueAbstractAction
 
 	public String doShortcuts()
 	{
+		logUserActionInfo(getClass(), "doShortcuts");
 		try
 		{
 			availableShortcutVOList = shortcutController.getAvailableShortcutVOList(getInfoGluePrincipal());
@@ -139,6 +143,7 @@ public class ViewMyDesktopAction extends InfoGlueAbstractAction
 
 	public String doLatestPages()
 	{
+		logUserActionInfo(getClass(), "doLatestPages");
 		try
 		{
 			this.siteNodeVOListLastModifiedByPincipal = SiteNodeController.getController().getSiteNodeVOListLastModifiedByPincipal(getInfoGluePrincipal());
@@ -153,6 +158,7 @@ public class ViewMyDesktopAction extends InfoGlueAbstractAction
 
 	public String doLatestContents()
 	{
+		logUserActionInfo(getClass(), "doLatestContents");
 		try
 		{
 			this.contentVOListLastModifiedByPincipal = ContentController.getContentController().getContentVOListLastModifiedByPincipal(getInfoGluePrincipal(), new String[] {"Meta info"});
@@ -305,24 +311,28 @@ public class ViewMyDesktopAction extends InfoGlueAbstractAction
 
 	public String doExecute() throws SystemException
 	{
+		logUserActivity(getClass(), "doExecute");
 		populateLists();
 		return SUCCESS;
 	}
 
 	public String doTaskList() throws SystemException
 	{
+		logUserActivity(getClass(), "doTaskList");
 		populateActiveWorkflowVOList();
 		return "successTaskList";
 	}
 
 	public String doStartWorkflow() throws SystemException
 	{
+		logUserActivity(getClass(), "doStartWorkflow");
 		workflow = controller.initializeWorkflow(getInfoGluePrincipal(), getWorkflowName(), actionId, WorkflowController.createWorkflowParameters(ActionContext.getRequest()));
 		return redirectToView();
 	}
 
 	public String doInvoke() throws SystemException
 	{
+		logUserActivity(getClass(), "doInvoke");
 		logger.info("****************************************");
 		logger.info("workflowId:" + getWorkflowId());
 		logger.info("actionId:" + actionId);
@@ -468,6 +478,7 @@ public class ViewMyDesktopAction extends InfoGlueAbstractAction
 	
 	public String doGetActiveWorkflowProperties() throws Exception
 	{
+		logUserActivity(getClass(), "doGetActiveWorkflowProperties");
 		StringBuffer sb = new StringBuffer();
 		
 		String activeWorkflowId = getRequest().getParameter("activeWorkflowId");
@@ -518,6 +529,7 @@ public class ViewMyDesktopAction extends InfoGlueAbstractAction
 
 	public String doGetAvailableWorkflowProperties() throws Exception
 	{
+		logUserActivity(getClass(), "doGetAvailableWorkflowProperties");
 		StringBuffer sb = new StringBuffer();
 		
 		String workflowName = getRequest().getParameter("workflowName");

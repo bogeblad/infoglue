@@ -42,6 +42,7 @@ public class UpdateInterceptionPointAction extends ViewInterceptionPointAction
 	
 	public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		super.initialize(getInterceptionPointId());
 		
     	ceb.add(this.interceptionPointVO.validate());
@@ -56,6 +57,7 @@ public class UpdateInterceptionPointAction extends ViewInterceptionPointAction
 	
 	public String doSaveAndExit() throws Exception
     {
+		logUserActionInfo(getClass(), "doSaveAndExit");
 		doExecute();
 						
 		return "saveAndExit";

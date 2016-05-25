@@ -38,6 +38,7 @@ public class ViewCMSAction extends InfoGlueAbstractAction
 	
 	public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		String preferredGUI = CmsPropertyHandler.getDefaultGUI(this.getUserName());
 		if(preferredGUI.equalsIgnoreCase("default"))
 			return "successDefault";

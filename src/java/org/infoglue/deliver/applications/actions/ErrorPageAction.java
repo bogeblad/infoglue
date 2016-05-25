@@ -100,6 +100,7 @@ public class ErrorPageAction extends InfoGlueAbstractAction
     
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
     	try
     	{
 	        String responseCodeAttribute = (String)this.getRequest().getAttribute("responseCode");
@@ -193,6 +194,7 @@ public class ErrorPageAction extends InfoGlueAbstractAction
     
     public String doBusy() throws Exception
     {
+		logUserActionInfo(getClass(), "doBusy");
     	String responseCodeAttribute = (String)this.getRequest().getAttribute("responseCode");
         if(responseCodeAttribute != null)
             responseCode = Integer.parseInt(responseCodeAttribute);

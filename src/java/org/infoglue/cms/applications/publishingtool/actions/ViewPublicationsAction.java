@@ -95,6 +95,7 @@ public class ViewPublicationsAction extends InfoGlueAbstractAction
 	
     public String doV3() throws Exception
     {
+		logUserActionInfo(getClass(), "doV3");
     	doExecute();
     	
         return "successV3";
@@ -107,6 +108,7 @@ public class ViewPublicationsAction extends InfoGlueAbstractAction
 
 	public String doExecute() throws Exception
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		if(filter == null)
 		{
 			if(CmsPropertyHandler.getAllowPublicationEventFilter().equalsIgnoreCase("true"))
@@ -134,6 +136,7 @@ public class ViewPublicationsAction extends InfoGlueAbstractAction
 	 */
 	public String doShowPublicationDetails() throws Exception
 	{
+		logUserActionInfo(getClass(), "doShowPublicationDetails");
 		this.publicationDetailVOList = PublicationController.getController().getPublicationDetailVOList(publicationId);
 		this.publicationStatusList = PublicationController.getPublicationStatusList(publicationId);
 		
@@ -146,6 +149,7 @@ public class ViewPublicationsAction extends InfoGlueAbstractAction
 	 */
 	public String doListFilteredPublication() throws Exception
 	{
+		logUserActionInfo(getClass(), "doListFilteredPublication");
 		editionBrowser = PublicationController.getEditionPage(repositoryId, startIndex);
 		
 		return "successV3Filtered";
@@ -158,6 +162,7 @@ public class ViewPublicationsAction extends InfoGlueAbstractAction
 	 */
 	public String doShowDebugEntityPublication() throws Exception
 	{
+		logUserActionInfo(getClass(), "doShowDebugEntityPublication");
 		Boolean isEntityPublicationProcessed = PublicationController.getController().getIsEntityPublicationProcessed(entityName, entityId);
 		List<String[]> debug = PublicationController.getController().getCacheDebugList(entityName, entityId, false, isEntityPublicationProcessed);
 		this.debugInformation = debug;
@@ -170,6 +175,7 @@ public class ViewPublicationsAction extends InfoGlueAbstractAction
 	 */
 	public String doFinishDebugEntityPublication() throws Exception
 	{
+		logUserActionInfo(getClass(), "doFinishDebugEntityPublication");
 		Boolean isEntityPublicationProcessed = PublicationController.getController().getIsEntityPublicationProcessed(entityName, entityId);
 		List<String[]> debug = PublicationController.getController().getCacheDebugList(entityName, entityId, true, isEntityPublicationProcessed);
 		this.debugInformation = debug;
@@ -179,11 +185,13 @@ public class ViewPublicationsAction extends InfoGlueAbstractAction
 
     public String doSystem() throws Exception
     {
+		logUserActionInfo(getClass(), "doSystem");
         return "successSystem";
     }
 
     public String doPushSystemNotificationMessages() throws Exception
     {
+		logUserActionInfo(getClass(), "doPushSystemNotificationMessages");
         NotificationMessage notificationMessage = null;
         List messages = RemoteCacheUpdater.getSystemNotificationMessages();
         synchronized(messages)

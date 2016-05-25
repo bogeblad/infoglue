@@ -67,6 +67,7 @@ public class DeleteEditionAction extends ViewPublicationsAction
 	
 	public String doCheckForModifiedVersions() throws Exception
 	{
+		logUserActionInfo(getClass(), "doCheckForModifiedVersions");
 		return doExecute();
 	}
 
@@ -78,6 +79,7 @@ public class DeleteEditionAction extends ViewPublicationsAction
 	
 	public String doV3() throws Exception
 	{
+		logUserActionInfo(getClass(), "doV3");
 		doExecute();
 		
 		 return "successV3";
@@ -91,6 +93,7 @@ public class DeleteEditionAction extends ViewPublicationsAction
 
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		// Editions to delete (support many, for now template allows only one)
         if(publicationId != null)
 		{

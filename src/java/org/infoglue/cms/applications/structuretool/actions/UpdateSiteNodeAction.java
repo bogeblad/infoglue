@@ -93,6 +93,7 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 	
 	public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		//try
 		//{
 			this.updated = true;
@@ -226,6 +227,7 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 
 	public String doV3() throws Exception
     {
+		logUserActionInfo(getClass(), "doV3");
 		doExecute();
 
 		return "successV3";
@@ -233,6 +235,7 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 
 	public String doSaveAndExit() throws Exception
     {
+		logUserActionInfo(getClass(), "doSaveAndExit");
 		doExecute();
 						
 		return "saveAndExit";
@@ -240,6 +243,7 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 
 	public String doSaveAndExitV3() throws Exception
     {
+		logUserActionInfo(getClass(), "doSaveAndExitV3");
 		doExecute();
 						
 		return "saveAndExitV3";
@@ -247,6 +251,7 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 
 	public String doSaveAndExitV3Inline() throws Exception
     {
+		logUserActionInfo(getClass(), "doSaveAndExitV3Inline");
 		doExecute();
 
 		this.userSessionKey = "" + System.currentTimeMillis();
@@ -259,6 +264,7 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 
     public String doUpdateSiteNodeTypeDefinition() throws Exception
     {
+		logUserActionInfo(getClass(), "doUpdateSiteNodeTypeDefinition");
     	SiteNodeController.getController().updateSiteNodeTypeDefinition(getSiteNodeId(), this.siteNodeTypeDefinitionId);
     	
     	return "successChooseSiteNodeTypeDefinition";

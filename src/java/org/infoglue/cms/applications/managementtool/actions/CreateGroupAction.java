@@ -69,11 +69,13 @@ public class CreateGroupAction extends InfoGlueAbstractAction
 		
 	public String doInput() throws Exception
     {
+		logUserActionInfo(getClass(), "doInput");
     	return "input";
     }
 	
 	public String doInputV3() throws Exception
     {
+		logUserActionInfo(getClass(), "doInputV3");
 		this.infoGluePrincipals	= UserControllerProxy.getController().getAllUsers();
 		this.contentTypeDefinitionVOList = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList(ContentTypeDefinitionVO.EXTRANET_GROUP_PROPERTIES);
 
@@ -82,6 +84,7 @@ public class CreateGroupAction extends InfoGlueAbstractAction
 
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		ceb.add(this.groupVO.validate());
     	ceb.throwIfNotEmpty();	
     				
@@ -102,6 +105,7 @@ public class CreateGroupAction extends InfoGlueAbstractAction
 	
 	public String doV3() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doV3");
 		try
 		{
 			doExecute();
@@ -123,6 +127,7 @@ public class CreateGroupAction extends InfoGlueAbstractAction
 
 	public String doSaveAndExitV3() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doSaveAndExitV3");
 		doV3();
 		
 		return "successSaveAndExitV3";

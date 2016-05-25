@@ -38,6 +38,7 @@ public class ViewSystemToolsAction extends InfoGlueAbstractAction
 		
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
         return "success";
     }
 

@@ -44,6 +44,7 @@ public class UpdateSystemUserUserNameAction extends InfoGlueAbstractAction
 
 	public String doInput() throws Exception
 	{
+		logUserActionInfo(getClass(), "doInput");
 		boolean hasAccessToRenameSystemUser = hasAccessTo(getInfoGluePrincipal(), "SystemUser.changeUsername", false);
 		if (!hasAccessToRenameSystemUser) // getInfoGluePrincipal().getIsAdministrator()
 		{
@@ -55,6 +56,7 @@ public class UpdateSystemUserUserNameAction extends InfoGlueAbstractAction
 
 	public String doExecute() throws Exception
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		if(userName.equals(CmsPropertyHandler.getAnonymousUser()) || userName.equals(CmsPropertyHandler.getAdministratorUserName()))
 		{
 	        throw new SystemException("You must not change the user name on this user as it's needed by the system.");

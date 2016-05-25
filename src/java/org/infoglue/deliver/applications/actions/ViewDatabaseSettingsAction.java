@@ -48,6 +48,7 @@ public class ViewDatabaseSettingsAction extends InfoGlueAbstractAction
 	
 	public String doExecute() throws Exception
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		String databaseDefinitions = CmsPropertyHandler.getContextRootPath() + File.separator + "WEB-INF" + File.separator + "classes" + File.separator + "databaseDefinitions.xml";
 		File file = new File(databaseDefinitions);
 		if(file.exists())
@@ -61,6 +62,7 @@ public class ViewDatabaseSettingsAction extends InfoGlueAbstractAction
 	
 	public String doUpdate() throws Exception
 	{
+		logUserActionInfo(getClass(), "doUpdate");
 		String databaseDefinitions = CmsPropertyHandler.getContextRootPath() + File.separator + "WEB-INF" + File.separator + "classes" + File.separator + "databaseDefinitions.xml";
 		
 		File file = new File(databaseDefinitions);

@@ -68,6 +68,7 @@ public class CreateContentWizardInputAssetsAction extends CreateContentWizardAbs
         	
     public String doInput() throws Exception
     {
+		logUserActionInfo(getClass(), "doInput");
 		CreateContentWizardInfoBean createContentWizardInfoBean = this.getCreateContentWizardInfoBean();
         this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(createContentWizardInfoBean.getContentTypeDefinitionId());
 		    
@@ -133,6 +134,7 @@ public class CreateContentWizardInputAssetsAction extends CreateContentWizardAbs
 
 	public String doExecute() throws Exception
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		InputStream is = null;
 		File renamedFile = null;
 		DigitalAssetVO digitalAssetVO = null;
@@ -224,6 +226,7 @@ public class CreateContentWizardInputAssetsAction extends CreateContentWizardAbs
     
 	public String doFinish() throws Exception
 	{
+		logUserActionInfo(getClass(), "doFinish");
 		return "success";
 	}
 	

@@ -65,6 +65,7 @@ public class ViewAvailableServiceBindingAction extends InfoGlueAbstractAction
     
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
         logger.info("Executing doExecute on ViewAvailableServiceBindingAction..");
 		initialize(getAvailableServiceBindingId());
 		/*

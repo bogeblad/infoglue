@@ -47,6 +47,7 @@ public class ViewListRedirectAction extends InfoGlueAbstractAction
 
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		this.userRedirects = RedirectController.getController().getUserRedirectVOList();
 		this.systemRedirects = RedirectController.getController().getSystemRedirectVOList();
     	return "success";

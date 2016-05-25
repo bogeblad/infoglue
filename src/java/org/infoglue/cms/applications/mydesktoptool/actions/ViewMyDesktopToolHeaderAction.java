@@ -38,6 +38,7 @@ public class ViewMyDesktopToolHeaderAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
         return "success";
     }
                

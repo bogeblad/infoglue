@@ -49,6 +49,7 @@ public class ViewWorkflowDefinitionAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
         this.workflowDefinitionVO = WorkflowDefinitionController.getController().getWorkflowDefinitionVOWithId(workflowDefinitionId);
 
         return SUCCESS;

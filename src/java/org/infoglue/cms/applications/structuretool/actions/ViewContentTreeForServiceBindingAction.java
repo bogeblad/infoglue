@@ -158,6 +158,7 @@ public class ViewContentTreeForServiceBindingAction extends InfoGlueAbstractActi
 	
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), true);
 		
     	if(this.repositoryId == null)

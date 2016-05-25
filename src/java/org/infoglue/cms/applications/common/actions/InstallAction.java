@@ -85,35 +85,41 @@ public class InstallAction extends InfoGlueAbstractAction
 	
 	public String doInput() throws Exception
     {
+		logUserActionInfo(getClass(), "doInput");
 		return INPUT;
     }
 
 	public String doInputInitiateInstall() throws Exception
     {
+		logUserActionInfo(getClass(), "doInputInitiateInstall");
 		
 		return "inputInitiateInstall";
     }
 
 	public String doInputDatabase() throws Exception
     {
+		logUserActionInfo(getClass(), "doInputDatabase");
 		
 		return "inputDatabase";
     } 
 	
 	public String doInputDatabaseExisting() throws Exception
     {
+		logUserActionInfo(getClass(), "doInputDatabaseExisting");
 		
 		return "inputDatabaseExisting";
     }
 
 	public String doInputDatabaseUpgrade() throws Exception
     {
+		logUserActionInfo(getClass(), "doInputDatabaseUpgrade");
 		
 		return "inputDatabaseUpgrade";
     }
 
 	public String doInputServer() throws Exception
     {
+		logUserActionInfo(getClass(), "doInputServer");
 		
 		return "inputServer";
     }
@@ -121,6 +127,7 @@ public class InstallAction extends InfoGlueAbstractAction
 
 	public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		logger.info("operation:" + operation);
 		if(operation.equalsIgnoreCase("updateDatabaseFromExistingConfig"))
 		{

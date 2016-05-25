@@ -130,6 +130,7 @@ public class CopyContentAction extends InfoGlueAbstractAction
 
 	public String doInput() throws Exception
 	{
+		logUserActionInfo(getClass(), "doInput");
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 		this.returnAddress = "ViewInlineOperationMessages.action"; //ViewContent!V3.action?contentId=" + contentId + "&repositoryId=" + this.repositoryId;
 		return "input";
@@ -137,6 +138,7 @@ public class CopyContentAction extends InfoGlueAbstractAction
 
 	public String doExecute() throws Exception
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		String exportId = "Copy_Content_" + visualFormatter.formatDate(new Date(), "yyyy-MM-dd_HHmm");
 		ProcessBean processBean = ProcessBean.createProcessBean(ImportRepositoryAction.class.getName(), exportId);
 		
@@ -255,6 +257,7 @@ public class CopyContentAction extends InfoGlueAbstractAction
 
 	public String doDeleteProcessBean() throws Exception
 	{
+		logUserActionInfo(getClass(), "doDeleteProcessBean");
 		if(this.processId != null)
 		{
 			ProcessBean pb = ProcessBean.getProcessBean(ImportRepositoryAction.class.getName(), processId);
@@ -273,11 +276,13 @@ public class CopyContentAction extends InfoGlueAbstractAction
 
 	public String doShowProcesses() throws Exception
 	{
+		logUserActionInfo(getClass(), "doShowProcesses");
 		return "successShowProcesses";
 	}
 
 	public String doShowProcessesAsJSON() throws Exception
 	{
+		logUserActionInfo(getClass(), "doShowProcessesAsJSON");
 		// TODO it would be nice we could write JSON to the OutputStream but we get a content already transmitted exception then.
 		return "successShowProcessesAsJSON";
 	}

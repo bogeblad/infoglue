@@ -43,6 +43,7 @@ public class ViewListInterceptorAction extends InfoGlueAbstractAction
 
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		this.interceptorVOList = InterceptorController.getController().getInterceptorVOList();
 		
         return "success";

@@ -125,6 +125,7 @@ public class CreateSiteNodeTypeDefinitionAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		ceb.add(this.siteNodeTypeDefinitionVO.validate());
     	ceb.throwIfNotEmpty();				
     	
@@ -134,6 +135,7 @@ public class CreateSiteNodeTypeDefinitionAction extends InfoGlueAbstractAction
         
     public String doInput() throws Exception
     {
+		logUserActionInfo(getClass(), "doInput");
     	return "input";
     }    
 }

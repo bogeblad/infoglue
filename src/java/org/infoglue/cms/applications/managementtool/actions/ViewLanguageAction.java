@@ -50,6 +50,7 @@ public class ViewLanguageAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
         this.initialize(getLanguageId());
 
         return "success";

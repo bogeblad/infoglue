@@ -49,6 +49,7 @@ public class DeleteSiteNodeTypeDefinitionAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		this.siteNodeTypeDefinitionVO.setSiteNodeTypeDefinitionId(this.getSiteNodeTypeDefinitionId());
 		SiteNodeTypeDefinitionController.getController().delete(this.siteNodeTypeDefinitionVO);
 		

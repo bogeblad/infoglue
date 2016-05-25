@@ -45,6 +45,7 @@ public class ViewInlineOperationMessagesAction extends InfoGlueAbstractAction
          
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		return SUCCESS;
     }
 

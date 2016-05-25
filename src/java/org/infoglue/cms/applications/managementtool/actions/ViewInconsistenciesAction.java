@@ -72,11 +72,13 @@ public class ViewInconsistenciesAction extends InfoGlueAbstractAction
 	
 	public String doInput() throws Exception
     {
+		logUserActionInfo(getClass(), "doInput");
     	return "input";
     }
 
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
     	inconsistencies = InconsistenciesController.getController().getAllInconsistencies();
         
     	return "success";
@@ -84,6 +86,7 @@ public class ViewInconsistenciesAction extends InfoGlueAbstractAction
 
     public String doRemoveReference() throws Exception
     {
+		logUserActionInfo(getClass(), "doRemoveReference");
     	InconsistenciesController.getController().removeReferences(registryId, this.getInfoGluePrincipal());
     	
     	inconsistencies = InconsistenciesController.getController().getAllInconsistencies();
@@ -98,6 +101,7 @@ public class ViewInconsistenciesAction extends InfoGlueAbstractAction
     
     public String doInputAccessRights() throws Exception
     {
+		logUserActionInfo(getClass(), "doInputAccessRights");
     	this.accessRightsStatusText = AccessRightController.getController().getAccessRightsStatusText();
     	AccessRightController.getController().getAllDuplicates(true, true, duplicateAccessRightVOList, duplicateAutoDeletableAccessRightVOList, duplicateAutoMergableAccessRightVOList);
     	    	
@@ -106,6 +110,7 @@ public class ViewInconsistenciesAction extends InfoGlueAbstractAction
 
     public String doFixAccessRightInconsistencies() throws Exception
     {
+		logUserActionInfo(getClass(), "doFixAccessRightInconsistencies");
     	this.accessRightsStatusText = AccessRightController.getController().fixAccessRightInconsistencies();
     	this.accessRightsStatusText += AccessRightController.getController().getAccessRightsStatusText();
     	AccessRightController.getController().getAllDuplicates(true, true, duplicateAccessRightVOList, duplicateAutoDeletableAccessRightVOList, duplicateAutoMergableAccessRightVOList);
@@ -115,6 +120,7 @@ public class ViewInconsistenciesAction extends InfoGlueAbstractAction
 
     public String doFixEmptyAccessRightInconsistencies() throws Exception
     {
+		logUserActionInfo(getClass(), "doFixEmptyAccessRightInconsistencies");
     	this.accessRightsStatusText = AccessRightController.getController().fixEmptyAccessRightInconsistencies();
     	this.accessRightsStatusText += AccessRightController.getController().getAccessRightsStatusText();
     	AccessRightController.getController().getAllDuplicates(true, true, duplicateAccessRightVOList, duplicateAutoDeletableAccessRightVOList, duplicateAutoMergableAccessRightVOList);
@@ -124,6 +130,7 @@ public class ViewInconsistenciesAction extends InfoGlueAbstractAction
 
     public String doFixAutoMergableAccessRightInconsistencies() throws Exception
     {
+		logUserActionInfo(getClass(), "doFixAutoMergableAccessRightInconsistencies");
     	this.accessRightsStatusText = AccessRightController.getController().fixAutoMergableAccessRightInconsistencies();
     	this.accessRightsStatusText += AccessRightController.getController().getAccessRightsStatusText();
     	AccessRightController.getController().getAllDuplicates(true, true, duplicateAccessRightVOList, duplicateAutoDeletableAccessRightVOList, duplicateAutoMergableAccessRightVOList);
@@ -133,6 +140,7 @@ public class ViewInconsistenciesAction extends InfoGlueAbstractAction
 
     public String doMergeAccessRight() throws Exception
     {
+		logUserActionInfo(getClass(), "doMergeAccessRight");
     	this.accessRightsStatusText = AccessRightController.getController().mergeAccessRight(this.interceptionPointId, this.parameters, this.roleNames, this.groupNames, this.userNames);
     	this.accessRightsStatusText += AccessRightController.getController().getAccessRightsStatusText();
     	AccessRightController.getController().getAllDuplicates(true, true, duplicateAccessRightVOList, duplicateAutoDeletableAccessRightVOList, duplicateAutoMergableAccessRightVOList);
@@ -142,6 +150,7 @@ public class ViewInconsistenciesAction extends InfoGlueAbstractAction
 
     public String doFixAccessRightDuplicates() throws Exception
     {
+		logUserActionInfo(getClass(), "doFixAccessRightDuplicates");
     	/*
     	AccessRightController.getController().fixAccessRightDuplicate(this.accessRightIds);
     	

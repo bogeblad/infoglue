@@ -48,6 +48,7 @@ public class UpdateInterceptorAction extends ViewInterceptorAction
 	
 	public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		super.initialize(getInterceptorId());
 		
     	ceb.add(this.interceptorVO.validate());
@@ -63,6 +64,7 @@ public class UpdateInterceptorAction extends ViewInterceptorAction
 	
 	public String doSaveAndExit() throws Exception
     {
+		logUserActionInfo(getClass(), "doSaveAndExit");
 		doExecute();
 						
 		return "saveAndExit";

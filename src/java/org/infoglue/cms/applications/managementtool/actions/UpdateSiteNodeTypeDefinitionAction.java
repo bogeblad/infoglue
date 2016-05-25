@@ -57,6 +57,7 @@ public class UpdateSiteNodeTypeDefinitionAction extends ViewSiteNodeTypeDefiniti
 	
 	public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		super.initialize(getSiteNodeTypeDefinitionId());
 
     	ceb.add(this.siteNodeTypeDefinitionVO.validate());
@@ -71,6 +72,7 @@ public class UpdateSiteNodeTypeDefinitionAction extends ViewSiteNodeTypeDefiniti
 
 	public String doSaveAndExit() throws Exception
     {
+		logUserActionInfo(getClass(), "doSaveAndExit");
 		doExecute();
 						
 		return "saveAndExit";

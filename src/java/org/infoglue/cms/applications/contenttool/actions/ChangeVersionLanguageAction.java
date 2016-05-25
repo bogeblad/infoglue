@@ -47,28 +47,32 @@ public class ChangeVersionLanguageAction extends InfoGlueAbstractAction
 	private List languageVOList = null;
 
 	public String doInput() throws Exception
-	{      		
+	{
+		logUserActionInfo(getClass(), "doInput");      		
 		this.languageVOList = LanguageController.getController().getLanguageVOList(repositoryId);
 		
 		return INPUT;
 	}
 
 	public String doInputV3() throws Exception
-	{      		
+	{
+		logUserActionInfo(getClass(), "doInputV3");      		
 		this.languageVOList = LanguageController.getController().getLanguageVOList(repositoryId);
 		
 		return INPUT + "V3";
 	}
 
     public String doExecute() throws Exception
-    {      		
+    {
+		logUserActionInfo(getClass(), "doExecute");      		
     	ContentVersionController.getContentVersionController().changeVersionLanguage(contentVersionId, languageId);
     	
        	return SUCCESS;
     }
 
     public String doV3() throws Exception
-    {      		
+    {
+		logUserActionInfo(getClass(), "doV3");      		
     	ContentVersionController.getContentVersionController().changeVersionLanguage(contentVersionId, languageId);
     	
 		if(this.returnAddress != null && !this.returnAddress.equals(""))

@@ -76,6 +76,7 @@ public class ViewContentTreeAction extends InfoGlueAbstractAction implements Vie
     
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
     	// Get / Set tree preferance
     	if (tree != null)
     	{

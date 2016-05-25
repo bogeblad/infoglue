@@ -96,6 +96,7 @@ public class CreateContentTypeDefinitionAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
 		ceb.add( this.contentTypeDefinitionVO.validate());
     	ceb.throwIfNotEmpty();				
     	this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().create(this.contentTypeDefinitionVO);
@@ -105,6 +106,7 @@ public class CreateContentTypeDefinitionAction extends InfoGlueAbstractAction
         
     public String doInput() throws Exception
     {
+		logUserActionInfo(getClass(), "doInput");
     	return "input";
     }    
     

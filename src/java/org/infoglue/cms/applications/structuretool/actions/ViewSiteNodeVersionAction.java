@@ -75,6 +75,7 @@ public class ViewSiteNodeVersionAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
+		logUserActionInfo(getClass(), "doExecute");
         this.initialize(getSiteNodeId(), this.languageId);
         
         return "success";
@@ -82,6 +83,7 @@ public class ViewSiteNodeVersionAction extends InfoGlueAbstractAction
 
     public String doPreview() throws Exception
     {
+		logUserActionInfo(getClass(), "doPreview");
         this.initialize(getSiteNodeId(), this.languageId);
         
         return "preview";
@@ -89,6 +91,7 @@ public class ViewSiteNodeVersionAction extends InfoGlueAbstractAction
 
     public String doChangeState() throws Exception
     {
+		logUserActionInfo(getClass(), "doChangeState");
     	logger.info("Gonna change state with comment:" + this.siteNodeVersionVO.getVersionComment());
     	//SiteNodeVersionController.updateStateId(this.siteNodeVersionVO.getSiteNodeVersionId(), getStateId(), this.siteNodeVersionVO.getVersionComment(), getRequest().getRemoteUser(), this.getSiteNodeId(), this.getLanguageId());
     	this.initialize(getSiteNodeId(), this.languageId);
@@ -97,6 +100,7 @@ public class ViewSiteNodeVersionAction extends InfoGlueAbstractAction
     
     public String doCommentVersion() throws Exception
     {
+		logUserActionInfo(getClass(), "doCommentVersion");
     	logger.info("Gonna show the comment-view");
         return "commentVersion";
     }

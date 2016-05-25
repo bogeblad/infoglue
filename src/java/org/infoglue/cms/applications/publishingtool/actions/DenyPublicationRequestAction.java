@@ -78,6 +78,7 @@ public class DenyPublicationRequestAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doExecute");
 		setEvents(getRequest().getParameterValues("sel"));
 		
 		PublicationController.denyPublicationRequest(this.events, this.getInfoGluePrincipal(), this.comment, getApplicationBaseUrl(getRequest()));
@@ -86,6 +87,7 @@ public class DenyPublicationRequestAction extends InfoGlueAbstractAction
 
 	public String doV3() throws Exception 
 	{
+		logUserActionInfo(getClass(), "doV3");
 		setEvents(getRequest().getParameterValues("sel"));
 		
 		PublicationController.denyPublicationRequest(this.events, this.getInfoGluePrincipal(), this.comment, getApplicationBaseUrl(getRequest()));
@@ -93,12 +95,14 @@ public class DenyPublicationRequestAction extends InfoGlueAbstractAction
 	}
 
 	public String doComment() throws Exception 
-	{		
+	{
+		logUserActionInfo(getClass(), "doComment");		
 		return "comment";
 	}
 
 	public String doCommentV3() throws Exception 
-	{		
+	{
+		logUserActionInfo(getClass(), "doCommentV3");		
 		return "commentV3";
 	}
 

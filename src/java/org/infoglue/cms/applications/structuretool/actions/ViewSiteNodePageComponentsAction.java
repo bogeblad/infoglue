@@ -570,7 +570,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 				contentVersionVO = ContentVersionController.getContentVersionController().create(pageMetaInfoContentVO.getId(), this.masterLanguageVO.getId(), contentVersionVO, null);
 			}
 			
-			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", componentXML, new InfoGluePrincipal("ComponentEditor", "none", "none", "none", new ArrayList(), new ArrayList(), true, null));
+			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", componentXML, new InfoGluePrincipal("ComponentEditor", "none", "none", "none", new ArrayList(), new ArrayList(), true, null), true);
 		}
 		
 		this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&activatedComponentId=" + newComponentId + "&showSimple=" + this.showSimple + "&stateChanged=" + this.stateChanged;
@@ -624,7 +624,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 				contentVersionVO = ContentVersionController.getContentVersionController().create(templateContentVO.getId(), languageId, contentVersionVO, null);
 			}
 			
-			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", componentXML, new InfoGluePrincipal("ComponentEditor", "none", "none", "none", new ArrayList(), new ArrayList(), true, null));
+			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", componentXML, new InfoGluePrincipal("ComponentEditor", "none", "none", "none", new ArrayList(), new ArrayList(), true, null), true);
 		}
 		else
 		{
@@ -686,7 +686,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 				ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVO.getId(), this.masterLanguageVO.getId());
 				
 				logger.info("Updating ComponentStructure on " + contentVersionVO.getContentVersionId());
-				ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal());
+				ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal(), true);
 			}
 		}
 		
@@ -788,7 +788,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 					ContentVO contentVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, this.masterLanguageVO.getId(), contentId).getBoundContent(this.getInfoGluePrincipal(), siteNodeId, this.masterLanguageVO.getId(), true, "Meta information", DeliveryContext.getDeliveryContext());
 					ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVO.getId(), this.masterLanguageVO.getId());
 					
-					ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal());
+					ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal(), true);
 				}						
 			}
 			
@@ -958,7 +958,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 					ContentVO contentVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, this.masterLanguageVO.getId(), contentId).getBoundContent(this.getInfoGluePrincipal(), siteNodeId, this.masterLanguageVO.getId(), true, "Meta information", DeliveryContext.getDeliveryContext());
 					ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVO.getId(), this.masterLanguageVO.getId());
 					
-					ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal());
+					ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal(), true);
 
 					this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + componentId + "&componentContentId=" + componentContentVO.getId() + "&showSimple=" + this.showSimple + "&stateChanged=" + stateChanged  + "&hideComponentPropertiesOnLoad=" + this.hideComponentPropertiesOnLoad;
 				}
@@ -997,7 +997,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 					ContentVO contentVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, this.masterLanguageVO.getId(), contentId).getBoundContent(this.getInfoGluePrincipal(), siteNodeId, this.masterLanguageVO.getId(), true, "Meta information", DeliveryContext.getDeliveryContext());
 					ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVO.getId(), this.masterLanguageVO.getId());
 					
-					ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal());
+					ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal(), true);
 
 					this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + componentId + "&componentContentId=" + componentContentVO.getId() + "&showSimple=" + this.showSimple + "&stateChanged=" + stateChanged;
 				}
@@ -1162,7 +1162,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 				
 				ContentVO contentVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getBoundContent(this.getInfoGluePrincipal(), siteNodeId, this.masterLanguageVO.getId(), true, "Meta information", DeliveryContext.getDeliveryContext());
 				ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVO.getId(), this.masterLanguageVO.getId());
-				ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal());
+				ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal(), true);
 			}
 		}
 				
@@ -1318,7 +1318,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 			String modifiedXML = XMLHelper.serializeDom(document, new StringBuffer()).toString(); 
 				
 			logger.info("contentVersionVO:" + contentVersionVO.getContentVersionId());
-			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal());
+			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal(), true);
 			
 			String returnStatus = this.getRequest().getParameter("returnStatus");
 			if(returnStatus != null && returnStatus.equalsIgnoreCase("true"))
@@ -1500,7 +1500,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 			String modifiedXML = XMLHelper.serializeDom(document, new StringBuffer()).toString(); 
 				
 			logger.info("contentVersionVO:" + contentVersionVO.getContentVersionId());
-			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal());
+			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal(), true);
 			this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + this.componentId + (!hideComponentPropertiesOnLoad ? "&activatedComponentId=" + this.componentId : "") + "&componentContentId=" + componentContentId + "&showSimple=" + this.showSimple + "&stateChanged=" + stateChanged + "&hideComponentPropertiesOnLoad=" + this.hideComponentPropertiesOnLoad;
 			//this.getResponse().sendRedirect(url);		
 
@@ -1553,7 +1553,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 			ContentVO contentVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getBoundContent(this.getInfoGluePrincipal(), siteNodeId, languageId, true, "Meta information", DeliveryContext.getDeliveryContext());
 			ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVO.getId(), this.masterLanguageVO.getId());
 
-			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal());
+			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal(), true);
 		}
 		
 		this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&showSimple=" + this.showSimple + "&stateChanged=" + stateChanged;
@@ -1785,7 +1785,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 			ContentVO boundContentVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, this.masterLanguageVO.getId(), contentId).getBoundContent(this.getInfoGluePrincipal(), siteNodeId, this.masterLanguageVO.getId(), true, "Meta information", DeliveryContext.getDeliveryContext());
 			ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(boundContentVO.getId(), this.masterLanguageVO.getId());
 
-			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal());
+			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal(), true);
 
 			List<Integer> erroneousSiteNodes = new LinkedList<Integer>();
 			if (recursive)
@@ -2045,7 +2045,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 			ContentVO contentVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getBoundContent(this.getInfoGluePrincipal(), siteNodeId, languageId, true, "Meta information", DeliveryContext.getDeliveryContext());
 			ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVO.getId(), this.masterLanguageVO.getId());
 
-			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal());
+			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal(), true);
 		}
 					
 		Boolean hideComponentPropertiesOnLoad = (Boolean)getHttpSession().getAttribute("" + siteNodeId + "_hideComponentPropertiesOnLoad");
@@ -2138,7 +2138,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 			ContentVO contentVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getBoundContent(this.getInfoGluePrincipal(), siteNodeId, languageId, true, "Meta information", DeliveryContext.getDeliveryContext());
 			ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVO.getId(), this.masterLanguageVO.getId());
 
-			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal());
+			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal(), true);
 		}
 					
 		if(showDecorated == null || showDecorated.equalsIgnoreCase("true"))
@@ -2196,7 +2196,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 			ContentVO contentVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getBoundContent(this.getInfoGluePrincipal(), siteNodeId, languageId, true, "Meta information", DeliveryContext.getDeliveryContext());
 			ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVO.getId(), this.masterLanguageVO.getId());
 
-			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal());
+			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal(), true);
 		}
 			
 		this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + this.componentId + "&activatedComponentId=" + this.componentId + "&showSimple=" + this.showSimple + "&stateChanged=" + stateChanged + "&hideComponentPropertiesOnLoad=" + this.hideComponentPropertiesOnLoad;
@@ -2354,7 +2354,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 		ContentVO contentVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getBoundContent(this.getInfoGluePrincipal(), siteNodeId, languageId, true, "Meta information", DeliveryContext.getDeliveryContext());
 		ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVO.getId(), this.masterLanguageVO.getId());
 
-		ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal());
+		ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal(), true);
 
 		this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + this.componentId + "&activatedComponentId=" + this.componentId + "&showSimple=" + this.showSimple + "&stateChanged=" + stateChanged;
 		//this.getResponse().sendRedirect(url);		

@@ -84,8 +84,10 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 						ContentVO contentObj = (ContentVO) obj;
 						if(ctdIdList.contains(contentObj.getContentTypeDefinitionId())) {
 							ContentVersionVO cvObj = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentObj.getId());
-							setArticleTitle(ContentVersionController.getContentVersionController().getAttributeValue(cvObj.getContentVersionId(), "Title", true));
-							contentList.put(contentObj.getContentId(), contentObj.getName() + (getArticleTitle().length() > 0 ? " (" + getArticleTitle() + ")" : ""));
+							if(cvObj != null) {
+								setArticleTitle(ContentVersionController.getContentVersionController().getAttributeValue(cvObj.getContentVersionId(), "Title", true));
+								contentList.put(contentObj.getContentId(), contentObj.getName() + (getArticleTitle().length() > 0 ? " (" + getArticleTitle() + ")" : ""));
+							}
 						}
 					}
 				}

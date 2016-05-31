@@ -48,6 +48,7 @@ import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
+import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.XMLHelper;
 
@@ -231,15 +232,6 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 			this.getHttpSession().removeAttribute("CreateContentWizardInfoBean");
 		
 			logger.info("this.getSiteNodeId():" + this.getSiteNodeId());
-			/*
-			if(this.getSiteNodeId() == null)
-			{
-				logger.info("this.contentId: " + this.contentId + ":" + this.getContentId() + ":" + this.contentVersionVO);
-				SiteNodeVO metaInfoSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(this.contentId);
-				if(metaInfoSiteNodeVO != null)
-					this.setSiteNodeId(metaInfoSiteNodeVO.getId());
-			}
-			*/
 			
 			if(this.getSiteNodeId() != null && this.contentTypeDefinitionVO.getName().equalsIgnoreCase("Meta info"))
 			{
@@ -256,7 +248,16 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 		catch(ConstraintException ce)
 		{
 		    super.contentVersionVO = this.contentVersionVO;
-		    ce.setResult("inputStandalone");
+		   
+		    if (CmsPropertyHandler.getContentVersionEditorFlavour().equalsIgnoreCase("v3TabbedLanguages")) 
+		    {
+		    	ce.setResult("inputVersionEditor");
+		    } 
+		    else 
+		    {
+		    	ce.setResult("inputStandalone");
+		    }
+
 		    throw ce;
 		}
 		

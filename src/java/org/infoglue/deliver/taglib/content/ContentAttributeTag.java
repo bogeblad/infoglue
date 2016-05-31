@@ -174,8 +174,8 @@ public class ContentAttributeTag extends ComponentLogicTag
 		{
 			try
 			{
-	            LanguageVO masteLanguageVO = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForSiteNode(this.getController().getDatabase(), this.getController().getSiteNodeId());
-			    result = getContentAttributeValue(masteLanguageVO.getLanguageId());
+	            LanguageVO masterLanguageVO = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForSiteNode(this.getController().getDatabase(), this.getController().getSiteNodeId());
+			    result = getContentAttributeValue(masterLanguageVO.getLanguageId());
 			}
 			catch(Exception e)
 			{

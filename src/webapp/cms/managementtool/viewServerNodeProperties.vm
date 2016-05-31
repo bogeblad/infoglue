@@ -208,6 +208,7 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.niceURIDisableNiceURIForContent" "niceURIDisableNiceURIForContent" "$this.getPropertyValue('niceURIDisableNiceURIForContent')" "$!cmsPH.niceURIDisableNiceURIForContent")
 				#editPropertyFieldCSS("ServerNode.property.niceURIDefaultReplacementCharacterForContent" "niceURIDefaultReplacementCharacterForContent" "$this.getPropertyValue('niceURIDefaultReplacementCharacterForContent')" "51" "$!serverNodeId" "$!cmsPH.niceURIDefaultReplacementCharacterForContent")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.redirectUsingSystemRedirect" "redirectUsingSystemRedirect" "$this.getPropertyValue('redirectUsingSystemRedirect')" "$!cmsPH.redirectUsingSystemRedirect")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.orderRedirectsByLength" "orderRedirectsByLength" "$this.getPropertyValue('orderRedirectsByLength')" "$!cmsPH.orderRedirectsByLength")
 			</div>
 		
 			<div class="inlineTabDiv" id="cacheSettings">
@@ -458,7 +459,7 @@
 				#set($WYSIWYGEditorAreaCSS = $this.getDataPropertyValue("WYSIWYGEditorAreaCSS"))
 				#set($WYSIWYGEditorAreaCSS = $WYSIWYGEditorAreaCSS.replaceAll("&amp;", "&amp;amp;"))
 				#editPropertyTextAreaCSS("ServerNode.property.WYSIWYGEditorAreaCSS" "WYSIWYGEditorAreaCSS" "$WYSIWYGEditorAreaCSS" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.WYSIWYGEditorAreaCSS")
-
+				#yesNoDropDownWithInheritCSS("ServerNode.property.viewInheritedAssetsInContentDialog" "viewInheritedAssetsInContentDialog" "$this.getPropertyValue('viewInheritedAssetsInContentDialog')" "$!cmsPH.viewInheritedAssetsInContentDialog")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.reloadStructureOnActivation" "reloadStructureOnActivation" "$this.getPropertyValue('reloadStructureOnActivation')" "$!cmsPH.reloadStructureOnActivation")
 
 			</div>
@@ -565,6 +566,8 @@
 				#editPropertyFieldCSS("ServerNode.property.buildName" "buildName" "$this.getPropertyValue('buildName')" "51" "$!serverNodeId" "$!cmsPH.buildName")
 				#editPropertyFieldCSS("ServerNode.property.adminToolsPath" "adminToolsPath" "$this.getPropertyValue('adminToolsPath')" "51" "$!serverNodeId" "$!cmsPH.adminToolsPath")
 				#editPropertyFieldCSS("ServerNode.property.dbScriptPath" "dbScriptPath" "$this.getPropertyValue('dbScriptPath')" "51" "$!serverNodeId" "$!cmsPH.dbScriptPath")	
+				#yesNoDropDownWithInheritCSS("ServerNode.property.defaultFallbackForceProtocolForURLs" "forceHTTPProtocol" "$this.getPropertyValue('forceHTTPProtocol')" "$!cmsPH.forceHTTPProtocol")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.cleanReferencesAfterDelete" "cleanReferencesAfterDelete" "$this.getPropertyValue('cleanReferencesAfterDelete')" "$!cmsPH.cleanReferencesAfterDelete")
 			</div>
 		
 		</div>

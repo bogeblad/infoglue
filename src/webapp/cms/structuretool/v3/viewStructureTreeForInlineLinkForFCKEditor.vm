@@ -36,6 +36,19 @@
 				document.getElementById("itreeFrame").src = "ViewStructureToolMenuHtml!bindingViewV3.action?repositoryId=" + repositoryId + "$sortArg";
 			else
 				document.getElementById("itreeFrameContent").src = "ViewContentHtmlTree.action?repositoryId=" + repositoryId + "&bodyClass=generaltooledit" + "$sortArg";
+				
+			updateContentList(repositoryId, 0);
+		}
+		
+		function updateContentList(entityId, repositoryId)
+		{
+			var eid = parseInt(entityId);
+			var rid = parseInt(repositoryId);
+			
+			if(!isNaN(eid) && !isNaN(rid))
+			{
+				document.getElementById("listFrameBoundContent").src = "ViewContentToolBoundList.action?repositoryId=" + rid + "&siteNodeId=" + eid;
+			}
 		}
 
 		var previousPath = "";
@@ -55,6 +68,7 @@
 			$("#selectedPagePath").text("$ui.getString("tool.contenttool.linkDialog.insertPage") \"" + shortPath + "\"");
 		
 			previousContentPath = path;
+			
 		}
 
 		function structureTreeItemClick(entityId, repositoryId, path)
@@ -73,8 +87,16 @@
 				$("#selectedPagePath").text("$ui.getString("tool.contenttool.linkDialog.insertPage") \"" + shortPath + "\"");
 				previousPath = path;
 			}
+			updateContentList(entityId, repositoryId);
 		}
 		
+		function anchorListItemClick(anchorId)
+		{
+			if(parent.anchorMarked)
+			{
+				parent.anchorMarked(anchorId);
+			}
+		}
 				
 		function init() 
 		{
@@ -82,6 +104,15 @@
             document.getElementById("entityId").value = "$oldSiteNodeId";
 		  	#else
 		  	document.getElementById("entityId").value = "-1";
+		  	#end
+		  	
+		  	#if($oldAnchorId)
+            document.getElementById("anchorId").value = "anchor-$oldAnchorId";
+            toggleContentDiv();
+            #set($oldAnchorId = "anchor-$oldAnchorId")
+		  	#else
+		  	document.getElementById("anchorId").value = "";
+		  	#set($oldAnchorId = "")
 		  	#end
 
             #if($oldContentId)
@@ -91,19 +122,29 @@
 		  	#end
 		}
 
-		function enableContentDiv()
+		function toggleContentDiv()
 		{
-			document.getElementById("content").style.display = "block";
+			var cDiv = jQuery("div#content");
+			if(cDiv.css("display") == "none") {
+				cDiv.show();
+			}
+			else {
+				cDiv.hide();
+				jQuery("#listFrameBoundContent").contents().find("li.content-item").removeClass("selected-content");
+				document.inputForm.anchorId.value = "";
+				anchorListItemClick("");
+			}
 		}
 		
 		function onOk() 
 		{
 		  	siteNodeId = document.inputForm.entityId.value;
 		  	contentId = document.inputForm.contentId.value;
+		  	anchorId = document.inputForm.anchorId.value;
 			path = document.inputForm.path.value;
 
 			if(siteNodeId != "" && siteNodeId.indexOf("select") == -1)
-				parent.onOkForInlineLink(siteNodeId, contentId);
+				parent.onOkForInlineLink(siteNodeId, contentId, anchorId);
 			else
 				alert("$ui.getString("tool.contenttool.linkDialog.pageMandatoryWarning")");
 			
@@ -145,8 +186,9 @@
 <form name="inputForm" action="CreateServiceBinding.action">
 	<input type="hidden" id="entityId" name="entityId" value="$!oldSiteNodeId">
 	<input type="hidden" id="contentId" name="contentId" value="">
-	<input type="hidden" id="repositoryId" name="repositoryId" value="">
+	<input type="hidden" id="repositoryId" name="repositoryId" value="$!repositoryId">
 	<input type="hidden" id="path" name="path" value="">
+	<input type="hidden" id="anchorId" name="anchorId" value="">
 </form>
 
 <div id="linkDiv" class="linkContainer">
@@ -161,7 +203,7 @@
 			  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this, 'itreeFrame');" class="contenttool">
 					    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
 					    #foreach ($repositoryVO in $repositories)
-					    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+					    <option value="$repositoryVO.getRepositoryId()"#if(${repositoryId} == $repositoryVO.getRepositoryId()) selected#end>$repositoryVO.getName()</option>
 					    #end
 					</select>
 				</td>
@@ -170,7 +212,7 @@
 				<td height="1" colspan="2"><img src="css/images/trans.gif" width="1" height="5"></td>
 			</tr>	
 			<tr>
-				<td class="menu" colspan="2" style="border: 1px solid silver;">   
+				<td class="menu" colspan="2">
 					#set($exp = $this.getExpansion($oldSiteNodeId))
 					<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureToolMenuHtml!bindingViewV3.action?repositoryId=${repositoryId}$sortArg&exp=$exp&akey=/$!oldSiteNodeId/&select=$!oldSiteNodeId" width="310" height="385" ></iframe>
 				</td>
@@ -180,38 +222,26 @@
 	</td>	
 	<td valign="middle" width="20">
 		<img src="css/images/trans.gif" width="20" height="1"/>
-		<a href="javascript:enableContentDiv();" class="optionalContent" title="$ui.getString('tool.contenttool.linkDialog.optionalContentTitle')"></a>
 	</td>
 	<td valign="top">
-		<div id="content" style="display: none;">
-			<table cellpadding="0" cellspacing="0" border="0">
-			<tr>
-				<td colspan="2">
-			  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this, 'itreeFrameContent');" class="contenttool">
-					    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
-					    #foreach ($repositoryVO in $repositories)
-					    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
-					    #end
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td height="1" colspan="2"><img src="css/images/trans.gif" width="1" height="5"></td>
-			</tr>		
-			<tr>
-				<td class="menu" colspan="2" style="border: 1px solid silver;">  
-					#if($oldContentId > -1)
-						#set($exp = $this.getContentExpansion($oldContentId))
-					#else
-						#set($oldContentId = "")
-						#set($exp = "")
-					#end
-					<iframe frameborder="0" name="itreeFrameContent" id="itreeFrameContent" src="ViewContentHtmlTree.action?repositoryId=$!repositoryId&exp=$exp&akey=/$!oldContentId/&select=$!oldContentId&bodyClass=generaltooledit" width="310" height="385" ></iframe>
-				</td>
-			</tr>	
-			</table>	
-		</div>
-		
+		<table cellpadding="0" cellspacing="0" border="0">
+		<tr>
+			<td>
+				<a href="javascript:toggleContentDiv();" class="optionalContent" title="$ui.getString('tool.contenttool.linkDialog.optionalContentHeader')"><p>$ui.getString('tool.contenttool.linkDialog.optionalContentHeader')</p></a>
+			</td>
+		</tr>
+		<tr>
+			<td height="1" colspan="2"><img src="css/images/trans.gif" width="1" height="5"></td>
+		</tr>
+		<tr>
+			<td class="menu" colspan="2">
+				<div id="content" style="display: none;">
+					<iframe frameborder="0" name="listFrameBoundContent" id="listFrameBoundContent" src="ViewContentToolBoundList.action?repositoryId=$!repositoryId&siteNodeId=$!oldSiteNodeId&anchorId=$!oldAnchorId"></iframe>
+					##  ---- IG-3618 deleted code ----
+				</div>
+			</td>
+		</tr>
+		</table>
 	</td>
 </tr>
 </table>

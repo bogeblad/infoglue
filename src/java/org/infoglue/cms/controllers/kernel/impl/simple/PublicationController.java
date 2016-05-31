@@ -1423,7 +1423,7 @@ public class PublicationController extends BaseController
 		for(String deliverUrl : publicUrls)
 		{
 			String address = deliverUrl + "/UpdateCache!entityCacheDebugInformation.action?entityName=" + entityName + "&entityId=" + entityId + "&forceClear=" + forceClear;
-			System.out.println("address:" + address);
+			logger.info("address:" + address);
 			if(address.indexOf("@") > -1)
 			{
 				debugInfo.add(new String[]{"" + deliverUrl, "Error", "Not valid server url"});

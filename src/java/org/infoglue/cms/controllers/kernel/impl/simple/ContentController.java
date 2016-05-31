@@ -3663,12 +3663,46 @@ public class ContentController extends BaseController
 			}
 			catch(SystemException e)
 			{
-				e.printStackTrace();
 				logger.warn("Problem marking content: " + childContentId + " as deleted. Message: " + e.getMessage(), e);
 			}
 		}
 	}        
 
+	
+	/**
+	 * This method deletes a content and also erases all the children and all versions.
+	 */
+	    
+	public void checkReferences(ContentVO contentVO, Database db, boolean skipRelationCheck, boolean skipServiceBindings, InfoGluePrincipal infogluePrincipal, Map<ContentVO, List<ReferenceBean>> references) throws ConstraintException, SystemException, Exception
+	{
+		List<Integer> contentIds = getContentIdsForAllChildren(contentVO.getId(), db);
+		contentIds.add(contentVO.getId());
+
+		int i = 0;
+		for(Integer childContentId : contentIds)
+		{
+			i++;
+			try
+			{
+		        SmallContentImpl smallContent = getSmallContentWithId(childContentId, db);
+		      
+		        if(!smallContent.getIsDeleted())
+		        {
+			        List<ReferenceBean> referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(smallContent.getId(), -1, true, true, false, db);
+					if(referenceBeanList != null && referenceBeanList.size() > 0)
+					{
+		   				references.put(smallContent.getValueObject(), referenceBeanList);
+					}
+				}
+			}
+			catch(SystemException e)
+			{
+				logger.warn("Problem marking content: " + childContentId + " as deleted. Message: " + e.getMessage(), e);
+			}
+		}
+	}  
+	
+	
     /**
 	 * This method restored a content.
 	 */
@@ -4339,7 +4373,7 @@ public class ContentController extends BaseController
 		while(rs.next() && sizes.size() < 500)
 		{
 			sizes.put(new Integer(rs.getString(1)), new Long(rs.getString(4)));
-            System.out.println(new Integer(rs.getString(1)) + ":" + new Long(rs.getString(4)));
+            //System.out.println(new Integer(rs.getString(1)) + ":" + new Long(rs.getString(4)));
             if(new Long(rs.getString(4)) < 2000000)
             	break;
 		}

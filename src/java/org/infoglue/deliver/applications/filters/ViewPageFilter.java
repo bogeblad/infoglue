@@ -302,6 +302,7 @@ public class ViewPageFilter implements Filter
 			                    
 			                    //TODO
 			                    DeliveryContext deliveryContext = DeliveryContext.getDeliveryContext();
+
 			                    if(httpSession.getAttribute(FilterConstants.LANGUAGE_ID) != null)
 			                    {
 			                    	deliveryContext.setSessionLanguageId((Integer)httpSession.getAttribute(FilterConstants.LANGUAGE_ID));

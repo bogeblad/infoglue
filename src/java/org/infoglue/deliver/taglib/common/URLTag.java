@@ -35,6 +35,7 @@ import javax.servlet.jsp.JspTagException;
 
 import org.apache.log4j.Logger;
 import org.infoglue.deliver.taglib.TemplateControllerTag;
+import org.infoglue.cms.util.CmsPropertyHandler;
 
 /**
  * This class implements the &lt;common:urlBuilder&gt; tag, which creates an url
@@ -46,7 +47,6 @@ public class URLTag extends TemplateControllerTag
 {
 
     private final static Logger logger = Logger.getLogger(URLTag.class.getName());
-
     /**
 	 * 
 	 */
@@ -76,6 +76,15 @@ public class URLTag extends TemplateControllerTag
 	 */
 	private boolean fullBaseUrl = false;
 	
+	/**
+	 * Include languageId in created urls
+	 * */
+	private boolean includeLanguageId = true;
+	
+	/**
+	 * Determine if you want to replace https with http
+	 * */
+	private boolean forceHTTPProtocol = false;
 	/**
 	 * The parameters to use when constructing the url.
 	 */
@@ -137,6 +146,7 @@ public class URLTag extends TemplateControllerTag
 		this.query = null;
 		this.excludedQueryStringParameters = null;
 		this.fullBaseUrl = false;
+		this.includeLanguageId = true;
 		this.parameters = null;
 		this.parameterNames = null;
 		this.disableNiceURI = false;
@@ -204,7 +214,7 @@ public class URLTag extends TemplateControllerTag
 	            else
 	                base = getRequest().getRequestURL().substring(0);
 	            
-	            String currentPageUrl = this.getController().getCurrentPageUrl();
+	            String currentPageUrl = this.getController().getCurrentPageUrl(includeLanguageId);
 	            
 	            if(currentPageUrl != null)
 	            {
@@ -230,7 +240,7 @@ public class URLTag extends TemplateControllerTag
 	        }
 		    else
 		    {
-		        String currentPageUrl = this.getController().getCurrentPageUrl();
+		        String currentPageUrl = this.getController().getCurrentPageUrl(includeLanguageId);
 		        
 		        if(currentPageUrl != null)
 	            {
@@ -261,6 +271,11 @@ public class URLTag extends TemplateControllerTag
 	        newBaseUrl = (baseURL == null) ? getRequest().getRequestURL().toString() : baseURL;
 	    }
 	    logger.info("newBaseUrl:" + newBaseUrl);
+	    
+		if (forceHTTPProtocol || CmsPropertyHandler.getForceHTTPProtocol()) {
+			newBaseUrl = newBaseUrl.replaceFirst("https:", "http:");
+		}
+
 	    return newBaseUrl;
 	}
 	
@@ -311,7 +326,8 @@ public class URLTag extends TemplateControllerTag
 				final StringTokenizer parameter = new StringTokenizer(token, "=");
 				if(parameter.countTokens() == 0 || parameter.countTokens() > 2)
 				{
-					throw new JspTagException("Illegal query parameter [" + token + "].");
+					logger.warn("The url contained illegal parameters [" + token + "].");
+					break;
 				}
 				final String name  = parameter.nextToken();
 				final String value = parameter.hasMoreTokens() ? parameter.nextToken() : "";
@@ -344,6 +360,7 @@ public class URLTag extends TemplateControllerTag
 			else
 			    return getBaseURL() + (sb.toString().length() > 0 ? "?" + sb.toString() : "");
 		}
+
 		return getBaseURL();
 	}
 
@@ -377,6 +394,22 @@ public class URLTag extends TemplateControllerTag
     public void setFullBaseUrl(boolean fullBaseUrl)
     {
         this.fullBaseUrl = fullBaseUrl;
+    }
+    
+	/**
+	 * Sets wether to include languageId in the url .
+	 * 
+	 * @param includeLanguageId.
+	 * @throws JspException if an error occurs while evaluating base includeLanguageId parameter.
+	 */
+	public void setIncludeLanguageId(final String includeLanguageId) throws JspException
+	{
+		this.includeLanguageId = evaluateBoolean("url", "includeLanguageId", includeLanguageId);
+	}
+	
+	public void setForceHTTPProtocol(final String forceHTTPProtocol) throws JspException
+    {
+        this.forceHTTPProtocol = evaluateBoolean("url", "forceHTTPProtocol", forceHTTPProtocol);
     }
     
     public void setDisableNiceURI(boolean disableNiceURI)

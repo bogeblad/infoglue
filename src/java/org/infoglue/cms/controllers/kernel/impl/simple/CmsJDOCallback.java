@@ -766,12 +766,6 @@ public class CmsJDOCallback implements CallbackInterceptor
 			return;
 		}
 
-		if(c.getName().contains("ContentImpl"))
-		{
-			System.out.println("c.getName():" + c.getName());
-			//Thread.dumpStack();
-		}
-		
 		Database db = CastorDatabaseService.getDatabase();
 
 		try

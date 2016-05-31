@@ -28,12 +28,15 @@ import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.applications.databeans.ProcessBean;
+import org.infoglue.cms.applications.databeans.ReferenceBean;
 import org.infoglue.cms.controllers.kernel.impl.simple.DeleteRepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
+import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.exception.AccessConstraintException;
 import org.infoglue.cms.exception.ConstraintException;
@@ -57,6 +60,7 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 	private String returnAddress = null;
 	private String message = null;
 	private Boolean byPassTrashcan = false;
+	private Map<BaseEntityVO,List<ReferenceBean>> refs = null;
 
 	private String processId = null;
 
@@ -79,6 +83,7 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 
 	public String doInput() throws ConstraintException, Exception 
 	{
+		this.refs = DeleteRepositoryController.getRepositoryReferences(this.repositoryVO, this.getInfoGluePrincipal());
 		return "input";
 	}
 
@@ -290,11 +295,9 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 
 	public String doDeleteProcessBean() throws Exception
 	{
-		System.out.println("this.processId:" + this.processId);
 		if(this.processId != null)
 		{
 			ProcessBean pb = ProcessBean.getProcessBean(DeleteRepositoryAction.class.getName(), processId);
-			System.out.println("pb:" + pb);
 			if(pb != null)
 				pb.removeProcess();
 		}
@@ -315,5 +318,8 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 		this.message = message;
 	}
 
+	public Map<BaseEntityVO,List<ReferenceBean>> getRefs() {
+		return refs;
+	}
 
 }

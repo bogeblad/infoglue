@@ -215,7 +215,7 @@ public class AccessRightController extends BaseController
 		}
 		sb.append("))) AS org.infoglue.cms.entities.management.impl.simple.SmallAccessRightImpl");
 		
-		logger.info("SQL::::::::::" + sb.toString());
+		logger.info("SQL:" + sb.toString());
 		
 		OQLQuery oql = db.getOQLQuery(sb.toString());
 		//t.printElapsedTime("Executed took");
@@ -2240,9 +2240,18 @@ public class AccessRightController extends BaseController
 				Integer hasAccess = userAccessRightsMap.get(acKey);
 				if(hasAccess == null)
 				{
-					boolean doDoubleCheck = true;
-					if(interceptionPointName.indexOf("Repository.") > -1 || interceptionPointName.indexOf("ComponentEditor.") > -1 /* || interceptionPointName.indexOf("ComponentPropertyEditor.EditProperty") > -1*/)
-						doDoubleCheck = false;
+					boolean doDoubleCheck;
+					
+					if(CmsPropertyHandler.getDoubleCheckComponentEditorRights())
+					{
+						doDoubleCheck = interceptionPointName.indexOf("Repository.") <= -1;
+					}
+					else
+					{
+						doDoubleCheck = true;
+						if(interceptionPointName.indexOf("Repository.") > -1 || interceptionPointName.indexOf("ComponentEditor.") > -1 /* || interceptionPointName.indexOf("ComponentPropertyEditor.EditProperty") > -1*/)
+							doDoubleCheck = false;
+					}
 					
 					if(returnTrueIfNoAccessRightsDefined && doDoubleCheck /*&& (interceptionPointName.indexOf("ContentVersion.") > -1 || )*/)
 					{
@@ -3613,7 +3622,7 @@ public class AccessRightController extends BaseController
 		StringBuffer sb = new StringBuffer();
 		try
 		{
-			System.out.println(accessRight.getInterceptionPointName());
+			//System.out.println(accessRight.getInterceptionPointName());
 			if(accessRight.getInterceptionPointName().startsWith("SiteNodeVersion"))
 			{
 				SiteNodeVersionVO snvVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(accessRight.getParameters()));

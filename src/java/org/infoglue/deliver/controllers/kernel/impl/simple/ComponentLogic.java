@@ -907,9 +907,6 @@ public class ComponentLogic
 		contents = getBoundContents(property);
 		if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
 			this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO contents:" + (contents == null ? "null" : contents.size()) + " (Thread" + Thread.currentThread().getId() + ")\n");
-		
-		if(property == null || contents == null && this.templateController.getDeliveryContext().getDebugInformation() != null && !this.templateController.getDeliveryContext().getDebugInformation().equals(""))
-			logger.warn("DEBUGGING INFORMATION GUFlashImages:" + this.templateController.getDeliveryContext().getDebugInformation());
 					
 		return contents;
 	}
@@ -1281,24 +1278,29 @@ public class ComponentLogic
 	{
 		return getPageUrl(propertyName, useInheritance, useRepositoryInheritance, this.useStructureInheritance);
 	}
-
-	public String getPageUrl(String propertyName, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance)
+	
+	public String getPageUrl(String propertyName, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance) {
+		return getPageUrl(propertyName, true, useInheritance, useRepositoryInheritance, useStructureInheritance);
+	}
+	public String getPageUrl(String propertyName, boolean includeLanguageId, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance)
 	{
 		String pageUrl = "";
 
 		Map property = getInheritedComponentProperty(this.infoGlueComponent, propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
 		Integer siteNodeId = getSiteNodeId(property);
 		if(siteNodeId != null)
-			pageUrl = this.getPageUrl(siteNodeId, templateController.getLanguageId(), templateController.getContentId());
+			pageUrl = this.getPageUrl(siteNodeId, templateController.getLanguageId(), includeLanguageId, templateController.getContentId());
 		
 		return pageUrl;		
 	}
-	
-	public String getPageUrl(Integer siteNodeId)
+	public String getPageUrl(Integer siteNodeId) {
+		return getPageUrl(siteNodeId, true);
+	}
+	public String getPageUrl(Integer siteNodeId, boolean includeLanguageId)
 	{
 		String pageUrl = "";
 
-		pageUrl = this.getPageUrl(siteNodeId, templateController.getLanguageId(), null);
+		pageUrl = this.getPageUrl(siteNodeId, templateController.getLanguageId(), includeLanguageId, null);
 
 		return pageUrl;
 	}
@@ -1317,37 +1319,41 @@ public class ComponentLogic
 	{
 		return getPageUrl(propertyName, contentId, useInheritance, useRepositoryInheritance, this.useStructureInheritance);
 	}
-
 	public String getPageUrl(String propertyName, Integer contentId, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance)
+	{
+		return getPageUrl(propertyName, contentId, true, useInheritance, useRepositoryInheritance, useStructureInheritance);
+	}
+	public String getPageUrl(String propertyName, Integer contentId, boolean includeLanguageId, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance)
 	{
 		String pageUrl = "";
 
 		Map property = getInheritedComponentProperty(this.infoGlueComponent, propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
 		Integer siteNodeId = getSiteNodeId(property);
 		if(siteNodeId != null)
-			pageUrl = this.getPageUrl(siteNodeId, templateController.getLanguageId(), contentId);
+			pageUrl = this.getPageUrl(siteNodeId, templateController.getLanguageId(), includeLanguageId, contentId);
 			
 		return pageUrl;
 	}
-
+	
 	public String getPageUrl(String propertyName, Integer contentId, Integer languageId, boolean useInheritance)
 	{
-		return getPageUrl(propertyName, contentId, languageId, useInheritance, this.useRepositoryInheritance, this.useStructureInheritance);
+		return getPageUrl(propertyName, contentId, languageId, true, useInheritance, this.useRepositoryInheritance, this.useStructureInheritance);
+	
 	}
 
 	public String getPageUrl(String propertyName, Integer contentId, Integer languageId, boolean useInheritance, boolean useRepositoryInheritance)
 	{
-		return getPageUrl(propertyName, contentId, languageId, useInheritance, useRepositoryInheritance, this.useStructureInheritance);
+		return getPageUrl(propertyName, contentId, languageId, true, useInheritance, useRepositoryInheritance, this.useStructureInheritance);
 	}
 
-	public String getPageUrl(String propertyName, Integer contentId, Integer languageId, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance)
+	public String getPageUrl(String propertyName, Integer contentId, Integer languageId, boolean includeLanguageId, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance)
 	{
 		String pageUrl = "";
 
 		Map property = getInheritedComponentProperty(this.infoGlueComponent, propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
 		Integer siteNodeId = getSiteNodeId(property);
 		if(siteNodeId != null)
-			pageUrl = this.getPageUrl(siteNodeId, languageId, contentId);
+			pageUrl = this.getPageUrl(siteNodeId, languageId, includeLanguageId, contentId);
 			
 		return pageUrl;
 	}
@@ -1993,9 +1999,9 @@ public class ComponentLogic
 	 * This method returns a url to the given page. The url is composed of siteNode, language and content
 	 */
 
-	public String getPageUrl(Integer siteNodeId, Integer languageId, Integer contentId)
+	public String getPageUrl(Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId)
 	{
-		String pageUrl = this.templateController.getPageUrl(siteNodeId, languageId, contentId);
+		String pageUrl = this.templateController.getPageUrl(siteNodeId, languageId, includeLanguageId, contentId);
 		
 		return pageUrl;
 	}

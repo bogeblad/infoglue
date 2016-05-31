@@ -3883,15 +3883,12 @@ public class CacheController extends Thread
 							    	if(entity.indexOf("EventImpl") == -1 && entity.indexOf(".Publication") == -1)
 							    	{
 							    		if(logger.isInfoEnabled())
-							    			logger.info("WHOOOAAAAAAAAAA.. clearing all... on " + cacheName + ":" + entity);
-								    	//System.out.println("selectiveCacheUpdate:" + selectiveCacheUpdate);
-								    	//System.out.println("entity:" + entity);
-								    	//System.out.println("cacheName:" + cacheName);
-								    	//logger.info("Flushing all:" + cacheName);
+							    			logger.info("Clearing all on: " + cacheName + ":" + entity);
+								    	
 								    	cacheInstance.flushAll();
 								    	if(logger.isInfoEnabled())
 								    		logger.info("clearing:" + e.getKey());
-										//t.printElapsedTime("WHOOOAAAAAAAAAA.. clearing all... ", 10);
+						
 									}
 							    }
 							} //BACK

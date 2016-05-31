@@ -164,7 +164,20 @@ public abstract class AbstractTag extends TagSupport
 	{
 		return (String) evaluate(tagName, attributeName, expression, String.class);
 	}
-
+	
+	/**
+	 * Evaluates the expression which must evaluate to a Boolean.
+	 * 
+	 * @param tagName the name of the tag.
+	 * @param attributeName the name of the attribute to evaluate.
+	 * @param expression the expression to evaluate.
+	 * @return the evaluated expression.
+	 * @throws JspException if an error occurs while evaluating the expression.
+	 */	
+	protected Boolean evaluateBoolean(String tagName, String attributeName, String expression) throws JspException
+	{
+		return (Boolean) evaluate(tagName, attributeName, expression, Boolean.class);
+	}
 	/**
 	 * Evaluates the expression which must evaluate to a Collection.
 	 * 

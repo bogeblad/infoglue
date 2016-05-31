@@ -2668,8 +2668,16 @@ public class ContentVersionController extends BaseController
 
 	public void updateAttributeValue(Integer contentVersionId, String attributeName, String attributeValue, InfoGluePrincipal infogluePrincipal, boolean skipValidate, Database db, boolean skipSiteNodeVersionUpdate) throws SystemException, Bug
 	{
-		ContentVersionVO contentVersionVO = getContentVersionVOWithId(contentVersionId);
-
+		ContentVersionVO contentVersionVO = null;
+		try
+		{
+			contentVersionVO = getContentVersionVOWithId(contentVersionId);
+		}
+		catch(Exception e)
+		{
+			logger.warn("Problem finding version: " + e.getMessage() + " - skipping - was probably deleted");
+		}
+		
 		if(contentVersionVO != null)
 		{
 			try
@@ -2723,7 +2731,7 @@ public class ContentVersionController extends BaseController
 			}
 			catch(Exception e)
 			{
-				e.printStackTrace();
+				logger.error("Error updating version value: " + e.getMessage(), e);
 			}
 		}
 	}
@@ -2995,7 +3003,7 @@ public class ContentVersionController extends BaseController
 					cleanVersions(numberOfVersionsToKeep, partList);
 				}
 				cleanedVersions = cleanedVersions + partList.size();
-				System.out.println("Cleaned " + cleanedVersions + " of " + contentVersionVOList.size());
+				//System.out.println("Cleaned " + cleanedVersions + " of " + contentVersionVOList.size());
 				partList.clear();
 				maxIndex = (contentVersionVOList.size() > batchLimit ? batchLimit : contentVersionVOList.size());
 				partList = contentVersionVOList.subList(0, maxIndex);
@@ -3212,7 +3220,7 @@ public class ContentVersionController extends BaseController
 	 */
 	public List<SmallestContentVersionVO> getSmallestContentVersionVOListImpl(List<Integer> contentIdList, Integer languageId, int numberOfVersionsToKeep, boolean keepOnlyOldPublishedVersions, long minimumTimeBetweenVersionsDuringClean) throws SystemException 
 	{
-		System.out.println("numberOfVersionsToKeep:" + numberOfVersionsToKeep);
+		//System.out.println("numberOfVersionsToKeep:" + numberOfVersionsToKeep);
 
 		Database db = CastorDatabaseService.getDatabase();
     	

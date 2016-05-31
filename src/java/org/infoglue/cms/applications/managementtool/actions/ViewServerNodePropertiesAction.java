@@ -181,6 +181,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "niceURIDisableNiceURIForContent");
 	    populate(ps, "niceURIDefaultReplacementCharacterForContent");
 	    populate(ps, "redirectUsingSystemRedirect");
+	    populate(ps, "orderRedirectsByLength");
 	    populate(ps, "duplicateAssetsBetweenVersions");
 	    populate(ps, "requestArgumentDelimiter");
 	    populate(ps, "errorHandling");
@@ -233,7 +234,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "casCookiesBeforeRedirect");
 	    populate(ps, "useBrowserLanguage");
 	    populate(ps, "ipAddressesToFallbackToBasicAuth");
-	    
+	    populate(ps, "forceHTTPProtocol");
 	    
 	    populate(ps, "deliver_loginUrl");
 	    populate(ps, "deliver_logoutUrl");
@@ -377,7 +378,8 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "allowInternalCallsBasedOnIP");
 	    
 	    populate(ps, "assetFileNameForm");
-
+	    populate(ps, "viewInheritedAssetsInContentDialog");
+	    
 	    populate(ps, "deriveProtocolWhenUsingProtocolRedirects");
 	    populate(ps, "useAccessBasedProtocolRedirects");
 	    populate(ps, "unprotectedProtocolName");
@@ -418,6 +420,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "useGlobalRepositoryChange");
 	    populate(ps, "reloadStructureOnActivation");
 	    populate(ps, "useWriteForAccessControlInWorking");
+	    populate(ps, "cleanReferencesAfterDelete");
 
 	    try
 	    {
@@ -439,7 +442,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 		}
 
 		NotificationMessage notificationMessage = new NotificationMessage("ViewServerNodePropertiesAction.doSave():", "ServerNodeProperties", this.getInfoGluePrincipal().getName(), NotificationMessage.SYSTEM, "0", "ServerNodeProperties");
-		//ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
+
 		RemoteCacheUpdater.getSystemNotificationMessages().add(notificationMessage);
 			    
     	return "save";

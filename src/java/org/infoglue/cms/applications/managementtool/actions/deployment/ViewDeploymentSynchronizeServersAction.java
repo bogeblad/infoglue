@@ -921,7 +921,7 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
 						if(contentVersionVO != null)
 						{	
 							contentVO.setVersions(new String[]{contentVersionVO.getVersionValue()});
-							contentVO.setVersionComments(new String[]{"AAAAAAA:" + contentVersionVO.getVersionComment()});
+							contentVO.setVersionComments(new String[]{"New Version comment:" + contentVersionVO.getVersionComment()});
 						}
 						contentVO.setFullPath(fullPath);
 

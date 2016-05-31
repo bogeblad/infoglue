@@ -304,7 +304,7 @@
 				<input type="checkbox" id="disableLanguagesCheckbox" name="disableLanguagesCheckbox" onchange="submitLanguageLimitations(this);" value="$disableLanguageCheckBoxValue" #if($!disableLanguages == 2)checked="1"#end>
 				$ui.getString("tool.common.toggleLangaugeInheritanceLabel")</label>
 			</p>
-
+			<p class="warning-message" >$ui.getString("tool.structuretool.changeLanguageInheritance.warning")</p>
 			<p style="display:none;">
 				#foreach ($language in $availableLanguages)
 					<input type="checkbox" name="disabledLanguageId" value="$language.id" #if(!$enabledLanguages.contains($language))checked="1"#end>$language.displayLanguage

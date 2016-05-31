@@ -1788,7 +1788,7 @@ public class CmsPropertyHandler
 
 	public static String getInfoGlueVersion()
 	{
-	    return getServerNodeProperty("infoGlueVersion", true, "3.4.0.0 GA");
+	    return getServerNodeProperty("infoGlueVersion", true, "3.5.0.0 RC");
 	}
 
 	public static String getInfoGlueDBVersion()
@@ -1798,7 +1798,7 @@ public class CmsPropertyHandler
 
 	public static String getInfoGlueVersionReleaseDate()
 	{
-	    return getServerNodeProperty("infoGlueVersionReleaseDate", true, "2015-06-15");
+	    return getServerNodeProperty("infoGlueVersionReleaseDate", true, "2016-05-20");
 	}
 
 	public static String getLogDatabaseMessages()
@@ -3192,6 +3192,13 @@ public class CmsPropertyHandler
 		return Boolean.parseBoolean(redirectUsingSystemRedirect);
 	}
 
+	public static boolean getOrderRedirectsByLength()
+	{
+		String orderRedirectsByLength = getServerNodeProperty("orderRedirectsByLength", true, "false");
+
+		return Boolean.parseBoolean(orderRedirectsByLength);
+	}
+
 	/**
 	 * Dev note: This method is not used at all places where it should be used so don't depend on that. However
 	 * it is good if new features utilize this property so that in the future we can depend on this attribute.
@@ -3205,6 +3212,26 @@ public class CmsPropertyHandler
 	public static String getExpectFormPostToBeUnicodeAllready() 
 	{
 		return getServerNodeProperty("expectFormPostToBeUnicodeAllready", true, "true");
+	}
+	
+		public static boolean getForceHTTPProtocol() {
+		String forceHTTPProtocol = getServerNodeProperty("forceHTTPProtocol", true, "false");
+	
+		return Boolean.parseBoolean(forceHTTPProtocol);
+	}
+	
+	public static boolean getViewInheritedAssetsInContentDialog() {
+		String viewInheritedAssetsInContentDialog = getServerNodeProperty("viewInheritedAssetsInContentDialog", true, "false");
+		return Boolean.parseBoolean(viewInheritedAssetsInContentDialog);
+	}
+	/**
+	 * Setting which determines if you wanna skip cleaning up references in content
+	 * @return boolean
+	 */
+	public static boolean getCleanReferencesAfterDelete() {
+		String cleanReferencesAfterDelete = getServerNodeProperty("cleanReferencesAfterDelete", true, "true");
+	
+		return Boolean.parseBoolean(cleanReferencesAfterDelete);
 	}
 	
 	public static float getWebappVersion()

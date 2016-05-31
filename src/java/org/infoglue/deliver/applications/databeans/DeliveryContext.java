@@ -862,6 +862,7 @@ public class DeliveryContext implements UsageListener
 	}
 
 	private Boolean languageCanBeOverridden = false;
+
 	private Integer sessionLanguageId = -1;
 	private List<Integer> acceptableLanguageIds = new ArrayList<Integer>();
 

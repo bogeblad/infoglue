@@ -632,6 +632,9 @@ p.error {
 span.error {
 	color: red;
 }
+p.warning-message {
+	color: red;
+}
 
 /* MY General button classes */
 .yui-skin-sam .yui-button {

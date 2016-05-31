@@ -314,7 +314,7 @@ public class RepositoryLanguageController extends BaseController
      * @throws SystemException
      * @throws Bug
      */
-    
+
     public void deleteRepositoryLanguagesLockless(Repository repository, Database db) throws SystemException, Bug
 	{
 		try
@@ -330,7 +330,7 @@ public class RepositoryLanguageController extends BaseController
 			throw new SystemException("An error occurred when we tried to find the matching RepositoryLanguage in the database. Reason: " + e.getMessage(), e);
 		}
 	}
-
+    
 	public void deleteRepositoryLanguages(Repository repository, Database db) throws SystemException, Bug
 	{
 		try

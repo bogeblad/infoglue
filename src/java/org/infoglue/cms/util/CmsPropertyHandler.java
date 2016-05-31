@@ -3261,5 +3261,9 @@ public class CmsPropertyHandler
 	{
 		return Boolean.parseBoolean(getServerNodeProperty("useWriteForAccessControlInWorking", false, "false"));
 	}
+	
+	public static boolean getDoubleCheckComponentEditorRights() {
+		return Boolean.parseBoolean(getServerNodeProperty("doubleCheckComponentEditorRights", false, "false"));
+	}
 
 }

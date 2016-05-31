@@ -390,7 +390,8 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "redirectStatusCode");
 	    populate(ps, "responseMethodOnFullErrorURL");
 	    populate(ps, "showRepositoriesByDefaultIfNoAccessRightsAreDefined");
-	    			  
+	    populate(ps, "doubleCheckComponentEditorRights");
+	    
 	    populate(ps, "enableDiskBasedDeployment");
 	    populate(ps, "diskBasedDeploymentBasePath");
 	    

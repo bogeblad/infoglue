@@ -1035,13 +1035,16 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	       	{
 	       		digitalAssets = DigitalAssetController.getDigitalAssetVOList(this.contentVersionVO.getContentVersionId());	       		
 
+				this.contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(this.contentVersionVO.getId());
 				Iterator digitalAssetsIterator = digitalAssets.iterator();
 
 	   			while(digitalAssetsIterator.hasNext())
 	   			{
 	   				DigitalAssetVO assetVO = (DigitalAssetVO)digitalAssetsIterator.next();
-
+	   				
+	   				System.out.println("Version content:" + this.contentVersionVO.getContentId() + ":" + assetVO.getAssetKey());
 	   				List<ReferenceBean> referenceBeans = RegistryController.getController().getReferencingObjectsForContentAsset(this.contentVersionVO.getContentId(), assetVO.getAssetKey(), 100, false, true, true);
+	   				System.out.println("referenceBeans:" + referenceBeans.size());
 	   				assetVO.setReferencingNumberOfObjects(referenceBeans.size());
 	   				
 	   			}
@@ -1098,7 +1101,9 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
    			{
    				DigitalAssetVO assetVO = (DigitalAssetVO)digitalAssetsIterator.next();
 
+   				System.out.println("Version content 2:" + this.contentVersionVO.getContentId() + ":" + assetVO.getAssetKey());
    				List<ReferenceBean> referenceBeans = RegistryController.getController().getReferencingObjectsForContentAsset(this.contentVersionVO.getContentId(), assetVO.getAssetKey(), 100, false, true, true);
+   				System.out.println("referenceBeans 2:" + referenceBeans.size());
    				assetVO.setReferencingNumberOfObjects(referenceBeans.size());
    				
    			}

@@ -1034,6 +1034,17 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 			if(this.contentVersionVO != null && this.contentVersionVO.getContentVersionId() != null)
 	       	{
 	       		digitalAssets = DigitalAssetController.getDigitalAssetVOList(this.contentVersionVO.getContentVersionId());	       		
+
+				Iterator digitalAssetsIterator = digitalAssets.iterator();
+
+	   			while(digitalAssetsIterator.hasNext())
+	   			{
+	   				DigitalAssetVO assetVO = (DigitalAssetVO)digitalAssetsIterator.next();
+
+	   				List<ReferenceBean> referenceBeans = RegistryController.getController().getReferencingObjectsForContentAsset(this.contentVersionVO.getContentId(), assetVO.getAssetKey(), 100, false, true, true);
+	   				assetVO.setReferencingNumberOfObjects(referenceBeans.size());
+	   				
+	   			}
 	       	}
 		}
 		catch(Exception e)

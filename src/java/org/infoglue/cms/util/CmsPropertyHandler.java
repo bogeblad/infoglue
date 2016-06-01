@@ -3204,6 +3204,7 @@ public class CmsPropertyHandler
 	 * it is good if new features utilize this property so that in the future we can depend on this attribute.
 	 * (Comment written on 2014-01-24)
 	 */
+	
 	public static String getMetaDataContentTypeDefinitionName()
 	{
 		return getServerNodeProperty("metaDataContentTypeDefinitionName", true, "Meta info");
@@ -3214,21 +3215,26 @@ public class CmsPropertyHandler
 		return getServerNodeProperty("expectFormPostToBeUnicodeAllready", true, "true");
 	}
 	
-		public static boolean getForceHTTPProtocol() {
+	public static boolean getForceHTTPProtocol() 
+	{
 		String forceHTTPProtocol = getServerNodeProperty("forceHTTPProtocol", true, "false");
 	
 		return Boolean.parseBoolean(forceHTTPProtocol);
 	}
 	
-	public static boolean getViewInheritedAssetsInContentDialog() {
-		String viewInheritedAssetsInContentDialog = getServerNodeProperty("viewInheritedAssetsInContentDialog", true, "false");
+	public static boolean getViewInheritedAssetsInContentDialog() 
+	{
+		String viewInheritedAssetsInContentDialog = getServerNodeProperty("viewInheritedAssetsInContentDialog", true, "true");
 		return Boolean.parseBoolean(viewInheritedAssetsInContentDialog);
 	}
+	
 	/**
 	 * Setting which determines if you wanna skip cleaning up references in content
 	 * @return boolean
 	 */
-	public static boolean getCleanReferencesAfterDelete() {
+	
+	public static boolean getCleanReferencesAfterDelete() 
+	{
 		String cleanReferencesAfterDelete = getServerNodeProperty("cleanReferencesAfterDelete", true, "true");
 	
 		return Boolean.parseBoolean(cleanReferencesAfterDelete);

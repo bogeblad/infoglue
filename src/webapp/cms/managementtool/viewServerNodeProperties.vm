@@ -504,7 +504,8 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.enforceRigidContentAccess" "enforceRigidContentAccess" "$this.getPropertyValue('enforceRigidContentAccess')" "$!cmsPH.enforceRigidContentAccess")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.allowCrossSiteSubmitToPublish" "allowCrossSiteSubmitToPublish" "$this.getPropertyValue('allowCrossSiteSubmitToPublish')" "$!cmsPH.allowCrossSiteSubmitToPublish")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.showRepositoriesByDefaultIfNoAccessRightsAreDefined" "showRepositoriesByDefaultIfNoAccessRightsAreDefined" "$this.getPropertyValue('showRepositoriesByDefaultIfNoAccessRightsAreDefined')" "$!cmsPH.showRepositoriesByDefaultIfNoAccessRightsAreDefined")
-	
+				#yesNoDropDownWithInheritCSS("ServerNode.property.doubleCheckComponentEditorRights" "doubleCheckComponentEditorRights" "$this.getPropertyValue('doubleCheckComponentEditorRights')" "$!cmsPH.doubleCheckComponentEditorRights")
+				
 				#editPropertyFieldCSS("ServerNode.property.defaultNumberOfYearsBeforeExpire" "defaultNumberOfYearsBeforeExpire" "$this.getPropertyValue('defaultNumberOfYearsBeforeExpire')" "51" "$!serverNodeId" "$!cmsPH.defaultNumberOfYearsBeforeExpire")
 				#editPropertyFieldCSS("ServerNode.property.defaultNumberOfMonthsBeforeRedirectExpire" "defaultNumberOfMonthsBeforeRedirectExpire" "$this.getPropertyValue('defaultNumberOfMonthsBeforeRedirectExpire')" "51" "$!serverNodeId" "$!cmsPH.defaultNumberOfMonthsBeforeRedirectExpire")
 				#editPropertyFieldCSS("ServerNode.property.defaultNumberOfMonthsBeforeSystemRedirectExpire" "defaultNumberOfMonthsBeforeSystemRedirectExpire" "$this.getPropertyValue('defaultNumberOfMonthsBeforeSystemRedirectExpire')" "51" "$!serverNodeId" "$!cmsPH.defaultNumberOfMonthsBeforeSystemRedirectExpire")

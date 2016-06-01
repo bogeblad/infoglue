@@ -1033,7 +1033,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 		{
 			if(this.contentVersionVO != null && this.contentVersionVO.getContentVersionId() != null)
 	       	{
-	       		digitalAssets = DigitalAssetController.getDigitalAssetVOList(this.contentVersionVO.getContentVersionId());
+	       		digitalAssets = DigitalAssetController.getDigitalAssetVOList(this.contentVersionVO.getContentVersionId());	       		
 	       	}
 		}
 		catch(Exception e)
@@ -1869,7 +1869,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
         return assetKey;
     }
     
-    public boolean getUseInheritedAssets () 
+    public boolean getUseInheritedAssets() 
     {
     	return CmsPropertyHandler.getViewInheritedAssetsInContentDialog();
     }

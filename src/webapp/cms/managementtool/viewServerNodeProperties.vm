@@ -181,7 +181,13 @@
 				#set($option4 = ["172800000", "2 days"])
 				#set($option5 = ["604800000", "7 days"])
 				#set($option6 = ["2678400000", "1 month"])
-				#set($minimumTimeBetweenVersionsDuringCleanOptions = [$option1, $option2, $option3, $option4, $option5, $option6]) 
+				#set($option5 = ["604800000", "7 days"])
+				#set($option6 = ["2678400000", "1 month"])
+				#set($option7 = ["300000", "5 minutes"])
+				#set($option8 = ["1800000", "30 minutes"])
+				#set($option8 = ["3600000", "1 hour"])
+				
+				#set($minimumTimeBetweenVersionsDuringCleanOptions = [$option1, $option2, $option3, $option4, $option5, $option6, $option7, $option8]) 
 
 				#selectFieldCSS("ServerNode.property.minimumTimeBetweenVersionsDuringClean" "minimumTimeBetweenVersionsDuringClean" $this.getPropertyValue('minimumTimeBetweenVersionsDuringClean') $minimumTimeBetweenVersionsDuringCleanOptions $!cmsPH.minimumTimeBetweenVersionsDuringCleanOptions)
 				#yesNoDropDownWithInheritCSS("ServerNode.property.duplicateAssetsBetweenVersions" "duplicateAssetsBetweenVersions" "$this.getPropertyValue('duplicateAssetsBetweenVersions')" $!cmsPH.duplicateAssetsBetweenVersions)

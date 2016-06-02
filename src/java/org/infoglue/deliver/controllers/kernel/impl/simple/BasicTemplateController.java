@@ -5923,6 +5923,7 @@ public class BasicTemplateController implements TemplateController
     	return originalRequestURL + (originalQueryString == null ? "" : "?" + originalQueryString);
 	}
 
+	
 	/**
 	 * This method deliveres a new url pointing to the same address as now but with new parameters.
 	 */

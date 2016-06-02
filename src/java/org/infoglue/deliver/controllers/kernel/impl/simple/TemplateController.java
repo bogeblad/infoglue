@@ -1125,6 +1125,12 @@ public interface TemplateController
 	public String getOriginalFullURL();
 
     /**
+     * This method deliveres a new url pointing to the same address as now but with new parameters.
+     */
+    public abstract String getPageUrl(Integer siteNodeId, Integer languageId,
+            Integer contentId);
+
+    /**
      * This method delivers a new url pointing to the same address as now but with new parameters.
      */
     public abstract String getPageUrl(Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId);

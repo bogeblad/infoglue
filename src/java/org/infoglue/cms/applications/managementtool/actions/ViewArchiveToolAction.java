@@ -137,10 +137,7 @@ public class ViewArchiveToolAction extends InfoGlueAbstractAction
 
 		Map<String,Integer> result = (Map<String,Integer>)jec.getResult();
 		this.cleaningMap = result;
-		String warningEmailReceiver = CmsPropertyHandler.getWarningEmailReceiver();
-		if (warningEmailReceiver != null && !warningEmailReceiver.isEmpty()) {
-			MailServiceFactory.getService().sendEmail(CmsPropertyHandler.getMailContentType(), warningEmailReceiver, warningEmailReceiver, null, null, null, null, "Archiving was complete", "", "utf-8");
-		}
+
 		return "input";
     }
 

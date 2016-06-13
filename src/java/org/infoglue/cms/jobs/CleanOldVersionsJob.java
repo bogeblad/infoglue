@@ -143,10 +143,7 @@ public class CleanOldVersionsJob implements Job
 				NotificationMessage notificationMessage = new NotificationMessage("CleanOldVersionsJob.execute():", "ServerNodeProperties", "administrator", NotificationMessage.SYSTEM, "0", "ServerNodeProperties");
 			    ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
 	        	ChangeNotificationController.getInstance().notifyListeners();
-	        	String warningEmailReceiver = CmsPropertyHandler.getWarningEmailReceiver();
-				if (warningEmailReceiver != null && !warningEmailReceiver.isEmpty()) {
-					MailServiceFactory.getService().sendEmail(CmsPropertyHandler.getMailContentType(), warningEmailReceiver, warningEmailReceiver, null, null, null, null, "Archiving was complete", "", "utf-8");
-				}
+	    
 			}
 			catch(Exception e)
 		    {

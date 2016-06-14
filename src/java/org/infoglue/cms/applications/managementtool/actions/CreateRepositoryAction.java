@@ -141,7 +141,6 @@ public class CreateRepositoryAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
 		ceb.add(this.repositoryVO.validate());
 		ceb.throwIfNotEmpty();
 
@@ -168,13 +167,11 @@ public class CreateRepositoryAction extends InfoGlueAbstractAction
 
     public String doInput() throws Exception
     {
-		logUserActionInfo(getClass(), "doInput");
     	return "input";
     }    
 
     public String doV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doV3");
 		ceb.add(this.repositoryVO.validate());
     	ceb.throwIfNotEmpty();				
 
@@ -218,7 +215,6 @@ public class CreateRepositoryAction extends InfoGlueAbstractAction
 
     public String doInputV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doInputV3");    	
         userSessionKey = "" + System.currentTimeMillis();
 
 		//String createSiteNodeInlineOperationDoneHeader = getLocalizedString(getLocale(), "tool.structuretool.createSiteNodeInlineOperationDoneHeader", parentSiteNodeVO.getName());

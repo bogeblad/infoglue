@@ -94,7 +94,6 @@ public class InstallationValidatorAction extends InfoGlueAbstractAction
     
     public String doInput()
     {
-		logUserActionInfo(getClass(), "doInput");
         return Action.INPUT;
     }
     
@@ -113,7 +112,6 @@ public class InstallationValidatorAction extends InfoGlueAbstractAction
     
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         Database db = CastorDatabaseService.getDatabase();
         
         db.begin();

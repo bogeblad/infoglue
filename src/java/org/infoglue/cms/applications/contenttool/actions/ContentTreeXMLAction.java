@@ -128,7 +128,6 @@ public class ContentTreeXMLAction extends InfoGlueAbstractAction
 	
 	public String doDigitalAssets() throws Exception
 	{
-		logUserActionInfo(getClass(), "doDigitalAssets");
 		/*String ret = "";
 		DigitalAssetVO digitalAssetVO = null;
 
@@ -159,7 +158,6 @@ public class ContentTreeXMLAction extends InfoGlueAbstractAction
      */
     public String doLanguage() throws Exception
 	{
-		logUserActionInfo(getClass(), "doLanguage");
         return null;
 	}
 
@@ -212,7 +210,6 @@ public class ContentTreeXMLAction extends InfoGlueAbstractAction
      */
     public String doContentVersion() throws Exception
 	{
-		logUserActionInfo(getClass(), "doContentVersion");
         Document doc = DocumentHelper.createDocument();
         doc.add(getContentVersionElement(parent));
 	    return out(getFormattedDocument(doc));
@@ -223,7 +220,6 @@ public class ContentTreeXMLAction extends InfoGlueAbstractAction
      */
     public String doContentVersions() throws Exception
 	{
-		logUserActionInfo(getClass(), "doContentVersions");
         Document doc = DocumentHelper.createDocument();
         Element root = doc.addElement("contentVersions");
         Collection availableLanguages = ContentController.getContentController().getRepositoryLanguages(parent);
@@ -244,7 +240,6 @@ public class ContentTreeXMLAction extends InfoGlueAbstractAction
      */
     public String doContentTypeDefinitions() throws Exception
 	{
-		logUserActionInfo(getClass(), "doContentTypeDefinitions");
     	List contentTypeDefinitions = getContentTypeDefinitions();
         Document doc = DocumentHelper.createDocument();
         Element root = doc.addElement("definitions");
@@ -286,7 +281,6 @@ public class ContentTreeXMLAction extends InfoGlueAbstractAction
      */
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         if (useTemplate) return "success";
         
         Document doc = DocumentHelper.createDocument();

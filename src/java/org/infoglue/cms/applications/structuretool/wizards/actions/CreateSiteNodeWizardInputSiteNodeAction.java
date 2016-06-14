@@ -71,7 +71,6 @@ public class CreateSiteNodeWizardInputSiteNodeAction extends CreateSiteNodeWizar
 	 
 	public String doInput() throws Exception
 	{
-		logUserActionInfo(getClass(), "doInput");
 		return "input";
 	}
 
@@ -84,7 +83,6 @@ public class CreateSiteNodeWizardInputSiteNodeAction extends CreateSiteNodeWizar
 	 
 	public String doExecute() throws Exception
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		this.siteNodeVO.setCreatorName(this.getInfoGluePrincipal().getName());
 
 		ceb = this.siteNodeVO.validate();

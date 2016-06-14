@@ -52,7 +52,6 @@ public class CreateInterceptorAction extends InfoGlueAbstractAction
 	      
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
 		ceb.add(this.interceptorVO.validate());
     	ceb.throwIfNotEmpty();				
     	
@@ -63,7 +62,6 @@ public class CreateInterceptorAction extends InfoGlueAbstractAction
 
     public String doInput() throws Exception
     {
-		logUserActionInfo(getClass(), "doInput");
         return "input";
     }
 

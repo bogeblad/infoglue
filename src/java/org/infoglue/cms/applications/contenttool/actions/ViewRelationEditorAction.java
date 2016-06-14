@@ -256,7 +256,6 @@ public abstract class ViewRelationEditorAction extends InfoGlueAbstractAction
 
 	public String doExecute() throws Exception
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		initialize();
 
 		return "success";
@@ -264,7 +263,6 @@ public abstract class ViewRelationEditorAction extends InfoGlueAbstractAction
     
 	public String doChangeRepository() throws Exception
 	{
-		logUserActionInfo(getClass(), "doChangeRepository");
 		initialize();
 
 		return "success";
@@ -276,7 +274,6 @@ public abstract class ViewRelationEditorAction extends InfoGlueAbstractAction
 
 	public String doV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doV3");
 		initialize();
 
 		return "successV3";
@@ -284,7 +281,6 @@ public abstract class ViewRelationEditorAction extends InfoGlueAbstractAction
     
 	public String doChangeRepositoryV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doChangeRepositoryV3");
 		initialize();
 
 		return "successV3";
@@ -296,7 +292,6 @@ public abstract class ViewRelationEditorAction extends InfoGlueAbstractAction
 
 	public String doUpdateQualifyer() throws Exception
 	{
-		logUserActionInfo(getClass(), "doUpdateQualifyer");
 		updateAttributeValue();
 		
 		initialize();
@@ -310,7 +305,6 @@ public abstract class ViewRelationEditorAction extends InfoGlueAbstractAction
 
 	public String doUpdateQualifyerV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doUpdateQualifyerV3");
 		if(!this.getCallbackMethod().startsWith("updateAttribute"))
 			updateAttributeValue();
 		
@@ -324,7 +318,6 @@ public abstract class ViewRelationEditorAction extends InfoGlueAbstractAction
 	 */
 	public String doUpdateQualifyerInEntityProperties() throws Exception
 	{
-		logUserActionInfo(getClass(), "doUpdateQualifyerInEntityProperties");	    
 	    if(this.entityName.equalsIgnoreCase(UserProperties.class.getName()))
 	        UserPropertiesController.getController().updateAttributeValue(getEntityId(), getAttributeName(), this.qualifyerXML);		
 	    else if(this.entityName.equalsIgnoreCase(RoleProperties.class.getName()))
@@ -342,7 +335,6 @@ public abstract class ViewRelationEditorAction extends InfoGlueAbstractAction
 	 */
 	public String doUpdateQualifyerInEntityPropertiesV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doUpdateQualifyerInEntityPropertiesV3");	    
 	    if(this.entityName.equalsIgnoreCase(UserProperties.class.getName()))
 	        UserPropertiesController.getController().updateAttributeValue(getEntityId(), getAttributeName(), this.qualifyerXML);		
 	    else if(this.entityName.equalsIgnoreCase(RoleProperties.class.getName()))

@@ -42,7 +42,6 @@ public class ViewDeploymentChooseServerAction extends InfoGlueAbstractAction
 	
 	public String doInputQuickV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doInputQuickV3");
     	this.deploymentServers = CmsPropertyHandler.getDeploymentServers();
     	
     	return "inputQuickV3";
@@ -50,7 +49,6 @@ public class ViewDeploymentChooseServerAction extends InfoGlueAbstractAction
 
     public String doInput() throws Exception
     {
-		logUserActionInfo(getClass(), "doInput");
     	this.deploymentServers = CmsPropertyHandler.getDeploymentServers();
     	
     	return "input";
@@ -58,7 +56,6 @@ public class ViewDeploymentChooseServerAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	return "success";
     }
 

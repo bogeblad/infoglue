@@ -117,7 +117,6 @@ public class RequestContentVersionUnpublishAction extends InfoGlueAbstractAction
       
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	ceb = this.eventVO.validate();
     	ceb.throwIfNotEmpty();
     	

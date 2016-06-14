@@ -49,7 +49,6 @@ public class ViewSiteNodeReferencesAction extends InfoGlueAbstractAction
 	
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
 		this.referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(siteNodeId, 200, false, true);
 		SiteNodeVersionVO latestSiteNodeVersion = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getLatestActiveSiteNodeVersionVO(siteNodeId);
 	    this.referencingBeanList = RegistryController.getController().getReferencedObjects(SiteNodeVersion.class.getName(), latestSiteNodeVersion.getSiteNodeVersionId().toString());

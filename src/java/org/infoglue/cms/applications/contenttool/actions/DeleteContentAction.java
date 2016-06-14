@@ -85,7 +85,6 @@ public class DeleteContentAction extends InfoGlueAbstractAction
 	
 	public String doExecute() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		this.referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(this.contentVO.getContentId());
 
 		if(this.referenceBeanList != null && this.referenceBeanList.size() > 0)
@@ -209,7 +208,6 @@ public class DeleteContentAction extends InfoGlueAbstractAction
 
 	public String doStandalone() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doStandalone");
 		this.referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(this.contentVO.getContentId());
 		if(this.referenceBeanList != null && this.referenceBeanList.size() > 0)
 		{
@@ -235,7 +233,6 @@ public class DeleteContentAction extends InfoGlueAbstractAction
 
 	public String doDeleteReference() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doDeleteReference");
 	    for(int i=0; i<registryId.length; i++)
 	    {
 	    	try
@@ -264,25 +261,21 @@ public class DeleteContentAction extends InfoGlueAbstractAction
 	
 	public String doV3() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doV3");
 		return executeV3(false);
     }
 	
 	public String doDeleteAllReferences() throws Exception
 	{
-		logUserActionInfo(getClass(), "doDeleteAllReferences");
 		return executeV3(true);
 	}
 
 	public String doFixPage() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doFixPage");
 	    return "fixPage";
 	}
 
 	public String doFixPageHeader() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doFixPageHeader");
 	    return "fixPageHeader";
 	}
 

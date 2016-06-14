@@ -83,13 +83,11 @@ public class ViewArchiveToolAction extends InfoGlueAbstractAction
 	
 	public String doInput() throws Exception
     {
-		logUserActionInfo(getClass(), "doInput");
     	return "input";
     }
 
 	public String doInputArchiveOldAssets() throws Exception
     {
-		logUserActionInfo(getClass(), "doInputArchiveOldAssets");
 		//optimizationBeanList = ContentVersionController.getContentVersionController().getHeavyContentVersions(numberOfVersionsToKeep, assetFileSizeLimit, assetNumberLimit);
 		optimizationBeanList = ContentVersionController.getContentVersionController().getAssetsPossibleToArchive(numberOfVersionsToKeep, assetFileSizeLimit, assetNumberLimit);
         		
@@ -98,13 +96,11 @@ public class ViewArchiveToolAction extends InfoGlueAbstractAction
 
 	public String doInputRestoreAssetArchive() throws Exception
     {
-		logUserActionInfo(getClass(), "doInputRestoreAssetArchive");        		
         return "inputRestoreAssetArchive";
     }
 	
 	public String doArchiveOldAssets() throws Exception
     {
-		logUserActionInfo(getClass(), "doArchiveOldAssets");
 		archiveUrl = DigitalAssetController.getController().archiveDigitalAssets(digitalAssetId, archiveFileSize, nullAssets);
 		
         return "successArchive";
@@ -112,7 +108,6 @@ public class ViewArchiveToolAction extends InfoGlueAbstractAction
 
 	public String doRestoreAssetArchive() throws Exception
     {
-		logUserActionInfo(getClass(), "doRestoreAssetArchive");
 		File file = FileUploadHelper.getUploadedFile(ActionContext.getContext().getMultiPartRequest());
 		if(file == null || !file.exists())
 			throw new SystemException("The file upload must have gone bad as no file reached the restore utility.");
@@ -124,7 +119,6 @@ public class ViewArchiveToolAction extends InfoGlueAbstractAction
 
 	public String doCleanOldVersions() throws Exception
     {
-		logUserActionInfo(getClass(), "doCleanOldVersions");
 		JobDetail jobDetail = new JobDetail();
 
 		SimpleTrigger trig = new SimpleTrigger();
@@ -143,7 +137,6 @@ public class ViewArchiveToolAction extends InfoGlueAbstractAction
 
 	public String doCleanOldVersionsForContent() throws Exception
     {
-		logUserActionInfo(getClass(), "doCleanOldVersionsForContent");
 		Map<String,Integer> totalCleanedContentVersions = new HashMap<String,Integer>();
 		
 		ContentVO contentVOToClean = ContentController.getContentController().getContentVOWithId(contentId);
@@ -163,7 +156,6 @@ public class ViewArchiveToolAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         return "success";
     }
 

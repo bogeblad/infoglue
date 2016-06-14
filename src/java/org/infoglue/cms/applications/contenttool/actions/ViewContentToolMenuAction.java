@@ -65,7 +65,6 @@ public class ViewContentToolMenuAction extends InfoGlueAbstractAction
     
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	getResponse().setHeader("Cache-Control","no-cache"); 
     	getResponse().setHeader("Pragma","no-cache");
     	getResponse().setDateHeader ("Expires", 0);
@@ -75,7 +74,6 @@ public class ViewContentToolMenuAction extends InfoGlueAbstractAction
 
     public String doV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doV3");
     	getResponse().setHeader("Cache-Control","no-cache"); 
     	getResponse().setHeader("Pragma","no-cache");
     	getResponse().setDateHeader ("Expires", 0);

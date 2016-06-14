@@ -91,7 +91,6 @@ public class ViewContentPropertiesAction extends InfoGluePropertiesAbstractActio
     
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         this.initialize(getContentId());
 
         return "success";
@@ -103,7 +102,6 @@ public class ViewContentPropertiesAction extends InfoGluePropertiesAbstractActio
     
     public String doV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doV3");
 		String userSessionKey = "" + System.currentTimeMillis();
 
         this.initialize(getContentId());
@@ -121,7 +119,6 @@ public class ViewContentPropertiesAction extends InfoGluePropertiesAbstractActio
     
     public String doSave() throws Exception
     {
-		logUserActionInfo(getClass(), "doSave");
         String allowedContentTypeNames = null;
         String[] allowedContentTypeNameArray = getRequest().getParameterValues("allowedContentTypeName");
         if(allowedContentTypeNameArray != null)
@@ -154,7 +151,6 @@ public class ViewContentPropertiesAction extends InfoGluePropertiesAbstractActio
     
     public String doSaveV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doSaveV3");
     	doSave();
     	
     	return "saveV3";
@@ -166,7 +162,6 @@ public class ViewContentPropertiesAction extends InfoGluePropertiesAbstractActio
     
     public String doSaveAndExit() throws Exception
     {
-		logUserActionInfo(getClass(), "doSaveAndExit");
     	doSave();
     	
         return "saveAndExit";
@@ -177,7 +172,6 @@ public class ViewContentPropertiesAction extends InfoGluePropertiesAbstractActio
      */
     public String doSaveAndExitV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doSaveAndExitV3");
     	doSave();
 
     	logger.info("returnAddress:" + returnAddress);

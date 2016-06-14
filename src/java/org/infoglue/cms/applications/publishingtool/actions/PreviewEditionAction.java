@@ -40,7 +40,6 @@ public class PreviewEditionAction extends ViewPublicationsAction
 	
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	try
     	{
 			String[] events = getRequest().getParameterValues("eventId");

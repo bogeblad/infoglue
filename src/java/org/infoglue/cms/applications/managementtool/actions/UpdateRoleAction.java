@@ -59,7 +59,6 @@ public class UpdateRoleAction extends ViewRoleAction //WebworkAbstractAction
 	
 	public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	super.initialize(getRoleName());
     	
     	ceb.add(this.roleVO.validate());
@@ -77,7 +76,6 @@ public class UpdateRoleAction extends ViewRoleAction //WebworkAbstractAction
 	
 	public String doSaveAndExit() throws Exception
     {
-		logUserActionInfo(getClass(), "doSaveAndExit");
 		doExecute();
 		
 		return "saveAndExit";
@@ -85,7 +83,6 @@ public class UpdateRoleAction extends ViewRoleAction //WebworkAbstractAction
 
 	public String doDeleteUser() throws Exception
     {
-		logUserActionInfo(getClass(), "doDeleteUser");
 		RoleControllerProxy.getController().removeUser(getRoleName(), this.userName);
 		
 		return "successRedirect";
@@ -93,7 +90,6 @@ public class UpdateRoleAction extends ViewRoleAction //WebworkAbstractAction
 
 	public String doAddUser() throws Exception
     {
-		logUserActionInfo(getClass(), "doAddUser");
 		RoleControllerProxy.getController().addUser(getRoleName(), this.userName);
 		
 		return "successRedirect";
@@ -101,7 +97,6 @@ public class UpdateRoleAction extends ViewRoleAction //WebworkAbstractAction
 
 	public String doV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doV3");
 		try
 		{
 			doExecute();
@@ -117,7 +112,6 @@ public class UpdateRoleAction extends ViewRoleAction //WebworkAbstractAction
 
 	public String doSaveAndExitV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doSaveAndExitV3");
 		try
 		{
 			doExecute();

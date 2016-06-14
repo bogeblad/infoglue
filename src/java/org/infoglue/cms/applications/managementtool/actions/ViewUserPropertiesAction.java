@@ -88,7 +88,6 @@ public class ViewUserPropertiesAction extends ViewEntityPropertiesAction
 
 	public String doExecute() throws Exception
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		this.initialize(getUserName());   
 		
         this.setCurrentAction("ViewUserProperties.action");
@@ -105,7 +104,6 @@ public class ViewUserPropertiesAction extends ViewEntityPropertiesAction
 
 	public String doV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doV3");
 		this.initialize(getUserName());   
 
         this.setCurrentAction("ViewUserProperties!v3.action");

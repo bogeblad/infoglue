@@ -364,7 +364,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
      */
     public String doDebugCache() throws Exception
     {
-		logUserActionInfo(getClass(), "doDebugCache");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -387,7 +386,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
      */
     public String doClearCache() throws Exception
     {
-		logUserActionInfo(getClass(), "doClearCache");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -412,7 +410,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
      */
     public String doClearStringPool() throws Exception
     {
-		logUserActionInfo(getClass(), "doClearStringPool");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -460,7 +457,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
      */
     public String doClearCacheStartingWith() throws Exception
     {
-		logUserActionInfo(getClass(), "doClearCacheStartingWith");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -490,7 +486,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
      */
     public String doClearPageCache() throws Exception
     {
-		logUserActionInfo(getClass(), "doClearPageCache");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -515,7 +510,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
      */
     public String doClearCastorCache() throws Exception
     {
-		logUserActionInfo(getClass(), "doClearCastorCache");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -530,7 +524,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
      */
     public String doClearApplicationCache() throws Exception
     {
-		logUserActionInfo(getClass(), "doClearApplicationCache");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -558,7 +551,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
      */
     public String doRestoreWorkflows() throws Exception
     {
-		logUserActionInfo(getClass(), "doRestoreWorkflows");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -575,7 +567,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
      */
     public String doDecreaseActiveCount() throws Exception
     {
-		logUserActionInfo(getClass(), "doDecreaseActiveCount");
         if(CmsPropertyHandler.getOperatingMode().equalsIgnoreCase("3"))
         {
             this.getResponse().setContentType("text/plain");
@@ -599,7 +590,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 	 */
 	public String doSetLogLevel() throws Exception
 	{
-		logUserActionInfo(getClass(), "doSetLogLevel");
 		LogModifierController.getController().changeLogLevel(this.className, this.logLevel);
 
 		return "cleared";
@@ -610,7 +600,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
      */
     public String doSetLogInfo() throws Exception
     {
-		logUserActionInfo(getClass(), "doSetLogInfo");
         //ViewPageFilter.logger.setLevel(Level.INFO);
         //ViewPageAction.logger.setLevel(Level.INFO);
         //RedirectFilter.logger.setLevel(Level.INFO);
@@ -627,7 +616,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
      */
     public String doSetLogWarning() throws Exception
     {
-		logUserActionInfo(getClass(), "doSetLogWarning");
         //ViewPageFilter.logger.setLevel(Level.WARN);
         //ViewPageAction.logger.setLevel(Level.WARN);
         //RedirectFilter.logger.setLevel(Level.WARN);
@@ -644,7 +632,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
      */
     public String doSetLogError() throws Exception
     {
-		logUserActionInfo(getClass(), "doSetLogError");
         //ViewPageFilter.logger.setLevel(Level.ERROR);
         //ViewPageAction.logger.setLevel(Level.ERROR);
         //RedirectFilter.logger.setLevel(Level.ERROR);
@@ -661,7 +648,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
      */
     public String doClearCaches() throws Exception
     {
-		logUserActionInfo(getClass(), "doClearCaches");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -698,7 +684,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
      */
     public String doClearCastorCaches() throws Exception
     {
-		logUserActionInfo(getClass(), "doClearCastorCaches");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -710,7 +695,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 
     public String doClearOSCaches() throws Exception
 	{
-		logUserActionInfo(getClass(), "doClearOSCaches");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -728,7 +712,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
      */
     public String doClearPortlets() throws Exception
     {
-		logUserActionInfo(getClass(), "doClearPortlets");
         try 
         {
         	
@@ -778,7 +761,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
      */
     public String doReCache() throws Exception
     {
-		logUserActionInfo(getClass(), "doReCache");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -799,7 +781,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
     
     public String doGC() throws Exception
     {
-		logUserActionInfo(getClass(), "doGC");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -811,7 +792,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 
     public String doResetAverageResponseTimeStatistics() throws Exception
     {
-		logUserActionInfo(getClass(), "doResetAverageResponseTimeStatistics");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -823,7 +803,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 
     public String doResetComponentStatistics() throws Exception
     {
-		logUserActionInfo(getClass(), "doResetComponentStatistics");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -835,7 +814,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 
     public String doResetPageStatistics() throws Exception
     {
-		logUserActionInfo(getClass(), "doResetPageStatistics");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -847,7 +825,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 
     public String doOngoingPublicationDetails() throws Exception
     {
-		logUserActionInfo(getClass(), "doOngoingPublicationDetails");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -862,7 +839,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
     
     public String doComponentStatistics() throws Exception
     {
-		logUserActionInfo(getClass(), "doComponentStatistics");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -892,7 +868,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 
     public String doPageStatistics() throws Exception
     {
-		logUserActionInfo(getClass(), "doPageStatistics");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -920,7 +895,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
     
     public String doCacheStatistics() throws Exception
     {
-		logUserActionInfo(getClass(), "doCacheStatistics");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -930,7 +904,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 
     public String doCacheDetailsStatistics() throws Exception
     {
-		logUserActionInfo(getClass(), "doCacheDetailsStatistics");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -953,7 +926,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
     
     public String doClearPublications() throws Exception
     {
-		logUserActionInfo(getClass(), "doClearPublications");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -970,7 +942,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 
     public String doLuceneStatistics() throws Exception
     {
-		logUserActionInfo(getClass(), "doLuceneStatistics");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -982,7 +953,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 
     public String doTestLucene() throws Exception
     {
-		logUserActionInfo(getClass(), "doTestLucene");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -994,7 +964,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 
     public String doDeleteIndex() throws Exception
     {
-		logUserActionInfo(getClass(), "doDeleteIndex");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -1030,7 +999,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 
     public String doIndexAll() throws Exception
     {
-		logUserActionInfo(getClass(), "doIndexAll");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -1070,7 +1038,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 
     public String doIndex() throws Exception
     {
-		logUserActionInfo(getClass(), "doIndex");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -1108,7 +1075,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 
     public String doSearch() throws Exception
     {
-		logUserActionInfo(getClass(), "doSearch");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -1156,7 +1122,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
          
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;
@@ -1255,7 +1220,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
         
 	public String doAsXML() throws Exception
 	{
-		logUserActionInfo(getClass(), "doAsXML");
 		doExecute();
 
 		getResponse().setContentType("text/xml; charset=utf-8");
@@ -1420,7 +1384,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 
     public String doCacheEntryGroups() throws Exception
     {
-		logUserActionInfo(getClass(), "doCacheEntryGroups");
     	logger.info("Cache name: " + this.cacheName);
     	if(this.cacheName != null && !this.cacheName.equals(""))
         {
@@ -1464,7 +1427,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 
     public String doCacheEntryValue() throws Exception
     {
-		logUserActionInfo(getClass(), "doCacheEntryValue");
     	Object value = null;
     	if(this.cacheName != null && !this.cacheName.equals(""))
         {

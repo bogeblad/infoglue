@@ -98,7 +98,6 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 	
 	public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
 		logger.info("Updating content version attribute....");
 		logger.info("contentId:" + contentId);
 		logger.info("languageId:" + languageId);
@@ -130,7 +129,6 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 	 */
 	public String doSaveAndReturnValue()
     {
-		logUserActionInfo(getClass(), "doSaveAndReturnValue");
 		/*
 		try
 		{
@@ -374,7 +372,6 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 
 	public String doGetAttributeValue() throws Exception
 	{
-		logUserActionInfo(getClass(), "doGetAttributeValue");
 		try
 		{
 			super.initialize(this.contentVersionId, this.contentId, this.languageId);

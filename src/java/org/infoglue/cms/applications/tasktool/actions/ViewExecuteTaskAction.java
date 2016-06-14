@@ -64,13 +64,11 @@ public class ViewExecuteTaskAction extends InfoGlueAbstractAction
     
 	public String doExecute() throws Exception
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		return "success";
 	}
 
 	public String doUserInput() throws Exception
 	{
-		logUserActionInfo(getClass(), "doUserInput");
 		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(this.getTaskContentId());
 		
 		ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentVO.getId(), LanguageController.getController().getMasterLanguage((Integer)getHttpSession().getAttribute("repositoryId")).getId());
@@ -119,7 +117,6 @@ public class ViewExecuteTaskAction extends InfoGlueAbstractAction
 
 	public String doExecuteTask() throws Exception
 	{
-		logUserActionInfo(getClass(), "doExecuteTask");
 		try
 		{
 			ContentVO contentVO = ContentController.getContentController().getContentVOWithId(this.getTaskContentId());

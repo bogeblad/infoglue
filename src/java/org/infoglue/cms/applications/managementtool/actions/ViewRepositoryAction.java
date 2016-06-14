@@ -85,7 +85,6 @@ public class ViewRepositoryAction extends InfoGlueAbstractAction
     
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         this.initialize(getRepositoryId());
 
         return "success";
@@ -112,7 +111,6 @@ public class ViewRepositoryAction extends InfoGlueAbstractAction
     
     public String doLocalView() throws Exception
     {
-		logUserActionInfo(getClass(), "doLocalView");
         this.initialize(getRepositoryId());
 
         return "successLocal";

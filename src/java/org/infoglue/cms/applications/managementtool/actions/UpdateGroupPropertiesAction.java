@@ -53,7 +53,6 @@ public class UpdateGroupPropertiesAction extends InfoGlueAbstractAction
 		
 	public String doExecute() throws Exception
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		ceb.throwIfNotEmpty();
 		GroupPropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.groupPropertiesVO);
 		
@@ -64,7 +63,6 @@ public class UpdateGroupPropertiesAction extends InfoGlueAbstractAction
 
 	public String doSaveAndExit() throws Exception
 	{
-		logUserActionInfo(getClass(), "doSaveAndExit");
 	    GroupPropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.groupPropertiesVO);
 						 
 		return "saveAndExit";
@@ -72,7 +70,6 @@ public class UpdateGroupPropertiesAction extends InfoGlueAbstractAction
 
 	public String doSaveAndExitStandalone() throws Exception
 	{
-		logUserActionInfo(getClass(), "doSaveAndExitStandalone");
 	    GroupPropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.groupPropertiesVO);
 						 
 		return "saveAndExitStandalone";
@@ -80,7 +77,6 @@ public class UpdateGroupPropertiesAction extends InfoGlueAbstractAction
 
 	public String doV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doV3");
 		ceb.throwIfNotEmpty();
 		GroupPropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.groupPropertiesVO);
 		
@@ -91,7 +87,6 @@ public class UpdateGroupPropertiesAction extends InfoGlueAbstractAction
 
 	public String doSaveAndExitV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doSaveAndExitV3");
 	    GroupPropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.groupPropertiesVO);
 						 
 		return "saveAndExitV3";

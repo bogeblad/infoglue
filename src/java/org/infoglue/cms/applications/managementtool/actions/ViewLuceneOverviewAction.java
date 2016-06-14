@@ -49,7 +49,6 @@ public class ViewLuceneOverviewAction extends InfoGlueAbstractAction
     
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	indexInformation = LuceneController.getController().getIndexInformation();
     	
         return "success";
@@ -57,7 +56,6 @@ public class ViewLuceneOverviewAction extends InfoGlueAbstractAction
 
     public String doDeleteIndex() throws Exception
     {
-		logUserActionInfo(getClass(), "doDeleteIndex");
     	if(!running)
     	{
     		running = true;
@@ -89,7 +87,6 @@ public class ViewLuceneOverviewAction extends InfoGlueAbstractAction
 
     public String doIndexAll() throws Exception
     {
-		logUserActionInfo(getClass(), "doIndexAll");
     	if(!running)
     	{
     		running = true;

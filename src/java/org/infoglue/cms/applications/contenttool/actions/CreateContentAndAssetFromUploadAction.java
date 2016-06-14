@@ -86,7 +86,6 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
 		
     public String doInput() throws Exception 
     {
-		logUserActionInfo(getClass(), "doInput");
     	logger.info("Input state");
     	
     	return INPUT;
@@ -94,7 +93,6 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
 	
     public String doMultiple() throws Exception
     {
-		logUserActionInfo(getClass(), "doMultiple");
     	logger.info("Uploading file....");
     	this.principal = getInfoGluePrincipal();
     	
@@ -149,7 +147,6 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
     
     public String doExecute()
     {
-		logUserActionInfo(getClass(), "doExecute");
     	if(this.principal == null)
     		this.principal = getInfoGluePrincipal();
 

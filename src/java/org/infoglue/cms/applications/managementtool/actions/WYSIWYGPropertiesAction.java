@@ -59,13 +59,11 @@ public class WYSIWYGPropertiesAction extends InfoGlueAbstractAction
 	
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	return "success";
     }
 
     public String doViewStylesXML() throws Exception
     {
-		logUserActionInfo(getClass(), "doViewStylesXML");
     	return "successStylesXML";
     }
 
@@ -216,7 +214,6 @@ public class WYSIWYGPropertiesAction extends InfoGlueAbstractAction
 	
 	public String doWYSIWYGToolbarComboPreviewCSS()
 	{
-		logUserActionInfo(getClass(), "doWYSIWYGToolbarComboPreviewCSS");
 		String WYSIWYGToolbarComboPreviewCSS = CmsPropertyHandler.getWYSIWYGToolbarComboPreviewCSS();
 		try
 		{
@@ -238,7 +235,6 @@ public class WYSIWYGPropertiesAction extends InfoGlueAbstractAction
 	
 	public String doWYSIWYGEditorAreaCSS()
 	{
-		logUserActionInfo(getClass(), "doWYSIWYGEditorAreaCSS");
 		String WYSIWYGEditorAreaCSS = CmsPropertyHandler.getWYSIWYGEditorAreaCSS();
 		try
 		{

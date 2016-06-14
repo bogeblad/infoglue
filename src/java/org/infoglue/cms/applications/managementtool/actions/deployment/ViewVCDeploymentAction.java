@@ -62,7 +62,6 @@ public class ViewVCDeploymentAction extends InfoGlueAbstractAction
 	
 	public String doInput() throws Exception
     {
-		logUserActionInfo(getClass(), "doInput");
     	this.vcServers = CmsPropertyHandler.getVCServers();
     	
     	return "input";
@@ -70,7 +69,6 @@ public class ViewVCDeploymentAction extends InfoGlueAbstractAction
 
     public String doInputChooseTag() throws Exception
     {
-		logUserActionInfo(getClass(), "doInputChooseTag");
     	this.vcServers = CmsPropertyHandler.getVCServers();
     	
     	if(vcServerName != null && !vcServerName.equals(""))
@@ -90,7 +88,6 @@ public class ViewVCDeploymentAction extends InfoGlueAbstractAction
 
     public String doInputVerifyCheckout() throws Exception
     {
-		logUserActionInfo(getClass(), "doInputVerifyCheckout");
     	this.vcServers = CmsPropertyHandler.getVCServers();
     	
     	if(vcServerName != null && !vcServerName.equals(""))
@@ -113,7 +110,6 @@ public class ViewVCDeploymentAction extends InfoGlueAbstractAction
     
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	ContentTypeDefinitionVO ctd = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("HTMLTemplate");
     	ContentTypeDefinitionVO ctdFolder = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Folder");
     	

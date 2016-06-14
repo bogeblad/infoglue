@@ -114,7 +114,6 @@ public class CreateRedirectAction extends InfoGlueAbstractAction
     
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
 		ceb.add(this.redirectVO.validate());
     	ceb.throwIfNotEmpty();				
     	
@@ -127,7 +126,6 @@ public class CreateRedirectAction extends InfoGlueAbstractAction
         
     public String doInput() throws Exception
     {
-		logUserActionInfo(getClass(), "doInput");
     	return "input";
     }    
 }

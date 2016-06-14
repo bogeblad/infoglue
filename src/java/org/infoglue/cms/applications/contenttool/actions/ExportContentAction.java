@@ -76,7 +76,6 @@ public class ExportContentAction extends InfoGlueAbstractAction
 
 	public String doInput() throws Exception
 	{
-		logUserActionInfo(getClass(), "doInput");
 		//repositories = RepositoryController.getController().getRepositoryVOList();
 		
 		return "input";
@@ -88,7 +87,6 @@ public class ExportContentAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		if(!AccessRightController.getController().getIsPrincipalAuthorized(this.getInfoGluePrincipal(), "ContentTool.ImportExport", true))
 			throw new SystemException("You are not allowed to export contents.");
 

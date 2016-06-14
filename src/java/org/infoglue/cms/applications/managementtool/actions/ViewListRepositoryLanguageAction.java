@@ -50,7 +50,6 @@ public class ViewListRepositoryLanguageAction extends InfoGlueAbstractAction
 
 	protected String doExecute() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		this.repositoryVO = RepositoryController.getController().getRepositoryVOWithId(this.repositoryId);
 		this.repositoryLanguageVOList = RepositoryLanguageController.getController().getRepositoryLanguageVOListWithRepositoryId(repositoryId);
 		this.allRemainingLanguageVOList = LanguageController.getController().getRemainingLanguages(repositoryId);

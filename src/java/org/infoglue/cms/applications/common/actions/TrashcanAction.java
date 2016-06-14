@@ -79,7 +79,6 @@ public class TrashcanAction extends InfoGlueAbstractAction
 
 	protected String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
 		this.repositoriesMarkedForDeletion = RepositoryController.getController().getRepositoryVOListMarkedForDeletion(getInfoGluePrincipal());
 		this.contentsMarkedForDeletion = ContentController.getContentController().getContentVOListMarkedForDeletion(repositoryFilter, getInfoGluePrincipal(), this.repositoriesMarkedForDeletion);
 		this.siteNodesMarkedForDeletion = SiteNodeController.getController().getSiteNodeVOListMarkedForDeletion(repositoryFilter, getInfoGluePrincipal(), this.repositoriesMarkedForDeletion);
@@ -89,7 +88,6 @@ public class TrashcanAction extends InfoGlueAbstractAction
 
 	public String doRestore() throws Exception
     {
-		logUserActionInfo(getClass(), "doRestore");
 		String exportId = "Empty_Trashcan_" + visualFormatter.formatDate(new Date(), "yyyy-MM-dd_HHmm");
 		ProcessBean processBean = ProcessBean.createProcessBean(TrashcanAction.class.getName(), exportId, "Restore items from trashcan");
 		
@@ -100,7 +98,6 @@ public class TrashcanAction extends InfoGlueAbstractAction
 
 	public String doDelete() throws Exception
     {
-		logUserActionInfo(getClass(), "doDelete");
 		validateSecurityCode();
 		
 		String exportId = "Empty_Trashcan_" + visualFormatter.formatDate(new Date(), "yyyy-MM-dd_HHmm");
@@ -113,7 +110,6 @@ public class TrashcanAction extends InfoGlueAbstractAction
 
 	public String doEmpty() throws Exception
     {
-		logUserActionInfo(getClass(), "doEmpty");
 		validateSecurityCode();
 
 		String exportId = "Empty_Trashcan_" + visualFormatter.formatDate(new Date(), "yyyy-MM-dd_HHmm");
@@ -181,13 +177,11 @@ public class TrashcanAction extends InfoGlueAbstractAction
 	
 	public String doShowProcesses() throws Exception
 	{
-		logUserActionInfo(getClass(), "doShowProcesses");
 		return "successShowProcesses";
 	}
 
 	public String doShowProcessesAsJSON() throws Exception
 	{
-		logUserActionInfo(getClass(), "doShowProcessesAsJSON");
 		// TODO it would be nice we could write JSON to the OutputStream but we get a content already transmitted exception then.
 		return "successShowProcessesAsJSON";
 	}
@@ -243,7 +237,6 @@ public class TrashcanAction extends InfoGlueAbstractAction
 
 	public String doDeleteProcessBean() throws Exception
 	{
-		logUserActionInfo(getClass(), "doDeleteProcessBean");
 		if(this.processId != null)
 		{
 			ProcessBean pb = ProcessBean.getProcessBean(DeleteRepositoryAction.class.getName(), processId);

@@ -65,7 +65,6 @@ public class CreateEmailAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	if(recipients != null && recipients.length() > 0 && subject != null && subject.length() > 0 && message != null && message.length() > 0)
     	{
 			if(from == null  || from.length() == 0)
@@ -102,7 +101,6 @@ public class CreateEmailAction extends InfoGlueAbstractAction
    
     public String doInputChooseRecipients() throws Exception
     {
-		logUserActionInfo(getClass(), "doInputChooseRecipients");    	
     	//users 	= UserControllerProxy.getController().getAllUsers();
     	roles 	= RoleControllerProxy.getController().getAllRoles();
     	groups 	= GroupControllerProxy.getController().getAllGroups();
@@ -112,7 +110,6 @@ public class CreateEmailAction extends InfoGlueAbstractAction
 
     public String doInputCreateEmail() throws Exception
     {
-		logUserActionInfo(getClass(), "doInputCreateEmail");
     	//userNames 	= getRequest().getParameterValues("userName");
     	roleNames 	= getRequest().getParameterValues("roleName");
     	groupNames 	= getRequest().getParameterValues("groupName");
@@ -182,7 +179,6 @@ public class CreateEmailAction extends InfoGlueAbstractAction
     
     public String doExecuteV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecuteV3");
     	VisualFormatter ui = new VisualFormatter();
     	extraText 	= getRequest().getParameter("extraText");
     	extraTextProperty 	= getRequest().getParameter("extraTextProperty");
@@ -244,7 +240,6 @@ public class CreateEmailAction extends InfoGlueAbstractAction
     
     public String doInputChooseRecipientsV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doInputChooseRecipientsV3");
     	extraText 	= getRequest().getParameter("extraText");    	
     	//users 		= UserControllerProxy.getController().getAllUsers();
     	roles 		= RoleControllerProxy.getController().getAllRoles();
@@ -259,7 +254,6 @@ public class CreateEmailAction extends InfoGlueAbstractAction
 
     public String doInputCreateEmailV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doInputCreateEmailV3");
     	extraText 	= getRequest().getParameter("extraText");
     	userNames 	= getRequest().getParameterValues("userName");
     	roleNames 	= getRequest().getParameterValues("roleName");

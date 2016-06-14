@@ -63,7 +63,6 @@ public class CreateContentWizardInputContentVersionsAction extends CreateContent
 	 
 	public String doInput() throws Exception
 	{
-		logUserActionInfo(getClass(), "doInput");
 		CreateContentWizardInfoBean createContentWizardInfoBean = getCreateContentWizardInfoBean();
 		
 		Integer contentTypeDefinitionId = createContentWizardInfoBean.getContentTypeDefinitionId();
@@ -109,7 +108,6 @@ public class CreateContentWizardInputContentVersionsAction extends CreateContent
 	 
 	public String doExecute() throws Exception
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		CreateContentWizardInfoBean createContentWizardInfoBean = getCreateContentWizardInfoBean();
 		
 		this.contentVersionVO.setVersionModifier(this.getInfoGluePrincipal().getName());

@@ -90,7 +90,6 @@ public class SubscriptionsAction extends InfoGlueAbstractAction
 	
 	public String doInput() throws Exception
     {
-		logUserActionInfo(getClass(), "doInput");
 		if(explicitInterceptionPointNames != null && explicitInterceptionPointNames.length > 0)
 		{
 			for(int i=0; i<explicitInterceptionPointNames.length; i++)
@@ -143,7 +142,6 @@ public class SubscriptionsAction extends InfoGlueAbstractAction
     
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	String[] interceptionPointIds = interceptionPointIdString.split(",");
     	for(int i=0; i<interceptionPointIds.length; i++)
     	{
@@ -195,7 +193,6 @@ public class SubscriptionsAction extends InfoGlueAbstractAction
     
 	public String doInputGlobalSubscriptions() throws Exception
     {
-		logUserActionInfo(getClass(), "doInputGlobalSubscriptions");
 		this.subscriptionVOList = subscriptionsController.getSubscriptionVOList(null, null, new Boolean(true), null, null, this.getInfoGluePrincipal().getName(), null);
 		this.detailedSubscriptionVOList = subscriptionsController.getSubscriptionVOList(null, null, new Boolean(false), null, null, this.getInfoGluePrincipal().getName(), null);
 		this.contentTypeDefintionVOList = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList();
@@ -244,7 +241,6 @@ public class SubscriptionsAction extends InfoGlueAbstractAction
     
     public String doGlobalSubscriptions() throws Exception
     {
-		logUserActionInfo(getClass(), "doGlobalSubscriptions");
     	SubscriptionVO subscriptionVO = new SubscriptionVO();
     	subscriptionVO.setIsGlobal(true);
     	subscriptionVO.setInterceptionPointId(interceptionPointId);
@@ -287,7 +283,6 @@ public class SubscriptionsAction extends InfoGlueAbstractAction
 
     public String doUpdateGlobalSubscription() throws Exception
     {
-		logUserActionInfo(getClass(), "doUpdateGlobalSubscription");
     	SubscriptionVO subscriptionVO = subscriptionsController.getSubscriptionVOWithId(subscriptionId);
 
     	subscriptionVO.setIsGlobal(true);
@@ -332,7 +327,6 @@ public class SubscriptionsAction extends InfoGlueAbstractAction
 
     public String doDeleteGlobalSubscription() throws Exception
     {
-		logUserActionInfo(getClass(), "doDeleteGlobalSubscription");
     	subscriptionsController.delete(subscriptionId);
     	
     	return "successGlobalSubscriptions";
@@ -340,7 +334,6 @@ public class SubscriptionsAction extends InfoGlueAbstractAction
         
     public String doGetSubscriptionForm() throws Exception
     {
-		logUserActionInfo(getClass(), "doGetSubscriptionForm");
     	SubscriptionVO subscriptionVO = subscriptionsController.getSubscriptionVOWithId(subscriptionId);
     	
     	StringBuffer sb = new StringBuffer();

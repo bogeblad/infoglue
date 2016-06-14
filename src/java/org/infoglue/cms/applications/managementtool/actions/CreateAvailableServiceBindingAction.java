@@ -190,7 +190,6 @@ public class CreateAvailableServiceBindingAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
 		ceb.add(this.availableServiceBindingVO.validate());
     	ceb.throwIfNotEmpty();				
     	
@@ -200,7 +199,6 @@ public class CreateAvailableServiceBindingAction extends InfoGlueAbstractAction
         
     public String doInput() throws Exception
     {
-		logUserActionInfo(getClass(), "doInput");
     	return "input";
     }    
 }

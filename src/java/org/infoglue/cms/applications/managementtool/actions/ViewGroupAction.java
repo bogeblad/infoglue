@@ -63,7 +63,6 @@ public class ViewGroupAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         this.initialize(getGroupName());
         
         return "success";
@@ -71,7 +70,6 @@ public class ViewGroupAction extends InfoGlueAbstractAction
      
     public String doV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doV3");
         this.initialize(getGroupName());
         
         return "successV3";

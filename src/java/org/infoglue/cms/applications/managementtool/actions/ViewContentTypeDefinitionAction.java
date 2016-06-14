@@ -143,7 +143,6 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         this.initialize(getContentTypeDefinitionId());
         return USE_EDITOR;
     }
@@ -154,7 +153,6 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 
 	public String doUseEditor() throws Exception
 	{
-		logUserActionInfo(getClass(), "doUseEditor");
 		this.initialize(getContentTypeDefinitionId());
 		return USE_EDITOR;
 	}
@@ -165,14 +163,12 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 
 	public String doUseSimple() throws Exception
 	{
-		logUserActionInfo(getClass(), "doUseSimple");
 		this.initialize(getContentTypeDefinitionId());
 		return SUCCESS;
 	}
 
 	public String doInsertAttribute() throws Exception
 	{
-		logUserActionInfo(getClass(), "doInsertAttribute");
 		this.initialize(getContentTypeDefinitionId());
 		String newSchemaValue = ContentTypeDefinitionController.getController().insertContentTypeAttribute(this.contentTypeDefinitionVO.getSchemaValue(), this.inputTypeId, this.activatedName);
 		this.contentTypeDefinitionVO.setSchemaValue(newSchemaValue);
@@ -184,7 +180,6 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 
 	public String doViewAttribute() throws Exception
 	{
-		logUserActionInfo(getClass(), "doViewAttribute");
 		this.initialize(getContentTypeDefinitionId());
 		if(this.attributeName == null || this.attributeName.equals(""))
 			throw new Exception("Must supply parameter 'attributeName'");
@@ -201,7 +196,6 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 
 	public String doDeleteAttribute() throws Exception
 	{
-		logUserActionInfo(getClass(), "doDeleteAttribute");
 		this.initialize(getContentTypeDefinitionId());
 
 		try
@@ -241,7 +235,6 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 
 	public String doMoveAttributeUp() throws Exception
 	{
-		logUserActionInfo(getClass(), "doMoveAttributeUp");
 		this.initialize(getContentTypeDefinitionId());
 
 		try
@@ -281,7 +274,6 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 
 	public String doMoveAttributeDown() throws Exception
 	{
-		logUserActionInfo(getClass(), "doMoveAttributeDown");
 		this.initialize(getContentTypeDefinitionId());
 
 		try
@@ -340,7 +332,6 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 
 	public String doMoveAssetKeyUp() throws Exception
 	{
-		logUserActionInfo(getClass(), "doMoveAssetKeyUp");
 		this.initialize(getContentTypeDefinitionId());
 
 		try
@@ -380,7 +371,6 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 
 	public String doMoveAssetKeyDown() throws Exception
 	{
-		logUserActionInfo(getClass(), "doMoveAssetKeyDown");
 		this.initialize(getContentTypeDefinitionId());
 
 		try
@@ -415,7 +405,6 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 
 	public String doDeleteAttributeParameterValue() throws Exception
 	{
-		logUserActionInfo(getClass(), "doDeleteAttributeParameterValue");
 		this.initialize(getContentTypeDefinitionId());
 
 		try
@@ -443,7 +432,6 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 
 	public String doInsertAttributeParameterValue() throws Exception
 	{
-		logUserActionInfo(getClass(), "doInsertAttributeParameterValue");
 		this.initialize(getContentTypeDefinitionId());
 
 		try
@@ -478,7 +466,6 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 
 	public String doUpdateAttribute() throws Exception
 	{
-		logUserActionInfo(getClass(), "doUpdateAttribute");
 		ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 		if(this.newAttributeName.indexOf(" ") > -1 || this.newAttributeName.indexOf(".") > -1 || this.newAttributeName.indexOf("'") > -1  || this.newAttributeName.indexOf("\"") > -1)
 		{
@@ -593,7 +580,6 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 
 	public String doUpdateAttributeParameterValue() throws Exception
 	{
-		logUserActionInfo(getClass(), "doUpdateAttributeParameterValue");
 		this.initialize(getContentTypeDefinitionId());
 
 		try
@@ -629,7 +615,6 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 
 	public String doInsertAttributeValidator() throws Exception
 	{
-		logUserActionInfo(getClass(), "doInsertAttributeValidator");
 		this.initialize(getContentTypeDefinitionId());
 
 		try
@@ -702,7 +687,6 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 
 	public String doUpdateAttributeValidatorArguments() throws Exception
 	{
-		logUserActionInfo(getClass(), "doUpdateAttributeValidatorArguments");
 		this.initialize(getContentTypeDefinitionId());
 
 		try
@@ -784,7 +768,6 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 
 	public String doDeleteAttributeValidator() throws Exception
 	{
-		logUserActionInfo(getClass(), "doDeleteAttributeValidator");
 		this.initialize(getContentTypeDefinitionId());
 
 		try
@@ -867,7 +850,6 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 
 	public String doInsertAssetKey() throws Exception
 	{
-		logUserActionInfo(getClass(), "doInsertAssetKey");
 		this.initialize(getContentTypeDefinitionId());
 
 		try
@@ -887,7 +869,6 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 
 	public String doInsertCategoryKey() throws Exception
 	{
-		logUserActionInfo(getClass(), "doInsertCategoryKey");
 		this.initialize(getContentTypeDefinitionId());
 
 		try
@@ -921,7 +902,6 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 
 	public String doUpdateAssetKey() throws Exception
 	{
-		logUserActionInfo(getClass(), "doUpdateAssetKey");
 		initialize(getContentTypeDefinitionId());
 		try
 		{
@@ -940,7 +920,6 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 
 	public String doUpdateCategoryKey() throws Exception
 	{
-		logUserActionInfo(getClass(), "doUpdateCategoryKey");
 		initialize(getContentTypeDefinitionId());
 
 		try
@@ -973,13 +952,11 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 
 	public String doDeleteAssetKey() throws Exception
 	{
-		logUserActionInfo(getClass(), "doDeleteAssetKey");
 		return deleteKey(ContentTypeDefinitionController.ASSET_KEYS, getAssetKey());
 	}
 
 	public String doDeleteCategoryKey() throws Exception
 	{
-		logUserActionInfo(getClass(), "doDeleteCategoryKey");
 		return deleteKey(ContentTypeDefinitionController.CATEGORY_KEYS, getCategoryKey());
 	}
 

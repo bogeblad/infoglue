@@ -118,7 +118,6 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
          
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
 		try
 		{  
 			CacheController.clearCaches(className, objectId, null);
@@ -310,7 +309,6 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
          
 	public String doInput() throws Exception
 	{
-		logUserActionInfo(getClass(), "doInput");
 		return "input";
 	}
     

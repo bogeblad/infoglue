@@ -86,7 +86,6 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 
 	public String doInput() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doInput");
 		if(this.siteNodeId != null)
 		{
 		    SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(this.siteNodeId);
@@ -117,7 +116,6 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 	
 	public String doInputChooseSiteNodes() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doInputChooseSiteNodes");
 		ProcessBean processBean = ProcessBean.createProcessBean(UnpublishSiteNodeVersionAction.class.getName(), "" + siteNodeId + "_" + getInfoGluePrincipal().getName());
 		processBean.setStatus(ProcessBean.RUNNING);
 		
@@ -157,7 +155,6 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 
 	public String doInputChooseSiteNodesV3() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doInputChooseSiteNodesV3");
 		doInputChooseSiteNodes();
 
         userSessionKey = "" + System.currentTimeMillis();
@@ -184,7 +181,6 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 	   
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");   
 		setSiteNodeVersionIdList( getRequest().getParameterValues("sel") );
 		
 		Map<Integer,SiteNodeVO> siteNodeMap = SiteNodeController.getController().getSiteNodeVOMapWithNoStateCheck(getSiteNodeVersionIdList());
@@ -274,7 +270,6 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 	   
     public String doUnpublishAll() throws Exception
     {
-		logUserActionInfo(getClass(), "doUnpublishAll");   
     	ProcessBean processBean = ProcessBean.createProcessBean(UnpublishSiteNodeVersionAction.class.getName(), "" + getInfoGluePrincipal().getName());
 		processBean.setStatus(ProcessBean.RUNNING);
 
@@ -417,7 +412,6 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 	   
     public String doUnpublishLatest() throws Exception
     {
-		logUserActionInfo(getClass(), "doUnpublishLatest");   
     	ProcessBean processBean = ProcessBean.createProcessBean(UnpublishSiteNodeVersionAction.class.getName(), "" + getInfoGluePrincipal().getName());
 		processBean.setStatus(ProcessBean.RUNNING);
 
@@ -710,7 +704,6 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 	
 	public String doShowProcessesAsJSON() throws Exception
 	{
-		logUserActionInfo(getClass(), "doShowProcessesAsJSON");
 		return "successShowProcessesAsJSON";
 	}
 

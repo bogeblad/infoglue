@@ -56,7 +56,6 @@ public class UpdateLanguageAction extends ViewLanguageAction //WebworkAbstractAc
 	
 	public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
 		super.initialize(getLanguageId());
 
     	ceb.add(this.languageVO.validate());
@@ -69,7 +68,6 @@ public class UpdateLanguageAction extends ViewLanguageAction //WebworkAbstractAc
 
 	public String doSaveAndExit() throws Exception
     {
-		logUserActionInfo(getClass(), "doSaveAndExit");
 		doExecute();
 						
 		return "saveAndExit";

@@ -53,7 +53,6 @@ public class DeleteContentVersionAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		ContentVersionControllerProxy.getController().acDelete(this.getInfoGluePrincipal(), this.contentVersionVO);
 		//ContentVersionController.delete(contentVersionVO);
 		

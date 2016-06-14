@@ -61,7 +61,6 @@ public class CreateContentWizardChooseParentAction extends CreateContentWizardAb
 
 	public String doExecute() throws Exception
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 
 		return "success";

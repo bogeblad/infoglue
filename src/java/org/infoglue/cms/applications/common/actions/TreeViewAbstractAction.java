@@ -32,7 +32,6 @@ public abstract class TreeViewAbstractAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	// Fix key
 		setExp(getExp().replaceAll(getRkey(), "") + getAkey());
 		
@@ -50,7 +49,6 @@ public abstract class TreeViewAbstractAction extends InfoGlueAbstractAction
     
     public String doV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doV3");
     	doExecute();
     	
         return "successV3";

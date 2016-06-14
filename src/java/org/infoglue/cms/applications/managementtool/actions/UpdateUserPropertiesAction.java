@@ -53,7 +53,6 @@ public class UpdateUserPropertiesAction extends InfoGlueAbstractAction
 		
 	public String doExecute() throws Exception
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		ceb.throwIfNotEmpty();
 		UserPropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.userPropertiesVO);
 		
@@ -64,7 +63,6 @@ public class UpdateUserPropertiesAction extends InfoGlueAbstractAction
 
 	public String doSaveAndExit() throws Exception
 	{
-		logUserActionInfo(getClass(), "doSaveAndExit");
 	    UserPropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.userPropertiesVO);
 						 
 		return "saveAndExit";
@@ -72,7 +70,6 @@ public class UpdateUserPropertiesAction extends InfoGlueAbstractAction
 
 	public String doSaveAndExitStandalone() throws Exception
 	{
-		logUserActionInfo(getClass(), "doSaveAndExitStandalone");
 	    UserPropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.userPropertiesVO);
 						 
 		return "saveAndExitStandalone";
@@ -80,7 +77,6 @@ public class UpdateUserPropertiesAction extends InfoGlueAbstractAction
 
 	public String doV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doV3");
 	    ceb.throwIfNotEmpty();
 	    UserPropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.userPropertiesVO);
 		
@@ -91,7 +87,6 @@ public class UpdateUserPropertiesAction extends InfoGlueAbstractAction
 
 	public String doSaveAndExitV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doSaveAndExitV3");
 		UserPropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.userPropertiesVO);
 						 
 		return "saveAndExitV3";
@@ -99,7 +94,6 @@ public class UpdateUserPropertiesAction extends InfoGlueAbstractAction
 
 	public String doSaveAndExitStandaloneV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doSaveAndExitStandaloneV3");
 		UserPropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.userPropertiesVO);
 						 
 		return "saveAndExitStandaloneV3";

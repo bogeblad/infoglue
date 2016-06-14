@@ -249,7 +249,6 @@ public class ViewMultiSelectContentTreeForServiceBindingAction extends InfoGlueA
 	     
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), true);
 		
 		if(this.repositoryId == null)
@@ -278,7 +277,6 @@ public class ViewMultiSelectContentTreeForServiceBindingAction extends InfoGlueA
     
 	public String doChangeRepository() throws Exception
 	{
-		logUserActionInfo(getClass(), "doChangeRepository");
 		this.qualifyers = parseQualifyers(qualifyerString);
 		
 		initialize();
@@ -288,7 +286,6 @@ public class ViewMultiSelectContentTreeForServiceBindingAction extends InfoGlueA
 	
 	public String doChangeTree() throws Exception
 	{
-		logUserActionInfo(getClass(), "doChangeTree");
 		this.qualifyers = parseQualifyers(qualifyerString);
 		
 		initialize();
@@ -298,7 +295,6 @@ public class ViewMultiSelectContentTreeForServiceBindingAction extends InfoGlueA
 	
     public String doAddQualifyer() throws Exception
     {
-		logUserActionInfo(getClass(), "doAddQualifyer");
     	if(this.qualifyerString != null && !this.qualifyerString.equals(""))
     		this.qualifyerString += "," + this.entityId;
     	else
@@ -313,7 +309,6 @@ public class ViewMultiSelectContentTreeForServiceBindingAction extends InfoGlueA
 
 	public String doAddQualifyerAtPosition() throws Exception
 	{
-		logUserActionInfo(getClass(), "doAddQualifyerAtPosition");
 		if(this.qualifyerString == null || this.qualifyerString.equals("") || this.requestedPosition == null )
 			this.qualifyerString += "," + this.entityId;
 		else
@@ -340,7 +335,6 @@ public class ViewMultiSelectContentTreeForServiceBindingAction extends InfoGlueA
 	}
 	public String doMoveQualifyerToPosition() throws Exception
 	{
-		logUserActionInfo(getClass(), "doMoveQualifyerToPosition");
 		this.entityId = new Integer(((QualifyerVO) parseQualifyers(qualifyerString).get(oldSortOrder.intValue())).getValue());
 		this.qualifyers = parseQualifyers(qualifyerString);
 		this.qualifyers = deleteQualifyer(this.oldSortOrder, this.qualifyers);
@@ -354,7 +348,6 @@ public class ViewMultiSelectContentTreeForServiceBindingAction extends InfoGlueA
 
     public String doMoveQualifyer() throws Exception
     {
-		logUserActionInfo(getClass(), "doMoveQualifyer");	
     	logger.info("------------------------------------->");
 		this.qualifyers = parseQualifyers(qualifyerString);
 		this.qualifyers = moveQualifyer(this.direction, this.oldSortOrder, this.qualifyers);  	
@@ -367,7 +360,6 @@ public class ViewMultiSelectContentTreeForServiceBindingAction extends InfoGlueA
 
     public String doDeleteQualifyer() throws Exception
     {
-		logUserActionInfo(getClass(), "doDeleteQualifyer");	
     	logger.info("------------------------------------->");
 		this.qualifyers = parseQualifyers(qualifyerString);
 		this.qualifyers = deleteQualifyer(this.oldSortOrder, this.qualifyers);  	

@@ -147,7 +147,6 @@ public class CreateServiceBindingAction extends InfoGlueAbstractAction
      
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	logger.info("-------------------------->" + this.serviceBindingVO.getServiceBindingId());
     	if(this.serviceBindingVO.getServiceBindingId() == null)
     	{

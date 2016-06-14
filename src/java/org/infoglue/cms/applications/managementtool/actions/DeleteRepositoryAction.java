@@ -78,20 +78,17 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 
 	public String doMarkForDeleteChooseMethod() throws ConstraintException, Exception 
 	{
-		logUserActionInfo(getClass(), "doMarkForDeleteChooseMethod");
 		return "successChooseMethod";
 	}
 
 	public String doInput() throws ConstraintException, Exception 
 	{
-		logUserActionInfo(getClass(), "doInput");
 		this.refs = DeleteRepositoryController.getRepositoryReferences(this.repositoryVO, this.getInfoGluePrincipal());
 		return "input";
 	}
 
 	public String doMarkForDelete() throws ConstraintException, Exception 
 	{
-		logUserActionInfo(getClass(), "doMarkForDelete");
 		boolean hasAccessToManagementTool = hasAccessTo("ManagementTool.Read");
 		if(!hasAccessToManagementTool)
 			throw new AccessConstraintException("Repository.delete", "1003");
@@ -124,7 +121,6 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 	
 	public String doMarkForDeleteByForce() throws ConstraintException, Exception 
 	{
-		logUserActionInfo(getClass(), "doMarkForDeleteByForce");
 		boolean hasAccessToManagementTool = hasAccessTo("ManagementTool.Read");
 		if(!hasAccessToManagementTool)
 			throw new AccessConstraintException("Repository.delete", "1003");
@@ -155,7 +151,6 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 
 	protected String doExecute() throws ConstraintException, Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		boolean hasAccessToManagementTool = hasAccessTo("ManagementTool.Read");
 		if(!hasAccessToManagementTool)
 			throw new AccessConstraintException("Repository.delete", "1003");
@@ -185,7 +180,6 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 
 	public String doExecuteByForce() throws ConstraintException, Exception 
 	{
-		logUserActionInfo(getClass(), "doExecuteByForce");
 		boolean hasAccessToManagementTool = hasAccessTo("ManagementTool.Read");
 		if(!hasAccessToManagementTool)
 			throw new AccessConstraintException("Repository.delete", "1003");
@@ -241,13 +235,11 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 	
 	public String doShowProcesses() throws Exception
 	{
-		logUserActionInfo(getClass(), "doShowProcesses");
 		return "successShowProcesses";
 	}
 
 	public String doShowProcessesAsJSON() throws Exception
 	{
-		logUserActionInfo(getClass(), "doShowProcessesAsJSON");
 		// TODO it would be nice we could write JSON to the OutputStream but we get a content already transmitted exception then.
 		return "successShowProcessesAsJSON";
 	}
@@ -303,7 +295,6 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 
 	public String doDeleteProcessBean() throws Exception
 	{
-		logUserActionInfo(getClass(), "doDeleteProcessBean");
 		//System.out.println("this.processId:" + this.processId);
 		if(this.processId != null)
 		{

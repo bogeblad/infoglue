@@ -39,7 +39,6 @@ public class ChangeSiteNodeSortOrderAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");		
 		SiteNodeControllerProxy.getSiteNodeControllerProxy().acChangeSiteNodeSortOrder(this.getInfoGluePrincipal(), siteNodeId, beforeSiteNodeId, direction, this.sortLanguageId);
 
 		return "success";
@@ -47,7 +46,6 @@ public class ChangeSiteNodeSortOrderAction extends InfoGlueAbstractAction
 
     public String doToggleHidden() throws Exception
     {
-		logUserActionInfo(getClass(), "doToggleHidden");		
     	try
     	{
     		SiteNodeControllerProxy.getSiteNodeControllerProxy().acToggleHidden(this.getInfoGluePrincipal(), siteNodeId, this.sortLanguageId);

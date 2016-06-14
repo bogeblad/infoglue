@@ -43,7 +43,6 @@ public class AdminAction extends InfoGlueAbstractAction
 
 	public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
 		String preferredGUI = CmsPropertyHandler.getDefaultGUI(getUserName());
 		if(preferredGUI.equalsIgnoreCase("classic"))
 			return "successClassic";
@@ -53,7 +52,6 @@ public class AdminAction extends InfoGlueAbstractAction
 
 	public String doEmbla() throws Exception
     {
-		logUserActionInfo(getClass(), "doEmbla");
 		String preferredGUI = CmsPropertyHandler.getDefaultGUI(getUserName());
 		if(preferredGUI.equalsIgnoreCase("classic"))
 			return "successClassic";
@@ -63,7 +61,6 @@ public class AdminAction extends InfoGlueAbstractAction
 
 	public String doResetGUI() throws Exception
     {
-		logUserActionInfo(getClass(), "doResetGUI");
 		this.getHttpSession().removeAttribute("repositoryId");
 		setLanguageCode(CmsPropertyHandler.getPreferredLanguageCode(getUserName()));
 		

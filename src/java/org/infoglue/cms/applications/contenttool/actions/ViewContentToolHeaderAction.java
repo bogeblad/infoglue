@@ -53,7 +53,6 @@ public class ViewContentToolHeaderAction extends InfoGlueAbstractAction
     
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	if (this.showVersions == null || this.showVersions.equals("")) 
 			this.showVersions = (String)getRequest().getSession().getAttribute("htmlTreeShowVersions");
 		else 

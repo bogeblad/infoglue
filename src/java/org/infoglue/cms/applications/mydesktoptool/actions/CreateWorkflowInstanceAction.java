@@ -50,7 +50,6 @@ public class CreateWorkflowInstanceAction extends InfoGlueAbstractAction
 
 	public String doExecute() throws SystemException
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		WorkflowController.getController().initializeWorkflow(this.getInfoGluePrincipal(), this.name, 0, null);
 		return SUCCESS;
 	}

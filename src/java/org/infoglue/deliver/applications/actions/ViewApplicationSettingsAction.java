@@ -81,7 +81,6 @@ public class ViewApplicationSettingsAction extends ViewPageAction //WebworkAbstr
          
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
 		return NONE;
     }
 
@@ -113,7 +112,6 @@ public class ViewApplicationSettingsAction extends ViewPageAction //WebworkAbstr
     
 	public String doGetClassMethods() throws Exception
 	{
-		logUserActionInfo(getClass(), "doGetClassMethods");
 	    StringBuffer document = new StringBuffer();
 		try 
 		{
@@ -157,7 +155,6 @@ public class ViewApplicationSettingsAction extends ViewPageAction //WebworkAbstr
 	
 	public String doGetTemplateLogicMethods() throws Exception
 	{
-		logUserActionInfo(getClass(), "doGetTemplateLogicMethods");
 		try 
 		{
             Method m[] = BasicTemplateController.class.getDeclaredMethods();
@@ -209,7 +206,6 @@ public class ViewApplicationSettingsAction extends ViewPageAction //WebworkAbstr
 	
 	public String doGetPageNavigationTitle() throws Exception
 	{
-		logUserActionInfo(getClass(), "doGetPageNavigationTitle");
 	    DatabaseWrapper dbWrapper = new DatabaseWrapper(CastorDatabaseService.getDatabase());
     	//Database db = CastorDatabaseService.getDatabase();
 		

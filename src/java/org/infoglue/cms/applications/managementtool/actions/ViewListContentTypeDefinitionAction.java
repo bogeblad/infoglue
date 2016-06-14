@@ -49,7 +49,6 @@ public class ViewListContentTypeDefinitionAction extends InfoGlueAbstractAction
 
 	protected String doExecute() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		//this.contentTypeDefinitions = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList();
 		this.contentTypeDefinitions = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOListWithParentId(null);
     	logger.info("contentTypeDefinitions:" + contentTypeDefinitions.size());

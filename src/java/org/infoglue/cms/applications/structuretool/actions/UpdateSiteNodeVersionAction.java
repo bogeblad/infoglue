@@ -67,7 +67,6 @@ public class UpdateSiteNodeVersionAction extends ViewSiteNodeVersionAction
 	
 	public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
 		super.initialize(this.siteNodeId, this.languageId);
 		
 		ceb.throwIfNotEmpty();
@@ -77,7 +76,6 @@ public class UpdateSiteNodeVersionAction extends ViewSiteNodeVersionAction
 
 	public String doSaveAndExit() throws Exception
     {
-		logUserActionInfo(getClass(), "doSaveAndExit");
 		doExecute();
 						 
 		return "saveAndExit";
@@ -85,7 +83,6 @@ public class UpdateSiteNodeVersionAction extends ViewSiteNodeVersionAction
 
 	public String doInactive() throws Exception
     {
-		logUserActionInfo(getClass(), "doInactive");
 		SiteNodeVersionController.getController().inactivate(this.siteNodeVersionId);
 						 
 		return "saveAndExit";
@@ -93,7 +90,6 @@ public class UpdateSiteNodeVersionAction extends ViewSiteNodeVersionAction
 
 	public String doReactivate() throws Exception
 	{
-		logUserActionInfo(getClass(), "doReactivate");
 		this.userSessionKey = "" + System.currentTimeMillis();
 		SiteNodeVersionController.getController().reactivate(this.siteNodeVersionId, this.getInfoGluePrincipal());
 

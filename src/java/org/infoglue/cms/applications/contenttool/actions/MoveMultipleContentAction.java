@@ -141,7 +141,6 @@ public class MoveMultipleContentAction extends InfoGlueAbstractAction
      
     public String doInput() throws Exception
     {
-		logUserActionInfo(getClass(), "doInput");    	
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 
 		if(this.qualifyerXML != null && !this.qualifyerXML.equals(""))
@@ -160,7 +159,6 @@ public class MoveMultipleContentAction extends InfoGlueAbstractAction
 
     public String doInputV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doInputV3");    	
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 
 		if(this.qualifyerXML != null && !this.qualifyerXML.equals(""))
@@ -178,7 +176,6 @@ public class MoveMultipleContentAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         if(this.newParentContentId == null)
         {
     		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
@@ -222,7 +219,6 @@ public class MoveMultipleContentAction extends InfoGlueAbstractAction
 
     public String doV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doV3");
         userSessionKey = "" + System.currentTimeMillis();
 
         String moveContentInlineOperationDoneHeader = getLocalizedString(getLocale(), "tool.contenttool.moveContentsInlineOperationDoneHeader", contentVO.getName());

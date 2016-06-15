@@ -73,13 +73,15 @@ import webwork.action.ServletResponseAware;
 
 public abstract class WebworkAbstractAction implements Action, ServletRequestAware, ServletResponseAware, CommandDriven 
 {
-	private static final String VIEW_MESSAGE_CENTER_ACTION = "ViewMessageCenter";
-	private static final String UPDATE_CACHE_ACTION = "UpdateCache";
+	private static final String  VIEW_MESSAGE_CENTER_ACTION = "ViewMessageCenter";
+	private static final String  UPDATE_CACHE_ACTION = "UpdateCache";
 	private static final String  USER_ACTION_FORMAT  = "%-10s %-20s %-40s %-30s %s";
 	private static final Pattern USER_ACTION_PATTERN = Pattern.compile("^https?://[^/]+/(.*)/([^/!.]*)(!([^.]+))?.*$");
 	private static final int     ACTION_GROUP_INDEX  = 2;
 	private static final int     CONTEXT_GROUP_INDEX = 1;
 	private static final int     METHOD_GROUP_INDEX  = 4;
+	private static final Pattern PASSWORD_PATTERN = Pattern.compile("(?i)(password)=([^&]+)");
+
 
 	private final static Logger logger = Logger.getLogger(WebworkAbstractAction.class.getName());
 	private final static Logger USER_ACTION_LOGGER = Logger.getLogger("User Action");
@@ -654,6 +656,13 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 				String userName = getOptionalUserName();
 				String url = getRequest().getRequestURL().toString();
 				String parameters = request.getQueryString();
+
+				if (parameters != null) {
+					// Remove obvious passwords from query string
+					parameters = PASSWORD_PATTERN.matcher(parameters).replaceAll("$1=????????");
+				} else {
+					parameters = "";
+				}
 				
 				if (url != null)
 				{				
@@ -684,7 +693,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 				if (!action.equals(UPDATE_CACHE_ACTION) && !action.equals(VIEW_MESSAGE_CENTER_ACTION))
 				{
 					// For all other actions, log to the USER_ACTION_LOGGER
-					USER_ACTION_LOGGER.log(level, String.format(USER_ACTION_FORMAT, userName, context, action, method, parameters != null ? parameters : ""));
+					USER_ACTION_LOGGER.log(level, String.format(USER_ACTION_FORMAT, userName, context, action, method, parameters));
 				}
 			}
 		} catch (Throwable t)

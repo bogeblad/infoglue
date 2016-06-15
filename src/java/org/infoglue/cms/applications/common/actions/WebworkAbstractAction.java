@@ -75,7 +75,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 {
 	private static final String  VIEW_MESSAGE_CENTER_ACTION = "ViewMessageCenter";
 	private static final String  UPDATE_CACHE_ACTION = "UpdateCache";
-	private static final String  USER_ACTION_FORMAT  = "%-10s %-20s %-40s %-30s %s";
+	private static final String  USER_ACTION_FORMAT  = "%-10s %-25s %-35s %-30s %s";
 	private static final Pattern USER_ACTION_PATTERN = Pattern.compile("^https?://[^/]+/(.*)/([^/!.]*)(!([^.]+))?.*$");
 	private static final int     ACTION_GROUP_INDEX  = 2;
 	private static final int     CONTEXT_GROUP_INDEX = 1;

@@ -659,7 +659,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 
 				if (parameters != null) {
 					// Remove obvious passwords from query string
-					parameters = PASSWORD_PATTERN.matcher(parameters).replaceAll("$1=????????");
+					parameters = PASSWORD_PATTERN.matcher(parameters).replaceAll("$1=______");
 				} else {
 					parameters = "";
 				}

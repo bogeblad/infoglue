@@ -31,8 +31,10 @@ import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.databeans.InfoglueTool;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LabelController;
+import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
+import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.exception.SystemException;
@@ -86,9 +88,10 @@ public class DefaultToolsProvider implements ToolsProvider
 				if(repositoryVO != null)
 				{
 					SiteNodeVO siteNodeVO = SiteNodeController.getController().getRootSiteNodeVO(repositoryVO.getId());
+					LanguageVO languageVO = LanguageController.getController().getLanguageVOWithCode(locale.getLanguage());
 					if(siteNodeVO != null)
 					{
-						tools.add(new InfoglueTool("CalendarTool", "ViewSiteNode.action?siteNodeId=" + siteNodeVO.getId(), "", LabelController.getController(locale).getLocalizedString(locale, "tool.common.calendarTool.name"), "A place to manage your calendars", "calendareditor", ""));
+						tools.add(new InfoglueTool("CalendarTool", "ViewSiteNode.action?siteNodeId=" + siteNodeVO.getId() + "&languageId=" + languageVO.getLanguageId(), "", LabelController.getController(locale).getLocalizedString(locale, "tool.common.calendarTool.name"), "A place to manage your calendars", "calendareditor", ""));
 					}
 				}
 			} 

@@ -496,7 +496,7 @@ public class BasicURLComposer extends URLComposer
 		if (createUnDecoratedUrlWithURI)
 		{
 			url = getUndecoratedUrl(db, infoGluePrincipal, siteNodeId, languageId, includeLanguageId, contentId, applicationContext, deliveryContext, enableNiceURI, useDNSNameInUrls, operatingMode, isDecorated, context);
-			System.out.println("Even more end:" + url);
+			
 		}
         else
         {
@@ -534,14 +534,14 @@ public class BasicURLComposer extends URLComposer
         		logger.info("unprotectedProtocolPort:" + unprotectedProtocolPort);
         		logger.info("protectedProtocolPort:" + protectedProtocolPort);
 			}
-        	System.out.println("makeAccessBasedProtocolAdjustmentsIntoProtected:" + makeAccessBasedProtocolAdjustmentsIntoProtected);
+        	
 			if(makeAccessBasedProtocolAdjustmentsIntoProtected)
 				url = url.replaceFirst(unprotectedProtocolName + "://", protectedProtocolName + "://").replaceFirst(unprotectedProtocolPort, protectedProtocolPort);
 			else
 				url = url.replaceFirst(protectedProtocolName + "://", unprotectedProtocolName + "://").replaceFirst(protectedProtocolPort, unprotectedProtocolPort);
 			logger.info("Adjusted url:" + url);
         }
-        System.out.println("Super END:" + url);
+        
         return url;
     }
 	

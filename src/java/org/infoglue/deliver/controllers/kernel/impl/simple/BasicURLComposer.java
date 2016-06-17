@@ -40,6 +40,8 @@ import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
+import org.infoglue.cms.exception.Bug;
+import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -375,7 +377,7 @@ public class BasicURLComposer extends URLComposer
 	}
 	public String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId, String applicationContext, DeliveryContext deliveryContext, Boolean enableNiceURI, Boolean useDNSNameInUrls, String operatingMode, boolean isDecorated, String context) throws SystemException, Exception
     {
-
+		
     	String url = null;
 
 		if (infoGluePrincipal == null)
@@ -487,411 +489,33 @@ public class BasicURLComposer extends URLComposer
 		logger.debug("URL is decorated: " + isDecoratedUrl);
 		logger.debug("isDecorated was: " + isDecorated);
 
-		if (enableNiceURI && (!isDecoratedUrl && !deliveryContext.getDisableNiceUri()) && !isDecorated)
+		
+		boolean createUnDecoratedUrlWithURI = enableNiceURI && (!isDecoratedUrl && !deliveryContext.getDisableNiceUri()) && !isDecorated;
+
+
+		if (createUnDecoratedUrlWithURI)
 		{
-			logger.info("The url should not be decorated and displayed as uri");
-			SiteNodeVO siteNode = SiteNodeController.getController().getSmallSiteNodeVOWithId(siteNodeId, db);
-			if(siteNode == null)
-			{
-				logger.warn("composePageUrl was called with siteNodeId which does not exist:" + siteNodeId + " from the page with key: " + deliveryContext.getPageKey());
-				return "";
-			}
-			String enableNiceURIForLanguage = CmsPropertyHandler.getEnableNiceURIForLanguage();
-
-			SiteNodeVO currentSiteNode = SiteNodeController.getController().getSmallSiteNodeVOWithId(deliveryContext.getSiteNodeId(), db);
-
-			if(!siteNode.getRepositoryId().equals(currentSiteNode.getRepositoryId()) || operatingMode != null)
-			{
-				logger.info("The target url is not in this repository or operating mode is set");
-				RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNode.getRepositoryId(), db);
-				String dnsName = repositoryVO.getDnsName();
-				logger.info("dnsName:" + dnsName + " for siteNode " + siteNode.getName());
-
-				//    		    String operatingMode = CmsPropertyHandler.getOperatingMode();
-				String keyword = "";
-				if (operatingMode.equalsIgnoreCase("0"))
-				{
-					keyword = "working=";
-				}
-				else if (operatingMode.equalsIgnoreCase("2"))
-				{
-					keyword = "preview=";
-				}
-				if (operatingMode.equalsIgnoreCase("3"))
-				{
-					keyword = "live=";
-				}
-
-				String repositoryPath = null;
-				if (!operatingMode.equals("3"))
-				{
-					int workingPathStartIndex = dnsName.indexOf("workingPath=");
-					if(workingPathStartIndex != -1)
-					{
-						int workingPathEndIndex = dnsName.indexOf(",", workingPathStartIndex);
-						if(workingPathEndIndex > -1)
-							repositoryPath = dnsName.substring(workingPathStartIndex + 12, workingPathEndIndex);
-						else
-							repositoryPath = dnsName.substring(workingPathStartIndex + 12);
-					}
-				}
-
-				if(repositoryPath == null)
-				{
-					int pathStartIndex = dnsName.indexOf("path=");
-					if(pathStartIndex != -1)
-					{
-						int pathEndIndex = dnsName.indexOf(",", pathStartIndex);
-						if(pathEndIndex > -1)
-							repositoryPath = dnsName.substring(pathStartIndex + 5, pathEndIndex);
-						else
-							repositoryPath = dnsName.substring(pathStartIndex + 5);
-					}
-				}
-
-				if(logger.isInfoEnabled())
-				{
-					logger.info("repositoryPath in constructing new url:" + repositoryPath);
-					logger.info("dnsName:" + dnsName);
-					logger.info("repositoryPath:" + repositoryPath);
-				}
-
-				if(dnsName != null)
-				{
-					int startIndex = dnsName.indexOf(keyword);
-					if(startIndex != -1)
-					{
-						int endIndex = dnsName.indexOf(",", startIndex);
-						if(endIndex > -1)
-							dnsName = dnsName.substring(startIndex, endIndex);
-						else
-							dnsName = dnsName.substring(startIndex);
-
-						dnsName = dnsName.split("=")[1];
-					}
-					else
-					{
-						int endIndex = dnsName.indexOf(",");
-						if(endIndex > -1)
-							dnsName = dnsName.substring(0, endIndex);
-						else
-							dnsName = dnsName.substring(0);
-					}
-				}
-
-				if(logger.isInfoEnabled())
-				{
-					logger.info("A4:" + dnsName);
-				}
-				if(schema != null && schema.equalsIgnoreCase("https"))
-				{
-					dnsName = dnsName.replaceFirst(unprotectedProtocolName + "://", protectedProtocolName + "://").replaceFirst(unprotectedProtocolPort, protectedProtocolPort);
-				}
-				if(logger.isInfoEnabled())
-				{
-					logger.info("A42:" + dnsName);
-				}
-
-				if(repositoryPath != null)
-				{
-					if(applicationContext.startsWith("/"))
-						applicationContext = dnsName + applicationContext + "/" + repositoryPath;
-					else
-						applicationContext = dnsName + "/" + (applicationContext.equals("") ? "" : applicationContext + "/") + repositoryPath;
-				}
-				else
-				{
-					
-					if(applicationContext.startsWith("/"))
-						applicationContext = dnsName + applicationContext;
-					else
-						applicationContext = dnsName + "/" + applicationContext;
-				}
-
-				if(logger.isInfoEnabled())
-				{
-					logger.info("A5:" + applicationContext);
-				}
-
-			}
-			else
-			{
-				RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNode.getRepositoryId(), db);
-				String dnsName = repositoryVO.getDnsName();
-
-				String repositoryPath = null;
-				if (!operatingMode.equals("3"))
-    	    	{
-    		    	int workingPathStartIndex = dnsName.indexOf("workingPath=");
-    		    	if(workingPathStartIndex != -1)
-    		    	{
-    		    		int workingPathEndIndex = dnsName.indexOf(",", workingPathStartIndex);
-    		    		if(workingPathEndIndex > -1)
-        		    		repositoryPath = dnsName.substring(workingPathStartIndex + 12, workingPathEndIndex);
-    		    		else
-    		    			repositoryPath = dnsName.substring(workingPathStartIndex + 12);
-    		    	}
-    	    	}
-
-    	    	if(repositoryPath == null)
-    	    	{
-        	    	int pathStartIndex = dnsName.indexOf("path=");
-        	    	if(pathStartIndex != -1)
-        	    	{
-    		    		int pathEndIndex = dnsName.indexOf(",", pathStartIndex);
-    		    		if(pathEndIndex > -1)
-        		    		repositoryPath = dnsName.substring(pathStartIndex + 5, pathEndIndex);
-    		    		else
-    		    			repositoryPath = dnsName.substring(pathStartIndex + 5);
-        	    	}
-    	    	}
-
-				logger.info("repositoryPath in constructing new url:" + repositoryPath);
-
-				if(repositoryPath != null)
-				{
-					applicationContext = applicationContext + "/" + repositoryPath;
-				}
-			}
-
-			StringBuilder sb = new StringBuilder(256);
-
-			if ((deliveryContext.getUseFullUrl() || makeAccessBasedProtocolAdjustments) && applicationContext.indexOf("://") == -1)
-			{
-				String originalUrl;
-				if (request == null)
-				{
-					logger.info("Could not derive full base URL since we got no request. Getting value from DNS names instead.");
-					RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNode.getRepositoryId(), db);
-					originalUrl = getHost(repositoryVO.getDnsName(), operatingMode);
-				}
-				else
-				{
-					originalUrl = request.getRequestURL().toString();
-				}
-				if (originalUrl != null)
-				{
-					String base = originalUrl;
-					int indexOfProtocol = base.indexOf("://");
-					if (indexOfProtocol > -1)
-					{
-						indexOfProtocol += 3;
-					}
-					else
-					{
-						indexOfProtocol = 0;
-					}
-					int indexFirstSlash = originalUrl.indexOf("/", indexOfProtocol);
-					if (indexFirstSlash > -1)
-					{
-						base = originalUrl.substring(0, indexFirstSlash);
-					}
-					sb.append(base);
-				}
-			}
-
-			sb.append(applicationContext);
-
-			try
-			{
-				String navigationPath = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getPageNavigationPath(db, infoGluePrincipal, siteNodeId, languageId, contentId, deliveryContext);
-				if(navigationPath != null && navigationPath.startsWith("/") && sb.toString().endsWith("/"))
-					sb.append(navigationPath.substring(1));
-				else
-					sb.append(navigationPath);
-
-				if(sb.toString().endsWith(applicationContext) && !sb.toString().endsWith("/"))
-				{
-					sb.append("/");
-				}
-
-				boolean addedContent = false;
-	            
-	            if(contentId != null && contentId.intValue() != -1)
-	            {
-	            	if(!CmsPropertyHandler.getNiceURIDisableNiceURIForContent().equals("true"))
-	            	{
-		            	String navigationTitle = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, contentId, languageId, "NavigationTitle", siteNodeId, true, deliveryContext, infoGluePrincipal, false, false);
-		            	if(navigationTitle == null || navigationTitle.equals(""))
-		            		navigationTitle = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, contentId, languageId, "Title", siteNodeId, true, deliveryContext, infoGluePrincipal, false, false);
-		            	if(navigationTitle != null && !navigationTitle.equals(""))
-		            	{
-			            	navigationTitle = new VisualFormatter().replaceNiceURINonAsciiWithSpecifiedChars(navigationTitle, CmsPropertyHandler.getNiceURIDefaultReplacementCharacterForContent());
-			            	sb.append("/" + navigationTitle + ".cid").append(String.valueOf(contentId));
-			                addedContent = true;
-						}
-		            	else
-		            	{
-		            
-		            	
-		    	            if(contentId != null && contentId.intValue() != -1)
-		    	            {
-		    	                sb.append("?contentId=").append(String.valueOf(contentId));
-		    	                addedContent = true;
-							}
-						}
-	            	}
-	            	else
-	            	{
-	    	            if(contentId != null && contentId.intValue() != -1)
-	    	            {
-	    	                sb.append("?contentId=").append(String.valueOf(contentId));
-	    	                addedContent = true;
-						}
-					}
-	            }
-	            
-	            if(!enableNiceURIForLanguage.equalsIgnoreCase("true") && includeLanguageId)
-	            {
-		            if (languageId != null && languageId.intValue() != -1 && deliveryContext.getLanguageId().intValue() != languageId.intValue())
-		            {
-		                if(addedContent)
-		                    sb.append(getRequestArgumentDelimiter());
-		                else
-		                    sb.append("?");
-		                    
-		                sb.append("languageId=").append(String.valueOf(languageId));
-		            }
-	            }
-	            
-	            url = (!sb.toString().equals("") ? sb.toString() : "/");
-	        } 
-	        catch (Exception e) 
-			{
-	            logger.warn("Error generating url:" + e.getMessage());
-	        }
-        }
+			url = getUndecoratedUrl(db, infoGluePrincipal, siteNodeId, languageId, includeLanguageId, contentId, applicationContext, deliveryContext, enableNiceURI, useDNSNameInUrls, operatingMode, isDecorated, context);
+			System.out.println("Even more end:" + url);
+		}
         else
-        {           
-
+        {
+        	/*
+        	 * Creating a decorated
+        	 * */
             if(useDNSNameInUrls)
             {
-	    		if(siteNodeId == null)
-	    			siteNodeId = new Integer(-1);
-	
-	    		if(languageId == null)
-	    			languageId = new Integer(-1);
-	
-	    		if(contentId == null)
-	    			contentId = new Integer(-1);
-	
-	            String arguments = "siteNodeId=" + siteNodeId + getRequestArgumentDelimiter() + "languageId=" + languageId + getRequestArgumentDelimiter() + "contentId=" + contentId;
-
-	            //SiteNode siteNode = SiteNodeController.getSiteNodeWithId(siteNodeId, db, true);
-	            SiteNodeVO siteNode = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
-	    		String dnsName = CmsPropertyHandler.getWebServerAddress();
-	    		if(siteNode != null)
-	    		{
-	    			RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNode.getRepositoryId(), db);
-		    		if(siteNode != null && repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
-		    			dnsName = repositoryVO.getDnsName();
-	    		}
-
-//	        	String operatingMode = CmsPropertyHandler.getOperatingMode();
-				String keyword = "";
-				if(operatingMode.equalsIgnoreCase("0"))
-				{
-					keyword = "working=";
-				}
-				else if(operatingMode.equalsIgnoreCase("2"))
-				{
-					keyword = "preview=";
-				}
-				if(operatingMode.equalsIgnoreCase("3"))
-				{
-					keyword = "live=";
-				}
-			    
-			    if(dnsName != null)
-			    {
-	    		    int startIndex = dnsName.indexOf(keyword);
-	    		    if(startIndex != -1)
-	    		    {
-	    		        int endIndex = dnsName.indexOf(",", startIndex);
-	        		    if(endIndex > -1)
-	    		            dnsName = dnsName.substring(startIndex, endIndex);
-	    		        else
-	    		            dnsName = dnsName.substring(startIndex);
-	    		        
-	    		        dnsName = dnsName.split("=")[1];
-	    		    }
-	    		    else
-	    		    {
-	    		        int endIndex = dnsName.indexOf(",");
-	    		        if(endIndex > -1)
-	    		            dnsName = dnsName.substring(0, endIndex);
-	    		        else
-	    		            dnsName = dnsName.substring(0);
-	    		        
-	    		    }
-				}
-			    String applicationBaseAction = CmsPropertyHandler.getApplicationBaseAction();
-			    if (isDecorated) {
-			    	applicationBaseAction = CmsPropertyHandler.getComponentRendererAction();
-			    }
-			    if (applicationBaseAction.startsWith("/")) {
-			    	url = dnsName + context + applicationBaseAction + "?" + arguments;
-			    } else {
-			    	url = dnsName + context + "/" + applicationBaseAction + "?" + arguments;
-			    }
-				
-				
-				if ((isDecoratedUrl || isDecorated) && !operatingMode.equalsIgnoreCase("3"))
-				{
-					String componentRendererUrl = CmsPropertyHandler.getComponentRendererUrl();
-					if(!componentRendererUrl.endsWith("/")) {
-						componentRendererUrl += "/";
-					}
-					url = dnsName + componentRendererUrl + CmsPropertyHandler.getComponentRendererAction() + "?" + arguments;
-				}
-
-				if(request != null && request.getScheme().equalsIgnoreCase("https"))
-				{
-					url = url.replaceFirst(unprotectedProtocolName + "://", protectedProtocolName + "://").replaceFirst(unprotectedProtocolPort, protectedProtocolPort);
-				}
+            	
+            	url = getDecoratedUrlWithDNS(url, siteNodeId, languageId, contentId, isDecorated, operatingMode, isDecoratedUrl, context, db);
+        		if(request != null && request.getScheme().equalsIgnoreCase("https"))
+        		{
+        			url = url.replaceFirst(unprotectedProtocolName + "://", protectedProtocolName + "://").replaceFirst(unprotectedProtocolPort, protectedProtocolPort);
+        		}
 			}
 			else
 			{
-				StringBuilder sb = new StringBuilder(256);
-				if(deliveryContext.getUseFullUrl() || makeAccessBasedProtocolAdjustments)
-				{
-					if (request == null)
-					{
-						logger.warn("Cannot derive full base URL since there is no request.");
-					}
-					else
-					{
-						String originalUrl = request.getRequestURL().toString();
-						int indexOfProtocol = originalUrl.indexOf("://");
-						int indexFirstSlash = originalUrl.indexOf("/", indexOfProtocol + 3);
-						String base = originalUrl.substring(0, indexFirstSlash);
-						sb.append(base);
-					}
-				}
-
-                String servletContext = CmsPropertyHandler.getServletContext();
-
-                if(siteNodeId == null)
-	    			siteNodeId = new Integer(-1);
-
-	    		if(languageId == null)
-	    			languageId = new Integer(-1);
-
-	    		if(contentId == null)
-	    			contentId = new Integer(-1);
-
-	            String arguments = "siteNodeId=" + siteNodeId + getRequestArgumentDelimiter() + "languageId=" + languageId + getRequestArgumentDelimiter() + "contentId=" + contentId;
-
-				if (isDecoratedUrl || isDecorated)
-				{
-					sb.append(servletContext + "/" + CmsPropertyHandler.getComponentRendererAction() + "?" + arguments);
-				}
-				else
-				{
-					sb.append(servletContext + "/" + CmsPropertyHandler.getApplicationBaseAction() + "?" + arguments);
-				}
-			
-				url = sb.toString();
+				
+				url = getDecoratedUrlWithoutDNS(url, siteNodeId, languageId, contentId, isDecorated, isDecoratedUrl, makeAccessBasedProtocolAdjustments, deliveryContext);
             }
         }
         
@@ -910,15 +534,443 @@ public class BasicURLComposer extends URLComposer
         		logger.info("unprotectedProtocolPort:" + unprotectedProtocolPort);
         		logger.info("protectedProtocolPort:" + protectedProtocolPort);
 			}
+        	System.out.println("makeAccessBasedProtocolAdjustmentsIntoProtected:" + makeAccessBasedProtocolAdjustmentsIntoProtected);
 			if(makeAccessBasedProtocolAdjustmentsIntoProtected)
 				url = url.replaceFirst(unprotectedProtocolName + "://", protectedProtocolName + "://").replaceFirst(unprotectedProtocolPort, protectedProtocolPort);
 			else
 				url = url.replaceFirst(protectedProtocolName + "://", unprotectedProtocolName + "://").replaceFirst(protectedProtocolPort, unprotectedProtocolPort);
 			logger.info("Adjusted url:" + url);
         }
-        
+        System.out.println("Super END:" + url);
         return url;
     }
+	
+	private String getUndecoratedUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId, String applicationContext, DeliveryContext deliveryContext, Boolean enableNiceURI, Boolean useDNSNameInUrls, String operatingMode, boolean isDecorated, String context) throws Bug, Exception {
+		logger.info("The url should not be decorated and displayed as uri");
+		SiteNodeVO siteNode = SiteNodeController.getController().getSmallSiteNodeVOWithId(siteNodeId, db);
+		String url = "";
+		HttpServletRequest request = deliveryContext.getHttpServletRequest();
+		
+		boolean makeAccessBasedProtocolAdjustments = false;
+		
+		if(siteNode == null)
+		{
+			logger.warn("composePageUrl was called with siteNodeId which does not exist:" + siteNodeId + " from the page with key: " + deliveryContext.getPageKey());
+			return "";
+		}
+		String enableNiceURIForLanguage = CmsPropertyHandler.getEnableNiceURIForLanguage();
+
+		SiteNodeVO currentSiteNode = SiteNodeController.getController().getSmallSiteNodeVOWithId(deliveryContext.getSiteNodeId(), db);
+
+		if(!siteNode.getRepositoryId().equals(currentSiteNode.getRepositoryId()))
+		{
+			url = getUrlForForeignSiteNode(url ,siteNode, db, infoGluePrincipal, siteNodeId, languageId, includeLanguageId, contentId, applicationContext, deliveryContext, enableNiceURI, useDNSNameInUrls, operatingMode, isDecorated, context);
+
+		}
+		else
+		{
+			RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNode.getRepositoryId(), db);
+			String dnsName = repositoryVO.getDnsName();
+
+			String repositoryPath = null;
+			if (!operatingMode.equals("3"))
+	    	{
+		    	int workingPathStartIndex = dnsName.indexOf("workingPath=");
+		    	if(workingPathStartIndex != -1)
+		    	{
+		    		int workingPathEndIndex = dnsName.indexOf(",", workingPathStartIndex);
+		    		if(workingPathEndIndex > -1)
+    		    		repositoryPath = dnsName.substring(workingPathStartIndex + 12, workingPathEndIndex);
+		    		else
+		    			repositoryPath = dnsName.substring(workingPathStartIndex + 12);
+		    	}
+	    	}
+			
+	    	if(repositoryPath == null)
+	    	{
+    	    	int pathStartIndex = dnsName.indexOf("path=");
+    	    	if(pathStartIndex != -1)
+    	    	{
+		    		int pathEndIndex = dnsName.indexOf(",", pathStartIndex);
+		    		if(pathEndIndex > -1)
+    		    		repositoryPath = dnsName.substring(pathStartIndex + 5, pathEndIndex);
+		    		else
+		    			repositoryPath = dnsName.substring(pathStartIndex + 5);
+    	    	}
+	    	}
+
+			logger.info("repositoryPath in constructing new url:" + repositoryPath);
+		
+			if(repositoryPath != null)
+			{
+				applicationContext = applicationContext + "/" + repositoryPath;
+			}
+			
+			url = applicationContext;
+		}
+
+		StringBuilder sb = new StringBuilder(256);
+
+		if ((deliveryContext.getUseFullUrl() || makeAccessBasedProtocolAdjustments) && applicationContext.indexOf("://") == -1)
+		{
+			String originalUrl;
+			if (request == null)
+			{
+				logger.info("Could not derive full base URL since we got no request. Getting value from DNS names instead.");
+				RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNode.getRepositoryId(), db);
+				originalUrl = getHost(repositoryVO.getDnsName(), operatingMode);
+			}
+			else
+			{
+				originalUrl = request.getRequestURL().toString();
+			}
+			if (originalUrl != null)
+			{
+				String base = originalUrl;
+				int indexOfProtocol = base.indexOf("://");
+				if (indexOfProtocol > -1)
+				{
+					indexOfProtocol += 3;
+				}
+				else
+				{
+					indexOfProtocol = 0;
+				}
+				int indexFirstSlash = originalUrl.indexOf("/", indexOfProtocol);
+				if (indexFirstSlash > -1)
+				{
+					base = originalUrl.substring(0, indexFirstSlash);
+				}
+				sb.append(base);
+			}
+		}
+
+		sb.append(applicationContext);
+
+		try
+		{
+			String navigationPath = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getPageNavigationPath(db, infoGluePrincipal, siteNodeId, languageId, contentId, deliveryContext);
+			if(navigationPath != null && navigationPath.startsWith("/") && sb.toString().endsWith("/"))
+				sb.append(navigationPath.substring(1));
+			else
+				sb.append(navigationPath);
+
+			if(sb.toString().endsWith(applicationContext) && !sb.toString().endsWith("/"))
+			{
+				sb.append("/");
+			}
+
+			boolean addedContent = false;
+            
+            if(contentId != null && contentId.intValue() != -1)
+            {
+            	if(!CmsPropertyHandler.getNiceURIDisableNiceURIForContent().equals("true"))
+            	{
+	            	String navigationTitle = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, contentId, languageId, "NavigationTitle", siteNodeId, true, deliveryContext, infoGluePrincipal, false, false);
+	            	if(navigationTitle == null || navigationTitle.equals(""))
+	            		navigationTitle = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, contentId, languageId, "Title", siteNodeId, true, deliveryContext, infoGluePrincipal, false, false);
+	            	if(navigationTitle != null && !navigationTitle.equals(""))
+	            	{
+		            	navigationTitle = new VisualFormatter().replaceNiceURINonAsciiWithSpecifiedChars(navigationTitle, CmsPropertyHandler.getNiceURIDefaultReplacementCharacterForContent());
+		            	sb.append("/" + navigationTitle + ".cid").append(String.valueOf(contentId));
+		                addedContent = true;
+					}
+	            	else
+	            	{
+	            
+	            	
+	    	            if(contentId != null && contentId.intValue() != -1)
+	    	            {
+	    	                sb.append("?contentId=").append(String.valueOf(contentId));
+	    	                addedContent = true;
+						}
+					}
+            	}
+            	else
+            	{
+    	            if(contentId != null && contentId.intValue() != -1)
+    	            {
+    	                sb.append("?contentId=").append(String.valueOf(contentId));
+    	                addedContent = true;
+					}
+				}
+            }
+          
+            if(!enableNiceURIForLanguage.equalsIgnoreCase("true") && includeLanguageId)
+            {
+	            if (languageId != null && languageId.intValue() != -1 && deliveryContext.getLanguageId().intValue() != languageId.intValue())
+	            {
+	                if(addedContent)
+	                    sb.append(getRequestArgumentDelimiter());
+	                else
+	                    sb.append("?");
+	                    
+	                sb.append("languageId=").append(String.valueOf(languageId));
+	            }
+            }
+    
+    		
+    		//url = (!sb.toString().equals("") ? sb.toString() : "/");
+    		
+            return url;
+        } 
+        catch (Exception e) 
+		{
+        	
+            logger.warn("Error generating url:" + e.getMessage());
+            return null;
+        }
+	}
+	
+	private String getUrlForForeignSiteNode(String url, SiteNodeVO siteNode, Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId, String applicationContext, DeliveryContext deliveryContext, Boolean enableNiceURI, Boolean useDNSNameInUrls, String operatingMode, boolean isDecorated, String context) throws SystemException, Exception{
+		logger.info("The target url is not in this repository or operating mode is set");
+		RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNode.getRepositoryId(), db);
+		String dnsName = repositoryVO.getDnsName();
+		logger.info("dnsName:" + dnsName + " for siteNode " + siteNode.getName());
+		HttpServletRequest request = deliveryContext.getHttpServletRequest();
+		String schema = request == null ? null : request.getScheme();
+		
+		String unprotectedProtocolName = CmsPropertyHandler.getUnprotectedProtocolName();
+		String unprotectedProtocolPort = CmsPropertyHandler.getUnprotectedProtocolPort();
+		String protectedProtocolName = CmsPropertyHandler.getProtectedProtocolName();
+		String protectedProtocolPort = CmsPropertyHandler.getProtectedProtocolPort();
+		//    		    String operatingMode = CmsPropertyHandler.getOperatingMode();
+		String keyword = "";
+		
+		if (operatingMode.equalsIgnoreCase("0"))
+		{
+			keyword = "working=";
+		}
+		else if (operatingMode.equalsIgnoreCase("2"))
+		{
+			keyword = "preview=";
+		}
+		if (operatingMode.equalsIgnoreCase("3"))
+		{
+			keyword = "live=";
+		}
+
+		String repositoryPath = null;
+		if (!operatingMode.equals("3"))
+		{
+			int workingPathStartIndex = dnsName.indexOf("workingPath=");
+			if(workingPathStartIndex != -1)
+			{
+				int workingPathEndIndex = dnsName.indexOf(",", workingPathStartIndex);
+				if(workingPathEndIndex > -1)
+					repositoryPath = dnsName.substring(workingPathStartIndex + 12, workingPathEndIndex);
+				else
+					repositoryPath = dnsName.substring(workingPathStartIndex + 12);
+			}
+		}
+
+		if(repositoryPath == null)
+		{
+			int pathStartIndex = dnsName.indexOf("path=");
+			if(pathStartIndex != -1)
+			{
+				int pathEndIndex = dnsName.indexOf(",", pathStartIndex);
+				if(pathEndIndex > -1)
+					repositoryPath = dnsName.substring(pathStartIndex + 5, pathEndIndex);
+				else
+					repositoryPath = dnsName.substring(pathStartIndex + 5);
+			}
+		}
+
+		if(logger.isInfoEnabled())
+		{
+			logger.info("repositoryPath in constructing new url:" + repositoryPath);
+			logger.info("dnsName:" + dnsName);
+			logger.info("repositoryPath:" + repositoryPath);
+		}
+
+		if(dnsName != null)
+		{
+			int startIndex = dnsName.indexOf(keyword);
+			if(startIndex != -1)
+			{
+				int endIndex = dnsName.indexOf(",", startIndex);
+				if(endIndex > -1)
+					dnsName = dnsName.substring(startIndex, endIndex);
+				else
+					dnsName = dnsName.substring(startIndex);
+
+				dnsName = dnsName.split("=")[1];
+			}
+			else
+			{
+				int endIndex = dnsName.indexOf(",");
+				if(endIndex > -1)
+					dnsName = dnsName.substring(0, endIndex);
+				else
+					dnsName = dnsName.substring(0);
+			}
+		}
+
+		if(logger.isInfoEnabled())
+		{
+			logger.info("A4:" + dnsName);
+		}
+		if(schema != null && schema.equalsIgnoreCase("https"))
+		{
+			dnsName = dnsName.replaceFirst(unprotectedProtocolName + "://", protectedProtocolName + "://").replaceFirst(unprotectedProtocolPort, protectedProtocolPort);
+		}
+		if(logger.isInfoEnabled())
+		{
+			logger.info("A42:" + dnsName);
+		}
+
+
+		if(repositoryPath != null)
+		{
+			if(applicationContext.startsWith("/"))
+				applicationContext = dnsName + applicationContext + "/" + repositoryPath;
+			else
+				applicationContext = dnsName + "/" + (applicationContext.equals("") ? "" : applicationContext + "/") + repositoryPath;
+		}
+		else
+		{
+			
+			if(applicationContext.startsWith("/"))
+				applicationContext = dnsName + applicationContext;
+			else
+				applicationContext = dnsName + "/" + applicationContext;
+		}
+
+		if(logger.isInfoEnabled())
+		{
+			logger.info("A5:" + applicationContext);
+		}
+		
+		return applicationContext;
+	}
+	
+	private String getDecoratedUrlWithoutDNS(String url, Integer siteNodeId, Integer languageId, Integer contentId, boolean isDecorated, boolean isDecoratedUrl, boolean makeAccessBasedProtocolAdjustments, DeliveryContext deliveryContext) {
+		StringBuilder sb = new StringBuilder(256);
+		HttpServletRequest request = deliveryContext.getHttpServletRequest();
+		if(deliveryContext.getUseFullUrl() || makeAccessBasedProtocolAdjustments)
+		{
+			if (request == null)
+			{
+				logger.warn("Cannot derive full base URL since there is no request.");
+			}
+			else
+			{
+				String originalUrl = request.getRequestURL().toString();
+				int indexOfProtocol = originalUrl.indexOf("://");
+				int indexFirstSlash = originalUrl.indexOf("/", indexOfProtocol + 3);
+				String base = originalUrl.substring(0, indexFirstSlash);
+				sb.append(base);
+			}
+		}
+
+        String servletContext = CmsPropertyHandler.getServletContext();
+
+        if(siteNodeId == null)
+			siteNodeId = new Integer(-1);
+
+		if(languageId == null)
+			languageId = new Integer(-1);
+
+		if(contentId == null)
+			contentId = new Integer(-1);
+
+        String arguments = "siteNodeId=" + siteNodeId + getRequestArgumentDelimiter() + "languageId=" + languageId + getRequestArgumentDelimiter() + "contentId=" + contentId;
+
+		if (isDecoratedUrl || isDecorated)
+		{
+			sb.append(servletContext + "/" + CmsPropertyHandler.getComponentRendererAction() + "?" + arguments);
+		}
+		else
+		{
+			sb.append(servletContext + "/" + CmsPropertyHandler.getApplicationBaseAction() + "?" + arguments);
+		}
+		
+		return sb.toString();
+	}
+	
+	
+	private String getDecoratedUrlWithDNS(String url, Integer siteNodeId, Integer languageId, Integer contentId, boolean isDecorated, String operatingMode, boolean isDecoratedUrl, String context, Database db) throws Bug, Exception {
+		if(siteNodeId == null)
+			siteNodeId = new Integer(-1);
+
+		if(languageId == null)
+			languageId = new Integer(-1);
+
+		if(contentId == null)
+			contentId = new Integer(-1);
+
+        String arguments = "siteNodeId=" + siteNodeId + getRequestArgumentDelimiter() + "languageId=" + languageId + getRequestArgumentDelimiter() + "contentId=" + contentId;
+
+        SiteNodeVO siteNode = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
+		String dnsName = CmsPropertyHandler.getWebServerAddress();
+		if(siteNode != null)
+		{
+			RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNode.getRepositoryId(), db);
+    		if(siteNode != null && repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
+    			dnsName = repositoryVO.getDnsName();
+		}
+
+		String keyword = "";
+		if(operatingMode.equalsIgnoreCase("0"))
+		{
+			keyword = "working=";
+		}
+		else if(operatingMode.equalsIgnoreCase("2"))
+		{
+			keyword = "preview=";
+		}
+		if(operatingMode.equalsIgnoreCase("3"))
+		{
+			keyword = "live=";
+		}
+	    
+	    if(dnsName != null)
+	    {
+		    int startIndex = dnsName.indexOf(keyword);
+		    if(startIndex != -1)
+		    {
+		        int endIndex = dnsName.indexOf(",", startIndex);
+    		    if(endIndex > -1)
+		            dnsName = dnsName.substring(startIndex, endIndex);
+		        else
+		            dnsName = dnsName.substring(startIndex);
+		        
+		        dnsName = dnsName.split("=")[1];
+		    }
+		    else
+		    {
+		        int endIndex = dnsName.indexOf(",");
+		        if(endIndex > -1)
+		            dnsName = dnsName.substring(0, endIndex);
+		        else
+		            dnsName = dnsName.substring(0);
+		        
+		    }
+		}
+	    String applicationBaseAction = CmsPropertyHandler.getApplicationBaseAction();
+
+		if (!operatingMode.equalsIgnoreCase("3"))
+		{
+			String componentRendererUrl = CmsPropertyHandler.getComponentRendererUrl();
+			if(!componentRendererUrl.endsWith("/")) {
+				componentRendererUrl += "/";
+			}
+			url = dnsName + componentRendererUrl + CmsPropertyHandler.getComponentRendererAction() + "?" + arguments;
+
+		} else {
+			
+			if (applicationBaseAction.startsWith("/")) {
+		    	url = dnsName + context + applicationBaseAction + "?" + arguments;
+		    } else {
+		    	url = dnsName + context + "/" + applicationBaseAction + "?" + arguments;
+		    }
+	
+		}
+		
+		return url;
+
+	}
     public String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId, String applicationContext, DeliveryContext deliveryContext) throws SystemException, Exception
     {
     	String url = null;

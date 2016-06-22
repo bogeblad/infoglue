@@ -46,7 +46,7 @@
 				<group>infoglueCleanJobs</group>
 				<job-name>CleanOldVersions</job-name>
 				<job-group>infoglueJobs</job-group>
-				<cron-expression>0 0 1 * * ?</cron-expression>
+				<cron-expression>0 5 * * * ?</cron-expression>
 				<!--<cron-expression>0/30 * * ? * *</cron-expression>-->
 			</cron>
 		</trigger>

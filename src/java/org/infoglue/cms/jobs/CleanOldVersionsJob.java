@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
+import org.infoglue.cms.applications.databeans.ProcessBean;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
@@ -58,6 +59,10 @@ public class CleanOldVersionsJob implements Job
     	logger.info("* Purpose is to keep the database size at a minimum 				 *");
     	logger.info("*********************************************************************");
     	
+		ProcessBean processBean = (ProcessBean)context.get("processBean");
+		if(processBean != null)
+			processBean.updateProcess("Starting version cleanup job");
+
     	if(running.compareAndSet(false, true))
     	{
 	    	try
@@ -108,6 +113,9 @@ public class CleanOldVersionsJob implements Job
 							if(deleteVersions && cleanedContentVersions > 0)
 								anyDeletions = true;
 							
+							if(processBean != null)
+								processBean.updateLastDescription("cleanedContentVersions: " + cleanedContentVersions);
+
 							logger.info("cleanedContentVersions:" + cleanedContentVersions);
 							if(totalCleanedContentVersions.get(ctdVO.getName()) != null)
 								totalCleanedContentVersions.put(ctdVO.getName(), totalCleanedContentVersions.get(ctdVO.getName()) + cleanedContentVersions);
@@ -158,5 +166,6 @@ public class CleanOldVersionsJob implements Job
 		{
 			System.out.println("CleanOldVersionsJob allready running... skipping.");
 		}
+    	
     }	    
 }

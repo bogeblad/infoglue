@@ -1806,6 +1806,11 @@
 		<view name="inputRestoreAssetArchive">/cms/managementtool/viewArchiveToolInputRestoreAssetArchive.vm</view>
 		<view name="successRestoreArchive">/cms/managementtool/viewSuccessRestoreArchive.vm</view>
 		<view name="success">/cms/managementtool/viewArchiveToolResult.vm</view>
+
+		<view name="successShowProcesses">/cms/managementtool/viewArchiveToolProcesses.vm</view>
+		<view name="successRedirectToProcesses">org.infoglue.cms.applications.common.actions.ExtendedRedirect.action?url=ViewArchiveTool!showProcesses.action</view>
+		<view name="successShowProcessesAsJSON">/cms/managementtool/viewExportRepositoryProcessesAsJson.vm</view>
+		
 		<view name="error">/cms/managementtool/error.vm</view>
 	</action>
 

@@ -27,6 +27,7 @@ import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -723,7 +724,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 	private String getParametersString()
 	{
 		@SuppressWarnings("unchecked")
-		Map<String, String> parameterMap = getRequest().getParameterMap();
+		Map<String, String[]> parameterMap = getRequest().getParameterMap();
 		List<String> params = new LinkedList<String>();
 		
 		if(parameterMap.size() > 0)
@@ -739,7 +740,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 				}
 				else
 				{
-					value = parameterMap.get(key);
+					value = join(",", Arrays.asList(parameterMap.get(key)));
 				}
 				
 				if (value.length() > MAX_PARAMETER_VALUE_LENGTH)

@@ -28,10 +28,12 @@ import java.net.URLEncoder;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -80,7 +82,8 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 	private static final int     ACTION_GROUP_INDEX  = 2;
 	private static final int     CONTEXT_GROUP_INDEX = 1;
 	private static final int     METHOD_GROUP_INDEX  = 4;
-	private static final Pattern PASSWORD_PATTERN = Pattern.compile("(?i)(password)=([^&]+)");
+	private static final Pattern PASSWORD_PATTERN = Pattern.compile("(?i)(password)");
+	private static final int MAX_PARAMETER_VALUE_LENGTH = 50;
 
 
 	private final static Logger logger = Logger.getLogger(WebworkAbstractAction.class.getName());
@@ -654,15 +657,8 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 				String context = "unknown context";
 				
 				String userName = getOptionalUserName();
-				String url = getRequest().getRequestURL().toString();
-				String parameters = request.getQueryString();
-
-				if (parameters != null) {
-					// Remove obvious passwords from query string
-					parameters = PASSWORD_PATTERN.matcher(parameters).replaceAll("$1=______");
-				} else {
-					parameters = "";
-				}
+				String url = request.getRequestURL().toString();
+				String parameters = getParametersString();
 				
 				if (url != null)
 				{				
@@ -700,6 +696,65 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 		{
 			logger.error("Error thrown in log method", t); 
 		}
+	}
+
+	static public String join(String delimiter, List<String> list)
+	{
+	   StringBuilder sb = new StringBuilder();
+	   boolean first = true;
+	   
+	   for (String elem : list)
+	   {
+	      if (first) 
+	      {
+	         first = false;
+	      }
+	      else
+	      {
+	         sb.append(delimiter);
+	      }
+	      
+	      sb.append(elem);
+	   }
+	   return sb.toString();
+	}
+	
+	
+	private String getParametersString()
+	{
+		@SuppressWarnings("unchecked")
+		Map<String, String> parameterMap = getRequest().getParameterMap();
+		List<String> params = new LinkedList<String>();
+		
+		if(parameterMap.size() > 0)
+		{
+			Set<String> keys = (Set<String>) parameterMap.keySet();
+			
+			for(String key : keys)
+			{
+				String value;
+				if (PASSWORD_PATTERN.matcher(key).matches()) 
+				{
+					value = "______";
+				}
+				else
+				{
+					value = parameterMap.get(key);
+				}
+				
+				if (value.length() > MAX_PARAMETER_VALUE_LENGTH)
+				{
+					value = value.substring(0, MAX_PARAMETER_VALUE_LENGTH);
+				}
+				
+				String param = key + "=" + value;
+				
+				params.add(param);
+			}
+			
+		}
+		
+		return join("&", params);
 	}
 
 	private String getOptionalUserName() {

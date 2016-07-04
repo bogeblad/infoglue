@@ -83,7 +83,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 	private static final int     ACTION_GROUP_INDEX  = 2;
 	private static final int     CONTEXT_GROUP_INDEX = 1;
 	private static final int     METHOD_GROUP_INDEX  = 4;
-	private static final Pattern PASSWORD_PATTERN = Pattern.compile("(?i)(password)");
+	private static final Pattern PASSWORD_PATTERN = Pattern.compile("(?i).*(password).*");
 	private static final int MAX_PARAMETER_VALUE_LENGTH = 50;
 
 

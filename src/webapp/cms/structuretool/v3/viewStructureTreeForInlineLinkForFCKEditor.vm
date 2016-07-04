@@ -227,7 +227,9 @@
 		<table cellpadding="0" cellspacing="0" border="0">
 		<tr>
 			<td>
-				<a href="javascript:toggleContentDiv();" class="optionalContent" title="$ui.getString('tool.contenttool.linkDialog.optionalContentHeader')"><p>$ui.getString('tool.contenttool.linkDialog.optionalContentHeader')</p></a>
+				#if($includeContentList)
+					<a href="javascript:toggleContentDiv();" class="optionalContent" title="$ui.getString('tool.contenttool.linkDialog.optionalContentHeader')"><p>$ui.getString('tool.contenttool.linkDialog.optionalContentHeader')</p></a>
+				#end
 			</td>
 		</tr>
 		<tr>
@@ -235,10 +237,12 @@
 		</tr>
 		<tr>
 			<td class="menu" colspan="2">
-				<div id="content" style="display: none;">
-					<iframe frameborder="0" name="listFrameBoundContent" id="listFrameBoundContent" src="ViewContentToolBoundList.action?repositoryId=$!repositoryId&siteNodeId=$!oldSiteNodeId&anchorId=$!oldAnchorId"></iframe>
-					##  ---- IG-3618 deleted code ----
-				</div>
+				#if($includeContentList)
+					<div id="content" style="display: none;">
+						<iframe frameborder="0" name="listFrameBoundContent" id="listFrameBoundContent" src="ViewContentToolBoundList.action?repositoryId=$!repositoryId&siteNodeId=$!oldSiteNodeId&anchorId=$!oldAnchorId"></iframe>
+						##  ---- IG-3618 deleted code ----
+					</div>
+				#end
 			</td>
 		</tr>
 		</table>

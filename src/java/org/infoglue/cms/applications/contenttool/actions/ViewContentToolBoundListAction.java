@@ -23,7 +23,6 @@
 
 package org.infoglue.cms.applications.contenttool.actions;
 
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +42,7 @@ import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
+import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.XMLHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -71,47 +71,63 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 		{
 			try
 			{
-				LanguageVO masterLanguage = LanguageController.getController().getMasterLanguage(this.repositoryId);
-				logger.info("Selected language for sitenode: " + this.selectedLanguage);
-				if (this.selectedLanguage == 0)
+				String[] slotNames = CmsPropertyHandler.getSlotNamesForContentListing().split(","); // komponentplats 2/slot 2
+				String[] contentNames = CmsPropertyHandler.getContentNamesForContentListing().split(","); // Article
+				String[] attributeNames = CmsPropertyHandler.getTitleAttributesForContentListing().split(","); // Title
+				logger.info("Number of slot names in application settings: " + slotNames.length);
+				// If there are stored application settings for listing of contents on site nodes, try to list matching content for this site node
+				// Only do this if there is at least one slot name with length > 0 
+				if( (slotNames != null && slotNames.length > 0 && slotNames[0].length() > 0) && 
+						(contentNames != null && contentNames.length > 0) && 
+						(attributeNames != null && attributeNames.length > 0) && 
+						(contentNames.length >= slotNames.length && attributeNames.length >= slotNames.length) )
 				{
-					List<LanguageVO> enabledLangs = SiteNodeController.getController().getEnabledLanguageVOListForSiteNode(this.siteNodeId);
-					this.selectedLanguage = enabledLangs.get(0).getLanguageId();
-					logger.info("Re-set selected language for sitenode (first enabled language): " + this.selectedLanguage);
-				}
-				SiteNodeVersionVO latestSiteNodeVersion = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getLatestActiveSiteNodeVersionVO(this.siteNodeId);
-				
-				if(latestSiteNodeVersion != null) {
-					String slotName = "komponentplats 2/slot 2";
-					String contentName = "Article";
-					String componentXML = null;
-					SiteNodeVO siteNode = SiteNodeController.getController().getSiteNodeVOWithId(this.siteNodeId);
-					ContentVersionVO metaInfo = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNode.getMetaInfoContentId(), masterLanguage.getLanguageId());
-					componentXML = ContentVersionController.getContentVersionController().getAttributeValue(metaInfo.getId(), "ComponentStructure", false);
-					logger.info("componentXML:" + componentXML);
-					
-					Document document = XMLHelper.readDocumentFromByteArray(componentXML.getBytes("UTF-8"));
-					String xpath = "//component[@name='" + slotName + "']/properties/property[@name='" + contentName + "']/binding";
-					NodeList components = org.apache.xpath.XPathAPI.selectNodeList(document.getDocumentElement(), xpath);
-					int NrOfComponents = components.getLength();
-					logger.info("Number of sitenode contents: " + NrOfComponents);
-					
-					if (components.getLength() > 0)
+					contentList = new HashMap<Integer, String>();
+					String contentName;
+					LanguageVO masterLanguage = LanguageController.getController().getMasterLanguage(this.repositoryId);
+					logger.info("Selected language for sitenode: " + this.selectedLanguage);
+					if (this.selectedLanguage == 0)
 					{
-						String articleTitle;
-						contentList = new HashMap<Integer, String>();
-						for (int i=0; i<NrOfComponents; i++)
+						List<LanguageVO> enabledLangs = SiteNodeController.getController().getEnabledLanguageVOListForSiteNode(this.siteNodeId);
+						this.selectedLanguage = enabledLangs.get(0).getLanguageId();
+						logger.info("Re-set selected language for sitenode (first enabled language): " + this.selectedLanguage);
+					}
+					SiteNodeVersionVO latestSiteNodeVersion = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getLatestActiveSiteNodeVersionVO(this.siteNodeId);
+					
+					if(latestSiteNodeVersion != null) {
+						// Get the XML data for this site node
+						String componentXML = null;
+						SiteNodeVO siteNode = SiteNodeController.getController().getSiteNodeVOWithId(this.siteNodeId);
+						ContentVersionVO metaInfo = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNode.getMetaInfoContentId(), masterLanguage.getLanguageId());
+						componentXML = ContentVersionController.getContentVersionController().getAttributeValue(metaInfo.getId(), "ComponentStructure", false);
+						logger.info("componentXML:" + componentXML);
+						
+						Document document = XMLHelper.readDocumentFromByteArray(componentXML.getBytes("UTF-8"));
+						// Loop over the application settings and get the content we are interested in from the XML for each set of 3 settings
+						for(int j = 0; j < slotNames.length; j++)
 						{
-							articleTitle = "";
-							Element elem = (Element) components.item(i);
-							int contentId = Integer.parseInt(elem.getAttribute("entityId"));
-							articleTitle = ContentController.getContentController().getContentAttribute(contentId, selectedLanguage, "Title");
-							ContentVO contentObj = ContentController.getContentController().getContentVOWithId(contentId);
-							if(contentObj != null)
+							String xpath = "//component[@name='" + slotNames[j].trim() + "']/properties/property[@name='" + contentNames[j].trim() + "']/binding";
+							NodeList components = org.apache.xpath.XPathAPI.selectNodeList(document.getDocumentElement(), xpath);
+							int NrOfComponents = components.getLength();
+							logger.info("Number of sitenode contents: " + NrOfComponents + " (slot name: " + slotNames[j] + " - content name: " + contentNames[j] +")");
+							
+							if (components.getLength() > 0)
 							{
-								contentList.put(contentId, contentObj.getName() + (articleTitle.length() > 0 ? " (" + articleTitle + ")" : ""));
+								for (int i=0; i<NrOfComponents; i++)
+								{
+									contentName = "";
+									Element elem = (Element) components.item(i);
+									int contentId = Integer.parseInt(elem.getAttribute("entityId"));
+									contentName = ContentController.getContentController().getContentAttribute(contentId, selectedLanguage, attributeNames[j].trim());
+									ContentVO contentObj = ContentController.getContentController().getContentVOWithId(contentId);
+									if(contentObj != null)
+									{
+										contentList.put(contentId, contentObj.getName() + (contentName.length() > 0 ? " (" + contentName + ")" : ""));
+									}
+								}
 							}
 						}
+							
 					}
 				}
 			}
@@ -185,21 +201,6 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
         this.allowedContentTypeIds = allowedContentTypeIds;
     }
     
-    public String getAllowedContentTypeIdsAsUrlEncodedString() throws Exception
-    {
-        StringBuffer sb = new StringBuffer();
-        
-        for(int i=0; i<allowedContentTypeIds.length; i++)
-        {
-            if(i > 0)
-                sb.append("&");
-            
-            sb.append("allowedContentTypeIds=" + URLEncoder.encode(allowedContentTypeIds[i], "UTF-8"));
-        }
-
-        return sb.toString();
-    }
-
 	public Integer getSiteNodeId() {
 		return siteNodeId;
 	}

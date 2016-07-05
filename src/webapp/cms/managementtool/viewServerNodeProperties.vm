@@ -398,6 +398,9 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.autoShowApprovalButtons" "autoShowApprovalButtons" "$this.getPropertyValue('autoShowApprovalButtons')" "$!cmsPH.autoShowApprovalButtons")
 
 				#editPropertyFieldCSS("ServerNode.property.metaInfoAttributesToShowInCreatePageDialog" "metaInfoAttributesToShowInCreatePageDialog" "$this.getPropertyValue('metaInfoAttributesToShowInCreatePageDialog')" "51" "$!serverNodeId" "$!cmsPH.metaInfoAttributesToShowInCreatePageDialog")
+				#editPropertyFieldCSS("ServerNode.property.slotNamesForContentListing" "slotNamesForContentListing" "$this.getPropertyValue('slotNamesForContentListing')" "51" "$!serverNodeId" "$!cmsPH.slotNamesForContentListing")
+				#editPropertyFieldCSS("ServerNode.property.contentNamesForContentListing" "contentNamesForContentListing" "$this.getPropertyValue('contentNamesForContentListing')" "51" "$!serverNodeId" "$!cmsPH.contentNamesForContentListing")
+				#editPropertyFieldCSS("ServerNode.property.titleAttributesForContentListing" "titleAttributesForContentListing" "$this.getPropertyValue('titleAttributesForContentListing')" "51" "$!serverNodeId" "$!cmsPH.titleAttributesForContentListing")
 
 				#set($option1 = ["default", "Default"])
 				#set($option2 = ["v3TabbedLanguages", "Tabbed language editor"])

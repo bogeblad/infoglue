@@ -455,7 +455,6 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	this.initialize(getContentVersionId(), getContentId(), this.languageId);
         
 	    return "successForFCKEditor";
@@ -463,7 +462,6 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
     public String doV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doV3");
     	doExecute();
     	
     	if(CmsPropertyHandler.getContentVersionEditorFlavour().equalsIgnoreCase("v3TabbedLanguages"))
@@ -474,7 +472,6 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
 	public String doStandalone() throws Exception
 	{
-		logUserActionInfo(getClass(), "doStandalone");
 	    this.initialize(getContentVersionId(), getContentId(), this.languageId);
 
     	if(CmsPropertyHandler.getContentVersionEditorFlavour().equalsIgnoreCase("v3TabbedLanguages"))
@@ -485,14 +482,12 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
 	public String doBackground() throws Exception
 	{
-		logUserActionInfo(getClass(), "doBackground");
 		this.initialize(getContentVersionId(), getContentId(), this.languageId);
 		return "background";
 	}
 	
 	public String doViewAssetsDialog() throws Exception
 	{
-		logUserActionInfo(getClass(), "doViewAssetsDialog");
 	    if(this.oldContentId != null)
 		{
 	        this.contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), getOldContentId());
@@ -510,7 +505,6 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
 	public String doViewAssetsDialogForFCKEditor() throws Exception
 	{
-		logUserActionInfo(getClass(), "doViewAssetsDialogForFCKEditor");
 	    if(this.oldContentId != null)
 		{
 	        this.contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), getOldContentId());
@@ -528,7 +522,6 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
 	public String doViewAssetsDialogForFCKEditorV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doViewAssetsDialogForFCKEditorV3");
 	    if(this.oldContentId != null)
 		{
 	        this.contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), getOldContentId());
@@ -569,7 +562,6 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
 	public String doViewAssetBrowserForFCKEditorV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doViewAssetBrowserForFCKEditorV3");
 	    if(this.oldContentId != null)
 		{
 	        this.contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), getOldContentId());
@@ -593,7 +585,6 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
 	public String doViewSmallAssetBrowserForFCKEditorV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doViewSmallAssetBrowserForFCKEditorV3");
 	    if(this.oldContentId != null)
 		{
 	        this.contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), getOldContentId());
@@ -611,7 +602,6 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
 	public String doViewAssetsForComponentBinding() throws Exception
 	{
-		logUserActionInfo(getClass(), "doViewAssetsForComponentBinding");
 	    if(this.oldContentId != null)
 		{
 	        this.contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), getOldContentId());
@@ -629,7 +619,6 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
 	public String doViewAssetBrowserForComponentBindingV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doViewAssetBrowserForComponentBindingV3");
 	    if(this.assignedContentId != null)
 		{
 	        this.contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), this.assignedContentId);
@@ -658,7 +647,6 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
 	public String doViewAssetBrowserForMultipleComponentBindingV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doViewAssetBrowserForMultipleComponentBindingV3");
 	    if(this.assignedContentId != null)
 		{
 	        this.contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), this.assignedContentId);
@@ -671,7 +659,6 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
 	public String doViewAssets() throws Exception
 	{
-		logUserActionInfo(getClass(), "doViewAssets");
 		if(getContentId() != null && getContentId().intValue() != -1)
 		{
 		    this.initialize(getContentVersionId(), getContentId(), this.languageId, true, false);
@@ -684,7 +671,6 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
 	public String doViewAssetsForFCKEditor() throws Exception
 	{
-		logUserActionInfo(getClass(), "doViewAssetsForFCKEditor");
 		if(getContentId() != null && getContentId().intValue() != -1)
 		{
 		    this.initialize(getContentVersionId(), getContentId(), this.languageId, true, false);
@@ -710,7 +696,6 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
 	public String doViewAssetsForFCKEditorV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doViewAssetsForFCKEditorV3");
 		if(getContentId() != null && getContentId().intValue() != -1)
 		{
 		    this.initialize(getContentVersionId(), getContentId(), this.languageId, true, false);
@@ -736,7 +721,6 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
 	public String doViewAssetsForFCKEditorSmallV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doViewAssetsForFCKEditorSmallV3");
 		doViewAssetsForFCKEditorV3();
 		
 		return "viewAssetsForFCKEditorSmallV3";
@@ -744,7 +728,6 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
 	public String doViewContentAssetsForFCKEditorV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doViewContentAssetsForFCKEditorV3");
 		logger.info("considerLatest:" + considerLatest);
 
 		
@@ -799,28 +782,24 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
     public String doPreview() throws Exception
     {
-		logUserActionInfo(getClass(), "doPreview");
         this.initialize(getContentVersionId(), getContentId(), this.languageId);
         return "preview";
     }
 
     public String doAsXML() throws Exception
     {
-		logUserActionInfo(getClass(), "doAsXML");
         this.initialize(getContentVersionId(), getContentId(), this.languageId);
         return "asXML";
     }
 
     public String doAsXMLV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doAsXMLV3");
         this.initialize(getContentVersionId(), getContentId(), this.languageId);
         return "asXMLV3";
     }
 
     public String doDeleteDigitalAsset() throws Exception
     {
-		logUserActionInfo(getClass(), "doDeleteDigitalAsset");
     	Integer oldContentVersionId = this.getContentVersionId();
     	ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().deleteDigitalAssetRelation(getContentVersionId(), this.digitalAssetId, this.getInfoGluePrincipal());
     	this.setContentVersionId(contentVersionVO.getId());
@@ -850,7 +829,6 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
     
     public String doDeleteDigitalAssetStandalone() throws Exception
     {
-		logUserActionInfo(getClass(), "doDeleteDigitalAssetStandalone");
     	Integer oldContentVersionId = this.getContentVersionId();
     	ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().deleteDigitalAssetRelation(getContentVersionId(), this.digitalAssetId, this.getInfoGluePrincipal());
     	this.setContentVersionId(contentVersionVO.getId());

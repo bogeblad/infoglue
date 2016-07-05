@@ -111,7 +111,6 @@ public class ViewAssetListAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         if(getContentId() != null && getContentId().intValue() != -1)
             this.initialize(getContentId(), this.languageId);
         
@@ -120,7 +119,6 @@ public class ViewAssetListAction extends InfoGlueAbstractAction
     
     public String doBrowser() throws Exception
     {
-		logUserActionInfo(getClass(), "doBrowser");
         this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), true);
         
         /*

@@ -43,7 +43,6 @@ public class UpdateWorkflowDefinitionAction extends InfoGlueAbstractAction
 	
 	public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	ceb.add(this.workflowDefinitionVO.validate());
     	ceb.throwIfNotEmpty();		
 
@@ -54,7 +53,6 @@ public class UpdateWorkflowDefinitionAction extends InfoGlueAbstractAction
 	
 	public String doSaveAndExit() throws Exception
     {
-		logUserActionInfo(getClass(), "doSaveAndExit");
     	doExecute();
     	
 		return "saveAndExit";

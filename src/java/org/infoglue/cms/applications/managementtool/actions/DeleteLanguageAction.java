@@ -51,7 +51,6 @@ public class DeleteLanguageAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		this.languageVO.setLanguageId(this.getLanguageId());
 		LanguageController.getController().delete(languageVO);
 		

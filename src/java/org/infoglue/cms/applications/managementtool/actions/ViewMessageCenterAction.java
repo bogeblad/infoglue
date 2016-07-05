@@ -59,7 +59,6 @@ public class ViewMessageCenterAction extends InfoGlueAbstractAction
 	
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	if(getInfoGluePrincipal() == null)
     		return ERROR;
 
@@ -68,7 +67,6 @@ public class ViewMessageCenterAction extends InfoGlueAbstractAction
 
     public String doStandaloneChat() throws Exception
     {
-		logUserActionInfo(getClass(), "doStandaloneChat");
     	if(getInfoGluePrincipal() == null)
     		return ERROR;
 
@@ -77,7 +75,6 @@ public class ViewMessageCenterAction extends InfoGlueAbstractAction
 
     public String doGetMessages() throws Exception
     {
-		logUserActionInfo(getClass(), "doGetMessages");
     	if(getInfoGluePrincipal() == null)
     		return ERROR;
     	
@@ -131,7 +128,6 @@ public class ViewMessageCenterAction extends InfoGlueAbstractAction
 
     public String doSendMessage() throws Exception
     {
-		logUserActionInfo(getClass(), "doSendMessage");
     	if(getInfoGluePrincipal() == null)
     		return ERROR;
     	

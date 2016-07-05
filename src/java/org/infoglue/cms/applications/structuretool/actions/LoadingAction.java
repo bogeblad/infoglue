@@ -37,19 +37,16 @@ public class LoadingAction extends ViewCMSAbstractToolAction
 
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         return "success";
     }
 
     public String doExecuteStructure() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecuteStructure");
         return "successStructure";
     }
 
     public String doExecuteContent() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecuteContent");
         return "successContent";
     }
 

@@ -76,7 +76,6 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
          
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	HttpServletResponse response = this.getResponse();
     	
         if(digitalAssetId != null && !ServerNodeController.getController().getIsIPAllowed(getRequest()))

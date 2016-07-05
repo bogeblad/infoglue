@@ -46,7 +46,6 @@ public abstract class ViewCMSAbstractToolAction extends InfoGlueAbstractAction
 
     public String doV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doV3");
         return "successV3";
     }
 

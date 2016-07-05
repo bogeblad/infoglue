@@ -59,7 +59,6 @@ public class ViewLabelsAction extends InfoGlueAbstractAction
 	
 	public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	this.translations = LabelController.getController(getLocale()).getAvailableTranslations();
     	
     	return "success";
@@ -67,13 +66,11 @@ public class ViewLabelsAction extends InfoGlueAbstractAction
 
     public String doInput() throws Exception
     {
-		logUserActionInfo(getClass(), "doInput");
     	return "input";
     }
 
     public String doAdd() throws Exception
     {
-		logUserActionInfo(getClass(), "doAdd");
 		File file = FileUploadHelper.getUploadedFile(ActionContext.getContext().getMultiPartRequest());
 		if(file == null || !file.exists())
 			throw new SystemException("The file upload must have gone bad as no file reached this action.");
@@ -114,7 +111,6 @@ public class ViewLabelsAction extends InfoGlueAbstractAction
 
     public String doDelete() throws Exception
     {
-		logUserActionInfo(getClass(), "doDelete");
 		File file = new File(CmsPropertyHandler.getContextRootPath() + File.separator + "translations" + File.separator + translation);
 		
 		// Check existance of presentation string and remove old ones

@@ -1,3 +1,4 @@
+
 /* ===============================================================================
  *
  * Part of the InfoGlue Content Management Platform (www.infoglue.org)
@@ -23,8 +24,12 @@
 
 package org.infoglue.cms.applications.structuretool.actions;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.TreeViewAbstractAction;
+import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
+import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.treeservice.ss.SiteNodeNodeSupplier;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -44,10 +49,10 @@ public class ViewStructureToolMenuHtmlAction extends TreeViewAbstractAction
 	private BaseNode rootNode = null; 
     private Integer sortLanguageId;
     private boolean binding = false;
-    
+    private List<LanguageVO> availableLanguages;
+    private Integer siteNodeLanguageId;
 	public String doBindingView() throws Exception
 	{
-		logUserActionInfo(getClass(), "doBindingView");
 		setBinding(true);
 		
 		super.doExecute();
@@ -57,9 +62,11 @@ public class ViewStructureToolMenuHtmlAction extends TreeViewAbstractAction
 
 	public String doBindingViewV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doBindingViewV3");
+		if (repositoryId != null) {
+			this.availableLanguages = LanguageController.getController().getLanguageVOList(this.repositoryId);
+		}
 		setBinding(true);
-
+		
 		super.doExecute();
         
 		return "bindingViewV3";
@@ -68,7 +75,6 @@ public class ViewStructureToolMenuHtmlAction extends TreeViewAbstractAction
 	@Override
 	public String doExecute() throws Exception
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		setBinding(false);
 
 		return super.doExecute();
@@ -77,7 +83,6 @@ public class ViewStructureToolMenuHtmlAction extends TreeViewAbstractAction
 	@Override
 	public String doV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doV3");
 		setBinding(false);
 
 		return super.doV3();       
@@ -148,7 +153,7 @@ public class ViewStructureToolMenuHtmlAction extends TreeViewAbstractAction
 	{
 		this.select = select;
 	}
-
+	
 	public String getTreeMode() {
 		return treeMode;
 	}
@@ -161,6 +166,17 @@ public class ViewStructureToolMenuHtmlAction extends TreeViewAbstractAction
 	public void setRootNode(BaseNode rootNode) {
 		this.rootNode = rootNode;
 	}
+    /**
+	 * @return the siteNodeLanguageId
+	 */
+	public Integer getSiteNodeLanguageId() 
+	{
+		return siteNodeLanguageId;
+	}
+	public void setSiteNodeLanguageId(Integer siteNodeLanguageId) 
+	{
+		this.siteNodeLanguageId = siteNodeLanguageId;
+	}
 	
     /**
 	 * @return the deliverLanguageId
@@ -169,7 +185,13 @@ public class ViewStructureToolMenuHtmlAction extends TreeViewAbstractAction
 	{
 		return sortLanguageId;
 	}
-
+    /**
+	 * @return the deliverLanguageId
+	 */
+	public List<LanguageVO> getAvailableLanguages() 
+	{
+		return availableLanguages;
+	}
 	/**
 	 * @param deliverLanguageId the deliverLanguageId to set
 	 */

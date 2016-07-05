@@ -42,7 +42,6 @@ public class DeleteInterceptionPointAction extends InfoGlueAbstractAction
 		
 	protected String doExecute() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		InterceptionPointController.getController().delete(interceptionPointVO);
 		return "success";
 	}

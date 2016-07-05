@@ -97,7 +97,6 @@ public class ImageEditorAction extends InfoGlueAbstractAction
 	
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	if(clearHistory)
     	{
     		logger.info("Cleaning up all session images");
@@ -132,7 +131,6 @@ public class ImageEditorAction extends InfoGlueAbstractAction
 	
     public String doUndo() throws Exception
     {
-		logUserActionInfo(getClass(), "doUndo");
     	this.digitalAssetVO = DigitalAssetController.getDigitalAssetVOWithId(this.digitalAssetId);
     	this.contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(this.contentVersionId);
         this.contentTypeDefinitionVO = ContentController.getContentController().getContentTypeDefinition(contentVersionVO.getContentId());
@@ -148,7 +146,6 @@ public class ImageEditorAction extends InfoGlueAbstractAction
 
     public String doResize() throws Exception
     {
-		logUserActionInfo(getClass(), "doResize");
     	ceb.throwIfNotEmpty();
 
     	this.digitalAssetVO = DigitalAssetController.getDigitalAssetVOWithId(this.digitalAssetId);
@@ -186,7 +183,6 @@ public class ImageEditorAction extends InfoGlueAbstractAction
 
     public String doRotate() throws Exception
     {
-		logUserActionInfo(getClass(), "doRotate");
     	ceb.throwIfNotEmpty();
 
     	this.digitalAssetVO = DigitalAssetController.getDigitalAssetVOWithId(this.digitalAssetId);
@@ -244,7 +240,6 @@ public class ImageEditorAction extends InfoGlueAbstractAction
     
     public String doCrop() throws Exception
     {
-		logUserActionInfo(getClass(), "doCrop");
     	ceb.throwIfNotEmpty();
 
     	this.digitalAssetVO = DigitalAssetController.getDigitalAssetVOWithId(this.digitalAssetId);
@@ -274,7 +269,6 @@ public class ImageEditorAction extends InfoGlueAbstractAction
 
     public String doSave() throws Exception
     {
-		logUserActionInfo(getClass(), "doSave");
     	ceb.throwIfNotEmpty();
 
     	this.digitalAssetVO = DigitalAssetController.getDigitalAssetVOWithId(this.digitalAssetId);
@@ -419,7 +413,6 @@ public class ImageEditorAction extends InfoGlueAbstractAction
     
     public String doSaveAs() throws Exception
     {
-		logUserActionInfo(getClass(), "doSaveAs");
     	ceb.throwIfNotEmpty();
 
     	this.digitalAssetVO = DigitalAssetController.getDigitalAssetVOWithId(this.digitalAssetId);

@@ -40,7 +40,6 @@ public class ViewStructureToolAction extends ViewCMSAbstractToolAction
 	
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         return "success";
     }
 

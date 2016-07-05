@@ -84,7 +84,6 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 	
 	public String doRepositories() throws Exception
     {
-		logUserActionInfo(getClass(), "doRepositories");
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(getInfoGluePrincipal(), false);
         
 		return "successRepositories";
@@ -92,7 +91,6 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 
 	public String doSiteNodeIdPath() throws Exception
     {
-		logUserActionInfo(getClass(), "doSiteNodeIdPath");
 		String siteNodeIdPath = SiteNodeController.getController().getSiteNodeIdPath(new Integer(getRequest().getParameter("siteNodeId")));
 		this.getResponse().setContentType("text/plain");
 		this.getResponse().getWriter().print("" + siteNodeIdPath);
@@ -102,7 +100,6 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 
 	public String doSiteNodePath() throws Exception
     {
-		logUserActionInfo(getClass(), "doSiteNodePath");
 		String siteNodePath = SiteNodeController.getController().getSiteNodePath(new Integer(getRequest().getParameter("siteNodeId")), false, true);
 		this.getResponse().setContentType("text/plain");
 		this.getResponse().getWriter().print("" + siteNodePath);
@@ -112,7 +109,6 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 
 	public String doContentIdPath() throws Exception
     {
-		logUserActionInfo(getClass(), "doContentIdPath");
 		String contentIdPath = ContentController.getContentController().getContentIdPath(new Integer(getRequest().getParameter("contentId")));
 		this.getResponse().setContentType("text/plain");
 		this.getResponse().getWriter().print("" + contentIdPath);
@@ -122,7 +118,6 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 
 	public String doContentPath() throws Exception
     {
-		logUserActionInfo(getClass(), "doContentPath");
 		String contentPath = ContentController.getContentController().getContentPath(new Integer(getRequest().getParameter("contentId")), false, true);
 		this.getResponse().setContentType("text/plain");
 		this.getResponse().getWriter().print("" + contentPath);
@@ -132,7 +127,6 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 
 	public String doRepositoryName() throws Exception
     {
-		logUserActionInfo(getClass(), "doRepositoryName");
 		String repositoryName = "";
 		Integer repositoryId = null;
 		if(getRequest().getParameter("repositoryId") != null && getRequest().getParameter("repositoryId").equals(""))
@@ -160,7 +154,6 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 
 	public String doReferenceCount() throws Exception
     {
-		logUserActionInfo(getClass(), "doReferenceCount");
 		List<Integer> uniqueList = new ArrayList<Integer>();
 		List<ReferenceBean> refList = RegistryController.getController().getReferencingObjectsForContent(new Integer(getRequest().getParameter("contentId")), 100, true, true);
 		if(getRequest().getParameter("isMetaInfoContent") != null && getRequest().getParameter("isMetaInfoContent").equals("true"))
@@ -193,7 +186,6 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 
 	public String doAssetCount() throws Exception
     {
-		logUserActionInfo(getClass(), "doAssetCount");
 		List digitalAssets = DigitalAssetController.getDigitalAssetVOList(new Integer(getRequest().getParameter("contentVersionId")));
 
 		this.getResponse().setContentType("text/plain");
@@ -204,7 +196,6 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 
 	public String doAssetWeight() throws Exception
     {
-		logUserActionInfo(getClass(), "doAssetWeight");
 		VisualFormatter formatter = new VisualFormatter();
 
 		Map<Integer,Long> sizes = ContentController.getContentController().getContentWeight(new Integer(getRequest().getParameter("contentId")), true);
@@ -229,7 +220,6 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 	
 	public String doHeaviestContents() throws Exception
     {
-		logUserActionInfo(getClass(), "doHeaviestContents");
 		VisualFormatter formatter = new VisualFormatter();
 
 		Map<Integer,Long> sizes = ContentController.getContentController().getHeaviestContents();
@@ -254,7 +244,6 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 	
 	public String doContentsWithDeletableAssets() throws Exception
     {
-		logUserActionInfo(getClass(), "doContentsWithDeletableAssets");
 		VisualFormatter formatter = new VisualFormatter();
 
 		Map<Integer,Long> sizes = ContentController.getContentController().getContentsWithDeletableAssets();
@@ -279,7 +268,6 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 	
 	public String doCategoryCount() throws Exception
     {
-		logUserActionInfo(getClass(), "doCategoryCount");
 		List categories = ContentCategoryController.getController().findByContentVersion(new Integer(getRequest().getParameter("contentVersionId")));
 		
 		this.getResponse().setContentType("text/plain");
@@ -290,7 +278,6 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 
 	public String doUserSearch() throws Exception
     {
-		logUserActionInfo(getClass(), "doUserSearch");
 		//System.out.println(getRequest().getParameter("q"));
 		//System.out.println(getRequest().getParameter("fieldToMatchExact"));
 		List<InfoGluePrincipal> users = LuceneUsersController.getController().getFilteredUsers(0, 100, "userName", "asc", getRequest().getParameter("q"), false);
@@ -326,7 +313,6 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 
 	public String doPublishableNumberOfItems() throws Exception
     {
-		logUserActionInfo(getClass(), "doPublishableNumberOfItems");
 		String approveEntityName = getRequest().getParameter("approveEntityName");
 		logger.info("approveEntityName:" + approveEntityName);
 		String approveEntityId = getRequest().getParameter("approveEntityId");
@@ -489,7 +475,6 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 
 	public String doValidateW3C() throws Exception
     {
-		logUserActionInfo(getClass(), "doValidateW3C");
 		String markup = getRequest().getParameter("markup");
 		
 		if(markup != null && !markup.equals(""))
@@ -511,7 +496,6 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 
 	public String doApprovePublication() throws Exception
 	{
-		logUserActionInfo(getClass(), "doApprovePublication");
 		PublicationVO publicationVO = new PublicationVO();
 		publicationVO.setName("Auto publishing from EOS");
 		publicationVO.setDescription("N/A");
@@ -533,7 +517,6 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 	
 	public String doDenyPublication() throws Exception
 	{
-		logUserActionInfo(getClass(), "doDenyPublication");
 		PublicationVO publicationVO = new PublicationVO();
 		publicationVO.setName("Denied publishing from EOS");
 		publicationVO.setDescription("N/A");
@@ -555,7 +538,6 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 	
 	public String doReplaceNiceURINonAsciiWithSpecifiedChars() throws Exception
 	{
-		logUserActionInfo(getClass(), "doReplaceNiceURINonAsciiWithSpecifiedChars");
 		String text = getRequest().getParameter("text");
 		
 		VisualFormatter formatter = new VisualFormatter();
@@ -569,7 +551,6 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 	
 	public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
 		
         return "success";
     }

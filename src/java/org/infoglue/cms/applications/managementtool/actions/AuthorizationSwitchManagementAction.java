@@ -79,7 +79,6 @@ public class AuthorizationSwitchManagementAction extends InfoGlueAbstractAction
     
     public String doInputUser() throws Exception
     {
-		logUserActionInfo(getClass(), "doInputUser");    	
     	this.users = UserControllerProxy.getController().getAllUsers();
     	this.accessRights = getAccessRightsUser();
     	
@@ -88,7 +87,6 @@ public class AuthorizationSwitchManagementAction extends InfoGlueAbstractAction
 
     public String doInputRole() throws Exception
     {
-		logUserActionInfo(getClass(), "doInputRole");   
     	this.roles = RoleControllerProxy.getController().getAllRoles();
     	this.accessRights = getAccessRightsRole();
     	
@@ -97,7 +95,6 @@ public class AuthorizationSwitchManagementAction extends InfoGlueAbstractAction
 
     public String doInputGroup() throws Exception
     {
-		logUserActionInfo(getClass(), "doInputGroup");
     	this.groups = GroupControllerProxy.getController().getAllGroups();
     	this.accessRights = getAccessRightsGroup();
     	
@@ -106,7 +103,6 @@ public class AuthorizationSwitchManagementAction extends InfoGlueAbstractAction
 
     public String doUpdateUser() throws Exception
     {
-		logUserActionInfo(getClass(), "doUpdateUser");    	
     	if(this.getInfoGluePrincipal().getIsAdministrator())
     		updateAccessRightsUser(userName, newUserName);
     	else
@@ -117,7 +113,6 @@ public class AuthorizationSwitchManagementAction extends InfoGlueAbstractAction
 
     public String doUpdateRole() throws Exception
     {
-		logUserActionInfo(getClass(), "doUpdateRole");    	
     	if(this.getInfoGluePrincipal().getIsAdministrator())
     		updateAccessRightsRole(roleName, newRoleName);
     	else
@@ -128,7 +123,6 @@ public class AuthorizationSwitchManagementAction extends InfoGlueAbstractAction
 
     public String doUpdateGroup() throws Exception
     {
-		logUserActionInfo(getClass(), "doUpdateGroup");    	
     	if(this.getInfoGluePrincipal().getIsAdministrator())
     		updateAccessRightsGroup(groupName, newGroupName);
     	else
@@ -139,7 +133,6 @@ public class AuthorizationSwitchManagementAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");   
     	/*
     	this.invalidUsers = getInvalidAccessRightsUser();
     	this.invalidRoles = getInvalidAccessRightsRole();

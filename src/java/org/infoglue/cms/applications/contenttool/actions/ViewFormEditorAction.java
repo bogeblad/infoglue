@@ -120,14 +120,12 @@ public class ViewFormEditorAction extends InfoGlueAbstractAction //extends ViewC
     
 	public String doExecute() throws Exception
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		this.initialize();
 		return "success";
 	}
             
 	public String doInsertAttribute() throws Exception
 	{
-		logUserActionInfo(getClass(), "doInsertAttribute");
 		this.initialize();
 		String newFormDefinition = ContentTypeDefinitionController.getController().insertContentTypeAttribute(this.formDefinition, this.inputTypeId, new ArrayList());
 		ContentVersionController.getContentVersionController().updateAttributeValue(getContentVersionId(), getContentVersionAttributeName(), newFormDefinition, this.getInfoGluePrincipal());		
@@ -140,7 +138,6 @@ public class ViewFormEditorAction extends InfoGlueAbstractAction //extends ViewC
 	
 	public String doDeleteAttribute() throws Exception
 	{
-		logUserActionInfo(getClass(), "doDeleteAttribute");
 		this.initialize();
 		
 		try
@@ -180,7 +177,6 @@ public class ViewFormEditorAction extends InfoGlueAbstractAction //extends ViewC
 	
 	public String doMoveAttributeUp() throws Exception
 	{
-		logUserActionInfo(getClass(), "doMoveAttributeUp");
 		this.initialize();
 		
 		try
@@ -227,7 +223,6 @@ public class ViewFormEditorAction extends InfoGlueAbstractAction //extends ViewC
 	
 	public String doMoveAttributeDown() throws Exception
 	{
-		logUserActionInfo(getClass(), "doMoveAttributeDown");
 		this.initialize();
 		
 		try
@@ -290,7 +285,6 @@ public class ViewFormEditorAction extends InfoGlueAbstractAction //extends ViewC
 
 	public String doUpdateAttribute() throws Exception
 	{
-		logUserActionInfo(getClass(), "doUpdateAttribute");
 		this.initialize();
 		
 		try
@@ -368,7 +362,6 @@ public class ViewFormEditorAction extends InfoGlueAbstractAction //extends ViewC
 
 	public String doInsertAttributeParameterValue() throws Exception
 	{
-		logUserActionInfo(getClass(), "doInsertAttributeParameterValue");
 		this.initialize();
 		
 		try
@@ -408,7 +401,6 @@ public class ViewFormEditorAction extends InfoGlueAbstractAction //extends ViewC
 
 	public String doDeleteAttributeParameterValue() throws Exception
 	{
-		logUserActionInfo(getClass(), "doDeleteAttributeParameterValue");
 		this.initialize();
 		
 		try
@@ -446,7 +438,6 @@ public class ViewFormEditorAction extends InfoGlueAbstractAction //extends ViewC
 
 	public String doUpdateAttributeParameterValue() throws Exception
 	{
-		logUserActionInfo(getClass(), "doUpdateAttributeParameterValue");
 		this.initialize();
 		
 		try

@@ -65,8 +65,6 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 	@Override
 	public String doExecute() throws Exception
 	{
-		logUserActionInfo(getClass(), "doExecute");
-		
 		if(this.siteNodeId != null && this.siteNodeId > 0)
 		{
 			try

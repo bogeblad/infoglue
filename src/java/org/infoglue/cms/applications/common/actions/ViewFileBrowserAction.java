@@ -53,7 +53,6 @@ public class ViewFileBrowserAction extends InfoGlueAbstractAction
 	
 	public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
 		drives = File.listRoots();
 		
 		file = new File(path);
@@ -63,7 +62,6 @@ public class ViewFileBrowserAction extends InfoGlueAbstractAction
 
 	public String doViewFile() throws Exception
     {
-		logUserActionInfo(getClass(), "doViewFile");
 		try
 		{
 			if(path != null && !path.equals(""))

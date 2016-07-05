@@ -57,7 +57,6 @@ public class ViewSiteNodeHistoryAction extends InfoGlueAbstractAction
 
 	protected String doExecute() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 	    this.siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(this.siteNodeId);
 	    this.siteNodeVersionVOList = SiteNodeVersionController.getController().getSiteNodeVersionVOList(this.siteNodeId);
 

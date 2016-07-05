@@ -167,13 +167,11 @@ public abstract class SimpleXmlServiceAction extends InfoGlueAbstractAction
      */
     public String doLanguage() throws Exception
 	{
-		logUserActionInfo(getClass(), "doLanguage");
         return null;
 	}
     
     public String doApplicationSettings() throws Exception
     {
-		logUserActionInfo(getClass(), "doApplicationSettings");
         Document doc = DocumentHelper.createDocument();
         Element root = doc.addElement("applicationSettings");
         Properties props = CmsPropertyHandler.getProperties();
@@ -205,7 +203,6 @@ public abstract class SimpleXmlServiceAction extends InfoGlueAbstractAction
      */
     public String doContentTypeDefinitions() throws Exception
 	{
-		logUserActionInfo(getClass(), "doContentTypeDefinitions");
     	List contentTypeDefinitions = getContentTypeDefinitions();
         Document doc = DocumentHelper.createDocument();
         Element root = doc.addElement("definitions");
@@ -239,7 +236,6 @@ public abstract class SimpleXmlServiceAction extends InfoGlueAbstractAction
 
     public String doGetChangeNotifications() throws IOException
     {
-		logUserActionInfo(getClass(), "doGetChangeNotifications");
         String id = getRequest().getSession().getId();
         StringWriter buffer = (StringWriter) changeNotificationBuffer.get(id);
         if(buffer==null)
@@ -267,7 +263,6 @@ public abstract class SimpleXmlServiceAction extends InfoGlueAbstractAction
     
     public String doGetChangeNotificationsStream() throws IOException
     {
-		logUserActionInfo(getClass(), "doGetChangeNotificationsStream");
         boolean open = true;
         String remoteId = getRequest().getRemoteAddr() + " / " + getInfoGluePrincipal().getName();
         
@@ -316,7 +311,6 @@ public abstract class SimpleXmlServiceAction extends InfoGlueAbstractAction
      */
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         if (useTemplate) return "success";
         
         Document doc = DocumentHelper.createDocument();

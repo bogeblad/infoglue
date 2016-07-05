@@ -51,7 +51,6 @@ public class DeleteServerNodeAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws ConstraintException, Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 	    this.serverNodeVO.setServerNodeId(this.getServerNodeId());
 		ServerNodeController.getController().delete(this.serverNodeVO, this.getInfoGluePrincipal());
 		return "success";

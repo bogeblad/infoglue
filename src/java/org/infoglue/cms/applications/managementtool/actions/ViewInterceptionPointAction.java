@@ -60,7 +60,6 @@ public class ViewInterceptionPointAction extends InfoGlueAbstractAction
     
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         initialize(interceptionPointId);
 
         return "success";

@@ -147,7 +147,6 @@ public class ConfirmAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		if(this.choice.length() > 0)
 		{
 			Reroute();

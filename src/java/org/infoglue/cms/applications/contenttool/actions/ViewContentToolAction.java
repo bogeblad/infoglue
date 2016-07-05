@@ -41,7 +41,6 @@ public class ViewContentToolAction extends ViewCMSAbstractToolAction
 
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         return "success";
     }
     

@@ -58,7 +58,6 @@ public class ViewSiteNodeTypeDefinitionAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         this.initialize(getSiteNodeTypeDefinitionId());
         return "success";
     }

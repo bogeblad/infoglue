@@ -119,7 +119,6 @@ public class CreateContentWizardAction extends InfoGlueAbstractAction implements
 	 
 	public String doInput() throws Exception
 	{
-		logUserActionInfo(getClass(), "doInput");
 		if(parentContentId == null)
 		{
 			return "stateLocation";
@@ -154,7 +153,6 @@ public class CreateContentWizardAction extends InfoGlueAbstractAction implements
 
 	public String doCreateContent() throws Exception
 	{
-		logUserActionInfo(getClass(), "doCreateContent");
 		this.contentVO.setCreatorName(this.getInfoGluePrincipal().getName());
 
 		ceb = this.contentVO.validate();
@@ -169,7 +167,6 @@ public class CreateContentWizardAction extends InfoGlueAbstractAction implements
 
 	public String doExecute() throws Exception
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		this.contentVO.setCreatorName(this.getInfoGluePrincipal().getName());
 
 		ceb = this.contentVO.validate();

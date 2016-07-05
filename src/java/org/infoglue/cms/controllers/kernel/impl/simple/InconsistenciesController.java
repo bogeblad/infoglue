@@ -84,6 +84,7 @@ public class InconsistenciesController extends BaseController
 			List registryVOList = RegistryController.getController().getRegistryVOList(db);
 			if(registryVOList != null && registryVOList.size() > 0)
 			{
+				logger.debug("registryVOList size was:" + registryVOList.size());
 				Iterator registryVOListIterator = registryVOList.iterator();
 				while(registryVOListIterator.hasNext())
 				{
@@ -93,6 +94,7 @@ public class InconsistenciesController extends BaseController
 						try
 						{
 							ContentVO contentVO = ContentController.getContentController().getContentVOWithId(new Integer(registryVO.getEntityId()), db);
+							logger.debug("RegistryVO entityID:" + registryVO.getEntityId());
 							if(contentVO == null)
 								addContentInconsistency(inconsistencies, registryVO, db);
 								//inconsistencies.add(registryVO);								

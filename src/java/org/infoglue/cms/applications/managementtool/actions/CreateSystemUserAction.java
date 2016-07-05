@@ -73,7 +73,6 @@ public class CreateSystemUserAction extends InfoGlueAbstractAction
 	
 	public String doInput() throws Exception
     {
-		logUserActionInfo(getClass(), "doInput");
 		this.availableRoles 				= RoleControllerProxy.getController().getAvailableRoles(this.getInfoGluePrincipal(), "Role.ManageUsers");
 		this.availableGroups 				= GroupControllerProxy.getController().getAvailableGroups(this.getInfoGluePrincipal(), "Group.ManageUsers");
 		this.contentTypeDefinitionVOList 	= ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList(ContentTypeDefinitionVO.EXTRANET_USER_PROPERTIES);
@@ -83,7 +82,6 @@ public class CreateSystemUserAction extends InfoGlueAbstractAction
 
 	public String doInputV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doInputV3");
 		this.availableRoles 				= RoleControllerProxy.getController().getAvailableRoles(this.getInfoGluePrincipal(), "Role.ManageUsers");
 		this.availableGroups 				= GroupControllerProxy.getController().getAvailableGroups(this.getInfoGluePrincipal(), "Group.ManageUsers");
 		this.contentTypeDefinitionVOList 	= ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList(ContentTypeDefinitionVO.EXTRANET_USER_PROPERTIES);
@@ -93,7 +91,6 @@ public class CreateSystemUserAction extends InfoGlueAbstractAction
 
 	public String doExecute() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		/*	
 		for(int i=40000; i<100000; i++)
 		{
@@ -167,7 +164,6 @@ public class CreateSystemUserAction extends InfoGlueAbstractAction
 
 	public String doV3() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doV3");
 		try
 		{
 			doExecute();
@@ -187,7 +183,6 @@ public class CreateSystemUserAction extends InfoGlueAbstractAction
 
 	public String doSaveAndExitV3() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doSaveAndExitV3");
 		doV3();
 		
 		return "successSaveAndExitV3";

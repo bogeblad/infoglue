@@ -88,7 +88,6 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 	
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), true);
 
 		if(this.repositoryId == null)
@@ -107,7 +106,6 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 
     public String doUseFCKEditor() throws Exception
     {
-		logUserActionInfo(getClass(), "doUseFCKEditor");
         doExecute();
         
 		return "successFCKEditor";					
@@ -115,7 +113,6 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 
     public String doUseFCKEditorV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doUseFCKEditorV3");
         doExecute();
         
 		return "successFCKEditorV3";					

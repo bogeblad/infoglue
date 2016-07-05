@@ -133,7 +133,6 @@ public class SearchContentAction extends InfoGlueAbstractAction
 	
 	public String doExecute() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 	    int maxRows = 100;
 		try
 		{
@@ -191,7 +190,6 @@ public class SearchContentAction extends InfoGlueAbstractAction
 
 	public String doBindingResult() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doBindingResult");
 		Integer[] allowedContentTypeId = new Integer[0];
 		if(allowedContentTypeIds != null && allowedContentTypeIds.length != 0)
 		{
@@ -232,7 +230,6 @@ public class SearchContentAction extends InfoGlueAbstractAction
 
 	public String doInlineAssetResult() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doInlineAssetResult");
 		Integer[] allowedContentTypeId = new Integer[0];
 		if(allowedContentTypeIds != null && allowedContentTypeIds.length != 0)
 		{
@@ -273,7 +270,6 @@ public class SearchContentAction extends InfoGlueAbstractAction
 
 	public String doInlineAssetSearchV3() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doInlineAssetSearchV3");
 		int maxRows = 100;
 		try
 		{
@@ -306,7 +302,6 @@ public class SearchContentAction extends InfoGlueAbstractAction
 
 	public String doLatestInlineAssetsV3() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doLatestInlineAssetsV3");
 		int maxRows = 20;
 		/*
 		try
@@ -346,7 +341,6 @@ public class SearchContentAction extends InfoGlueAbstractAction
 
 	public String doInput() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doInput");
 		if(CmsPropertyHandler.getInternalSearchEngine().equalsIgnoreCase("lucene"))
 		{
 			includeAssets = true;
@@ -368,7 +362,6 @@ public class SearchContentAction extends InfoGlueAbstractAction
 
 	public String doInputBinding() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doInputBinding");
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 	    
 	    return Action.INPUT + "Binding";
@@ -380,7 +373,6 @@ public class SearchContentAction extends InfoGlueAbstractAction
 
 	public String doInputInlineAsset() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doInputInlineAsset");
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 	    
 	    return Action.INPUT + "InlineAsset";
@@ -392,7 +384,6 @@ public class SearchContentAction extends InfoGlueAbstractAction
 
 	public String doInputInlineAssetV3() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doInputInlineAssetV3");
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 	    
 	    return Action.INPUT + "InlineAssetV3";

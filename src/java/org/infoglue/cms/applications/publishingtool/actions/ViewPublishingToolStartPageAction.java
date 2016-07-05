@@ -71,7 +71,6 @@ public class ViewPublishingToolStartPageAction extends InfoGlueAbstractAction
 
     public String doV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doV3");
     	doExecute();
     	
         return "successV3";
@@ -79,7 +78,6 @@ public class ViewPublishingToolStartPageAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
     	
         return "success";
@@ -87,7 +85,6 @@ public class ViewPublishingToolStartPageAction extends InfoGlueAbstractAction
     
     public String doPushSystemNotificationMessages() throws Exception
     {
-		logUserActionInfo(getClass(), "doPushSystemNotificationMessages");
         List<NotificationMessage> notificationMessagesToSend = new ArrayList<NotificationMessage>();
 
 	    PublicationVO publicationVO = new PublicationVO();

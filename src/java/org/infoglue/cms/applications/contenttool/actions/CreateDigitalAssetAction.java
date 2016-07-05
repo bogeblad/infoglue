@@ -167,7 +167,6 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 	
     public String doMultiple() throws Exception //throws Exception
     {
-		logUserActionInfo(getClass(), "doMultiple");
     	logger.info("Uploading file....");
     	this.principal = getInfoGluePrincipal();
     	
@@ -222,7 +221,6 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
     
     public String doExecute() throws IOException //throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	logger.info("Uploading file....");
     	if(this.principal == null)
     		this.principal = getInfoGluePrincipal();

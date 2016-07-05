@@ -44,7 +44,6 @@ public class ViewListGroupAction extends InfoGlueAbstractAction
 		
 	protected String doExecute() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 	    this.groups = GroupControllerProxy.getController().getAllGroups();
 
 	    return "success";
@@ -52,7 +51,6 @@ public class ViewListGroupAction extends InfoGlueAbstractAction
 	
 	public String doListManagableGroups() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doListManagableGroups");
 		this.groups = GroupControllerProxy.getController().getAvailableGroups(this.getInfoGluePrincipal(), "Group.ManageUsers");
 	    
 	    return "successV3";

@@ -45,7 +45,6 @@ public class ViewListContentAction extends InfoGlueAbstractAction
 
 	protected String doExecute() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 	
 	    logger.info("Executing doExecute on ViewListContentAction..");
 		//ViewListContentUCC viewListContentUCC = ViewListContentUCCFactory.newViewListContentUCC();

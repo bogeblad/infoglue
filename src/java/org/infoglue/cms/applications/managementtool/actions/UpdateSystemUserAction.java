@@ -63,7 +63,6 @@ public class UpdateSystemUserAction extends ViewSystemUserAction //WebworkAbstra
 	
 	public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	super.initialize(this.getInfoGluePrincipal().getName());
     			
     	ceb = this.systemUserVO.validate();
@@ -88,7 +87,6 @@ public class UpdateSystemUserAction extends ViewSystemUserAction //WebworkAbstra
 
 	public String doSaveAndExit() throws Exception
     {
-		logUserActionInfo(getClass(), "doSaveAndExit");
 		doExecute();
 		
 		return "saveAndExit";
@@ -96,7 +94,6 @@ public class UpdateSystemUserAction extends ViewSystemUserAction //WebworkAbstra
 
 	public String doChangePassword() throws Exception
 	{
-		logUserActionInfo(getClass(), "doChangePassword");
 	    if(this.systemUserVO.getUserName().equals(CmsPropertyHandler.getAnonymousUser()))
 			UserControllerProxy.getController().updateAnonymousUserPassword();
 	    else
@@ -107,7 +104,6 @@ public class UpdateSystemUserAction extends ViewSystemUserAction //WebworkAbstra
 	
 	public String doRenameUser() throws Exception
 	{
-		logUserActionInfo(getClass(), "doRenameUser");
 		// Do something
 		
 		String newUserName = getRequest().getParameter("newUserName");
@@ -117,7 +113,6 @@ public class UpdateSystemUserAction extends ViewSystemUserAction //WebworkAbstra
 	
 	public String doRenameUserAndExit() throws Exception
 	{
-		logUserActionInfo(getClass(), "doRenameUserAndExit");
 		// Do something
 		
 		String newUserName = getRequest().getParameter("newUserName");
@@ -127,7 +122,6 @@ public class UpdateSystemUserAction extends ViewSystemUserAction //WebworkAbstra
 
 	public String doV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doV3");
     	doExecute();
 		
 		return "successV3";
@@ -136,7 +130,6 @@ public class UpdateSystemUserAction extends ViewSystemUserAction //WebworkAbstra
 
 	public String doSaveAndExitV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doSaveAndExitV3");
 		doV3();
 		
 		return "saveAndExitV3";
@@ -144,7 +137,6 @@ public class UpdateSystemUserAction extends ViewSystemUserAction //WebworkAbstra
 
 	public String doChangePasswordV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doChangePasswordV3");
 		doChangePassword();
 		
 		return "passwordSentSuccessV3";
@@ -152,7 +144,6 @@ public class UpdateSystemUserAction extends ViewSystemUserAction //WebworkAbstra
 	
 	public String doInputRename() throws Exception
 	{
-		logUserActionInfo(getClass(), "doInputRename");
 		return "inputRename";
 	}
 

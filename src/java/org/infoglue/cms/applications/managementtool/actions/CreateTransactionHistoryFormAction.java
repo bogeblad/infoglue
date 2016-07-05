@@ -54,7 +54,6 @@ public class CreateTransactionHistoryFormAction extends InfoGlueAbstractAction
       
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         //Here we should put things that are needed for this view. 
         //Could be list of choices or other stuff
         

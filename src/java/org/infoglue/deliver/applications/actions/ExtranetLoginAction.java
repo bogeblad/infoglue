@@ -62,32 +62,27 @@ public final class ExtranetLoginAction extends InfoGlueAbstractAction
 	
 	public String doExecute() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		return "success";
 	}	
 
 	public String doLoginForm() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doLoginForm");
 		return "loginForm";
 	}	
 
 	public String doNoAccess() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doNoAccess");
 		return "noAccess";
 	}
 	
 	public String doInvalidLogin() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doInvalidLogin");
 		return "invalidLogin";
 	}
 	
 	// To check access 
 	public String doCheckUser() throws Exception
 	{
-		logUserActionInfo(getClass(), "doCheckUser");
 	    Map arguments = HttpUtilities.requestToHashtable((HttpServletRequest)this.getRequest());
 
 		if(ExtranetController.getController().getAuthenticatedPrincipal(arguments,this.getRequest())!=null)
@@ -98,7 +93,6 @@ public final class ExtranetLoginAction extends InfoGlueAbstractAction
 	
 	public String doAuthenticateUser() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doAuthenticateUser");
 		boolean isAuthenticated = false;
 		
 		HttpServletRequest hreq  = this.getRequest();
@@ -158,7 +152,6 @@ public final class ExtranetLoginAction extends InfoGlueAbstractAction
 
 	public String doLogout() throws Exception
 	{
-		logUserActionInfo(getClass(), "doLogout");
 		getHttpSession().invalidate();
 		
 		Cookie cookie_iguserid = new Cookie("iguserid", "none");

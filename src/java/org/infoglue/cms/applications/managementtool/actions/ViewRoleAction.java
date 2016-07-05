@@ -72,7 +72,6 @@ public class ViewRoleAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         this.initialize(getRoleName());
         
         return "success";
@@ -80,7 +79,6 @@ public class ViewRoleAction extends InfoGlueAbstractAction
 
     public String doV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doV3");
         this.initialize(getRoleName());
         
         return "successV3";

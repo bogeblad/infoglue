@@ -52,7 +52,6 @@ public class ViewListPortletAction extends InfoGlueAbstractAction
 
 	protected String doExecute() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 	    PortletApplicationEntityList pael = PortletEntityRegistry.getPortletApplicationEntityList();
 	    
 	    for(Iterator it = pael.iterator(); it.hasNext();) {
@@ -72,7 +71,6 @@ public class ViewListPortletAction extends InfoGlueAbstractAction
 	
 	public String doSimple() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doSimple");
 		DigitalAsset digitalAsset = PortletAssetController.getPortletAssetController().getPortletRegistryAsset();
 		if(digitalAsset == null)
 		{

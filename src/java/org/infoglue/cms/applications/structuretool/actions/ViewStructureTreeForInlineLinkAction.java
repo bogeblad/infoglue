@@ -99,7 +99,7 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 		
 		// Check if we should include the iframe that lists content on a sitenode
 		String slotNames = CmsPropertyHandler.getSlotNamesForContentListing();
-		this.setIncludeContentList((slotNames != null && slotNames.length() > 0) ? true : false);
+		this.setIncludeContentList((slotNames != null && slotNames.trim().length() > 0) ? true : false);
 		
 		return "success";					
     }

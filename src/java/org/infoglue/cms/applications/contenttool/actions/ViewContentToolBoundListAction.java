@@ -69,16 +69,12 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 		{
 			try
 			{
-				String[] slotNames = CmsPropertyHandler.getSlotNamesForContentListing().split(","); // komponentplats 2/slot 2
-				String[] contentNames = CmsPropertyHandler.getContentNamesForContentListing().split(","); // Article
-				String[] attributeNames = CmsPropertyHandler.getTitleAttributesForContentListing().split(","); // Title
+				String[] slotNames = CmsPropertyHandler.getSlotNamesForContentListing().split(",");
+				String[] contentNames = CmsPropertyHandler.getContentNamesForContentListing().split(",");
+				String[] attributeNames = CmsPropertyHandler.getTitleAttributesForContentListing().split(",");
 				logger.info("Number of slot names in application settings: " + slotNames.length);
 				// If there are stored application settings for listing of contents on site nodes, try to list matching content for this site node
-				// Only do this if there is at least one slot name with length > 0 
-				if( (slotNames != null && slotNames.length > 0 && slotNames[0].length() > 0) && 
-						(contentNames != null && contentNames.length > 0) && 
-						(attributeNames != null && attributeNames.length > 0) && 
-						(contentNames.length >= slotNames.length && attributeNames.length >= slotNames.length) )
+				if( (slotNames[0].trim().length() > 0) && (contentNames.length >= slotNames.length && attributeNames.length >= slotNames.length) )
 				{
 					contentList = new HashMap<Integer, String>();
 					String contentName;

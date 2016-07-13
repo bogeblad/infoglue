@@ -62,7 +62,7 @@
 <body oncontextmenu="return false;" class="generaltooledit" onload="">
 #if ($!siteNodeId > 0)
 	<div id="contentList" class="contentTree">
-		#if ($!contentList)
+		#if ($contentList && $contentList.size() > 0)
 			<ul>
 			#foreach( $key in $contentList.keySet() )
 			    <li class="content-item" id="anchor-$key">$contentList.get($key)</li>

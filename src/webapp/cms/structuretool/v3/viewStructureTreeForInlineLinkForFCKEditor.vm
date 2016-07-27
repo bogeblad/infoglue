@@ -47,7 +47,7 @@
 			
 			if(!isNaN(eid) && !isNaN(rid))
 			{
-				document.getElementById("listFrameBoundContent").src = "ViewContentToolBoundList.action?repositoryId=" + rid + "&siteNodeId=" + eid;
+				document.getElementById("listFrameBoundContent").src = "ViewContentToolBoundList.action?repositoryId=" + rid + "&siteNodeId=" + eid + "&currentLanguageId=$!{languageId}";
 			}
 		}
 
@@ -239,8 +239,7 @@
 			<td class="menu" colspan="2">
 				#if($includeContentList)
 					<div id="content" style="display: none;">
-						<iframe frameborder="0" name="listFrameBoundContent" id="listFrameBoundContent" src="ViewContentToolBoundList.action?repositoryId=$!repositoryId&siteNodeId=$!oldSiteNodeId&anchorId=$!oldAnchorId"></iframe>
-						##  ---- IG-3618 deleted code ----
+						<iframe frameborder="0" name="listFrameBoundContent" id="listFrameBoundContent" src="ViewContentToolBoundList.action?repositoryId=$!repositoryId&siteNodeId=$!oldSiteNodeId&anchorId=$!oldAnchorId&currentLanguageId=$!languageId"></iframe>
 					</div>
 				#end
 			</td>

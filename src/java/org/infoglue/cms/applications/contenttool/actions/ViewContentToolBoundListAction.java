@@ -59,7 +59,7 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 	private String anchorId;
 	private Map<Integer, String> contentList;
 	private String[] allowedContentTypeIds = null;
-	private Integer selectedLanguage = 0;
+	private Integer currentLanguageId = 0;
 	
 
 	@Override
@@ -79,12 +79,12 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 					contentList = new HashMap<Integer, String>();
 					String contentName;
 					LanguageVO masterLanguage = LanguageController.getController().getMasterLanguage(this.repositoryId);
-					logger.info("Selected language for sitenode: " + this.selectedLanguage);
-					if (this.selectedLanguage == 0)
+					logger.info("Selected language for sitenode: " + this.currentLanguageId);
+					if (this.currentLanguageId == 0)
 					{
 						List<LanguageVO> enabledLangs = SiteNodeController.getController().getEnabledLanguageVOListForSiteNode(this.siteNodeId);
-						this.selectedLanguage = enabledLangs.get(0).getLanguageId();
-						logger.info("Re-set selected language for sitenode (first enabled language): " + this.selectedLanguage);
+						this.currentLanguageId = enabledLangs.get(0).getLanguageId();
+						logger.info("Re-set selected language for sitenode (first enabled language): " + this.currentLanguageId);
 					}
 					SiteNodeVersionVO latestSiteNodeVersion = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getLatestActiveSiteNodeVersionVO(this.siteNodeId);
 					
@@ -112,7 +112,7 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 									contentName = "";
 									Element elem = (Element) components.item(i);
 									int contentId = Integer.parseInt(elem.getAttribute("entityId"));
-									contentName = ContentController.getContentController().getContentAttribute(contentId, selectedLanguage, attributeNames[j].trim());
+									contentName = ContentController.getContentController().getContentAttribute(contentId, currentLanguageId, attributeNames[j].trim());
 									ContentVO contentObj = ContentController.getContentController().getContentVOWithId(contentId);
 									if(contentObj != null)
 									{
@@ -211,11 +211,11 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 		this.anchorId = anchorId;
 	}
 
-	public Integer getSelectedLanguage() {
-		return selectedLanguage;
+	public Integer getCurrentLanguageId() {
+		return currentLanguageId;
 	}
 
-	public void setSelectedLanguage(Integer selectedLanguage) {
-		this.selectedLanguage = selectedLanguage;
+	public void setCurrentLanguageId(Integer currentLanguageId) {
+		this.currentLanguageId = currentLanguageId;
 	}
 }

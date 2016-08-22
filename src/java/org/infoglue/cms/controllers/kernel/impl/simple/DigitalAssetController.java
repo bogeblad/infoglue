@@ -30,10 +30,10 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -54,7 +54,6 @@ import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.applications.common.VisualFormatter;
-import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
@@ -65,10 +64,8 @@ import org.infoglue.cms.entities.content.impl.simple.DigitalAssetImpl;
 import org.infoglue.cms.entities.content.impl.simple.MediumContentVersionImpl;
 import org.infoglue.cms.entities.content.impl.simple.MediumDigitalAssetImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl;
-import org.infoglue.cms.entities.content.impl.simple.SmallStateContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
-import org.infoglue.cms.entities.management.GeneralOQLResult;
 import org.infoglue.cms.entities.management.GroupProperties;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RoleProperties;
@@ -83,7 +80,6 @@ import org.infoglue.cms.util.graphics.ThumbnailGenerator;
 import org.infoglue.deliver.controllers.kernel.impl.simple.LanguageDeliveryController;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.HttpHelper;
-import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Timer;
 
 /**
@@ -1086,7 +1082,7 @@ public class DigitalAssetController extends BaseController
 					logger.info("Found a digital asset:" + digitalAsset.getAssetFileName());
 				}
 				//String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
-				String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+				String fileName = createFileNameForAssetVO(digitalAsset);
 				String filePath = CmsPropertyHandler.getDigitalAssetPath() + File.separator + folderName;
 				boolean fileExists = dumpDigitalAsset(digitalAsset, fileName, filePath, db);
 				
@@ -1113,10 +1109,11 @@ public class DigitalAssetController extends BaseController
 		return assetUrl;
     }
 
-	/**
-	 * This method should return a String containing the URL for this digital asset.
-	 */
 
+	/**
+	 * This method returns a String containing the path for this digital asset.
+	 * Also dumps the asset to disk.
+	 */
 	public static String getDigitalAssetFilePath(DigitalAssetVO digitalAssetVO, Database db) throws Exception
     {
     	String assetPath = null;
@@ -1127,18 +1124,19 @@ public class DigitalAssetController extends BaseController
 			logger.info("folderName:" + folderName);
 			logger.info("Found a digital asset:" + digitalAssetVO.getAssetFileName());
 		}
-		String fileName = digitalAssetVO.getDigitalAssetId() + "_" + digitalAssetVO.getAssetFileName();
+		String fileName = createFileNameForAssetVO(digitalAssetVO);
 		String filePath = CmsPropertyHandler.getDigitalAssetPath() + File.separator + folderName;
-		dumpDigitalAsset(digitalAssetVO, fileName, filePath, db);
 		assetPath = filePath + File.separator + fileName;
+
+		dumpDigitalAsset(digitalAssetVO, fileName, filePath, db);
     	
 		return assetPath;
     }
 	
 	/**
-	 * This method should return a String containing the URL for this digital asset.
+	 * This method returns a String containing the path for this digital asset.
+	 * Also dumps the asset to disk.
 	 */
-
 	public static String getDigitalAssetFilePath(Integer digitalAssetId) throws SystemException, Bug
     {
     	Database db = CastorDatabaseService.getDatabase();
@@ -1146,25 +1144,10 @@ public class DigitalAssetController extends BaseController
     	String assetPath = null;
 
         beginTransaction(db);
-
         try
         {
-			DigitalAsset digitalAsset = getSmallDigitalAssetWithId(digitalAssetId, db);
-						
-			if(digitalAsset != null)
-			{
-				String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
-				if(logger.isInfoEnabled())
-				{
-					logger.info("folderName:" + folderName);
-					logger.info("Found a digital asset:" + digitalAsset.getAssetFileName());
-				}
-				String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
-				String filePath = CmsPropertyHandler.getDigitalAssetPath() + File.separator + folderName;
-				dumpDigitalAsset(digitalAsset.getValueObject(), fileName, filePath, db);
-				assetPath = filePath + File.separator + fileName;
-			}			       	
-
+        	DigitalAssetVO digitalAssetVO = getSmallDigitalAssetVOWithId(digitalAssetId, db);
+        	assetPath = getDigitalAssetFilePath(digitalAssetVO, db);
             commitTransaction(db);
         }
         catch(Exception e)
@@ -1176,6 +1159,8 @@ public class DigitalAssetController extends BaseController
     	
 		return assetPath;
     }
+
+
 
 	/**
 	 * This method should return a String containing the URL for this digital asset.
@@ -1201,7 +1186,7 @@ public class DigitalAssetController extends BaseController
 					logger.info("folderName:" + folderName);
 					logger.info("Found a digital asset:" + digitalAsset.getAssetFileName());
 				}
-				String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+				String fileName = createFileNameForAsset(digitalAsset);
 				String filePath = CmsPropertyHandler.getDigitalAssetPath() + File.separator + "protected" + File.separator + folderName;
 				dumpDigitalAsset(digitalAsset.getValueObject(), fileName, filePath, db);
 				assetPath = filePath + File.separator + fileName;
@@ -1247,7 +1232,7 @@ public class DigitalAssetController extends BaseController
 		String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
 		if(logger.isInfoEnabled())
 			logger.info("folderName:" + folderName);
-	    String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+	    String fileName = createFileNameForAsset(digitalAsset);
 		String filePath = CmsPropertyHandler.getDigitalAssetPath() + File.separator + folderName;
 		boolean ok = dumpDigitalAsset(digitalAsset, fileName, filePath);
 		File assetFile = new File(filePath + File.separator + fileName);
@@ -1280,7 +1265,7 @@ public class DigitalAssetController extends BaseController
 				logger.info("folderName:" + folderName);
 				logger.info("Found a digital asset:" + digitalAssetVO.getAssetFileName());
 			}
-			String fileName = digitalAssetVO.getDigitalAssetId() + "_" + digitalAssetVO.getAssetFileName();
+			String fileName = createFileNameForAssetVO(digitalAssetVO);
 			String filePath = CmsPropertyHandler.getDigitalAssetPath() + File.separator + folderName;
 			dumpDigitalAsset(digitalAssetVO, fileName, filePath, db);
 			if(logger.isInfoEnabled())
@@ -1332,7 +1317,7 @@ public class DigitalAssetController extends BaseController
 				}
 				else if(contentType.equalsIgnoreCase("image/gif") || contentType.equalsIgnoreCase("image/jpg") || contentType.equalsIgnoreCase("image/pjpeg") || contentType.equalsIgnoreCase("image/jpeg") || contentType.equalsIgnoreCase("image/png"))
 				{
-					String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+					String fileName = createFileNameForAsset(digitalAsset);
 					logger.info("fileName:" + fileName);
 					String filePath = CmsPropertyHandler.getDigitalAssetPath() + File.separator + folderName;
 					logger.info("filePath:" + filePath);
@@ -1371,7 +1356,7 @@ public class DigitalAssetController extends BaseController
 				}
 				else
 				{
-					String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+					String fileName = createFileNameForAsset(digitalAsset);
 					String filePath = CmsPropertyHandler.getDigitalAssetPath() + File.separator + folderName;
 					File originalFile = new File(filePath + File.separator + fileName);
 					if(!originalFile.exists())
@@ -1454,7 +1439,7 @@ public class DigitalAssetController extends BaseController
 				}
 				else if(contentType.equalsIgnoreCase("image/gif") || contentType.equalsIgnoreCase("image/jpg") || contentType.equalsIgnoreCase("image/pjpeg") || contentType.equalsIgnoreCase("image/jpeg") || contentType.equalsIgnoreCase("image/png"))
 				{
-					String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+					String fileName = createFileNameForAssetVO(digitalAsset);
 					logger.info("fileName:" + fileName);
 					String filePath = CmsPropertyHandler.getDigitalAssetPath() + File.separator + folderName;
 					logger.info("filePath:" + filePath);
@@ -1493,7 +1478,7 @@ public class DigitalAssetController extends BaseController
 				}
 				else
 				{
-					String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+					String fileName = createFileNameForAssetVO(digitalAsset);
 					String filePath = CmsPropertyHandler.getDigitalAssetPath() + File.separator + folderName;
 					File originalFile = new File(filePath + File.separator + fileName);
 					if(!originalFile.exists())
@@ -1572,7 +1557,7 @@ public class DigitalAssetController extends BaseController
 				}
 				else if(contentType.equalsIgnoreCase("image/gif") || contentType.equalsIgnoreCase("image/jpg") || contentType.equalsIgnoreCase("image/pjpeg") || contentType.equalsIgnoreCase("image/jpeg") || contentType.equalsIgnoreCase("image/png"))
 				{
-					String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+					String fileName = createFileNameForAssetVO(digitalAsset);
 					logger.info("fileName:" + fileName);
 					String filePath = CmsPropertyHandler.getDigitalAssetPath() + File.separator + folderName;
 					logger.info("filePath:" + filePath);
@@ -1611,7 +1596,7 @@ public class DigitalAssetController extends BaseController
 				}
 				else
 				{
-					String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+					String fileName = createFileNameForAssetVO(digitalAsset);
 					String filePath = CmsPropertyHandler.getDigitalAssetPath() + File.separator + folderName;
 					File originalFile = new File(filePath + File.separator + fileName);
 					if(!originalFile.exists())
@@ -1685,7 +1670,7 @@ public class DigitalAssetController extends BaseController
 						logger.info("folderName:" + folderName);
 						logger.info("Found a digital asset:" + digitalAssetVO.getAssetFileName());
 					}
-					String fileName = digitalAssetVO.getDigitalAssetId() + "_" + digitalAssetVO.getAssetFileName();
+					String fileName = createFileNameForAssetVO(digitalAssetVO);
 					String filePath = CmsPropertyHandler.getDigitalAssetPath() + File.separator + folderName;
 					
 					dumpDigitalAsset(digitalAssetVO, fileName, filePath, db);
@@ -1737,7 +1722,6 @@ public class DigitalAssetController extends BaseController
 	/**
 	 * This method should return a String containing the URL for this digital asset.
 	 */
-	   	
 	public static String getDigitalAssetUrl(Integer contentId, Integer languageId, String assetKey, boolean useLanguageFallback, Database db) throws SystemException, Bug, Exception
     {
 		if(contentId == null || assetKey == null)
@@ -1758,41 +1742,7 @@ public class DigitalAssetController extends BaseController
 
 		if(assetKey != null)
 		{
-			
-			boolean isUTF8 = false;
-			boolean hasUnicodeChars = false;
-			if(assetKey.indexOf((char)65533) > -1)
-				isUTF8 = true;
-			
-			for(int i=0; i<assetKey.length(); i++)
-			{
-				int c = (int)assetKey.charAt(i);
-				if(c > 255 && c < 65533)
-					hasUnicodeChars = true;
-			}
-
-			if(!isUTF8 && !hasUnicodeChars)
-			{
-				String fromEncoding = CmsPropertyHandler.getAssetKeyFromEncoding();
-				if(fromEncoding == null)
-					fromEncoding = "iso-8859-1";
-				
-				String toEncoding = CmsPropertyHandler.getAssetKeyToEncoding();
-				if(toEncoding == null)
-					toEncoding = "utf-8";
-				String[] controlChars = new String[]{"\u0153", "\u0160", "\u0161", "", "\u20AC", "\u2026", "\u00E5", "\u00E4", "\u00F6", "\u00C5", "\u00C4", "\u00D6"};
-				boolean convert = true;
-				for(String charToTest : controlChars)
-				{
-					if(assetKey.indexOf(charToTest) > -1)
-						convert = false;
-				}
-					
-				if(convert)
-				{
-					assetKey = new String(assetKey.getBytes(fromEncoding), toEncoding);
-				}
-			}			
+			assetKey = convertToUTF8(assetKey);
 		}
 		
 		StringBuffer sb = new StringBuffer(256);
@@ -1800,26 +1750,40 @@ public class DigitalAssetController extends BaseController
 		String servletContext = CmsPropertyHandler.getServletContext();
         String digitalAssetPath = CmsPropertyHandler.getDigitalAssetBaseUrl();
         if (!digitalAssetPath.startsWith("/"))
+        {
         	digitalAssetPath = "/" + digitalAssetPath;
-
+        }
+        
         if(digitalAssetPath.indexOf(servletContext) == -1)
+        {
         	sb.append(servletContext);	
-		
+        }
+        
         sb.append(digitalAssetPath);
 	     
         if(!sb.toString().endsWith("/"))
+        {
         	sb.append("/");
-
+        }
+        
     	ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, languageId, db);
-    	LanguageVO masterLanguageVO = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForRepository(contentVO.getRepositoryId(), db);	
+
     	if(logger.isInfoEnabled())
+    	{
     		logger.info("contentVersionVO:" + contentVersionVO);
+    	}
     	
+		DigitalAssetVO digitalAssetVO = null;
+
 		if(contentVersionVO != null)
 		{
-			DigitalAssetVO digitalAssetVO = getLatestDigitalAssetVO(contentVersionVO.getContentVersionId(), assetKey, db);
+			digitalAssetVO = getLatestDigitalAssetVO(contentVersionVO.getContentVersionId(), assetKey, db);
+			
 			if(logger.isInfoEnabled())
+			{
 				logger.info("digitalAssetVO:" + digitalAssetVO);
+			}
+			
 			if(digitalAssetVO != null)
 			{
 				String folderName = "" + (digitalAssetVO.getDigitalAssetId().intValue() / 1000);
@@ -1829,48 +1793,68 @@ public class DigitalAssetController extends BaseController
 					logger.info("digitalAsset:" + digitalAssetVO.getAssetKey());
 					logger.info("Found a digital asset:" + digitalAssetVO.getAssetFileName());
 				}
-				String fileName = digitalAssetVO.getDigitalAssetId() + "_" + digitalAssetVO.getAssetFileName();
+				String fileName = createFileNameForAssetVO(digitalAssetVO);
 				String filePath = CmsPropertyHandler.getDigitalAssetPath() + File.separator + folderName;
 				
 				dumpDigitalAsset(digitalAssetVO, fileName, filePath, db);
 				assetUrl = sb.toString() + folderName + "/" + fileName;
 			}
-			else
-			{
-				//LanguageVO masterLanguageVO = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForRepository(content.getRepository().getRepositoryId(), db);
-				if(useLanguageFallback && languageId.intValue() != masterLanguageVO.getId().intValue())
-					return getDigitalAssetUrl(contentId, masterLanguageVO.getId(), assetKey, useLanguageFallback, db);
-			}
 		}
-		else if(useLanguageFallback && languageId.intValue() != masterLanguageVO.getId().intValue())
+		
+		if(digitalAssetVO == null && useLanguageFallback)
 		{
-			contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, masterLanguageVO.getId(), db);
-	    	
-	    	logger.info("contentVersion:" + contentVersionVO);
-			if(contentVersionVO != null)
+			LanguageVO masterLanguageVO = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForRepository(contentVO.getRepositoryId(), db);	
+			
+			// Check if we already are using the master language before falling back on it
+			if (languageId.intValue() != masterLanguageVO.getId().intValue())
 			{
-			    DigitalAssetVO digitalAssetVO = getLatestDigitalAssetVO(contentVersionVO.getId(), assetKey, db);
-				logger.info("digitalAssetVO:" + digitalAssetVO);
-				if(digitalAssetVO != null)
-				{
-					String folderName = "" + (digitalAssetVO.getDigitalAssetId().intValue() / 1000);
-					if(logger.isInfoEnabled())
-					{
-						logger.info("folderName:" + folderName);
-						logger.info("digitalAsset:" + digitalAssetVO.getAssetKey());
-						logger.info("Found a digital asset:" + digitalAssetVO.getAssetFileName());
-					}
-					String fileName = digitalAssetVO.getDigitalAssetId() + "_" + digitalAssetVO.getAssetFileName();
-					String filePath = CmsPropertyHandler.getDigitalAssetPath() + File.separator + folderName;
-					
-					dumpDigitalAsset(digitalAssetVO, fileName, filePath, db);
-					assetUrl = sb.toString() + folderName + "/" + fileName;
-				}
+				// Try to call this method with the master language instead
+				assetUrl = getDigitalAssetUrl(contentId, masterLanguageVO.getId(), assetKey, useLanguageFallback, db);
 			}
 		}
-
+		
 		return assetUrl;
     }
+
+
+	public static String convertToUTF8(String assetKey)
+			throws UnsupportedEncodingException {
+		boolean isUTF8 = false;
+		boolean hasUnicodeChars = false;
+		if(assetKey.indexOf((char)65533) > -1)
+			isUTF8 = true;
+		
+		for(int i=0; i<assetKey.length(); i++)
+		{
+			int c = (int)assetKey.charAt(i);
+			if(c > 255 && c < 65533)
+				hasUnicodeChars = true;
+		}
+
+		if(!isUTF8 && !hasUnicodeChars)
+		{
+			String fromEncoding = CmsPropertyHandler.getAssetKeyFromEncoding();
+			if(fromEncoding == null)
+				fromEncoding = "iso-8859-1";
+			
+			String toEncoding = CmsPropertyHandler.getAssetKeyToEncoding();
+			if(toEncoding == null)
+				toEncoding = "utf-8";
+			String[] controlChars = new String[]{"\u0153", "\u0160", "\u0161", "", "\u20AC", "\u2026", "\u00E5", "\u00E4", "\u00F6", "\u00C5", "\u00C4", "\u00D6"};
+			boolean convert = true;
+			for(String charToTest : controlChars)
+			{
+				if(assetKey.indexOf(charToTest) > -1)
+					convert = false;
+			}
+				
+			if(convert)
+			{
+				assetKey = new String(assetKey.getBytes(fromEncoding), toEncoding);
+			}
+		}
+		return assetKey;
+	}
 
 	/**
 	 * This method should return a String containing the URL for this digital asset.
@@ -1967,7 +1951,7 @@ public class DigitalAssetController extends BaseController
 					logger.info("folderName:" + folderName);
 					if(contentType.equalsIgnoreCase("image/gif") || contentType.equalsIgnoreCase("image/jpg") || contentType.equalsIgnoreCase("image/png"))
 					{
-						String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+						String fileName = createFileNameForAsset(digitalAsset);
 						//String filePath = digitalAsset.getAssetFilePath();
 						String filePath = CmsPropertyHandler.getDigitalAssetPath() + File.separator + folderName;
 						String thumbnailFileName = digitalAsset.getDigitalAssetId() + "_thumbnail_" + digitalAsset.getAssetFileName();
@@ -1983,7 +1967,7 @@ public class DigitalAssetController extends BaseController
 					}
 					else
 					{
-						String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+						String fileName = createFileNameForAsset(digitalAsset);
 						String filePath = CmsPropertyHandler.getDigitalAssetPath() + File.separator + folderName;
 						File originalFile = new File(filePath + File.separator + fileName);
 						if(!originalFile.exists())
@@ -2641,7 +2625,7 @@ public class DigitalAssetController extends BaseController
 				String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
 				logger.info("folderName:" + folderName);
 
-				String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+				String fileName = createFileNameForAsset(digitalAsset);
 				if(!outputFile.exists() || outputFile.length() == digitalAsset.getAssetFileSize().intValue())
 				{
 					dumpDigitalAsset(digitalAsset.getValueObject(), fileName, filePath + File.separator + folderName, db);
@@ -2861,36 +2845,79 @@ public class DigitalAssetController extends BaseController
 
 		return assetFolderFile;
 	}
+	
+	private static String createFileNameForAsset(int assetId, String assetFileName) 
+	{
+		String fileName = String.format("a_%d-f_%s", assetId, assetFileName);
+		return fileName;
+	}
+
+	private static String createFileNameForAssetVO(DigitalAssetVO digitalAssetVO)
+	{
+		return createFileNameForAsset(digitalAssetVO.getDigitalAssetId(), digitalAssetVO.getAssetFileName());
+	}
+
+	private static String createFileNameForAsset(DigitalAsset digitalAsset) 
+	{
+		String fileName = createFileNameForAsset(digitalAsset.getDigitalAssetId(), digitalAsset.getAssetFileName());
+		return fileName;
+	}
+
+	private static String createSafeFileNameForAssetVO(DigitalAssetVO digitalAssetVO) 
+	{
+		VisualFormatter formatter = new VisualFormatter();
+		String asciiAssetFileName = formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAssetVO.getAssetFileName(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
+		String fileName = createFileNameForAsset(digitalAssetVO.getDigitalAssetId(), asciiAssetFileName);
+		return fileName;
+	}
+
+	private String createAlternativeFileNameForAssetVO(DigitalAssetVO digitalAssetVO, Integer contentId, Integer languageId, Database db)
+			throws SystemException, Bug 
+	{
+		VisualFormatter formatter = new VisualFormatter();
+		String fileName;
+		if(contentId == null || languageId == null)
+		{
+			DigitalAsset asset = DigitalAssetController.getMediumDigitalAssetWithIdReadOnly(digitalAssetVO.getId(), db);
+			if(asset.getContentVersions() != null && asset.getContentVersions().size() > 0)
+			{
+				ContentVersion cv = (ContentVersion)asset.getContentVersions().iterator().next();
+				contentId = cv.getValueObject().getContentId();
+				languageId = cv.getValueObject().getLanguageId();
+			}
+		}
+
+		String assetFileName = digitalAssetVO.getAssetFileName();
+		String suffix = "";
+		int endingStartIndex = assetFileName.lastIndexOf(".");
+		if(endingStartIndex > -1) {
+			suffix = assetFileName.substring(endingStartIndex);
+		}
+				
+		String asciiAssetKey = formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAssetVO.getAssetKey(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
+		fileName = String.format("c_%d-l_%d-k_%s%s", contentId, languageId, asciiAssetKey, suffix);
+
+		return fileName;
+	}
 
 	public String getAssetFileName(DigitalAssetVO digitalAssetVO, Integer contentId, Integer languageId, Database db) throws Exception
 	{
-		VisualFormatter formatter = new VisualFormatter();
-		String fileName = digitalAssetVO.getDigitalAssetId() + "_" + formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAssetVO.getAssetFileName(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
-
+		String fileName;
+		
 		if(CmsPropertyHandler.getAssetFileNameForm().equals("contentId_languageId_assetKey"))
 		{
-			if(contentId == null || languageId == null)
-			{
-				DigitalAsset asset = DigitalAssetController.getMediumDigitalAssetWithIdReadOnly(digitalAssetVO.getId(), db);
-				if(asset.getContentVersions() != null && asset.getContentVersions().size() > 0)
-				{
-					ContentVersion cv = (ContentVersion)asset.getContentVersions().iterator().next();
-					contentId = cv.getValueObject().getContentId();
-					languageId = cv.getValueObject().getLanguageId();
-				}
-			}
-
-			String assetFileName = digitalAssetVO.getAssetFileName();
-			String suffix = "";
-			int endingStartIndex = assetFileName.lastIndexOf(".");
-			if(endingStartIndex > -1)
-				suffix = assetFileName.substring(endingStartIndex);
-
-			fileName = "" + contentId + "_" + languageId + formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAssetVO.getAssetKey(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter()) + suffix;
+			fileName = createAlternativeFileNameForAssetVO(digitalAssetVO, contentId, languageId, db);
+		}
+		else
+		{
+			fileName = createSafeFileNameForAssetVO(digitalAssetVO);
 		}
 
 		return fileName;
 	}
+
+
+
 
 	public File getAssetFile(DigitalAssetVO digitalAssetVO, Integer contentId, Integer languageId, Database db) throws Exception
 	{

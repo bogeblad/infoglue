@@ -102,14 +102,12 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 		return digitalAssetController;
 	}
 	
-/*
-	private static String createFileNameForAssetVO(DigitalAssetVO digitalAssetVO) {
-		return digitalAssetVO.getDigitalAssetId() + "_" + formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAssetVO.getAssetFileName(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
-	}
-*/
+	/**
+	 * Creates a filename for an asset based on the standard format, using the asset id and filename
+	 */
 	private static String createFileNameForAsset(DigitalAsset digitalAsset) {
 		String asciiAssetFileName = formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAsset.getAssetFileName(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
-		String fileName = String.format("a_%d-f_%s", digitalAsset.getDigitalAssetId(), asciiAssetFileName);
+		String fileName = String.format(DigitalAssetController.STANDARD_ASSET_FILE_NAME_FORMAT, digitalAsset.getDigitalAssetId(), asciiAssetFileName);
 		return fileName;
 	}
 
@@ -135,16 +133,9 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 		}
 		
 		String asciiAssetKey = formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAsset.getAssetKey(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
-		fileName = String.format("c_%d-l_%d-k_%s%s", contentId, languageId, asciiAssetKey, suffix);				
+		fileName = String.format(DigitalAssetController.ALTERNATIVE_ASSET_FILE_NAME_FORMAT, contentId, languageId, asciiAssetKey, suffix);				
 		return fileName;
 	}
-	
-/*	
-	private static String createAlternativeFileNameForAssetVO(DigitalAssetVO digitalAssetVO, Integer contentId, Integer languageId, Database db) throws SystemException, Bug {
-		DigitalAsset digitalAsset = DigitalAssetController.getMediumDigitalAssetWithIdReadOnly(digitalAssetVO.getId(), db);
-		return createAlternativeFileNameForAsset(digitalAsset, contentId, languageId);
-	}
-*/
 
 	/**
 	 * Main logic for getting the filename of an asset. 
@@ -165,7 +156,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 		Timer t = new Timer();
 		String fileName;
 		
-		if(CmsPropertyHandler.getAssetFileNameForm().equals("contentId_languageId_assetKey"))
+		if(CmsPropertyHandler.getAssetFileNameForm().equals(DigitalAssetController.ALTERNATIVE_ASSET_FILE_NAME_TYPE))
 		{
 			fileName = createAlternativeFileNameForAsset(digitalAsset, contentId, languageId);
 		} 
@@ -189,7 +180,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 		//logger.info("folderName:" + folderName);
 		//logger.info("AssetFileNameForm:" + CmsPropertyHandler.getAssetFileNameForm());
 		Timer t = new Timer();
-		if(CmsPropertyHandler.getAssetFileNameForm().equals("contentId_languageId_assetKey"))
+		if(CmsPropertyHandler.getAssetFileNameForm().equals(DigitalAssetController.ALTERNATIVE_ASSET_FILE_NAME_TYPE))
 		{
 			if(contentId == null || languageId == null)
 			{
@@ -225,7 +216,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 		//logger.info("folderName:" + folderName);
 		//logger.info("AssetFileNameForm:" + CmsPropertyHandler.getAssetFileNameForm());
 		Timer t = new Timer();
-		if(CmsPropertyHandler.getAssetFileNameForm().equals("contentId_languageId_assetKey"))
+		if(CmsPropertyHandler.getAssetFileNameForm().equals(DigitalAssetController.ALTERNATIVE_ASSET_FILE_NAME_TYPE))
 		{
 			if(contentId == null || languageId == null)
 			{
@@ -884,13 +875,13 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 		//TODO - how to remove
 		try
 		{
-			String filterString = "" + digitalAssetId.toString();
+			String filterString = "a_" + digitalAssetId.toString() + "-"; // See DigitalAssetController.STANDARD_ASSET_FILE_NAME_FORMAT
 			String folderName = "" + (digitalAssetId.intValue() / 1000);
 			String assetKey = null;
 			
 			logger.info("filterString:" + filterString);
 			logger.info("folderName:" + folderName);
-			if(CmsPropertyHandler.getAssetFileNameForm().equals("contentId_languageId_assetKey"))
+			if(CmsPropertyHandler.getAssetFileNameForm().equals(DigitalAssetController.ALTERNATIVE_ASSET_FILE_NAME_TYPE))
 			{
 				List<SmallestContentVersionVO> contentVersionVOList = DigitalAssetController.getContentVersionVOListConnectedToAssetWithId(digitalAssetId);	
 	    		Iterator<SmallestContentVersionVO> contentVersionVOListIterator = contentVersionVOList.iterator();
@@ -903,7 +894,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 	    			assetKey = assetVO.getAssetKey();
 	    			
 					folderName = "" + (contentId / 1000);
-					filterString = "" + contentId + "_";
+					filterString = "c_" + contentId + "-"; // See DigitalAssetController.ALTERNATIVE_ASSET_FILE_NAME_FORMAT
 					logger.info("New folderName is:" + folderName);
 	    		}
 			}
@@ -926,13 +917,15 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 				{
 					File file = files[j];
 					logger.info("file:" + file.getName());
-					if(assetKey != null && file.getName().indexOf(assetKey) > -1)
+					if(assetKey != null && file.getName().indexOf(assetKey) > -1) // FIXME: This probably won't work when using the standard type of asset filename, since it doesn't contain the asset key.
 					{
 						logger.info("Deleting file " + file.getPath());
 						file.delete();
 					}
 					else
+					{
 						logger.info("Skipping file " + file.getPath() + " as we don't want to delete all assets for a content");
+					}
 				}
 				i++;
 				filePath = CmsPropertyHandler.getProperty("digitalAssetPath." + i);
@@ -957,7 +950,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 					{
 						File file = files[j];
 						logger.info("file:" + file.getName());
-						if(assetKey != null && file.getName().indexOf(assetKey) > -1)
+						if(assetKey != null && file.getName().indexOf(assetKey) > -1) // FIXME: This probably won't work when using the standard type of asset filename, since it doesn't contain the asset key.
 						{
 							logger.info("Deleting file " + file.getPath());
 							file.delete();

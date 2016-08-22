@@ -50,7 +50,6 @@ import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.content.SmallestContentVersionVO;
 import org.infoglue.cms.entities.management.Repository;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.graphics.ThumbnailGenerator;
@@ -103,13 +102,15 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 		return digitalAssetController;
 	}
 	
-
+/*
 	private static String createFileNameForAssetVO(DigitalAssetVO digitalAssetVO) {
 		return digitalAssetVO.getDigitalAssetId() + "_" + formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAssetVO.getAssetFileName(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
 	}
-
+*/
 	private static String createFileNameForAsset(DigitalAsset digitalAsset) {
-		return   digitalAsset.getDigitalAssetId() + "_" + formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAsset.getAssetFileName(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
+		String asciiAssetFileName = formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAsset.getAssetFileName(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
+		String fileName = String.format("a_%d-f_%s", digitalAsset.getDigitalAssetId(), asciiAssetFileName);
+		return fileName;
 	}
 
 
@@ -129,17 +130,21 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 		String suffix = "";
 		int endingStartIndex = assetFileName.lastIndexOf(".");
 		if(endingStartIndex > -1)
+		{
 			suffix = assetFileName.substring(endingStartIndex);
-			
-		fileName = "" + contentId + "_" + languageId + "_" + formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAsset.getAssetKey(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter()) + suffix;
+		}
+		
+		String asciiAssetKey = formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAsset.getAssetKey(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
+		fileName = String.format("c_%d-l_%d-k_%s%s", contentId, languageId, asciiAssetKey, suffix);				
 		return fileName;
 	}
 	
+/*	
 	private static String createAlternativeFileNameForAssetVO(DigitalAssetVO digitalAssetVO, Integer contentId, Integer languageId, Database db) throws SystemException, Bug {
 		DigitalAsset digitalAsset = DigitalAssetController.getMediumDigitalAssetWithIdReadOnly(digitalAssetVO.getId(), db);
 		return createAlternativeFileNameForAsset(digitalAsset, contentId, languageId);
 	}
-
+*/
 
 	/**
 	 * Main logic for getting the filename of an asset. 
@@ -390,7 +395,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 
 	/**
 	 * This is the basic way of getting an asset-url for a digital asset. 
-	 * If the asset is cached on disk it returns that path imediately it's ok - otherwise it dumps it fresh.
+	 * If the asset is cached on disk it returns that path immediately it's ok - otherwise it dumps it fresh.
 	 */
 
 	public String getAssetThumbnailUrl(DigitalAsset digitalAsset, Repository repository, int width, int height, DeliveryContext deliveryContext) throws SystemException, Exception

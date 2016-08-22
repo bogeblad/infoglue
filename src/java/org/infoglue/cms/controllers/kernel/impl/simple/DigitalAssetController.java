@@ -30,7 +30,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -55,7 +54,6 @@ import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.applications.common.VisualFormatter;
-import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
@@ -66,10 +64,8 @@ import org.infoglue.cms.entities.content.impl.simple.DigitalAssetImpl;
 import org.infoglue.cms.entities.content.impl.simple.MediumContentVersionImpl;
 import org.infoglue.cms.entities.content.impl.simple.MediumDigitalAssetImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl;
-import org.infoglue.cms.entities.content.impl.simple.SmallStateContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
-import org.infoglue.cms.entities.management.GeneralOQLResult;
 import org.infoglue.cms.entities.management.GroupProperties;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RoleProperties;
@@ -84,7 +80,6 @@ import org.infoglue.cms.util.graphics.ThumbnailGenerator;
 import org.infoglue.deliver.controllers.kernel.impl.simple.LanguageDeliveryController;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.HttpHelper;
-import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Timer;
 
 /**
@@ -2849,20 +2844,29 @@ public class DigitalAssetController extends BaseController
 		return assetFolderFile;
 	}
 	
-	private static String createFileNameForAssetVO(DigitalAssetVO digitalAsset)
+	private static String createFileNameForAsset(int assetId, String assetFileName) 
 	{
-		return digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+		String fileName = String.format("a_%d-f_%s", assetId, assetFileName);
+		return fileName;
+	}
+
+	private static String createFileNameForAssetVO(DigitalAssetVO digitalAssetVO)
+	{
+		return createFileNameForAsset(digitalAssetVO.getDigitalAssetId(), digitalAssetVO.getAssetFileName());
 	}
 
 	private static String createFileNameForAsset(DigitalAsset digitalAsset) 
 	{
-		return digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+		String fileName = createFileNameForAsset(digitalAsset.getDigitalAssetId(), digitalAsset.getAssetFileName());
+		return fileName;
 	}
 
 	private static String createSafeFileNameForAssetVO(DigitalAssetVO digitalAssetVO) 
 	{
 		VisualFormatter formatter = new VisualFormatter();
-		return digitalAssetVO.getDigitalAssetId() + "_" + formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAssetVO.getAssetFileName(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
+		String asciiAssetFileName = formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAssetVO.getAssetFileName(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
+		String fileName = createFileNameForAsset(digitalAssetVO.getDigitalAssetId(), asciiAssetFileName);
+		return fileName;
 	}
 
 	private String createAlternativeFileNameForAssetVO(DigitalAssetVO digitalAssetVO, Integer contentId, Integer languageId, Database db)
@@ -2887,8 +2891,10 @@ public class DigitalAssetController extends BaseController
 		if(endingStartIndex > -1) {
 			suffix = assetFileName.substring(endingStartIndex);
 		}
-		
-		fileName = "" + contentId + "_" + languageId + "_" + formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAssetVO.getAssetKey(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter()) + suffix;
+				
+		String asciiAssetKey = formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAssetVO.getAssetKey(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
+		fileName = String.format("c_%d-l_%d-k_%s%s", contentId, languageId, asciiAssetKey, suffix);
+
 		return fileName;
 	}
 

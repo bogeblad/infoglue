@@ -1749,7 +1749,8 @@ public class DigitalAssetController extends BaseController
 			
 		String servletContext = CmsPropertyHandler.getServletContext();
         String digitalAssetPath = CmsPropertyHandler.getDigitalAssetBaseUrl();
-        if (!digitalAssetPath.startsWith("/")) {
+        if (!digitalAssetPath.startsWith("/"))
+        {
         	digitalAssetPath = "/" + digitalAssetPath;
         }
         
@@ -1804,6 +1805,7 @@ public class DigitalAssetController extends BaseController
 		{
 			LanguageVO masterLanguageVO = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForRepository(contentVO.getRepositoryId(), db);	
 			
+			// Check if we already are using the master language before falling back on it
 			if (languageId.intValue() != masterLanguageVO.getId().intValue())
 			{
 				// Try to call this method with the master language instead

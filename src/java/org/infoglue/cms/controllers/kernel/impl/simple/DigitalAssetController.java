@@ -88,7 +88,12 @@ import org.infoglue.deliver.util.Timer;
 
 public class DigitalAssetController extends BaseController 
 {
-    private final static Logger logger = Logger.getLogger(DigitalAssetController.class.getName());
+	
+	public static final String ALTERNATIVE_ASSET_FILE_NAME_TYPE = "contentId_languageId_assetKey";
+	public static final String ALTERNATIVE_ASSET_FILE_NAME_FORMAT = "c_%d-l_%d-k_%s%s";
+	public static final String STANDARD_ASSET_FILE_NAME_FORMAT = "a_%d-f_%s";
+
+	private final static Logger logger = Logger.getLogger(DigitalAssetController.class.getName());
     
     private final static String BROKENFILENAME = "brokenAsset.gif";
     
@@ -1793,7 +1798,18 @@ public class DigitalAssetController extends BaseController
 					logger.info("digitalAsset:" + digitalAssetVO.getAssetKey());
 					logger.info("Found a digital asset:" + digitalAssetVO.getAssetFileName());
 				}
-				String fileName = createFileNameForAssetVO(digitalAssetVO);
+				
+				String fileName;
+				
+				if(CmsPropertyHandler.getAssetFileNameForm().equals(ALTERNATIVE_ASSET_FILE_NAME_TYPE))
+				{
+					fileName = createAlternativeFileNameForAssetVO(digitalAssetVO, contentId, languageId, db);
+				}
+				else
+				{
+					fileName = createSafeFileNameForAssetVO(digitalAssetVO);
+				}
+
 				String filePath = CmsPropertyHandler.getDigitalAssetPath() + File.separator + folderName;
 				
 				dumpDigitalAsset(digitalAssetVO, fileName, filePath, db);
@@ -2819,7 +2835,7 @@ public class DigitalAssetController extends BaseController
 	{
 		String folderName = "" + (digitalAssetVO.getDigitalAssetId().intValue() / 1000);
 
-		if(CmsPropertyHandler.getAssetFileNameForm().equals("contentId_languageId_assetKey"))
+		if(CmsPropertyHandler.getAssetFileNameForm().equals(ALTERNATIVE_ASSET_FILE_NAME_TYPE))
 		{
 			if(contentId == null || languageId == null)
 			{
@@ -2848,7 +2864,7 @@ public class DigitalAssetController extends BaseController
 	
 	private static String createFileNameForAsset(int assetId, String assetFileName) 
 	{
-		String fileName = String.format("a_%d-f_%s", assetId, assetFileName);
+		String fileName = String.format(STANDARD_ASSET_FILE_NAME_FORMAT, assetId, assetFileName);
 		return fileName;
 	}
 
@@ -2871,7 +2887,7 @@ public class DigitalAssetController extends BaseController
 		return fileName;
 	}
 
-	private String createAlternativeFileNameForAssetVO(DigitalAssetVO digitalAssetVO, Integer contentId, Integer languageId, Database db)
+	private static String createAlternativeFileNameForAssetVO(DigitalAssetVO digitalAssetVO, Integer contentId, Integer languageId, Database db)
 			throws SystemException, Bug 
 	{
 		VisualFormatter formatter = new VisualFormatter();
@@ -2895,7 +2911,7 @@ public class DigitalAssetController extends BaseController
 		}
 				
 		String asciiAssetKey = formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAssetVO.getAssetKey(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
-		fileName = String.format("c_%d-l_%d-k_%s%s", contentId, languageId, asciiAssetKey, suffix);
+		fileName = String.format(ALTERNATIVE_ASSET_FILE_NAME_FORMAT, contentId, languageId, asciiAssetKey, suffix);
 
 		return fileName;
 	}
@@ -2904,7 +2920,7 @@ public class DigitalAssetController extends BaseController
 	{
 		String fileName;
 		
-		if(CmsPropertyHandler.getAssetFileNameForm().equals("contentId_languageId_assetKey"))
+		if(CmsPropertyHandler.getAssetFileNameForm().equals(ALTERNATIVE_ASSET_FILE_NAME_TYPE))
 		{
 			fileName = createAlternativeFileNameForAssetVO(digitalAssetVO, contentId, languageId, db);
 		}

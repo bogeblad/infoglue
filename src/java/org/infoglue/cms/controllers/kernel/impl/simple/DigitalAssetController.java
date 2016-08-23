@@ -1798,12 +1798,10 @@ public class DigitalAssetController extends BaseController
 				
 				if(CmsPropertyHandler.getAssetFileNameForm().equals(CmsPropertyHandler.NEW_ASSET_FILE_NAME_FORM))
 				{
-System.out.println("Filename form was NEW");					
 					fileName = createNewFormFileNameForAssetVO(digitalAssetVO, contentId, languageId, db);
 				}
 				else
 				{
-System.out.println("Filename form was NOT new: " + CmsPropertyHandler.getAssetFileNameForm());					
 					fileName = createSafeOldFormFileNameForAssetVO(digitalAssetVO);
 				}
 

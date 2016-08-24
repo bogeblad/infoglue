@@ -32,6 +32,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
+import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 /**
@@ -53,6 +54,7 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 	private Integer oldAnchorId;
 	private Integer oldContentId;
 	private Integer languageId;
+	private Boolean includeContentList;
 	
 	public ViewStructureTreeForInlineLinkAction()
 	{
@@ -94,6 +96,10 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 			if(this.repositoryId == null)
 				this.repositoryId = RepositoryController.getController().getFirstRepositoryVO().getRepositoryId();		
 		}
+		
+		// Check if we should include the iframe that lists content on a sitenode
+		String slotNames = CmsPropertyHandler.getSlotNamesForContentListing();
+		this.setIncludeContentList((slotNames != null && slotNames.trim().length() > 0) ? true : false);
 		
 		return "success";					
     }
@@ -211,5 +217,13 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 
 	public void setOldAnchorId(Integer oldAnchorId) {
 		this.oldAnchorId = oldAnchorId;
+	}
+
+	public Boolean getIncludeContentList() {
+		return includeContentList;
+	}
+
+	public void setIncludeContentList(Boolean includeContentList) {
+		this.includeContentList = includeContentList;
 	}
 }

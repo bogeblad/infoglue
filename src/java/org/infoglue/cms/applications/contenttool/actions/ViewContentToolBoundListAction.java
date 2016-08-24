@@ -23,29 +23,30 @@
 
 package org.infoglue.cms.applications.contenttool.actions;
 
-import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
-import org.infoglue.cms.controllers.kernel.impl.simple.RegistryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionControllerProxy;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
-import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
+import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
-import org.infoglue.cms.entities.structure.SiteNodeVersion;
+import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
-
-//import com.frovi.ss.Tree.BaseNode;
-//import com.frovi.ss.Tree.INodeSupplier;
+import org.infoglue.cms.util.CmsPropertyHandler;
+import org.infoglue.cms.util.XMLHelper;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 {
@@ -56,40 +57,77 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 	private Integer repositoryId;
 	private Integer siteNodeId;
 	private String anchorId;
-	private String articleTitle;
 	private Map<Integer, String> contentList;
 	private String[] allowedContentTypeIds = null;
+	private Integer currentLanguageId = 0;
 	
 
 	@Override
 	public String doExecute() throws Exception
 	{
-		SiteNodeVersionVO latestSiteNodeVersion = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getLatestActiveSiteNodeVersionVO(siteNodeId);
-		if(latestSiteNodeVersion != null) {
-			List<Object> referencedObjects = RegistryController.getController().getReferencedObjects(SiteNodeVersion.class.getName(), latestSiteNodeVersion.getSiteNodeVersionId().toString(), true);
-			
-			if(!referencedObjects.isEmpty()) {
-				// List of CTD-ID for the content types that you can have anchor links to.
-				// To add more content types, just add the CTD-ID for them to the array list
-				List<Integer> ctdIdList = new ArrayList<Integer>();
-				ContentTypeDefinitionVO ctd = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Article");
-				ctdIdList.add(ctd.getContentTypeDefinitionId());
-				contentList = new HashMap<Integer, String>();
-				
-				// Build list of contents that can be linked to
-				for (Object obj : referencedObjects) {
-					setArticleTitle("");
-					if(obj instanceof ContentVO) {
-						ContentVO contentObj = (ContentVO) obj;
-						if(ctdIdList.contains(contentObj.getContentTypeDefinitionId())) {
-							ContentVersionVO cvObj = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentObj.getId());
-							if(cvObj != null) {
-								setArticleTitle(ContentVersionController.getContentVersionController().getAttributeValue(cvObj.getContentVersionId(), "Title", true));
-								contentList.put(contentObj.getContentId(), contentObj.getName() + (getArticleTitle().length() > 0 ? " (" + getArticleTitle() + ")" : ""));
+		if(this.siteNodeId != null && this.siteNodeId > 0)
+		{
+			try
+			{
+				String[] slotNames = CmsPropertyHandler.getSlotNamesForContentListing().split(",");
+				String[] contentNames = CmsPropertyHandler.getContentNamesForContentListing().split(",");
+				String[] attributeNames = CmsPropertyHandler.getTitleAttributesForContentListing().split(",");
+				logger.info("Number of slot names in application settings: " + slotNames.length);
+				// If there are stored application settings for listing of contents on site nodes, try to list matching content for this site node
+				if( (slotNames[0].trim().length() > 0) && (contentNames.length >= slotNames.length && attributeNames.length >= slotNames.length) )
+				{
+					contentList = new HashMap<Integer, String>();
+					String contentName;
+					LanguageVO masterLanguage = LanguageController.getController().getMasterLanguage(this.repositoryId);
+					logger.info("Selected language for sitenode: " + this.currentLanguageId);
+					if (this.currentLanguageId == 0)
+					{
+						List<LanguageVO> enabledLangs = SiteNodeController.getController().getEnabledLanguageVOListForSiteNode(this.siteNodeId);
+						this.currentLanguageId = enabledLangs.get(0).getLanguageId();
+						logger.info("Re-set selected language for sitenode (first enabled language): " + this.currentLanguageId);
+					}
+					SiteNodeVersionVO latestSiteNodeVersion = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getLatestActiveSiteNodeVersionVO(this.siteNodeId);
+					
+					if(latestSiteNodeVersion != null) {
+						// Get the XML data for this site node
+						String componentXML = null;
+						SiteNodeVO siteNode = SiteNodeController.getController().getSiteNodeVOWithId(this.siteNodeId);
+						ContentVersionVO metaInfo = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNode.getMetaInfoContentId(), masterLanguage.getLanguageId());
+						componentXML = ContentVersionController.getContentVersionController().getAttributeValue(metaInfo.getId(), "ComponentStructure", false);
+						logger.info("componentXML:" + componentXML);
+						
+						Document document = XMLHelper.readDocumentFromByteArray(componentXML.getBytes("UTF-8"));
+						// Loop over the application settings and get the content we are interested in from the XML for each set of 3 settings
+						for(int j = 0; j < slotNames.length; j++)
+						{
+							String xpath = "//component[@name='" + slotNames[j].trim() + "']/properties/property[@name='" + contentNames[j].trim() + "']/binding";
+							NodeList components = org.apache.xpath.XPathAPI.selectNodeList(document.getDocumentElement(), xpath);
+							int NrOfComponents = components.getLength();
+							logger.info("Number of sitenode contents: " + NrOfComponents + " (slot name: " + slotNames[j] + " - content name: " + contentNames[j] +")");
+							
+							if (components.getLength() > 0)
+							{
+								for (int i=0; i<NrOfComponents; i++)
+								{
+									contentName = "";
+									Element elem = (Element) components.item(i);
+									int contentId = Integer.parseInt(elem.getAttribute("entityId"));
+									contentName = ContentController.getContentController().getContentAttribute(contentId, currentLanguageId, attributeNames[j].trim());
+									ContentVO contentObj = ContentController.getContentController().getContentVOWithId(contentId);
+									if(contentObj != null)
+									{
+										contentList.put(contentId, contentObj.getName() + (contentName.length() > 0 ? " (" + contentName + ")" : ""));
+									}
+								}
 							}
 						}
+							
 					}
 				}
+			}
+			catch(Exception e)
+			{
+				logger.info("Error when listing sitenode content:" + e.getMessage(), e);
 			}
 		}
 		return "success";
@@ -157,21 +195,6 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
         this.allowedContentTypeIds = allowedContentTypeIds;
     }
     
-    public String getAllowedContentTypeIdsAsUrlEncodedString() throws Exception
-    {
-        StringBuffer sb = new StringBuffer();
-        
-        for(int i=0; i<allowedContentTypeIds.length; i++)
-        {
-            if(i > 0)
-                sb.append("&");
-            
-            sb.append("allowedContentTypeIds=" + URLEncoder.encode(allowedContentTypeIds[i], "UTF-8"));
-        }
-
-        return sb.toString();
-    }
-
 	public Integer getSiteNodeId() {
 		return siteNodeId;
 	}
@@ -188,11 +211,11 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 		this.anchorId = anchorId;
 	}
 
-	public String getArticleTitle() {
-		return articleTitle;
+	public Integer getCurrentLanguageId() {
+		return currentLanguageId;
 	}
 
-	public void setArticleTitle(String articleTitle) {
-		this.articleTitle = articleTitle;
+	public void setCurrentLanguageId(Integer currentLanguageId) {
+		this.currentLanguageId = currentLanguageId;
 	}
 }

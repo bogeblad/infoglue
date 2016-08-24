@@ -2047,6 +2047,21 @@ public class CmsPropertyHandler
 	{
 	    return getServerNodeProperty("metaInfoAttributesToShowInCreatePageDialog", true, "Title,NavigationTitle,NiceURIName");
 	}
+	
+	public static String getSlotNamesForContentListing()
+	{
+		return getServerNodeProperty("slotNamesForContentListing", true, "");
+	}
+	
+	public static String getContentNamesForContentListing()
+	{
+		return getServerNodeProperty("contentNamesForContentListing", true, "");
+	}
+	
+	public static String getTitleAttributesForContentListing()
+	{
+		return getServerNodeProperty("titleAttributesForContentListing", true, "");
+	}
 
 	public static String getPreferredLanguageCode(String userName)
 	{

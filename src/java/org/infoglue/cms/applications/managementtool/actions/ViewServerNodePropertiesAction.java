@@ -398,6 +398,9 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "useApprovalFlow");
 	    populate(ps, "autoShowApprovalButtons");
 	    populate(ps, "metaInfoAttributesToShowInCreatePageDialog");
+	    populate(ps, "slotNamesForContentListing");
+	    populate(ps, "contentNamesForContentListing");
+	    populate(ps, "titleAttributesForContentListing");
 
 	    populate(ps, "defaultSystemTheme");
 

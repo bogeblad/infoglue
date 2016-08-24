@@ -38,12 +38,9 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
-import org.infoglue.cms.applications.common.Session;
 import org.infoglue.cms.applications.databeans.InfoglueTool;
 import org.infoglue.cms.applications.databeans.LinkBean;
 import org.infoglue.cms.applications.databeans.ProcessBean;
@@ -71,7 +68,6 @@ import org.infoglue.cms.entities.management.InterceptionPointVO;
 import org.infoglue.cms.entities.management.InterceptorVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
-import org.infoglue.cms.entities.management.SystemUser;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.exception.Bug;
@@ -88,7 +84,6 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
 import org.infoglue.deliver.controllers.kernel.impl.simple.ExtranetController;
 import org.infoglue.deliver.controllers.kernel.impl.simple.RepositoryDeliveryController;
-import org.infoglue.deliver.controllers.kernel.impl.simple.TemplateController;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.HttpHelper;
 import org.infoglue.deliver.util.LiveInstanceMonitor;
@@ -108,7 +103,6 @@ import webwork.config.Configuration;
 public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 {
     private final static Logger logger = Logger.getLogger(InfoGlueAbstractAction.class.getName());
-	private final static Logger USER_ACTION_LOGGER = Logger.getLogger("User Action");
 	private final static AdminToolbarService toolbarService = AdminToolbarService.getService();
 	
 
@@ -1828,85 +1822,10 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 
 	public String doShowProcessesAsJSON() throws Exception
 	{
-		logUserActionInfo(getClass(), "doShowProcessesAsJSON");
 		return "successShowProcessesAsJSON";
 	}
 
-	private <T> void logUserAction(Class<T> actionClass, String actionMethod, Level level)
-	{
-		String className = actionClass.getSimpleName();
-		String packageName = actionClass.getPackage().getName();
-		String userName = getOptionalUserName();
-		USER_ACTION_LOGGER.log(level, String.format("%-10s %-60s %-40s %s", userName, packageName, className, actionMethod));
-	}
-	
-	protected <T> void logUserActionInfo(Class<T> actionClass, String actionMethod)
-	{
-		if (USER_ACTION_LOGGER.isInfoEnabled()) {
-			logUserAction(actionClass, actionMethod, Level.INFO);
-		}
-	}
-	
-	private String getOptionalUserName() {
-		String name = "????????";
-		Session session = getSession();
-		Principal user = null;
-		
-		// Try to fetch the user from the session
-		if (session != null) {
-			logger.debug("Got session");
-			user = session.getInfoGluePrincipal();
-			logger.debug("Got InfogluePrincipal from session: " + user);
-		}
-		
-		// If we got no user, try to get it from the HTTP session
-		if (user == null) {
-			logger.debug("Got HTTP session");
-			HttpSession httpSession = this.getHttpSession();
-			if (httpSession != null) {
-				user = (Principal) httpSession.getAttribute("infogluePrincipal");
-				logger.debug("Got InfogluePrincipal from HTTP session: " + user);
-			}
-		}
-		
-		// If we still have got no user, try to get a TemplateController from the request
-		// to get the user from there
-		if (user == null) {
-			HttpServletRequest request = getRequest();
-			if (request != null) {
-				logger.debug("Got request");
 
-				TemplateController controller = (TemplateController) request.getAttribute("org.infoglue.cms.deliver.templateLogic");
-				if (controller != null) {
-					logger.debug("Got controller");
-					
-					user = controller.getPrincipal();
-					logger.debug("Got InfogluePrincipal from request: " + user);
-				}
-			}
-		}
-
-		if (user != null) {
-			logger.debug("Got user");
-
-			// We have a user, get the name of the user
-			name = user.getName();
-			if (user instanceof InfoGluePrincipal && ((InfoGluePrincipal) user).getIsAdministrator()) {
-				name = name + "*";
-			}
-		} else if (session != null) {
-			// We have no principal user, fall back on a SystemUser if available
-			SystemUser systemUser = session.getUser();
-			if (systemUser != null) {
-				logger.debug("Got SystemUser from session: " + systemUser);
-
-				name = "(" + systemUser.getUserName() + ")";
-			}
-		}
-
-		return name;
-	}
-	
 	public String getLocalizedNameForSiteNode(SiteNodeVO siteNodeVO, Integer languageId) throws Exception
 	{
 		String navigationTitle = ContentController.getContentController().getContentAttribute(siteNodeVO.getMetaInfoContentId(), languageId, "NavigationTitle");

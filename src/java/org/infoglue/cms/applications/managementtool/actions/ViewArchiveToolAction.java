@@ -117,7 +117,7 @@ public class ViewArchiveToolAction extends InfoGlueAbstractAction
     }
 
 	public String doInputRestoreAssetArchive() throws Exception
-    {        		
+    {
         return "inputRestoreAssetArchive";
     }
 	

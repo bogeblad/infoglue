@@ -159,7 +159,6 @@ public class ViewContentAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         try
         {
 	        ContentVO contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), getContentId());
@@ -204,14 +203,12 @@ public class ViewContentAction extends InfoGlueAbstractAction
 
 	public String doStandalone() throws Exception
 	{
-		logUserActionInfo(getClass(), "doStandalone");
 		this.initialize(getContentId());
 		return "standalone";
 	}
 
 	public String doV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doV3");
 		try
         {
 	        ContentVO contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), getContentId());

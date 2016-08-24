@@ -55,7 +55,6 @@ public class UpdateServerNodeAction extends ViewServerNodeAction //WebworkAbstra
        	
 	public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
 		super.initialize(getServerNodeId());
 
     	ceb.add(this.serverNodeVO.validate());
@@ -68,7 +67,6 @@ public class UpdateServerNodeAction extends ViewServerNodeAction //WebworkAbstra
 
 	public String doSaveAndExit() throws Exception
     {
-		logUserActionInfo(getClass(), "doSaveAndExit");
 		doExecute();
 						
 		return "saveAndExit";

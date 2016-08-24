@@ -56,7 +56,6 @@ public class UpdateRedirectAction extends ViewRedirectAction //WebworkAbstractAc
        	
 	public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
 		super.initialize(getRedirectId());
 		if(super.redirectVO != null)
 		{
@@ -77,7 +76,6 @@ public class UpdateRedirectAction extends ViewRedirectAction //WebworkAbstractAc
 
 	public String doLocal() throws Exception
     {
-		logUserActionInfo(getClass(), "doLocal");
 		super.initialize(getRedirectId());
 		if(super.redirectVO != null)
 		{
@@ -97,7 +95,6 @@ public class UpdateRedirectAction extends ViewRedirectAction //WebworkAbstractAc
 
 	public String doSaveAndExit() throws Exception
     {
-		logUserActionInfo(getClass(), "doSaveAndExit");
 		doExecute();
 						
 		return "saveAndExit";
@@ -105,7 +102,6 @@ public class UpdateRedirectAction extends ViewRedirectAction //WebworkAbstractAc
 
 	public String doSaveAndExitLocal() throws Exception
     {
-		logUserActionInfo(getClass(), "doSaveAndExitLocal");
 		doLocal();
 						
 		return "saveAndExitLocal";

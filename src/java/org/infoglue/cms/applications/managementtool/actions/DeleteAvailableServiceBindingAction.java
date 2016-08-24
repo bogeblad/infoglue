@@ -52,7 +52,6 @@ public class DeleteAvailableServiceBindingAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		AvailableServiceBindingController.getController().delete(this.availableServiceBindingVO);
 		
 		return "success";

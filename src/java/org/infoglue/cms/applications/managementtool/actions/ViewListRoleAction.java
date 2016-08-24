@@ -44,7 +44,6 @@ public class ViewListRoleAction extends InfoGlueAbstractAction
 		
 	protected String doExecute() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		this.roles = RoleControllerProxy.getController().getAllRoles();
 	    
 	    return "success";
@@ -52,7 +51,6 @@ public class ViewListRoleAction extends InfoGlueAbstractAction
 
 	public String doListManagableRoles() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doListManagableRoles");
 		this.roles = RoleControllerProxy.getController().getAvailableRoles(this.getInfoGluePrincipal(), "Role.ManageUsers");
 	    
 	    return "successV3";

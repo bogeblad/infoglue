@@ -53,7 +53,6 @@ public class RepositoryLanguageAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		RepositoryLanguageController.getController().publishRepositoryLanguage(this.repositoryLanguageVO);
 		
 		return "success";
@@ -61,7 +60,6 @@ public class RepositoryLanguageAction extends InfoGlueAbstractAction
 	
 	public String doUnpublish() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doUnpublish");
 		RepositoryLanguageController.getController().unpublishRepositoryLanguage(this.repositoryLanguageVO);
 
 		return "success";
@@ -69,7 +67,6 @@ public class RepositoryLanguageAction extends InfoGlueAbstractAction
 
 	public String doMoveDown() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doMoveDown");
 		RepositoryLanguageController.getController().moveRepositoryLanguage(this.repositoryLanguageVO, true);
 
 		return "success";
@@ -77,7 +74,6 @@ public class RepositoryLanguageAction extends InfoGlueAbstractAction
 
 	public String doMoveUp() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doMoveUp");
 		RepositoryLanguageController.getController().moveRepositoryLanguage(this.repositoryLanguageVO, false);
 
 		return "success";
@@ -94,7 +90,6 @@ public class RepositoryLanguageAction extends InfoGlueAbstractAction
 	
 	public String doUpdate() throws Exception
 	{
-		logUserActionInfo(getClass(), "doUpdate");
     	String[] values = getRequest().getParameterValues("languageId");
 		RepositoryLanguageController.getController().updateRepositoryLanguages(this.repositoryId,values);
 			
@@ -103,7 +98,6 @@ public class RepositoryLanguageAction extends InfoGlueAbstractAction
 	
 	public String doSaveAndExit() throws Exception
 	{
-		logUserActionInfo(getClass(), "doSaveAndExit");
     	doUpdate();
 		return "saveAndExit";	
 	}

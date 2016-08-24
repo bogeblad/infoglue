@@ -93,7 +93,6 @@ public class CreatePageTemplateAction extends InfoGlueAbstractAction implements 
 	
     public String doInput() throws Exception
     {
-		logUserActionInfo(getClass(), "doInput");
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 
         return Action.INPUT;
@@ -101,7 +100,6 @@ public class CreatePageTemplateAction extends InfoGlueAbstractAction implements 
 
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         logger.info("contentId:" + contentId);
         logger.info("parentContentId:" + parentContentId);
         logger.info("repositoryId:" + repositoryId);
@@ -256,7 +254,6 @@ public class CreatePageTemplateAction extends InfoGlueAbstractAction implements 
     
     public String doUpdate() throws Exception
     {
-		logUserActionInfo(getClass(), "doUpdate");
         logger.info("pagePartContentId:" + pagePartContentId);
         logger.info("contentId:" + contentId);
         logger.info("componentId:" + componentId);

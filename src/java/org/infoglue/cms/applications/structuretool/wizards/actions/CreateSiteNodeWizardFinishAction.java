@@ -59,7 +59,6 @@ public class CreateSiteNodeWizardFinishAction extends CreateSiteNodeWizardAbstra
 	
 	public String doExecute() throws Exception
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		try
 		{
 			CreateSiteNodeWizardInfoBean createSiteNodeWizardInfoBean = getCreateSiteNodeWizardInfoBean();
@@ -125,7 +124,6 @@ public class CreateSiteNodeWizardFinishAction extends CreateSiteNodeWizardAbstra
 
 	public String doCancel() throws Exception
 	{
-		logUserActionInfo(getClass(), "doCancel");
 		try
 		{
 			CreateSiteNodeWizardInfoBean createSiteNodeWizardInfoBean = getCreateSiteNodeWizardInfoBean();

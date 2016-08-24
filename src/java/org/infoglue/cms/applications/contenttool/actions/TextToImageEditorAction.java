@@ -140,7 +140,6 @@ public class TextToImageEditorAction extends InfoGlueAbstractAction
     
     protected String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         DatabaseWrapper dbWrapper = new DatabaseWrapper(CastorDatabaseService.getDatabase());
     	//Database db = CastorDatabaseService.getDatabase();
 		

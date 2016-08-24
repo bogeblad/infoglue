@@ -54,25 +54,21 @@ public class UpdateSystemUserPasswordAction extends InfoGlueAbstractAction
 
 	public String doInput() throws Exception
     {
-		logUserActionInfo(getClass(), "doInput");
     	return Action.INPUT;
     }
 
     public String doInputV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doInputV3");
     	return Action.INPUT + "V3";
     }
 
     public String doInputStandalone() throws Exception
     {
-		logUserActionInfo(getClass(), "doInputStandalone");
     	return "inputStandalone";
     }
 
     public String doInputStandaloneV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doInputStandaloneV3");
     	showInline = true;
     	
     	return "inputStandaloneV3";
@@ -80,7 +76,6 @@ public class UpdateSystemUserPasswordAction extends InfoGlueAbstractAction
 
 	protected String doExecute() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 	    if(userName.equals(CmsPropertyHandler.getAnonymousUser()))
 	        throw new SystemException("You must not change password on this user as it's needed by the system.");
 
@@ -100,7 +95,6 @@ public class UpdateSystemUserPasswordAction extends InfoGlueAbstractAction
 
 	public String doV3() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doV3");
 		try
 		{
 			if(userName.equals(CmsPropertyHandler.getAnonymousUser()))

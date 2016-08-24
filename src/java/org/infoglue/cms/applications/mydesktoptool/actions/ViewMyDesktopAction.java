@@ -76,7 +76,6 @@ public class ViewMyDesktopAction extends InfoGlueAbstractAction
 	
 	public String doExecute()
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		try
 		{
 			populateActiveWorkflowVOList();
@@ -98,7 +97,6 @@ public class ViewMyDesktopAction extends InfoGlueAbstractAction
 	
 	public String doAvailable()
 	{
-		logUserActionInfo(getClass(), "doAvailable");
 		try
 		{
 			availableWorkflowVOList = controller.getAvailableWorkflowVOList(getInfoGluePrincipal());
@@ -113,7 +111,6 @@ public class ViewMyDesktopAction extends InfoGlueAbstractAction
 
 	public String doOngoing()
 	{
-		logUserActionInfo(getClass(), "doOngoing");
 		try
 		{
 			populateActiveWorkflowVOList();
@@ -128,7 +125,6 @@ public class ViewMyDesktopAction extends InfoGlueAbstractAction
 
 	public String doShortcuts()
 	{
-		logUserActionInfo(getClass(), "doShortcuts");
 		try
 		{
 			availableShortcutVOList = shortcutController.getAvailableShortcutVOList(getInfoGluePrincipal());
@@ -143,7 +139,6 @@ public class ViewMyDesktopAction extends InfoGlueAbstractAction
 
 	public String doLatestPages()
 	{
-		logUserActionInfo(getClass(), "doLatestPages");
 		try
 		{
 			this.siteNodeVOListLastModifiedByPincipal = SiteNodeController.getController().getSiteNodeVOListLastModifiedByPincipal(getInfoGluePrincipal());
@@ -158,7 +153,6 @@ public class ViewMyDesktopAction extends InfoGlueAbstractAction
 
 	public String doLatestContents()
 	{
-		logUserActionInfo(getClass(), "doLatestContents");
 		try
 		{
 			this.contentVOListLastModifiedByPincipal = ContentController.getContentController().getContentVOListLastModifiedByPincipal(getInfoGluePrincipal(), new String[] {"Meta info"});

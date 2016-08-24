@@ -63,7 +63,6 @@ public class InfoGlueDefaultInputHandlerAction extends InfoGlueAbstractAction
 	
 	public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	invokeHandler();
     	getResponse().sendRedirect(this.redirectAddress);
     	

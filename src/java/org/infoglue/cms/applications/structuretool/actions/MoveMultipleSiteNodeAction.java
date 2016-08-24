@@ -94,7 +94,6 @@ public class MoveMultipleSiteNodeAction extends InfoGlueAbstractAction
 	@SuppressWarnings("unchecked")
 	public String doInput() throws Exception
 	{
-		logUserActionInfo(getClass(), "doInput");
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 
 		if(this.qualifyerXML != null && !this.qualifyerXML.equals(""))
@@ -113,7 +112,6 @@ public class MoveMultipleSiteNodeAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         if(this.newParentSiteNodeId == null)
         {
     		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);

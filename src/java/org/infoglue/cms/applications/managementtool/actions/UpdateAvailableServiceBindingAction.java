@@ -61,7 +61,6 @@ public class UpdateAvailableServiceBindingAction extends ViewAvailableServiceBin
 	
 	public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
 		super.initialize(getAvailableServiceBindingId());
 
 		// ceb.throwIfNotEmpty();
@@ -77,7 +76,6 @@ public class UpdateAvailableServiceBindingAction extends ViewAvailableServiceBin
 
 	public String doSaveAndExit() throws Exception
     {
-		logUserActionInfo(getClass(), "doSaveAndExit");
 		doExecute();
 						
 		return "saveAndExit";

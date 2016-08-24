@@ -139,7 +139,6 @@ public class MoveContentAction extends InfoGlueAbstractAction
 
     public String doInputV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doInputV3");		
         userSessionKey = "" + System.currentTimeMillis();
 
 		ContentVO contentVO = ContentControllerProxy.getContentController().getContentVOWithId(getContentId());
@@ -157,7 +156,6 @@ public class MoveContentAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         ceb.throwIfNotEmpty();
     	
 		ContentControllerProxy.getController().acMoveContent(this.getInfoGluePrincipal(), this.contentVO, this.newParentContentId);
@@ -169,7 +167,6 @@ public class MoveContentAction extends InfoGlueAbstractAction
 
     public String doV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doV3");
         try
         {
             ceb.throwIfNotEmpty();
@@ -216,7 +213,6 @@ public class MoveContentAction extends InfoGlueAbstractAction
 
     public String doAjax() throws Exception
     {
-		logUserActionInfo(getClass(), "doAjax");
         try
         {
             ceb.throwIfNotEmpty();

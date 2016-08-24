@@ -86,7 +86,6 @@ public class ViewSystemUserAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         this.initialize(getUserName());
         
         return "success";
@@ -94,7 +93,6 @@ public class ViewSystemUserAction extends InfoGlueAbstractAction
 
     public String doV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doV3");
         this.initialize(getUserName());
         
         return "successV3";

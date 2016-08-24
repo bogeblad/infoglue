@@ -89,7 +89,6 @@ public class ViewListSiteNodeVersionAction extends InfoGlueAbstractAction
 
 	protected String doExecute() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		ProcessBean processBean = ProcessBean.createProcessBean(ViewListSiteNodeVersionAction.class.getName(), "" + getInfoGluePrincipal().getName());
 		processBean.setStatus(ProcessBean.RUNNING);
 
@@ -248,7 +247,6 @@ public class ViewListSiteNodeVersionAction extends InfoGlueAbstractAction
 
 	public String doV3() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doV3");
 		doExecute();
 		
         userSessionKey = "" + System.currentTimeMillis();

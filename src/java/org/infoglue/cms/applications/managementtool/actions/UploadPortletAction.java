@@ -75,7 +75,6 @@ public class UploadPortletAction extends InfoGlueAbstractAction
 
     public String doExecute() //throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         try
 		{
 			MultiPartRequestWrapper mpr = ActionContext.getMultiPartRequest();

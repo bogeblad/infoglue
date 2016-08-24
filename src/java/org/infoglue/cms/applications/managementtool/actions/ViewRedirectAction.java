@@ -65,7 +65,6 @@ public class ViewRedirectAction extends InfoGlueAbstractAction
     
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         this.initialize(getRedirectId());
 
         return "success";
@@ -77,7 +76,6 @@ public class ViewRedirectAction extends InfoGlueAbstractAction
     
     public String doLocalView() throws Exception
     {
-		logUserActionInfo(getClass(), "doLocalView");
         this.initialize(getRedirectId());
 
         return "successLocal";

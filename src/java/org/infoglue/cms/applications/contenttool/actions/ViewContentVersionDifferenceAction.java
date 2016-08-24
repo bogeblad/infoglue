@@ -56,7 +56,6 @@ public class ViewContentVersionDifferenceAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
         this.contentVersionVO1 = ContentVersionControllerProxy.getController().getACContentVersionVOWithId(this.getInfoGluePrincipal(), contentVersionId1);    		 	
         this.contentVersionVO2 = ContentVersionControllerProxy.getController().getACContentVersionVOWithId(this.getInfoGluePrincipal(), contentVersionId2);    		 	
 

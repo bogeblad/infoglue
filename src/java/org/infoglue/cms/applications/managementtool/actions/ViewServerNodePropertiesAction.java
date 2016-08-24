@@ -83,7 +83,6 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
     
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
 		this.serverNodeVOList = ServerNodeController.getController().getServerNodeVOList();
         this.initialize(getServerNodeId());
 
@@ -117,7 +116,6 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
     
     public String doSave() throws Exception
     {
-		logUserActionInfo(getClass(), "doSave");
 		validateSecurityCode();
 
         Map args = new HashMap();
@@ -440,7 +438,6 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
     
     public String doDeleteProperty() throws Exception
     {
-		logUserActionInfo(getClass(), "doDeleteProperty");
 		validateSecurityCode();
 
         Map args = new HashMap();
@@ -472,7 +469,6 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
     
     public String doSaveAndExit() throws Exception
     {
-		logUserActionInfo(getClass(), "doSaveAndExit");
     	doSave();
     	
         return "saveAndExit";

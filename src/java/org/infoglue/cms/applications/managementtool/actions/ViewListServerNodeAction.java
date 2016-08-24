@@ -45,7 +45,6 @@ public class ViewListServerNodeAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		this.serverNodes = ServerNodeController.getController().getServerNodeVOList();
 		this.allowedAdminIPList = ServerNodeController.getController().getAllowedAdminIPList();
     	this.allowedAdminIP = ServerNodeController.getController().getAllowedAdminIP();
@@ -60,7 +59,6 @@ public class ViewListServerNodeAction extends InfoGlueAbstractAction
 
 	public String doSave() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doSave");
 		ServerNodeController.getController().setAllowedAdminIP(allowedAdminIP);
     	return "success";
 	}

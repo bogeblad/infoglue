@@ -84,7 +84,6 @@ public class ViewStructureToolToolBarAction extends InfoGlueAbstractAction
 	
 	public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
 	    try
 	    {
 			if(siteNodeVersionId != null)

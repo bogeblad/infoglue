@@ -98,7 +98,6 @@ public class ViewRepositoryPropertiesAction extends InfoGluePropertiesAbstractAc
     
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
         this.initialize(getRepositoryId());
 
         return "success";
@@ -110,7 +109,6 @@ public class ViewRepositoryPropertiesAction extends InfoGluePropertiesAbstractAc
     
     public String doSave() throws Exception
     {
-		logUserActionInfo(getClass(), "doSave");
     	Map args = new HashMap();
 	    args.put("globalKey", "infoglue");
 	    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
@@ -137,7 +135,6 @@ public class ViewRepositoryPropertiesAction extends InfoGluePropertiesAbstractAc
     
     public String doSaveAndExit() throws Exception
     {
-		logUserActionInfo(getClass(), "doSaveAndExit");
     	doSave();
     	
         return "saveAndExit";

@@ -40,7 +40,6 @@ public class DeleteWorkflowDefinitionAction extends InfoGlueAbstractAction
 		
 	protected String doExecute() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		WorkflowDefinitionController.getController().delete(this.workflowDefinitionVO);
 		return "success";
 	}

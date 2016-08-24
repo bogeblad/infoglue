@@ -84,7 +84,6 @@ public class CreateContentWizardInputContentAction extends InfoGlueAbstractActio
 	 
 	public String doInput() throws Exception
 	{
-		logUserActionInfo(getClass(), "doInput");
 		initialiaze();
 		return "input";
 	}
@@ -98,7 +97,6 @@ public class CreateContentWizardInputContentAction extends InfoGlueAbstractActio
 	 
 	public String doExecute() throws Exception
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		this.contentVO.setCreatorName(this.getInfoGluePrincipal().getName());
 
 		ceb = this.contentVO.validate();

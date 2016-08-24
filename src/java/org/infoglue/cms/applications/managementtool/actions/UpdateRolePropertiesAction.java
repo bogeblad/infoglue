@@ -53,7 +53,6 @@ public class UpdateRolePropertiesAction extends InfoGlueAbstractAction
 		
 	public String doExecute() throws Exception
 	{
-		logUserActionInfo(getClass(), "doExecute");
 	    ceb.throwIfNotEmpty();
 		RolePropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.rolePropertiesVO);
 		
@@ -64,7 +63,6 @@ public class UpdateRolePropertiesAction extends InfoGlueAbstractAction
 
 	public String doSaveAndExit() throws Exception
 	{
-		logUserActionInfo(getClass(), "doSaveAndExit");
 	    RolePropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.rolePropertiesVO);
 						 
 		return "saveAndExit";
@@ -72,7 +70,6 @@ public class UpdateRolePropertiesAction extends InfoGlueAbstractAction
 
 	public String doSaveAndExitStandalone() throws Exception
 	{
-		logUserActionInfo(getClass(), "doSaveAndExitStandalone");
 	    RolePropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.rolePropertiesVO);
 						 
 		return "saveAndExitStandalone";
@@ -80,7 +77,6 @@ public class UpdateRolePropertiesAction extends InfoGlueAbstractAction
 
 	public String doV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doV3");
 	    ceb.throwIfNotEmpty();
 		RolePropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.rolePropertiesVO);
 		
@@ -91,7 +87,6 @@ public class UpdateRolePropertiesAction extends InfoGlueAbstractAction
 
 	public String doSaveAndExitV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doSaveAndExitV3");
 	    RolePropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.rolePropertiesVO);
 						 
 		return "saveAndExitV3";
@@ -99,7 +94,6 @@ public class UpdateRolePropertiesAction extends InfoGlueAbstractAction
 
 	public String doSaveAndExitStandaloneV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doSaveAndExitStandaloneV3");
 	    RolePropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.rolePropertiesVO);
 						 
 		return "saveAndExitStandaloneV3";

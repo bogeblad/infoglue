@@ -200,7 +200,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doExecute() throws Exception
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		initialize(false);
 		return "success";
 	}
@@ -212,7 +211,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doListComponents() throws Exception
 	{
-		logUserActionInfo(getClass(), "doListComponents");
 		logger.info("queryString:" + this.getRequest().getQueryString());
 		initialize(false);
 
@@ -227,7 +225,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doListFormComponents() throws Exception
 	{
-		logUserActionInfo(getClass(), "doListFormComponents");
 		logger.info("queryString:" + this.getRequest().getQueryString());
 		//initialize(false);
 
@@ -240,7 +237,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doListComponentsForChange() throws Exception
 	{
-		logUserActionInfo(getClass(), "doListComponentsForChange");
 		logger.info("queryString:" + this.getRequest().getQueryString());
 		initialize(false);
 
@@ -288,7 +284,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doListFormComponentsForChange() throws Exception
 	{
-		logUserActionInfo(getClass(), "doListFormComponentsForChange");
 		logger.info("queryString:" + this.getRequest().getQueryString());
 		//initialize(false);
 
@@ -316,7 +311,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doListComponentsForPalette() throws Exception
 	{
-		logUserActionInfo(getClass(), "doListComponentsForPalette");
 		initialize(false);
 		return "listComponentsForPalette";
 	}
@@ -327,7 +321,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doShowContentTree() throws Exception
 	{
-		logUserActionInfo(getClass(), "doShowContentTree");
 		initialize(false);
 		initializeTreeView("ViewSiteNodePageComponents!showContentTree.action");
 
@@ -342,7 +335,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doShowContentTreeV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doShowContentTreeV3");
 		initialize(false);
 		initializeTreeView("ViewSiteNodePageComponents!showContentTreeV3.action");
 
@@ -357,7 +349,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doShowContentTreeForMultipleBinding() throws Exception
 	{
-		logUserActionInfo(getClass(), "doShowContentTreeForMultipleBinding");
 		initialize(false);
 		initializeTreeView("ViewSiteNodePageComponents!showContentTreeForMultipleBinding.action");
 		
@@ -372,7 +363,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doShowContentTreeForMultipleBindingV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doShowContentTreeForMultipleBindingV3");
 		initialize(false);
 		initializeTreeView("ViewSiteNodePageComponents!showContentTreeForMultipleBindingV3.action");
 		
@@ -387,7 +377,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doShowContentTreeForMultipleAssetBinding() throws Exception
 	{
-		logUserActionInfo(getClass(), "doShowContentTreeForMultipleAssetBinding");
 		initialize(false);
 		initializeTreeView("ViewSiteNodePageComponents!showContentTreeForMultipleAssetBinding.action");
 		
@@ -402,7 +391,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doShowStructureTree() throws Exception
 	{
-		logUserActionInfo(getClass(), "doShowStructureTree");
 		initialize(false);
 		initializeTreeView("ViewSiteNodePageComponents!showStructureTree.action");
 
@@ -417,7 +405,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doShowStructureTreeV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doShowStructureTreeV3");
 		initialize(false);
 		initializeTreeView("ViewSiteNodePageComponents!showStructureTreeV3.action");
 
@@ -432,7 +419,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doShowStructureTreeForMultipleBinding() throws Exception
 	{
-		logUserActionInfo(getClass(), "doShowStructureTreeForMultipleBinding");
 		initialize(false);
 		initializeTreeView("ViewSiteNodePageComponents!showStructureTreeForMultipleBinding.action");
 	
@@ -447,7 +433,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doShowStructureTreeForMultipleBindingV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doShowStructureTreeForMultipleBindingV3");
 		initialize(false);
 		initializeTreeView("ViewSiteNodePageComponents!showStructureTreeForMultipleBindingV3.action");
 	
@@ -461,7 +446,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	 */
 	public String doShowCategoryTree() throws Exception
 	{
-		logUserActionInfo(getClass(), "doShowCategoryTree");
 		initialize(false);
 		initializeTreeView("ViewSiteNodePageComponents!showCategoryTree.action");
 		return CATEGORY_TREE;
@@ -472,7 +456,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	 */
 	public String doShowCategoryTreeForMultipleBinding() throws Exception
 	{
-		logUserActionInfo(getClass(), "doShowCategoryTreeForMultipleBinding");
 		initialize(false);
 		initializeTreeView("ViewSiteNodePageComponents!showCategoryTreeForMultipleBinding.action");
 		return CATEGORY_TREE_MULTIPLE;
@@ -510,7 +493,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doAddPageTemplate() throws Exception
 	{
-		logUserActionInfo(getClass(), "doAddPageTemplate");
 		logger.info("************************************************************");
 		logger.info("* ADDING PAGE TEMPLATE                                     *");
 		logger.info("************************************************************");
@@ -587,7 +569,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doAddComponent() throws Exception
 	{
-		logUserActionInfo(getClass(), "doAddComponent");
 		logger.info("************************************************************");
 		logger.info("* ADDING COMPONENT                                         *");
 		logger.info("************************************************************");
@@ -708,7 +689,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doAddOrReplaceComponent() throws Exception
 	{
-		logUserActionInfo(getClass(), "doAddOrReplaceComponent");
 		logger.info("************************************************************");
 		logger.info("* ADDING OR REPLACING COMPONENT                            *");
 		logger.info("************************************************************");
@@ -814,7 +794,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doMoveComponentToSlot() throws Exception
 	{
-		logUserActionInfo(getClass(), "doMoveComponentToSlot");
 		logger.info("************************************************************");
 		logger.info("* MOVING COMPONENT TO ANOTHER SLOT                         *");
 		logger.info("************************************************************");
@@ -1021,7 +1000,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doMoveComponent() throws Exception
 	{
-		logUserActionInfo(getClass(), "doMoveComponent");
 		initialize();
 			
 		String componentXML   = getPageComponentsString(siteNodeId, this.masterLanguageVO.getId());			
@@ -1181,7 +1159,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doUpdateComponentProperty() throws Exception
 	{
-		logUserActionInfo(getClass(), "doUpdateComponentProperty");
 		if(logger.isInfoEnabled())
 		{
 			logger.info("************************************************************");
@@ -1350,7 +1327,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doUpdateComponentProperties() throws Exception
 	{
-		logUserActionInfo(getClass(), "doUpdateComponentProperties");
 		if(logger.isInfoEnabled())
 		{
 			logger.info("************************************************************");
@@ -1522,7 +1498,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doDeleteComponent() throws Exception
 	{
-		logUserActionInfo(getClass(), "doDeleteComponent");
 		initialize();
 		//logger.info("************************************************************");
 		//logger.info("* DELETING COMPONENT                                         *");
@@ -1569,7 +1544,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doChangeComponent() throws Exception
 	{
-		logUserActionInfo(getClass(), "doChangeComponent");
 		initialize();
 		//logger.info("************************************************************");
 		//logger.info("* DELETING COMPONENT                                         *");
@@ -1882,7 +1856,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doAddComponentPropertyBinding() throws Exception
 	{
-		logUserActionInfo(getClass(), "doAddComponentPropertyBinding");
 		initialize();
 		//logger.info("************************************************************");
 		//logger.info("* doAddComponentPropertyBinding                            *");
@@ -2071,7 +2044,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doAddComponentPropertyBindingWithQualifyer() throws Exception
 	{
-		logUserActionInfo(getClass(), "doAddComponentPropertyBindingWithQualifyer");
 		initialize();
 		//logger.info("************************************************************");
 		//logger.info("* doAddComponentPropertyBindingWithQualifyer               *");
@@ -2157,7 +2129,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doDeleteComponentBinding() throws Exception
 	{
-		logUserActionInfo(getClass(), "doDeleteComponentBinding");
 		initialize();
 		//logger.info("************************************************************");
 		//logger.info("* doDeleteComponentBinding               *");
@@ -2297,7 +2268,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
     
 	public String doDeleteComponentPropertyValue() throws Exception
 	{
-		logUserActionInfo(getClass(), "doDeleteComponentPropertyValue");
 		initialize();
 	
 		Integer siteNodeId 	= new Integer(this.getRequest().getParameter("siteNodeId"));

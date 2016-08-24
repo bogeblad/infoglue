@@ -46,7 +46,6 @@ public class ReplaceContentAction extends SearchContentAction
 		
 	public String doExecute() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 	    String contentVersionIds[] = contentVersionId.split(",");
 	    
 	    //logger.info("contentVersionIds:" + contentVersionIds + ":" + contentVersionIds.length);
@@ -64,7 +63,6 @@ public class ReplaceContentAction extends SearchContentAction
 
 	public String doV3() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doV3");
 	    String contentVersionIds[] = contentVersionId.split(",");
 	    Boolean caseSensitive = false;
 	    if(getCaseSensitive() != null && getCaseSensitive() == 1)

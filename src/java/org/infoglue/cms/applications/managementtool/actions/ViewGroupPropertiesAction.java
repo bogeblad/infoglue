@@ -91,7 +91,6 @@ public class ViewGroupPropertiesAction extends ViewEntityPropertiesAction
 
 	public String doExecute() throws Exception
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		this.initialize(getGroupName());   
 		
         this.setCurrentAction("ViewGroupProperties.action");
@@ -113,7 +112,6 @@ public class ViewGroupPropertiesAction extends ViewEntityPropertiesAction
 
 	public String doV3() throws Exception
 	{
-		logUserActionInfo(getClass(), "doV3");
 		this.initialize(getGroupName());   
 		
         this.setCurrentAction("ViewGroupProperties!v3.action");

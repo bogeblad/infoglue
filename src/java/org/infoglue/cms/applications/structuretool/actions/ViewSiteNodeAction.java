@@ -329,7 +329,6 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	String result = "success";
     	
         Database db = CastorDatabaseService.getDatabase();
@@ -454,7 +453,6 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
     
     public String doV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doV3");
     	String result = "successV3";
     	
         Database db = CastorDatabaseService.getDatabase();
@@ -591,7 +589,6 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
     
     public String doRefreshAndRedirect() throws Exception
     {
-		logUserActionInfo(getClass(), "doRefreshAndRedirect");
     	String result = "successRefreshAndRedirect";
     	
         Database db = CastorDatabaseService.getDatabase();
@@ -633,7 +630,6 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 
     public String doChangeState() throws Exception
     {
-		logUserActionInfo(getClass(), "doChangeState");
     	logger.info("Gonna change state with comment:" + this.siteNodeVersionVO.getVersionComment());
 
     	Database db = CastorDatabaseService.getDatabase();
@@ -659,13 +655,11 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
         
     public String doCommentVersion() throws Exception
     {
-		logUserActionInfo(getClass(), "doCommentVersion"); 
         return "commentVersion";
     }
 
     public String doChooseSiteNodeTypeDefinition() throws Exception
     {
-		logUserActionInfo(getClass(), "doChooseSiteNodeTypeDefinition"); 
 		this.siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(getSiteNodeId());
 		
         return "chooseSiteNodeTypeDefinition";

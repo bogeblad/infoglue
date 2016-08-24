@@ -153,7 +153,6 @@ public class ViewMyDesktopToolStartPageAction extends InfoGlueAbstractAction
 	 */
 	public String doExecute() throws SystemException
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		populateLists();
 		return SUCCESS;
 	}
@@ -165,7 +164,6 @@ public class ViewMyDesktopToolStartPageAction extends InfoGlueAbstractAction
 	 */
 	public String doTaskList() throws SystemException
 	{
-		logUserActionInfo(getClass(), "doTaskList");
 		populateActiveWorkflowVOList();
 		return "successTaskList";
 	}
@@ -181,7 +179,6 @@ public class ViewMyDesktopToolStartPageAction extends InfoGlueAbstractAction
 	 */
 	public String doStartWorkflow() throws SystemException
 	{
-		logUserActionInfo(getClass(), "doStartWorkflow");
 		workflow = controller.initializeWorkflow(getInfoGluePrincipal(), getWorkflowName(), actionId, WorkflowController.createWorkflowParameters(ActionContext.getRequest()));
 		return redirectToView();
 	}
@@ -200,7 +197,6 @@ public class ViewMyDesktopToolStartPageAction extends InfoGlueAbstractAction
 	 */
 	public String doInvoke() throws SystemException
 	{
-		logUserActionInfo(getClass(), "doInvoke");
 		logger.info("****************************************");
 		logger.info("workflowId:" + getWorkflowId());
 		logger.info("actionId:" + actionId);
@@ -411,7 +407,6 @@ public class ViewMyDesktopToolStartPageAction extends InfoGlueAbstractAction
 	
 	public String doGetActiveWorkflowProperties() throws Exception
 	{
-		logUserActionInfo(getClass(), "doGetActiveWorkflowProperties");
 		StringBuffer sb = new StringBuffer();
 		
 		String activeWorkflowId = getRequest().getParameter("activeWorkflowId");
@@ -466,7 +461,6 @@ public class ViewMyDesktopToolStartPageAction extends InfoGlueAbstractAction
 	
 	public String doGetAvailableWorkflowProperties() throws Exception
 	{
-		logUserActionInfo(getClass(), "doGetAvailableWorkflowProperties");
 		StringBuffer sb = new StringBuffer();
 		
 		String workflowName = getRequest().getParameter("workflowName");

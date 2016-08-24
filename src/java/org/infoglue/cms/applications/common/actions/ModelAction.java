@@ -57,7 +57,6 @@ public abstract class ModelAction extends InfoGlueAbstractAction
 	 */
 	protected String doExecute() throws Exception
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		return SUCCESS;
 	}
 

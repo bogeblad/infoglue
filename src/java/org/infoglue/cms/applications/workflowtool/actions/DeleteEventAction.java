@@ -64,7 +64,6 @@ public class DeleteEventAction extends InfoGlueAbstractAction
       
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	ceb.throwIfNotEmpty();
     	
 		EventController.delete(this.eventVO);  	

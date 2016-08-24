@@ -50,7 +50,6 @@ public class ChangeSiteNodeStateAction extends InfoGlueAbstractAction
 	   
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");      
     	//If the comment is not null we carry out the stateChange
     	if(getStateId().intValue() == 2 && getVersionComment() == null)
     	{

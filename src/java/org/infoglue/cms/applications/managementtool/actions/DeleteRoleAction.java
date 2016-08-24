@@ -39,7 +39,6 @@ public class DeleteRoleAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doExecute");
 		RoleControllerProxy.getController().deleteRole(roleName);
 
 		return "success";
@@ -47,7 +46,6 @@ public class DeleteRoleAction extends InfoGlueAbstractAction
 
 	public String doV3() throws Exception 
 	{
-		logUserActionInfo(getClass(), "doV3");
 		RoleControllerProxy.getController().deleteRole(roleName);
 
 		return "successV3";

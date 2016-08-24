@@ -95,7 +95,6 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 	
 	public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
     	if(this.interceptionPointId != null)
 	    	this.interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithId(this.interceptionPointId);
     	

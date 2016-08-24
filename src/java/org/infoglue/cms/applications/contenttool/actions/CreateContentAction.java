@@ -199,7 +199,6 @@ public class CreateContentAction extends InfoGlueAbstractAction
       
     public String doExecute() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecute");
 		this.contentVO.setCreatorName(this.getInfoGluePrincipal().getName());
 
     	ceb = this.contentVO.validate();
@@ -236,7 +235,6 @@ public class CreateContentAction extends InfoGlueAbstractAction
     
     public String doXML() throws Exception
     {
-		logUserActionInfo(getClass(), "doXML");
     	try
     	{
     		
@@ -261,21 +259,18 @@ public class CreateContentAction extends InfoGlueAbstractAction
 
 	public String doBindingView() throws Exception
 	{
-		logUserActionInfo(getClass(), "doBindingView");
 		doExecute();
 		return "bindingView";
 	}
 	
 	public String doTreeView() throws Exception
 	{
-		logUserActionInfo(getClass(), "doTreeView");
 		doExecute();
 		return "treeView";
 	}
 
     public String doInput() throws Exception
     {
-		logUserActionInfo(getClass(), "doInput");
 		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
 		Integer protectedContentId = ContentControllerProxy.getController().getProtectedContentId(parentContentId);
@@ -307,7 +302,6 @@ public class CreateContentAction extends InfoGlueAbstractAction
 
     public String doInputV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doInputV3");
 		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
 		Integer protectedContentId = ContentControllerProxy.getController().getProtectedContentId(parentContentId);
@@ -349,7 +343,6 @@ public class CreateContentAction extends InfoGlueAbstractAction
     
     public String doExecuteV3() throws Exception
     {
-		logUserActionInfo(getClass(), "doExecuteV3");
     	Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 

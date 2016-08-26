@@ -1081,12 +1081,10 @@ public class DigitalAssetController extends BaseController
 					logger.info("folderName:" + folderName);
 					logger.info("Found a digital asset:" + digitalAsset.getAssetFileName());
 				}
-				//String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
 				String fileName = createOldFormFileNameForAssetVO(digitalAsset);
 				String filePath = CmsPropertyHandler.getDigitalAssetPath() + File.separator + folderName;
 				boolean fileExists = dumpDigitalAsset(digitalAsset, fileName, filePath, db);
 				
-				//File outputFile = new File(filePath + File.separator + fileName);
 				if(!fileExists)
 				{
 					assetUrl = (fullURL ? CmsPropertyHandler.getWebServerAddress() : "") + "/" + CmsPropertyHandler.getImagesBaseUrl() + "/" + BROKENFILENAME;

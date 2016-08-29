@@ -91,8 +91,6 @@ public class ViewMessageCenterAction extends InfoGlueAbstractAction
 
     public String doGetSystemMessages() throws Exception
     {
-    	// Not logging this action since it is called very often
-    	// logInfoUserAction(getClass(), "doGetSystemMessages");
     	if(getInfoGluePrincipal() == null)
     		return ERROR;
     	
@@ -110,8 +108,6 @@ public class ViewMessageCenterAction extends InfoGlueAbstractAction
 
     public String doGetSystemMessagesV3() throws Exception
     {
-    	// Not logging this action since it is called very often
-    	// logInfoUserAction(getClass(), "doGetSystemMessagesV3");
     	if(getInfoGluePrincipal() == null)
     		return ERROR;
     	

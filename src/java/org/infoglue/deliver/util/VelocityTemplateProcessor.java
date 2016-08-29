@@ -43,6 +43,7 @@ import org.apache.velocity.app.Velocity;
 import org.apache.velocity.exception.ParseErrorException;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.tasktool.actions.ScriptController;
+import org.infoglue.cms.controllers.kernel.impl.simple.LabelController;
 import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.applications.actions.InfoGlueComponent;
@@ -185,13 +186,9 @@ public class VelocityTemplateProcessor
 		    	VisualFormatter formatter = new VisualFormatter();
 		        String errorMessage = e.getMessage();
 		        String htmlEscapedErrorMessage = formatter.escapeHTML(errorMessage);
-		        String errorHTML = "<h2>Something went wrong!</h2>" +
-		        		"<p>There was an error when generating this page. " +
-		        		"Please contact your local support team for help with rebuilding it. " + 
-		        		"If you were editing this page when the error occured, please " +
-		        		"make sure that you include any details about what you were doing.</p>" +
-		        		"<p>The page can be viewed below, but may be hard to edit. The system error message was:</p>";
-		        String errorMessageDiv = "<div class='error'>" + errorHTML + "</div><div class='internal-error' style='font-size: smaller; color: red'>" + htmlEscapedErrorMessage + "</div>";
+		        String errorHTML = LabelController.getController(templateController.getLocale()).getString("tool.common.generator.error.html");
+				String errorTitle = LabelController.getController(templateController.getLocale()).getString("tool.common.generator.error.title");
+		        String errorMessageDiv = "<div class='error'>" + errorHTML + "</div><div class='internal-error'>" + htmlEscapedErrorMessage + "</div>";
 		        String jsEscapedTemplate = formatter.escapeForJavascripts(templateAsString);
 				String errorScript = 
 		        		"<script>" + 
@@ -205,7 +202,7 @@ public class VelocityTemplateProcessor
 		        		"  iframe.width = window.innerWidth;" +
 		        		"</script>";
 		        String errorPageString = 
-		        		"<html><head><title>Error when rendering page</title></head><body>" + errorMessageDiv + "<iframe id='originalPage'></iframe>" + errorScript + "</body></html>";
+		        		"<html><head><title>" + errorTitle + "</title></head><body>" + errorMessageDiv + "<iframe id='originalPage'></iframe>" + errorScript + "</body></html>";
 		        pw.println(errorPageString);
 		    }
 		    else

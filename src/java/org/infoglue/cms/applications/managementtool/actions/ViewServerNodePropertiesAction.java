@@ -363,6 +363,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "sendToolbarKeyAsParameter");
 	    populate(ps, "errorTitle");
 	    populateData(ps, "errorHTML");
+	    populate(ps, "failedToRenderPageHelpUrl");
 	    populate(ps, "enableIfModifiedHeaders");
 	    
 	    populate(ps, "allowPublicationEventFilter");

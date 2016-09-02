@@ -367,6 +367,8 @@
 
 				#editPropertyFieldCSS("ServerNode.property.errorTitle" "errorTitle" "$this.getPropertyValue('errorTitle')" "51" "$!serverNodeId" "$!cmsPH.errorTitle")
 				#editPropertyTextAreaCSS("ServerNode.property.errorHTML" "errorHTML" "$this.getDataPropertyValue('errorHTML')" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.errorHTML")
+
+				#editPropertyFieldCSS("ServerNode.property.failedToRenderPageHelpUrl" "failedToRenderPageHelpUrl" "$this.getPropertyValue('failedToRenderPageHelpUrl')" "51" "$!serverNodeId" "$!cmsPH.failedToRenderPageHelpUrl")
 				
 				#yesNoDropDownWithInheritCSS("ServerNode.property.editOnSight" "editOnSight" "$this.getPropertyValue('editOnSight')" "$!cmsPH.editOnSight")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.disableEditOnSightToolbar" "disableEditOnSightToolbar" "$this.getPropertyValue('disableEditOnSightToolbar')" "$!cmsPH.disableEditOnSightToolbar")

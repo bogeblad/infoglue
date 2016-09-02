@@ -368,8 +368,6 @@
 				#editPropertyFieldCSS("ServerNode.property.errorTitle" "errorTitle" "$this.getPropertyValue('errorTitle')" "51" "$!serverNodeId" "$!cmsPH.errorTitle")
 				#editPropertyTextAreaCSS("ServerNode.property.errorHTML" "errorHTML" "$this.getDataPropertyValue('errorHTML')" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.errorHTML")
 
-				#editPropertyFieldCSS("ServerNode.property.failedToRenderPageHelpUrl" "failedToRenderPageHelpUrl" "$this.getPropertyValue('failedToRenderPageHelpUrl')" "51" "$!serverNodeId" "$!cmsPH.failedToRenderPageHelpUrl")
-				
 				#yesNoDropDownWithInheritCSS("ServerNode.property.editOnSight" "editOnSight" "$this.getPropertyValue('editOnSight')" "$!cmsPH.editOnSight")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.disableEditOnSightToolbar" "disableEditOnSightToolbar" "$this.getPropertyValue('disableEditOnSightToolbar')" "$!cmsPH.disableEditOnSightToolbar")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.showInlinePropertiesIcon" "showInlinePropertiesIcon" "$this.getPropertyValue('showInlinePropertiesIcon')" "$!cmsPH.showInlinePropertiesIcon")
@@ -516,6 +514,7 @@
 				#editPropertyFieldCSS("ServerNode.property.publicationThreadDelay" "publicationThreadDelay" "$this.getPropertyValue('publicationThreadDelay')" "51" "$!serverNodeId" "$!cmsPH.publicationThreadDelay")
 				#editPropertyFieldCSS("ServerNode.property.pathsToRecacheOnPublishing" "pathsToRecacheOnPublishing" "$this.getPropertyValue('pathsToRecacheOnPublishing')" "51" "$!serverNodeId" "$!cmsPH.pathsToRecacheOnPublishing")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.disableTemplateDebug" "disableTemplateDebug" "$this.getPropertyValue('disableTemplateDebug')" "$!cmsPH.disableTemplateDebug")
+				#editPropertyFieldCSS("ServerNode.property.failedToRenderPageHelpUrl" "failedToRenderPageHelpUrl" "$this.getPropertyValue('failedToRenderPageHelpUrl')" "51" "$!serverNodeId" "$!cmsPH.failedToRenderPageHelpUrl")
 				#editPropertyFieldCSS("ServerNode.property.exportFormat" "exportFormat" "$this.getPropertyValue('exportFormat')" "51" "$!serverNodeId" "$!cmsPH.exportFormat")
 				#editPropertyFieldCSS("ServerNode.property.digitalAssetUploadPath" "digitalAssetUploadPath" "$this.getPropertyValue('digitalAssetUploadPath')" "51" "$!serverNodeId" "$!cmsPH.digitalAssetUploadPath")
 				#editPropertyFieldCSS("ServerNode.property.decoratedPageInvoker" "decoratedPageInvoker" "$this.getPropertyValue('decoratedPageInvoker')" "51" "$!serverNodeId" "$!cmsPH.decoratedPageInvoker")

@@ -105,14 +105,14 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 	/**
 	 * Creates a filename for an asset based on the standard format, using the asset id and filename
 	 */
-	private static String createFileNameForAsset(DigitalAsset digitalAsset) {
+	private static String createOldFormFileNameForAsset(DigitalAsset digitalAsset) {
 		String asciiAssetFileName = formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAsset.getAssetFileName(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
-		String fileName = String.format(DigitalAssetController.STANDARD_ASSET_FILE_NAME_FORMAT, digitalAsset.getDigitalAssetId(), asciiAssetFileName);
+		String fileName = String.format(CmsPropertyHandler.OLD_ASSET_FILE_NAME_FORMAT, digitalAsset.getDigitalAssetId(), asciiAssetFileName);
 		return fileName;
 	}
 
 
-	private static String createAlternativeFileNameForAsset(DigitalAsset digitalAsset, Integer contentId, Integer languageId) {
+	private static String createNewFormFileNameForAsset(DigitalAsset digitalAsset, Integer contentId, Integer languageId) {
 		String fileName;
 		if(contentId == null || languageId == null)
 		{
@@ -133,7 +133,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 		}
 		
 		String asciiAssetKey = formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAsset.getAssetKey(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
-		fileName = String.format(DigitalAssetController.ALTERNATIVE_ASSET_FILE_NAME_FORMAT, contentId, languageId, asciiAssetKey, suffix);				
+		fileName = String.format(CmsPropertyHandler.NEW_ASSET_FILE_NAME_FORMAT, contentId, languageId, asciiAssetKey, suffix);				
 		return fileName;
 	}
 
@@ -156,13 +156,13 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 		Timer t = new Timer();
 		String fileName;
 		
-		if(CmsPropertyHandler.getAssetFileNameForm().equals(DigitalAssetController.ALTERNATIVE_ASSET_FILE_NAME_TYPE))
+		if(CmsPropertyHandler.getAssetFileNameForm().equals(CmsPropertyHandler.NEW_ASSET_FILE_NAME_FORM))
 		{
-			fileName = createAlternativeFileNameForAsset(digitalAsset, contentId, languageId);
+			fileName = createNewFormFileNameForAsset(digitalAsset, contentId, languageId);
 		} 
 		else
 		{
-			fileName = createFileNameForAsset(digitalAsset);
+			fileName = createOldFormFileNameForAsset(digitalAsset);
 		}
 		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getAssetFileName", t.getElapsedTime());
 
@@ -180,7 +180,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 		//logger.info("folderName:" + folderName);
 		//logger.info("AssetFileNameForm:" + CmsPropertyHandler.getAssetFileNameForm());
 		Timer t = new Timer();
-		if(CmsPropertyHandler.getAssetFileNameForm().equals(DigitalAssetController.ALTERNATIVE_ASSET_FILE_NAME_TYPE))
+		if(CmsPropertyHandler.getAssetFileNameForm().equals(CmsPropertyHandler.NEW_ASSET_FILE_NAME_FORM))
 		{
 			if(contentId == null || languageId == null)
 			{
@@ -216,7 +216,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 		//logger.info("folderName:" + folderName);
 		//logger.info("AssetFileNameForm:" + CmsPropertyHandler.getAssetFileNameForm());
 		Timer t = new Timer();
-		if(CmsPropertyHandler.getAssetFileNameForm().equals(DigitalAssetController.ALTERNATIVE_ASSET_FILE_NAME_TYPE))
+		if(CmsPropertyHandler.getAssetFileNameForm().equals(CmsPropertyHandler.NEW_ASSET_FILE_NAME_FORM))
 		{
 			if(contentId == null || languageId == null)
 			{
@@ -881,7 +881,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 			
 			logger.info("filterString:" + filterString);
 			logger.info("folderName:" + folderName);
-			if(CmsPropertyHandler.getAssetFileNameForm().equals(DigitalAssetController.ALTERNATIVE_ASSET_FILE_NAME_TYPE))
+			if(CmsPropertyHandler.getAssetFileNameForm().equals(CmsPropertyHandler.NEW_ASSET_FILE_NAME_FORM))
 			{
 				List<SmallestContentVersionVO> contentVersionVOList = DigitalAssetController.getContentVersionVOListConnectedToAssetWithId(digitalAssetId);	
 	    		Iterator<SmallestContentVersionVO> contentVersionVOListIterator = contentVersionVOList.iterator();

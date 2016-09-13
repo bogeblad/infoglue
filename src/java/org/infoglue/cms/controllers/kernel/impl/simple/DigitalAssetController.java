@@ -1784,25 +1784,28 @@ public class DigitalAssetController extends BaseController
 			
 			if(digitalAssetVO != null)
 			{
-				String folderName = "" + (digitalAssetVO.getDigitalAssetId().intValue() / 1000);
-				if(logger.isInfoEnabled())
-				{
-					logger.info("folderName:" + folderName);
-					logger.info("digitalAsset:" + digitalAssetVO.getAssetKey());
-					logger.info("Found a digital asset:" + digitalAssetVO.getAssetFileName());
-				}
-				
 				String fileName;
+				String folderName;
 				
 				if(CmsPropertyHandler.getAssetFileNameForm().equals(CmsPropertyHandler.NEW_ASSET_FILE_NAME_FORM))
 				{
+					folderName = "" + (contentId / 1000);
 					fileName = createNewFormFileNameForAssetVO(digitalAssetVO, contentId, languageId, db);
 				}
 				else
 				{
+					folderName = "" + (digitalAssetVO.getDigitalAssetId().intValue() / 1000);
 					fileName = createSafeOldFormFileNameForAssetVO(digitalAssetVO);
 				}
-
+				
+				if(logger.isInfoEnabled())
+				{
+					logger.info("folderName:" + folderName);
+					logger.info("fileName:" + fileName);
+					logger.info("digitalAsset:" + digitalAssetVO.getAssetKey());
+					logger.info("Found a digital asset:" + digitalAssetVO.getAssetFileName());
+				}
+				
 				String filePath = CmsPropertyHandler.getDigitalAssetPath() + File.separator + folderName;
 				
 				dumpDigitalAsset(digitalAssetVO, fileName, filePath, db);

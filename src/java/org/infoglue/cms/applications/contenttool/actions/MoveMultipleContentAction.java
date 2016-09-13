@@ -140,7 +140,7 @@ public class MoveMultipleContentAction extends InfoGlueAbstractAction
 	}
      
     public String doInput() throws Exception
-    {    	
+    {
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 
 		if(this.qualifyerXML != null && !this.qualifyerXML.equals(""))
@@ -158,7 +158,7 @@ public class MoveMultipleContentAction extends InfoGlueAbstractAction
     }
 
     public String doInputV3() throws Exception
-    {    	
+    {
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 
 		if(this.qualifyerXML != null && !this.qualifyerXML.equals(""))

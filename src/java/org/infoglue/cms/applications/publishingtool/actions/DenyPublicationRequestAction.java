@@ -93,12 +93,12 @@ public class DenyPublicationRequestAction extends InfoGlueAbstractAction
 	}
 
 	public String doComment() throws Exception 
-	{		
+	{
 		return "comment";
 	}
 
 	public String doCommentV3() throws Exception 
-	{		
+	{
 		return "commentV3";
 	}
 

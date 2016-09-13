@@ -118,7 +118,7 @@ public class MoveDigitalAssetAction extends InfoGlueAbstractAction
 	}
 
     public String doInput() throws Exception
-    {		
+    {
         userSessionKey = "" + System.currentTimeMillis();
 
         

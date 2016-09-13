@@ -77,6 +77,10 @@ import com.opensymphony.module.propertyset.PropertySetManager;
 
 public class CmsPropertyHandler
 {
+	public static final String NEW_ASSET_FILE_NAME_FORM = "contentId_languageId_assetKey";
+	public static final String NEW_ASSET_FILE_NAME_FORMAT = "c_%d-l_%d-k_%s%s";
+	public static final String OLD_ASSET_FILE_NAME_FORMAT = "a_%d-f_%s";
+
 	private final static Logger logger = Logger.getLogger(CmsPropertyHandler.class.getName());
 
 	private final static HttpHelper httpHelper = new HttpHelper();
@@ -2052,6 +2056,21 @@ public class CmsPropertyHandler
 	{
 	    return getServerNodeProperty("metaInfoAttributesToShowInCreatePageDialog", true, "Title,NavigationTitle,NiceURIName");
 	}
+	
+	public static String getSlotNamesForContentListing()
+	{
+		return getServerNodeProperty("slotNamesForContentListing", true, "");
+	}
+	
+	public static String getContentNamesForContentListing()
+	{
+		return getServerNodeProperty("contentNamesForContentListing", true, "");
+	}
+	
+	public static String getTitleAttributesForContentListing()
+	{
+		return getServerNodeProperty("titleAttributesForContentListing", true, "");
+	}
 
 	public static String getPreferredLanguageCode(String userName)
 	{
@@ -3100,7 +3119,7 @@ public class CmsPropertyHandler
 
 	public static String getAssetFileNameForm() 
 	{
-		return getServerNodeProperty("assetFileNameForm", true, "contentId_languageId_assetKey");
+		return getServerNodeProperty("assetFileNameForm", true, NEW_ASSET_FILE_NAME_FORM);
 	}
 
 	public static String getSQLUpgradePath() 

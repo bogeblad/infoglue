@@ -124,7 +124,7 @@ public class CopyMultipleSiteNodeAction extends InfoGlueAbstractAction
 	}
 
    public String doCopyDone() throws Exception
-   {    	
+   {
        return "success";
    }
     

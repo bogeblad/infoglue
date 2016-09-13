@@ -199,7 +199,7 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 	 */
 	   
     public String doExecute() throws Exception
-    {   
+    {
 		setContentVersionId( getRequest().getParameterValues("sel") );
 		Iterator it = getContentVersionId().iterator();
 		
@@ -299,7 +299,7 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 	 */
 	   
     public String doUnpublishAll() throws Exception
-    {   
+    {
 		ProcessBean processBean = ProcessBean.createProcessBean(UnpublishContentVersionAction.class.getName(), "" + getInfoGluePrincipal().getName());
 		processBean.setStatus(ProcessBean.RUNNING);
 
@@ -398,7 +398,7 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 	 */
 	   
     public String doUnpublishAllV3() throws Exception
-    {   
+    {
     	try
     	{
 	    	doUnpublishAll();

@@ -198,7 +198,7 @@ public class ViewAndCreateContentForServiceBindingAction extends InfoGlueAbstrac
 	 */
 	
     public String doExecute() throws Exception
-    {		
+    {
         Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 

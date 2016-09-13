@@ -103,8 +103,8 @@ import webwork.config.Configuration;
 public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 {
     private final static Logger logger = Logger.getLogger(InfoGlueAbstractAction.class.getName());
-
 	private final static AdminToolbarService toolbarService = AdminToolbarService.getService();
+	
 
     protected String colorScheme = null; 
     
@@ -607,7 +607,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 			principal = (Principal)CacheController.getCachedObject("userCache", "anonymous");
 			if(principal == null)
 			{
-			    Map arguments = new HashMap();
+				Map arguments = new HashMap();
 			    arguments.put("j_username", CmsPropertyHandler.getAnonymousUser());
 			    arguments.put("j_password", CmsPropertyHandler.getAnonymousPassword());
 			    arguments.put("ticket", this.getHttpSession().getAttribute("ticket"));
@@ -1824,6 +1824,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	{
 		return "successShowProcessesAsJSON";
 	}
+
 
 	public String getLocalizedNameForSiteNode(SiteNodeVO siteNodeVO, Integer languageId) throws Exception
 	{

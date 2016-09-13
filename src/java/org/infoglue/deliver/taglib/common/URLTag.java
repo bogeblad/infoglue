@@ -83,8 +83,10 @@ public class URLTag extends TemplateControllerTag
 	
 	/**
 	 * Determine if you want to replace https with http
-	 * */
-	private boolean forceHTTPProtocol = false;
+	 * null means "not set with parameter"
+	 */
+	private Boolean forceHTTPProtocol = null;
+	
 	/**
 	 * The parameters to use when constructing the url.
 	 */
@@ -152,6 +154,7 @@ public class URLTag extends TemplateControllerTag
 		this.disableNiceURI = false;
 		this.allowMultipleArguments = false;
 		this.includeCurrentQueryString = true;
+		this.forceHTTPProtocol = null;
 		
 		return EVAL_PAGE;
     }
@@ -272,10 +275,14 @@ public class URLTag extends TemplateControllerTag
 	    }
 	    logger.info("newBaseUrl:" + newBaseUrl);
 	    
-		if (forceHTTPProtocol || CmsPropertyHandler.getForceHTTPProtocol()) {
-			newBaseUrl = newBaseUrl.replaceFirst("https:", "http:");
-		}
+		String protectedProtocolName = CmsPropertyHandler.getProtectedProtocolName();
 
+	    if ((forceHTTPProtocol == null && CmsPropertyHandler.getForceHTTPProtocol() || forceHTTPProtocol) &&
+	    		newBaseUrl.startsWith(protectedProtocolName))
+	    {
+	    	newBaseUrl = newBaseUrl.replaceFirst(protectedProtocolName, CmsPropertyHandler.getUnprotectedProtocolName());
+	    }
+	    
 	    return newBaseUrl;
 	}
 	
@@ -397,7 +404,7 @@ public class URLTag extends TemplateControllerTag
     }
     
 	/**
-	 * Sets wether to include languageId in the url .
+	 * Sets whether to include languageId in the url.
 	 * 
 	 * @param includeLanguageId.
 	 * @throws JspException if an error occurs while evaluating base includeLanguageId parameter.

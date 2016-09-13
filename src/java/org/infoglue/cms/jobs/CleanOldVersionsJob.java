@@ -35,6 +35,7 @@ import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.util.ChangeNotificationController;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.NotificationMessage;
+import org.infoglue.cms.util.mail.MailServiceFactory;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -142,6 +143,7 @@ public class CleanOldVersionsJob implements Job
 				NotificationMessage notificationMessage = new NotificationMessage("CleanOldVersionsJob.execute():", "ServerNodeProperties", "administrator", NotificationMessage.SYSTEM, "0", "ServerNodeProperties");
 			    ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
 	        	ChangeNotificationController.getInstance().notifyListeners();
+	    
 			}
 			catch(Exception e)
 		    {
@@ -150,6 +152,7 @@ public class CleanOldVersionsJob implements Job
 			finally
 			{
 				running.set(false);
+			
 			}
 			
 		   	logger.info("Cleanup-job finished");

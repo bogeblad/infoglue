@@ -65,7 +65,7 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 		{
 			try 
 			{
-				assetUrl = DigitalAssetController.getDigitalAssetUrl(assetId, true);
+				assetUrl = DigitalAssetController.getDigitalAssetUrl(assetId, false);
 			}
 			catch(Exception e)
 			{

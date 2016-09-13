@@ -56,7 +56,7 @@ public class ViewInlineOperationMessagesAction extends InfoGlueAbstractAction
      */
          
     public String doExecute() throws Exception
-    {    	
+    {
     	actionLinks 						= new ArrayList<LinkBean>();
     	message								= getRequest().getParameter("message");
 		String actionLinkString				= getRequest().getParameter("actionLinks");	

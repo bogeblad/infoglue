@@ -1007,7 +1007,7 @@ public abstract class BaseController
 		{
 			oql = db.getOQLQuery( "SELECT u FROM " + arg.getName() + " u ORDER BY u." + primaryKey);
 			QueryResults results = oql.execute(Database.READONLY);
-			
+			logger.debug("fetching all VO objects:" + results.size());
 			while (results.hasMore()) 
 			{
 				IBaseEntity baseEntity = (IBaseEntity)results.next();

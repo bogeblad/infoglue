@@ -422,7 +422,7 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 
 
     public String doInputV3() throws Exception
-    {    	
+    {
     	AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 
 		Integer protectedSiteNodeVersionId = SiteNodeControllerProxy.getController().getProtectedSiteNodeVersionId(parentSiteNodeId);

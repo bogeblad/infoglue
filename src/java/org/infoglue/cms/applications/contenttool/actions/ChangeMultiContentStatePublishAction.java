@@ -78,7 +78,7 @@ public class ChangeMultiContentStatePublishAction extends InfoGlueAbstractAction
 	 */
 	   
     public String doExecute() throws Exception
-    {   
+    {
         setSiteNodeVersionId( getRequest().getParameterValues("selSiteNodeVersions") );
 		
         List<EventVO> events = new ArrayList<EventVO>();

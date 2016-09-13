@@ -51,7 +51,7 @@ public class PageUrlTag extends ComponentLogicTag
 	private boolean useInheritance = true;
 	private boolean useRepositoryInheritance = true;
     private boolean useStructureInheritance = true;
-    private boolean forceHTTPProtocol = false;
+    private Boolean forceHTTPProtocol = null; // null means "not set with parameter"
     private boolean includeLanguageId = true;
     private Boolean isDecorated;
 	private Integer siteNodeId;
@@ -81,6 +81,7 @@ public class PageUrlTag extends ComponentLogicTag
         this.includeLanguageId = true;
         this.operatingMode = null;
         this.isDecorated = null;
+        this.forceHTTPProtocol = null;
         
         return EVAL_PAGE;
     }
@@ -108,7 +109,7 @@ public class PageUrlTag extends ComponentLogicTag
 	    		operatingMode = dc.getOperatingMode();
 	    	}
 	    	
-	    	if (isDecorated == null ||operatingMode.equalsIgnoreCase("3") && isDecorated == true) {
+	    	if (isDecorated == null || operatingMode.equalsIgnoreCase("3") && isDecorated == true) {
 	    		/* live pages can not med combined with decorated mode */
 		    	isDecorated = false;
 	    	}
@@ -122,8 +123,13 @@ public class PageUrlTag extends ComponentLogicTag
 		    	dc.setOperatingMode(tempOperatingMode);	
 	    	}
 	    }
-	    if (forceHTTPProtocol || CmsPropertyHandler.getForceHTTPProtocol()) {
-	    	url = url.replaceFirst("https:", "http:");
+
+		String protectedProtocolName = CmsPropertyHandler.getProtectedProtocolName();
+		
+	    if ((forceHTTPProtocol == null && CmsPropertyHandler.getForceHTTPProtocol() || forceHTTPProtocol) &&
+	    	url.startsWith(protectedProtocolName))
+	    {
+	    	url = url.replaceFirst(protectedProtocolName, CmsPropertyHandler.getUnprotectedProtocolName());
 	    }
 
 	    return url;

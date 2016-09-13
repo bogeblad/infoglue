@@ -78,7 +78,7 @@ public class AuthorizationSwitchManagementAction extends InfoGlueAbstractAction
     private String newGroupName;
     
     public String doInputUser() throws Exception
-    {    	
+    {
     	this.users = UserControllerProxy.getController().getAllUsers();
     	this.accessRights = getAccessRightsUser();
     	
@@ -86,7 +86,7 @@ public class AuthorizationSwitchManagementAction extends InfoGlueAbstractAction
     }
 
     public String doInputRole() throws Exception
-    {   
+    {
     	this.roles = RoleControllerProxy.getController().getAllRoles();
     	this.accessRights = getAccessRightsRole();
     	
@@ -102,7 +102,7 @@ public class AuthorizationSwitchManagementAction extends InfoGlueAbstractAction
     }
 
     public String doUpdateUser() throws Exception
-    {    	
+    {
     	if(this.getInfoGluePrincipal().getIsAdministrator())
     		updateAccessRightsUser(userName, newUserName);
     	else
@@ -112,7 +112,7 @@ public class AuthorizationSwitchManagementAction extends InfoGlueAbstractAction
     }
 
     public String doUpdateRole() throws Exception
-    {    	
+    {
     	if(this.getInfoGluePrincipal().getIsAdministrator())
     		updateAccessRightsRole(roleName, newRoleName);
     	else
@@ -122,7 +122,7 @@ public class AuthorizationSwitchManagementAction extends InfoGlueAbstractAction
     }
 
     public String doUpdateGroup() throws Exception
-    {    	
+    {
     	if(this.getInfoGluePrincipal().getIsAdministrator())
     		updateAccessRightsGroup(groupName, newGroupName);
     	else
@@ -132,7 +132,7 @@ public class AuthorizationSwitchManagementAction extends InfoGlueAbstractAction
     }
 
     public String doExecute() throws Exception
-    {   
+    {
     	/*
     	this.invalidUsers = getInvalidAccessRightsUser();
     	this.invalidRoles = getInvalidAccessRightsRole();

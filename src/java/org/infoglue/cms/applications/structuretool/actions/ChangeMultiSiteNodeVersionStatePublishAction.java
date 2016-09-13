@@ -82,7 +82,7 @@ public class ChangeMultiSiteNodeVersionStatePublishAction extends InfoGlueAbstra
 	 */
 	   
     public String doExecute() throws Exception
-    {      
+    {
 			ProcessBean processBean = ProcessBean.createProcessBean(this.getClass().getName(), "" + getInfoGluePrincipal().getName());
 			processBean.setStatus(ProcessBean.RUNNING);
 			

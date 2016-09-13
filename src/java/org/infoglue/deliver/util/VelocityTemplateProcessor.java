@@ -40,13 +40,17 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.apache.velocity.exception.ParseErrorException;
+import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.tasktool.actions.ScriptController;
+import org.infoglue.cms.controllers.kernel.impl.simple.LabelController;
 import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.applications.actions.InfoGlueComponent;
 import org.infoglue.deliver.applications.databeans.DeliveryContext;
 import org.infoglue.deliver.controllers.kernel.impl.simple.TemplateController;
 import org.infoglue.deliver.portal.PortalController;
+import org.infoglue.deliver.taglib.common.GetCookieTag;
 
 import com.caucho.java.WorkDir;
 import com.caucho.quercus.QuercusContext;
@@ -152,8 +156,10 @@ public class VelocityTemplateProcessor
 			        Reader reader = new StringReader(templateAsString);
 			        if(logger.isInfoEnabled())
 			        	logger.info("Going to evaluate the string of length:" + templateAsString.length());
+				    
+			        TemplateController templateController = (TemplateController)params.get("templateLogic");
 			        
-			        boolean finished = Velocity.evaluate(context, pw, "Generator Error", reader);        
+			        Velocity.evaluate(context, pw, (templateController != null ? templateController.getCurrentPageUrl() : "unknown url") + ": ", reader);        
 		        }
 		    }
 		    
@@ -176,7 +182,29 @@ public class VelocityTemplateProcessor
 			}
 			
 		    if(CmsPropertyHandler.getOperatingMode().equalsIgnoreCase("0") && (CmsPropertyHandler.getDisableTemplateDebug() == null || !CmsPropertyHandler.getDisableTemplateDebug().equalsIgnoreCase("true")))
-		        pw.println("Error rendering template:" + e.getMessage());
+		    {		    	
+		    	VisualFormatter formatter = new VisualFormatter();
+		        String errorMessage = e.getMessage();
+		        String htmlEscapedErrorMessage = formatter.escapeHTML(errorMessage);
+		        String errorHTML = LabelController.getController(templateController.getLocale()).getString("tool.common.generator.error.html");
+				String errorTitle = LabelController.getController(templateController.getLocale()).getString("tool.common.generator.error.title");
+		        String errorMessageDiv = "<div class='error'>" + errorHTML + "</div><div class='internal-error'>" + htmlEscapedErrorMessage + "</div>";
+		        String jsEscapedTemplate = formatter.escapeForJavascripts(templateAsString);
+				String errorScript = 
+		        		"<script>" + 
+		        		"  var iframe = document.getElementById('originalPage');" +
+		        		"  iframe.style.border = 0;" +
+		        		"  iframe.style.marginLeft = -iframe.offsetLeft;" +
+		        		"  iframe.contentWindow.document.open();" +
+		        		"  iframe.contentWindow.document.write('" + jsEscapedTemplate + "');" +
+		        		"  iframe.contentWindow.document.close();" +
+		        		"  iframe.onload = function() { this.height = this.contentWindow.document.body.scrollHeight + 'px'; };" +
+		        		"  iframe.width = window.innerWidth;" +
+		        		"</script>";
+		        String errorPageString = 
+		        		"<html><head><title>" + errorTitle + "</title></head><body>" + errorMessageDiv + "<iframe id='originalPage'></iframe>" + errorScript + "</body></html>";
+		        pw.println(errorPageString);
+		    }
 		    else
 		    {
 			    logger.warn("Warning rendering template::" + e.getMessage(), e);

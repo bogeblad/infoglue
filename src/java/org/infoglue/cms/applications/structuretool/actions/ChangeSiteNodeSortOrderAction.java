@@ -38,14 +38,14 @@ public class ChangeSiteNodeSortOrderAction extends InfoGlueAbstractAction
     private Integer sortLanguageId;
 
     public String doExecute() throws Exception
-    {		
+    {
 		SiteNodeControllerProxy.getSiteNodeControllerProxy().acChangeSiteNodeSortOrder(this.getInfoGluePrincipal(), siteNodeId, beforeSiteNodeId, direction, this.sortLanguageId);
 
 		return "success";
     }
 
     public String doToggleHidden() throws Exception
-    {		
+    {
     	try
     	{
     		SiteNodeControllerProxy.getSiteNodeControllerProxy().acToggleHidden(this.getInfoGluePrincipal(), siteNodeId, this.sortLanguageId);

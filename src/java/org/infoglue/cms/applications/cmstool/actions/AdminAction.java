@@ -29,8 +29,6 @@ import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
-import com.caucho.env.repository.Repository;
-
 /**
  * This class implements the action class for the base fram for the entire tool.
  * 

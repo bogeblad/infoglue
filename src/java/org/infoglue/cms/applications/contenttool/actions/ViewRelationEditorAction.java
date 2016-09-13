@@ -317,7 +317,7 @@ public abstract class ViewRelationEditorAction extends InfoGlueAbstractAction
 	 * Updates the qualifyer in the EntityProperties stucture.
 	 */
 	public String doUpdateQualifyerInEntityProperties() throws Exception
-	{	    
+	{
 	    if(this.entityName.equalsIgnoreCase(UserProperties.class.getName()))
 	        UserPropertiesController.getController().updateAttributeValue(getEntityId(), getAttributeName(), this.qualifyerXML);		
 	    else if(this.entityName.equalsIgnoreCase(RoleProperties.class.getName()))
@@ -334,7 +334,7 @@ public abstract class ViewRelationEditorAction extends InfoGlueAbstractAction
 	 * Updates the qualifyer in the EntityProperties stucture.
 	 */
 	public String doUpdateQualifyerInEntityPropertiesV3() throws Exception
-	{	    
+	{
 	    if(this.entityName.equalsIgnoreCase(UserProperties.class.getName()))
 	        UserPropertiesController.getController().updateAttributeValue(getEntityId(), getAttributeName(), this.qualifyerXML);		
 	    else if(this.entityName.equalsIgnoreCase(RoleProperties.class.getName()))

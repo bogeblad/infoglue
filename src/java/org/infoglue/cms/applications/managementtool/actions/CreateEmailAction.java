@@ -100,7 +100,7 @@ public class CreateEmailAction extends InfoGlueAbstractAction
     }
    
     public String doInputChooseRecipients() throws Exception
-    {    	
+    {
     	//users 	= UserControllerProxy.getController().getAllUsers();
     	roles 	= RoleControllerProxy.getController().getAllRoles();
     	groups 	= GroupControllerProxy.getController().getAllGroups();

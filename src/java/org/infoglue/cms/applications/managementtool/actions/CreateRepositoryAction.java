@@ -214,7 +214,7 @@ public class CreateRepositoryAction extends InfoGlueAbstractAction
 
 
     public String doInputV3() throws Exception
-    {    	
+    {
         userSessionKey = "" + System.currentTimeMillis();
 
 		//String createSiteNodeInlineOperationDoneHeader = getLocalizedString(getLocale(), "tool.structuretool.createSiteNodeInlineOperationDoneHeader", parentSiteNodeVO.getName());

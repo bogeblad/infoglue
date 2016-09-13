@@ -465,6 +465,7 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 	/*
 	public String doUserListSearch() throws Exception
 	{
+		logUserActivity(getClass(), "doUserListSearch");
 		String searchString 					= this.getRequest().getParameter("searchString");		
 		List<InfoGluePrincipal> searchResult 	= UserControllerProxy.getController().getFilteredUsers(searchString, null, null, null, null);
 		ServletOutputStream myOut 				= getResponse().getOutputStream();

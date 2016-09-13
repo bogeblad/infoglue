@@ -348,7 +348,7 @@ public class ViewMultiSelectStructureTreeForServiceBindingAction extends InfoGlu
 	}
 
     public String doMoveQualifyer() throws Exception
-    {	
+    {
     	logger.info("------------------------------------->");
 		this.qualifyers = parseQualifyers(qualifyerString);
 		this.qualifyers = moveQualifyer(this.direction, this.oldSortOrder, this.qualifyers);  	
@@ -360,7 +360,7 @@ public class ViewMultiSelectStructureTreeForServiceBindingAction extends InfoGlu
 
 
     public String doDeleteQualifyer() throws Exception
-    {	
+    {
     	logger.info("------------------------------------->");
 		this.qualifyers = parseQualifyers(qualifyerString);
 		this.qualifyers = deleteQualifyer(this.oldSortOrder, this.qualifyers);  	

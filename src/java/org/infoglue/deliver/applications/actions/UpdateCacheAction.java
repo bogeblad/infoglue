@@ -178,6 +178,7 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
          
     public String doTest() throws Exception
     {
+    	// Not logging this action since it is called very often
         String operatingMode = CmsPropertyHandler.getOperatingMode();
 		
         if(operatingMode != null && operatingMode.equalsIgnoreCase("3"))
@@ -360,6 +361,7 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
          
     public String doTestV3() throws Exception
     {
+    	// Not logging this action since it is called very often
         String operatingMode = CmsPropertyHandler.getOperatingMode();
 		
         if(operatingMode != null && operatingMode.equalsIgnoreCase("3"))

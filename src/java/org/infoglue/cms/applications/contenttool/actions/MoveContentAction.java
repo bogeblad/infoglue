@@ -138,7 +138,7 @@ public class MoveContentAction extends InfoGlueAbstractAction
 	}
 
     public String doInputV3() throws Exception
-    {		
+    {
         userSessionKey = "" + System.currentTimeMillis();
 
 		ContentVO contentVO = ContentControllerProxy.getContentController().getContentVOWithId(getContentId());

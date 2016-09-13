@@ -105,6 +105,8 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
          
     public String doTest() throws Exception
     {
+    	// Not logging this action since it is called very often
+    	// logInfoUserAction(getClass(), "doTest");
         this.getResponse().getWriter().println("test ok - cache action available");
         return NONE;
     }

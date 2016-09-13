@@ -82,6 +82,7 @@ public class RepositoryLanguageAction extends InfoGlueAbstractAction
 	/*
 	public String doCreate() throws Exception 
 	{
+		logUserActivity(getClass(), "doCreate");
 		RepositoryLanguageController.getController().createRepositoryLanguage(this.repositoryId, this.languageId);
 		return "success";
 	}

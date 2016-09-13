@@ -181,7 +181,13 @@
 				#set($option4 = ["172800000", "2 days"])
 				#set($option5 = ["604800000", "7 days"])
 				#set($option6 = ["2678400000", "1 month"])
-				#set($minimumTimeBetweenVersionsDuringCleanOptions = [$option1, $option2, $option3, $option4, $option5, $option6]) 
+				#set($option5 = ["604800000", "7 days"])
+				#set($option6 = ["2678400000", "1 month"])
+				#set($option7 = ["300000", "5 minutes"])
+				#set($option8 = ["1800000", "30 minutes"])
+				#set($option8 = ["3600000", "1 hour"])
+				
+				#set($minimumTimeBetweenVersionsDuringCleanOptions = [$option1, $option2, $option3, $option4, $option5, $option6, $option7, $option8]) 
 
 				#selectFieldCSS("ServerNode.property.minimumTimeBetweenVersionsDuringClean" "minimumTimeBetweenVersionsDuringClean" $this.getPropertyValue('minimumTimeBetweenVersionsDuringClean') $minimumTimeBetweenVersionsDuringCleanOptions $!cmsPH.minimumTimeBetweenVersionsDuringCleanOptions)
 				#yesNoDropDownWithInheritCSS("ServerNode.property.duplicateAssetsBetweenVersions" "duplicateAssetsBetweenVersions" "$this.getPropertyValue('duplicateAssetsBetweenVersions')" $!cmsPH.duplicateAssetsBetweenVersions)
@@ -267,8 +273,8 @@
 				#editPropertyFieldCSS("ServerNode.property.digitalAssetBaseUrl" "digitalAssetBaseUrl" "$this.getPropertyValue('digitalAssetBaseUrl')" "51" "$!serverNodeId" "$!cmsPH.digitalAssetBaseUrl")
 				#editPropertyFieldCSS("ServerNode.property.imagesBaseUrl" "imagesBaseUrl" "$this.getPropertyValue('imagesBaseUrl')" "51" "$!serverNodeId" "$!cmsPH.imagesBaseUrl")
 				#editPropertyFieldCSS("ServerNode.property.digitalAssetPath" "digitalAssetPath" "$this.getPropertyValue('digitalAssetPath')" "51" "$!serverNodeId" "$!cmsPH.digitalAssetPath")
-				#set($option1 = ["contentId_languageId_assetKey", "Default since 3.0 (contentId_languageId_assetKey)"])
-				#set($option2 = ["digitalAssetId_assetFileName", "Old key used in 2.x (digitalAssetId_assetFileName)"])
+				#set($option1 = ["contentId_languageId_assetKey", "Use contentId, languageId and asset key (default since 3.0, not used in *all* places)"])
+				#set($option2 = ["digitalAssetId_assetFileName", "Use assetId and filename (old key used in 2.x)"])
 				#set($assetFileNameFormOptions = [$option1, $option2]) 
 				#selectFieldCSS("ServerNode.property.assetFileNameForm" "assetFileNameForm" $this.getPropertyValue('assetFileNameForm') $assetFileNameFormOptions "$!cmsPH.assetFileNameForm")
 				
@@ -402,6 +408,9 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.autoShowApprovalButtons" "autoShowApprovalButtons" "$this.getPropertyValue('autoShowApprovalButtons')" "$!cmsPH.autoShowApprovalButtons")
 
 				#editPropertyFieldCSS("ServerNode.property.metaInfoAttributesToShowInCreatePageDialog" "metaInfoAttributesToShowInCreatePageDialog" "$this.getPropertyValue('metaInfoAttributesToShowInCreatePageDialog')" "51" "$!serverNodeId" "$!cmsPH.metaInfoAttributesToShowInCreatePageDialog")
+				#editPropertyFieldCSS("ServerNode.property.slotNamesForContentListing" "slotNamesForContentListing" "$this.getPropertyValue('slotNamesForContentListing')" "51" "$!serverNodeId" "$!cmsPH.slotNamesForContentListing")
+				#editPropertyFieldCSS("ServerNode.property.contentNamesForContentListing" "contentNamesForContentListing" "$this.getPropertyValue('contentNamesForContentListing')" "51" "$!serverNodeId" "$!cmsPH.contentNamesForContentListing")
+				#editPropertyFieldCSS("ServerNode.property.titleAttributesForContentListing" "titleAttributesForContentListing" "$this.getPropertyValue('titleAttributesForContentListing')" "51" "$!serverNodeId" "$!cmsPH.titleAttributesForContentListing")
 
 				#set($option1 = ["default", "Default"])
 				#set($option2 = ["v3TabbedLanguages", "Tabbed language editor"])

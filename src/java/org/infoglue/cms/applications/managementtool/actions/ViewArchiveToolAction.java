@@ -41,6 +41,7 @@ import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.jobs.CleanOldVersionsJob;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.FileUploadHelper;
+import org.infoglue.cms.util.mail.MailServiceFactory;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.SimpleTrigger;
@@ -94,7 +95,7 @@ public class ViewArchiveToolAction extends InfoGlueAbstractAction
     }
 
 	public String doInputRestoreAssetArchive() throws Exception
-    {        		
+    {
         return "inputRestoreAssetArchive";
     }
 	
@@ -123,14 +124,15 @@ public class ViewArchiveToolAction extends InfoGlueAbstractAction
 		SimpleTrigger trig = new SimpleTrigger();
 
 		JobExecutionContext jec = new JobExecutionContext(null, new TriggerFiredBundle(jobDetail, trig, null, false, null, null, null, null), new NoOpJob());
+
 		jec.put("deleteVersions", new Boolean(deleteVersions));
 		jec.put("redoNumberOfTimes", redoNumberOfTimes);
 		new CleanOldVersionsJob().execute(jec);
 
 		Map<String,Integer> result = (Map<String,Integer>)jec.getResult();
 		this.cleaningMap = result;
-		
-        return "input";
+
+		return "input";
     }
 
 	public String doCleanOldVersionsForContent() throws Exception

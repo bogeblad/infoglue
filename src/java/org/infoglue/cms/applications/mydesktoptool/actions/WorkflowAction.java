@@ -321,12 +321,14 @@ public class WorkflowAction extends InfoGlueAbstractAction
 
 	public String doExecute() throws SystemException
 	{
+		logUserActivity(getClass(), "doExecute");
 		populateLists();
 		return SUCCESS;
 	}
 
 	public String doTaskList() throws SystemException
 	{
+		logUserActivity(getClass(), "doTaskList");
 		populateActiveWorkflowVOList();
 		return "successTaskList";
 	}
@@ -353,6 +355,7 @@ public class WorkflowAction extends InfoGlueAbstractAction
 	
 	public String doGetActiveWorkflowProperties() throws Exception
 	{
+		logUserActivity(getClass(), "doGetActiveWorkflowProperties");
 		StringBuffer sb = new StringBuffer();
 		
 		String activeWorkflowId = getRequest().getParameter("activeWorkflowId");
@@ -403,6 +406,7 @@ public class WorkflowAction extends InfoGlueAbstractAction
 
 	public String doGetAvailableWorkflowProperties() throws Exception
 	{
+		logUserActivity(getClass(), "doGetAvailableWorkflowProperties");
 		StringBuffer sb = new StringBuffer();
 		
 		String workflowName = getRequest().getParameter("workflowName");

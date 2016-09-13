@@ -98,7 +98,7 @@ public class CategoryAction extends ModelAction
 
 	// Needed as part of WebworklAbstractAction
 	public String doExecute() throws Exception
-	{ 
+	{
 		return SUCCESS; 
 	}
 

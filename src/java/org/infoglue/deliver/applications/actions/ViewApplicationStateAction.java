@@ -433,6 +433,7 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
     /*
     public String doFlushCache() throws Exception
     {
+		logUserActivity(getClass(), "doFlushCache");
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
     		return returnValue;

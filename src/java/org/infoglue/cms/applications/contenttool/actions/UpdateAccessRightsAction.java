@@ -72,7 +72,7 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 	private ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 	
 	public String doExecute() throws Exception
-    {   		
+    {
 		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
 		if(this.extraMultiParameter == null || this.extraMultiParameter.length == 0)
@@ -165,7 +165,7 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 	}
 	
 	public String doAddGroups() throws Exception
-    {   
+    {
 		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
 		if(interceptionPointCategory.equalsIgnoreCase("Content"))
@@ -237,7 +237,7 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 	}
 
 	public String doAddUser() throws Exception
-    {   
+    {
 		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
 		if(this.extraMultiParameter == null || this.extraMultiParameter.length == 0)
@@ -346,12 +346,12 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 	}
 
 	public String doAddUserV3() throws Exception
-    {   
+    {
 		return doAddUser();
     }
 	
 	public String doDeleteUser() throws Exception
-    {   
+    {
 		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
 		if(this.extraMultiParameter == null || this.extraMultiParameter.length == 0)

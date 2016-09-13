@@ -64,7 +64,7 @@ public class ViewDiagnosticCenterAction extends InfoGlueAbstractAction
 	 * This method does several checks and return the diagnostic view.
 	 */
 	public String doExecute() throws Exception
-    {		
+    {
     	this.internalDeliverUrls = CmsPropertyHandler.getInternalDeliveryUrls();
     	this.publicDeliverUrls = CmsPropertyHandler.getPublicDeliveryUrls();
 

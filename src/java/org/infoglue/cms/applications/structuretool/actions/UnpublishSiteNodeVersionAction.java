@@ -180,7 +180,7 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 	 */
 	   
     public String doExecute() throws Exception
-    {   
+    {
 		setSiteNodeVersionIdList( getRequest().getParameterValues("sel") );
 		
 		Map<Integer,SiteNodeVO> siteNodeMap = SiteNodeController.getController().getSiteNodeVOMapWithNoStateCheck(getSiteNodeVersionIdList());
@@ -269,7 +269,7 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 	 */
 	   
     public String doUnpublishAll() throws Exception
-    {   
+    {
     	ProcessBean processBean = ProcessBean.createProcessBean(UnpublishSiteNodeVersionAction.class.getName(), "" + getInfoGluePrincipal().getName());
 		processBean.setStatus(ProcessBean.RUNNING);
 
@@ -411,7 +411,7 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 	 */
 	   
     public String doUnpublishLatest() throws Exception
-    {   
+    {
     	ProcessBean processBean = ProcessBean.createProcessBean(UnpublishSiteNodeVersionAction.class.getName(), "" + getInfoGluePrincipal().getName());
 		processBean.setStatus(ProcessBean.RUNNING);
 

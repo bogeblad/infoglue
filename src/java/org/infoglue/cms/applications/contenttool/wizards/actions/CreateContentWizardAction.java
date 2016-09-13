@@ -355,6 +355,7 @@ public class CreateContentWizardAction extends InfoGlueAbstractAction implements
       
     public String doExecute() throws Exception
     {
+		logUserActivity(getClass(), "doExecute");
 		this.contentVO.setCreatorName(this.getInfoGluePrincipal().getName());
 
     	ceb = this.contentVO.validate();
@@ -368,18 +369,21 @@ public class CreateContentWizardAction extends InfoGlueAbstractAction implements
     
 	public String doBindingView() throws Exception
 	{
+		logUserActivity(getClass(), "doBindingView");
 		doExecute();
 		return "bindingView";
 	}
 	
 	public String doTreeView() throws Exception
 	{
+		logUserActivity(getClass(), "doTreeView");
 		doExecute();
 		return "treeView";
 	}
 
     public String doInput() throws Exception
     {
+		logUserActivity(getClass(), "doInput");
 		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
 		if(ContentControllerProxy.getController().getIsContentProtected(parentContentId) && !AccessRightController.getController().getIsPrincipalAuthorized(this.getInfoGluePrincipal(), "Content.Create", parentContentId.toString()))

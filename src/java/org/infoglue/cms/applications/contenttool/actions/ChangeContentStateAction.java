@@ -89,7 +89,7 @@ public class ChangeContentStateAction extends InfoGlueAbstractAction
     }
 
 	public String doStandalone() throws Exception
-	{      
+	{
 		//If the comment is not null we carry out the stateChange
 		if(getStateId().intValue() == 2 && getVersionComment() == null)
 		{

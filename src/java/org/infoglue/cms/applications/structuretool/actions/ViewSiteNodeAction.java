@@ -654,12 +654,12 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
     }
         
     public String doCommentVersion() throws Exception
-    { 
+    {
         return "commentVersion";
     }
 
     public String doChooseSiteNodeTypeDefinition() throws Exception
-    { 
+    {
 		this.siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(getSiteNodeId());
 		
         return "chooseSiteNodeTypeDefinition";

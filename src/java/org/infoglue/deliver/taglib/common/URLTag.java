@@ -31,11 +31,10 @@ import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspTagException;
 
 import org.apache.log4j.Logger;
-import org.infoglue.deliver.taglib.TemplateControllerTag;
 import org.infoglue.cms.util.CmsPropertyHandler;
+import org.infoglue.deliver.taglib.TemplateControllerTag;
 
 /**
  * This class implements the &lt;common:urlBuilder&gt; tag, which creates an url
@@ -275,12 +274,9 @@ public class URLTag extends TemplateControllerTag
 	    }
 	    logger.info("newBaseUrl:" + newBaseUrl);
 	    
-		String protectedProtocolName = CmsPropertyHandler.getProtectedProtocolName();
-
-	    if ((forceHTTPProtocol == null && CmsPropertyHandler.getForceHTTPProtocol() || forceHTTPProtocol) &&
-	    		newBaseUrl.startsWith(protectedProtocolName))
+	    if ((forceHTTPProtocol == null && CmsPropertyHandler.getForceHTTPProtocol() || forceHTTPProtocol) && newBaseUrl.toLowerCase().startsWith("https"))
 	    {
-	    	newBaseUrl = newBaseUrl.replaceFirst(protectedProtocolName, CmsPropertyHandler.getUnprotectedProtocolName());
+	    	newBaseUrl = newBaseUrl.replaceFirst("(?i)https", "http");
 	    }
 	    
 	    return newBaseUrl;

@@ -31,6 +31,7 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
@@ -45,6 +46,7 @@ import org.infoglue.cms.applications.tasktool.actions.ScriptController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LabelController;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.io.FileHelper;
+import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.applications.actions.InfoGlueComponent;
 import org.infoglue.deliver.applications.databeans.DeliveryContext;
@@ -232,7 +234,24 @@ public class VelocityTemplateProcessor
 
 	public String getErrorMessageForFailedRendering(TemplateController templateController) throws SystemException
 	{
-		String errorHTML = templateController != null ? LabelController.getController(templateController.getLocale()).getString("tool.common.generator.error.html") : "";
+		Locale preferredLocale = null;	
+		if (templateController != null) 
+		{
+			InfoGluePrincipal principal = templateController.getPrincipal();
+			// First try to get the locale from the user's settings
+			if (principal != null)
+			{
+				preferredLocale = templateController.getLocaleAvailableInTool(principal);
+			}
+		}
+		
+		// If we didn't get a locale, use the locale of the page
+		if (preferredLocale == null)
+		{
+			preferredLocale = templateController.getLocale();
+		}
+		
+		String errorHTML = LabelController.getController(preferredLocale).getString("tool.common.generator.error.html");
 		errorHTML = addOptionalSupportUrlToErrorMessage(errorHTML);
 		return errorHTML;
 	}

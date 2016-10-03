@@ -50,6 +50,7 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 	private List repositories;
 	private String textAreaId = "";
 	private Integer oldSiteNodeId;
+	private Integer oldAnchorId;
 	private Integer oldContentId;
 	private Integer languageId;
 	
@@ -138,7 +139,7 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 	
 	public String getExpansion(Integer oldSiteNodeId)
 	{
-	    String expansion = "/";
+	    String expansion = "";
 	    
 	    if(oldSiteNodeId == null)
 	        return "";
@@ -148,7 +149,7 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 	        SiteNodeVO parentSiteNodeVO = SiteNodeController.getController().getParentSiteNode(oldSiteNodeId);
 		    while(parentSiteNodeVO != null)
 		    {
-		        expansion += parentSiteNodeVO.getId() + "/";
+		        expansion = parentSiteNodeVO.getId() + "/" + expansion;
 		        parentSiteNodeVO = SiteNodeController.getController().getParentSiteNode(parentSiteNodeVO.getId());
 		    }
 	    }
@@ -203,4 +204,12 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
     {
         this.languageId = languageId;
     }
+
+	public Integer getOldAnchorId() {
+		return oldAnchorId;
+	}
+
+	public void setOldAnchorId(Integer oldAnchorId) {
+		this.oldAnchorId = oldAnchorId;
+	}
 }

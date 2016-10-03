@@ -215,7 +215,7 @@ public class AccessRightController extends BaseController
 		}
 		sb.append("))) AS org.infoglue.cms.entities.management.impl.simple.SmallAccessRightImpl");
 		
-		logger.info("SQL::::::::::" + sb.toString());
+		logger.info("SQL:" + sb.toString());
 		
 		OQLQuery oql = db.getOQLQuery(sb.toString());
 		//t.printElapsedTime("Executed took");
@@ -2121,6 +2121,12 @@ public class AccessRightController extends BaseController
 		if(!logger.isInfoEnabled())
 			t.setActive(false);
 		
+		if(interceptionPointName.equalsIgnoreCase("SiteNodeVersion.Read"))
+		{			
+			if(CmsPropertyHandler.getOperatingMode().equals("0") && CmsPropertyHandler.getUseWriteForAccessControlInWorking())
+				interceptionPointName = "SiteNodeVersion.Write";
+		}
+		
 		//Map<String,Integer> cachedPrincipalAuthorizationMap = (Map<String,Integer>)CacheController.getCachedObjectFromAdvancedCache("personalAuthorizationCache", "authorizationMap_" + infoGluePrincipal.getName());
 		Map<String,Integer> cachedPrincipalAuthorizationMap = (Map<String,Integer>)CacheController.getCachedObject("userAccessCache", "authorizationMap_" + infoGluePrincipal.getName());
 		if(!infoGluePrincipal.getIsAdministrator() && cachedPrincipalAuthorizationMap == null && !preCacheInProcessForUsers.contains(infoGluePrincipal.getName()))
@@ -2232,13 +2238,25 @@ public class AccessRightController extends BaseController
 				//logger.info("Checking access on: " + acKey);
 				
 				Integer hasAccess = userAccessRightsMap.get(acKey);
-				//if(acKey.indexOf("RightColumnOne") > -1)
-				//	logger.info("hasAccess:" + hasAccess + " on " + acKey);
-				
 				if(hasAccess == null)
 				{
-					if(returnTrueIfNoAccessRightsDefined /*&& (interceptionPointName.indexOf("ContentVersion.") > -1 || )*/)
-						logger.info("Double checking on access as it's a content version and those are often not protected:" + acKey);
+					boolean doDoubleCheck;
+					
+					if(CmsPropertyHandler.getDoubleCheckComponentEditorRights())
+					{
+						doDoubleCheck = interceptionPointName.indexOf("Repository.") <= -1;
+					}
+					else
+					{
+						doDoubleCheck = true;
+						if(interceptionPointName.indexOf("Repository.") > -1 || interceptionPointName.indexOf("ComponentEditor.") > -1 /* || interceptionPointName.indexOf("ComponentPropertyEditor.EditProperty") > -1*/)
+							doDoubleCheck = false;
+					}
+					
+					if(returnTrueIfNoAccessRightsDefined && doDoubleCheck /*&& (interceptionPointName.indexOf("ContentVersion.") > -1 || )*/)
+					{
+						logger.warn("Double checking on access as it's a content version and those are often not protected:" + interceptionPointName + ":" + acKey);
+					}
 					else
 					{
 					    CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(false), new String[]{infoGluePrincipal.getName()}, true);
@@ -2257,7 +2275,7 @@ public class AccessRightController extends BaseController
 			}
 		}
 		
-		logger.info("Reading the hard way:" + interceptionPointVO.getId() + ":" + extraParameters);
+		logger.info("Reading the hard way:" + interceptionPointVO.getName() + "/" + interceptionPointVO.getId() + ":" + extraParameters);
 		
 		List<AccessRight> accessRightList = this.getAccessRightListOnlyReadOnly(interceptionPointVO.getId(), extraParameters, db);
 		if(logger.isInfoEnabled())
@@ -2309,7 +2327,7 @@ public class AccessRightController extends BaseController
 		while(accessRightListIterator.hasNext() && !isPrincipalAuthorized)
 		{
 		    AccessRight accessRight = (AccessRight)accessRightListIterator.next();
-			if(enableDebug)
+		    if(enableDebug)
 				debugInfo += "\n	Access right: " + accessRight.getId();
 
 			Collection approvedRoles = accessRight.getRoles();
@@ -2320,6 +2338,7 @@ public class AccessRightController extends BaseController
 			while(approvedUsersIterator.hasNext())
 			{
 			    AccessRightUser accessRightUser = (AccessRightUser)approvedUsersIterator.next();
+			    
 			    if(enableDebug)
 					debugInfo += "\n		user:" + accessRightUser.getUserName();
 			    if(accessRightUser.getUserName().equals(infoGluePrincipal.getName()))
@@ -2422,7 +2441,7 @@ public class AccessRightController extends BaseController
 				debugInfo += "\n		limitOnGroups: " + limitOnGroups;
 			}
 		}
-		
+
 		//getCastorCategory().setLevel(Level.WARN);
 		//getCastorJDOCategory().setLevel(Level.WARN);
 
@@ -3603,7 +3622,7 @@ public class AccessRightController extends BaseController
 		StringBuffer sb = new StringBuffer();
 		try
 		{
-			System.out.println(accessRight.getInterceptionPointName());
+			//System.out.println(accessRight.getInterceptionPointName());
 			if(accessRight.getInterceptionPointName().startsWith("SiteNodeVersion"))
 			{
 				SiteNodeVersionVO snvVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(accessRight.getParameters()));
@@ -3999,7 +4018,7 @@ public class AccessRightController extends BaseController
 				}
 			}
 		}
-		
+
 		return accessRightsStatusText;		
 	}
 

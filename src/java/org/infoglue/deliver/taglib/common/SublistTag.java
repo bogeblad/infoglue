@@ -137,6 +137,17 @@ public class SublistTag extends AbstractTag
     }
 
 	/**
+	 * Sets the list attribute to the specified list.
+	 * 
+	 * @param list the list to use.
+	 * @throws JspException if an error occurs while evaluating the list.
+	 */
+    public void setListObject(final java.util.List list) throws JspException
+    {
+        this.list = list;
+    }
+
+	/**
 	 * Sets the start index attribute to the specified index.
 	 * 
 	 * @param index the index to use.

@@ -75,9 +75,14 @@ public class GroupPropertyTag extends TemplateControllerTag
         this.groupName = evaluateString("group", "groupName", groupName);
     }
 
-    public void setGroup(final String principalString) throws JspException
+    public void setGroup(final String groupString) throws JspException
     {
-        this.group = (InfoGlueGroup)evaluate("group", "group", principalString, InfoGlueGroup.class);
+        this.group = (InfoGlueGroup)evaluate("group", "group", groupString, InfoGlueGroup.class);
+    }
+
+    public void setGroupObject(final InfoGlueGroup group) throws JspException
+    {
+        this.group = group;
     }
 
     public void setPropertyName(final String propertyName) throws JspException

@@ -355,6 +355,49 @@ public class ContentController extends BaseController
 		return contentVO;
     } 
 
+	public ContentVO getLocklessContentVOWithId(Integer contentId) throws SystemException, Bug
+    {
+		String key = "" + contentId;
+		ContentVO contentVO = (ContentVO)CacheController.getCachedObjectFromAdvancedCache("contentCache", key);
+		if(contentVO != null)
+		{
+			//logger.info("There was an cached contentVO:" + contentVO);
+		}
+		else
+		{
+			contentVO = (ContentVO) getVOWithIdLockless(SmallContentImpl.class, "contentId", contentId);
+
+			if(contentVO != null)
+			{
+				CacheController.cacheObjectInAdvancedCache("contentCache", key, contentVO, new String[]{CacheController.getPooledString(1, contentId)}, true);
+			}
+		}
+		
+		return contentVO;
+    } 
+	
+	public ContentVO getLocklessContentVOWithId(Integer contentId, Database db) throws Exception
+    {
+		String key = "" + contentId;
+		ContentVO contentVO = (ContentVO)CacheController.getCachedObjectFromAdvancedCache("contentCache", key);
+		if(contentVO != null)
+		{
+			//logger.info("There was an cached contentVO:" + contentVO);
+		}
+		else
+		{
+			contentVO = (ContentVO) getVOWithIdLockless(SmallContentImpl.class, "contentId", contentId, db);
+
+			if(contentVO != null)
+			{
+				CacheController.cacheObjectInAdvancedCache("contentCache", key, contentVO, new String[]{CacheController.getPooledString(1, contentId)}, true);
+			}
+		}
+		
+		return contentVO;
+    } 
+
+	
 	public ContentVO getContentVOWithId(Integer contentId) throws SystemException, Bug
     {
 		String key = "" + contentId;
@@ -3270,7 +3313,7 @@ public class ContentController extends BaseController
 
 		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId, db);
 
-		sb.insert(0, contentVO.getName());
+		insertContentNameInPath(sb, contentVO);
 
 		while (contentVO.getParentContentId() != null)
 		{
@@ -3278,7 +3321,8 @@ public class ContentController extends BaseController
 
 			if (includeRootContent || contentVO.getParentContentId() != null)
 			{
-				sb.insert(0, contentVO.getName() + "/");
+				sb.insert(0, "/");
+				insertContentNameInPath(sb, contentVO);
 			}
 		}
 
@@ -3292,6 +3336,19 @@ public class ContentController extends BaseController
 		return sb.toString();
 	}
 
+	private void insertContentNameInPath(StringBuffer sb, ContentVO contentVO)
+	{
+		if (contentVO.getName() == null || contentVO.getName().equals(""))
+		{
+			sb.insert(0, "]");
+			sb.insert(0, contentVO.getId());
+			sb.insert(0, "[");
+		}
+		else
+		{
+			sb.insert(0, contentVO.getName());
+		}
+	}
 
 
 	public List<ContentVO> getRelatedContents(Database db, Integer contentId, Integer languageId, String attributeName, boolean useLanguageFallback) throws Exception
@@ -3606,12 +3663,46 @@ public class ContentController extends BaseController
 			}
 			catch(SystemException e)
 			{
-				e.printStackTrace();
 				logger.warn("Problem marking content: " + childContentId + " as deleted. Message: " + e.getMessage(), e);
 			}
 		}
 	}        
 
+	
+	/**
+	 * This method deletes a content and also erases all the children and all versions.
+	 */
+	    
+	public void checkReferences(ContentVO contentVO, Database db, boolean skipRelationCheck, boolean skipServiceBindings, InfoGluePrincipal infogluePrincipal, Map<ContentVO, List<ReferenceBean>> references) throws ConstraintException, SystemException, Exception
+	{
+		List<Integer> contentIds = getContentIdsForAllChildren(contentVO.getId(), db);
+		contentIds.add(contentVO.getId());
+
+		int i = 0;
+		for(Integer childContentId : contentIds)
+		{
+			i++;
+			try
+			{
+		        SmallContentImpl smallContent = getSmallContentWithId(childContentId, db);
+		      
+		        if(!smallContent.getIsDeleted())
+		        {
+			        List<ReferenceBean> referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(smallContent.getId(), -1, true, true, false, db);
+					if(referenceBeanList != null && referenceBeanList.size() > 0)
+					{
+		   				references.put(smallContent.getValueObject(), referenceBeanList);
+					}
+				}
+			}
+			catch(SystemException e)
+			{
+				logger.warn("Problem marking content: " + childContentId + " as deleted. Message: " + e.getMessage(), e);
+			}
+		}
+	}  
+	
+	
     /**
 	 * This method restored a content.
 	 */
@@ -4282,7 +4373,7 @@ public class ContentController extends BaseController
 		while(rs.next() && sizes.size() < 500)
 		{
 			sizes.put(new Integer(rs.getString(1)), new Long(rs.getString(4)));
-            System.out.println(new Integer(rs.getString(1)) + ":" + new Long(rs.getString(4)));
+            //System.out.println(new Integer(rs.getString(1)) + ":" + new Long(rs.getString(4)));
             if(new Long(rs.getString(4)) < 2000000)
             	break;
 		}

@@ -1,6 +1,18 @@
 #define($scripts)
 	<script type="text/javascript">
 	<!--
+		(function() {
+			var noop = function() {};
+			if (!("console" in window)) {
+				window.console = {
+					log: noop,
+					warn: noop,
+					info: noop,
+					error: noop
+				};
+			}
+		}());
+
 		function closeDialog()
 		{
 			if(parent && parent.closeInlineDiv) 
@@ -36,7 +48,7 @@
 					{
 						parent.refreshContent($unrefreshedNodeId, $changeTypeId, $newContentId);
 					}
-					catch(e) {alert("e:" + e);}
+					catch(e) {console.warn("Got error when refreshing content tool. Message: " + e.message, e);}
 					#end
 					
 					if("$changeTypeId" == "1" || "$changeTypeId" == "3") //The item was published - lets reload the views.
@@ -168,10 +180,9 @@
 						#if($firstActionLink.actionURL == "javascript:closeDialog();" && $unrefreshedNodeId)
 							try
 							{
-								//alert(parent.refreshPage);
 								parent.refreshPage($unrefreshedNodeId, 1, $unrefreshedNodeId);
 							}
-							catch(e) {alert("e:" + e);}
+							catch(e) {console.warn("Error when executing custom action for closeDialog actionURL. Message: " + e.message, e);}
 						#end
 						$firstActionLink.actionURL
 					#else
@@ -305,7 +316,7 @@
     					}
 					}
 				} 
-				catch(e) {alert("e:" + e);}
+				catch(e) {console.warn("Error in inline operation done. Message: " + e.message, e);}
 
 			});
 	 	-->

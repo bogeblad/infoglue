@@ -131,12 +131,22 @@ public class CreateUserServiceTag extends TemplateControllerTag
 	   this.principal = (InfoGluePrincipal) this.evaluate("remoteUserService", "principal", principalString, InfoGluePrincipal.class);
    }
 
+   public void setPrincipalObject(final InfoGluePrincipal principal) throws JspException
+   {
+	   this.principal = principal;
+   }
+
    /**
     * 
     */
    public void setSystemUserVO(final String systemUserVO) throws JspException
    {
 	   this.systemUserVO = (SystemUserVO)this.evaluate("remoteUserService", "systemUserVO", systemUserVO, SystemUserVO.class);
+   }
+
+   public void setSystemUserVOObject(final SystemUserVO systemUserVO) throws JspException
+   {
+	   this.systemUserVO = systemUserVO;
    }
 
    public void setUserName(final String userName) throws JspException

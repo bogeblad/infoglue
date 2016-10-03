@@ -32,7 +32,7 @@ public class ComponentBinding
 	private Integer id;
 	private Integer componentId;
 	private String entityClass;
-	private Integer entityId;
+	private String entityId;
 	private String assetKey;
 	private String bindingPath;
 
@@ -56,7 +56,7 @@ public class ComponentBinding
 		return entityClass;
 	}
 
-	public Integer getEntityId()
+	public String getEntityId()
 	{
 		return entityId;
 	}
@@ -71,7 +71,7 @@ public class ComponentBinding
 		entityClass = string;
 	}
 
-	public void setEntityId(Integer integer)
+	public void setEntityId(String integer)
 	{
 		entityId = integer;
 	}

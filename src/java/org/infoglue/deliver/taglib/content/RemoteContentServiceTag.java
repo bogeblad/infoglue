@@ -138,19 +138,11 @@ public class RemoteContentServiceTag extends TemplateControllerTag
 	   this.principal = (InfoGluePrincipal) this.evaluate("remoteContentService", "principal", principalString, InfoGluePrincipal.class);
    }
 
-   /**
-    * Add the content the child tag generated to the list of contents that are to be persisted.
-    */
-   /*
-   public void addContent(final ContentVO contentVO) 
+   public void setPrincipalObject(final InfoGluePrincipal principal) throws JspException
    {
-       //Map contentMap = new HashMap();
-       //contentMap.put("name", "Kalle" + contentVO.getName());
-       //this.contents.add(contentMap);
-	   this.contents.add(contentVO);
+	   this.principal = principal;
    }
-   */
-   
+
    /**
     * Add the content the child tag generated to the list of contents that are to be persisted.
     */

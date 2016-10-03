@@ -189,6 +189,9 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.onlyShowReferenceIfLatestVersion" "onlyShowReferenceIfLatestVersion" "$this.getPropertyValue('onlyShowReferenceIfLatestVersion')" $!cmsPH.onlyShowReferenceIfLatestVersion)
 				#editPropertyTextAreaCSS("ServerNode.property.generalSettings" "generalSettings" "$this.getDataPropertyValue('generalSettings')" "40" "6" "righttextarea" "$!serverNodeId" $!cmsPH.generalSettings)
 				#editPropertyTextAreaCSS("ServerNode.property.workingGeneralSettings" "workingGeneralSettings" "$this.getDataPropertyValue('workingGeneralSettings')" "40" "6" "righttextarea" "$!serverNodeId" $!cmsPH.workingGeneralSettings)
+
+				#yesNoDropDownWithInheritCSS("ServerNode.property.enableDiskBasedDeployment" "enableDiskBasedDeployment" "$this.getPropertyValue('enableDiskBasedDeployment')" $!cmsPH.enableDiskBasedDeployment)
+				#editPropertyFieldCSS("ServerNode.property.diskBasedDeploymentBasePath" "diskBasedDeploymentBasePath" "$this.getPropertyValue('diskBasedDeploymentBasePath')" "51" "$!serverNodeId" $!cmsPH.diskBasedDeploymentBasePath)	
 			</div>
 		
 			<div class="inlineTabDiv" id="niceURISettings">
@@ -197,6 +200,7 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.enableNiceURIForLanguage" "enableNiceURIForLanguage" "$this.getPropertyValue('enableNiceURIForLanguage')" $!cmsPH.enableNiceURIForLanguage)
 				#editPropertyFieldCSS("ServerNode.property.niceURIEncoding" "niceURIEncoding" "$this.getPropertyValue('niceURIEncoding')" "51" "$!serverNodeId" $!cmsPH.niceURIEncoding)
 				#editPropertyFieldCSS("ServerNode.property.niceURIAttributeName" "niceURIAttributeName" "$this.getPropertyValue('niceURIAttributeName')" "51" "$!serverNodeId" $!cmsPH.niceURIAttributeName)
+				#editPropertyFieldCSS("ServerNode.property.niceURIFallbackAttributeName" "niceURIFallbackAttributeName" "$this.getPropertyValue('niceURIFallbackAttributeName')" "51" "$!serverNodeId" $!cmsPH.niceURIFallbackAttributeName)
 				$!cmsPH.getServerNodeDataProperty(null, 'niceURICharacterReplacingMapping', true, null)
 				#editPropertyTextAreaCSS("ServerNode.property.niceURICharacterReplacingMapping" "niceURICharacterReplacingMapping" "$this.getDataPropertyValue('niceURICharacterReplacingMapping')" "40" "6" "righttextarea" "$!serverNodeId" "$!cmsPH.getServerNodeDataProperty(null, 'niceURICharacterReplacingMapping', true, null)")
 				#editPropertyFieldCSS("ServerNode.property.niceURIDefaultReplacementCharacter" "niceURIDefaultReplacementCharacter" "$this.getPropertyValue('niceURIDefaultReplacementCharacter')" "51" "$!serverNodeId" "$!cmsPH.niceURIDefaultReplacementCharacter")
@@ -204,6 +208,7 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.niceURIDisableNiceURIForContent" "niceURIDisableNiceURIForContent" "$this.getPropertyValue('niceURIDisableNiceURIForContent')" "$!cmsPH.niceURIDisableNiceURIForContent")
 				#editPropertyFieldCSS("ServerNode.property.niceURIDefaultReplacementCharacterForContent" "niceURIDefaultReplacementCharacterForContent" "$this.getPropertyValue('niceURIDefaultReplacementCharacterForContent')" "51" "$!serverNodeId" "$!cmsPH.niceURIDefaultReplacementCharacterForContent")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.redirectUsingSystemRedirect" "redirectUsingSystemRedirect" "$this.getPropertyValue('redirectUsingSystemRedirect')" "$!cmsPH.redirectUsingSystemRedirect")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.orderRedirectsByLength" "orderRedirectsByLength" "$this.getPropertyValue('orderRedirectsByLength')" "$!cmsPH.orderRedirectsByLength")
 			</div>
 		
 			<div class="inlineTabDiv" id="cacheSettings">
@@ -454,6 +459,8 @@
 				#set($WYSIWYGEditorAreaCSS = $this.getDataPropertyValue("WYSIWYGEditorAreaCSS"))
 				#set($WYSIWYGEditorAreaCSS = $WYSIWYGEditorAreaCSS.replaceAll("&amp;", "&amp;amp;"))
 				#editPropertyTextAreaCSS("ServerNode.property.WYSIWYGEditorAreaCSS" "WYSIWYGEditorAreaCSS" "$WYSIWYGEditorAreaCSS" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.WYSIWYGEditorAreaCSS")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.viewInheritedAssetsInContentDialog" "viewInheritedAssetsInContentDialog" "$this.getPropertyValue('viewInheritedAssetsInContentDialog')" "$!cmsPH.viewInheritedAssetsInContentDialog")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.reloadStructureOnActivation" "reloadStructureOnActivation" "$this.getPropertyValue('reloadStructureOnActivation')" "$!cmsPH.reloadStructureOnActivation")
 
 			</div>
 		
@@ -476,6 +483,8 @@
 				#editPropertyFieldCSS("ServerNode.property.protectedProtocolPort" "protectedProtocolPort" "$this.getPropertyValue('protectedProtocolPort')" "51" "$!serverNodeId" "$!cmsPH.protectedProtocolPort")
 				#editPropertyFieldCSS("ServerNode.property.accessBasedProtocolRedirectHTTPCode" "accessBasedProtocolRedirectHTTPCode" "$this.getPropertyValue('accessBasedProtocolRedirectHTTPCode')" "51" "$!serverNodeId" "$!cmsPH.accessBasedProtocolRedirectHTTPCode")
 
+				#yesNoDropDownWithInheritCSS("ServerNode.property.useWriteForAccessControlInWorking" "useWriteForAccessControlInWorking" "$this.getPropertyValue('useWriteForAccessControlInWorking')" "$!cmsPH.useWriteForAccessControlInWorking")
+
 				#set($redirectStatusCodeInherit = ["inherit", "$ui.getString('tool.common.inherit')"])
 				#set($redirectStatusCode301 = ["301", "$ui.getString('entity.ServerNode.property.redirectStatusCode301.label')"])
 				#set($redirectStatusCode302 = ["302", "$ui.getString('entity.ServerNode.property.redirectStatusCode302.label')"])
@@ -483,13 +492,20 @@
 				#set($redirectStatusCodeOptions = [$redirectStatusCodeInherit, $redirectStatusCode301, $redirectStatusCode302, $redirectStatusCode307])
 				#selectFieldCSS("ServerNode.property.redirectStatusCode" "redirectStatusCode" $this.getPropertyValue('redirectStatusCode') $redirectStatusCodeOptions "$!cmsPH.redirectStatusCode")
 
+				#set($redirectMethodInclude = ["include", "HTTP INCLUDE (backend fetch)"])
+				#set($redirectMethodRedirect = ["redirect", "Redirect to page"])
+				#set($redirectMethodOptions = [$redirectMethodInclude, $redirectMethodRedirect])
+				#selectFieldCSS("ServerNode.property.responseMethodOnFullErrorURL" "responseMethodOnFullErrorURL" $this.getPropertyValue('responseMethodOnFullErrorURL') $redirectMethodOptions "$!cmsPH.responseMethodOnFullErrorURL")
+
 				#editPropertyFieldCSS("ServerNode.property.allowedDirectLoginNames" "allowedDirectLoginNames" "$this.getPropertyValue('allowedDirectLoginNames')" "51" "$!serverNodeId" "$!cmsPH.allowedDirectLoginNames")
 				
 				#yesNoDropDownWithInheritCSS("ServerNode.property.allowInternalCallsBasedOnIP" "allowInternalCallsBasedOnIP" "$this.getPropertyValue('allowInternalCallsBasedOnIP')" "$!cmsPH.allowInternalCallsBasedOnIP")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.forceIdentityCheck" "forceIdentityCheck" "$this.getPropertyValue('forceIdentityCheck')" "$!cmsPH.forceIdentityCheck")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.enforceRigidContentAccess" "enforceRigidContentAccess" "$this.getPropertyValue('enforceRigidContentAccess')" "$!cmsPH.enforceRigidContentAccess")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.allowCrossSiteSubmitToPublish" "allowCrossSiteSubmitToPublish" "$this.getPropertyValue('allowCrossSiteSubmitToPublish')" "$!cmsPH.allowCrossSiteSubmitToPublish")
-	
+				#yesNoDropDownWithInheritCSS("ServerNode.property.showRepositoriesByDefaultIfNoAccessRightsAreDefined" "showRepositoriesByDefaultIfNoAccessRightsAreDefined" "$this.getPropertyValue('showRepositoriesByDefaultIfNoAccessRightsAreDefined')" "$!cmsPH.showRepositoriesByDefaultIfNoAccessRightsAreDefined")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.doubleCheckComponentEditorRights" "doubleCheckComponentEditorRights" "$this.getPropertyValue('doubleCheckComponentEditorRights')" "$!cmsPH.doubleCheckComponentEditorRights")
+				
 				#editPropertyFieldCSS("ServerNode.property.defaultNumberOfYearsBeforeExpire" "defaultNumberOfYearsBeforeExpire" "$this.getPropertyValue('defaultNumberOfYearsBeforeExpire')" "51" "$!serverNodeId" "$!cmsPH.defaultNumberOfYearsBeforeExpire")
 				#editPropertyFieldCSS("ServerNode.property.defaultNumberOfMonthsBeforeRedirectExpire" "defaultNumberOfMonthsBeforeRedirectExpire" "$this.getPropertyValue('defaultNumberOfMonthsBeforeRedirectExpire')" "51" "$!serverNodeId" "$!cmsPH.defaultNumberOfMonthsBeforeRedirectExpire")
 				#editPropertyFieldCSS("ServerNode.property.defaultNumberOfMonthsBeforeSystemRedirectExpire" "defaultNumberOfMonthsBeforeSystemRedirectExpire" "$this.getPropertyValue('defaultNumberOfMonthsBeforeSystemRedirectExpire')" "51" "$!serverNodeId" "$!cmsPH.defaultNumberOfMonthsBeforeSystemRedirectExpire")
@@ -551,6 +567,8 @@
 				#editPropertyFieldCSS("ServerNode.property.buildName" "buildName" "$this.getPropertyValue('buildName')" "51" "$!serverNodeId" "$!cmsPH.buildName")
 				#editPropertyFieldCSS("ServerNode.property.adminToolsPath" "adminToolsPath" "$this.getPropertyValue('adminToolsPath')" "51" "$!serverNodeId" "$!cmsPH.adminToolsPath")
 				#editPropertyFieldCSS("ServerNode.property.dbScriptPath" "dbScriptPath" "$this.getPropertyValue('dbScriptPath')" "51" "$!serverNodeId" "$!cmsPH.dbScriptPath")	
+				#yesNoDropDownWithInheritCSS("ServerNode.property.defaultFallbackForceProtocolForURLs" "forceHTTPProtocol" "$this.getPropertyValue('forceHTTPProtocol')" "$!cmsPH.forceHTTPProtocol")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.cleanReferencesAfterDelete" "cleanReferencesAfterDelete" "$this.getPropertyValue('cleanReferencesAfterDelete')" "$!cmsPH.cleanReferencesAfterDelete")
 			</div>
 		
 		</div>

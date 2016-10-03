@@ -133,7 +133,14 @@
 		#if($enableInlineButtons)<div id="assets" class="imgBoxContainer resizableDiv">#end
 
 		#set($counter = 0)
-		#foreach($digitalAsset in $inheritedDigitalAssets)
+		
+		#if ($!useInheritedAssets)
+			#set($assets = $inheritedDigitalAssets)
+		#else
+			#set($assets = $digitalAssets)
+		#end	
+		
+		#foreach($digitalAsset in $assets)
 			#set($digitalAssetUrl = $this.getDigitalAssetUrl($digitalAsset.digitalAssetId))
 			<div class="imgBox">
 				<div class="usageCounter #if($digitalAsset.referencingNumberOfObjects == 0)notUsed#end" title="$ui.getString("tool.contenttool.usageCounterText"): $digitalAsset.referencingNumberOfObjects">$digitalAsset.referencingNumberOfObjects</div>

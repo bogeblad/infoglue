@@ -174,12 +174,14 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "disableAssetDeletionInLiveThread");
 	    populate(ps, "niceURIEncoding");
 	    populate(ps, "niceURIAttributeName");
+	    populate(ps, "niceURIFallbackAttributeName");
 	    populateData(ps, "niceURICharacterReplacingMapping");
 	    populate(ps, "niceURIUseLowerCase");
 	    populate(ps, "niceURIDefaultReplacementCharacter");
 	    populate(ps, "niceURIDisableNiceURIForContent");
 	    populate(ps, "niceURIDefaultReplacementCharacterForContent");
 	    populate(ps, "redirectUsingSystemRedirect");
+	    populate(ps, "orderRedirectsByLength");
 	    populate(ps, "duplicateAssetsBetweenVersions");
 	    populate(ps, "requestArgumentDelimiter");
 	    populate(ps, "errorHandling");
@@ -232,7 +234,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "casCookiesBeforeRedirect");
 	    populate(ps, "useBrowserLanguage");
 	    populate(ps, "ipAddressesToFallbackToBasicAuth");
-	    
+	    populate(ps, "forceHTTPProtocol");
 	    
 	    populate(ps, "deliver_loginUrl");
 	    populate(ps, "deliver_logoutUrl");
@@ -376,7 +378,8 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "allowInternalCallsBasedOnIP");
 	    
 	    populate(ps, "assetFileNameForm");
-
+	    populate(ps, "viewInheritedAssetsInContentDialog");
+	    
 	    populate(ps, "deriveProtocolWhenUsingProtocolRedirects");
 	    populate(ps, "useAccessBasedProtocolRedirects");
 	    populate(ps, "unprotectedProtocolName");
@@ -385,6 +388,20 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "protectedProtocolPort");
 	    populate(ps, "accessBasedProtocolRedirectHTTPCode");
 	    populate(ps, "redirectStatusCode");
+	    populate(ps, "responseMethodOnFullErrorURL");
+	    populate(ps, "showRepositoriesByDefaultIfNoAccessRightsAreDefined");
+	    populate(ps, "doubleCheckComponentEditorRights");
+	    
+	    populate(ps, "enableDiskBasedDeployment");
+	    populate(ps, "diskBasedDeploymentBasePath");
+	    
+	    System.out.println("CmsPropertyHandler.getEnableDiskBasedDeployment()......");
+	    System.out.println("CmsPropertyHandler.getEnableDiskBasedDeployment():" + CmsPropertyHandler.getEnableDiskBasedDeployment());
+	    if(CmsPropertyHandler.getEnableDiskBasedDeployment())
+		{
+			System.out.println("Starting disk sync area");
+			org.infoglue.cms.filesync.DevelopmentResourcesSyncService.getInstance(true);
+		}
 
 	    populate(ps, "indexDigitalAssetContent");
 
@@ -402,6 +419,9 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "doNotUseTrashcanForRepositories");
 
 	    populate(ps, "useGlobalRepositoryChange");
+	    populate(ps, "reloadStructureOnActivation");
+	    populate(ps, "useWriteForAccessControlInWorking");
+	    populate(ps, "cleanReferencesAfterDelete");
 
 	    try
 	    {
@@ -423,7 +443,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 		}
 
 		NotificationMessage notificationMessage = new NotificationMessage("ViewServerNodePropertiesAction.doSave():", "ServerNodeProperties", this.getInfoGluePrincipal().getName(), NotificationMessage.SYSTEM, "0", "ServerNodeProperties");
-		//ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
+
 		RemoteCacheUpdater.getSystemNotificationMessages().add(notificationMessage);
 			    
     	return "save";

@@ -42,7 +42,7 @@ public class ContentVersionsTag extends TemplateControllerTag
 	private Integer contentId;
 	private Integer languageId;
 	private boolean includeAllLanguages = false;
-    
+
     public ContentVersionsTag()
     {
         super();
@@ -84,7 +84,12 @@ public class ContentVersionsTag extends TemplateControllerTag
 	
     public void setContent(String content) throws JspException
     {
-        this.content = (ContentVO)evaluate("contentVersions", "content", content, ContentVO.class);
+    	this.content = (ContentVO)evaluate("contentVersions", "content", content, ContentVO.class);
+    }
+
+    public void setContentObject(ContentVO content) throws JspException
+    {
+        this.content = content;
     }
 
     public void setContentId(String contentId) throws JspException

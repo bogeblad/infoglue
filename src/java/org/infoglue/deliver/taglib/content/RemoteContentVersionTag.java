@@ -104,6 +104,11 @@ public class RemoteContentVersionTag extends InfoGlueWebServiceTag
         this.principal = (InfoGluePrincipal) this.evaluate("remoteContentService", "principal", principalString, InfoGluePrincipal.class);
     }
 
+    public void setPrincipalObject(final InfoGluePrincipal principal) throws JspException
+    {
+ 	   this.principal = principal;
+    }
+
     public void setContentId(String contentId) throws JspException
     {
         this.contentId = evaluateInteger("deleteContent", "contentId", contentId);

@@ -277,6 +277,15 @@ public class DigitalAssetController extends BaseController
     	return (DigitalAsset) getObjectWithId(SmallDigitalAssetImpl.class, digitalAssetId, db);
     }
 
+	public DigitalAssetVO getLocklessSmallDigitalAssetVOWithId(Integer digitalAssetId) throws SystemException, Bug
+    {
+		return (DigitalAssetVO) getVOWithIdLockless(SmallDigitalAssetImpl.class, "digitalAssetId", digitalAssetId);
+    } 
+	
+	public DigitalAssetVO getLocklessSmallDigitalAssetVOWithId(Integer digitalAssetId, Database db) throws SystemException, Bug
+    {
+		return (DigitalAssetVO) getVOWithIdLockless(SmallDigitalAssetImpl.class, "digitalAssetId", digitalAssetId, db);
+    } 
 
    	/**
    	 * This method creates a new digital asset in the database and connects it to the contentVersion it belongs to.

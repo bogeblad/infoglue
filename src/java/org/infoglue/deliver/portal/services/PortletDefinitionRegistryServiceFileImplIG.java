@@ -112,6 +112,8 @@ public class PortletDefinitionRegistryServiceFileImplIG extends PortletDefinitio
         else
         {
             this.baseWMDir = this.servletContext.getRealPath("");
+            if(this.baseWMDir == null)
+            	this.baseWMDir = this.servletContext.getRealPath("/");
             // BEGIN PATCH for IBM WebSphere 
             if (this.baseWMDir.endsWith(fileSeparator)) {
                 this.baseWMDir = this.baseWMDir.substring(0, this.baseWMDir.length()-1);
@@ -130,7 +132,15 @@ public class PortletDefinitionRegistryServiceFileImplIG extends PortletDefinitio
         String _mapping = properties.getString(CONFIG_MAPPING_PORTLETXML, DEFAULT_MAPPING_PORTLETXML);
         log.debug("_mapping = " + _mapping);
         File f = new File(_mapping);
+        log.debug("f: " + f.getPath() + ":" + f.exists());
         if (!f.isAbsolute()) _mapping = servletContext.getRealPath(_mapping);
+        if(_mapping == null)
+        {
+            _mapping = properties.getString(CONFIG_MAPPING_PORTLETXML, DEFAULT_MAPPING_PORTLETXML);
+            _mapping = servletContext.getRealPath("/" + _mapping);
+        }
+        
+        log.debug("_mapping = " + _mapping);
         this.mappingPortletXml = new Mapping();
         try
         {
@@ -145,6 +155,12 @@ public class PortletDefinitionRegistryServiceFileImplIG extends PortletDefinitio
         _mapping = properties.getString(CONFIG_MAPPING_WEBXML, DEFAULT_MAPPING_WEBXML);
         f = new File(_mapping);
         if (!f.isAbsolute()) _mapping = servletContext.getRealPath(_mapping);
+        if(_mapping == null)
+        {
+            _mapping = properties.getString(CONFIG_MAPPING_WEBXML, DEFAULT_MAPPING_WEBXML);
+            _mapping = servletContext.getRealPath("/" + _mapping);
+        }
+
         this.mappingWebXml = new Mapping();
         try
         {

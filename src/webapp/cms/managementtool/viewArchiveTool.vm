@@ -38,6 +38,18 @@
 					<option value="20" #if($numberOfVersionsToKeep == 20)selected='selected'#end>20</option>
 				</select>
 				</p>
+
+				<p>
+				Repeat this many times:<br/>
+				<select id="redoNumberOfTimes">
+					<option value="1">1</option>
+					<option value="5">5</option>
+					<option value="10">10</option>
+					<option value="50">50</option>
+					<option value="100">100</option>
+					<option value="500">500</option>
+				</select>
+				</p>
 				
 				#if($deleteVersions)
 					<p>
@@ -46,7 +58,7 @@
 				#else
 					<p>
 						<input type="button" onclick="document.location.href = 'ViewArchiveTool!cleanOldVersionsForContent.action?contentId=$contentId&recurse=$recurse&numberOfVersionsToKeep=' + $('#numberOfVersionsToKeep').val() + '&igSecurityCode=$!securityCode';" value="Check again"/>
-						<input type="button" onclick="if(confirm('Make sure you take a backup of the database first. The versions will be completely deleted and not possible to restore again. Do you want to continue?')) document.location.href = 'ViewArchiveTool!cleanOldVersionsForContent.action?contentId=$contentId&recurse=$recurse&deleteVersions=true&numberOfVersionsToKeep=' + $('#numberOfVersionsToKeep').val() + '&igSecurityCode=$!securityCode';" value="$ui.getString("tool.managementtool.cleanOldVersions.title")"/>
+						<input type="button" onclick="if(confirm('Make sure you take a backup of the database first. The versions will be completely deleted and not possible to restore again. Do you want to continue?')) document.location.href = 'ViewArchiveTool!cleanOldVersionsForContent.action?contentId=$contentId&recurse=$recurse&deleteVersions=true&numberOfVersionsToKeep=' + $('#numberOfVersionsToKeep').val() + '&redoNumberOfTimes=' + $('#redoNumberOfTimes').val() + '&igSecurityCode=$!securityCode';" value="$ui.getString("tool.managementtool.cleanOldVersions.title")"/>
 					</p>
 				#end		
 			</p>
@@ -128,8 +140,20 @@
 							</p>
 						#else
 							<p>
+								Repeat this many times:<br/>
+								<select id="redoNumberOfTimes">
+									<option value="1">1</option>
+									<option value="5">5</option>
+									<option value="10">10</option>
+									<option value="50">50</option>
+									<option value="100">100</option>
+									<option value="500">500</option>
+								</select>
+							</p>
+							
+							<p>
 								<input type="button" onclick="document.location.href = 'ViewArchiveTool!cleanOldVersions.action?igSecurityCode=$!securityCode';" value="Check again"/>
-								<input type="button" onclick="if(confirm('Make sure you take a backup of the database first. The versions will be completely deleted and not possible to restore again. Do you want to continue?')) document.location.href = 'ViewArchiveTool!cleanOldVersions.action?deleteVersions=true&igSecurityCode=$!securityCode';" value="$ui.getString("tool.managementtool.cleanOldVersions.title")"/>
+								<input type="button" onclick="if(confirm('Make sure you take a backup of the database first. The versions will be completely deleted and not possible to restore again. Do you want to continue?')) document.location.href = 'ViewArchiveTool!cleanOldVersions.action?deleteVersions=true&redoNumberOfTimes=' + $('#redoNumberOfTimes').val() + '&igSecurityCode=$!securityCode';" value="$ui.getString("tool.managementtool.cleanOldVersions.title")"/>
 							</p>
 						#end		
 					</p>

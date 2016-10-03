@@ -223,7 +223,7 @@ public class ComponentLogic
 			while(bindingsIterator.hasNext())
 			{
 				ComponentBinding componentBinding = bindingsIterator.next();
-				Integer boundContentId 	= componentBinding.getEntityId();
+				Integer boundContentId 	= Integer.parseInt(componentBinding.getEntityId());
 				String assetKey 		= componentBinding.getAssetKey();
 				
 				if(assetKey != null && !assetKey.equals(""))
@@ -248,7 +248,7 @@ public class ComponentLogic
 			while(bindingsIterator.hasNext())
 			{
 				ComponentBinding componentBinding = bindingsIterator.next();
-				Integer boundContentId 	= componentBinding.getEntityId();
+				Integer boundContentId 	= Integer.parseInt(componentBinding.getEntityId());
 				String assetKey 		= componentBinding.getAssetKey();
 		
 				if(assetKey != null && !assetKey.equals(""))
@@ -907,9 +907,6 @@ public class ComponentLogic
 		contents = getBoundContents(property);
 		if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
 			this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO contents:" + (contents == null ? "null" : contents.size()) + " (Thread" + Thread.currentThread().getId() + ")\n");
-		
-		if(property == null || contents == null && this.templateController.getDeliveryContext().getDebugInformation() != null && !this.templateController.getDeliveryContext().getDebugInformation().equals(""))
-			logger.warn("DEBUGGING INFORMATION GUFlashImages:" + this.templateController.getDeliveryContext().getDebugInformation());
 					
 		return contents;
 	}
@@ -960,13 +957,13 @@ public class ComponentLogic
 
 		Map property = getInheritedComponentProperty(this.infoGlueComponent, propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
 		contents = getBoundContents(property);
-
+		
 		return contents;
 	}
 	
-	protected List<Integer> getExternalBindings(Map property)
+	protected List<String> getExternalBindings(Map property)
 	{
-	    List<Integer> bindingList = new ArrayList<Integer>();
+	    List<String> bindingList = new ArrayList<String>();
 
 	    if(property != null)
 		{
@@ -982,9 +979,9 @@ public class ComponentLogic
 		return bindingList;
 	}
 
-	public List<Integer> getExternalBindings(String propertyName, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance)
+	public List<String> getExternalBindings(String propertyName, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance)
 	{
-		List<Integer> bindings = null;
+		List<String> bindings = null;
 
 		Map property = getInheritedComponentProperty(this.infoGlueComponent, propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
 		bindings = getExternalBindings(property);
@@ -1028,7 +1025,7 @@ public class ComponentLogic
 			Iterator<ComponentBinding> bindingsIterator = bindings.iterator();
 			while(bindingsIterator.hasNext())
 			{
-				Integer contentId = bindingsIterator.next().getEntityId();
+				Integer contentId = Integer.parseInt(bindingsIterator.next().getEntityId());
 				childContents.addAll(this.templateController.getChildContents(contentId, searchRecursive, sortAttribute, sortOrder, includeFolders));
 			}
 		}	
@@ -1219,7 +1216,7 @@ public class ComponentLogic
 			Iterator<ComponentBinding> bindingsIterator = bindings.iterator();
 			while(bindingsIterator.hasNext())
 			{
-				Integer siteNodeId = bindingsIterator.next().getEntityId();
+				Integer siteNodeId = Integer.parseInt(bindingsIterator.next().getEntityId());
 				logger.info("propertyName:" + propertyName);
 				childPages.addAll(getChildPages(siteNodeId, levelsToPopulate, nameFilter, hideUnauthorizedPages, includeHidden, includeEvenIfLanguageDisabled));
 			}
@@ -1281,24 +1278,29 @@ public class ComponentLogic
 	{
 		return getPageUrl(propertyName, useInheritance, useRepositoryInheritance, this.useStructureInheritance);
 	}
-
-	public String getPageUrl(String propertyName, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance)
+	
+	public String getPageUrl(String propertyName, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance) {
+		return getPageUrl(propertyName, true, useInheritance, useRepositoryInheritance, useStructureInheritance);
+	}
+	public String getPageUrl(String propertyName, boolean includeLanguageId, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance)
 	{
 		String pageUrl = "";
 
 		Map property = getInheritedComponentProperty(this.infoGlueComponent, propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
 		Integer siteNodeId = getSiteNodeId(property);
 		if(siteNodeId != null)
-			pageUrl = this.getPageUrl(siteNodeId, templateController.getLanguageId(), templateController.getContentId());
+			pageUrl = this.getPageUrl(siteNodeId, templateController.getLanguageId(), includeLanguageId, templateController.getContentId());
 		
 		return pageUrl;		
 	}
-	
-	public String getPageUrl(Integer siteNodeId)
+	public String getPageUrl(Integer siteNodeId) {
+		return getPageUrl(siteNodeId, true);
+	}
+	public String getPageUrl(Integer siteNodeId, boolean includeLanguageId)
 	{
 		String pageUrl = "";
 
-		pageUrl = this.getPageUrl(siteNodeId, templateController.getLanguageId(), null);
+		pageUrl = this.getPageUrl(siteNodeId, templateController.getLanguageId(), includeLanguageId, null);
 
 		return pageUrl;
 	}
@@ -1317,37 +1319,41 @@ public class ComponentLogic
 	{
 		return getPageUrl(propertyName, contentId, useInheritance, useRepositoryInheritance, this.useStructureInheritance);
 	}
-
 	public String getPageUrl(String propertyName, Integer contentId, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance)
+	{
+		return getPageUrl(propertyName, contentId, true, useInheritance, useRepositoryInheritance, useStructureInheritance);
+	}
+	public String getPageUrl(String propertyName, Integer contentId, boolean includeLanguageId, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance)
 	{
 		String pageUrl = "";
 
 		Map property = getInheritedComponentProperty(this.infoGlueComponent, propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
 		Integer siteNodeId = getSiteNodeId(property);
 		if(siteNodeId != null)
-			pageUrl = this.getPageUrl(siteNodeId, templateController.getLanguageId(), contentId);
+			pageUrl = this.getPageUrl(siteNodeId, templateController.getLanguageId(), includeLanguageId, contentId);
 			
 		return pageUrl;
 	}
-
+	
 	public String getPageUrl(String propertyName, Integer contentId, Integer languageId, boolean useInheritance)
 	{
-		return getPageUrl(propertyName, contentId, languageId, useInheritance, this.useRepositoryInheritance, this.useStructureInheritance);
+		return getPageUrl(propertyName, contentId, languageId, true, useInheritance, this.useRepositoryInheritance, this.useStructureInheritance);
+	
 	}
 
 	public String getPageUrl(String propertyName, Integer contentId, Integer languageId, boolean useInheritance, boolean useRepositoryInheritance)
 	{
-		return getPageUrl(propertyName, contentId, languageId, useInheritance, useRepositoryInheritance, this.useStructureInheritance);
+		return getPageUrl(propertyName, contentId, languageId, true, useInheritance, useRepositoryInheritance, this.useStructureInheritance);
 	}
 
-	public String getPageUrl(String propertyName, Integer contentId, Integer languageId, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance)
+	public String getPageUrl(String propertyName, Integer contentId, Integer languageId, boolean includeLanguageId, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance)
 	{
 		String pageUrl = "";
 
 		Map property = getInheritedComponentProperty(this.infoGlueComponent, propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
 		Integer siteNodeId = getSiteNodeId(property);
 		if(siteNodeId != null)
-			pageUrl = this.getPageUrl(siteNodeId, languageId, contentId);
+			pageUrl = this.getPageUrl(siteNodeId, languageId, includeLanguageId, contentId);
 			
 		return pageUrl;
 	}
@@ -1876,7 +1882,7 @@ public class ComponentLogic
 							//componentBinding.setId(new Integer(id));
 							//componentBinding.setComponentId(componentId);
 							componentBinding.setEntityClass(entity);
-							componentBinding.setEntityId(new Integer(entityId));
+							componentBinding.setEntityId(entityId);
 							componentBinding.setAssetKey(assetKey);
 							//componentBinding.setBindingPath(path);
 							
@@ -1993,9 +1999,9 @@ public class ComponentLogic
 	 * This method returns a url to the given page. The url is composed of siteNode, language and content
 	 */
 
-	public String getPageUrl(Integer siteNodeId, Integer languageId, Integer contentId)
+	public String getPageUrl(Integer siteNodeId, Integer languageId, boolean includeLanguageId, Integer contentId)
 	{
-		String pageUrl = this.templateController.getPageUrl(siteNodeId, languageId, contentId);
+		String pageUrl = this.templateController.getPageUrl(siteNodeId, languageId, includeLanguageId, contentId);
 		
 		return pageUrl;
 	}
@@ -2077,7 +2083,6 @@ public class ComponentLogic
 
 				if(property != null)
 				{
-					//System.out.println("property:" + property);
 					if(property.get("isPagePartReference") != null)
 						relatedRepositoryIds.add("selectiveCacheUpdateNonApplicable");
 					try
@@ -2544,7 +2549,7 @@ public class ComponentLogic
 				//componentBinding.setId(new Integer(id));
 				//componentBinding.setComponentId(componentId);
 				componentBinding.setEntityClass(entity);
-				componentBinding.setEntityId(new Integer(entityId));
+				componentBinding.setEntityId(entityId);
 				componentBinding.setAssetKey(assetKey);
 				//componentBinding.setBindingPath(path);
 				
@@ -2672,7 +2677,7 @@ public class ComponentLogic
 				//componentBinding.setId(new Integer(id));
 				//componentBinding.setComponentId(componentId);
 				componentBinding.setEntityClass(entity);
-				componentBinding.setEntityId(new Integer(entityId));
+				componentBinding.setEntityId(entityId);
 				componentBinding.setAssetKey(assetKey);
 				//componentBinding.setBindingPath(path);
 				
@@ -2838,7 +2843,7 @@ public class ComponentLogic
 				//componentBinding.setId(new Integer(id));
 				//componentBinding.setComponentId(componentId);
 				componentBinding.setEntityClass(entity);
-				componentBinding.setEntityId(new Integer(entityId));
+				componentBinding.setEntityId(entityId);
 				componentBinding.setAssetKey(assetKey);
 				//componentBinding.setBindingPath(path);
 				
@@ -3052,7 +3057,7 @@ public class ComponentLogic
 						//componentBinding.setId(new Integer(id));
 						//componentBinding.setComponentId(componentId);
 						componentBinding.setEntityClass(entity);
-						componentBinding.setEntityId(new Integer(entityId));
+						componentBinding.setEntityId(entityId);
 						componentBinding.setAssetKey(assetKey);
 						//componentBinding.setBindingPath(path);
 
@@ -3653,7 +3658,7 @@ public class ComponentLogic
     			Iterator<ComponentBinding> bindingsIterator = bindings.iterator();
     			if(bindingsIterator.hasNext())
     			{
-    				Integer contentId = bindingsIterator.next().getEntityId();
+    				Integer contentId = Integer.parseInt(bindingsIterator.next().getEntityId());
                     assetUrl = templateController.getRenderedTextUrl( contentId, text, renderAttributes );
     			}                
             }
@@ -3680,7 +3685,7 @@ public class ComponentLogic
 			if(bindings.size() > 0)
 			{
 				ComponentBinding componentBinding = bindings.get(0);
-				boundContentId = componentBinding.getEntityId();
+				boundContentId = Integer.parseInt(componentBinding.getEntityId());
 				//boundContentId = new Integer((String)bindings.get(0));
 			}
 		}
@@ -3743,7 +3748,7 @@ public class ComponentLogic
 			while(bindingsIterator.hasNext())
 			{
 				ComponentBinding componentBinding = bindingsIterator.next();
-				Integer contentId = componentBinding.getEntityId();
+				Integer contentId = Integer.parseInt(componentBinding.getEntityId());
 				contents.add(this.templateController.getContent(contentId));
 			}
 		}
@@ -3780,7 +3785,7 @@ public class ComponentLogic
 			if(bindings.size() > 0)
 			{
 				ComponentBinding componentBinding = bindings.get(0);
-			    siteNodeId = componentBinding.getEntityId();
+			    siteNodeId = Integer.parseInt(componentBinding.getEntityId());
 			}
 		}
 
@@ -3816,7 +3821,7 @@ public class ComponentLogic
 	    	while(bindingsIterator.hasNext())
 			{
 				ComponentBinding componentBinding = bindingsIterator.next();
-			    Integer siteNodeId = componentBinding.getEntityId();
+			    Integer siteNodeId = Integer.parseInt(componentBinding.getEntityId());
 			    SiteNodeVO siteNodeVO = templateController.getSiteNode(siteNodeId);
 				if(siteNodeVO != null && !siteNodeVO.getIsDeleted())
 					siteNodeVOList.add(siteNodeVO);
@@ -3837,7 +3842,7 @@ public class ComponentLogic
 			while(bindingsIterator.hasNext())
 			{
 				ComponentBinding componentBinding = bindingsIterator.next();
-				Integer siteNodeId = componentBinding.getEntityId();
+				Integer siteNodeId = Integer.parseInt(componentBinding.getEntityId());
 				SiteNodeVO siteNode = templateController.getSiteNode(siteNodeId);
 				if(siteNode != null && !siteNode.getIsDeleted())
 				{
@@ -3868,7 +3873,7 @@ public class ComponentLogic
 			{
 				webPage = new WebPage();
 				ComponentBinding componentBinding = bindingsIterator.next();
-				Integer siteNodeId = componentBinding.getEntityId();
+				Integer siteNodeId = Integer.parseInt(componentBinding.getEntityId());
 				SiteNodeVO siteNode = templateController.getSiteNode(siteNodeId);
 				if(siteNode != null && !siteNode.getIsDeleted())
 				{
@@ -3923,8 +3928,6 @@ public class ComponentLogic
 	
 	private ComponentPropertyDefinition getComponentPropertyDefinition(Integer componentContentId, String propertyName, Integer siteNodeId, Integer languageId, Integer contentId, Database db, InfoGluePrincipal principal) throws Exception
 	{
-		//TODO - h�r kan vi s�kert cache:a.
-		
 		ComponentPropertyDefinition propertyDefinition = null;
 		
 		Timer timer = new Timer();
@@ -4068,7 +4071,7 @@ public class ComponentLogic
 				{
 					ComponentBinding componentBinding = bindingsIterator.next();
 					entity = new EntityVOWithSupplementingEntityVO();
-					Integer contentId = componentBinding.getEntityId();
+					Integer contentId = Integer.parseInt(componentBinding.getEntityId());
 					entity.setEntity(this.templateController.getContent(contentId));
 					if (componentBinding instanceof SupplementedComponentBinding)
 					{
@@ -4127,12 +4130,12 @@ public class ComponentLogic
 
 					if ("Content".equalsIgnoreCase(componentBinding.getEntityClass()))
 					{
-						Integer contentId = componentBinding.getEntityId();
+						Integer contentId = Integer.parseInt(componentBinding.getEntityId());
 						entity.setEntity(this.templateController.getContent(contentId));
 					}
 					else if ("External".equalsIgnoreCase(componentBinding.getEntityClass()))
 					{
-						Integer entityId = componentBinding.getEntityId();
+						Integer entityId = Integer.parseInt(componentBinding.getEntityId());
 						entity.setEntity(new EntityVOWithSupplementingEntityVO.IdOnlyBaseEntityVO(entityId));
 					}
 

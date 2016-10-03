@@ -56,30 +56,42 @@ public class URIMapperCache
     {
     }
 
-    public Integer getCachedSiteNodeId(Integer repositoryId, String[] path, int upToIndex)
+    public Integer getCachedSiteNodeId(Integer repositoryId, String[] path, int upToIndex, String requestLanguageId)
     {
         if (repositoryId == null || path == null)
             return null;
-        String cacheKey = createCacheKey(repositoryId, path, upToIndex);
+        String cacheKey = createCacheKey(repositoryId, path, upToIndex, requestLanguageId);
         return (Integer)CacheController.getCachedObject(CACHE_NAME, cacheKey);
     }
 
-    public boolean addCachedSiteNodeId(Integer repositoryId, String[] path, int upToIndex, Integer siteNodeId)
+    public Integer getCachedSiteNodeLanguageId(Integer repositoryId, String[] path, int upToIndex, String requestLanguageId)
+    {
+        if (repositoryId == null || path == null)
+            return null;
+        String cacheKey = createCacheKey(repositoryId, path, upToIndex, requestLanguageId) + "_languageId";
+        return (Integer)CacheController.getCachedObject(CACHE_NAME, cacheKey);
+    }
+
+    public boolean addCachedSiteNodeId(Integer repositoryId, String[] path, int upToIndex, Integer siteNodeId, String requestLanguageId, Integer languageId)
     {
         if (repositoryId == null || path == null || siteNodeId == null)
             return false;
-        String cacheKey = createCacheKey(repositoryId, path, upToIndex);
+        String cacheKey = createCacheKey(repositoryId, path, upToIndex, requestLanguageId);
         CacheController.cacheObject(CACHE_NAME, cacheKey, siteNodeId);
+        CacheController.cacheObject(CACHE_NAME, cacheKey + "_languageId", languageId);
         return true;
     }
 
-    private String createCacheKey(Integer repositoryId, String[] path, int upToIndex)
+    private String createCacheKey(Integer repositoryId, String[] path, int upToIndex, String requestLanguageId)
     {
     	StringBuilder sb = new StringBuilder(128);
         sb.append(String.valueOf(repositoryId)).append(":/");
         for (int i=0;i < path.length && i < upToIndex ;i++) {
             sb.append(path[i].toLowerCase()).append("/");
         }
+        if(requestLanguageId != null)
+        	sb.append("?" + requestLanguageId);
+        
         return sb.toString();
     }
 } 

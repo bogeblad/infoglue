@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head> 
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	
+	<title>Menus</title>
+
+	#includeLatestJQuery()
+
+	<script type="text/javascript">
+	<!-- 
+		var cssFile = "script/menu/skins/winclassic.css";
+		document.write("<link type=\"text/css\" rel=\"StyleSheet\" href=\"" + cssFile + "\" />" );
+		var languageCode = "$languageCode";
+		var oldSelected;
+		
+		jQuery(document).ready(function() {
+			#if($anchorId)
+            jQuery("li#$!anchorId").addClass("selected-content");
+		  	#end
+		  	
+			jQuery("li.content-item").click(function() {
+				var prevAnchor = parent.document.inputForm.anchorId.value;
+				var anchor = jQuery(this).attr("id");
+				jQuery("li.content-item").removeClass("selected-content");
+				
+				if(anchor != prevAnchor) {
+					parent.document.inputForm.anchorId.value = anchor;
+					if(parent.anchorListItemClick) {
+						parent.anchorListItemClick(anchor);
+					}
+					jQuery(this).addClass("selected-content");
+				}
+				else {
+					parent.document.inputForm.anchorId.value = "";
+					if(parent.anchorListItemClick) {
+						parent.anchorListItemClick("");
+					}
+				}
+			});
+		});
+		// -->
+	</script>
+
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<link rel="stylesheet" type="text/css" href="css/infoglue.css" />
+	<link rel="stylesheet" type="text/css" href="css/menu.css" />
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/menu.css" />
+	<style>
+		li.selected-content {
+			background-color: #e6e6e6;
+		}
+		li.content-item {
+			cursor: pointer;
+		}
+	</style>
+</head>
+<body oncontextmenu="return false;" class="generaltooledit" onload="">
+#if ($!siteNodeId > 0)
+	<div id="contentList" class="contentTree">
+		#if ($!contentList)
+			<ul>
+			#foreach( $key in $contentList.keySet() )
+			    <li class="content-item" id="anchor-$key">$contentList.get($key)</li>
+			#end
+			</ul>
+		#else
+			<p>$ui.getString("tool.contenttool.linkDialog.noNodeContentLabel")</p>
+		#end
+	</div>
+#end
+</body>
+</html>

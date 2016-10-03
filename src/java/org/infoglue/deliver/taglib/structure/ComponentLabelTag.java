@@ -60,6 +60,17 @@ public class ComponentLabelTag extends ContentAttributeTag
 	{
 		Integer componentContentId = getController().getComponentLogic().getIncludedComponentContentId();
 		if(componentContentId == null)
+		{
+			logger.info("No includedComponentContentId in A - lets look in attributes");
+			componentContentId = (Integer)getController().getHttpServletRequest().getAttribute("includedComponentContentId");
+			String result = getController().getContentAttribute(componentContentId, languageId, attributeName, disableEditOnSight);
+			if(result == null || result.equals("") || !result.contains("mapKeyName"))
+				componentContentId = null;
+			else 
+				return result;
+		}
+
+		if(componentContentId == null)
 			componentContentId = getController().getComponentLogic().getInfoGlueComponent().getContentId();
 		
 		String result = getController().getContentAttribute(componentContentId, languageId, attributeName, disableEditOnSight);

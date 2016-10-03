@@ -486,8 +486,9 @@ public class WorkingPublicationThread extends Thread
 							handledCacheCalls.put("" + igCacheCall.get("className") + "_" + igCacheCall.get("objectId") + "_" + extraInformation, new Boolean(true));
 							
 						    elapsedTime = t.getElapsedTime();
-						    if(elapsedTime > 50)
-						    	logger.warn("Clearing all caches for " + igCacheCall.get("className") + ":" + igCacheCall.get("objectId"));
+						    if(elapsedTime > 50) {
+						    	logger.info("Clearing all caches for " + igCacheCall.get("className") + ":" + igCacheCall.get("objectId"));
+						    }
 						}
 					    
 					    String key = "" + className + "_" + objectId + "_" + extraInformation;

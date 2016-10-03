@@ -1701,6 +1701,11 @@ public class CmsPropertyHandler
 	    return getServerNodeProperty("niceURIAttributeName", true, "NiceURIName");
 	}
 
+	public static String getNiceURIFallbackAttributeName()
+	{
+	    return getServerNodeProperty("niceURIFallbackAttributeName", true, "NavigationTitle");
+	}
+
 	public static String getRequestArgumentDelimiter()
 	{
 	    return getServerNodeProperty("requestArgumentDelimiter", true, "&amp;");
@@ -1783,7 +1788,7 @@ public class CmsPropertyHandler
 
 	public static String getInfoGlueVersion()
 	{
-	    return getServerNodeProperty("infoGlueVersion", true, "3.4.0.0 GA");
+	    return getServerNodeProperty("infoGlueVersion", true, "3.5.0.0 RC");
 	}
 
 	public static String getInfoGlueDBVersion()
@@ -1793,7 +1798,7 @@ public class CmsPropertyHandler
 
 	public static String getInfoGlueVersionReleaseDate()
 	{
-	    return getServerNodeProperty("infoGlueVersionReleaseDate", true, "2015-06-15");
+	    return getServerNodeProperty("infoGlueVersionReleaseDate", true, "2016-05-20");
 	}
 
 	public static String getLogDatabaseMessages()
@@ -2841,6 +2846,64 @@ public class CmsPropertyHandler
 		}
 	}
 
+	/**
+	 * If the user has set a error-url to http://www.google.se we could either sendRedirect or do a http-backend include. The incude 
+	 * will be able to return the error page html AND a 404 status code. The old method will transfer the user and give robots etc the impression that 
+	 * the page just moved.
+	 * @return
+	 */
+	public static String getResponseMethodOnFullErrorURL()
+	{
+		return getServerNodeProperty("responseMethodOnFullErrorURL", true, "include");
+	}
+
+	/**
+	 * If a repository has no access rights defined - should it be available to users or not by default?
+	 * @return
+	 */
+	public static boolean getShowRepositoriesByDefaultIfNoAccessRightsAreDefined()
+	{
+		String showRepositoriesByDefaultIfNoAccessRightsAreDefined = getServerNodeProperty("showRepositoriesByDefaultIfNoAccessRightsAreDefined", true, "true");
+		
+		return Boolean.parseBoolean(showRepositoriesByDefaultIfNoAccessRightsAreDefined);
+	}
+
+	/**
+	 * Enable disk based deployment or not?
+	 * @return
+	 */
+	public static boolean getEnableDiskBasedDeployment()
+	{
+		String enableDiskBasedDeployment = getServerNodeProperty("enableDiskBasedDeployment", true, "false");
+	
+		return Boolean.parseBoolean(enableDiskBasedDeployment);
+	}
+	
+	/**
+	 * Enable disk based deployment or not?
+	 * @return
+	 */
+	public static boolean getEnableDiskBasedDeployment(boolean skipCaches)
+	{
+		String enableDiskBasedDeployment = getServerNodeProperty("enableDiskBasedDeployment", true, "false", skipCaches);
+	
+		return Boolean.parseBoolean(enableDiskBasedDeployment);
+	}
+
+
+	/**
+	 * The folder to sync for changes. See doc for folder structure and content.
+	 * @return
+	 */
+	public static String getDiskBasedDeploymentBasePath()
+	{
+		String diskBasedDeploymentBasePath = getServerNodeProperty("diskBasedDeploymentBasePath", true, "");
+		if(diskBasedDeploymentBasePath != null && diskBasedDeploymentBasePath.contains("\\"))
+			diskBasedDeploymentBasePath = diskBasedDeploymentBasePath.replace("\\", "/");
+		return diskBasedDeploymentBasePath;
+	}
+
+	
 	public static String getDefaultRepositoryAccessRoles()
 	{
 		return getServerNodeProperty("defaultRepositoryAccessRoles", true, null);
@@ -3129,11 +3192,19 @@ public class CmsPropertyHandler
 		return Boolean.parseBoolean(redirectUsingSystemRedirect);
 	}
 
+	public static boolean getOrderRedirectsByLength()
+	{
+		String orderRedirectsByLength = getServerNodeProperty("orderRedirectsByLength", true, "false");
+
+		return Boolean.parseBoolean(orderRedirectsByLength);
+	}
+
 	/**
 	 * Dev note: This method is not used at all places where it should be used so don't depend on that. However
 	 * it is good if new features utilize this property so that in the future we can depend on this attribute.
 	 * (Comment written on 2014-01-24)
 	 */
+	
 	public static String getMetaDataContentTypeDefinitionName()
 	{
 		return getServerNodeProperty("metaDataContentTypeDefinitionName", true, "Meta info");
@@ -3142,6 +3213,63 @@ public class CmsPropertyHandler
 	public static String getExpectFormPostToBeUnicodeAllready() 
 	{
 		return getServerNodeProperty("expectFormPostToBeUnicodeAllready", true, "true");
+	}
+	
+	public static boolean getForceHTTPProtocol() 
+	{
+		String forceHTTPProtocol = getServerNodeProperty("forceHTTPProtocol", true, "false");
+	
+		return Boolean.parseBoolean(forceHTTPProtocol);
+	}
+	
+	public static boolean getViewInheritedAssetsInContentDialog() 
+	{
+		String viewInheritedAssetsInContentDialog = getServerNodeProperty("viewInheritedAssetsInContentDialog", true, "true");
+		return Boolean.parseBoolean(viewInheritedAssetsInContentDialog);
+	}
+	
+	/**
+	 * Setting which determines if you wanna skip cleaning up references in content
+	 * @return boolean
+	 */
+	
+	public static boolean getCleanReferencesAfterDelete() 
+	{
+		String cleanReferencesAfterDelete = getServerNodeProperty("cleanReferencesAfterDelete", true, "true");
+	
+		return Boolean.parseBoolean(cleanReferencesAfterDelete);
+	}
+	
+	public static float getWebappVersion()
+	{
+		String webappVersion = getServerNodeProperty("webappVersion", true, "2.3");
+		try
+		{
+			return Float.parseFloat(webappVersion);
+		}
+		catch(Exception e) 
+		{
+			logger.error("Problem getting webapp version: " + e.getMessage());
+		}
+		
+		return 1F;
+	}
+
+	/**
+	 * Indicates that the structure tool should be reloaded when activated
+	 */
+	public static boolean getReloadStructureOnActivation()
+	{
+		return Boolean.parseBoolean(getServerNodeProperty("reloadStructureOnActivation", false, "false"));
+	}
+
+	public static boolean getUseWriteForAccessControlInWorking() 
+	{
+		return Boolean.parseBoolean(getServerNodeProperty("useWriteForAccessControlInWorking", false, "false"));
+	}
+	
+	public static boolean getDoubleCheckComponentEditorRights() {
+		return Boolean.parseBoolean(getServerNodeProperty("doubleCheckComponentEditorRights", false, "false"));
 	}
 
 }

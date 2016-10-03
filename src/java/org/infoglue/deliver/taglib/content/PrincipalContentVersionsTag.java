@@ -66,9 +66,19 @@ public class PrincipalContentVersionsTag extends TemplateControllerTag
         this.publishStartDate = (Date)evaluate("contentVersionSearchTag", "publishStartDate", publishStartDate, Date.class);
 	}
 
+	public void setPublishStartDateObject(Date publishStartDate) throws JspException
+	{
+        this.publishStartDate = publishStartDate;
+	}
+
 	public void setPublishEndDate(String publishEndDate) throws JspException
 	{
         this.publishEndDate = (Date)evaluate("contentVersionSearchTag", "publishEndDate", publishEndDate, Date.class);
+	}
+
+	public void setPublishEndDateObject(Date publishEndDate) throws JspException
+	{
+        this.publishEndDate = publishEndDate;
 	}
 
 	public void setExpireStartDate(String expireStartDate) throws JspException
@@ -76,9 +86,21 @@ public class PrincipalContentVersionsTag extends TemplateControllerTag
         this.expireStartDate = (Date)evaluate("contentVersionSearchTag", "expireStartDate", expireStartDate, Date.class);
 	}
 
+	public void setExpireStartDateObject(Date expireStartDate) throws JspException
+	{
+        this.expireStartDate = expireStartDate;
+	}
+
 	public void setExpireEndDate(String expireEndDate) throws JspException
 	{
         this.expireEndDate = (Date)evaluate("contentVersionSearchTag", "expireEndDate", expireEndDate, Date.class);
 	}
+
+	public void setExpireEndDateObject(Date expireEndDate) throws JspException
+	{
+        this.expireEndDate = expireEndDate;
+	}
+
+
 
 }

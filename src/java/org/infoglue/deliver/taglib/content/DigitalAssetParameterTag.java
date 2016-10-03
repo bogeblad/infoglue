@@ -214,6 +214,11 @@ public class DigitalAssetParameterTag extends AbstractTag
 		this.bytes = (byte[]) evaluate("addAttachment", "bytes", bytes, Object.class);
 	}
 
+	public void setBytesObject(final byte[] bytes) throws JspException
+	{
+		this.bytes = bytes;
+	}
+
 	/**
 	 * Sets the file attribute to the specified evaluated file.
 	 * 
@@ -225,6 +230,11 @@ public class DigitalAssetParameterTag extends AbstractTag
 		this.file = (File) evaluate("addAttachment", "file", file, Object.class);
 	}
 
+	public void setFileObject(final File file) throws JspException
+	{
+		this.file = file;
+	}
+
 	/**
 	 * Sets the FileItem attribute to the specified evaluated fileItem.
 	 * 
@@ -234,6 +244,11 @@ public class DigitalAssetParameterTag extends AbstractTag
 	public void setFileItem(final String fileItem) throws JspException
 	{
 		this.fileItem = (FileItem) evaluate("addAttachment", "fileItem", fileItem, Object.class);
+	}
+
+	public void setFileItemObject(final FileItem fileItem) throws JspException
+	{
+		this.fileItem = fileItem;
 	}
 
 }

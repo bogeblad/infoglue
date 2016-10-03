@@ -1393,33 +1393,54 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
         	}
         }
     	
-    	CacheEntry ce = null;
-
-    	Iterator ceIterator = ((GeneralCacheAdministrator)cache).getCache().cacheMap.values().iterator();
-    	while(ceIterator.hasNext())
-    	{
-    		ce = (CacheEntry)ceIterator.next();
-    		if(ce.getKey().equals(this.cacheKey))
-    		{
-    			break;
-    		}
-    	}
-    	getResponse().setContentType("text/plain");
-
-    	StringBuilder sb = new StringBuilder();
     	
-    	if(ce != null && ce.getGroups() != null)
+
+    	if(cache instanceof GeneralCacheAdministrator)
     	{
-    		List<String> groups = new ArrayList<String>();
-    		groups.addAll(ce.getGroups());
-    		Collections.sort(groups);
-	    	for(Object group : groups)
+    		CacheEntry ce = null;
+	    	Iterator ceIterator = ((GeneralCacheAdministrator)cache).getCache().cacheMap.values().iterator();
+	    	while(ceIterator.hasNext())
 	    	{
-	    		sb.append("" + group + "\n");
+	    		ce = (CacheEntry)ceIterator.next();
+	    		if(ce.getKey().equals(this.cacheKey))
+	    		{
+	    			break;
+	    		}
+	    	}
+	    	
+	    	getResponse().setContentType("text/plain");
+
+	    	StringBuilder sb = new StringBuilder();
+	    	
+	    	if(ce != null && ce.getGroups() != null)
+	    	{
+	    		List<String> groups = new ArrayList<String>();
+	    		groups.addAll(ce.getGroups());
+	    		Collections.sort(groups);
+		    	for(Object group : groups)
+		    	{
+		    		sb.append("" + group + "\n");
+		    	}
+	    	}
+
+	    	getResponse().getWriter().println(sb.toString());
+    	}
+    	else
+    	{
+    		Iterator<Map.Entry<String,Object>> ceIterator = ((Map)cache).entrySet().iterator();
+	    	while(ceIterator.hasNext())
+	    	{
+	    		Map.Entry<String,Object> entry = ceIterator.next();
+	    		System.out.println("entry:" + entry.getKey() + ":" + entry.getValue() + ":" + this.cacheKey);
+	    		if(entry.getKey().equals(this.cacheKey))
+	    		{
+	    	    	getResponse().setContentType("text/plain");
+	    	    	getResponse().getWriter().println(entry.getValue());
+	    			break;
+	    		}
 	    	}
     	}
 
-    	getResponse().getWriter().println(sb.toString());
     	
     	return NONE;
     }

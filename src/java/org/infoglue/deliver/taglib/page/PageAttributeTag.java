@@ -72,4 +72,9 @@ public class PageAttributeTag extends TemplateControllerTag
 		this.value = evaluate("PageAttribute", "value", value, Object.class);
 	}
 
+	public void setValueObject(final Object value) throws JspException
+	{
+		this.value = value;
+	}
+
 }

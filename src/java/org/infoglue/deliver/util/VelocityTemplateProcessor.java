@@ -194,8 +194,13 @@ public class VelocityTemplateProcessor
 	 * @throws ServletException
 	 * @throws IOException
 	 */
-	public void dispatchJSP(final Map params, final PrintWriter pw, final String templateAsString, final InfoGlueComponent component) throws ServletException, IOException, Exception
+	public void dispatchJSP(final Map params, final PrintWriter pw, String templateAsString, final InfoGlueComponent component) throws ServletException, IOException, Exception
 	{
+	    if(CmsPropertyHandler.getWebappVersion() >= 3 && templateAsString.contains("http://java.sun.com/jstl/"))
+	    	templateAsString = templateAsString.replaceAll("http://java.sun.com/jstl/", "http://java.sun.com/jsp/jstl/");
+	    else if(CmsPropertyHandler.getWebappVersion() < 3 && templateAsString.contains("http://java.sun.com/jsp/jstl/"))
+	    	templateAsString = templateAsString.replaceAll("http://java.sun.com/jsp/jstl/", "http://java.sun.com/jstl/");
+
 	    final String dir = CmsPropertyHandler.getContextRootPath() + "jsp";
 	    final String fileName;
 	    if ( component != null ) {
@@ -203,8 +208,8 @@ public class VelocityTemplateProcessor
 	    } else {
 	        fileName = "Template_" + templateAsString.hashCode() + ".jsp";
 	    }
-	    final File template = new File(dir , fileName);
-
+	    final File template = new File(dir, fileName);
+	    	    	
 	    synchronized (fileName.intern()) {
 		    if(!template.exists()) {
 		        final PrintWriter fpw = new PrintWriter(template);
@@ -218,6 +223,7 @@ public class VelocityTemplateProcessor
 	    final TemplateController templateController = (TemplateController)params.get("templateLogic");
 	    final PortalController portletController = (PortalController)params.get("portalLogic");
 	    final Map<String,Object> model = (Map<String,Object>)params.get("model");
+	    final Integer includedComponentContentId = (Integer)params.get("includedComponentContentId");
 	    if(templateController != null)
 	    {
 	    	final DeliveryContext deliveryContext = templateController.getDeliveryContext();
@@ -227,6 +233,7 @@ public class VelocityTemplateProcessor
 		    templateController.getHttpServletRequest().setAttribute("org.infoglue.cms.deliver.portalLogic", portletController);
 		    templateController.getHttpServletRequest().setAttribute("org.infoglue.cms.deliver.classLoader", Thread.currentThread().getContextClassLoader());
 		    templateController.getHttpServletRequest().setAttribute("model", model);
+		    templateController.getHttpServletRequest().setAttribute("includedComponentContentId", includedComponentContentId);
 		    final CharResponseWrapper wrapper = new CharResponseWrapper(deliveryContext.getHttpServletResponse());
 		    final RequestDispatcher dispatch = templateController.getHttpServletRequest().getRequestDispatcher("/jsp/" + fileName);
 		    dispatch.include(templateController.getHttpServletRequest(), wrapper);
@@ -239,6 +246,7 @@ public class VelocityTemplateProcessor
 	    	scriptController.getRequest().setAttribute("org.infoglue.cms.deliver.portalLogic", portletController);
 	    	scriptController.getRequest().setAttribute("org.infoglue.cms.deliver.classLoader", Thread.currentThread().getContextClassLoader());
 	    	scriptController.getRequest().setAttribute("model", model);
+	    	scriptController.getRequest().setAttribute("includedComponentContentId", includedComponentContentId);
 		    final CharResponseWrapper wrapper = new CharResponseWrapper(scriptController.getResponse());
 		    final RequestDispatcher dispatch = scriptController.getRequest().getRequestDispatcher("/jsp/" + fileName);
 		    dispatch.include(scriptController.getRequest(), wrapper);
@@ -261,6 +269,11 @@ public class VelocityTemplateProcessor
 	@Deprecated
 	public void dispatchJSP(Map params, PrintWriter pw, String templateAsString) throws ServletException, IOException, Exception
 	{
+	    if(CmsPropertyHandler.getWebappVersion() >= 3 && templateAsString.contains("http://java.sun.com/jstl/"))
+	    	templateAsString = templateAsString.replaceAll("http://java.sun.com/jstl/", "http://java.sun.com/jsp/jstl/");
+	    else if(CmsPropertyHandler.getWebappVersion() < 3 && templateAsString.contains("http://java.sun.com/jsp/jstl/"))
+	    	templateAsString = templateAsString.replaceAll("http://java.sun.com/jsp/jstl/", "http://java.sun.com/jstl/");
+
 	    Timer timer = new Timer();
 	    timer.setActive(false);
 

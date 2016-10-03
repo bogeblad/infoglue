@@ -317,6 +317,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
     		this.contentVersionVO = ContentVersionControllerProxy.getController().getACContentVersionVOWithId(this.getInfoGluePrincipal(), contentVersionId);    		 	
     		contentId = contentVersionVO.getContentId();
     		languageId = contentVersionVO.getLanguageId();
+
     		this.languageId = contentVersionVO.getLanguageId();
     	
     	}   
@@ -390,16 +391,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
         if(contentVersionId != null)	
 			this.contentVersionVO = ContentVersionControllerProxy.getController().getACContentVersionVOWithId(this.getInfoGluePrincipal(), contentVersionId);    		 	
-    		//this.contentVersionVO = ContentVersionController.getContentVersionVOWithId(contentVersionId);    		 	
 
-        /*
-		if(this.forceWorkingChange && contentVersionVO != null && !contentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
-		{
-		    ContentVersion contentVersion = ContentStateController.changeState(contentVersionVO.getContentVersionId(), ContentVersionVO.WORKING_STATE, "Edit on sight", false, null, this.getInfoGluePrincipal(), this.getContentId(), new ArrayList());
-		    contentVersionId = contentVersion.getContentVersionId();
-		    contentVersionVO = contentVersion.getValueObject();
-		}
-		*/
 
 		if(this.contentTypeDefinitionVO != null)
 		{
@@ -738,6 +730,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	{
 		logger.info("considerLatest:" + considerLatest);
 
+		
 		if(considerLatest && getContentVersionId() != null) 
 		{
 			ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(getContentVersionId());
@@ -764,7 +757,6 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 		
 		if(getContentId() != null && getContentId().intValue() != -1 && getLanguageId() == null)
 		{
-
 			
 		    this.initialize(getContentVersionId(), getContentId(), this.languageId, true, false);
 		}
@@ -1036,12 +1028,26 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	public List getDigitalAssets()
 	{
 		List digitalAssets = null;
-		
+
 		try
 		{
 			if(this.contentVersionVO != null && this.contentVersionVO.getContentVersionId() != null)
 	       	{
-	       		digitalAssets = DigitalAssetController.getDigitalAssetVOList(this.contentVersionVO.getContentVersionId());
+	       		digitalAssets = DigitalAssetController.getDigitalAssetVOList(this.contentVersionVO.getContentVersionId());	       		
+
+				this.contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(this.contentVersionVO.getId());
+				Iterator digitalAssetsIterator = digitalAssets.iterator();
+
+	   			while(digitalAssetsIterator.hasNext())
+	   			{
+	   				DigitalAssetVO assetVO = (DigitalAssetVO)digitalAssetsIterator.next();
+	   				
+	   				System.out.println("Version content:" + this.contentVersionVO.getContentId() + ":" + assetVO.getAssetKey());
+	   				List<ReferenceBean> referenceBeans = RegistryController.getController().getReferencingObjectsForContentAsset(this.contentVersionVO.getContentId(), assetVO.getAssetKey(), 100, false, true, true);
+	   				System.out.println("referenceBeans:" + referenceBeans.size());
+	   				assetVO.setReferencingNumberOfObjects(referenceBeans.size());
+	   				
+	   			}
 	       	}
 		}
 		catch(Exception e)
@@ -1095,7 +1101,9 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
    			{
    				DigitalAssetVO assetVO = (DigitalAssetVO)digitalAssetsIterator.next();
 
+   				System.out.println("Version content 2:" + this.contentVersionVO.getContentId() + ":" + assetVO.getAssetKey());
    				List<ReferenceBean> referenceBeans = RegistryController.getController().getReferencingObjectsForContentAsset(this.contentVersionVO.getContentId(), assetVO.getAssetKey(), 100, false, true, true);
+   				System.out.println("referenceBeans 2:" + referenceBeans.size());
    				assetVO.setReferencingNumberOfObjects(referenceBeans.size());
    				
    			}
@@ -1108,6 +1116,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 		
 		return filteredDigitalAssets;
 	}	
+
 
 	/**
 	 * Returns a list of digital assets available for this content version.
@@ -1874,6 +1883,11 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
     public String getAssetKey()
     {
         return assetKey;
+    }
+    
+    public boolean getUseInheritedAssets() 
+    {
+    	return CmsPropertyHandler.getViewInheritedAssetsInContentDialog();
     }
     
     public void setAssetKey(String assetKey)

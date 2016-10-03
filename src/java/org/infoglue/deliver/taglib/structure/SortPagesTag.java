@@ -97,6 +97,11 @@ public class SortPagesTag extends TemplateControllerTag
 		this.input = evaluateList("contentSort", "input", input);
 	}
 
+	public void setInputObject(final List input) throws JspException
+	{
+		this.input = input;
+	}
+
 	/**
 	 * 
 	 */
@@ -131,4 +136,5 @@ public class SortPagesTag extends TemplateControllerTag
     {
         this.numberOrder = numberOrder;
     }
+
 }

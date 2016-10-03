@@ -989,7 +989,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 						//componentBinding.setId(new Integer(id));
 						//componentBinding.setComponentId(componentId);
 						componentBinding.setEntityClass(entity);
-						componentBinding.setEntityId(new Integer(entityId));
+						componentBinding.setEntityId(entityId);
 						componentBinding.setAssetKey(assetKey);
 						componentBinding.setBindingPath(path);
 						
@@ -1457,7 +1457,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 						//componentBinding.setId(new Integer(id));
 						//componentBinding.setComponentId(componentId);
 						componentBinding.setEntityClass(entity);
-						componentBinding.setEntityId(new Integer(entityId));
+						componentBinding.setEntityId(entityId);
 						componentBinding.setAssetKey(assetKey);
 						componentBinding.setBindingPath(path);
 						
@@ -1773,6 +1773,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 				logger.debug("componentString:" + componentString);
 		    
 			String componentModelClassName = getComponentModelClassName(templateController, component.getContentId(), component); 
+			componentModelClassName = componentModelClassName.trim();
 			if(logger.isDebugEnabled())
 				logger.debug("componentModelClassName:" + componentModelClassName);
 		    
@@ -1794,9 +1795,9 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 							File jarFile = new File(path);
 							if(logger.isDebugEnabled())
 								logger.debug("jarFile:" + jarFile.exists());
-							URL url = jarFile.toURL();
-							URLClassLoader child = new URLClassLoader(new URL[]{url}, this.getClass().getClassLoader());
-
+							URL[] urls = { new URL("jar:file:" + path+"!/") };
+							URLClassLoader child = new URLClassLoader(urls, this.getClass().getClassLoader());
+							
 							Class c = child.loadClass(componentModelClassName);
 							boolean isOk = ComponentModel.class.isAssignableFrom(c);
 							if(logger.isDebugEnabled())
@@ -1822,7 +1823,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 						componentModel.prepare(componentString, templateController, component.getModel());
 					}
 					if(logger.isDebugEnabled())
-						t.printElapsedTime("Invoking custome class took");
+						t.printElapsedTime("Invoking custom class took");
 				}
 				catch (Exception e) 
 				{
@@ -2979,7 +2980,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 								//componentBinding.setId(new Integer(id));
 								//componentBinding.setComponentId(componentId);
 								componentBinding.setEntityClass(entity);
-								componentBinding.setEntityId(new Integer(entityId));
+								componentBinding.setEntityId(entityId);
 								componentBinding.setAssetKey(assetKey);
 								componentBinding.setBindingPath(path);
 								

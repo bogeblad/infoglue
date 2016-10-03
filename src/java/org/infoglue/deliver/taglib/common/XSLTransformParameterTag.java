@@ -117,6 +117,11 @@ public class XSLTransformParameterTag extends AbstractTag
 		this.value = evaluate("parameter", "value", value, Object.class);
 	}
 
+	public void setValueObject(final Object value) throws JspException
+	{
+		this.value = value;
+	}
+
 	/**
 	 * Sets the value attribute.
 	 * 

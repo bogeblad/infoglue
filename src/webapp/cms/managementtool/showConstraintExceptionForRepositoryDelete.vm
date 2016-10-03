@@ -3,17 +3,124 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 #beginManagementTool("tool.managementtool.deleteRepository.header" "tool.managementtool.deleteRepository.header" "")
+<style>
+
+li.contentIcon {background:url(css/images/v3/contentIcon.gif) no-repeat left center; background-position: 0px 0px; text-indent: 18px; }
+li.pageIcon {background:url(css/images/v3/pageIcon.gif) no-repeat left center; background-position: 0px 0px; text-indent: 18px; }
+
+	#navcontainer
+	{
+		margin-left: 20px;
+	}
+	
+	#navcontainer ul
+	{
+		margin: 0;
+		padding: 0;
+		list-style-type: none;
+		margin-top: 10px;
+	}
+	
+	#navcontainer li
+	{
+		margin-top: 10px;
+	}
+	
+	#navcontainer > ul > li > span
+	{
+		font-weight: bold;
+	}
+	
+	#navcontainer > ul > li > a
+	{
+		display: block;
+		apadding: 3px 12px 3px 8px;
+		aheight: 20px;
+		text-decoration: none;
+		font-weight: bold;
+		white-space: nowrap;
+	}
+	
+	#navcontainer li li 
+	{
+		margin-left: 20px;
+	}
+	
+	#navcontainer li li a
+	{
+		display: block;
+		width: 9em;
+		/*padding: 3px 3px 3px 17px;*/
+		text-decoration: none;
+		white-space: nowrap;
+	}
+	
+	
+</style> 
 
 <div class="fullymarginalized">
 
 <h1>$ui.getString("tool.managementtool.deleteRepository.header")</h1>
 
 <p>
-    $ui.getString("tool.common.constraintsOnRepositoryDelete.header")
-
+	#if($refs.keySet().size() > 0)
+		$ui.getString("tool.common.constraintsOnRepositoryDelete.header")
+	#else
+		We found references which aborted the delete process but they were only references to other contents and pages in the repository itself so you can safely press "Next" to continue.
+	#end
+    
 	<br><br>
     <input type="button" onclick="document.location.href='ViewListRepository.action?title=Repositories';" value="$ui.getString("tool.common.cancelButton.label")"/> | <input type="button" onclick="document.location.href='DeleteRepository!markForDeleteByForce.action?repositoryId=$repositoryId&byPassTrashcan=$byPassTrashcan&igSecurityCode=$!securityCode';" value="$ui.getString("tool.common.nextButton.label")"/>
 </p>
+
+#if($refs.keySet().size() > 0)
+
+	<h2>Found references</h2>
+	<p>
+		You can fix each reference before deleting a repository. Just click on it, remove it from the referencing page or content and return to this view and press refresh to see if you still have any remaining references.
+	</p>
+	<div id="navcontainer">
+	<ul>
+		#foreach($refKey in $refs.keySet())
+			#set($linkName = $refKey.name)
+			#if($refKey.class.name == "org.infoglue.cms.entities.structure.SiteNodeVO")
+				#set($linkName = $this.getLocalizedSiteNodePath($refKey.id, true).replaceAll(' ', '&nbsp;'))
+				#set($className = "pageIcon")
+			#elseif($refKey.class.name == "org.infoglue.cms.entities.content.ContentVO")
+				#set($linkName = $this.getContentPath($refKey.id, true).replaceAll(' ', '&nbsp;'))
+				#set($className = "contentIcon")
+			#end
+			
+			<li class="$className">
+			<span>
+				#if($className == "pageIcon")
+					<a href="#" onclick="top.openUrlInWorkArea('ViewSiteNode.action?siteNodeId=$refKey.id', '$refKey.name', 'structure', '$ui.getString("tool.common.pageTabLabelPrefix")', 'StructureTool'); return false;">$linkName</a>	
+				#else
+					<a href="#" onclick="top.openUrlInWorkArea('ViewContent!V3.action?contentId=$refKey.id', '$refKey.name', 'content', '$ui.getString("tool.common.contentTabLabelPrefix")', 'ContentTool'); return false;">$linkName</a>
+				#end
+				</span> is referenced by
+				<ul class="detailRefs">
+					#foreach($ref in $refs.get($refKey))
+						
+						#set($refLinkName = $ref.name)
+						#if($ref.referencingCompletingObject.class.name == "org.infoglue.cms.entities.structure.SiteNodeVO")
+							#set($refLinkName = $this.getLocalizedSiteNodePath($ref.referencingCompletingObject.id, true).replaceAll(' ', '&nbsp;'))
+							<li class="pageIcon"><a href="#" onclick="top.openUrlInWorkArea('ViewSiteNode.action?siteNodeId=$ref.referencingCompletingObject.id', '$ref.referencingCompletingObject.name', 'structure', '$ui.getString("tool.common.pageTabLabelPrefix")', 'StructureTool'); return false;">$refLinkName</a></li>
+						#elseif($ref.referencingCompletingObject.class.name == "org.infoglue.cms.entities.content.ContentVO")
+							#set($refLinkName = $this.getContentPath($ref.referencingCompletingObject.id, true).replaceAll(' ', '&nbsp;'))
+							<li class="contentIcon"><a href="#" onclick="top.openUrlInWorkArea('ViewContent!V3.action?contentId=$ref.referencingCompletingObject.id', '$ref.referencingCompletingObject.name', 'content', '$ui.getString("tool.common.contentTabLabelPrefix")', 'ContentTool'); return false;">$refLinkName</a></li>
+						#end
+						
+					#end
+				</ul>
+			</li>
+		#end
+	</ul>
+	<br/><br/>
+	<input type="button" onclick="document.location.href='DeleteRepository!input.action?repositoryId=$repositoryId&byPassTrashcan=$byPassTrashcan&igSecurityCode=$!securityCode';" value="$ui.getString("tool.managementtool.logRefresh.label")"/>
+	</div>
+#end
+
 </div>
 
 #endManagementTool()

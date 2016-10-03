@@ -759,6 +759,63 @@ public abstract class BaseController
 		}
 		return ret;
 	}
+	
+	
+	/**
+	 * This method is used to fetch a ValueObject from the database.
+	 */
+
+	public static Object getVOWithIdLockless(Class arg, String idName, Integer id) throws SystemException, Bug
+	{
+		Database db = CastorDatabaseService.getDatabase();		
+		Object ret = null;
+		try
+		{
+			beginTransaction(db);
+			
+			ret = getVOWithIdLockless(arg, idName, id, db);
+			
+			commitTransaction(db);
+		}
+		catch (Exception e)
+		{
+			rollbackTransaction(db);
+            throw new SystemException("An error occurred when we tried to fetch the object " + arg.getName() + ". Reason:" + e.getMessage(), e);    
+		}
+		return ret;
+	}
+	
+	/**
+	 * This method is used to fetch a ValueObject from the database.
+	 */
+
+	public static Object getVOWithIdLockless(Class arg, String idName, Integer id, Database db) throws SystemException, Bug
+	{
+		Object ret = null;
+
+		try
+        {
+			OQLQuery oql = db.getOQLQuery("SELECT u FROM " + arg.getName() + " u WHERE u." + idName +" = $1 ORDER BY u." + idName +" desc");
+			QueryResults results = oql.execute(Database.READONLY);
+			
+			if (results.hasMore()) 
+	        {
+				IBaseEntity o = (IBaseEntity)results.next();
+	            ret = o.getVO();
+	        }       
+			
+			results.close();
+			oql.close();
+        }
+        catch(Exception e)
+        {
+            throw new SystemException("An error occurred when we tried to fetch the object " + arg.getName() + ". Reason:" + e.getMessage(), e);    
+        }
+
+		return ret;
+	}
+
+	
 
 	/**
 	 * This method fetches one object in read only mode and returns it's value object.

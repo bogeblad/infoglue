@@ -1520,7 +1520,14 @@ public class SiteNodeController extends BaseController
 					
 					if(localizedSortOrder != null && !localizedSortOrder.equals(""))
 					{
-						siteNode.getValueObject().setLocalizedSortOrder(new Integer(localizedSortOrder));
+						try
+						{
+							siteNode.getValueObject().setLocalizedSortOrder(new Integer(localizedSortOrder));
+						}
+						catch(Exception e)
+						{
+							logger.warn("The sitenode " + siteNode.getName() + " (ID: " + siteNode.getId() + ") had a bad localizedSortOrder:" + localizedSortOrder + ". Error:" + e.getMessage());
+						}
 					}
 					else
 						siteNode.getValueObject().setLocalizedSortOrder(new Integer(100));
@@ -2285,7 +2292,8 @@ public class SiteNodeController extends BaseController
 					{
 						logger.trace("Version value after copy transformation (ContentVersion.id: " + contentVersionVO.getContentVersionId() + "). VersionValue: " + contentVersionVO.getVersionValue());
 					}
-					ContentVersionController.getContentVersionController().update(contentVO.getId(), contentVersionVO.getLanguageId(), contentVersionVO, db);
+					//ContentVersionController.getContentVersionController().update(contentVO.getId(), contentVersionVO.getLanguageId(), contentVersionVO, db);
+					ContentVersionController.getContentVersionController().update(contentVO.getId(), contentVersionVO.getLanguageId(), contentVersionVO, null, true, db, false);
 				}
 			}
 
@@ -3940,14 +3948,14 @@ public class SiteNodeController extends BaseController
 		        if(logger.isDebugEnabled())
 		        	logger.info("Marking " + siteNode.getName() + " for delete");
 
-		        List<ReferenceBean> referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(siteNode.getId(), -1, false, db);
+		        List<ReferenceBean> referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(siteNode.getId(), -1, CmsPropertyHandler.getOnlyShowReferenceIfLatestVersion(), true, db);
 				if(referenceBeanList != null && referenceBeanList.size() > 0 && !forceDelete)
 					throw new ConstraintException("SiteNode.stateId", "3405", "<br/><br/>" + siteNode.getName() + " (" + siteNode.getId() + ")");
 
 				boolean isDeletable = true;
 		        if(!forceDelete)
 		        	isDeletable = getIsDeletable(siteNode.getValueObject(), infogluePrincipal, db);
-		        
+
 				if(forceDelete || isDeletable)
 			    {
 					siteNode.setIsDeleted(true);
@@ -3957,7 +3965,7 @@ public class SiteNodeController extends BaseController
 						clean = false;
 					}
 
-					List<ReferenceBean> contactList = RegistryController.getController().deleteAllForSiteNode(siteNode.getSiteNodeId(), infogluePrincipal, clean, CmsPropertyHandler.getOnlyShowReferenceIfLatestVersion(), db);
+					List<ReferenceBean> contactList = RegistryController.getController().deleteAllForSiteNode(siteNode.getSiteNodeId(), infogluePrincipal, clean, CmsPropertyHandler.getOnlyShowReferenceIfLatestVersion(), true, db);
 					if (notifyResponsibleOnReferenceChange)
 					{
 						if (contactList != null)
@@ -3983,7 +3991,35 @@ public class SiteNodeController extends BaseController
 	}
 
 
+	/**
+	 * This method deletes a siteNode and also erases all the children and all versions.
+	 */
+	public void checkReferences(SiteNodeVO siteNodeVO, Database db, InfoGluePrincipal infogluePrincipal, Map<SiteNodeVO, List<ReferenceBean>> refBeansMap) throws ConstraintException, SystemException, Exception
+	{
+		List<Integer> siteNodeIds = getSiteNodeIdsForAllChildren(siteNodeVO.getId(), db);
+		siteNodeIds.add(siteNodeVO.getId());
 
+		int i = 0;
+		for(Integer childSiteNodeId : siteNodeIds)
+		{
+			i++;
+			try
+			{
+				SmallSiteNodeImpl siteNode = getSmallSiteNodeWithId(childSiteNodeId, db);
+				
+				List<ReferenceBean> referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(siteNode.getId(), -1, false, false, true, db);
+				if (referenceBeanList != null && referenceBeanList.size() > 0)
+				{
+					refBeansMap.put(siteNode.getValueObject(), referenceBeanList);
+				}
+			}
+			catch(SystemException e)
+			{
+				logger.warn("Problem checking content: " + childSiteNodeId + " for references. Message: " + e.getMessage(), e);
+			}
+		}
+	}
+	
     /**
 	 * This method restores a siteNode.
 	 */

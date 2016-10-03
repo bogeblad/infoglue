@@ -382,12 +382,51 @@ public class RegistryController extends BaseController
 
     public List<ReferenceBean> deleteAllForSiteNode(Integer siteNodeId, InfoGluePrincipal principal, boolean clean, boolean onlyLatest, Database db) throws Exception
     {
+    	return deleteAllForSiteNode(siteNodeId, principal, clean, onlyLatest, false, db);
+    }
+    
+    public List<ReferenceBean> deleteAllForSiteNode(Integer siteNodeId, InfoGluePrincipal principal, boolean clean, boolean onlyLatest, boolean onlyLatestForEachLanguage, Database db) throws Exception
+    {
     	@SuppressWarnings("unchecked")
 		List<RegistryVO> registryEntires = getMatchingRegistryVOList(SiteNode.class.getName(), siteNodeId.toString(), -1, db);
 		if (clean)
 		{
 	    	Map<ContentVersionVO, RegistryVO> contentVersionRegistryPair = extractContentVersionsFromRegistryList(registryEntires, onlyLatest, db);
-			InconsistenciesController.getController().removeContentReferences(contentVersionRegistryPair, principal, db);
+
+	    	if(logger.isInfoEnabled())
+	    		logger.info("onlyLatestForEachLanguage:" + onlyLatestForEachLanguage + " and " + contentVersionRegistryPair.size());
+	    	if(onlyLatestForEachLanguage)
+			{
+	    		Iterator<Map.Entry<ContentVersionVO, RegistryVO>> iterator = contentVersionRegistryPair.entrySet().iterator();
+	    		while(iterator.hasNext())
+	    		{
+	    			Map.Entry<ContentVersionVO, RegistryVO> entry = iterator.next();
+	    			try
+	    			{
+		    			Integer contentId = entry.getKey().getContentId();
+		    			Integer languageId = entry.getKey().getLanguageId();
+		    			
+		    			ContentVersionVO latestContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, languageId, db);
+						if(entry.getKey().getId() == latestContentVersionVO.getId())
+						{
+							logger.info("Yes - was latest version - this we care about..");
+						}
+						else
+						{
+							logger.info("No - was older version - this we skip..");
+							iterator.remove();
+						}
+	    			}
+	    			catch(Exception e)
+	    			{
+	    				logger.error("Error figuring out if to include the version: " + e.getMessage(), e);
+	    			}
+				}
+			}
+			
+	    	InconsistenciesController.getController().removeContentReferences(contentVersionRegistryPair, principal, db);
+	    
+	    	
 			Map<SiteNodeVO, RegistryVO> siteNodeRegistryPair = extractSiteNodesFromRegistryList(registryEntires, db);
 			InconsistenciesController.getController().removeSiteNodeReferences(siteNodeRegistryPair, principal, db);
 		}
@@ -517,8 +556,16 @@ public class RegistryController extends BaseController
 		   c.getName().contains(".RepositoryLanguageImpl") || 
 		   c.getName().contains(".DigitalAssetImpl") || 
 		   c.getName().contains(".MediumDigitalAssetImpl") || 
+		   c.getName().contains(".ContentImpl") || 
+		   c.getName().contains(".MediumContentImpl") || 
+		   c.getName().contains(".SmallContentImpl") || 
+		   c.getName().contains(".SmallishContentImpl") || 
 		   c.getName().contains(".ContentVersionImpl") || 
 		   c.getName().contains(".MediumContentVersionImpl") || 
+		   c.getName().contains(".SmallContentVersionImpl") || 
+		   c.getName().contains(".SmallestContentVersionImpl") || 
+		   c.getName().contains(".AccessRightImpl") || 
+		   c.getName().contains(".SmallAccessRightImpl") || 
 		   c.getName().contains(".AccessRightRoleImpl") || 
 		   c.getName().contains(".AccessRightGroupImpl") || 
 		   c.getName().contains(".AccessRightUserImpl") || 
@@ -579,7 +626,7 @@ public class RegistryController extends BaseController
 						{
 							RegistryController.getController().updateContentVersion((ContentVersionVO)bean[0], (SiteNodeVersionVO)bean[1], db);
 						}
-
+						
 						clearCache(ContentImpl.class, db);
 						clearCache(SmallContentImpl.class, db);
 						clearCache(SmallishContentImpl.class, db);
@@ -714,7 +761,10 @@ public class RegistryController extends BaseController
 	   	ContentVersionVO oldContentVersion = contentVersion; //ContentVersionController.getContentVersionController().getContentVersionWithId(contentVersionVO.getContentVersionId(), db);
 	   	//Content oldContent = oldContentVersion.getOwningContent();
 	    ContentVO oldContentVO = ContentController.getContentController().getSmallContentVOWithId(contentVersion.getContentId(), db);
-	    ContentTypeDefinitionVO ctd = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(oldContentVO.getContentTypeDefinitionId(), db);
+	    
+	    ContentTypeDefinitionVO ctd = null;
+	    if(oldContentVO.getContentTypeDefinitionId() != null)
+	    	ctd = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(oldContentVO.getContentTypeDefinitionId(), db);
  
 	    if(ctd != null && ctd.getName().equalsIgnoreCase("Meta info"))
 	    {
@@ -1744,8 +1794,13 @@ public class RegistryController extends BaseController
 		
         return referenceBeanList;
     }
-	
+
 	public List<ReferenceBean> getReferencingObjectsForContent(Integer contentId, int maxRows, boolean excludeInternalContentReferences, boolean onlyOneVersionPerLanguage, Database db) throws SystemException, Exception
+    {
+		return getReferencingObjectsForContent(contentId, maxRows, excludeInternalContentReferences, false, onlyOneVersionPerLanguage, db);
+    }
+	
+	public List<ReferenceBean> getReferencingObjectsForContent(Integer contentId, int maxRows, boolean excludeInternalContentReferences, boolean excludeInternalRepoReferences, boolean onlyOneVersionPerLanguage, Database db) throws SystemException, Exception
     {
         List<ReferenceBean> referenceBeanList = new ArrayList<ReferenceBean>();
 
@@ -1784,7 +1839,30 @@ public class RegistryController extends BaseController
             {
                 try
                 {
+                	Boolean isLocalRepo = false;
+                	Boolean isDeleted = false;
+                	if(excludeInternalRepoReferences)
+                	{
+                		ContentVO checkedContentVO = ContentController.getContentController().getSmallContentVOWithId(contentId, db);
+                		ContentVO referencingContentVO = ContentController.getContentController().getSmallContentVOWithId(new Integer(registryVO.getReferencingEntityCompletingId()), db);
+
+                		if(checkedContentVO.getRepositoryId().intValue() == referencingContentVO.getRepositoryId().intValue())
+                			isLocalRepo = true;
+                	}
+                		
+            		ContentVO referencingContentVO = ContentController.getContentController().getSmallContentVOWithId(new Integer(registryVO.getReferencingEntityCompletingId()), db);
+            		if(referencingContentVO.getIsDeleted())
+            			isDeleted = true;
+            		
                     ContentVersionVO contentVersion = ContentVersionController.getContentVersionController().getContentVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
+            		ContentVersionVO latestCVVOForReferencingContent = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(referencingContentVO.getId(), contentVersion.getLanguageId(), db);
+
+            		boolean isLatest = (contentVersion.getId().intValue() == latestCVVOForReferencingContent.getId().intValue());
+            		if(!isLatest)
+            		{
+	            		continue;
+            		}
+            		
                     //logger.info("content: " + contentVersion.getOwningContent().getContentId() + " - contentVersion: " + contentVersion.getId());
                     Boolean hasVersion = checkedLanguageVersions.get("" + contentVersion.getContentId() + "_" + contentVersion.getLanguageId());
                     if(hasVersion != null && onlyOneVersionPerLanguage)
@@ -1797,6 +1875,16 @@ public class RegistryController extends BaseController
 		    			logger.info("Skipping internal reference " + contentId + " had on itself.");
 		    			referenceBeanList.remove(existingReferenceBean);
 		    		}
+                    else if(isLocalRepo)
+                    {
+		    			logger.info("Skipping internal reference " + contentId + " had on local repo contents.");
+		    			referenceBeanList.remove(existingReferenceBean);                    	
+                    }
+                    else if(isDeleted)
+                    {
+		    			logger.info("Skipping reference " + contentId + " was deleted.");
+		    			referenceBeanList.remove(existingReferenceBean);                    	
+                    }
 		    		else
 		    		{
 	    				ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentVersion.getContentId(), db);
@@ -1843,7 +1931,34 @@ public class RegistryController extends BaseController
                 try
                 {
 	                SiteNodeVersionVO siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
-	                if(!siteNodeVersion.getIsActive())
+	                SiteNodeVO referencingSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersion.getSiteNodeId(), db);
+
+                	Boolean isLocalRepo = false;
+                	Boolean isDeleted = false;
+                	if(excludeInternalRepoReferences)
+                	{
+                		ContentVO checkedContentVO = ContentController.getContentController().getSmallContentVOWithId(contentId, db);
+                		if(checkedContentVO.getRepositoryId().intValue() == referencingSiteNodeVO.getRepositoryId().intValue())
+                			isLocalRepo = true;
+                	}
+                	
+            		if(referencingSiteNodeVO.getIsDeleted())
+            			isDeleted = true;
+            		
+            		SiteNodeVersionVO latestSNVVOForReferencingContent = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, referencingSiteNodeVO.getId());
+
+            		boolean isLatest = (siteNodeVersion.getId().intValue() == latestSNVVOForReferencingContent.getId().intValue());
+            		if(!isLatest)
+            		{
+	            		continue;
+            		}
+                    else if(isDeleted)
+                    {
+		    			logger.info("Skipping reference " + contentId + " was deleted.");
+		    			referenceBeanList.remove(existingReferenceBean);                    	
+                    }
+
+	                if(!siteNodeVersion.getIsActive() || isLocalRepo)
 	                	add = false;
 	                
 	                SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersion.getSiteNodeId(), db);
@@ -1926,6 +2041,9 @@ public class RegistryController extends BaseController
     {
         List<ReferenceBean> referenceBeanList = new ArrayList<ReferenceBean>();
 
+        if(contentId == null)
+        	return referenceBeanList;
+        
         Map entries = new HashMap();
 		
         Map<String,Boolean> checkedLanguageVersions = new HashMap<String,Boolean>();
@@ -2444,6 +2562,11 @@ public class RegistryController extends BaseController
 
     public List<ReferenceBean> getReferencingObjectsForSiteNode(Integer siteNodeId, int maxRows, boolean onlyLatestVersion, boolean onlyOneVersionPerLanguage, Database db) throws SystemException, Exception
     {
+    	return getReferencingObjectsForSiteNode(siteNodeId, maxRows, onlyLatestVersion, onlyOneVersionPerLanguage, false, db);
+    }
+    
+    public List<ReferenceBean> getReferencingObjectsForSiteNode(Integer siteNodeId, int maxRows, boolean onlyLatestVersion, boolean onlyOneVersionPerLanguage, boolean excludeInternalRepoReferences, Database db) throws SystemException, Exception
+    {
         List<ReferenceBean> referenceBeanList = new ArrayList<ReferenceBean>();
 
         Map<String,Boolean> checkedLanguageVersions = new HashMap<String,Boolean>();
@@ -2455,11 +2578,74 @@ public class RegistryController extends BaseController
         while(registryEntiresIterator.hasNext())
         {
             RegistryVO registryVO = registryEntiresIterator.next();
-            logger.info("registryVO:" + registryVO.getReferencingEntityId() + ":" +  registryVO.getReferencingEntityCompletingId());
-            ReferenceBean referenceBean = getReferenceBeanFromRegistryVO(registryVO, entries, checkedLanguageVersions, onlyLatestVersion, onlyOneVersionPerLanguage, db);
-            if (referenceBean != null)
+            
+            try
             {
-            	referenceBeanList.add(referenceBean);
+	            logger.info("registryVO:" + registryVO.getReferencingEntityId() + ":" +  registryVO.getReferencingEntityCompletingId());
+	            
+	            Boolean isLocalRepo = false;
+	            Boolean isDeleted = false;
+	        	if(excludeInternalRepoReferences)
+	        	{
+	        		SiteNodeVO checkedSiteNodeVO = SiteNodeController.getController().getSmallSiteNodeVOWithId(siteNodeId, db);
+	        		if(registryVO.getReferencingEntityCompletingName().contains("SiteNode"))
+	        		{
+	            		SiteNodeVO referencingSiteNodeVO = SiteNodeController.getController().getSmallSiteNodeVOWithId(new Integer(registryVO.getReferencingEntityCompletingId()), db);
+	            		if(checkedSiteNodeVO == null || referencingSiteNodeVO == null)
+	            			continue;
+	            			
+	            		if(checkedSiteNodeVO.getRepositoryId().intValue() == referencingSiteNodeVO.getRepositoryId().intValue())
+	            			isLocalRepo = true;
+
+	            		if(checkedSiteNodeVO.getIsDeleted())
+	            			isDeleted = true;
+	            		
+	                	SiteNodeVersionVO siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
+	            		SiteNodeVersionVO latestSNVVOForReferencingContent = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, referencingSiteNodeVO.getId());
+	
+	            		boolean isLatest = (siteNodeVersion.getId().intValue() == latestSNVVOForReferencingContent.getId().intValue());
+	            		if(!isLatest || isDeleted)
+	            		{
+		            		continue;
+		            	}
+	        		}
+	        		else if(registryVO.getReferencingEntityCompletingName().contains("Content"))
+	        		{
+	        			ContentVO referencingContentVO = ContentController.getContentController().getSmallContentVOWithId(new Integer(registryVO.getReferencingEntityCompletingId()), db);
+	
+	        			if(checkedSiteNodeVO == null || referencingContentVO == null)
+	            			continue;
+	
+	        			if(checkedSiteNodeVO.getRepositoryId().intValue() == referencingContentVO.getRepositoryId().intValue())
+	            			isLocalRepo = true;
+	            		
+	            		if(checkedSiteNodeVO.getIsDeleted())
+	            			isDeleted = true;
+
+	                	ContentVersionVO contentVersion = ContentVersionController.getContentVersionController().getContentVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
+	            		ContentVersionVO latestCVVOForReferencingContent = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(referencingContentVO.getId(), contentVersion.getLanguageId(), db);
+	
+	            		boolean isLatest = (contentVersion.getId().intValue() == latestCVVOForReferencingContent.getId().intValue());
+	            		if(!isLatest || isDeleted)
+	            		{
+		            		continue;
+	            		}
+	
+	        		}
+	        	}
+	        	
+	        	if(!isLocalRepo)
+	        	{
+		            ReferenceBean referenceBean = getReferenceBeanFromRegistryVO(registryVO, entries, checkedLanguageVersions, onlyLatestVersion, onlyOneVersionPerLanguage, db);
+		            if (referenceBean != null)
+		            {
+		            	referenceBeanList.add(referenceBean);
+		            }
+	        	}
+            }
+            catch(Exception e)
+            {
+            	logger.warn("No reference:" + registryVO.getId() + " had deleted relation - skipping.");
             }
         }
 

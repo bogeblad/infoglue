@@ -1,17 +1,21 @@
 package org.infoglue.cms.util.validators;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.apache.commons.validator.Field;
 import org.apache.commons.validator.GenericTypeValidator;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.commons.validator.Validator;
 import org.apache.commons.validator.ValidatorException;
 import org.apache.commons.validator.util.ValidatorUtils;
+import org.apache.log4j.Logger;
 
 /**                                                       
  * Contains validation methods for different unit tests.
  */                                                       
 public class CommonsValidator {
-          
+	private static final Logger logger = Logger.getLogger(CommonsValidator.class);
     /**
      * Throws a runtime exception if the value of the argument is "RUNTIME", 
      * an exception if the value of the argument is "CHECKED", and a 
@@ -53,7 +57,7 @@ public class CommonsValidator {
     * Otherwise <code>false</code>.
     */
    public static boolean validateRequired(Object bean, Field field) {
-      String value = ValidatorUtils.getValueAsString(bean, field.getProperty());
+      String value = getBeanValue(bean, field.getProperty());
       return !GenericValidator.isBlankOrNull(value);
    }
 
@@ -169,26 +173,157 @@ public class CommonsValidator {
       return GenericValidator.isEmail(value);
    }
 
-   /**
-    * Checks if the field value matches a regexp.
-    */
-   public static boolean validateRegexp(Object bean, Field field) {
-      String value = ValidatorUtils.getValueAsString(bean, field.getProperty());
-      String regexp = field.getVarValue("regexp");
-      
-      //boolean valid = GenericValidator.matchRegexp(value, regexp);
-      boolean valid = value.matches(regexp);
-	  return valid;
-   }
-   
-  public final static String FIELD_TEST_NULL = "NULL";
-  public final static String FIELD_TEST_NOTNULL = "NOTNULL";
-  public final static String FIELD_TEST_EQUAL = "EQUAL";
+	/**
+	* Checks if the field value matches a regexp.
+	*/
+	public static boolean validateRegexp(Object bean, Field field) {
+		String value	= getBeanValue(bean, field.getProperty());
+		String regexp	= field.getVarValue("regexp");
 
-  public static boolean validateRequiredIf(Object bean, Field field, Validator validator) 
-  {
-      final String value          = ValidatorUtils.getValueAsString(bean, field.getProperty());
-      final String dependentValue = ValidatorUtils.getValueAsString(bean, field.getVarValue("dependent"));
-      return dependentValue == null || dependentValue.length() == 0 || (value != null && value.length() > 0);  
-  }
-}                                                         
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("validateRegexp. value: <" + value + ">. Regexp: <" + regexp + ">");
+		}
+
+		boolean valid = value.matches(regexp);
+		return valid;
+	}
+
+	public final static String FIELD_TEST_NULL = "NULL";
+	public final static String FIELD_TEST_NOTNULL = "NOTNULL";
+	public final static String FIELD_TEST_EQUAL = "EQUAL";
+
+	public static boolean validateRequiredIf(Object bean, Field field, Validator validator)
+	{
+		final String value			= getBeanValue(bean, field.getProperty());
+		final String dependentValue	= getBeanValue(bean, field.getVarValue("dependent"));
+
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("validateRequiredIf. value: <" + value + ">. dependentValue: <" + dependentValue + ">");
+		}
+
+		return dependentValue == null || dependentValue.length() == 0 || (value != null && value.length() > 0);
+	}
+
+	private static String getBeanValue(Object bean, String property)
+	{
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("Getting value from bean. Property: <" + property + ">. Bean: " + bean);
+		}
+
+		String value = ValidatorUtils.getValueAsString(bean, property);
+		if (value == null && bean instanceof ContentVersionBean)
+		{
+			logger.trace("Value was null and bean is ContentVersionBean");
+			ContentVersionBean cvBean = (ContentVersionBean)bean;
+			value = (String)cvBean.get(property);
+		}
+
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("Got value from bean. Property: <" + property + ">. Value: " + value);
+		}
+
+		return value;
+	}
+
+	public static boolean validateGreaterThan(Object bean, Field field, Validator validator) 
+	{
+		return compare(bean, field, new ValueComparator()
+		{
+			@Override
+			public boolean compare(int result)
+			{
+				return result > 0;
+			}
+		});
+	}
+
+	public static boolean validateGreaterThanEquals(Object bean, Field field, Validator validator)
+	{
+		return compare(bean, field, new ValueComparator()
+		{
+			@Override
+			public boolean compare(int result)
+			{
+				return result >= 0;
+			}
+		});
+	}
+
+	public static boolean validateLessThan(Object bean, Field field, Validator validator)
+	{
+		return compare(bean, field, new ValueComparator()
+		{
+			@Override
+			public boolean compare(int result)
+			{
+				return result < 0;
+			}
+		});
+	}
+
+	public static boolean validateLessThanEquals(Object bean, Field field, Validator validator)
+	{
+		return compare(bean, field, new ValueComparator()
+		{
+			@Override
+			public boolean compare(int result)
+			{
+				return result <= 0;
+			}
+		});
+	}
+
+	private interface ValueComparator
+	{
+		boolean compare(int result);
+	}
+
+	/**
+	 * Compare contract summary: if either or both values are null or empty return true otherwise
+	 * send the value of {@link Comparable#compareTo(Object)} to the given <em>ValueComparator</em>.
+	 */
+	private static boolean compare(Object beanObject, Field field, ValueComparator comparator)
+	{
+		try
+		{
+			ContentVersionBean bean		= (ContentVersionBean)beanObject;
+			final String value			= getBeanValue(bean, field.getProperty());
+			final String dependentValue	= getBeanValue(bean, field.getVarValue("dependent"));
+			final String valueType		= bean.getAttributeType(field.getProperty()).getInputType();
+
+			boolean valueEmpty = value == null || value.equals("");
+			boolean dependentValueEmpty = dependentValue == null || dependentValue.equals("");
+
+			if (valueEmpty || dependentValueEmpty)
+			{
+				return true;
+			}
+			else
+			{
+				int compareValue;
+				if ("datefield".equals(valueType))
+				{
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+					Date self = sdf.parse(value);
+					Date other = sdf.parse(dependentValue);
+					compareValue = self.compareTo(other);
+				}
+				else
+				{
+					compareValue = value.compareTo(dependentValue);
+				}
+				return comparator.compare(compareValue);
+			}
+		}
+		catch (Throwable tr)
+		{
+			logger.error("Error when validating with compare validator. Property: <" + field.getProperty() + ">, Message: " + tr.getMessage());
+			logger.warn("Error when validating with compare validator. Property: <" + field.getProperty() + ">", tr);
+			return false;
+		}
+	}
+}

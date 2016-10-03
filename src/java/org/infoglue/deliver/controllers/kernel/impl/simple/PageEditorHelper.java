@@ -431,7 +431,7 @@ public class PageEditorHelper extends BaseDeliveryController
 						sb.append("	<div class=\"propertyRow\">");
 						
 						ComponentBinding binding = componentProperty.getBindings().get(0);
-						List referencingPages = getReferencingPages(binding.getEntityId(), siteNodeId, 50, new Boolean(true), db);
+						List referencingPages = getReferencingPages(Integer.parseInt(binding.getEntityId()), siteNodeId, 50, new Boolean(true), db);
 						
 						if(referencingPages.size() == 0)
 						{
@@ -1661,7 +1661,7 @@ public class PageEditorHelper extends BaseDeliveryController
 			
 			ComponentBinding componentBinding = new ComponentBinding();
 			componentBinding.setEntityClass(entity);
-			componentBinding.setEntityId(new Integer(entityId));
+			componentBinding.setEntityId(entityId);
 			componentBinding.setAssetKey(assetKey);
 
 			componentBindings.add(componentBinding);
@@ -2290,7 +2290,7 @@ public class PageEditorHelper extends BaseDeliveryController
 								//componentBinding.setId(new Integer(id));
 								//componentBinding.setComponentId(componentId);
 								componentBinding.setEntityClass(entity);
-								componentBinding.setEntityId(new Integer(entityId));
+								componentBinding.setEntityId(entityId);
 								componentBinding.setAssetKey(assetKey);
 								componentBinding.setBindingPath(path);
 								

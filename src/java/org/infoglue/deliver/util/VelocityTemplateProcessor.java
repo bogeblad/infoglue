@@ -219,11 +219,10 @@ public class VelocityTemplateProcessor
 				"  iframe.contentWindow.document.open();" +
 				"  iframe.contentWindow.document.write('" + jsEscapedTemplate + "');" +
 				"  iframe.contentWindow.document.close();" +
-				"  iframe.contentWindow.document.body.style.overflow = 'hidden';" +
 				"  iframe.width = window.innerWidth + 'px';" +
 				"  clickBlocker.style.width = iframe.width;" +
 				"  clickBlocker.style.marginLeft = iframe.style.marginLeft;" +
-				"  iframe.onload = function() { this.height = this.contentWindow.document.body.scrollHeight + 'px'; clickBlocker.style.height = this.height; };" +
+				"  iframe.onload = function() { this.height = this.contentWindow.document.body.scrollHeight + 'px'; clickBlocker.style.height = this.height; this.contentWindow.document.body.style.overflow = 'hidden';};" +
 				"</script>";
 		return errorScript;
 	}

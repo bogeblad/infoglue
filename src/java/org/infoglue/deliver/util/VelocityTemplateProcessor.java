@@ -94,7 +94,7 @@ public class VelocityTemplateProcessor
 	
 	public void renderTemplate(Map params, PrintWriter pw, String templateAsString, boolean forceVelocity) throws Exception 
 	{
-	    renderTemplate(params, pw, templateAsString, forceVelocity, null);
+		renderTemplate(params, pw, templateAsString, forceVelocity, null);
 	}
 
 	/**
@@ -104,14 +104,13 @@ public class VelocityTemplateProcessor
 	
 	public void renderTemplate(Map params, PrintWriter pw, String templateAsString, boolean forceVelocity, InfoGlueComponent component) throws Exception 
 	{
-	    renderTemplate(params, pw, templateAsString, forceVelocity, component, null);
+		renderTemplate(params, pw, templateAsString, forceVelocity, component, null);
 	}
 
 	/**
 	 * This method takes arguments and renders a template given as a string to the specified outputstream.
 	 * Improve later - cache for example the engine.
 	 */
-	
 	public void renderTemplate(final Map params, PrintWriter pw, String templateAsString, boolean forceVelocity, InfoGlueComponent component, String statisticsSuffix) throws Exception 
 	{
 	 	String componentName = "Unknown name or not a component";
@@ -200,7 +199,10 @@ public class VelocityTemplateProcessor
 		String errorTitle = templateController != null ? LabelController.getController(templateController.getLocale()).getString("tool.common.generator.error.title") : "";
 		String errorMessageDiv = createErrorMessageHtmlForFailedRendering(e, templateController);
 		String errorScript = createJavaScriptForFailedRendering(templateAsString);
-		String errorPageString = "<html><head><title>" + errorTitle + "</title></head><body>" + errorMessageDiv + "<iframe id='originalPage'></iframe>" + errorScript + "</body></html>";
+		// Add a div that covers the iframe with the broken page to avoid users clicking on links
+		// Not there for security, but for usability
+		String clickBlockerHtml = "<div id=\"clickBlocker\" onclick=\"return false\" oncontextmenu=\"return false\" style=\"background-color: rgba(0, 0, 0, 0.2); position: absolute; z-index: 2;\"></div>";
+		String errorPageString = "<html><head><title>" + errorTitle + "</title></head><body>" + errorMessageDiv + clickBlockerHtml + "<iframe id='originalPage' style=\"border: 0; z-index: 1\"></iframe>" + errorScript + "</body></html>";
 		return errorPageString;
 	}
 
@@ -211,13 +213,17 @@ public class VelocityTemplateProcessor
 		String errorScript = 
 				"<script>" + 
 				"  var iframe = document.getElementById('originalPage');" +
+				"  var clickBlocker = document.getElementById('clickBlocker');" +
 				"  iframe.style.border = 0;" +
 				"  iframe.style.marginLeft = -iframe.offsetLeft;" +
 				"  iframe.contentWindow.document.open();" +
 				"  iframe.contentWindow.document.write('" + jsEscapedTemplate + "');" +
 				"  iframe.contentWindow.document.close();" +
-				"  iframe.onload = function() { this.height = this.contentWindow.document.body.scrollHeight + 'px'; };" +
-				"  iframe.width = window.innerWidth;" +
+				"  iframe.contentWindow.document.body.style.overflow = 'hidden';" +
+				"  iframe.width = window.innerWidth + 'px';" +
+				"  clickBlocker.style.width = iframe.width;" +
+				"  clickBlocker.style.marginLeft = iframe.style.marginLeft;" +
+				"  iframe.onload = function() { this.height = this.contentWindow.document.body.scrollHeight + 'px'; clickBlocker.style.height = this.height; };" +
 				"</script>";
 		return errorScript;
 	}

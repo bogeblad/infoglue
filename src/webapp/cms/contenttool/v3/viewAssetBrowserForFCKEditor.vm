@@ -193,7 +193,7 @@
 			else
 				value = url.substring(valueIndex + parameterName.length + 1);
 		}
-		return value;
+		return decodeURIComponent(value);
 	}
 
 	function uploadAsset()

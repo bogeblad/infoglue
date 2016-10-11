@@ -111,7 +111,7 @@
 		else
 			value = url.substring(valueIndex + parameterName.length + 1);
 		//alert("value:" + value);
-		return value;
+		return decodeURIComponent(value);
 	}
 	
 	

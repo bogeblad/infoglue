@@ -98,20 +98,33 @@ public class ViewContentToolMenuHtmlAction extends TreeViewAbstractAction
 		return super.doV3();       
 	}
 
+	private boolean hasAccessToViewTree()
+	{
+		String repositoryIdString = getRepositoryId().toString();
+		boolean result = hasAccessTo("Repository.Read", repositoryIdString);
+		if (!result && isBinding())
+		{
+			result = hasAccessTo("Repository.ReadForBinding", repositoryIdString);
+		}
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("User is allowed access too content tree for repository: " + repositoryIdString + ": " + result);
+		}
+		return result;
+	}
+
 	/**
 	 * @see org.infoglue.cms.applications.common.actions.TreeViewAbstractAction#getNodeSupplier()
 	 */
 	protected INodeSupplier getNodeSupplier() throws Exception, org.infoglue.cms.exception.SystemException
 	{
-		String interceptionPointName = isBinding() ? "Repository.ReadForBinding" : "Repository.Read";
-		
 		if (getRepositoryId() == null  || getRepositoryId().intValue() < 1)
 		{
 			return null;
 		}
 
 		// Check if this user really has access to this repository
-		if (hasAccessTo(interceptionPointName, getRepositoryId().toString()))
+		if (hasAccessToViewTree())
 		{
 			if (this.showVersions == null || this.showVersions.equals("")) 
 			{
@@ -121,19 +134,7 @@ public class ViewContentToolMenuHtmlAction extends TreeViewAbstractAction
 			{
 				getRequest().getSession().setAttribute("htmlTreeShowVersions", this.showVersions);
 			}
-			
-			/*		
-		Cookie[] cookies = getRequest().getCookies();
-	    if(cookies != null)
-			for (int i=0; i < cookies.length; i++)
-				if (cookies[i].getName().compareTo("showversions") == 0)
-					if (cookies[i].getValue().compareTo("yes") == 0)
-					{
-						setShowVersions("yes");
-						return new ContentNodeVersionSupplier(getRepositoryId(), this.getInfoGluePrincipal().getName());
-					}
-			 */		
-			
+
 			INodeSupplier sup = null;
 			if (this.showVersions != null && this.showVersions.equalsIgnoreCase("yes")) 
 			{

@@ -277,10 +277,11 @@
 			if(parent.assetMarked)
 				parent.assetMarked(contentId, assetKey, ""); 
 			*/
-			
+
 			//alert("contentId:" + contentId);
 			document.getElementById("entityId").value = contentId;
-		  	
+			selectedContentId(contentId);
+
 			document.getElementById("itreeFrame").src = "ViewContentHtmlTree!V3.action?repositoryId=$!repositoryId&exp=$exp&akey=/" + contentId + "/&select=" + contentId;
 			document.getElementById("contentVersionAssetsFrame").src = "ViewContentVersion!viewAssetsForFCKEditorSmallV3.action?contentId=" + contentId + "&languageId=$languageId&assetKey=" + assetKey + "&treatAsLink=$treatAsLink&assetTypeFilter=$assetTypeFilter";
 		};

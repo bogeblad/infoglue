@@ -462,8 +462,14 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.viewInheritedAssetsInContentDialog" "viewInheritedAssetsInContentDialog" "$this.getPropertyValue('viewInheritedAssetsInContentDialog')" "$!cmsPH.viewInheritedAssetsInContentDialog")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.reloadStructureOnActivation" "reloadStructureOnActivation" "$this.getPropertyValue('reloadStructureOnActivation')" "$!cmsPH.reloadStructureOnActivation")
 
+				#set($option1 = ["content", "Content"])
+				#set($option2 = ["hash", "HTML anchor"])
+				#set($optionalContentModeOptions = [$option1, $option2]) 
+				#selectFieldCSS("ServerNode.property.optionalContentMode" "optionalContentMode" $this.getPropertyValue('optionalContentMode') $optionalContentModeOptions "$!cmsPH.optionalContentMode")
+				#editPropertyFieldCSS("ServerNode.property.optionalContentHashSlotName" "optionalContentHashSlotName" "$this.getPropertyValue('optionalContentHashSlotName')" "51" "$!serverNodeId" "$!cmsPH.optionalContentHashSlotName")
+				#editPropertyFieldCSS("ServerNode.property.optionalContentHashPropertyName" "optionalContentHashPropertyName" "$this.getPropertyValue('optionalContentHashPropertyName')" "51" "$!serverNodeId" "$!cmsPH.optionalContentHashPropertyName")
 			</div>
-		
+
 			<div class="inlineTabDiv" id="protectionSettings">
 				#yesNoDropDownWithInheritCSSImpl("ServerNode.property.usePasswordEncryption" "usePasswordEncryption" "$this.getPropertyValue('usePasswordEncryption')" "alert('Be aware that changing this may require you to reset the users passwords as the are stored with the old setting and automatic conversion is only possible one way.')" "$!cmsPH.usePasswordEncryption")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.disableImageEditor" "disableImageEditor" "$this.getPropertyValue('disableImageEditor')" "$!cmsPH.disableImageEditor")

@@ -423,6 +423,10 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "useWriteForAccessControlInWorking");
 	    populate(ps, "cleanReferencesAfterDelete");
 
+	    populate(ps, "optionalContentMode");
+	    populate(ps, "optionalContentHashSlotName");
+	    populate(ps, "optionalContentHashPropertyName");
+
 	    try
 	    {
 	    	UserControllerProxy.getController().updateAnonymousUserPassword();

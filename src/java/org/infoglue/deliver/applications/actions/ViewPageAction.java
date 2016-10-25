@@ -2239,7 +2239,9 @@ public class ViewPageAction extends InfoGlueAbstractAction
 				}
 				
 				if(principal == null)
+				{
 					principal = loginWithCookies();
+				}
 				
 			    if(principal == null)
 			        principal = loginWithRequestArguments();
@@ -2313,6 +2315,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 	    {
 	        enableExtranetCookies = true;
 	    }
+	    logger.info("enableExtranetCookies: " + enableExtranetCookies);
 	    if(extranetCookieTimeoutString != null)
 	    {
 	        try
@@ -2338,9 +2341,15 @@ public class ViewPageAction extends InfoGlueAbstractAction
 			            password = cookie.getValue();
 			    }
 		    }
+		    if (logger.isInfoEnabled())
+		    {
+				logger.info("External user cookie, name: " + userName);
+		    }
 		    
 		    if(userName != null && password != null)
 		    {
+			    userName = new String(Base64.decodeBase64(userName.getBytes("utf-8")), "utf-8");
+			    password = new String(Base64.decodeBase64(password.getBytes("utf-8")), "utf-8");
 		    	DesEncryptionHelper encHelper = new DesEncryptionHelper();
 		        userName = encHelper.decrypt(userName);
 		        password = encHelper.decrypt(password);
@@ -2352,6 +2361,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 				principal = ExtranetController.getController().getAuthenticatedPrincipal(arguments, this.getRequest());
 				if(principal != null)
 				{
+					logger.info("User was logged in from extranet cookie: " + principal.getName());
 				    this.getHttpSession().setAttribute("infogluePrincipal", principal);
 					this.getHttpSession().setAttribute("infoglueRemoteUser", principal.getName());
 					this.getHttpSession().setAttribute("cmsUserName", principal.getName());

@@ -8,6 +8,8 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.log4j.Logger;
+import org.infoglue.deliver.applications.actions.ExtranetLoginAction;
 
 /* ===============================================================================
 *
@@ -34,6 +36,7 @@ import org.apache.commons.codec.binary.Base64;
 
 public class DesEncryptionHelper 
 {
+	private final static Logger logger = Logger.getLogger(DesEncryptionHelper.class.getName());
     private static SecretKey key = null;
     
     static
@@ -62,15 +65,11 @@ public class DesEncryptionHelper
             dcipher.init(Cipher.DECRYPT_MODE, key);
 
         } 
-        catch (javax.crypto.NoSuchPaddingException e) 
+        catch (Exception ex)
         {
+			logger.error("Error when initializing encryption helper. Message: " + ex.getMessage());
+			logger.warn("Error when initializing encryption helper.", ex);
         } 
-        catch (java.security.NoSuchAlgorithmException e) 
-        {
-        } 
-        catch (java.security.InvalidKeyException e) 
-        {
-        }
     }
 
     public String encrypt(String str) 
@@ -87,14 +86,10 @@ public class DesEncryptionHelper
 			return new String(Base64.encodeBase64(enc), "ASCII");
             //return new sun.misc.BASE64Encoder().encode(enc);
         } 
-        catch (javax.crypto.BadPaddingException e) 
+        catch (Exception ex)
         {
-        } 
-        catch (IllegalBlockSizeException e) 
-        {
-        } 
-        catch (UnsupportedEncodingException e) 
-        {
+			logger.error("Error when encrypting value. Message: " + ex.getMessage());
+			logger.warn("Error when encrypting value.", ex);
         } 
         
         return null;
@@ -113,16 +108,12 @@ public class DesEncryptionHelper
             // Decode using utf-8
             return new String(utf8, "UTF8");
         } 
-        catch (javax.crypto.BadPaddingException e) 
+        catch (Exception ex)
         {
+			logger.error("Error when decrypting value. Message: " + ex.getMessage());
+			logger.warn("Error when decrypting value.", ex);
         } 
-        catch (IllegalBlockSizeException e) 
-        {
-        } 
-        catch (UnsupportedEncodingException e) 
-        {
-        } 
-        
+
         return null;
     }
 }

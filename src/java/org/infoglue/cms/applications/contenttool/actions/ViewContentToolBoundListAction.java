@@ -43,6 +43,7 @@ import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
+import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.XMLHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -70,8 +71,8 @@ public class ViewContentToolBoundListAction extends InfoGlueAbstractAction
 		SiteNodeVersionVO latestSiteNodeVersion = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getLatestActiveSiteNodeVersionVO(this.siteNodeId);
 		
 		if(latestSiteNodeVersion != null) {
-			String slotName = "komponentplats 2/slot 2";
-			String contentName = "Article";
+			String slotName = CmsPropertyHandler.getOptionalContentHashSlotName();
+			String contentName = CmsPropertyHandler.getOptionalContentHashPropertyName();
 			String componentXML = null;
 			SiteNodeVO siteNode = SiteNodeController.getController().getSiteNodeVOWithId(this.siteNodeId);
 			ContentVersionVO metaInfo = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNode.getMetaInfoContentId());

@@ -3267,9 +3267,32 @@ public class CmsPropertyHandler
 	{
 		return Boolean.parseBoolean(getServerNodeProperty("useWriteForAccessControlInWorking", false, "false"));
 	}
-	
+
 	public static boolean getDoubleCheckComponentEditorRights() {
 		return Boolean.parseBoolean(getServerNodeProperty("doubleCheckComponentEditorRights", false, "false"));
+	}
+
+	public static String getOptionalContentMode()
+	{
+		return getServerNodeProperty("optionalContentMode", false, "content");
+	}
+
+	public static String getOptionalContentHashSlotName()
+	{
+		/*
+		 * The default value is used by the user who implemented the feature. Since there is not
+		 * appropriate default value their desired value is used as default.
+		 */
+		return getServerNodeProperty("optionalContentHashSlotName", false, "komponentplats 2/slot 2");
+	}
+
+	public static String getOptionalContentHashPropertyName()
+	{
+		/*
+		 * The default value is used by the user who implemented the feature. Since there is not
+		 * appropriate default value their desired value is used as default.
+		 */
+		return getServerNodeProperty("optionalContentHashPropertyName", false, "Article");
 	}
 
 }

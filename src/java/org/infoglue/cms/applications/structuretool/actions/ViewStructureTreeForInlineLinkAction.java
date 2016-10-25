@@ -32,6 +32,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
+import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 /**
@@ -40,12 +41,12 @@ import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 {
-    private final static Logger logger = Logger.getLogger(ViewStructureTreeForInlineLinkAction.class.getName());
+	private final static Logger logger = Logger.getLogger(ViewStructureTreeForInlineLinkAction.class.getName());
 
 	private static final long serialVersionUID = 1L;
 
-    private Integer repositoryId;
-    private ConstraintExceptionBuffer ceb;
+	private Integer repositoryId;
+	private ConstraintExceptionBuffer ceb;
 	private String tree;	
 	private List repositories;
 	private String textAreaId = "";
@@ -56,7 +57,7 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 	
 	public ViewStructureTreeForInlineLinkAction()
 	{
-		this.ceb = new ConstraintExceptionBuffer();			
+		this.ceb = new ConstraintExceptionBuffer();
 	}	
 
 	public void setRepositoryId(Integer repositoryId)
@@ -68,7 +69,7 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 	{
 		return this.repositoryId;
 	}
-   
+
 	public String getTree()
 	{
 		return tree;
@@ -83,9 +84,9 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 	{
 		return "ViewStructureTreeForInlineLink.action";
 	}
-	
-    public String doExecute() throws Exception
-    {
+
+	public String doExecute() throws Exception
+	{
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), true);
 
 		if(this.repositoryId == null)
@@ -95,21 +96,21 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 				this.repositoryId = RepositoryController.getController().getFirstRepositoryVO().getRepositoryId();		
 		}
 		
-		return "success";					
-    }
+		return "success";
+	}
 
     public String doUseFCKEditor() throws Exception
     {
         doExecute();
         
-		return "successFCKEditor";					
+		return "successFCKEditor";
     }
 
     public String doUseFCKEditorV3() throws Exception
     {
         doExecute();
         
-		return "successFCKEditorV3";					
+		return "successFCKEditorV3";
     }
 
 	public List getRepositories()
@@ -189,7 +190,7 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
     {
         return oldContentId;
     }
-    
+
     public void setOldContentId(Integer oldContentId)
     {
         this.oldContentId = oldContentId;
@@ -199,17 +200,29 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
     {
         return languageId;
     }
-    
+
     public void setLanguageId(Integer languageId)
     {
         this.languageId = languageId;
     }
 
-	public Integer getOldAnchorId() {
+	public Integer getOldAnchorId()
+	{
 		return oldAnchorId;
 	}
 
-	public void setOldAnchorId(Integer oldAnchorId) {
+	public void setOldAnchorId(Integer oldAnchorId)
+	{
 		this.oldAnchorId = oldAnchorId;
+	}
+
+	public String getOptionalContentMode()
+	{
+		return CmsPropertyHandler.getOptionalContentMode();
+	}
+
+	public boolean getHasOptionalContent()
+	{
+		return this.getOldContentId() != null || (this.getOldAnchorId() != null && this.getOldAnchorId() > 0);
 	}
 }

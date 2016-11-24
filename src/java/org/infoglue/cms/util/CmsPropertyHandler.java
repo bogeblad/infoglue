@@ -3295,4 +3295,9 @@ public class CmsPropertyHandler
 		return getServerNodeProperty("optionalContentHashPropertyName", false, "Article");
 	}
 
+	public static boolean shouldTomcatGzipResources() {
+		String value = getServerNodeProperty("gzipResourcesWithTomcat", true, "true");
+		return Boolean.parseBoolean(value);
+	}
+
 }

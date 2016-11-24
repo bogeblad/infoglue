@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.infoglue.cms.util.CmsPropertyHandler;
 
 /**
  * This filter adds expires headers on resources.
@@ -52,27 +53,30 @@ public class ResourceFilter implements Filter
 		HttpServletResponse resp = (HttpServletResponse) response;
 
 		String requestURI = req.getRequestURI();
-		if (requestURI.indexOf(".png") > -1 || requestURI.indexOf(".jpg") > -1 || requestURI.indexOf(".gif") > -1)
+		if (CmsPropertyHandler.shouldTomcatGzipResources())
 		{
-			if (logger.isTraceEnabled())
+			if (requestURI.indexOf(".png") > -1 || requestURI.indexOf(".jpg") > -1 || requestURI.indexOf(".gif") > -1)
 			{
-				logger.trace("Found image resource. Checking for gzip support. URI: " + requestURI);
-			}
-			resp.setDateHeader("Expires", System.currentTimeMillis() + 365 * 24 * 60 * 60 * 1000);
+				if (logger.isTraceEnabled())
+				{
+					logger.trace("Found image resource. Checking for gzip support. URI: " + requestURI);
+				}
+				resp.setDateHeader("Expires", System.currentTimeMillis() + 365 * 24 * 60 * 60 * 1000);
 
-			// check for the HTTP header that signifies GZIP support
-			String ae = req.getHeader("accept-encoding");
-			if (ae != null && ae.indexOf("gzip") != -1)
-			{
-				GZIPResponseWrapper wrappedResponse = new GZIPResponseWrapper(resp);
-				chain.doFilter(request, wrappedResponse);
-				wrappedResponse.finishResponse();
-				return;
+				// check for the HTTP header that signifies GZIP support
+				String ae = req.getHeader("accept-encoding");
+				if (ae != null && ae.indexOf("gzip") != -1)
+				{
+					GZIPResponseWrapper wrappedResponse = new GZIPResponseWrapper(resp);
+					chain.doFilter(request, wrappedResponse);
+					wrappedResponse.finishResponse();
+					return;
+				}
 			}
-		}
-		else if (requestURI.indexOf(".js") > -1 || requestURI.indexOf(".css") > -1)
-		{
-			resp.setDateHeader("Expires", System.currentTimeMillis() + 1 * 24 * 60 * 60 * 1000);
+			else if (requestURI.indexOf(".js") > -1 || requestURI.indexOf(".css") > -1)
+			{
+				resp.setDateHeader("Expires", System.currentTimeMillis() + 1 * 24 * 60 * 60 * 1000);
+			}
 		}
 
 		// Continue
@@ -83,7 +87,7 @@ public class ResourceFilter implements Filter
 	{
 	}
 
-	public void init(FilterConfig arg0) throws ServletException 
+	public void init(FilterConfig arg0) throws ServletException
 	{
 	}
 }

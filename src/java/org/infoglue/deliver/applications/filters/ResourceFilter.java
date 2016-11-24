@@ -24,10 +24,6 @@
 package org.infoglue.deliver.applications.filters;
 
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -40,7 +36,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.deliver.util.CacheController;
 
 /**
  * This filter adds expires headers on resources.
@@ -52,56 +47,47 @@ public class ResourceFilter implements Filter
 {
 	public final static Logger logger = Logger.getLogger(ResourceFilter.class.getName());
 
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException 
-    {  
-    	HttpServletRequest req = (HttpServletRequest) request;
-        HttpServletResponse resp = (HttpServletResponse) response;
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException
+	{
+		HttpServletRequest req = (HttpServletRequest) request;
+		HttpServletResponse resp = (HttpServletResponse) response;
 
-    	String requestURI = req.getRequestURI();
-    	if(requestURI.indexOf(".png") > -1 || requestURI.indexOf(".jpg") > -1 || requestURI.indexOf(".gif") > -1)
-    	{
-    		resp.setDateHeader("Expires", System.currentTimeMillis() + 3000*24*60*60*1000);  
+		String requestURI = req.getRequestURI();
+		if (CmsPropertyHandler.shouldTomcatGzipResources())
+		{
+			if (requestURI.indexOf(".png") > -1 || requestURI.indexOf(".jpg") > -1 || requestURI.indexOf(".gif") > -1)
+			{
+				if (logger.isTraceEnabled())
+				{
+					logger.trace("Found image resource. Checking for gzip support. URI: " + requestURI);
+				}
+				resp.setDateHeader("Expires", System.currentTimeMillis() + 365 * 24 * 60 * 60 * 1000);
 
-    		// check for the HTTP header that
-            // signifies GZIP support
-            String ae = req.getHeader("accept-encoding");
-            if (ae != null && ae.indexOf("gzip") != -1) 
-            {
-            	GZIPResponseWrapper wrappedResponse = new GZIPResponseWrapper(resp);
-            	chain.doFilter(request, wrappedResponse);
-            	wrappedResponse.finishResponse();
-            	return;
-            }
-        }
-    	else if(requestURI.indexOf(".js") > -1 || requestURI.indexOf(".css") > -1)
-    	{
-    		resp.setDateHeader("Expires", System.currentTimeMillis() + 1*24*60*60*1000);  
-    		// check for the HTTP header that
-            // signifies GZIP support
-            /*
-    		String ae = req.getHeader("accept-encoding");
-            if (ae != null && ae.indexOf("gzip") != -1) 
-            {
-            	GZIPResponseWrapper wrappedResponse = new GZIPResponseWrapper(resp);
-            	System.out.println("ResourceFilter before doFilter:" + requestURI);
-            	chain.doFilter(request, wrappedResponse);
-            	System.out.println("ResourceFilter before finishResponse:" + requestURI);
-            	wrappedResponse.finishResponse();
-            	System.out.println("ResourceFilter end requestURI:" + requestURI);
-            	return;
-            }
-            */
-        }
+				// check for the HTTP header that signifies GZIP support
+				String ae = req.getHeader("accept-encoding");
+				if (ae != null && ae.indexOf("gzip") != -1)
+				{
+					GZIPResponseWrapper wrappedResponse = new GZIPResponseWrapper(resp);
+					chain.doFilter(request, wrappedResponse);
+					wrappedResponse.finishResponse();
+					return;
+				}
+			}
+			else if (requestURI.indexOf(".js") > -1 || requestURI.indexOf(".css") > -1)
+			{
+				resp.setDateHeader("Expires", System.currentTimeMillis() + 1 * 24 * 60 * 60 * 1000);
+			}
+		}
 
-        // Continue  
-	    chain.doFilter(request, response);  
+		// Continue
+		chain.doFilter(request, response);
 	}
-	
-    public void destroy() 
+
+	public void destroy()
 	{
 	}
 
-	public void init(FilterConfig arg0) throws ServletException 
+	public void init(FilterConfig arg0) throws ServletException
 	{
-	}  
+	}
 }

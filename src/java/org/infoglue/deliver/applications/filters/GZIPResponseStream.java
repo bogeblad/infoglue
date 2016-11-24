@@ -23,6 +23,10 @@
 
 package org.infoglue.deliver.applications.filters;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.zip.GZIPOutputStream;
@@ -30,146 +34,178 @@ import java.util.zip.GZIPOutputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
+
 /**
  * Wraps Response Stream for GZipFilter
  * 
  * @author Matt Raible
  * @version $Revision: 1.2 $ $Date: 2004/05/22 12:24:23 $
  */
-public class GZIPResponseStream extends ServletOutputStream {
-  // abstraction of the output stream used for compression
-  protected OutputStream bufferedOutput = null;
+public class GZIPResponseStream extends ServletOutputStream
+{
+	public final static Logger logger = Logger.getLogger(GZIPResponseStream.class.getName());
 
-  // state keeping variable for if close() has been called
-  protected boolean closed = false;
+	// abstraction of the output stream used for compression
+	protected OutputStream bufferedOutput = null;
 
-  // reference to original response
-  protected HttpServletResponse response = null;
+	// state keeping variable for if close() has been called
+	protected boolean closed = false;
 
-  // reference to the output stream to the client's browser
-  protected ServletOutputStream output = null;
+	// reference to original response
+	protected HttpServletResponse response = null;
 
-  // default size of the in-memory buffer
-  private int bufferSize = 50000;
+	// reference to the output stream to the client's browser
+	protected ServletOutputStream output = null;
 
-  public GZIPResponseStream(HttpServletResponse response) throws IOException {
-    super();
-    closed = false;
-    this.response = response;
-    this.output = response.getOutputStream();
-    bufferedOutput = new ByteArrayOutputStream();
-  }
+	// default size of the in-memory buffer
+	private int bufferSize = 50000;
 
-  public void close() throws IOException {
-    // verify the stream is yet to be closed
-    if (closed) {
-      throw new IOException("This output stream has already been closed");
-    }
+	private File tempFile;
 
-    // if we buffered everything in memory, gzip it
-    if (bufferedOutput instanceof ByteArrayOutputStream) {
-      // get the content
-      ByteArrayOutputStream baos = (ByteArrayOutputStream) bufferedOutput;
+	public GZIPResponseStream(HttpServletResponse response) throws IOException {
+		super();
+		closed = false;
+		this.response = response;
+		this.output = response.getOutputStream();
+		bufferedOutput = new ByteArrayOutputStream();
+	}
 
-      // prepare a gzip stream
-      ByteArrayOutputStream compressedContent = new ByteArrayOutputStream();
-      GZIPOutputStream gzipstream = new GZIPOutputStream(compressedContent);
-      byte[] bytes = baos.toByteArray();
-      gzipstream.write(bytes);
-      gzipstream.finish();
+	public void close() throws IOException {
+		if (closed) {
+			throw new IOException("This output stream has already been closed");
+		}
 
-      // get the compressed content
-      byte[] compressedBytes = compressedContent.toByteArray();
+		try
+		{
+			// if we buffered everything in memory, gzip it
+			if (bufferedOutput instanceof ByteArrayOutputStream) {
+				// get the content
+				ByteArrayOutputStream baos = (ByteArrayOutputStream) bufferedOutput;
 
-      // set appropriate HTTP headers
-      response.setContentLength(compressedBytes.length);
-      response.addHeader("Content-Encoding", "gzip");
-      output.write(compressedBytes);
-      output.flush();
-      output.close();
-      closed = true;
-    }
-    // if things were not buffered in memory, finish the GZIP stream and
-    // response
-    else if (bufferedOutput instanceof GZIPOutputStream) {
-      // cast to appropriate type
-      GZIPOutputStream gzipstream = (GZIPOutputStream) bufferedOutput;
+				// prepare a gzip stream
+				ByteArrayOutputStream compressedContent = new ByteArrayOutputStream();
+				GZIPOutputStream gzipstream = new GZIPOutputStream(compressedContent);
+				byte[] bytes = baos.toByteArray();
+				gzipstream.write(bytes);
+				gzipstream.finish();
 
-      // finish the compression
-      gzipstream.finish();
+				// get the compressed content
+				byte[] compressedBytes = compressedContent.toByteArray();
 
-      // finish the response
-      output.flush();
-      output.close();
-      closed = true;
-    }
-  }
+				// set appropriate HTTP headers
+				response.setContentLength(compressedBytes.length);
+				response.addHeader("Content-Encoding", "gzip");
+				output.write(compressedBytes);
+				output.flush();
+				output.close();
+				closed = true;
+			}
+			// if things were not buffered in memory, finish the GZIP stream and
+			// response
+			else if (bufferedOutput instanceof GZIPOutputStream) {
+				// cast to appropriate type
+				GZIPOutputStream gzipstream = (GZIPOutputStream) bufferedOutput;
 
-  public void flush() throws IOException {
-    if (closed) {
-      throw new IOException("Cannot flush a closed output stream");
-    }
+				// finish the compression
+				gzipstream.finish();
+				gzipstream.flush();
+				gzipstream.close();
 
-    bufferedOutput.flush();
-  }
+				response.setContentLength((int)tempFile.length());
 
-  public void write(int b) throws IOException {
-    if (closed) {
-      throw new IOException("Cannot write to a closed output stream");
-    }
+				FileInputStream tempFileStream = new FileInputStream(tempFile);
+				IOUtils.copy(tempFileStream, output);
 
-    // make sure we aren't over the buffer's limit
-    checkBufferSize(1);
+				// finish the response
+				output.flush();
+				output.close();
+				closed = true;
+			}
+		}
+		finally
+		{
+			if (tempFile != null)
+			{
+				tempFile.delete();
+				tempFile = null;
+			}
+		}
+	}
 
-    // write the byte to the temporary output
-    bufferedOutput.write((byte) b);
-  }
+	public void flush() throws IOException {
+		if (closed) {
+			throw new IOException("Cannot flush a closed output stream");
+		}
 
-  private void checkBufferSize(int length) throws IOException {
-    // check if we are buffering too large of a file
-    if (bufferedOutput instanceof ByteArrayOutputStream) {
-      ByteArrayOutputStream baos = (ByteArrayOutputStream) bufferedOutput;
+		bufferedOutput.flush();
+	}
 
-      if ((baos.size() + length) > bufferSize) {
-        // files too large to keep in memory are sent to the client without
-        // Content-Length specified
-        response.addHeader("Content-Encoding", "gzip");
+	public void write(int b) throws IOException {
+		if (closed) {
+			throw new IOException("Cannot write to a closed output stream");
+		}
 
-        // get existing bytes
-        byte[] bytes = baos.toByteArray();
+		// make sure we aren't over the buffer's limit
+		checkBufferSize(1);
 
-        // make new gzip stream using the response output stream
-        GZIPOutputStream gzipstream = new GZIPOutputStream(output);
-        gzipstream.write(bytes);
+		// write the byte to the temporary output
+		bufferedOutput.write((byte) b);
+	}
 
-        // we are no longer buffering, send content via gzipstream
-        bufferedOutput = gzipstream;
-      }
-    }
-  }
+	private void switchToFilebacking(byte[] initialBytes) throws FileNotFoundException, IOException
+	{
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("Resource exceeds buffer size. Switching to file-backed mode.");
+		}
+		tempFile = File.createTempFile("gzip-", ".tmp");
 
-  public void write(byte[] b) throws IOException {
-    write(b, 0, b.length);
-  }
+		// make new gzip stream using the response output stream
+		OutputStream gzipstream = new GZIPOutputStream(new FileOutputStream(tempFile));
+		gzipstream.write(initialBytes);
 
-  public void write(byte[] b, int off, int len) throws IOException {
+		// we are no longer buffering, send content via gzipstream
+		bufferedOutput = gzipstream;
 
-    if (closed) {
-      throw new IOException("Cannot write to a closed output stream");
-    }
+		response.addHeader("Content-Encoding", "gzip");
+	}
 
-    // make sure we aren't over the buffer's limit
-    checkBufferSize(len);
+	private void checkBufferSize(int length) throws IOException {
+		// check if we are buffering too large of a file
+		if (bufferedOutput instanceof ByteArrayOutputStream) {
+			ByteArrayOutputStream baos = (ByteArrayOutputStream) bufferedOutput;
 
-    // write the content to the buffer
-    bufferedOutput.write(b, off, len);
-  }
+			if ((baos.size() + length) > bufferSize) {
+				// files too large to keep in memory are sent to the client without
+				// Content-Length specified
+				switchToFilebacking(baos.toByteArray());
+			}
+		}
+	}
 
-  public boolean closed() {
-    return (this.closed);
-  }
+	public void write(byte[] b) throws IOException {
+		write(b, 0, b.length);
+	}
 
-  public void reset() {
-    //noop
-  }
+	public void write(byte[] b, int off, int len) throws IOException {
+		if (closed) {
+			throw new IOException("Cannot write to a closed output stream");
+		}
+
+		// make sure we aren't over the buffer's limit
+		checkBufferSize(len);
+
+		// write the content to the buffer
+		bufferedOutput.write(b, off, len);
+	}
+
+	public boolean closed() {
+		return (this.closed);
+	}
+
+	public void reset() {
+		//noop
+	}
 }

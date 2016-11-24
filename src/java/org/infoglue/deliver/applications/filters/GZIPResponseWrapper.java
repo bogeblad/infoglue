@@ -24,18 +24,14 @@
 package org.infoglue.deliver.applications.filters;
 
 import java.io.*;
-import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
 
-import java.util.Set;
-import java.util.HashSet;
-
 public class GZIPResponseWrapper extends HttpServletResponseWrapper 
 {
-	public final static Logger logger = Logger.getLogger(ResourceFilter.class.getName());
+	public final static Logger logger = Logger.getLogger(GZIPResponseWrapper.class.getName());
 
 	protected HttpServletResponse origResponse = null;
 	protected ServletOutputStream stream = null;

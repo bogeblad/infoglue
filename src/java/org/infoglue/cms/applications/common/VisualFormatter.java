@@ -331,7 +331,10 @@ public class VisualFormatter
 	}
 	
 	/**
-	 * This method converts all non-standard characters to html-equivalents.
+	 * This method converts the input string to a string fit for including in JavaScript strings
+	 * that will be quoted with single quote (').
+	 * Example:
+	 * String js = "alert('" + formatter.escapeForJavascripts(message) + "');";
 	 */
 	
 	public final String escapeForJavascripts(String s)
@@ -344,8 +347,14 @@ public class VisualFormatter
 		for (int i = 0; i < n; i++) 
 		{
 			char c = s.charAt(i);
-			if(c == '\'') sb.append("\\'");
-			else sb.append(c);
+			switch(c) {
+			case '\r': break; // Ignore carriage returns
+			case '\\': sb.append("\\\\"); break; // backslash
+			case '\'': sb.append("\\'"); break;  // quote
+			case '\n': sb.append("\\\n"); break; // New lines need a backslash before \n
+			case '<': sb.append("\\x3C"); break; // To avoid </script> messing up. See http://stackoverflow.com/a/236106/185596
+			default: sb.append(c);       
+			}
 		}
 		
 		return sb.toString();

@@ -34,7 +34,6 @@ import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.entities.content.ContentVO;
@@ -75,7 +74,6 @@ public class BasicURLComposer extends URLComposer
 		String protectedProtocolPort = CmsPropertyHandler.getProtectedProtocolPort();
 		String unprotectedProtocolPort = CmsPropertyHandler.getUnprotectedProtocolPort();
 
-        String disableEmptyUrls = CmsPropertyHandler.getDisableEmptyUrls();
         if(siteNodeId == null || contentId == null || languageId == null || assetKey == null)
             return "";
             

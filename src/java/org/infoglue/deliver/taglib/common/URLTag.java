@@ -31,11 +31,10 @@ import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspTagException;
 
 import org.apache.log4j.Logger;
-import org.infoglue.deliver.taglib.TemplateControllerTag;
 import org.infoglue.cms.util.CmsPropertyHandler;
+import org.infoglue.deliver.taglib.TemplateControllerTag;
 
 /**
  * This class implements the &lt;common:urlBuilder&gt; tag, which creates an url
@@ -83,8 +82,10 @@ public class URLTag extends TemplateControllerTag
 	
 	/**
 	 * Determine if you want to replace https with http
-	 * */
-	private boolean forceHTTPProtocol = false;
+	 * null means "not set with parameter"
+	 */
+	private Boolean forceHTTPProtocol = null;
+	
 	/**
 	 * The parameters to use when constructing the url.
 	 */
@@ -152,6 +153,7 @@ public class URLTag extends TemplateControllerTag
 		this.disableNiceURI = false;
 		this.allowMultipleArguments = false;
 		this.includeCurrentQueryString = true;
+		this.forceHTTPProtocol = null;
 		
 		return EVAL_PAGE;
     }
@@ -272,10 +274,11 @@ public class URLTag extends TemplateControllerTag
 	    }
 	    logger.info("newBaseUrl:" + newBaseUrl);
 	    
-		if (forceHTTPProtocol || CmsPropertyHandler.getForceHTTPProtocol()) {
-			newBaseUrl = newBaseUrl.replaceFirst("https:", "http:");
-		}
-
+	    if ((forceHTTPProtocol == null && CmsPropertyHandler.getForceHTTPProtocol() || forceHTTPProtocol) && newBaseUrl.toLowerCase().startsWith("https"))
+	    {
+	    	newBaseUrl = newBaseUrl.replaceFirst("(?i)https", "http");
+	    }
+	    
 	    return newBaseUrl;
 	}
 	
@@ -397,7 +400,7 @@ public class URLTag extends TemplateControllerTag
     }
     
 	/**
-	 * Sets wether to include languageId in the url .
+	 * Sets whether to include languageId in the url.
 	 * 
 	 * @param includeLanguageId.
 	 * @throws JspException if an error occurs while evaluating base includeLanguageId parameter.

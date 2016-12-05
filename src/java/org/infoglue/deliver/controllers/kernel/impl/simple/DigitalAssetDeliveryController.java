@@ -46,7 +46,6 @@ import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.entities.content.ContentVersion;
-import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.content.SmallestContentVersionVO;
@@ -104,82 +103,74 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 	}
 	
 	/**
-	 * This is the new main logic for getting the filename of an asset. 
+	 * Creates a filename for an asset based on the standard format, using the asset id and filename
 	 */
+	private static String createOldFormFileNameForAsset(DigitalAsset digitalAsset) {
+		String asciiAssetFileName = formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAsset.getAssetFileName(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
+		String fileName = String.format(CmsPropertyHandler.OLD_ASSET_FILE_NAME_FORMAT, digitalAsset.getDigitalAssetId(), asciiAssetFileName);
+		return fileName;
+	}
 
-	public static String getAssetFileName(DigitalAssetVO digitalAssetVO, Integer contentId, Integer languageId, Database db) throws Exception
-	{
-		String fileName = digitalAssetVO.getDigitalAssetId() + "_" + formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAssetVO.getAssetFileName(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
-		
-		Timer t = new Timer();
-		if(CmsPropertyHandler.getAssetFileNameForm().equals("contentId_languageId_assetKey"))
+
+	private static String createNewFormFileNameForAsset(DigitalAsset digitalAsset, Integer contentId, Integer languageId) {
+		String fileName;
+		if(contentId == null || languageId == null)
 		{
-			if(contentId == null || languageId == null)
+			if(digitalAsset.getContentVersions() != null && digitalAsset.getContentVersions().size() > 0)
 			{
-				DigitalAsset asset = DigitalAssetController.getMediumDigitalAssetWithIdReadOnly(digitalAssetVO.getId(), db);
-				if(asset.getContentVersions() != null && asset.getContentVersions().size() > 0)
-				{
-					ContentVersion cv = (ContentVersion)asset.getContentVersions().iterator().next();
-					contentId = cv.getValueObject().getContentId();
-					languageId = cv.getValueObject().getLanguageId();
-				}
+				ContentVersion cv = (ContentVersion)digitalAsset.getContentVersions().iterator().next();
+				contentId = cv.getValueObject().getContentId();
+				languageId = cv.getValueObject().getLanguageId();
 			}
-			
-			String assetFileName = digitalAssetVO.getAssetFileName();
-			String suffix = "";
-			int endingStartIndex = assetFileName.lastIndexOf(".");
-			if(endingStartIndex > -1)
-				suffix = assetFileName.substring(endingStartIndex);
-				
-			fileName = "" + contentId + "_" + languageId + formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAssetVO.getAssetKey(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter()) + suffix;
 		}
-		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getAssetFileName", t.getElapsedTime());
 		
+		String assetFileName = digitalAsset.getAssetFileName();
+		String suffix = "";
+		int endingStartIndex = assetFileName.lastIndexOf(".");
+		if(endingStartIndex > -1)
+		{
+			suffix = assetFileName.substring(endingStartIndex);
+		}
+		
+		String asciiAssetKey = formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAsset.getAssetKey(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
+		fileName = String.format(CmsPropertyHandler.NEW_ASSET_FILE_NAME_FORMAT, contentId, languageId, asciiAssetKey, suffix);				
 		return fileName;
 	}
 
 	/**
-	 * This is the new main logic for getting the filename of an asset. 
+	 * Main logic for getting the filename of an asset. 
+	 */
+	public static String getAssetFileName(DigitalAssetVO digitalAssetVO, Integer contentId, Integer languageId, Database db) throws Exception
+	{
+		DigitalAsset digitalAsset = DigitalAssetController.getMediumDigitalAssetWithIdReadOnly(digitalAssetVO.getId(), db);
+		return getAssetFileName(digitalAsset, contentId, languageId);
+	}
+
+
+	/**
+	 * Main logic for getting the file name of an asset. 
 	 */
 
 	public static String getAssetFileName(DigitalAsset digitalAsset, Integer contentId, Integer languageId) throws Exception
 	{
-		String fileName = digitalAsset.getDigitalAssetId() + "_" + formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAsset.getAssetFileName(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
-		
-		//logger.info("fileName:" + fileName);
-		//logger.info("AssetFileNameForm:" + CmsPropertyHandler.getAssetFileNameForm());
 		Timer t = new Timer();
-		if(CmsPropertyHandler.getAssetFileNameForm().equals("contentId_languageId_assetKey"))
+		String fileName;
+		
+		if(CmsPropertyHandler.getAssetFileNameForm().equals(CmsPropertyHandler.NEW_ASSET_FILE_NAME_FORM))
 		{
-			if(contentId == null || languageId == null)
-			{
-				//Timer t = new Timer();
-				//logger.info("As no contentId was sent - we check for the first version we find that uses it. Should not matter which:" + digitalAsset.getContentVersions());
-				if(digitalAsset.getContentVersions() != null && digitalAsset.getContentVersions().size() > 0)
-				{
-					ContentVersion cv = (ContentVersion)digitalAsset.getContentVersions().iterator().next();
-					contentId = cv.getValueObject().getContentId();
-					languageId = cv.getValueObject().getLanguageId();
-				}
-				//t.printElapsedTime("Finding content and language for an asset took");
-			}
-			
-			String assetFileName = digitalAsset.getAssetFileName();
-			String suffix = "";
-			int endingStartIndex = assetFileName.lastIndexOf(".");
-			if(endingStartIndex > -1)
-				suffix = assetFileName.substring(endingStartIndex);
-				
-			fileName = "" + contentId + "_" + languageId + formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAsset.getAssetKey(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter()) + suffix;
-			//logger.info("New key is:" + fileName);
+			fileName = createNewFormFileNameForAsset(digitalAsset, contentId, languageId);
+		} 
+		else
+		{
+			fileName = createOldFormFileNameForAsset(digitalAsset);
 		}
-		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getAssetFileName2", t.getElapsedTime());
+		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getAssetFileName", t.getElapsedTime());
 
 		return fileName;
 	}
 
 	/**
-	 * This is the new main logic for getting the filename of an asset. 
+	 * Main logic for getting the folder name of an asset. 
 	 */
 
 	public static String getAssetFolderName(DigitalAssetVO digitalAssetVO, Integer contentId, Integer languageId, Database db) throws Exception
@@ -189,7 +180,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 		//logger.info("folderName:" + folderName);
 		//logger.info("AssetFileNameForm:" + CmsPropertyHandler.getAssetFileNameForm());
 		Timer t = new Timer();
-		if(CmsPropertyHandler.getAssetFileNameForm().equals("contentId_languageId_assetKey"))
+		if(CmsPropertyHandler.getAssetFileNameForm().equals(CmsPropertyHandler.NEW_ASSET_FILE_NAME_FORM))
 		{
 			if(contentId == null || languageId == null)
 			{
@@ -215,7 +206,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 	}
 
 	/**
-	 * This is the new main logic for getting the filename of an asset. 
+	 * Main logic for getting the folder name of an asset. 
 	 */
 
 	public static String getAssetFolderName(DigitalAsset digitalAsset, Integer contentId, Integer languageId) throws Exception
@@ -225,7 +216,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 		//logger.info("folderName:" + folderName);
 		//logger.info("AssetFileNameForm:" + CmsPropertyHandler.getAssetFileNameForm());
 		Timer t = new Timer();
-		if(CmsPropertyHandler.getAssetFileNameForm().equals("contentId_languageId_assetKey"))
+		if(CmsPropertyHandler.getAssetFileNameForm().equals(CmsPropertyHandler.NEW_ASSET_FILE_NAME_FORM))
 		{
 			if(contentId == null || languageId == null)
 			{
@@ -395,7 +386,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 
 	/**
 	 * This is the basic way of getting an asset-url for a digital asset. 
-	 * If the asset is cached on disk it returns that path imediately it's ok - otherwise it dumps it fresh.
+	 * If the asset is cached on disk it returns that path immediately it's ok - otherwise it dumps it fresh.
 	 */
 
 	public String getAssetThumbnailUrl(DigitalAsset digitalAsset, Repository repository, int width, int height, DeliveryContext deliveryContext) throws SystemException, Exception
@@ -884,13 +875,13 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 		//TODO - how to remove
 		try
 		{
-			String filterString = "" + digitalAssetId.toString();
+			String filterString = "a_" + digitalAssetId.toString() + "-"; // See DigitalAssetController.STANDARD_ASSET_FILE_NAME_FORMAT
 			String folderName = "" + (digitalAssetId.intValue() / 1000);
 			String assetKey = null;
 			
 			logger.info("filterString:" + filterString);
 			logger.info("folderName:" + folderName);
-			if(CmsPropertyHandler.getAssetFileNameForm().equals("contentId_languageId_assetKey"))
+			if(CmsPropertyHandler.getAssetFileNameForm().equals(CmsPropertyHandler.NEW_ASSET_FILE_NAME_FORM))
 			{
 				List<SmallestContentVersionVO> contentVersionVOList = DigitalAssetController.getContentVersionVOListConnectedToAssetWithId(digitalAssetId);	
 	    		Iterator<SmallestContentVersionVO> contentVersionVOListIterator = contentVersionVOList.iterator();
@@ -903,7 +894,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 	    			assetKey = assetVO.getAssetKey();
 	    			
 					folderName = "" + (contentId / 1000);
-					filterString = "" + contentId + "_";
+					filterString = "c_" + contentId + "-"; // See DigitalAssetController.ALTERNATIVE_ASSET_FILE_NAME_FORMAT
 					logger.info("New folderName is:" + folderName);
 	    		}
 			}
@@ -926,13 +917,15 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 				{
 					File file = files[j];
 					logger.info("file:" + file.getName());
-					if(assetKey != null && file.getName().indexOf(assetKey) > -1)
+					if(assetKey != null && file.getName().indexOf(assetKey) > -1) // FIXME: This probably won't work when using the standard type of asset filename, since it doesn't contain the asset key.
 					{
 						logger.info("Deleting file " + file.getPath());
 						file.delete();
 					}
 					else
+					{
 						logger.info("Skipping file " + file.getPath() + " as we don't want to delete all assets for a content");
+					}
 				}
 				i++;
 				filePath = CmsPropertyHandler.getProperty("digitalAssetPath." + i);
@@ -957,7 +950,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 					{
 						File file = files[j];
 						logger.info("file:" + file.getName());
-						if(assetKey != null && file.getName().indexOf(assetKey) > -1)
+						if(assetKey != null && file.getName().indexOf(assetKey) > -1) // FIXME: This probably won't work when using the standard type of asset filename, since it doesn't contain the asset key.
 						{
 							logger.info("Deleting file " + file.getPath());
 							file.delete();

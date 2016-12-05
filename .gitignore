@@ -7,3 +7,4 @@ build.properties
 .project/build.properties
 /bin/
 .project
+*~

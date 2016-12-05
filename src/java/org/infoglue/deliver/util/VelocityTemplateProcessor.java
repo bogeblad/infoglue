@@ -31,6 +31,7 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
@@ -40,8 +41,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.tasktool.actions.ScriptController;
+import org.infoglue.cms.controllers.kernel.impl.simple.LabelController;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.io.FileHelper;
+import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.applications.actions.InfoGlueComponent;
 import org.infoglue.deliver.applications.databeans.DeliveryContext;
@@ -89,7 +94,7 @@ public class VelocityTemplateProcessor
 	
 	public void renderTemplate(Map params, PrintWriter pw, String templateAsString, boolean forceVelocity) throws Exception 
 	{
-	    renderTemplate(params, pw, templateAsString, forceVelocity, null);
+		renderTemplate(params, pw, templateAsString, forceVelocity, null);
 	}
 
 	/**
@@ -99,14 +104,13 @@ public class VelocityTemplateProcessor
 	
 	public void renderTemplate(Map params, PrintWriter pw, String templateAsString, boolean forceVelocity, InfoGlueComponent component) throws Exception 
 	{
-	    renderTemplate(params, pw, templateAsString, forceVelocity, component, null);
+		renderTemplate(params, pw, templateAsString, forceVelocity, component, null);
 	}
 
 	/**
 	 * This method takes arguments and renders a template given as a string to the specified outputstream.
 	 * Improve later - cache for example the engine.
 	 */
-	
 	public void renderTemplate(final Map params, PrintWriter pw, String templateAsString, boolean forceVelocity, InfoGlueComponent component, String statisticsSuffix) throws Exception 
 	{
 	 	String componentName = "Unknown name or not a component";
@@ -152,8 +156,10 @@ public class VelocityTemplateProcessor
 			        Reader reader = new StringReader(templateAsString);
 			        if(logger.isInfoEnabled())
 			        	logger.info("Going to evaluate the string of length:" + templateAsString.length());
+				    
+			        TemplateController templateController = (TemplateController)params.get("templateLogic");
 			        
-			        boolean finished = Velocity.evaluate(context, pw, "Generator Error", reader);        
+			        Velocity.evaluate(context, pw, (templateController != null ? templateController.getCurrentPageUrl() : "unknown url") + ": ", reader);        
 		        }
 		    }
 		    
@@ -167,22 +173,106 @@ public class VelocityTemplateProcessor
 			logger.warn("Error rendering template:" + e.getMessage(), e);
 			logger.info("templateAsString: \n" + (templateAsString.length() > 500 ? templateAsString.substring(0, 500) + "... (template truncated)." : templateAsString));
 		    
-			//If error we don't want the error cached - right?
 			TemplateController templateController = (TemplateController)params.get("templateLogic");
 			if(templateController != null)
 			{
+				// If error we don't want the error cached - right?
 				DeliveryContext deliveryContext = templateController.getDeliveryContext();
 				deliveryContext.setDisablePageCache(true);
 			}
 			
 		    if(CmsPropertyHandler.getOperatingMode().equalsIgnoreCase("0") && (CmsPropertyHandler.getDisableTemplateDebug() == null || !CmsPropertyHandler.getDisableTemplateDebug().equalsIgnoreCase("true")))
-		        pw.println("Error rendering template:" + e.getMessage());
+		    {		    	
+				String errorPageString = createHtmlForFailedRendering(templateAsString, e, templateController);
+		        pw.println(errorPageString);
+		    }
 		    else
 		    {
 			    logger.warn("Warning rendering template::" + e.getMessage(), e);
 			    throw e;
 		    }
 		}
+	}
+
+	public String createHtmlForFailedRendering(String templateAsString, Exception e, TemplateController templateController) throws SystemException
+	{
+		String errorTitle = templateController != null ? LabelController.getController(templateController.getLocale()).getString("tool.common.generator.error.title") : "";
+		String errorMessageDiv = createErrorMessageHtmlForFailedRendering(e, templateController);
+		String errorScript = createJavaScriptForFailedRendering(templateAsString);
+		// Add a div that covers the iframe with the broken page to avoid users clicking on links
+		// Not there for security, but for usability
+		String clickBlockerHtml = "<div id=\"clickBlocker\" onclick=\"return false\" oncontextmenu=\"return false\" style=\"background-color: rgba(0, 0, 0, 0.2); position: absolute; z-index: 2;\"></div>";
+		String errorPageString = "<html><head><title>" + errorTitle + "</title></head><body>" + errorMessageDiv + clickBlockerHtml + "<iframe id='originalPage' style=\"border: 0; z-index: 1\"></iframe>" + errorScript + "</body></html>";
+		return errorPageString;
+	}
+
+	public String createJavaScriptForFailedRendering(String templateAsString)
+	{
+		VisualFormatter formatter = new VisualFormatter();
+		String jsEscapedTemplate = formatter.escapeForJavascripts(templateAsString);
+		String errorScript = 
+				"<script>" + 
+				"  var iframe = document.getElementById('originalPage');" +
+				"  var clickBlocker = document.getElementById('clickBlocker');" +
+				"  iframe.style.border = 0;" +
+				"  iframe.style.marginLeft = -iframe.offsetLeft;" +
+				"  iframe.contentWindow.document.open();" +
+				"  iframe.contentWindow.document.write('" + jsEscapedTemplate + "');" +
+				"  iframe.contentWindow.document.close();" +
+				"  iframe.width = window.innerWidth + 'px';" +
+				"  clickBlocker.style.width = iframe.width;" +
+				"  clickBlocker.style.marginLeft = iframe.style.marginLeft;" +
+				"  iframe.onload = function() { this.height = this.contentWindow.document.body.scrollHeight + 'px'; clickBlocker.style.height = this.height; this.contentWindow.document.body.style.overflow = 'hidden';};" +
+				"</script>";
+		return errorScript;
+	}
+
+	public String createErrorMessageHtmlForFailedRendering(Exception e, TemplateController templateController) throws SystemException
+	{
+		VisualFormatter formatter = new VisualFormatter();
+		String errorMessage = e.getMessage();
+		String htmlEscapedErrorMessage = formatter.escapeHTML(errorMessage);
+		String errorHTML = getErrorMessageForFailedRendering(templateController);
+		String errorMessageDiv = "<div class='error'>" + errorHTML + "</div><div class='internal-error'>" + htmlEscapedErrorMessage + "</div>";
+		return errorMessageDiv;
+	}
+
+	public String getErrorMessageForFailedRendering(TemplateController templateController) throws SystemException
+	{
+		Locale preferredLocale = null;	
+		if (templateController != null) 
+		{
+			InfoGluePrincipal principal = templateController.getPrincipal();
+			// First try to get the locale from the user's settings
+			if (principal != null)
+			{
+				preferredLocale = templateController.getLocaleAvailableInTool(principal);
+			}
+		}
+		
+		// If we didn't get a locale, use the locale of the page
+		if (preferredLocale == null)
+		{
+			preferredLocale = templateController.getLocale();
+		}
+		
+		String errorHTML = LabelController.getController(preferredLocale).getString("tool.common.generator.error.html");
+		errorHTML = addOptionalSupportUrlToErrorMessage(errorHTML);
+		return errorHTML;
+	}
+
+	public String addOptionalSupportUrlToErrorMessage(String errorHTML)
+	{
+		String supportUrl = CmsPropertyHandler.getFailedToRenderPageHelpUrl();
+		if (supportUrl != null && !supportUrl.equals(""))
+		{
+			errorHTML = String.format(errorHTML, "<a href='" + supportUrl + "'>", "</a>");
+		}	
+		else
+		{
+			errorHTML = String.format(errorHTML, "", "");
+		}
+		return errorHTML;
 	}
 
 	/**

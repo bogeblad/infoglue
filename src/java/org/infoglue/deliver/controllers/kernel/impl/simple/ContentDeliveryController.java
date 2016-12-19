@@ -24,23 +24,18 @@
 package org.infoglue.deliver.controllers.kernel.impl.simple;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
 import java.net.URLDecoder;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 
-import org.apache.log4j.Category;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
@@ -72,14 +67,7 @@ import org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
-import org.infoglue.cms.entities.management.impl.simple.AccessRightGroupImpl;
-import org.infoglue.cms.entities.management.impl.simple.AccessRightImpl;
-import org.infoglue.cms.entities.management.impl.simple.AccessRightRoleImpl;
-import org.infoglue.cms.entities.management.impl.simple.AccessRightUserImpl;
-import org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl;
-import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
-import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -1370,7 +1358,8 @@ public class ContentDeliveryController extends BaseDeliveryController
 		
 		if(digitalAssetVO == null && useLanguageFallback)
 		{
-			digitalAssetVO = getLanguageIndependentAssetVO(contentId, languageId, siteNodeId, db, assetKey, deliveryContext, infoGluePrincipal);
+			Entry<LanguageVO, DigitalAssetVO> assetWithLanguage = getLanguageIndependentAssetVO(contentId, languageId, siteNodeId, db, assetKey, deliveryContext, infoGluePrincipal);
+			digitalAssetVO = assetWithLanguage.getValue();
 		}
 		
 		
@@ -1473,7 +1462,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 	 * many duplicates.
 	 *  
 	 */
-	private DigitalAssetVO getLanguageIndependentAssetVO(Integer contentId, Integer languageId, Integer siteNodeId, Database db, String assetKey, DeliveryContext deliveryContext, InfoGluePrincipal infoGluePrincipal) throws SystemException, Exception
+	private Entry<LanguageVO, DigitalAssetVO> getLanguageIndependentAssetVO(Integer contentId, Integer languageId, Integer siteNodeId, Database db, String assetKey, DeliveryContext deliveryContext, InfoGluePrincipal infoGluePrincipal) throws SystemException, Exception
 	{
 		DigitalAssetVO asset = null;
 		// TODO: This method should only return a asset url depending on settings on the actual content in the future
@@ -1485,6 +1474,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		List langs = LanguageDeliveryController.getLanguageDeliveryController().getAvailableLanguages(db, siteNodeId);
 		List<Integer> checkedLanguages = new ArrayList<Integer>();
 		Iterator lit = langs.iterator();
+		LanguageVO usedLanguage = null;
 		while (lit.hasNext())
 		{
 			LanguageVO langVO = (LanguageVO) lit.next();
@@ -1498,6 +1488,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 					if(digitalAsset != null)
 					{
 						asset = digitalAsset;
+						usedLanguage = langVO;
 						break;
 					}
 				}									
@@ -1532,6 +1523,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 							if(digitalAsset != null)
 							{
 								asset = digitalAsset;
+								usedLanguage = langVO;
 								break;
 							}
 						}									
@@ -1539,8 +1531,9 @@ public class ContentDeliveryController extends BaseDeliveryController
 				}
 			}
 		}
-		
-		return asset;			
+		// Semi-ugly way of creating a tuple to return both asset and the language of the version it came from
+		Entry<LanguageVO, DigitalAssetVO> assetWithLanguage = new SimpleImmutableEntry<LanguageVO, DigitalAssetVO>(usedLanguage, asset);
+		return assetWithLanguage;			
 	}
 
 	private String getLanguageIndependentAssetUrl(Integer contentId, Integer languageId, Integer siteNodeId, Database db, String assetKey, DeliveryContext deliveryContext, InfoGluePrincipal infoGluePrincipal) throws SystemException, Exception
@@ -1548,13 +1541,17 @@ public class ContentDeliveryController extends BaseDeliveryController
 		String assetUrl = "";
 		assetUrl = urlComposer.composeDigitalAssetUrl("", null, "", deliveryContext); 
 		
-		DigitalAssetVO digitalAssetVO = getLanguageIndependentAssetVO(contentId, languageId, siteNodeId, db, assetKey, deliveryContext, infoGluePrincipal);
+		Entry<LanguageVO, DigitalAssetVO> assetWithLanguage = getLanguageIndependentAssetVO(contentId, languageId, siteNodeId, db, assetKey, deliveryContext, infoGluePrincipal);
+		DigitalAssetVO digitalAssetVO = assetWithLanguage.getValue();
+		LanguageVO assetLanguage = assetWithLanguage.getKey();
+		int assetLanguageId = assetLanguage != null ? assetLanguage.getLanguageId() : languageId;
+		
 		if(digitalAssetVO != null)
 		{
 			System.out.println("DEBUG (remove me): " + "getLanguageIndependentAssetUrl - " + "digitalAssetVO: " + digitalAssetVO.getDigitalAssetId());
-			System.out.println("DEBUG (remove me): " + "getLanguageIndependentAssetUrl - " + "contentId: " + contentId + ", languageId: " + languageId + ", siteNodeId: " + siteNodeId + ", assetKey: " + assetKey);
-			String fileName = DigitalAssetDeliveryController.getAssetFileName(digitalAssetVO, contentId, languageId, db);
-			String folderName = DigitalAssetDeliveryController.getAssetFolderName(digitalAssetVO, contentId, languageId, db);
+			System.out.println("DEBUG (remove me): " + "getLanguageIndependentAssetUrl - " + "contentId: " + contentId + ", languageId: " + languageId + ", assetLanguageId: " + assetLanguageId + ", siteNodeId: " + siteNodeId + ", assetKey: " + assetKey);
+			String fileName = DigitalAssetDeliveryController.getAssetFileName(digitalAssetVO, contentId, assetLanguageId, db);
+			String folderName = DigitalAssetDeliveryController.getAssetFolderName(digitalAssetVO, contentId, assetLanguageId, db);
 			System.out.println("DEBUG (remove me): " + "getLanguageIndependentAssetUrl - " + "fileName: " + fileName + ", folderName: " + folderName);
 
 			logger.info("folderName:" + folderName);
@@ -1613,14 +1610,15 @@ public class ContentDeliveryController extends BaseDeliveryController
 	{
 		String assetUrl = "";
 		assetUrl = urlComposer.composeDigitalAssetUrl("", null, "", deliveryContext); 
+		Entry<LanguageVO, DigitalAssetVO> assetWithLanguage = getLanguageIndependentAssetVO(contentId, languageId, siteNodeId, db, assetKey, deliveryContext, infoGluePrincipal);
+		DigitalAssetVO digitalAsset = assetWithLanguage.getValue();
+		LanguageVO assetLanguage = assetWithLanguage.getKey();
+		int assetLanguageId = assetLanguage != null ? assetLanguage.getLanguageId() : languageId;
 		
-		DigitalAssetVO digitalAsset = getLanguageIndependentAssetVO(contentId, languageId, siteNodeId, db, assetKey, deliveryContext, infoGluePrincipal);
 		if(digitalAsset != null)
 		{
-			//String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
-			String fileName = DigitalAssetDeliveryController.getAssetFileName(digitalAsset, contentId, languageId, db);
-			//String folderName = "" + (digitalAssetVO.getDigitalAssetId().intValue() / 1000);
-			String folderName = DigitalAssetDeliveryController.getAssetFolderName(digitalAsset, contentId, languageId, db);
+			String fileName = DigitalAssetDeliveryController.getAssetFileName(digitalAsset, contentId, assetLanguageId, db);
+			String folderName = DigitalAssetDeliveryController.getAssetFolderName(digitalAsset, contentId, assetLanguageId, db);
 
 			String thumbnailFileName = "thumbnail_" + width + "_" + height + "_" + fileName;
 
@@ -2469,9 +2467,10 @@ public class ContentDeliveryController extends BaseDeliveryController
 			//DigitalAsset digitalAsset =	(assetKey == null) ? getLatestDigitalAsset(contentVersion) : getDigitalAssetWithKey(contentVersion, assetKey); 
 			DigitalAssetVO digitalAsset =	(assetKey == null) ? DigitalAssetController.getLatestDigitalAssetVO(contentVersion.getId(), db) : DigitalAssetController.getLatestDigitalAssetVO(contentVersion.getId(), assetKey, db);
 			
-			if(digitalAsset == null)
-				digitalAsset = getLanguageIndependentAssetVO(contentId, languageId, siteNodeId, db, assetKey, deliveryContext, infoGluePrincipal);
-				
+			if(digitalAsset == null) {
+				Entry<LanguageVO, DigitalAssetVO> assetWithLanguage = getLanguageIndependentAssetVO(contentId, languageId, siteNodeId, db, assetKey, deliveryContext, infoGluePrincipal);
+				digitalAsset = assetWithLanguage.getValue();
+			}
 			if(digitalAsset != null)
 			{
 				fileSize = digitalAsset.getAssetFileSize();

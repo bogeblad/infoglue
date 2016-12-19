@@ -1551,10 +1551,11 @@ public class ContentDeliveryController extends BaseDeliveryController
 		DigitalAssetVO digitalAssetVO = getLanguageIndependentAssetVO(contentId, languageId, siteNodeId, db, assetKey, deliveryContext, infoGluePrincipal);
 		if(digitalAssetVO != null)
 		{
-			//String fileName = digitalAssetVO.getDigitalAssetId() + "_" + digitalAssetVO.getAssetFileName();
+			System.out.println("DEBUG (remove me): " + "getLanguageIndependentAssetUrl - " + "digitalAssetVO: " + digitalAssetVO.getDigitalAssetId());
+			System.out.println("DEBUG (remove me): " + "getLanguageIndependentAssetUrl - " + "contentId: " + contentId + ", languageId: " + languageId + ", siteNodeId: " + siteNodeId + ", assetKey: " + assetKey);
 			String fileName = DigitalAssetDeliveryController.getAssetFileName(digitalAssetVO, contentId, languageId, db);
-			//String folderName = "" + (digitalAssetVO.getDigitalAssetId().intValue() / 1000);
 			String folderName = DigitalAssetDeliveryController.getAssetFolderName(digitalAssetVO, contentId, languageId, db);
+			System.out.println("DEBUG (remove me): " + "getLanguageIndependentAssetUrl - " + "fileName: " + fileName + ", folderName: " + folderName);
 
 			logger.info("folderName:" + folderName);
 			String filePath = CmsPropertyHandler.getDigitalAssetPath0() + File.separator + folderName;

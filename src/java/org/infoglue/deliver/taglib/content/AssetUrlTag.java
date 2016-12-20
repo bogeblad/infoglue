@@ -70,8 +70,6 @@ public class AssetUrlTag extends ComponentLogicTag
 			else if(contentId != null)
             {
 	            if(assetKey != null) {
-	    			System.out.println("DEBUG (remove me): 1");
-
 	                produceResult(getController().getAssetUrl(contentId, assetKey));
 	            }
 	            else

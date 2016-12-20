@@ -24,23 +24,18 @@
 package org.infoglue.deliver.controllers.kernel.impl.simple;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
 import java.net.URLDecoder;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 
-import org.apache.log4j.Category;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
@@ -72,14 +67,7 @@ import org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
-import org.infoglue.cms.entities.management.impl.simple.AccessRightGroupImpl;
-import org.infoglue.cms.entities.management.impl.simple.AccessRightImpl;
-import org.infoglue.cms.entities.management.impl.simple.AccessRightRoleImpl;
-import org.infoglue.cms.entities.management.impl.simple.AccessRightUserImpl;
-import org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl;
-import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
-import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -1370,7 +1358,8 @@ public class ContentDeliveryController extends BaseDeliveryController
 		
 		if(digitalAssetVO == null && useLanguageFallback)
 		{
-			digitalAssetVO = getLanguageIndependentAssetVO(contentId, languageId, siteNodeId, db, assetKey, deliveryContext, infoGluePrincipal);
+			Entry<LanguageVO, DigitalAssetVO> assetWithLanguage = getLanguageIndependentAssetVO(contentId, languageId, siteNodeId, db, assetKey, deliveryContext, infoGluePrincipal);
+			digitalAssetVO = assetWithLanguage.getValue();
 		}
 		
 		
@@ -1473,7 +1462,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 	 * many duplicates.
 	 *  
 	 */
-	private DigitalAssetVO getLanguageIndependentAssetVO(Integer contentId, Integer languageId, Integer siteNodeId, Database db, String assetKey, DeliveryContext deliveryContext, InfoGluePrincipal infoGluePrincipal) throws SystemException, Exception
+	private Entry<LanguageVO, DigitalAssetVO> getLanguageIndependentAssetVO(Integer contentId, Integer languageId, Integer siteNodeId, Database db, String assetKey, DeliveryContext deliveryContext, InfoGluePrincipal infoGluePrincipal) throws SystemException, Exception
 	{
 		DigitalAssetVO asset = null;
 		// TODO: This method should only return a asset url depending on settings on the actual content in the future
@@ -1485,6 +1474,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		List langs = LanguageDeliveryController.getLanguageDeliveryController().getAvailableLanguages(db, siteNodeId);
 		List<Integer> checkedLanguages = new ArrayList<Integer>();
 		Iterator lit = langs.iterator();
+		LanguageVO usedLanguage = null;
 		while (lit.hasNext())
 		{
 			LanguageVO langVO = (LanguageVO) lit.next();
@@ -1498,6 +1488,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 					if(digitalAsset != null)
 					{
 						asset = digitalAsset;
+						usedLanguage = langVO;
 						break;
 					}
 				}									
@@ -1532,6 +1523,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 							if(digitalAsset != null)
 							{
 								asset = digitalAsset;
+								usedLanguage = langVO;
 								break;
 							}
 						}									
@@ -1539,8 +1531,9 @@ public class ContentDeliveryController extends BaseDeliveryController
 				}
 			}
 		}
-		
-		return asset;			
+		// Semi-ugly way of creating a tuple to return both asset and the language of the version it came from
+		Entry<LanguageVO, DigitalAssetVO> assetWithLanguage = new SimpleImmutableEntry<LanguageVO, DigitalAssetVO>(usedLanguage, asset);
+		return assetWithLanguage;			
 	}
 
 	private String getLanguageIndependentAssetUrl(Integer contentId, Integer languageId, Integer siteNodeId, Database db, String assetKey, DeliveryContext deliveryContext, InfoGluePrincipal infoGluePrincipal) throws SystemException, Exception
@@ -1548,15 +1541,21 @@ public class ContentDeliveryController extends BaseDeliveryController
 		String assetUrl = "";
 		assetUrl = urlComposer.composeDigitalAssetUrl("", null, "", deliveryContext); 
 		
-		DigitalAssetVO digitalAssetVO = getLanguageIndependentAssetVO(contentId, languageId, siteNodeId, db, assetKey, deliveryContext, infoGluePrincipal);
+		Entry<LanguageVO, DigitalAssetVO> assetWithLanguage = getLanguageIndependentAssetVO(contentId, languageId, siteNodeId, db, assetKey, deliveryContext, infoGluePrincipal);
+		DigitalAssetVO digitalAssetVO = assetWithLanguage.getValue();
+		LanguageVO assetLanguage = assetWithLanguage.getKey();
+		int assetLanguageId = assetLanguage != null ? assetLanguage.getLanguageId() : languageId;
+		
 		if(digitalAssetVO != null)
 		{
-			//String fileName = digitalAssetVO.getDigitalAssetId() + "_" + digitalAssetVO.getAssetFileName();
-			String fileName = DigitalAssetDeliveryController.getAssetFileName(digitalAssetVO, contentId, languageId, db);
-			//String folderName = "" + (digitalAssetVO.getDigitalAssetId().intValue() / 1000);
-			String folderName = DigitalAssetDeliveryController.getAssetFolderName(digitalAssetVO, contentId, languageId, db);
+			logger.info("Asset language: " + assetLanguageId);
+			
+			String fileName = DigitalAssetDeliveryController.getAssetFileName(digitalAssetVO, contentId, assetLanguageId, db);
+			String folderName = DigitalAssetDeliveryController.getAssetFolderName(digitalAssetVO, contentId, assetLanguageId, db);
 
-			logger.info("folderName:" + folderName);
+			logger.info("Language independent fileName: " + fileName);
+			logger.info("Language independent folderName: " + folderName);
+
 			String filePath = CmsPropertyHandler.getDigitalAssetPath0() + File.separator + folderName;
 			
 			int i = 0;
@@ -1566,9 +1565,13 @@ public class ContentDeliveryController extends BaseDeliveryController
 				try
 				{
 					if(masterFile == null)
+					{
 				        masterFile = DigitalAssetDeliveryController.getDigitalAssetDeliveryController().dumpDigitalAsset(digitalAssetVO, fileName, filePath, db);
+					}
 					else
+					{
 					    DigitalAssetDeliveryController.getDigitalAssetDeliveryController().dumpDigitalAsset(masterFile, fileName, filePath);
+					}
 				}
 				catch(Exception e)
 				{
@@ -1580,8 +1583,6 @@ public class ContentDeliveryController extends BaseDeliveryController
 			    if(filePath != null)
 			    	filePath += File.separator + folderName;
 			}
-			//String filePath = CmsPropertyHandler.getDigitalAssetPath();
-			//DigitalAssetDeliveryController.getDigitalAssetDeliveryController().dumpDigitalAsset(digitalAsset, fileName, filePath);
 		
 			SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId, deliveryContext).getSiteNodeVO(db, siteNodeId);
 			String dnsName = CmsPropertyHandler.getWebServerAddress();
@@ -1591,15 +1592,10 @@ public class ContentDeliveryController extends BaseDeliveryController
 				if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
 					dnsName = repositoryVO.getDnsName();
 			}
-			/*
-			SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNode(db, siteNodeId);
-			String dnsName = CmsPropertyHandler.getWebServerAddress();
-			if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
-				dnsName = siteNode.getRepository().getDnsName();
-			*/
 				
-			//assetUrl = dnsName + "/" + CmsPropertyHandler.getDigitalAssetBaseUrl() + "/" + fileName;
-			if(deliveryContext.getUseDownloadAction())
+			boolean useDownloadAction = deliveryContext.getUseDownloadAction();
+			logger.info("Use download action: " + useDownloadAction);
+			if(useDownloadAction)
 				assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, siteNodeId, contentId, languageId, assetKey, deliveryContext, db);
 			else
 				assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, folderName, fileName, deliveryContext); 
@@ -1612,14 +1608,15 @@ public class ContentDeliveryController extends BaseDeliveryController
 	{
 		String assetUrl = "";
 		assetUrl = urlComposer.composeDigitalAssetUrl("", null, "", deliveryContext); 
+		Entry<LanguageVO, DigitalAssetVO> assetWithLanguage = getLanguageIndependentAssetVO(contentId, languageId, siteNodeId, db, assetKey, deliveryContext, infoGluePrincipal);
+		DigitalAssetVO digitalAsset = assetWithLanguage.getValue();
+		LanguageVO assetLanguage = assetWithLanguage.getKey();
+		int assetLanguageId = assetLanguage != null ? assetLanguage.getLanguageId() : languageId;
 		
-		DigitalAssetVO digitalAsset = getLanguageIndependentAssetVO(contentId, languageId, siteNodeId, db, assetKey, deliveryContext, infoGluePrincipal);
 		if(digitalAsset != null)
 		{
-			//String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
-			String fileName = DigitalAssetDeliveryController.getAssetFileName(digitalAsset, contentId, languageId, db);
-			//String folderName = "" + (digitalAssetVO.getDigitalAssetId().intValue() / 1000);
-			String folderName = DigitalAssetDeliveryController.getAssetFolderName(digitalAsset, contentId, languageId, db);
+			String fileName = DigitalAssetDeliveryController.getAssetFileName(digitalAsset, contentId, assetLanguageId, db);
+			String folderName = DigitalAssetDeliveryController.getAssetFolderName(digitalAsset, contentId, assetLanguageId, db);
 
 			String thumbnailFileName = "thumbnail_" + width + "_" + height + "_" + fileName;
 
@@ -1638,21 +1635,12 @@ public class ContentDeliveryController extends BaseDeliveryController
 			        masterThumbFile = DigitalAssetDeliveryController.getDigitalAssetDeliveryController().dumpDigitalAssetThumbnail(fileName, thumbnailFileName, filePath, width, height);
 			    else
 			        DigitalAssetDeliveryController.getDigitalAssetDeliveryController().dumpDigitalAssetThumbnail(fileName, thumbnailFileName, filePath, width, height);
-			    /*
-			    if(masterFile == null)
-			        masterThumbFile = DigitalAssetDeliveryController.getDigitalAssetDeliveryController().dumpDigitalAssetThumbnail(fileName, thumbnailFileName, filePath, width, height);
-				else
-				    DigitalAssetDeliveryController.getDigitalAssetDeliveryController().dumpDigitalAssetThumbnail(fileName, thumbnailFileName, filePath, width, height);
-			    */
 			    
 			    i++;
 				filePath = CmsPropertyHandler.getProperty("digitalAssetPath." + i);
 			    if(filePath != null)
 			    	filePath += File.separator + folderName;
 			}
-
-			//String filePath = CmsPropertyHandler.getDigitalAssetPath();
-			//DigitalAssetDeliveryController.getDigitalAssetDeliveryController().dumpDigitalAssetThumbnail(digitalAsset, fileName, thumbnailFileName, filePath, width, height);
 			
 			SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId, deliveryContext).getSiteNodeVO(db, siteNodeId);
 			String dnsName = CmsPropertyHandler.getWebServerAddress();
@@ -1663,7 +1651,6 @@ public class ContentDeliveryController extends BaseDeliveryController
 					dnsName = repositoryVO.getDnsName();
 			}
 				
-			//assetUrl = dnsName + "/" + CmsPropertyHandler.getDigitalAssetBaseUrl() + "/" + thumbnailFileName;
 			assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, folderName, thumbnailFileName, deliveryContext); 
 		}
 		return assetUrl;	
@@ -1776,10 +1763,8 @@ public class ContentDeliveryController extends BaseDeliveryController
         }
             		
         CacheController.cacheObject(cacheName, assetCacheKey, assetUrl);
-		//System.out.println("Group:" + "content_" + contentId);
-        //CacheController.cacheObjectInAdvancedCache(cacheName, assetCacheKey, assetUrl, new String[]{"content_" + contentId}, true);
-        
-		return assetUrl;
+
+        return assetUrl;
 	}
 
 	/**
@@ -1869,7 +1854,6 @@ public class ContentDeliveryController extends BaseDeliveryController
 
 		Timer t = new Timer();
 		
-		//System.out.println("Adding:" + "content_" + contentId);
 		deliveryContext.addUsedContent(CacheController.getPooledString(1, contentId));
 
 	    SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
@@ -1882,16 +1866,15 @@ public class ContentDeliveryController extends BaseDeliveryController
 	    assetKey = URLDecoder.decode(assetKey, "utf-8");
 	    
 		String cacheName = "assetUrlCacheWithGroups";
-		//String cachedAssetUrl = (String)CacheController.getCachedObject(cacheName, assetCacheKey);
 		String cachedAssetUrl = (String)CacheController.getCachedObjectFromAdvancedCache(cacheName, assetCacheKey);
 		if(cachedAssetUrl != null)
 		{
 			if(logger.isInfoEnabled())
 				logger.info("There was an cached cachedAssetUrl:" + cachedAssetUrl);
-			
+
 			return cachedAssetUrl;
 		}
-		
+
 		String assetUrl = "";
 		assetUrl = urlComposer.composeDigitalAssetUrl("", null, "", deliveryContext); 
 		
@@ -1903,20 +1886,9 @@ public class ContentDeliveryController extends BaseDeliveryController
 			logger.info("languageId:" + languageId);
 			logger.info("masterLanguageVO:" + masterLanguageVO);
 		}
-		/*
-		if(deliveryContext.getUseDownloadAction())
-		{
-			SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNode(db, siteNodeId);
-			String dnsName = CmsPropertyHandler.getWebServerAddress();
-			if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
-				dnsName = siteNode.getRepository().getDnsName();
-
-			return urlComposer.composeDigitalAssetUrl(dnsName, siteNodeId, contentId, languageId, assetKey, deliveryContext);
-		}
-		*/
-		
+	
 		boolean isUnprotectedAsset = getHasUserContentAccess(db, UserControllerProxy.getController().getUser(CmsPropertyHandler.getAnonymousUser()), contentId);
-		
+
 		if(!isUnprotectedAsset)
 		{
         	DigitalAssetVO digitalAsset = DigitalAssetController.getLatestDigitalAssetVO(contentVersion.getId(), assetKey, db);
@@ -1946,9 +1918,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 			
 			if(digitalAsset != null)
 			{
-				//String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
 				String fileName = DigitalAssetDeliveryController.getAssetFileName(digitalAsset, contentId, languageId, db);
-				//String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
 				String folderName = DigitalAssetDeliveryController.getAssetFolderName(digitalAsset, contentId, languageId, db);
 
 				int i = 0;
@@ -1974,7 +1944,6 @@ public class ContentDeliveryController extends BaseDeliveryController
 				    	filePath += File.separator + folderName;
 				}
 
-				//SiteNodeVO siteNodeVO = getSiteNodeVO(db, siteNodeId);
 				String dnsName = CmsPropertyHandler.getWebServerAddress();
 				if(siteNodeVO != null)
 				{
@@ -1983,13 +1952,6 @@ public class ContentDeliveryController extends BaseDeliveryController
 						dnsName = repositoryVO.getDnsName();
 				}
 
-				/*
-				SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNode(db, siteNodeId);
-				String dnsName = CmsPropertyHandler.getWebServerAddress();
-				if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
-					dnsName = siteNode.getRepository().getDnsName();
-				*/
-					
 				if(deliveryContext.getUseDownloadAction())
 					assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, siteNodeId, contentId, languageId, assetKey, deliveryContext, db);
 				else
@@ -2011,9 +1973,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 				
 				if(digitalAsset != null)
 				{
-					//String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
 					String fileName = DigitalAssetDeliveryController.getAssetFileName(digitalAsset, contentId, languageId, db);
-					//String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
 					String folderName = DigitalAssetDeliveryController.getAssetFolderName(digitalAsset, contentId, languageId, db);
 					
 					int i = 0;
@@ -2039,7 +1999,6 @@ public class ContentDeliveryController extends BaseDeliveryController
 			    			filePath += File.separator + folderName;
 					}
 
-					//SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNodeVO(db, siteNodeId);
 					String dnsName = CmsPropertyHandler.getWebServerAddress();
 					if(siteNodeVO != null)
 					{
@@ -2047,12 +2006,6 @@ public class ContentDeliveryController extends BaseDeliveryController
 						if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
 							dnsName = repositoryVO.getDnsName();
 					}
-					/*
-					SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNode(db, siteNodeId);
-					String dnsName = CmsPropertyHandler.getWebServerAddress();
-					if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
-						dnsName = siteNode.getRepository().getDnsName();
-					*/
 						
 					if(deliveryContext.getUseDownloadAction())
 						assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, siteNodeId, contentId, languageId, assetKey, deliveryContext, db);
@@ -2425,9 +2378,10 @@ public class ContentDeliveryController extends BaseDeliveryController
 			//DigitalAsset digitalAsset =	(assetKey == null) ? getLatestDigitalAsset(contentVersion) : getDigitalAssetWithKey(contentVersion, assetKey); 
 			DigitalAssetVO digitalAsset =	(assetKey == null) ? DigitalAssetController.getLatestDigitalAssetVO(contentVersion.getId(), db) : DigitalAssetController.getLatestDigitalAssetVO(contentVersion.getId(), assetKey, db);
 			
-			if(digitalAsset == null)
-				digitalAsset = getLanguageIndependentAssetVO(contentId, languageId, siteNodeId, db, assetKey, deliveryContext, infoGluePrincipal);
-				
+			if(digitalAsset == null) {
+				Entry<LanguageVO, DigitalAssetVO> assetWithLanguage = getLanguageIndependentAssetVO(contentId, languageId, siteNodeId, db, assetKey, deliveryContext, infoGluePrincipal);
+				digitalAsset = assetWithLanguage.getValue();
+			}
 			if(digitalAsset != null)
 			{
 				fileSize = digitalAsset.getAssetFileSize();
@@ -3399,16 +3353,10 @@ public class ContentDeliveryController extends BaseDeliveryController
 	{
 		Integer protectedContentId = null;
 		
-		//org.infoglue.deliver.util.Timer t = new org.infoglue.deliver.util.Timer();
 	    Content content = (Content)getObjectWithId(SmallContentImpl.class, contentId, db);
-	    //Content content = (Content)getObjectWithId(ContentImpl.class, contentId, db);
-	    	    
-    	protectedContentId = getProtectedContentId(db, content);
+    	protectedContentId = getProtectedContentId(db, content);		
 
-    	//totalLoadTime = totalLoadTime + t.getElapsedTimeNanos();
-    	//System.out.println("totalLoadTime:" + totalLoadTime / 1000000);
-		
-		return protectedContentId;
+    	return protectedContentId;
 	}
 
 	

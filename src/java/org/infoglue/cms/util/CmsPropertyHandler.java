@@ -3300,4 +3300,9 @@ public class CmsPropertyHandler
 		return Boolean.parseBoolean(value);
 	}
 
+	public static String getExternalImageOptimizer()
+	{
+		return getServerNodeProperty("digitalAssetOptimizer", true, null);
+	}
+
 }

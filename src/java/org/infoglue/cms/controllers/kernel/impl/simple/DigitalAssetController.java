@@ -30,7 +30,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -54,7 +53,6 @@ import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.applications.common.VisualFormatter;
-import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
@@ -65,10 +63,8 @@ import org.infoglue.cms.entities.content.impl.simple.DigitalAssetImpl;
 import org.infoglue.cms.entities.content.impl.simple.MediumContentVersionImpl;
 import org.infoglue.cms.entities.content.impl.simple.MediumDigitalAssetImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl;
-import org.infoglue.cms.entities.content.impl.simple.SmallStateContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
-import org.infoglue.cms.entities.management.GeneralOQLResult;
 import org.infoglue.cms.entities.management.GroupProperties;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RoleProperties;
@@ -80,10 +76,10 @@ import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.graphics.ThumbnailGenerator;
+import org.infoglue.common.util.DigitalAssetOptimizer;
 import org.infoglue.deliver.controllers.kernel.impl.simple.LanguageDeliveryController;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.HttpHelper;
-import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Timer;
 
 /**
@@ -878,7 +874,7 @@ public class DigitalAssetController extends BaseController
 		if(digitalAssetVOList != null)
 		{
 			if(logger.isInfoEnabled())
-				logger.info("There was an cached digitalAssetVOList:" + digitalAssetVOList);
+				logger.info("There was a cached digitalAssetVOList:" + digitalAssetVOList);
 
 			return digitalAssetVOList;
 		}
@@ -955,7 +951,7 @@ public class DigitalAssetController extends BaseController
 		if(digitalAssetVOList != null)
 		{
 			if(logger.isInfoEnabled())
-				logger.info("There was an cached digitalAssetVOList:" + digitalAssetVOList);
+				logger.info("There was a cached digitalAssetVOList:" + digitalAssetVOList);
 			
 			return digitalAssetVOList;
 		}
@@ -2243,7 +2239,7 @@ public class DigitalAssetController extends BaseController
 		if(digitalAssetVO != null)
 		{
 			if(logger.isInfoEnabled())
-				logger.info("There was an cached digitalAssetVO:" + digitalAssetVO);
+				logger.info("There was a cached digitalAssetVO:" + digitalAssetVO);
 			
 			return digitalAssetVO;
 		}
@@ -2311,7 +2307,7 @@ public class DigitalAssetController extends BaseController
 		if(digitalAssetVO != null)
 		{
 			if(logger.isInfoEnabled())
-				logger.info("There was an cached digitalAssetVO:" + digitalAssetVO);
+				logger.info("There was a cached digitalAssetVO:" + digitalAssetVO);
 
 			return digitalAssetVO;
 		}
@@ -2400,7 +2396,7 @@ public class DigitalAssetController extends BaseController
 		if(!forceDump && outputFile.exists())
 		{
 			if(logger.isInfoEnabled())
-				logger.info("The file allready exists so we don't need to dump it again..");
+				logger.info("The file already exists so we don't need to dump it again..");
 
 			return true;
 		}
@@ -2454,6 +2450,15 @@ public class DigitalAssetController extends BaseController
 							if (forceDump)
 							{
 								outputFile.delete();
+							}
+							if (DigitalAssetOptimizer.hasDigitalAssetOptimizerEnabled())
+							{
+								File optimizedFile = DigitalAssetOptimizer.getInstance().optimizeDigitalAsset(digitalAssetVO, tmpOutputFile);
+								if (optimizedFile != null)
+								{
+									tmpOutputFile.delete();
+									tmpOutputFile = optimizedFile;
+								}
 							}
 							tmpOutputFile.renameTo(outputFile);
 							logger.info("Renamed to" + outputFile.getAbsolutePath() + "=" + outputFile.exists());
@@ -2537,7 +2542,7 @@ public class DigitalAssetController extends BaseController
 		if(outputFile.exists())
 		{
 			if(logger.isInfoEnabled())
-				logger.info("The file allready exists so we don't need to dump it again..");
+				logger.info("The file already exists so we don't need to dump it again..");
 		
 			return true;
 		}
@@ -2576,6 +2581,15 @@ public class DigitalAssetController extends BaseController
 				{
 					if(tmpOutputFile.length() == digitalAsset.getAssetFileSize())
 					{
+						if (DigitalAssetOptimizer.hasDigitalAssetOptimizerEnabled())
+						{
+							File optimizedFile = DigitalAssetOptimizer.getInstance().optimizeDigitalAsset(digitalAsset.getValueObject(), tmpOutputFile);
+							if (optimizedFile != null)
+							{
+								tmpOutputFile.delete();
+								tmpOutputFile = optimizedFile;
+							}
+						}
 						logger.info("written file:" + tmpOutputFile.getAbsolutePath() + " - renaming it to " + outputFile.getAbsolutePath());	
 						tmpOutputFile.renameTo(outputFile);
 						logger.info("Renamed to" + outputFile.getAbsolutePath() + "=" + outputFile.exists());

@@ -557,6 +557,7 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.useFreeMarker" "useFreeMarker" "$this.getPropertyValue('useFreeMarker')" "$!cmsPH.useFreeMarker")
 				#editPropertyFieldCSS("ServerNode.property.errorBusyUrl" "errorBusyUrl" "$this.getPropertyValue('errorBusyUrl')" "51" "$!serverNodeId" "$!cmsPH.errorBusyUrl")
 				#editPropertyFieldCSS("ServerNode.property.externalThumbnailGeneration" "externalThumbnailGeneration" "$this.getPropertyValue('externalThumbnailGeneration')" "51" "$!serverNodeId" "$!cmsPH.externalThumbnailGeneration")
+				#editPropertyFieldCSS("ServerNode.property.digitalAssetOptimizer" "digitalAssetOptimizer" "$this.getPropertyValue('digitalAssetOptimizer')" "51" "$!serverNodeId" "$!cmsPH.digitalAssetOptimizer")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.enablePortal" "enablePortal" "$this.getPropertyValue('enablePortal')" "$!cmsPH.enablePortal")
 				#editPropertyFieldCSS("ServerNode.property.portletBase" "portletBase" "$this.getPropertyValue('portletBase')" "51" "$!serverNodeId" "$!cmsPH.portletBase")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.logDatabaseMessages" "logDatabaseMessages" "$this.getPropertyValue('logDatabaseMessages')" "$!cmsPH.logDatabaseMessages")

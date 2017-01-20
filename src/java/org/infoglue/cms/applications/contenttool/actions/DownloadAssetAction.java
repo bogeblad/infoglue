@@ -23,11 +23,14 @@
 
 package org.infoglue.cms.applications.contenttool.actions;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
+import org.infoglue.cms.entities.content.SmallestContentVersionVO;
 
 /**
 * This action downloads an asset from the system.
@@ -56,16 +59,30 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 			}
 			catch(Exception e)
 			{
-				logger.warn("Could not download asset on contentId:" + contentId + " (" + languageId + "/" + assetKey + ")");
+				logger.info("Could not download asset on contentId:" + contentId + " (" + languageId + "/" + assetKey + ")");
 			}
 		} else if (assetId != null) {
 			try 
 			{
-				assetUrl = DigitalAssetController.getDigitalAssetUrl(assetId, false);
+				// Check if this asset belongs to a published content version
+				boolean published = false;
+				List<SmallestContentVersionVO> contentVersions = DigitalAssetController.getContentVersionVOListConnectedToAssetWithId(assetId);
+				for (SmallestContentVersionVO contentVersion : contentVersions) {
+					if (contentVersion.getStateId() == 3) {
+						published = true;
+					}
+				}
+				
+				// Only create url to asset if it belongs to a published content version
+				if (published) {
+					assetUrl = DigitalAssetController.getDigitalAssetUrl(assetId, false);
+				} else {
+					logger.info("Could not download asset on assetId:" + assetId);
+				}
 			}
 			catch(Exception e)
 			{
-				logger.warn("Could not download asset on assetId:" + assetId);
+				logger.info("Could not download asset on assetId:" + assetId, e);
 			}
 		}
 

@@ -33,6 +33,8 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.SmallestContentVersionVO;
+import org.infoglue.cms.util.CmsPropertyHandler;
+import org.infoglue.deliver.controllers.kernel.impl.simple.TemplateController;
 
 /**
 * This action downloads an asset from the system.
@@ -69,10 +71,13 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 				// Check if this asset belongs to the latest active content version
 				boolean assetAvailable = false;
 				List<SmallestContentVersionVO> contentVersions = DigitalAssetController.getContentVersionVOListConnectedToAssetWithId(assetId);
-				for (SmallestContentVersionVO contentVersion : contentVersions) {
+				int operatingMode = new Integer(CmsPropertyHandler.getOperatingMode());
+						
+				for (SmallestContentVersionVO currentVersion : contentVersions) {
 					// Get the latest active content version that matches both the current version's contentId and its languageId
-					ContentVersionVO latestActiveVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVersion.getContentId(), contentVersion.getLanguageId());
-					if (contentVersion.getId().equals(latestActiveVersion.getId())) {
+					ContentVersionVO latestActiveVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(currentVersion.getContentId(), currentVersion.getLanguageId());
+					// Check if the current version matches the latest active version and if it is visible in the current operating mode
+					if (currentVersion.getId().equals(latestActiveVersion.getId()) && currentVersion.getStateId() >= operatingMode) {
 						assetAvailable = true;
 					}
 				}

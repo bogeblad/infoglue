@@ -29,7 +29,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
+import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.SmallestContentVersionVO;
 
 /**
@@ -64,20 +66,22 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 		} else if (assetId != null) {
 			try 
 			{
-				// Check if this asset belongs to a published content version
-				boolean published = false;
+				// Check if this asset belongs to the latest active content version
+				boolean assetAvailable = false;
 				List<SmallestContentVersionVO> contentVersions = DigitalAssetController.getContentVersionVOListConnectedToAssetWithId(assetId);
 				for (SmallestContentVersionVO contentVersion : contentVersions) {
-					if (contentVersion.getStateId() == 3) {
-						published = true;
+					// Get the latest active content version that matches both the current version's contentId and its languageId
+					ContentVersionVO latestActiveVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVersion.getContentId(), contentVersion.getLanguageId());
+					if (contentVersion.getId().equals(latestActiveVersion.getId())) {
+						assetAvailable = true;
 					}
 				}
 				
-				// Only create url to asset if it belongs to a published content version
-				if (published) {
+				// Only create url to asset if it belongs to the latest active content version, otherwise it would be possible to access unpublished assets.
+				if (assetAvailable) {
 					assetUrl = DigitalAssetController.getDigitalAssetUrl(assetId, false);
 				} else {
-					logger.info("Could not download asset on assetId:" + assetId);
+					logger.info("Asset not available in the latest active content version. AssetId:" + assetId);
 				}
 			}
 			catch(Exception e)

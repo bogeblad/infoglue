@@ -23,11 +23,18 @@
 
 package org.infoglue.cms.applications.contenttool.actions;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
+import org.infoglue.cms.entities.content.ContentVersionVO;
+import org.infoglue.cms.entities.content.SmallestContentVersionVO;
+import org.infoglue.cms.util.CmsPropertyHandler;
+import org.infoglue.deliver.controllers.kernel.impl.simple.TemplateController;
 
 /**
 * This action downloads an asset from the system.
@@ -56,16 +63,35 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 			}
 			catch(Exception e)
 			{
-				logger.warn("Could not download asset on contentId:" + contentId + " (" + languageId + "/" + assetKey + ")");
+				logger.info("Could not download asset on contentId:" + contentId + " (" + languageId + "/" + assetKey + ")");
 			}
 		} else if (assetId != null) {
 			try 
 			{
-				assetUrl = DigitalAssetController.getDigitalAssetUrl(assetId, false);
+				// Check if this asset belongs to the latest active content version
+				boolean assetAvailable = false;
+				List<SmallestContentVersionVO> contentVersions = DigitalAssetController.getContentVersionVOListConnectedToAssetWithId(assetId);
+				int operatingMode = new Integer(CmsPropertyHandler.getOperatingMode());
+						
+				for (SmallestContentVersionVO currentVersion : contentVersions) {
+					// Get the latest active content version that matches both the current version's contentId and its languageId
+					ContentVersionVO latestActiveVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(currentVersion.getContentId(), currentVersion.getLanguageId());
+					// Check if the current version matches the latest active version and if it is visible in the current operating mode
+					if (currentVersion.getId().equals(latestActiveVersion.getId()) && currentVersion.getStateId() >= operatingMode) {
+						assetAvailable = true;
+					}
+				}
+				
+				// Only create url to asset if it belongs to the latest active content version, otherwise it would be possible to access unpublished assets.
+				if (assetAvailable) {
+					assetUrl = DigitalAssetController.getDigitalAssetUrl(assetId, false);
+				} else {
+					logger.info("Asset not available in the latest active content version. AssetId:" + assetId);
+				}
 			}
 			catch(Exception e)
 			{
-				logger.warn("Could not download asset on assetId:" + assetId);
+				logger.info("Could not download asset on assetId:" + assetId, e);
 			}
 		}
 

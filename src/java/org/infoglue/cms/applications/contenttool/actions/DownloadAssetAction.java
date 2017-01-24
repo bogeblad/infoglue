@@ -32,7 +32,10 @@ import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.entities.content.ContentVersionVO;
+import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.content.SmallestContentVersionVO;
+import org.infoglue.cms.exception.Bug;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.controllers.kernel.impl.simple.TemplateController;
 
@@ -56,37 +59,38 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 	protected String doExecute() throws Exception 
 	{
 		String assetUrl = null;
-		if (contentId != null && assetKey != null && languageId != null) {
+		
+		if (contentId != null && assetKey != null && languageId != null)
+		{
 			try
 			{
-				assetUrl = DigitalAssetController.getDigitalAssetUrl(contentId, languageId, assetKey, true);
+				// Only create url to asset if it belongs to the latest active content version, otherwise it would be possible to access unpublished assets.
+				if (assetAvailableInCurrentMode(contentId, languageId, assetKey))
+				{
+					assetUrl = DigitalAssetController.getDigitalAssetUrl(contentId, languageId, assetKey, true);
+				}
+				else
+				{
+					logger.info("Asset not available in the latest active content version. AssetId: " + assetId + ", contentId:" + contentId + " (" + languageId + "/" + assetKey + ")");
+				}
 			}
 			catch(Exception e)
 			{
-				logger.info("Could not download asset on contentId:" + contentId + " (" + languageId + "/" + assetKey + ")");
+				logger.info("Could not download asset on contentId:" + contentId + " (" + languageId + "/" + assetKey + ")", e);
 			}
-		} else if (assetId != null) {
+		}
+		else if (assetId != null)
+		{
 			try 
 			{
-				// Check if this asset belongs to the latest active content version
-				boolean assetAvailable = false;
-				List<SmallestContentVersionVO> contentVersions = DigitalAssetController.getContentVersionVOListConnectedToAssetWithId(assetId);
-				int operatingMode = new Integer(CmsPropertyHandler.getOperatingMode());
-						
-				for (SmallestContentVersionVO currentVersion : contentVersions) {
-					// Get the latest active content version that matches both the current version's contentId and its languageId
-					ContentVersionVO latestActiveVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(currentVersion.getContentId(), currentVersion.getLanguageId());
-					// Check if the current version matches the latest active version and if it is visible in the current operating mode
-					if (currentVersion.getId().equals(latestActiveVersion.getId()) && currentVersion.getStateId() >= operatingMode) {
-						assetAvailable = true;
-					}
-				}
-				
 				// Only create url to asset if it belongs to the latest active content version, otherwise it would be possible to access unpublished assets.
-				if (assetAvailable) {
+				if (assetAvailableInCurrentMode(assetId))
+				{
 					assetUrl = DigitalAssetController.getDigitalAssetUrl(assetId, false);
-				} else {
-					logger.info("Asset not available in the latest active content version. AssetId:" + assetId);
+				}
+				else
+				{
+					logger.info("Asset not available in the latest active content version. AssetId: " + assetId);
 				}
 			}
 			catch(Exception e)
@@ -107,6 +111,57 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 		}
 		
 		return NONE;
+	}
+	
+	
+	public boolean assetAvailableInCurrentMode(int contentId, int languageId, String assetKey)
+	{
+		DigitalAssetVO assetVO;
+		try {
+			assetVO = DigitalAssetController.getDigitalAssetVO(contentId, languageId, assetKey, true);
+			if (assetVO != null) {
+				assetId = assetVO.getId();
+				return assetAvailableInCurrentMode(assetId);
+			}
+		} catch (SystemException | Bug e) {
+			logger.info("Could not check asset availability for contentId:" + contentId + " (" + languageId + "/" + assetKey + ")", e);
+		}
+		return false;
+	}
+	
+	/** 
+	 * Check if this asset belongs to the latest active content version
+	 */
+	public boolean assetAvailableInCurrentMode(int assetId)
+	{
+		boolean assetAvailable = false;
+		try 
+		{
+			List<SmallestContentVersionVO> contentVersions = DigitalAssetController.getContentVersionVOListConnectedToAssetWithId(assetId);
+			int operatingMode = new Integer(CmsPropertyHandler.getOperatingMode());
+
+			for (SmallestContentVersionVO currentVersion : contentVersions)
+			{
+				// Get the latest active content version that matches both the current version's contentId and its languageId
+				try 
+				{
+					ContentVersionVO latestActiveVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(currentVersion.getContentId(), currentVersion.getLanguageId());
+					// Check if the current version matches the latest active version and if it is visible in the current operating mode
+					if (currentVersion.getId().equals(latestActiveVersion.getId()) && currentVersion.getStateId() >= operatingMode)
+					{
+						assetAvailable = true;
+					}
+				} catch (SystemException | Bug e) 
+				{
+					logger.info("Error when getting latest active versions for content version id " + currentVersion.getId(), e);
+				}
+			}
+		}
+		catch (SystemException | Bug e) 
+		{
+			logger.info("Error when getting content version list for asset id " + assetId, e);
+		}
+		return assetAvailable;
 	}
 
 	public String getAssetKey() 

@@ -1833,6 +1833,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 				dnsName = siteNode.getRepository().getDnsName();
 			*/
 			assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, folderName, fileName, deliveryContext); 
+			logger.info("assetUrl: " + assetUrl);
 		}
             		
         CacheController.cacheObject(cacheName, assetCacheKey, assetUrl);
@@ -1877,7 +1878,8 @@ public class ContentDeliveryController extends BaseDeliveryController
 
 		String assetUrl = "";
 		assetUrl = urlComposer.composeDigitalAssetUrl("", null, "", deliveryContext); 
-		
+		logger.info("assetUrl(0): " + assetUrl);
+
 		SmallestContentVersionVO contentVersion = getSmallestContentVersionVO(siteNodeId, contentId, languageId, db, useLanguageFallback, deliveryContext, infoGluePrincipal);
 		ContentVO contentVO = this.getContentVO(db, contentId, deliveryContext);
 		LanguageVO masterLanguageVO = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForRepository(contentVO.getRepositoryId(), db);
@@ -1891,35 +1893,35 @@ public class ContentDeliveryController extends BaseDeliveryController
 
 		if(!isUnprotectedAsset)
 		{
+			logger.info("isUnprotectedAsset: " + isUnprotectedAsset + " (contentId: " + contentId + ", assetKey: " + assetKey + ")");
         	DigitalAssetVO digitalAsset = DigitalAssetController.getLatestDigitalAssetVO(contentVersion.getId(), assetKey, db);
         	if(digitalAsset == null)
         		return "";
         	
-			//SiteNodeVO siteNodeVO = getSiteNodeVO(db, siteNodeId);
 			String dnsName = CmsPropertyHandler.getWebServerAddress();
 			if(siteNodeVO != null)
 			{
+				logger.info("siteNodeId: " + siteNodeVO.getId() + " (contentId: " + contentId + ", assetKey: " + assetKey + ")");
 				RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), db);
 				if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
 					dnsName = repositoryVO.getDnsName();
 			}
-			/*
-			SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNodeVO(db, siteNodeId);
-			String dnsName = CmsPropertyHandler.getWebServerAddress();
-			if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
-				dnsName = siteNode.getRepository().getDnsName();
-			*/
 
 			return urlComposer.composeDigitalAssetUrl(dnsName, siteNodeId, contentId, languageId, assetKey, deliveryContext, db);
 		}
 		else if(contentVersion != null) 
         {
+			logger.info("contentVersionId: " + contentVersion.getId() + " (contentId: " + contentId + ", assetKey: " + assetKey + ")");
+
         	DigitalAssetVO digitalAsset = DigitalAssetController.getLatestDigitalAssetVO(contentVersion.getId(), assetKey, db);
 			
 			if(digitalAsset != null)
 			{
+				logger.info("digitalAssetId: " + digitalAsset.getId() + " (contentId: " + contentId + ", assetKey: " + assetKey + ")");
 				String fileName = DigitalAssetDeliveryController.getAssetFileName(digitalAsset, contentId, languageId, db);
 				String folderName = DigitalAssetDeliveryController.getAssetFolderName(digitalAsset, contentId, languageId, db);
+
+				logger.info("fileName: " + fileName + ", folderName: " + folderName + " (contentId: " + contentId + ", assetKey: " + assetKey + ")");
 
 				int i = 0;
 				File masterFile = null;
@@ -1947,19 +1949,28 @@ public class ContentDeliveryController extends BaseDeliveryController
 				String dnsName = CmsPropertyHandler.getWebServerAddress();
 				if(siteNodeVO != null)
 				{
+					logger.info("siteNodeId: " + siteNodeVO.getId() + " (contentId: " + contentId + ", assetKey: " + assetKey + ")");
+
 					RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), db);
 					if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
 						dnsName = repositoryVO.getDnsName();
 				}
 
 				if(deliveryContext.getUseDownloadAction())
+				{
 					assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, siteNodeId, contentId, languageId, assetKey, deliveryContext, db);
+					logger.info("assetUrl(1): " + assetUrl);
+				}
 				else
+				{
 					assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, folderName, fileName, deliveryContext); 
+					logger.info("assetUrl(2): " + assetUrl);
+				}
 			}
 			else if(useLanguageFallback)
 			{
 				assetUrl = getLanguageIndependentAssetUrl(contentId, languageId, siteNodeId, db, assetKey, deliveryContext, infoGluePrincipal);
+				logger.info("assetUrl(3): " + assetUrl);
 			}
 		}				
 		else if(useLanguageFallback && languageId != null && masterLanguageVO != null && languageId.intValue() != masterLanguageVO.getId().intValue())
@@ -2008,13 +2019,20 @@ public class ContentDeliveryController extends BaseDeliveryController
 					}
 						
 					if(deliveryContext.getUseDownloadAction())
+					{
 						assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, siteNodeId, contentId, languageId, assetKey, deliveryContext, db);
-					else
-						assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, folderName, fileName, deliveryContext); 
+						logger.info("assetUrl(4): " + assetUrl);
+					}
+						else
+						{
+							assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, folderName, fileName, deliveryContext); 
+							logger.info("assetUrl(5): " + assetUrl);
+						}
 				}
 				else if(useLanguageFallback)
 				{
 					assetUrl = getLanguageIndependentAssetUrl(contentId, languageId, siteNodeId, db, assetKey, deliveryContext, infoGluePrincipal);
+					logger.info("assetUrl(6): " + assetUrl);
 				}
 			}
 		}

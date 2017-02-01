@@ -146,7 +146,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		ContentVO contentVO = (ContentVO)CacheController.getCachedObjectFromAdvancedCache("contentCache", key);
 		if(contentVO != null)
 		{
-			//logger.info("There was an cached contentVO:" + contentVO);
+			//logger.info("There was a cached contentVO:" + contentVO);
 		}
 		else
 		{
@@ -192,7 +192,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		contentVO = (ContentVO)CacheController.getCachedObject("rootContentCache", key);
 		if(contentVO != null)
 		{
-		    logger.info("There was an cached master root contentVO:" + contentVO.getName());
+		    logger.info("There was a cached master root contentVO:" + contentVO.getName());
 		}
 		else
 		{
@@ -228,7 +228,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		ContentVO contentVO = (ContentVO)CacheController.getCachedObjectFromAdvancedCache("contentCache", key);
 		if(contentVO != null)
 		{
-			//logger.info("There was an cached contentVO:" + contentVO);
+			//logger.info("There was a cached contentVO:" + contentVO);
 		}
 		else
 		{
@@ -267,7 +267,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		
 		if(contentVersionVO != null)
 		{
-			//logger.info("There was an cached contentVersionVO:" + contentVersionVO.getContentVersionId());
+			//logger.info("There was a cached contentVersionVO:" + contentVersionVO.getContentVersionId());
 		}
 		else
 		{
@@ -304,7 +304,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		
 		if(contentVersionVO != null)
 		{
-			//logger.info("There was an cached contentVersionVO:" + contentVersionVO.getContentVersionId());
+			//logger.info("There was a cached contentVersionVO:" + contentVersionVO.getContentVersionId());
 		}
 		else
 		{
@@ -539,7 +539,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		Object object = CacheController.getCachedObjectFromAdvancedCache("contentVersionIdCache", versionKey);
 		if(object instanceof NullObject)
 		{
-			logger.info("There was an cached parentSiteNodeVO but it was null:" + object);
+			logger.info("There was a cached parentSiteNodeVO but it was null:" + object);
 		}
 		else if(object != null)
 		{
@@ -592,7 +592,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		Object object = CacheController.getCachedObjectFromAdvancedCache("contentVersionCache", versionKey);
 		if(object instanceof NullObject)
 		{
-			logger.info("There was an cached contentVersionVO but it was null:" + object);
+			logger.info("There was a cached contentVersionVO but it was null:" + object);
 		}
 		else if(object != null)
 		{
@@ -615,7 +615,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 			Object smallestContentVersionVOCandidate = CacheController.getCachedObjectFromAdvancedCache("contentVersionCache", smallVersionKey);
 			if(smallestContentVersionVOCandidate instanceof NullObject)
 			{
-				//logger.info("There was an cached content version but it was null:" + smallestContentVersionVOCandidate);
+				//logger.info("There was a cached content version but it was null:" + smallestContentVersionVOCandidate);
 			}
 			else if(smallestContentVersionVOCandidate != null)
 			{
@@ -686,7 +686,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		Object object = CacheController.getCachedObjectFromAdvancedCache("contentVersionCache", versionKey);
 		if(object instanceof NullObject)
 		{
-			logger.info("There was an cached SmallestContentVersionVO but it was null:" + object);
+			logger.info("There was a cached SmallestContentVersionVO but it was null:" + object);
 		}
 		else if(object != null)
 		{
@@ -993,7 +993,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 			if(attribute != null)
 			{
 				contentVersionId = (Integer)CacheController.getCachedObjectFromAdvancedCache(contentVersionIdCacheName, versionKey);
-				//logger.info("There was an cached content attribute:" + attribute);
+				//logger.info("There was a cached content attribute:" + attribute);
 			}
 			else
 			{
@@ -1379,7 +1379,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		if(digitalAssetVOList != null)
 		{
 			if(logger.isInfoEnabled())
-				logger.info("There was an cached digitalAssetVOList:" + digitalAssetVOList);
+				logger.info("There was a cached digitalAssetVOList:" + digitalAssetVOList);
 			
 			return digitalAssetVOList;
 		}
@@ -1575,7 +1575,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 				}
 				catch(Exception e)
 				{
-					logger.warn("An file could not be written:" + e.getMessage(), e);
+					logger.warn("A file could not be written:" + e.getMessage(), e);
 				}
 			    
 			    i++;
@@ -1685,16 +1685,15 @@ public class ContentDeliveryController extends BaseDeliveryController
 	 * It selects the correct contentVersion depending on the language and then gets the digitalAsset associated.
 	 * If the asset is cached on disk it returns that path imediately it's ok - otherwise it dumps it fresh.
 	 */
-
 	public String getAssetUrl(Database db, Integer contentId, Integer languageId, Integer siteNodeId, boolean useLanguageFallback, DeliveryContext deliveryContext, InfoGluePrincipal infoGluePrincipal) throws SystemException, Exception
 	{
 	    String assetCacheKey = "" + languageId + "_" + contentId + "_" + siteNodeId + "_" + useLanguageFallback;
-		logger.info("assetCacheKey:" + assetCacheKey);
+	    logger.info("assetCacheKey: " + assetCacheKey);
 		String cacheName = "assetUrlCache";
 		String cachedAssetUrl = (String)CacheController.getCachedObject(cacheName, assetCacheKey);
 		if(cachedAssetUrl != null)
 		{
-			logger.info("There was an cached cachedAssetUrl:" + cachedAssetUrl);
+			logger.info("There was a cached cachedAssetUrl: " + cachedAssetUrl);
 			return cachedAssetUrl;
 		}
 		
@@ -1703,14 +1702,17 @@ public class ContentDeliveryController extends BaseDeliveryController
 		SmallestContentVersionVO contentVersion = getSmallestContentVersionVO(siteNodeId, contentId, languageId, db, useLanguageFallback, deliveryContext, infoGluePrincipal);
 		if (contentVersion != null) 
         {
+			logger.info("contentVersionId: " + contentVersion.getId() + " (contentId: " + contentId + ")");
+
     		DigitalAssetVO digitalAsset = DigitalAssetController.getLatestDigitalAssetVO(contentVersion.getId(), db);
     		
 			if(digitalAsset != null)
 			{
-				//String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
-				String fileName = DigitalAssetDeliveryController.getAssetFileName(digitalAsset, contentId, languageId, db);
-				//String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
-				String folderName = DigitalAssetDeliveryController.getAssetFolderName(digitalAsset, contentId, languageId, db);
+				logger.info("digitalAssetId: " + digitalAsset.getId() + " (contentId: " + contentId + ")");
+				String fileName = DigitalAssetDeliveryController.getAssetFileName(digitalAsset, contentId, contentVersion.getLanguageId(), db);
+				String folderName = DigitalAssetDeliveryController.getAssetFolderName(digitalAsset, contentId, contentVersion.getLanguageId(), db);
+
+				logger.info("fileName: " + fileName + ", folderName: " + folderName + " (contentId: " + contentId + ")");
 
 				int i = 0;
 				File masterFile = null;
@@ -1726,39 +1728,35 @@ public class ContentDeliveryController extends BaseDeliveryController
 					}
 					catch(Exception e)
 					{
-						logger.warn("An file could not be written:" + e.getMessage(), e);
+						logger.warn("A file could not be written:" + e.getMessage(), e);
 					}
 					
 				    i++;
 					filePath = CmsPropertyHandler.getProperty("digitalAssetPath." + i);
 				    if(filePath != null)
+				    {
 				    	filePath += File.separator + folderName;
+				    }
 				}
 
-				//String filePath = CmsPropertyHandler.getDigitalAssetPath();
-				//DigitalAssetDeliveryController.getDigitalAssetDeliveryController().dumpDigitalAsset(digitalAsset, fileName, filePath);
-				
 				SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId, deliveryContext).getSiteNodeVO(db, siteNodeId);
 				String dnsName = CmsPropertyHandler.getWebServerAddress();
 				if(siteNodeVO != null)
 				{
+					logger.info("siteNodeId: " + siteNodeVO.getId() + " (contentId: " + contentId + ")");
+
 					RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), db);
 					if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
 						dnsName = repositoryVO.getDnsName();
 				}
-				/*
-				SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNode(db, siteNodeId);
-				String dnsName = CmsPropertyHandler.getWebServerAddress();
-				if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
-					dnsName = siteNode.getRepository().getDnsName();
-				*/
 
-				//assetUrl = dnsName + "/" + CmsPropertyHandler.getDigitalAssetBaseUrl() + "/" + fileName;
 				assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, folderName, fileName, deliveryContext); 
+				logger.debug("assetUrl (1): " + assetUrl);
 			}
 			else
 			{
 				assetUrl = getLanguageIndependentAssetUrl(contentId, languageId, siteNodeId, db, null, deliveryContext, infoGluePrincipal);
+				logger.debug("assetUrl (2): " + assetUrl);
 			}
         }
             		
@@ -1781,7 +1779,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		String cachedAssetUrl = (String)CacheController.getCachedObject(cacheName, assetCacheKey);
 		if(cachedAssetUrl != null)
 		{
-			logger.info("There was an cached cachedAssetUrl:" + cachedAssetUrl);
+			logger.info("There was a cached cachedAssetUrl:" + cachedAssetUrl);
 			return cachedAssetUrl;
 		}
 		
@@ -1790,9 +1788,7 @@ public class ContentDeliveryController extends BaseDeliveryController
     	DigitalAssetVO digitalAsset = DigitalAssetController.getSmallDigitalAssetVOWithId(digitalAssetId, db);
 		if(digitalAsset != null)
 		{
-			//String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
 			String fileName = DigitalAssetDeliveryController.getAssetFileName(digitalAsset, null, null, db);
-			//String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
 			String folderName = DigitalAssetDeliveryController.getAssetFolderName(digitalAsset, null, null, db);
 
 			int i = 0;
@@ -1802,20 +1798,22 @@ public class ContentDeliveryController extends BaseDeliveryController
 			{
 				try
 				{
-				    if(masterFile == null)
+				    if (masterFile == null)
 				        masterFile = DigitalAssetDeliveryController.getDigitalAssetDeliveryController().dumpDigitalAsset(digitalAsset, fileName, filePath, db);
 				    else
 				        DigitalAssetDeliveryController.getDigitalAssetDeliveryController().dumpDigitalAsset(masterFile, fileName, filePath);
 				}
 				catch(Exception e)
 				{
-					logger.warn("An file could not be written:" + e.getMessage(), e);
+					logger.warn("A file could not be written:" + e.getMessage(), e);
 				}
 				
 			    i++;
 				filePath = CmsPropertyHandler.getProperty("digitalAssetPath." + i);
-			    if(filePath != null)
+			    if (filePath != null)
+			    {
 			    	filePath += File.separator + folderName;
+			    }
 			}
 
 			SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null, deliveryContext).getSiteNodeVO(db, siteNodeId);
@@ -1826,14 +1824,9 @@ public class ContentDeliveryController extends BaseDeliveryController
 				if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
 					dnsName = repositoryVO.getDnsName();
 			}
-			/*
-			SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(null, deliveryContext.getLanguageId(), null, deliveryContext).getSiteNode(db, siteNodeId);
-			String dnsName = CmsPropertyHandler.getWebServerAddress();
-			if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
-				dnsName = siteNode.getRepository().getDnsName();
-			*/
+
 			assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, folderName, fileName, deliveryContext); 
-			logger.info("assetUrl: " + assetUrl);
+			logger.debug("assetUrl: " + assetUrl);
 		}
             		
         CacheController.cacheObject(cacheName, assetCacheKey, assetUrl);
@@ -1847,7 +1840,6 @@ public class ContentDeliveryController extends BaseDeliveryController
 	 * It selects the correct contentVersion depending on the language and then gets the digitalAsset associated with the key.
 	 * If the asset is cached on disk it returns that path imediately it's ok - otherwise it dumps it fresh.
 	 */
-
 	public String getAssetUrl(Database db, Integer contentId, Integer languageId, String assetKey, Integer siteNodeId, boolean useLanguageFallback, DeliveryContext deliveryContext, InfoGluePrincipal infoGluePrincipal) throws SystemException, Exception
 	{
 		if(contentId == null || contentId.intValue() < 1)
@@ -1861,8 +1853,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 
 	    String assetCacheKey = "" + languageId + "_" + contentId + "_" + siteNodeVO.getRepositoryId() + "_" + assetKey + "_" + useLanguageFallback + "_" + deliveryContext.getUseFullUrl() + "_" + deliveryContext.getUseDownloadAction();
 	    
-	    if(logger.isInfoEnabled())
-	    	logger.info("assetCacheKey:" + assetCacheKey);
+	    logger.info("assetCacheKey: " + assetCacheKey);
 	    
 	    assetKey = URLDecoder.decode(assetKey, "utf-8");
 	    
@@ -1870,24 +1861,19 @@ public class ContentDeliveryController extends BaseDeliveryController
 		String cachedAssetUrl = (String)CacheController.getCachedObjectFromAdvancedCache(cacheName, assetCacheKey);
 		if(cachedAssetUrl != null)
 		{
-			if(logger.isInfoEnabled())
-				logger.info("There was an cached cachedAssetUrl:" + cachedAssetUrl);
-
+			logger.info("There was a cached cachedAssetUrl:" + cachedAssetUrl);
 			return cachedAssetUrl;
 		}
 
 		String assetUrl = "";
 		assetUrl = urlComposer.composeDigitalAssetUrl("", null, "", deliveryContext); 
-		logger.info("assetUrl(0): " + assetUrl);
+		logger.debug("assetUrl (0): " + assetUrl);
 
 		SmallestContentVersionVO contentVersion = getSmallestContentVersionVO(siteNodeId, contentId, languageId, db, useLanguageFallback, deliveryContext, infoGluePrincipal);
 		ContentVO contentVO = this.getContentVO(db, contentId, deliveryContext);
 		LanguageVO masterLanguageVO = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForRepository(contentVO.getRepositoryId(), db);
-		if(logger.isInfoEnabled())
-		{
-			logger.info("languageId:" + languageId);
-			logger.info("masterLanguageVO:" + masterLanguageVO);
-		}
+		logger.info("languageId: " + languageId);
+		logger.info("masterLanguageVO: " + masterLanguageVO);
 	
 		if(contentVersion != null) 
         {
@@ -1898,12 +1884,12 @@ public class ContentDeliveryController extends BaseDeliveryController
 
 			if(!isUnprotectedAsset)
 			{
-				// TODO: Should add check if contenVersion is null
 	        	DigitalAssetVO digitalAsset = DigitalAssetController.getLatestDigitalAssetVO(contentVersion.getId(), assetKey, db);
 	        	if(digitalAsset == null)
 	        		return "";
 	        	
 				String dnsName = CmsPropertyHandler.getWebServerAddress();
+
 				if(siteNodeVO != null)
 				{
 					logger.info("siteNodeId: " + siteNodeVO.getId() + " (contentId: " + contentId + ", assetKey: " + assetKey + ")");
@@ -1913,7 +1899,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 				}
 
 				assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, siteNodeId, contentId, contentVersion.getLanguageId(), assetKey, deliveryContext, db);
-				logger.info("assetUrl(1): " + assetUrl);
+				logger.debug("assetUrl (1): " + assetUrl);
 			} else {
 				DigitalAssetVO digitalAsset = DigitalAssetController.getLatestDigitalAssetVO(contentVersion.getId(), assetKey, db);
 
@@ -1939,13 +1925,15 @@ public class ContentDeliveryController extends BaseDeliveryController
 						}
 						catch(Exception e)
 						{
-							logger.warn("An file could not be written:" + e.getMessage(), e);
+							logger.warn("A file could not be written:" + e.getMessage(), e);
 						}
 
 						i++;
 						filePath = CmsPropertyHandler.getProperty("digitalAssetPath." + i);
 						if(filePath != null)
+						{
 							filePath += File.separator + folderName;
+						}
 					}
 
 					String dnsName = CmsPropertyHandler.getWebServerAddress();
@@ -1961,18 +1949,18 @@ public class ContentDeliveryController extends BaseDeliveryController
 					if(deliveryContext.getUseDownloadAction())
 					{
 						assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, siteNodeId, contentId, contentVersion.getLanguageId(), assetKey, deliveryContext, db);
-						logger.info("assetUrl(2): " + assetUrl);
+						logger.debug("assetUrl (2): " + assetUrl);
 					}
 					else
 					{
 						assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, folderName, fileName, deliveryContext); 
-						logger.info("assetUrl(3): " + assetUrl);
+						logger.debug("assetUrl (3): " + assetUrl);
 					}
 				}
 				else if(useLanguageFallback)
 				{
 					assetUrl = getLanguageIndependentAssetUrl(contentId, languageId, siteNodeId, db, assetKey, deliveryContext, infoGluePrincipal);
-					logger.info("assetUrl(4): " + assetUrl);
+					logger.debug("assetUrl (4): " + assetUrl);
 				}
 			}
 		}				
@@ -2023,7 +2011,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 					}
 					catch(Exception e)
 					{
-						logger.warn("An file could not be written:" + e.getMessage(), e);
+						logger.warn("A file could not be written:" + e.getMessage(), e);
 					}
 					
 				    i++;
@@ -2054,7 +2042,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		String cachedAssetUrl = (String)CacheController.getCachedObject(cacheName, assetCacheKey);
 		if(cachedAssetUrl != null)
 		{
-			logger.info("There was an cached cachedAssetUrl:" + cachedAssetUrl);
+			logger.info("There was a cached cachedAssetUrl:" + cachedAssetUrl);
 			return cachedAssetUrl;
 		}
 		
@@ -2095,7 +2083,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 					}
 					catch(Exception e)
 					{
-						logger.warn("An file could not be written:" + e.getMessage(), e);
+						logger.warn("A file could not be written:" + e.getMessage(), e);
 					}
 					
 					i++;
@@ -2147,7 +2135,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		String cachedAssetUrl = (String)CacheController.getCachedObject(cacheName, assetCacheKey);
 		if(cachedAssetUrl != null)
 		{
-			logger.info("There was an cached cachedAssetUrl:" + cachedAssetUrl);
+			logger.info("There was a cached cachedAssetUrl:" + cachedAssetUrl);
 			return cachedAssetUrl;
 		}
 		
@@ -2184,7 +2172,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 				}
 				catch(Exception e)
 				{
-					logger.warn("An file could not be written:" + e.getMessage(), e);
+					logger.warn("A file could not be written:" + e.getMessage(), e);
 				}
 				
 				i++;
@@ -2231,7 +2219,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		String cachedAssetUrl = (String)CacheController.getCachedObject(cacheName, assetCacheKey);
 		if(cachedAssetUrl != null)
 		{
-			logger.info("There was an cached cachedAssetUrl:" + cachedAssetUrl);
+			logger.info("There was a cached cachedAssetUrl:" + cachedAssetUrl);
 			return cachedAssetUrl;
 		}
 
@@ -2272,7 +2260,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 					}
 					catch(Exception e)
 					{
-						logger.warn("An file could not be written:" + e.getMessage(), e);
+						logger.warn("A file could not be written:" + e.getMessage(), e);
 					}
 					
 					i++;
@@ -2763,7 +2751,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		List cachedSortedContentVOList = (List)CacheController.getCachedObject(cacheName, sortedChildContentsKey);
 		if(cachedSortedContentVOList != null)
 		{
-			logger.info("There was an cached content cachedSortedContentVOList:" + cachedSortedContentVOList.size());
+			logger.info("There was a cached content cachedSortedContentVOList:" + cachedSortedContentVOList.size());
 			return cachedSortedContentVOList;
 		}
 		

@@ -2949,6 +2949,9 @@ public class DigitalAssetController extends BaseController
 		return assetFile;
 	}
 
+	/**
+	 * Return true if the asset identified by assetId is available in the specified state.
+	 */
 	public Boolean isAssetAvailableInMode(Integer assetId, Integer stateId) throws SystemException {
 		Boolean available = false;
 		Database db = CastorDatabaseService.getDatabase();
@@ -2969,40 +2972,37 @@ public class DigitalAssetController extends BaseController
         
         return available;
     }     
-
 	
+	/**
+	 * Return true if the asset identified by assetId is available in the specified state.
+	 */
 	public Boolean isAssetAvailableInMode(Integer assetId, Integer stateId, Database db) throws PersistenceException {
 		String key = "assetAvailable_" + assetId + "_" + stateId;
 		String cacheName = "digitalAssetCache";
 		Boolean available = (Boolean) CacheController.getCachedObject(cacheName, key);
 		if(available != null)
 		{
-			if(logger.isInfoEnabled())
-				logger.info("There was a cached assetAvailable boolean:" + available);
-			
+			logger.info("There was a cached assetAvailable boolean:" + available);
 			return available;
 		}
 
-		logger.info("Making a sql call for assets on " + assetId + ", " + stateId);
+		logger.debug("Making a sql call for assets on " + assetId + ", " + stateId);
 
-		OQLQuery oql = db.getOQLQuery("CALL SELECT COUNT(cv.contentVersionId) FROM cmContentVersionDigitalAsset cvda, cmContentVersion cv WHERE cvda.contentVersionId = cv.contentVersionId AND cv.isActive = 1 AND cv.stateId >= $1 AND cvda.digitalAssetId = $2 AS java.lang.Integer");
-
-    	oql.bind(stateId);
+		String sql = "CALL SELECT cv.contentVersionId, cv.stateId, cv.modifiedDateTime, cv.versionComment, cv.isCheckedOut, cv.isActive, cv.contentId, cv.languageId, cv.versionModifier FROM cmContentVersionDigitalAsset cvda, cmContentVersion cv WHERE cvda.contentVersionId = cv.contentVersionId AND cv.isActive = 1 AND cv.stateId >= $1 AND cvda.digitalAssetId = $2";
+		OQLQuery oql = db.getOQLQuery("CALL SQL " + sql + " AS org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl"); 
+		oql.bind(stateId);
     	oql.bind(assetId);
     	
     	QueryResults results = oql.execute(Database.READONLY);
 		
-		if(results.hasMore()) 
-        {
-        	Integer count = (Integer) results.next();
-        	available = count > 1;
-        }
+		available = results.hasMore();
 		
 		results.close();
 		oql.close();
 
 		CacheController.cacheObject(cacheName, key, available);
 			
+		logger.debug("Asset " + assetId + " was available in state " + stateId + ": " + available);
 		return available;
 	}
 }

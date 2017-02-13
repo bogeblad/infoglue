@@ -23,17 +23,12 @@
 
 package org.infoglue.cms.applications.contenttool.actions;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
-import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
-import org.infoglue.cms.entities.content.SmallestContentVersionVO;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -64,7 +59,7 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 			try
 			{
 				// Only create url to asset if it belongs to the latest active content version, otherwise it would be possible to access unpublished assets.
-				if (assetAvailableInCurrentMode(contentId, languageId, assetKey))
+				if (isAssetAvailableInCurrentMode(contentId, languageId, assetKey))
 				{
 					assetUrl = DigitalAssetController.getDigitalAssetUrl(contentId, languageId, assetKey, true);
 				}
@@ -83,7 +78,7 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 			try 
 			{
 				// Only create url to asset if it belongs to the latest active content version, otherwise it would be possible to access unpublished assets.
-				if (assetAvailableInCurrentMode(assetId))
+				if (isAssetAvailableInCurrentMode(assetId))
 				{
 					assetUrl = DigitalAssetController.getDigitalAssetUrl(assetId, false);
 				}
@@ -113,14 +108,18 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 	}
 	
 	
-	public boolean assetAvailableInCurrentMode(int contentId, int languageId, String assetKey)
+	/**
+	 * Return true if the asset identified by contentId, languageId and assetKey is available in
+	 * the current operating mode.
+	 */
+	boolean isAssetAvailableInCurrentMode(int contentId, int languageId, String assetKey)
 	{
 		DigitalAssetVO assetVO;
 		try {
 			assetVO = DigitalAssetController.getDigitalAssetVO(contentId, languageId, assetKey, true);
 			if (assetVO != null) {
 				assetId = assetVO.getId();
-				return assetAvailableInCurrentMode(assetId);
+				return isAssetAvailableInCurrentMode(assetId);
 			}
 		} catch (SystemException | Bug e) {
 			logger.info("Could not check asset availability for contentId:" + contentId + " (" + languageId + "/" + assetKey + ")", e);
@@ -128,10 +127,11 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 		return false;
 	}
 	
-	/** 
-	 * Check if this asset belongs to the latest active content version
+	/**
+	 * Return true if the asset identified by assetId is available in
+	 * the current operating mode.
 	 */
-	public boolean assetAvailableInCurrentMode(int assetId)
+	boolean isAssetAvailableInCurrentMode(int assetId)
 	{
 		boolean assetAvailable = false;
 		try 
@@ -141,7 +141,7 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 		}
 		catch (SystemException e) 
 		{
-			logger.info("Error when getting content version list for asset id " + assetId, e);
+			logger.error("Error when getting content version list for asset id " + assetId, e);
 		}
 		return assetAvailable;
 	}

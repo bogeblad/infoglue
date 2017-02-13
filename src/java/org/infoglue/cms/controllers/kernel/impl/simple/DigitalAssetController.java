@@ -2988,7 +2988,7 @@ public class DigitalAssetController extends BaseController
 
 		logger.debug("Making a sql call for assets on " + assetId + ", " + stateId);
 
-		String sql = "CALL SELECT cv.contentVersionId, cv.stateId, cv.modifiedDateTime, cv.versionComment, cv.isCheckedOut, cv.isActive, cv.contentId, cv.languageId, cv.versionModifier FROM cmContentVersionDigitalAsset cvda, cmContentVersion cv WHERE cvda.contentVersionId = cv.contentVersionId AND cv.isActive = 1 AND cv.stateId >= $1 AND cvda.digitalAssetId = $2";
+		String sql = "SELECT cv.contentVersionId, cv.stateId, cv.modifiedDateTime, cv.versionComment, cv.isCheckedOut, cv.isActive, cv.contentId, cv.languageId, cv.versionModifier FROM cmContentVersionDigitalAsset cvda, cmContentVersion cv WHERE cvda.contentVersionId = cv.contentVersionId AND cv.isActive = 1 AND cv.stateId >= $1 AND cvda.digitalAssetId = $2";
 		OQLQuery oql = db.getOQLQuery("CALL SQL " + sql + " AS org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl"); 
 		oql.bind(stateId);
     	oql.bind(assetId);

@@ -37,7 +37,6 @@ import org.infoglue.cms.entities.content.SmallestContentVersionVO;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.deliver.controllers.kernel.impl.simple.TemplateController;
 
 /**
 * This action downloads an asset from the system.
@@ -137,27 +136,10 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 		boolean assetAvailable = false;
 		try 
 		{
-			List<SmallestContentVersionVO> contentVersions = DigitalAssetController.getContentVersionVOListConnectedToAssetWithId(assetId);
 			int operatingMode = new Integer(CmsPropertyHandler.getOperatingMode());
-
-			for (SmallestContentVersionVO currentVersion : contentVersions)
-			{
-				// Get the latest active content version that matches both the current version's contentId and its languageId
-				try 
-				{
-					ContentVersionVO latestActiveVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(currentVersion.getContentId(), currentVersion.getLanguageId());
-					// Check if the current version matches the latest active version and if it is visible in the current operating mode
-					if (currentVersion.getId().equals(latestActiveVersion.getId()) && currentVersion.getStateId() >= operatingMode)
-					{
-						assetAvailable = true;
-					}
-				} catch (SystemException | Bug e) 
-				{
-					logger.info("Error when getting latest active versions for content version id " + currentVersion.getId(), e);
-				}
-			}
+			return DigitalAssetController.getController().isAssetAvailableInMode(assetId, operatingMode);
 		}
-		catch (SystemException | Bug e) 
+		catch (SystemException e) 
 		{
 			logger.info("Error when getting content version list for asset id " + assetId, e);
 		}

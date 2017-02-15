@@ -3043,7 +3043,7 @@ public class DigitalAssetController extends BaseController
 			return available;
 		}
 
-		logger.debug("Making a sql call for assets on " + contentId + "," + languageId + "," + assetKey  + ", " + stateId);
+		logger.debug("Making an sql call for assets on " + contentId + "," + languageId + "," + assetKey  + ", " + stateId);
 
 		String sql = "SELECT cv.contentVersionId, cv.stateId, cv.modifiedDateTime, cv.versionComment, cv.isCheckedOut, cv.isActive, cv.contentId, cv.languageId, cv.versionModifier FROM cmContentVersion AS cv, cmContentVersionDigitalAsset AS cvda, cmDigitalAsset AS da WHERE cv.contentVersionId = cvda.contentVersionId AND cvda.digitalAssetId = da.digitalAssetId AND cv.contentId = $1 AND cv.languageId = $2 AND da.assetKey = $3 AND cv.stateId >= $4";
 

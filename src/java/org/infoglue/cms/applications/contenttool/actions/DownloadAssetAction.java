@@ -118,7 +118,7 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 		try 
 		{
 			int operatingMode = new Integer(CmsPropertyHandler.getOperatingMode());
-			return DigitalAssetController.getController().isAssetAvailableInState(assetId, operatingMode);
+			return DigitalAssetController.getController().isAssetAvailableInState(contentId, languageId, assetKey, operatingMode);
 		}
 		catch (SystemException e) 
 		{

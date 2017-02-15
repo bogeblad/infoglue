@@ -2952,7 +2952,7 @@ public class DigitalAssetController extends BaseController
 	/**
 	 * Return true if the asset identified by assetId is available in the specified state.
 	 */
-	public Boolean isAssetAvailableInMode(Integer assetId, Integer stateId) throws SystemException {
+	public Boolean isAssetAvailableInState(Integer assetId, Integer stateId) throws SystemException {
 		Boolean available = false;
 		Database db = CastorDatabaseService.getDatabase();
 
@@ -2960,7 +2960,7 @@ public class DigitalAssetController extends BaseController
         
         try
         {
-        	available = isAssetAvailableInMode(assetId, stateId, db);
+        	available = isAssetAvailableInState(assetId, stateId, db);
             commitTransaction(db);            
         }
         catch(Exception e)
@@ -2972,11 +2972,35 @@ public class DigitalAssetController extends BaseController
         
         return available;
     }     
-	
+
 	/**
 	 * Return true if the asset identified by assetId is available in the specified state.
 	 */
-	public Boolean isAssetAvailableInMode(Integer assetId, Integer stateId, Database db) throws PersistenceException {
+	public Boolean isAssetAvailableInState(Integer contentId, Integer languageId, String assetKey, Integer stateId) throws SystemException {
+		Boolean available = false;
+		Database db = CastorDatabaseService.getDatabase();
+
+        beginTransaction(db);
+        
+        try
+        {
+        	available = isAssetAvailableInState(contentId, languageId, assetKey, stateId, db);
+            commitTransaction(db);            
+        }
+        catch(Exception e)
+        {
+        	rollbackTransaction(db);
+            logger.error("Could not determine if asset " + contentId + "/" + languageId + "/" + assetKey + " is available in state " + stateId, e);
+            throw new SystemException(e.getMessage(), e);
+        }
+        
+        return available;
+    }     
+
+	/**
+	 * Return true if the asset identified by assetId is available in the specified state.
+	 */
+	public Boolean isAssetAvailableInState(Integer assetId, Integer stateId, Database db) throws PersistenceException {
 		String key = "assetAvailable_" + assetId + "_" + stateId;
 		String cacheName = "digitalAssetCache";
 		Boolean available = (Boolean) CacheController.getCachedObject(cacheName, key);
@@ -3003,6 +3027,43 @@ public class DigitalAssetController extends BaseController
 		CacheController.cacheObject(cacheName, key, available);
 			
 		logger.debug("Asset " + assetId + " was available in state " + stateId + ": " + available);
+		return available;
+	}
+	
+	/**
+	 * Return true if the asset identified by assetId is available in the specified state.
+	 */
+	public Boolean isAssetAvailableInState(Integer contentId, Integer languageId, String assetKey, Integer stateId, Database db) throws PersistenceException {
+		String key = "assetAvailable_" + contentId + "_" + languageId + "_" + assetKey + "_" + stateId;
+		String cacheName = "digitalAssetCache";
+		Boolean available = (Boolean) CacheController.getCachedObject(cacheName, key);
+		if(available != null)
+		{
+			logger.info("There was a cached assetAvailable boolean:" + available);
+			return available;
+		}
+
+		logger.debug("Making a sql call for assets on " + contentId + "," + languageId + "," + assetKey  + ", " + stateId);
+
+		String sql = "SELECT cv.contentVersionId, cv.stateId, cv.modifiedDateTime, cv.versionComment, cv.isCheckedOut, cv.isActive, cv.contentId, cv.languageId, cv.versionModifier FROM cmContentVersion AS cv, cmContentVersionDigitalAsset AS cvda, cmDigitalAsset AS da WHERE cv.contentVersionId = cvda.contentVersionId AND cvda.digitalAssetId = da.digitalAssetId AND cv.contentId = $1 AND cv.languageId = $2 AND da.assetKey = $3 AND cv.stateId >= $4";
+
+		OQLQuery oql = db.getOQLQuery("CALL SQL " + sql + " AS org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl"); 
+
+		oql.bind(contentId);
+		oql.bind(languageId);
+		oql.bind(assetKey);
+		oql.bind(stateId);
+    	
+    	QueryResults results = oql.execute(Database.READONLY);
+		
+		available = results.hasMore();
+		
+		results.close();
+		oql.close();
+
+		CacheController.cacheObject(cacheName, key, available);
+			
+		logger.debug("Asset " + contentId + "_" + languageId + "_" + assetKey + " was available in state " + stateId + ": " + available);
 		return available;
 	}
 }

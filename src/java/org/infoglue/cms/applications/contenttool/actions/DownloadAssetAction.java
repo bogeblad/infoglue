@@ -122,7 +122,7 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 				return isAssetAvailableInCurrentMode(assetId);
 			}
 		} catch (SystemException | Bug e) {
-			logger.info("Could not check asset availability for contentId:" + contentId + " (" + languageId + "/" + assetKey + ")", e);
+			logger.info("Could not check asset availability for contentId: " + contentId + " (" + languageId + "/" + assetKey + ")", e);
 		}
 		return false;
 	}
@@ -137,7 +137,7 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 		try 
 		{
 			int operatingMode = new Integer(CmsPropertyHandler.getOperatingMode());
-			return DigitalAssetController.getController().isAssetAvailableInMode(assetId, operatingMode);
+			return DigitalAssetController.getController().isAssetAvailableInState(assetId, operatingMode);
 		}
 		catch (SystemException e) 
 		{

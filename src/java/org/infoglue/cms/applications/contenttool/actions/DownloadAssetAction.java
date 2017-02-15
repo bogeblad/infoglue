@@ -114,17 +114,17 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 	 */
 	boolean isAssetAvailableInCurrentMode(int contentId, int languageId, String assetKey)
 	{
-		DigitalAssetVO assetVO;
-		try {
-			assetVO = DigitalAssetController.getDigitalAssetVO(contentId, languageId, assetKey, true);
-			if (assetVO != null) {
-				assetId = assetVO.getId();
-				return isAssetAvailableInCurrentMode(assetId);
-			}
-		} catch (SystemException | Bug e) {
-			logger.info("Could not check asset availability for contentId: " + contentId + " (" + languageId + "/" + assetKey + ")", e);
+		boolean assetAvailable = false;
+		try 
+		{
+			int operatingMode = new Integer(CmsPropertyHandler.getOperatingMode());
+			return DigitalAssetController.getController().isAssetAvailableInState(assetId, operatingMode);
 		}
-		return false;
+		catch (SystemException e) 
+		{
+			logger.error("Could not check asset availability for contentId: " + contentId + " (" + languageId + "/" + assetKey + ")", e);
+		}
+		return assetAvailable;
 	}
 	
 	/**
@@ -141,7 +141,7 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 		}
 		catch (SystemException e) 
 		{
-			logger.error("Error when getting content version list for asset id " + assetId, e);
+			logger.error("Could not check asset availability for asset id " + assetId, e);
 		}
 		return assetAvailable;
 	}

@@ -1692,9 +1692,16 @@ public class DigitalAssetController extends BaseController
 
 	/**
 	 * This method should return a String containing the URL for this digital asset.
-	 */
-	   	
+	 */   	
 	public static String getDigitalAssetUrl(Integer contentId, Integer languageId, String assetKey, boolean useLanguageFallback) throws SystemException, Bug
+    {
+		return getDigitalAssetUrlInState(contentId, languageId, assetKey, useLanguageFallback, null);
+    }
+	
+	/**
+	 * This method should return a String containing the URL for this digital asset.
+	 */   	
+	public static String getDigitalAssetUrlInState(Integer contentId, Integer languageId, String assetKey, boolean useLanguageFallback, Integer stateId) throws SystemException, Bug
     {
     	Database db = CastorDatabaseService.getDatabase();
 
@@ -1704,7 +1711,7 @@ public class DigitalAssetController extends BaseController
 
         try
         {
-        	assetUrl = getDigitalAssetUrl(contentId, languageId, assetKey, useLanguageFallback, db);
+        	assetUrl = getDigitalAssetUrl(contentId, languageId, assetKey, useLanguageFallback, stateId, db);
         	
             commitTransaction(db);
         }
@@ -1722,6 +1729,14 @@ public class DigitalAssetController extends BaseController
 	 * This method should return a String containing the URL for this digital asset.
 	 */
 	public static String getDigitalAssetUrl(Integer contentId, Integer languageId, String assetKey, boolean useLanguageFallback, Database db) throws SystemException, Bug, Exception
+	{
+		return getDigitalAssetUrl(contentId, languageId, assetKey, useLanguageFallback, null, db);
+	}
+	
+	/**
+	 * This method should return a String containing the URL for this digital asset.
+	 */
+	public static String getDigitalAssetUrl(Integer contentId, Integer languageId, String assetKey, boolean useLanguageFallback, Integer stateId, Database db) throws SystemException, Bug, Exception
     {
 		if(contentId == null || assetKey == null)
 		{
@@ -1765,7 +1780,18 @@ public class DigitalAssetController extends BaseController
         	sb.append("/");
         }
         
-    	ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, languageId, db);
+        
+        
+    	ContentVersionVO contentVersionVO;
+		logger.debug("stateId is: " + stateId);
+    	if (stateId != null) 
+    	{
+    		contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, languageId, stateId, db);
+    	}
+    	else
+    	{
+    		contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, languageId, db);
+    	}
 
     	if(logger.isInfoEnabled())
     	{

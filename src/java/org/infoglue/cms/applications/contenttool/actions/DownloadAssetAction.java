@@ -61,7 +61,8 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 				// Only create url to asset if it belongs to the latest active content version, otherwise it would be possible to access unpublished assets.
 				if (isAssetAvailableInCurrentMode(contentId, languageId, assetKey))
 				{
-					assetUrl = DigitalAssetController.getDigitalAssetUrl(contentId, languageId, assetKey, true);
+					Integer stateId = getCurrentOperatingMode();
+					assetUrl = DigitalAssetController.getDigitalAssetUrlInState(contentId, languageId, assetKey, true, stateId);
 				}
 				else
 				{
@@ -117,7 +118,7 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 		boolean assetAvailable = false;
 		try 
 		{
-			int operatingMode = new Integer(CmsPropertyHandler.getOperatingMode());
+			int operatingMode = getCurrentOperatingMode();
 			return DigitalAssetController.getController().isAssetAvailableInState(contentId, languageId, assetKey, operatingMode);
 		}
 		catch (SystemException e) 
@@ -126,7 +127,7 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 		}
 		return assetAvailable;
 	}
-	
+
 	/**
 	 * Return true if the asset identified by assetId is available in
 	 * the current operating mode.
@@ -136,7 +137,7 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 		boolean assetAvailable = false;
 		try 
 		{
-			int operatingMode = new Integer(CmsPropertyHandler.getOperatingMode());
+			int operatingMode = getCurrentOperatingMode();
 			return DigitalAssetController.getController().isAssetAvailableInState(assetId, operatingMode);
 		}
 		catch (SystemException e) 
@@ -146,6 +147,13 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 		return assetAvailable;
 	}
 
+	/**
+	 * Returns the current operating mode of the Infoglue webapp
+	 */
+	protected Integer getCurrentOperatingMode() {
+		return new Integer(CmsPropertyHandler.getOperatingMode());
+	}
+	
 	public String getAssetKey() 
 	{
 		return assetKey;

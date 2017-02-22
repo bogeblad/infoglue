@@ -54,6 +54,7 @@ import org.infoglue.cms.entities.management.Repository;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.graphics.ThumbnailGenerator;
+import org.infoglue.common.util.DigitalAssetOptimizer;
 import org.infoglue.deliver.applications.databeans.DeliveryContext;
 import org.infoglue.deliver.controllers.kernel.URLComposer;
 import org.infoglue.deliver.util.HttpHelper;
@@ -298,8 +299,8 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 	}
 
 	/**
-	 * This is the basic way of getting an asset-url for a digital asset. 
-	 * If the asset is cached on disk it returns that path imediately it's ok - otherwise it dumps it fresh.
+	 * This is the basic way of getting an asset-URL for a digital asset. 
+	 * If the asset is cached on disk it returns that path immediately it's OK - otherwise it dumps it fresh.
 	 */
 
 	public String getAssetUrl(DigitalAsset digitalAsset, Repository repository, DeliveryContext deliveryContext) throws SystemException, Exception
@@ -515,7 +516,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 		if(outputFile.exists())
 		{
 			if(logger.isInfoEnabled())
-				logger.info("The file allready exists so we don't need to dump it again..");
+				logger.info("The file already exists so we don't need to dump it again. File name: " + fileName);
 		
 			return outputFile;
 		}
@@ -648,6 +649,15 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 				}
 				else
 				{
+					if (DigitalAssetOptimizer.hasDigitalAssetOptimizerEnabled())
+					{
+						File optimizedFile = DigitalAssetOptimizer.getInstance().optimizeDigitalAsset(digitalAssetVO, tmpOutputFile);
+						if (optimizedFile != null)
+						{
+							tmpOutputFile.delete();
+							tmpOutputFile = optimizedFile;
+						}
+					}
 					logger.info("written file:" + tmpOutputFile.length() + " - renaming it to " + outputFile.getAbsolutePath());	
 					tmpOutputFile.renameTo(outputFile);
 					logger.info("Time for renaming file " + timer.getElapsedTime());
@@ -717,6 +727,15 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 			}
 			else
 			{
+				if (DigitalAssetOptimizer.hasDigitalAssetOptimizerEnabled())
+				{
+					File optimizedFile = DigitalAssetOptimizer.getInstance().optimizeDigitalAsset(digitalAsset.getValueObject(), tmpOutputFile);
+					if (optimizedFile != null)
+					{
+						tmpOutputFile.delete();
+						tmpOutputFile = optimizedFile;
+					}
+				}
 				logger.info("written file:" + tmpOutputFile.length() + " - renaming it to " + outputFile.getAbsolutePath());	
 				tmpOutputFile.renameTo(outputFile);
 				logger.info("Time for renaming file " + timer.getElapsedTime());
@@ -733,7 +752,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 
  	/**
    	 * This method checks if the given file exists on disk. If it does it's ignored because
-   	 * that means that the file is allready cached on the server. If not we take out the stream from the 
+   	 * that means that the file is already cached on the server. If not we take out the stream from the 
    	 * digitalAsset-object and dumps it.
    	 */
    	
@@ -744,7 +763,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 		File outputFile = new File(filePath + File.separator + fileName);
 		if(outputFile.exists() && outputFile.length() > 0)
 		{
-			//logger.info("The file allready exists so we don't need to dump it again..");
+			//logger.info("The file already exists so we don't need to dump it again..");
 			return outputFile;
 		}
 		

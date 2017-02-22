@@ -188,6 +188,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "errorUrl");
 	    populate(ps, "errorBusyUrl");
 	    populate(ps, "externalThumbnailGeneration");
+	    populate(ps, "digitalAssetOptimizer");
 	    populate(ps, "URIEncoding");
 	    populate(ps, "workflowEncoding");
 	    populate(ps, "formsEncoding");

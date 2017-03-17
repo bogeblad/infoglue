@@ -1748,10 +1748,11 @@ public class DigitalAssetController extends BaseController
     	ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId, db);
     	if(logger.isInfoEnabled())
     	{
-	    	logger.info("content:" + contentVO.getName());
-	    	logger.info("repositoryId:" + contentVO.getRepositoryId());
-	    	logger.info("languageId:" + languageId);
-	    	logger.info("assetKey:" + assetKey);
+    		logger.info("getDigitalAssetUrl(Integer contentId, Integer languageId, String assetKey, boolean useLanguageFallback, Integer stateId, Database db):");
+	    	logger.info("content: " + contentVO.getName());
+	    	logger.info("repositoryId: " + contentVO.getRepositoryId());
+	    	logger.info("languageId: " + languageId);
+	    	logger.info("assetKey: " + assetKey);
     	}
 
 		if(assetKey != null)
@@ -1780,7 +1781,7 @@ public class DigitalAssetController extends BaseController
         	sb.append("/");
         }
         
-        
+        logger.debug("Url prefix (sb): " + sb);
         
     	ContentVersionVO contentVersionVO;
 		logger.debug("stateId is: " + stateId);
@@ -1795,7 +1796,7 @@ public class DigitalAssetController extends BaseController
 
     	if(logger.isInfoEnabled())
     	{
-    		logger.info("contentVersionVO:" + contentVersionVO);
+    		logger.info("contentVersionVO: " + contentVersionVO);
     	}
     	
 		DigitalAssetVO digitalAssetVO = null;

@@ -62,6 +62,7 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 				if (isAssetAvailableInCurrentMode(contentId, languageId, assetKey))
 				{
 					Integer stateId = getCurrentOperatingMode();
+					logger.debug("stateId is " + stateId);
 					assetUrl = DigitalAssetController.getDigitalAssetUrlInState(contentId, languageId, assetKey, true, stateId);
 				}
 				else
@@ -105,6 +106,8 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 			this.getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
 		}
 		
+		logger.debug("Asset url was " + assetUrl);
+		
 		return NONE;
 	}
 	
@@ -119,6 +122,8 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 		try 
 		{
 			int operatingMode = getCurrentOperatingMode();
+			logger.debug("stateId is " + operatingMode);
+
 			return DigitalAssetController.getController().isAssetAvailableInState(contentId, languageId, assetKey, operatingMode);
 		}
 		catch (SystemException e) 

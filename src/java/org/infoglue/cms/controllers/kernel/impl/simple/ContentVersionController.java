@@ -603,6 +603,7 @@ public class ContentVersionController extends BaseController
     
 	public ContentVersionVO getLatestActiveContentVersionVO(Integer contentId, Integer languageId, Integer stateId, Database db) throws SystemException, Bug, Exception
 	{
+		logger.debug("getLatestActiveContentVersionVO with stateId " + stateId);
 		Timer t = new Timer();
 		
     	ContentVersionVO contentVersionVO = null;
@@ -714,6 +715,8 @@ public class ContentVersionController extends BaseController
     
 	public ContentVersionVO getLatestActiveContentVersionVO(Integer contentId, Integer languageId, Database db) throws SystemException, Bug, Exception
 	{
+		logger.debug("getLatestActiveContentVersionVO without stateId");
+
 		String contentVersionKey = "contentVersionVO_" + contentId + "_" + languageId + "_active";
 		ContentVersionVO contentVersionVO = (ContentVersionVO)CacheController.getCachedObjectFromAdvancedCache("contentVersionCache", contentVersionKey);
 		if(contentVersionVO != null)

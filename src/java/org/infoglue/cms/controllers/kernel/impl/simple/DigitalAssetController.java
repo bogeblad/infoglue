@@ -1746,7 +1746,7 @@ public class DigitalAssetController extends BaseController
     	String assetUrl = null;
 
     	ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId, db);
-    	if(logger.isInfoEnabled())
+    	if (logger.isInfoEnabled())
     	{
     		logger.info("getDigitalAssetUrl(Integer contentId, Integer languageId, String assetKey, boolean useLanguageFallback, Integer stateId, Database db):");
 	    	logger.info("content: " + contentVO.getName());
@@ -1849,7 +1849,7 @@ public class DigitalAssetController extends BaseController
 			if (languageId.intValue() != masterLanguageVO.getId().intValue())
 			{
 				// Try to call this method with the master language instead
-				assetUrl = getDigitalAssetUrl(contentId, masterLanguageVO.getId(), assetKey, useLanguageFallback, db);
+				assetUrl = getDigitalAssetUrl(contentId, masterLanguageVO.getId(), assetKey, useLanguageFallback, stateId, db);
 			}
 		}
 		

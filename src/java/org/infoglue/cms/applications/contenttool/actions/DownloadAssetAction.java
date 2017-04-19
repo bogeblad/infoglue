@@ -28,8 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
-import org.infoglue.cms.entities.content.DigitalAssetVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
@@ -124,7 +122,7 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 			int operatingMode = getCurrentOperatingMode();
 			logger.debug("stateId is " + operatingMode);
 
-			return DigitalAssetController.getController().isAssetAvailableInState(contentId, languageId, assetKey, operatingMode);
+			return DigitalAssetController.getController().isAssetAvailableInState(contentId, languageId, assetKey, operatingMode, true);
 		}
 		catch (SystemException e) 
 		{

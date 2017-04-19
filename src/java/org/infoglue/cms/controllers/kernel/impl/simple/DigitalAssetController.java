@@ -3002,8 +3002,9 @@ public class DigitalAssetController extends BaseController
 
 	/**
 	 * Return true if the asset identified by assetId is available in the specified state.
+	 * @param useLanguageFallback TODO
 	 */
-	public Boolean isAssetAvailableInState(Integer contentId, Integer languageId, String assetKey, Integer stateId) throws SystemException {
+	public Boolean isAssetAvailableInState(Integer contentId, Integer languageId, String assetKey, Integer stateId, Boolean useLanguageFallback) throws SystemException {
 		Boolean available = false;
 		Database db = CastorDatabaseService.getDatabase();
 
@@ -3011,7 +3012,7 @@ public class DigitalAssetController extends BaseController
         
         try
         {
-        	available = isAssetAvailableInState(contentId, languageId, assetKey, stateId, db);
+        	available = isAssetAvailableInState(contentId, languageId, assetKey, stateId, useLanguageFallback, db);
             commitTransaction(db);            
         }
         catch(Exception e)
@@ -3028,15 +3029,6 @@ public class DigitalAssetController extends BaseController
 	 * Return true if the asset identified by assetId is available in the specified state.
 	 */
 	public Boolean isAssetAvailableInState(Integer assetId, Integer stateId, Database db) throws PersistenceException {
-		String key = "assetAvailable_" + assetId + "_" + stateId;
-		String cacheName = "digitalAssetCache";
-		Boolean available = (Boolean) CacheController.getCachedObject(cacheName, key);
-		if(available != null)
-		{
-			logger.info("There was a cached assetAvailable boolean:" + available);
-			return available;
-		}
-
 		logger.debug("Making a sql call for assets on " + assetId + ", " + stateId);
 
 		String sql = "SELECT cv.contentVersionId, cv.stateId, cv.modifiedDateTime, cv.versionComment, cv.isCheckedOut, cv.isActive, cv.contentId, cv.languageId, cv.versionModifier FROM cmContentVersionDigitalAsset cvda, cmContentVersion cv WHERE cvda.contentVersionId = cv.contentVersionId AND cv.isActive = 1 AND cv.stateId >= $1 AND cvda.digitalAssetId = $2";
@@ -3046,12 +3038,10 @@ public class DigitalAssetController extends BaseController
     	
     	QueryResults results = oql.execute(Database.READONLY);
 		
-		available = results.hasMore();
+		Boolean available = results.hasMore();
 		
 		results.close();
 		oql.close();
-
-		CacheController.cacheObject(cacheName, key, available);
 			
 		logger.debug("Asset " + assetId + " was available in state " + stateId + ": " + available);
 		return available;
@@ -3059,18 +3049,10 @@ public class DigitalAssetController extends BaseController
 	
 	/**
 	 * Return true if the asset identified by assetId is available in the specified state.
+	 * @param useLanguageFallback TODO
 	 */
-	public Boolean isAssetAvailableInState(Integer contentId, Integer languageId, String assetKey, Integer stateId, Database db) throws PersistenceException {
-		String key = "assetAvailable_" + contentId + "_" + languageId + "_" + assetKey + "_" + stateId;
-		String cacheName = "digitalAssetCache";
-		Boolean available = (Boolean) CacheController.getCachedObject(cacheName, key);
-		if(available != null)
-		{
-			logger.info("There was a cached assetAvailable boolean:" + available);
-			return available;
-		}
-
-		logger.debug("Making an sql call for assets on " + contentId + "," + languageId + "," + assetKey  + ", " + stateId);
+	public Boolean isAssetAvailableInState(Integer contentId, Integer languageId, String assetKey, Integer stateId, Boolean useLanguageFallback, Database db) throws PersistenceException {
+		logger.debug("Making an sql call for assets on " + contentId + "," + languageId + "," + assetKey  + ", " + stateId + ", " + useLanguageFallback);
 
 		String sql = "SELECT cv.contentVersionId, cv.stateId, cv.modifiedDateTime, cv.versionComment, cv.isCheckedOut, cv.isActive, cv.contentId, cv.languageId, cv.versionModifier FROM cmContentVersion AS cv, cmContentVersionDigitalAsset AS cvda, cmDigitalAsset AS da WHERE cv.contentVersionId = cvda.contentVersionId AND cvda.digitalAssetId = da.digitalAssetId AND cv.contentId = $1 AND cv.languageId = $2 AND da.assetKey = $3 AND cv.stateId >= $4";
 
@@ -3083,14 +3065,39 @@ public class DigitalAssetController extends BaseController
     	
     	QueryResults results = oql.execute(Database.READONLY);
 		
-		available = results.hasMore();
+		Boolean available = results.hasMore();
 		
 		results.close();
 		oql.close();
-
-		CacheController.cacheObject(cacheName, key, available);
 			
 		logger.debug("Asset " + contentId + "_" + languageId + "_" + assetKey + " was available in state " + stateId + ": " + available);
+		
+		if (!available && useLanguageFallback) {
+			logger.debug("Using language fallback");
+			ContentVO contentVO;
+			// Get the master language of the repository of the content with the asset
+			try {
+				contentVO = ContentController.getContentController().getContentVOWithId(contentId);
+				if (contentVO != null) {
+					int repositoryId = contentVO.getRepositoryId();
+					Integer masterLanguageId = LanguageController.getController().getMasterLanguage(repositoryId).getId();
+					// Check that we didn't already check the asset against the master language
+					if (masterLanguageId != null && !masterLanguageId.equals(languageId)) {
+						// Fall back on the master language and check if the asset is available there
+						available = isAssetAvailableInState(contentId, masterLanguageId, assetKey, stateId, false);
+					}
+				} else {
+					logger.debug("The contentVO was null");
+				}
+			} catch (SystemException e) {
+				logger.warn("Could not do language fallback", e);
+			} catch (Bug e) {
+				logger.warn("Could not do language fallback", e);
+			} catch (Exception e) {
+				logger.warn("Could not do language fallback", e);
+			}
+		}
+		
 		return available;
 	}
 }

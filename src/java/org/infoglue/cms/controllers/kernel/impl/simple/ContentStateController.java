@@ -173,7 +173,6 @@ public class ContentStateController extends BaseController
 	public static MediumContentVersionImpl changeState(Integer oldContentVersionId, ContentVO contentVO, Integer stateId, String versionComment, boolean overrideVersionModifyer, String recipientFilter, InfoGluePrincipal infoGluePrincipal, Integer contentId, Database db, List resultingEvents, Integer excludedAssetId) throws SystemException, ConstraintException
 	{
 		MediumContentVersionImpl newContentVersion = null;
-
 		try
 		{
 			//MediumContentVersionImpl oldContentVersion = ContentVersionController.getContentVersionController().getReadOnlyMediumContentVersionWithId(oldContentVersionId, db);
@@ -236,10 +235,14 @@ public class ContentStateController extends BaseController
 					newContentVersionVO.setStateId(stateId);
 					newContentVersionVO.setVersionComment(versionComment);
 					newContentVersionVO.setModifiedDateTime(DateHelper.getSecondPreciseDate());
+
+
 					if(overrideVersionModifyer)
 					    newContentVersionVO.setVersionModifier(infoGluePrincipal.getName());
 				    else
 				        newContentVersionVO.setVersionModifier(oldContentVersion.getVersionModifier());
+			
+					
 					newContentVersionVO.setVersionValue(oldContentVersion.getVersionValue());
 					newContentVersion = ContentVersionController.getContentVersionController().createMedium(oldContentVersion, contentId, oldContentVersion.getValueObject().getLanguageId(), newContentVersionVO, oldContentVersion.getContentVersionId(), (oldContentVersion.getDigitalAssets().size() > 0), false, duplicateAssets, excludedAssetId, db);
 					logger.info("Creating " + newContentVersion.getId());
@@ -305,7 +308,10 @@ public class ContentStateController extends BaseController
 				//End new logic 
 
 				newContentVersion = oldContentVersion;
-
+		
+				if(overrideVersionModifyer)
+				    newContentVersion.setVersionModifier(infoGluePrincipal.getName());
+		
 				//Creating the event that will notify the editor...
 				if(oldContentVersionStateId.intValue() == ContentVersionVO.WORKING_STATE.intValue())
 				{

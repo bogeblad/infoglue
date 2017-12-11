@@ -4181,7 +4181,6 @@ public class CacheController extends Thread
 			   type.getName().contains(".RepositoryImpl") || 
 			   type.getName().contains(".RepositoryLanguageImpl") || 
 			   type.getName().contains(".DigitalAssetImpl") || 
-			   type.getName().contains(".MediumDigitalAssetImpl") || 
 			   type.getName().contains(".ContentImpl") || 
 			   type.getName().contains(".MediumContentImpl") || 
 			   type.getName().contains(".SmallContentImpl") || 

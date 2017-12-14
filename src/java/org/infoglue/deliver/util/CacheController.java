@@ -337,10 +337,10 @@ public class CacheController extends Thread
 	
 	public CacheController()
 	{
+		super();
 		// TEMPORARY
 		logger.setLevel(Level.TRACE);
 		// TEMPORARY
-		super();
 	}
 
 	public static void preCacheCMSEntities() throws Exception 

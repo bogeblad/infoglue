@@ -41,6 +41,9 @@ public class AssetUpdatingThread extends Thread
 	@Override
 	public void run()
 	{
+		if (true) {
+		return;
+		}
 		// TEMPORARY
 		try 
 		{

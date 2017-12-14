@@ -49,6 +49,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
@@ -97,6 +98,9 @@ public class DigitalAssetController extends BaseController
     
     public static DigitalAssetController getController()
     {
+// TEMPORARY
+logger.setLevel(Level.TRACE);
+// TEMPORARY
         return singelton;
     }
 
@@ -872,7 +876,8 @@ public class DigitalAssetController extends BaseController
 		String cacheName = "digitalAssetCache";
 		@SuppressWarnings("unchecked")
 		List<DigitalAssetVO> digitalAssetVOList = (List<DigitalAssetVO>)CacheController.getCachedObject(cacheName, key);
-		if(digitalAssetVOList != null)
+		
+		if(/* TEMPORARY */ false && /* TEMPORARY */ digitalAssetVOList != null)
 		{
 			if(logger.isInfoEnabled())
 				logger.info("There was an cached digitalAssetVOList:" + digitalAssetVOList);
@@ -2908,6 +2913,7 @@ public class DigitalAssetController extends BaseController
 		VisualFormatter formatter = new VisualFormatter();
 		String asciiAssetFileName = formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAssetVO.getAssetFileName(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
 		String fileName = createOldFormFileNameForAsset(digitalAssetVO.getDigitalAssetId(), asciiAssetFileName);
+		logger.debug("Created old form file name " + fileName);
 		return fileName;
 	}
 
@@ -2937,6 +2943,7 @@ public class DigitalAssetController extends BaseController
 		String asciiAssetKey = formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAssetVO.getAssetKey(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
 		fileName = String.format(CmsPropertyHandler.NEW_ASSET_FILE_NAME_FORMAT, contentId, languageId, asciiAssetKey, suffix);
 
+		logger.debug("Created new form file name " + fileName);
 		return fileName;
 	}
 

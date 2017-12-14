@@ -1584,7 +1584,7 @@ public class CacheController extends Thread
 			entityName = "content";
 		if(entityName.equalsIgnoreCase("sitenode"))
 			entityName = "siteNode";
-		logger.error("Debugging " + entityName + "=" + entityId + " (" + cacheNamesToDebug + ")" + " - forceClear:" + forceClear);
+		logger.debug("Debugging " + entityName + "=" + entityId + " (" + cacheNamesToDebug + ")" + " - forceClear:" + forceClear);
 		
 		/*
 		Boolean isEntityPublicationProcessed = false;
@@ -4285,7 +4285,6 @@ public class CacheController extends Thread
 		   type.getName().contains(".RepositoryImpl") || 
 		   type.getName().contains(".RepositoryLanguageImpl") || 
 		   type.getName().contains(".DigitalAssetImpl") || 
-		   type.getName().contains(".MediumDigitalAssetImpl") || 
 		   type.getName().contains(".ContentImpl") || 
 		   type.getName().contains(".MediumContentImpl") || 
 		   type.getName().contains(".SmallContentImpl") || 
@@ -4351,7 +4350,6 @@ public class CacheController extends Thread
 		   c.getName().contains(".RepositoryImpl") || 
 		   c.getName().contains(".RepositoryLanguageImpl") || 
 		   c.getName().contains(".DigitalAssetImpl") || 
-		   c.getName().contains(".MediumDigitalAssetImpl") || 
 		   c.getName().contains(".ContentImpl") || 
 		   c.getName().contains(".MediumContentImpl") || 
 		   c.getName().contains(".SmallContentImpl") || 

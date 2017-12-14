@@ -49,6 +49,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.pluto.portalImpl.services.ServiceManager;
 import org.apache.pluto.portalImpl.services.portletentityregistry.PortletEntityRegistry;
@@ -336,6 +337,9 @@ public class CacheController extends Thread
 	
 	public CacheController()
 	{
+		// TEMPORARY
+		logger.setLevel(Level.TRACE);
+		// TEMPORARY
 		super();
 	}
 

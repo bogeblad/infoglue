@@ -876,7 +876,8 @@ logger.setLevel(Level.TRACE);
 		String cacheName = "digitalAssetCache";
 		@SuppressWarnings("unchecked")
 		List<DigitalAssetVO> digitalAssetVOList = (List<DigitalAssetVO>)CacheController.getCachedObject(cacheName, key);
-		if(digitalAssetVOList != null)
+		
+		if(/* TEMPORARY */ false && /* TEMPORARY */ digitalAssetVOList != null)
 		{
 			if(logger.isInfoEnabled())
 				logger.info("There was an cached digitalAssetVOList:" + digitalAssetVOList);
@@ -2912,6 +2913,7 @@ logger.setLevel(Level.TRACE);
 		VisualFormatter formatter = new VisualFormatter();
 		String asciiAssetFileName = formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAssetVO.getAssetFileName(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
 		String fileName = createOldFormFileNameForAsset(digitalAssetVO.getDigitalAssetId(), asciiAssetFileName);
+		logger.debug("Created old form file name " + fileName);
 		return fileName;
 	}
 
@@ -2941,6 +2943,7 @@ logger.setLevel(Level.TRACE);
 		String asciiAssetKey = formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAssetVO.getAssetKey(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
 		fileName = String.format(CmsPropertyHandler.NEW_ASSET_FILE_NAME_FORMAT, contentId, languageId, asciiAssetKey, suffix);
 
+		logger.debug("Created new form file name " + fileName);
 		return fileName;
 	}
 

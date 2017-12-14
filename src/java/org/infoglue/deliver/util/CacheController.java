@@ -2127,8 +2127,6 @@ public class CacheController extends Thread
 	
 	public static void clearCaches(String entity, String entityId, Map<String,String> extraInformation, String[] cachesToSkip, boolean forceClear) throws Exception
 	{	
-		AssetUpdatingThread assetUpdatingThread = null;
-
 		Timer t = new Timer();
 		//t.setActive(false);
 		
@@ -3496,7 +3494,7 @@ public class CacheController extends Thread
 
 										if (cacheName.equals("contentVersionCache"))
 										{
-											assetUpdatingThread = new AssetUpdatingThread(entityId);
+											new AssetUpdatingThread(entityId).start();
 										}
 							    	}
 							    	catch(SystemException se)
@@ -3922,13 +3920,7 @@ public class CacheController extends Thread
     			CacheController.clearFileCaches("pageCache");
     		}
 		}
-		
-		if (assetUpdatingThread != null) {
-			assetUpdatingThread.start();
-			assetUpdatingThread.wait();
-		}
-		
-		
+				
 		t.printElapsedTime("clearCaches stop", 100);
 		/*
 		logger.info("clearCaches stop");

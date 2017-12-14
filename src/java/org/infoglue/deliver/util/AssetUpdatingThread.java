@@ -18,6 +18,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
+import org.infoglue.cms.entities.content.impl.simple.MediumDigitalAssetImpl;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
@@ -111,8 +112,13 @@ public class AssetUpdatingThread extends Thread
 				}
 				else
 				{
+					
 					for (DigitalAssetVO digitalAssetVO : digitalAssetVOs)
 					{
+						Class typesExtraMedium = MediumDigitalAssetImpl.class;
+						Object[] idsExtraMedium = {new Integer(digitalAssetVO.getDigitalAssetId())};
+						CacheController.clearCache(typesExtraMedium, idsExtraMedium);
+						
 						if (logger.isDebugEnabled())
 						{
 							logger.debug("Checking DigitalAsset.id: " + digitalAssetVO.getDigitalAssetId() + " for ContentVersion.id: " + contentVersionIdString);

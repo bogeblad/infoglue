@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.ObjectNotFoundException;
@@ -18,7 +17,6 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
-import org.infoglue.cms.entities.content.impl.simple.MediumDigitalAssetImpl;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
@@ -32,16 +30,12 @@ public class AssetUpdatingThread extends Thread
 	AssetUpdatingThread(String contentVersionIdString)
 	{
 		this.contentVersionIdString = contentVersionIdString;
-		
-		// TEMPORARY
-		logger.setLevel(Level.TRACE);
-		// TEMPORARY
 	}
 
 	@SuppressWarnings("static-access")
 	@Override
 	public void run()
-	{		
+	{
 		while(numberOfRunningThreads.get() > 10)
 		{
 			logger.info("To many threads - let's wait: ");
@@ -112,13 +106,8 @@ public class AssetUpdatingThread extends Thread
 				}
 				else
 				{
-					
 					for (DigitalAssetVO digitalAssetVO : digitalAssetVOs)
 					{
-						Class typesExtraMedium = MediumDigitalAssetImpl.class;
-						Object[] idsExtraMedium = {new Integer(digitalAssetVO.getDigitalAssetId())};
-						CacheController.clearCache(typesExtraMedium, idsExtraMedium);
-						
 						if (logger.isDebugEnabled())
 						{
 							logger.debug("Checking DigitalAsset.id: " + digitalAssetVO.getDigitalAssetId() + " for ContentVersion.id: " + contentVersionIdString);
@@ -136,7 +125,6 @@ public class AssetUpdatingThread extends Thread
 							logger.debug("File is currently stored on disc, let's update!. File: " + currentAssetFile.getAbsolutePath());
 							File assetFolder = DigitalAssetController.getController().getAssetFolderFile(digitalAssetVO, contentId, languageId, db);
 							String assetFilename = DigitalAssetController.getController().getAssetFileName(digitalAssetVO, contentId, languageId, db);
-							logger.debug("Let's use the folder " + assetFolder.getAbsolutePath() + " and the file " + assetFilename);
 							DigitalAssetController.getController().dumpDigitalAsset(digitalAssetVO, assetFilename, assetFolder.getAbsolutePath(), true, db);
 						}
 					}

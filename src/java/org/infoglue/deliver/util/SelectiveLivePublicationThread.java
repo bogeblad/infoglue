@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.PersistenceException;
@@ -132,10 +131,6 @@ public class SelectiveLivePublicationThread extends PublicationThread
     public SelectiveLivePublicationThread(List notifiations)
 	{
     	this.notifications = notifiations;
-    	// TEMPORARY
-    	logger.setLevel(Level.TRACE);
-    	// TEMPORARY
-
 	}
 	
 

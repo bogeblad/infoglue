@@ -41,7 +41,6 @@ import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.common.VisualFormatter;
@@ -92,10 +91,6 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 	
 	private DigitalAssetDeliveryController()
 	{
-		
-		// TEMPORARY
-		logger.setLevel(Level.TRACE);
-		// TEMPORARY
 	}
 	
 	/**

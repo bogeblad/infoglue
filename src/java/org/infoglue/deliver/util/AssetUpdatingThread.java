@@ -130,6 +130,7 @@ public class AssetUpdatingThread extends Thread
 							logger.debug("File is currently stored on disc, let's update!. File: " + currentAssetFile.getAbsolutePath());
 							File assetFolder = DigitalAssetController.getController().getAssetFolderFile(digitalAssetVO, contentId, languageId, db);
 							String assetFilename = DigitalAssetController.getController().getAssetFileName(digitalAssetVO, contentId, languageId, db);
+							logger.debug("Let's use the folder " + assetFolder.getAbsolutePath() + " and the file " + assetFilename);
 							DigitalAssetController.getController().dumpDigitalAsset(digitalAssetVO, assetFilename, assetFolder.getAbsolutePath(), true, db);
 						}
 					}

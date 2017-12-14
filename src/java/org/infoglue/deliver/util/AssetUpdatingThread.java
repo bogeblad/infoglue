@@ -41,6 +41,18 @@ public class AssetUpdatingThread extends Thread
 	@Override
 	public void run()
 	{
+		// TEMPORARY
+		try 
+		{
+			Thread.sleep(10000);
+		} 
+		catch (InterruptedException e) 
+		{
+			e.printStackTrace();
+		}
+		// TEMPORARY
+
+		
 		while(numberOfRunningThreads.get() > 10)
 		{
 			logger.info("To many threads - let's wait: ");

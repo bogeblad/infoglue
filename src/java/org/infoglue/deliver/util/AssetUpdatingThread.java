@@ -40,22 +40,7 @@ public class AssetUpdatingThread extends Thread
 	@SuppressWarnings("static-access")
 	@Override
 	public void run()
-	{
-		if (true) {
-		return;
-		}
-		// TEMPORARY
-		try 
-		{
-			Thread.sleep(10000);
-		} 
-		catch (InterruptedException e) 
-		{
-			e.printStackTrace();
-		}
-		// TEMPORARY
-
-		
+	{		
 		while(numberOfRunningThreads.get() > 10)
 		{
 			logger.info("To many threads - let's wait: ");

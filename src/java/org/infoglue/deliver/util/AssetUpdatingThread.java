@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.ObjectNotFoundException;
@@ -30,6 +31,10 @@ public class AssetUpdatingThread extends Thread
 	AssetUpdatingThread(String contentVersionIdString)
 	{
 		this.contentVersionIdString = contentVersionIdString;
+		
+		// TEMPORARY
+		logger.setLevel(Level.TRACE);
+		// TEMPORARY
 	}
 
 	@SuppressWarnings("static-access")

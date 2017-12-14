@@ -49,6 +49,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
@@ -97,6 +98,9 @@ public class DigitalAssetController extends BaseController
     
     public static DigitalAssetController getController()
     {
+// TEMPORARY
+logger.setLevel(Level.TRACE);
+// TEMPORARY
         return singelton;
     }
 

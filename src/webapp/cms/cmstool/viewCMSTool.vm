@@ -9,15 +9,6 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 	#includeLatestJQuery()
-	
-	<script language="JavaScript" type="text/javascript"> 
-	<!--		
-		#if($infoGluePrincipal.isAdministrator)
-			alert("You should only use this account to solve access rights issues etc as this is not a normal user account and some features are disabled because of that.");
-		#end
-	-->		
-	</script> 
-
 </head>
 
 <frameset rows="58,*,30" FRAMESPACING="0" FRAMEBORDER="NO" BORDER="0" >

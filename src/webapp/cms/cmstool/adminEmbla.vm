@@ -171,10 +171,6 @@
 			  	}
 			);
 			initMessageSystem();
-			
-			#if($infoGluePrincipal.isAdministrator)
-				setTimeout(function() { alert("You should only use this account to solve access rights issues etc as this is not a normal user account and some features are disabled because of that."); }, 1000);
-			#end
 		});
 				
 	-->

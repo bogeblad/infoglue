@@ -11,10 +11,6 @@
 	<script type="text/javascript">
 	<!--	
 		$(function() {
-	
-			#if($infoGluePrincipal.isAdministrator)
-				alert("You should only use this account to solve access rights issues etc as this is not a normal user account and some features are disabled because of that.");
-			#end
 			
 			resize();
 						

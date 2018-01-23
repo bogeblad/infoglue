@@ -23,8 +23,18 @@
 
 package org.infoglue.cms.applications.common.actions;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.StringReader;
 import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,14 +44,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.httpclient.HttpClient;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.Session;
@@ -54,6 +67,7 @@ import org.infoglue.cms.exception.ConfigurationError;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
+import org.infoglue.cms.security.InfoGlueRole;
 import org.infoglue.cms.util.ChangeNotificationController;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.StringManager;
@@ -62,6 +76,7 @@ import org.infoglue.deliver.controllers.kernel.impl.simple.TemplateController;
 import org.infoglue.deliver.util.BrowserBean;
 import org.infoglue.deliver.util.ThreadMonitor;
 import org.infoglue.deliver.util.Timer;
+import org.jfree.util.Log;
 
 import webwork.action.Action;
 import webwork.action.CommandDriven;
@@ -85,8 +100,10 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 	private static final int     METHOD_GROUP_INDEX  = 4;
 	private static final Pattern PASSWORD_PATTERN = Pattern.compile("(?i).*(password).*");
 	private static final int MAX_PARAMETER_VALUE_LENGTH = 50;
-
-
+	private static final String GA_CMS_ID ="ga.cms.id";
+	private static final String GA_CMS_URL ="ga.cms.url";
+	private static final String GA_EXLUDED_ACTIONS ="ga.cms.excluded.actions";
+	
 	private final static Logger logger = Logger.getLogger(WebworkAbstractAction.class.getName());
 	private final static Logger USER_ACTION_LOGGER = Logger.getLogger("User Action");
 
@@ -648,16 +665,16 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 	{
 		// An error in this log method must not propagate since it 
 		// will halt the execution of the current action
+		String action = "unknown action";
 		try
 		{
-			if (USER_ACTION_LOGGER.isEnabledFor(level))
-			{
+			
 				// Default values
-				String action = "unknown action";
+			
 				String method = "";
 				String context = "unknown context";
 				
-				String userName = getOptionalUserName();
+				final String userName = getOptionalUserName();
 				String url = request.getRequestURL().toString();
 				String parameters = getParametersString();
 				
@@ -683,7 +700,31 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 						}
 					}
 				}
+				
+				final String tid = getGeneralSetting(GA_CMS_ID, null);
+				final String gaUrl = getGeneralSetting(GA_CMS_URL, null);
+				final String actionFinal = action;
+	    		boolean isExcludedAction = false;
+	    		
+    			String excludedActions = getGeneralSetting(GA_EXLUDED_ACTIONS, null);
+	    		if (excludedActions != null) {	
+	    			isExcludedAction = excludedActions.matches(".*(^|,)" + action + "(,|$).*");
+	    		}
 
+	    		
+	    		
+				if (!isExcludedAction && action != null && tid != null && !tid.equalsIgnoreCase("") && gaUrl != null && !gaUrl.equalsIgnoreCase("")) {
+					Thread thread = new Thread(new Runnable() {
+						public void run() {
+						
+								sendToGA(actionFinal, userName, tid, gaUrl);
+							
+						}
+					});
+					thread.start(); 
+					
+				}
+	    		
 				logger.debug("action: " + action + ", method: " + method + ", context: " + context + ", userName: " + userName + ", parameters: " + parameters);
 
 				// Some actions are called too often, exclude them.
@@ -692,11 +733,58 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 					// For all other actions, log to the USER_ACTION_LOGGER
 					USER_ACTION_LOGGER.log(level, String.format(USER_ACTION_FORMAT, userName, context, action, method, parameters));
 				}
-			}
+			
 		} catch (Throwable t)
 		{
 			logger.error("Error thrown in log method", t); 
 		}
+	}
+	
+	private static String getGeneralSetting(String key, String defaultValue) {
+		Properties generalSettings = CmsPropertyHandler.getGeneralSettings(false);
+		if (generalSettings != null) {
+			return generalSettings.getProperty(key, defaultValue);
+		} else {
+			return defaultValue;
+		}
+	}
+	public void sendToGA(String action, String userName, String tid, String gaUrl) {
+
+		String urlParameters  = "";
+		HttpSession session = request.getSession();
+		if (session != null && (session.getAttribute("GASession") == null || session.getAttribute("GASession").toString().equalsIgnoreCase(""))) {
+			Double random = Math.random();
+			session.setAttribute("GASession", random.toString());
+		} 
+		InfoGluePrincipal igPrincipal = getInfoGluePrincipal();
+		String role = "Uknown";
+		if (igPrincipal != null && igPrincipal.getRoles() != null && igPrincipal.getRoles().size() > 0) {
+			role = igPrincipal.getRoles().get(0).getDisplayName();
+
+		}
+
+		urlParameters = "v=1&tid=" + tid + "&cid=" + session.getAttribute("GASession") + "&t=event&ec=" + role + "&ea=" + action;
+		byte[] postData       = urlParameters.getBytes( StandardCharsets.UTF_8 );
+		String request        = gaUrl;
+		URL url;
+		try {
+			url = new URL( request );
+
+			HttpURLConnection conn= (HttpURLConnection) url.openConnection();
+			
+			conn.setRequestMethod("POST");
+			conn.setDoOutput(true);
+			conn.setUseCaches( false );
+			
+			try( DataOutputStream wr = new DataOutputStream( conn.getOutputStream())) {
+			   wr.write( postData );
+			}
+			
+			} catch (IOException e) {
+		
+			logger.warn("Could send analytics data for action:" + action + " and data:" + postData);
+		}
+		
 	}
 
 	static public String join(String delimiter, List<String> list)

@@ -713,8 +713,9 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 	    		if (excludedActions != null) {	
 	    			isExcludedAction = excludedActions.matches(".*(^|,)" + action + "(,|$).*");
 	    		}
-
+	    		System.out.println("1:" + action + "," + tid + "," + isExcludedAction);
 				if (!isExcludedAction && action != null && tid != null && !tid.equalsIgnoreCase("") && gaUrl != null && !gaUrl.equalsIgnoreCase("")) {
+					System.out.println("2:");
 					Thread thread = new Thread(new Runnable() {
 						public void run() {
 							sendToGA(actionFinal, userName, tid, gaUrl);
@@ -771,8 +772,10 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 		// Send analytics data with post to google analytics measurement protocol
 		String urlParameters  = "";
 		urlParameters = "v=1&tid=" + tid + "&cid=" + session.getAttribute("GASession") + "&t=event&ec=" + principalRole + "&ea=" + action;
+		System.out.println("3:" + urlParameters);
 		byte[] postData       = urlParameters.getBytes( StandardCharsets.UTF_8 );
 		String request        = gaUrl;
+		System.out.println("4:" + gaUrl);
 		URL url;
 		try {
 			url = new URL( request );
@@ -786,7 +789,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 			try( DataOutputStream wr = new DataOutputStream( conn.getOutputStream())) {
 			   wr.write( postData );
 			}
-			
+			System.out.println("5:" + conn.getResponseCode());
 			} catch (IOException e) {
 		
 			logger.warn("Could send analytics data for action:" + action + " and data:" + postData);

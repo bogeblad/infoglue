@@ -578,7 +578,10 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 
 	public final InfoGluePrincipal getInfoGluePrincipal()
 	{
-		return getSession().getInfoGluePrincipal();
+		if (getSession() != null) {
+			return getSession().getInfoGluePrincipal();
+		} 
+		return null;
 	}
 
 	/**
@@ -747,7 +750,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 	
 	public void sendToGA(String action, String userName, String tid, String gaUrl) {
 
-		String principalRole = "uknown";
+		String principalRole = "unknown";
 		TemplateController controller = (TemplateController) request.getAttribute("org.infoglue.cms.deliver.templateLogic");
 		if (controller != null) {
 			logger.debug("Got controller");

@@ -23,18 +23,8 @@
 
 package org.infoglue.cms.applications.common.actions;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.StringReader;
 import java.lang.reflect.Method;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,17 +34,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
-import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.Session;
@@ -67,7 +54,6 @@ import org.infoglue.cms.exception.ConfigurationError;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
-import org.infoglue.cms.security.InfoGlueRole;
 import org.infoglue.cms.util.ChangeNotificationController;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.StringManager;
@@ -76,7 +62,6 @@ import org.infoglue.deliver.controllers.kernel.impl.simple.TemplateController;
 import org.infoglue.deliver.util.BrowserBean;
 import org.infoglue.deliver.util.ThreadMonitor;
 import org.infoglue.deliver.util.Timer;
-import org.jfree.util.Log;
 
 import webwork.action.Action;
 import webwork.action.CommandDriven;
@@ -100,10 +85,8 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 	private static final int     METHOD_GROUP_INDEX  = 4;
 	private static final Pattern PASSWORD_PATTERN = Pattern.compile("(?i).*(password).*");
 	private static final int MAX_PARAMETER_VALUE_LENGTH = 50;
-	private static final String GA_CMS_ID ="ga.cms.id";
-	private static final String GA_CMS_URL ="ga.cms.url";
-	private static final String GA_EXLUDED_ACTIONS ="ga.cms.excluded.actions";
-	
+
+
 	private final static Logger logger = Logger.getLogger(WebworkAbstractAction.class.getName());
 	private final static Logger USER_ACTION_LOGGER = Logger.getLogger("User Action");
 
@@ -578,10 +561,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 
 	public final InfoGluePrincipal getInfoGluePrincipal()
 	{
-		if (getSession() != null) {
-			return getSession().getInfoGluePrincipal();
-		} 
-		return null;
+		return getSession().getInfoGluePrincipal();
 	}
 
 	/**
@@ -668,16 +648,16 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 	{
 		// An error in this log method must not propagate since it 
 		// will halt the execution of the current action
-		String action = "unknown action";
 		try
 		{
-			
+			if (USER_ACTION_LOGGER.isEnabledFor(level))
+			{
 				// Default values
-			
+				String action = "unknown action";
 				String method = "";
 				String context = "unknown context";
 				
-				final String userName = getOptionalUserName();
+				String userName = getOptionalUserName();
 				String url = request.getRequestURL().toString();
 				String parameters = getParametersString();
 				
@@ -703,28 +683,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 						}
 					}
 				}
-				
-				final String tid = getGeneralSetting(GA_CMS_ID, null);
-				final String gaUrl = getGeneralSetting(GA_CMS_URL, null);
-				final String actionFinal = action;
-	    		boolean isExcludedAction = false;
-	    		
-    			String excludedActions = getGeneralSetting(GA_EXLUDED_ACTIONS, null);
-	    		if (excludedActions != null) {	
-	    			isExcludedAction = excludedActions.matches(".*(^|,)" + action + "(,|$).*");
-	    		}
-	    		System.out.println("1:" + action + "," + tid + "," + isExcludedAction);
-				if (!isExcludedAction && action != null && tid != null && !tid.equalsIgnoreCase("") && gaUrl != null && !gaUrl.equalsIgnoreCase("")) {
-					System.out.println("2:");
-					Thread thread = new Thread(new Runnable() {
-						public void run() {
-							sendToGA(actionFinal, userName, tid, gaUrl);
-						}
-					});
-					thread.start(); 
-					
-				}
-	    		
+
 				logger.debug("action: " + action + ", method: " + method + ", context: " + context + ", userName: " + userName + ", parameters: " + parameters);
 
 				// Some actions are called too often, exclude them.
@@ -733,68 +692,11 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 					// For all other actions, log to the USER_ACTION_LOGGER
 					USER_ACTION_LOGGER.log(level, String.format(USER_ACTION_FORMAT, userName, context, action, method, parameters));
 				}
-			
+			}
 		} catch (Throwable t)
 		{
 			logger.error("Error thrown in log method", t); 
 		}
-	}
-	
-	private static String getGeneralSetting(String key, String defaultValue) {
-		Properties generalSettings = CmsPropertyHandler.getGeneralSettings(false);
-		if (generalSettings != null) {
-			return generalSettings.getProperty(key, defaultValue);
-		} else {
-			return defaultValue;
-		}
-	}
-	
-	public void sendToGA(String action, String userName, String tid, String gaUrl) {
-
-		String principalRole = "unknown";
-		TemplateController controller = (TemplateController) request.getAttribute("org.infoglue.cms.deliver.templateLogic");
-		if (controller != null) {
-			logger.debug("Got controller");
-			InfoGluePrincipal principal = controller.getPrincipal();
-			
-			if (principal != null && principal.getRoles() != null && principal.getRoles().size() > 0) {
-				principalRole = principal.getRoles().get(0).getName();
-			}
-		}
-	
-		HttpSession session = request.getSession();
-		
-		if (session != null && (session.getAttribute("GASession") == null || session.getAttribute("GASession").toString().equalsIgnoreCase(""))) {
-			Double random = Math.random();
-			session.setAttribute("GASession", random.toString());
-		} 
-		
-		// Send analytics data with post to google analytics measurement protocol
-		String urlParameters  = "";
-		urlParameters = "v=1&tid=" + tid + "&cid=" + session.getAttribute("GASession") + "&t=event&ec=" + principalRole + "&ea=" + action;
-		System.out.println("3:" + urlParameters);
-		byte[] postData       = urlParameters.getBytes( StandardCharsets.UTF_8 );
-		String request        = gaUrl;
-		System.out.println("4:" + gaUrl);
-		URL url;
-		try {
-			url = new URL( request );
-
-			HttpURLConnection conn= (HttpURLConnection) url.openConnection();
-			
-			conn.setRequestMethod("POST");
-			conn.setDoOutput(true);
-			conn.setUseCaches( false );
-			
-			try( DataOutputStream wr = new DataOutputStream( conn.getOutputStream())) {
-			   wr.write( postData );
-			}
-			System.out.println("5:" + conn.getResponseCode());
-			} catch (IOException e) {
-		
-			logger.warn("Could send analytics data for action:" + action + " and data:" + postData);
-		}
-		
 	}
 
 	static public String join(String delimiter, List<String> list)
@@ -855,26 +757,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 		
 		return join("&", params);
 	}
-	
-	//Returns user from templateController
-	Principal getTemplateControllerUser() {
-		
-		HttpServletRequest request = getRequest();
-		if (request != null) {
-			logger.debug("Got request");
-	
-			TemplateController controller = (TemplateController) request.getAttribute("org.infoglue.cms.deliver.templateLogic");
-			if (controller != null) {
-				logger.debug("Got controller");
-				InfoGluePrincipal princ = controller.getPrincipal();
-				Principal user = controller.getPrincipal();
-				logger.debug("Got InfogluePrincipal from request: " + user);
-				return user;
-			}
-		}
-		return null;
-	}
-	
+
 	private String getOptionalUserName() {
 		String name = "????????";
 		Session session = getSession();
@@ -900,7 +783,18 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 		// If we still have got no user, try to get a TemplateController from the request
 		// to get the user from there
 		if (user == null) {
-			user = getTemplateControllerUser();
+			HttpServletRequest request = getRequest();
+			if (request != null) {
+				logger.debug("Got request");
+
+				TemplateController controller = (TemplateController) request.getAttribute("org.infoglue.cms.deliver.templateLogic");
+				if (controller != null) {
+					logger.debug("Got controller");
+
+					user = controller.getPrincipal();
+					logger.debug("Got InfogluePrincipal from request: " + user);
+				}
+			}
 		}
 
 		if (user != null) {

@@ -711,14 +711,10 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 	    			isExcludedAction = excludedActions.matches(".*(^|,)" + action + "(,|$).*");
 	    		}
 
-	    		
-	    		
 				if (!isExcludedAction && action != null && tid != null && !tid.equalsIgnoreCase("") && gaUrl != null && !gaUrl.equalsIgnoreCase("")) {
 					Thread thread = new Thread(new Runnable() {
 						public void run() {
-						
-								sendToGA(actionFinal, userName, tid, gaUrl);
-							
+							sendToGA(actionFinal, userName, tid, gaUrl);
 						}
 					});
 					thread.start(); 
@@ -748,22 +744,30 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 			return defaultValue;
 		}
 	}
+	
 	public void sendToGA(String action, String userName, String tid, String gaUrl) {
 
-		String urlParameters  = "";
+		String principalRole = "uknown";
+		TemplateController controller = (TemplateController) request.getAttribute("org.infoglue.cms.deliver.templateLogic");
+		if (controller != null) {
+			logger.debug("Got controller");
+			InfoGluePrincipal principal = controller.getPrincipal();
+			
+			if (principal != null && principal.getRoles() != null && principal.getRoles().size() > 0) {
+				principalRole = principal.getRoles().get(0).getName();
+			}
+		}
+	
 		HttpSession session = request.getSession();
+		
 		if (session != null && (session.getAttribute("GASession") == null || session.getAttribute("GASession").toString().equalsIgnoreCase(""))) {
 			Double random = Math.random();
 			session.setAttribute("GASession", random.toString());
 		} 
-		InfoGluePrincipal igPrincipal = getInfoGluePrincipal();
-		String role = "Uknown";
-		if (igPrincipal != null && igPrincipal.getRoles() != null && igPrincipal.getRoles().size() > 0) {
-			role = igPrincipal.getRoles().get(0).getDisplayName();
-
-		}
-
-		urlParameters = "v=1&tid=" + tid + "&cid=" + session.getAttribute("GASession") + "&t=event&ec=" + role + "&ea=" + action;
+		
+		// Send analytics data with post to google analytics measurement protocol
+		String urlParameters  = "";
+		urlParameters = "v=1&tid=" + tid + "&cid=" + session.getAttribute("GASession") + "&t=event&ec=" + principalRole + "&ea=" + action;
 		byte[] postData       = urlParameters.getBytes( StandardCharsets.UTF_8 );
 		String request        = gaUrl;
 		URL url;
@@ -845,7 +849,26 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 		
 		return join("&", params);
 	}
-
+	
+	//Returns user from templateController
+	Principal getTemplateControllerUser() {
+		
+		HttpServletRequest request = getRequest();
+		if (request != null) {
+			logger.debug("Got request");
+	
+			TemplateController controller = (TemplateController) request.getAttribute("org.infoglue.cms.deliver.templateLogic");
+			if (controller != null) {
+				logger.debug("Got controller");
+				InfoGluePrincipal princ = controller.getPrincipal();
+				Principal user = controller.getPrincipal();
+				logger.debug("Got InfogluePrincipal from request: " + user);
+				return user;
+			}
+		}
+		return null;
+	}
+	
 	private String getOptionalUserName() {
 		String name = "????????";
 		Session session = getSession();
@@ -871,18 +894,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 		// If we still have got no user, try to get a TemplateController from the request
 		// to get the user from there
 		if (user == null) {
-			HttpServletRequest request = getRequest();
-			if (request != null) {
-				logger.debug("Got request");
-
-				TemplateController controller = (TemplateController) request.getAttribute("org.infoglue.cms.deliver.templateLogic");
-				if (controller != null) {
-					logger.debug("Got controller");
-
-					user = controller.getPrincipal();
-					logger.debug("Got InfogluePrincipal from request: " + user);
-				}
-			}
+			user = getTemplateControllerUser();
 		}
 
 		if (user != null) {

@@ -41,7 +41,7 @@
 		function syncWithTree(path, repositoryId)
 		{
 			var timeout = 500;
-			//alert("AAA:" + path + " - " + repositoryId + ":" + currentRepositoryId + ":" + parent);
+			alert("AAA:" + path + " - " + repositoryId + ":" + currentRepositoryId + ":" + parent);
 			if(repositoryId && currentRepositoryId != repositoryId)
 			{
 				parent.frames['header'].changeRepository(repositoryId, escape(path));
